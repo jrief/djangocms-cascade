@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from setuptools import setup
-from djangocms_column import __version__
+from djangocms_style import __version__
 
 
 INSTALL_REQUIRES = [
@@ -24,13 +24,13 @@ CLASSIFIERS = [
 ]
 
 setup(
-    name='djangocms-column',
+    name='djangocms-style',
     version=__version__,
-    description='Column Plugin for django CMS',
+    description='Style Plugin for django CMS',
     author='Divio AG',
     author_email='info@divio.ch',
-    url='https://github.com/divio/djangocms-column',
-    packages=['djangocms_column', 'djangocms_column.migrations'],
+    url='https://github.com/divio/djangocms-style',
+    packages=['djangocms_style', 'djangocms_style.migrations'],
     install_requires=INSTALL_REQUIRES,
     license='LICENSE.txt',
     platforms=['OS Independent'],
