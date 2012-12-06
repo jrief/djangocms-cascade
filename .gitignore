@@ -7,3 +7,4 @@
 build
 env*
 dist
+djangocms_style.egg-info
