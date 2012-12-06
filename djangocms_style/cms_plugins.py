@@ -10,4 +10,4 @@ class StylePlugin(CMSPluginBase):
     render_template = "cms/plugins/style.html"
     allow_children = True
 
-plugin_pool.register_plugin(Style)
+plugin_pool.register_plugin(StylePlugin)
