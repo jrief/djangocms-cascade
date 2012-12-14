@@ -10,4 +10,18 @@ class StylePlugin(CMSPluginBase):
     render_template = "cms/plugins/style.html"
     allow_children = True
 
+    fieldsets = (
+        (None, {
+            'fields': ('class_name',)
+        }),
+        (_('Padding'), {
+            'classes': ('collapse',),
+            'fields': (('padding_left', 'padding_right', 'padding_top', 'padding_bottom'),),
+        }),
+        (_('Margin'), {
+            'classes': ('collapse',),
+            'fields': (('margin_left', 'margin_right', 'margin_top', 'margin_bottom'),),
+        }),
+    )
+
 plugin_pool.register_plugin(StylePlugin)
