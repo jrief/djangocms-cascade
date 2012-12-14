@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-06 16:24+0100\n"
+"POT-Creation-Date: 2012-12-14 14:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,14 @@ msgstr ""
 
 #: cms_plugins.py:9
 msgid "Style"
+msgstr ""
+
+#: cms_plugins.py:17
+msgid "Padding"
+msgstr ""
+
+#: cms_plugins.py:21
+msgid "Margin"
 msgstr ""
 
 #: models.py:7
@@ -35,4 +43,20 @@ msgstr ""
 
 #: models.py:17
 msgid "class name"
+msgstr ""
+
+#: models.py:19 models.py:24
+msgid "left"
+msgstr ""
+
+#: models.py:20 models.py:25
+msgid "right"
+msgstr ""
+
+#: models.py:21 models.py:26
+msgid "top"
+msgstr ""
+
+#: models.py:22 models.py:27
+msgid "bottom"
 msgstr ""
