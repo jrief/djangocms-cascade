@@ -27,7 +27,6 @@ class Style(CMSPlugin):
     margin_bottom = models.SmallIntegerField(_("bottom"), blank=True, null=True)
 
     def __unicode__(self):
-        print self.inline_style()
         return u"%s" % self.get_class_name_display()
 
     def inline_style(self):
