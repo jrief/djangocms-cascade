@@ -14,6 +14,7 @@ class Style(CMSPlugin):
     """
     A CSS Style Plugin
     """
+    cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
     class_name = models.CharField(_("class name"), choices=CLASS_NAMES, default=CLASS_NAMES[0][0], max_length=50, blank=True, null=True)
 
     padding_left = models.SmallIntegerField(_("left"), blank=True, null=True)
