@@ -14,18 +14,38 @@ class Style(CMSPlugin):
     """
     A CSS Style Plugin
     """
+
+    DIV_TAG = 'div'
+    ARTICLE_TAG = 'article'
+    SECTION_TAG = 'section'
+
+    HTML_TAG_TYPES = (
+        (DIV_TAG, _('div')),
+        (ARTICLE_TAG, _('article')),
+        (SECTION_TAG, _('section')),
+    )
+
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
     class_name = models.CharField(_("class name"), choices=CLASS_NAMES, default=CLASS_NAMES[0][0], max_length=50, blank=True, null=True)
 
-    padding_left = models.SmallIntegerField(_("left"), blank=True, null=True)
-    padding_right = models.SmallIntegerField(_("right"), blank=True, null=True)
-    padding_top = models.SmallIntegerField(_("top"), blank=True, null=True)
-    padding_bottom = models.SmallIntegerField(_("bottom"), blank=True, null=True)
+    tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50, choices=HTML_TAG_TYPES, default=DIV_TAG)
 
-    margin_left = models.SmallIntegerField(_("left"), blank=True, null=True)
-    margin_right = models.SmallIntegerField(_("right"), blank=True, null=True)
-    margin_top = models.SmallIntegerField(_("top"), blank=True, null=True)
-    margin_bottom = models.SmallIntegerField(_("bottom"), blank=True, null=True)
+    padding_left = models.SmallIntegerField(_("padding left"), blank=True, null=True)
+    padding_right = models.SmallIntegerField(_("padding right"), blank=True, null=True)
+    padding_top = models.SmallIntegerField(_("padding top"), blank=True, null=True)
+    padding_bottom = models.SmallIntegerField(_("padding bottom"), blank=True, null=True)
+
+    margin_left = models.SmallIntegerField(_("margin left"), blank=True, null=True)
+    margin_right = models.SmallIntegerField(_("margin right"), blank=True, null=True)
+    margin_top = models.SmallIntegerField(_("margin top"), blank=True, null=True)
+    margin_bottom = models.SmallIntegerField(_("margin bottom"), blank=True, null=True)
+
+    additional_classes = models.CharField(
+        verbose_name=_('additional clases'),
+        max_length=200,
+        blank=True,
+        help_text=_('Comma separated list of additional classes to apply to tag_type')
+    )
 
     def __unicode__(self):
         return u"%s" % self.get_class_name_display()
@@ -49,4 +69,11 @@ class Style(CMSPlugin):
         if self.margin_bottom:
             style += "margin-bottom: %dpx; " % self.margin_bottom
         return style
+
+    @property
+    def get_additional_classes(self):
+        if self.additional_classes:
+            # Removes any extra spaces
+            return ' '.join((html_class.strip() for html_class in self.additional_classes.split(',')))
+        return ''
 

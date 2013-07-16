@@ -14,13 +14,14 @@ class StylePlugin(CMSPluginBase):
         (None, {
             'fields': ('class_name',)
         }),
-        (_('Padding'), {
+        (_('Advanced Settings'), {
             'classes': ('collapse',),
-            'fields': (('padding_left', 'padding_right', 'padding_top', 'padding_bottom'),),
-        }),
-        (_('Margin'), {
-            'classes': ('collapse',),
-            'fields': (('margin_left', 'margin_right', 'margin_top', 'margin_bottom'),),
+            'fields': (
+                'tag_type',
+                'additional_classes',
+                ('padding_left', 'padding_right', 'padding_top', 'padding_bottom'),
+                ('margin_left', 'margin_right', 'margin_top', 'margin_bottom'),
+            ),
         }),
     )
 
