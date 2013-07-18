@@ -19,11 +19,11 @@ Usage
 
 Youcan define styles in your settings.py::
 
-	CMS_STYLE_NAMES", (
-        ('info', _("info")),
-        ('new', _("new")),
-        ('hint', _("hint"))
-    )
+CMS_STYLE_NAMES = (
+    ('info', _("info")),
+    ('new', _("new")),
+    ('hint', _("hint")),
+)
     
 After that you can place other plugins inside this style plugin.
 It will create a div with a class that was prior selected around this plugin.
