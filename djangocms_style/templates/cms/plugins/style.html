@@ -1,5 +1,5 @@
 {% load cms_tags %}
-<{{ instance.tag_type }} class="{{ instance.class_name }}{% if instance.additional_classes %} {{ instance.get_additional_classes }}{% endif %}"{% if instance.inline_style %} style="{{ instance.inline_style }}"{% endif %}>
+<{{ instance.tag_type }}{% if instance.class_name %} class="{{ instance.class_name }}{% if instance.additional_classes %} {{ instance.get_additional_classes }}{% endif %}"{% endif %}{% if instance.inline_style %} style="{{ instance.inline_style }}"{% endif %}>
 {% for plugin in instance.child_plugin_instances %}
     	{% render_plugin plugin %}
 {% endfor %}
