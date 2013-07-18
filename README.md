@@ -17,7 +17,7 @@ This plugin requires `django CMS` 2.4 or higher to be properly installed.
 Usage
 -----
 
-Youcan define styles in your settings.py::
+You can define styles in your settings.py:
 
 ```
 CMS_STYLE_NAMES = (
