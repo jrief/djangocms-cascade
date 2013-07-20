@@ -48,7 +48,8 @@ class Style(CMSPlugin):
     )
 
     def __unicode__(self):
-        return u"%s" % self.get_class_name_display()
+        display = self.get_class_name_display() or self.tag_type or u''
+        return u"%s" % display
 
     def inline_style(self):
         style = ""
