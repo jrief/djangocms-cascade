@@ -11,7 +11,7 @@ This plugin requires `django CMS` 2.4 or higher to be properly installed.
 
 * In your projects `virtualenv`_, run ``pip install djangocms-style``.
 * Add ``'djangocms_style'`` to your ``INSTALLED_APPS`` setting.
-* Run ``manage.py migrate cmsplugin_style``.
+* Run ``manage.py migrate djangocms_style``.
 
 
 Usage

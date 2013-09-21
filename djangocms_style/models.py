@@ -4,31 +4,30 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 CLASS_NAMES = getattr(settings, "CMS_STYLE_NAMES", (
-        ('info', _("info")),
-        ('new', _("new")),
-        ('hint', _("hint"))
+        ('info', _('info')),
+        ('new', _('new')),
+        ('hint', _('hint'))
     )
 )
+
+HTML_TAG_TYPES = getattr(settings, "CMS_STYLE_HTML_TAGS", (
+        ('naked', _('naked')),
+        ('div', _('div')),
+        ('article', _('article')),
+        ('section', _('section')),
+    )
+)
+
 
 class Style(CMSPlugin):
     """
     A CSS Style Plugin
     """
 
-    DIV_TAG = 'div'
-    ARTICLE_TAG = 'article'
-    SECTION_TAG = 'section'
-
-    HTML_TAG_TYPES = (
-        (DIV_TAG, _('div')),
-        (ARTICLE_TAG, _('article')),
-        (SECTION_TAG, _('section')),
-    )
-
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
     class_name = models.CharField(_("class name"), choices=CLASS_NAMES, default=CLASS_NAMES[0][0], max_length=50, blank=True, null=True)
 
-    tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50, choices=HTML_TAG_TYPES, default=DIV_TAG)
+    tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50, choices=HTML_TAG_TYPES, default=HTML_TAG_TYPES[0][0])
 
     padding_left = models.SmallIntegerField(_("padding left"), blank=True, null=True)
     padding_right = models.SmallIntegerField(_("padding right"), blank=True, null=True)
@@ -72,9 +71,15 @@ class Style(CMSPlugin):
         return style
 
     @property
-    def get_additional_classes(self):
+    def css_classes(self):
+        css_classes = self.class_name and [self.class_name] or []
         if self.additional_classes:
             # Removes any extra spaces
-            return ' '.join((html_class.strip() for html_class in self.additional_classes.split(',')))
-        return ''
+            css_classes += [html_class.strip() for html_class in self.additional_classes.split(',')]
+        return ' '.join(css_classes)
 
+    @property
+    def render_template(self):
+        if self.tag_type == 'naked':
+            return "cms/plugins/naked.html"
+        return "cms/plugins/style.html"
