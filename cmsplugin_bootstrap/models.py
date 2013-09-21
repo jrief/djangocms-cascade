@@ -12,7 +12,7 @@ class BootstrapElement(CMSPlugin):
     tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50)
     class_name = models.CharField(_("class name"), max_length=50, blank=True, null=True)
     extra_classes = JSONField(null=True, blank=True, verbose_name=_('A list of extra css classes'))
-    extra_styles = JSONField(null=True, blank=True, verbose_name=_('A dictionary of extra css styles'))
+    extra_styles = JSONField(null=True, blank=True, verbose_name=_('A dictionary of inline styles'))
 
     def __unicode__(self):
         return unicode(self.class_name or '')
@@ -25,7 +25,7 @@ class BootstrapElement(CMSPlugin):
         return ' '.join(css_classes)
 
     @property
-    def css_styles(self):
+    def inline_styles(self):
         if isinstance(self.extra_styles, dict):
             return ' '.join(['{0}: {1};'.format(*s) for s in self.extra_styles.items()])
         return ''

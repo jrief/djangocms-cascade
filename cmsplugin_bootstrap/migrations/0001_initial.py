@@ -11,8 +11,8 @@ class Migration(SchemaMigration):
         # Adding model 'BootstrapElement'
         db.create_table(u'cmsplugin_bootstrapelement', (
             ('cmsplugin_ptr', self.gf('django.db.models.fields.related.OneToOneField')(related_name='+', unique=True, primary_key=True, to=orm['cms.CMSPlugin'])),
-            ('tag_type', self.gf('django.db.models.fields.CharField')(default='naked', max_length=50)),
-            ('class_name', self.gf('django.db.models.fields.CharField')(default='btn', max_length=50, null=True, blank=True)),
+            ('tag_type', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('class_name', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
             ('extra_classes', self.gf('jsonfield.fields.JSONField')(null=True, blank=True)),
             ('extra_styles', self.gf('jsonfield.fields.JSONField')(null=True, blank=True)),
         ))
@@ -48,11 +48,11 @@ class Migration(SchemaMigration):
         },
         u'cmsplugin_bootstrap.bootstrapelement': {
             'Meta': {'object_name': 'BootstrapElement', 'db_table': "u'cmsplugin_bootstrapelement'", '_ormbases': ['cms.CMSPlugin']},
-            'class_name': ('django.db.models.fields.CharField', [], {'default': "'btn'", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'class_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'cmsplugin_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'+'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['cms.CMSPlugin']"}),
             'extra_classes': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
             'extra_styles': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
-            'tag_type': ('django.db.models.fields.CharField', [], {'default': "'naked'", 'max_length': '50'})
+            'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         }
     }
 
