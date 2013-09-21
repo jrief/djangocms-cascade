@@ -11,7 +11,7 @@ INSTALLED_APPS = [
     'mptt',
     'cms',
     'menus',
-    'djangocms_style',
+    'cmsplugin_bootstrap',
     'south',
 ]
 
@@ -49,7 +49,7 @@ def schemamigration():
     )
     argv = list(sys.argv)
     argv.insert(1, 'schemamigration')
-    argv.insert(2, 'djangocms_style')
+    argv.insert(2, 'cmsplugin_bootstrap')
     utility = ManagementUtility(argv)
     utility.execute()
 
