@@ -1,4 +1,3 @@
-from django import forms
 from django.forms import widgets
 from django.forms.models import modelform_factory
 from django.utils.translation import ugettext_lazy as _
@@ -12,29 +11,20 @@ class BootstrapPluginBase(CMSPluginBase):
     model = BootstrapElement
     render_template = "cms/plugins/bootstrap/generic.html"
     allow_children = True
-    fieldsets = (
-        (None, {
-            'fields': ('class_name',)
-        }),
-        (_('Advanced Settings'), {
-            'classes': ('collapse',),
-            'fields': ('extra_classes', 'extra_styles',),
-        }),
-    )
 
     def __init__(self, *args, **kwargs):
-        if hasattr(self, 'class_name_choices'):
-            class_name_widget = widgets.Select(choices=self.class_name_choices)
-            self.form = modelform_factory(BootstrapElement, widgets={'class_name': class_name_widget})
-        else:
-            self.form = modelform_factory(BootstrapElement, exclude=['class_name'])
-            self.fieldsets[0][1]['fields'] = ()
         super(BootstrapPluginBase, self).__init__(*args, **kwargs)
+        choice_widgets = {}
+        if hasattr(self, 'css_classes') and len(self.css_classes) > 1:
+            choice_widgets['class_name'] = widgets.Select(choices=self.css_classes)
+        if hasattr(self, 'extra_classes'):
+            choice_widgets['extra_classes'] = widgets.CheckboxSelectMultiple(choices=self.extra_classes)
+        self.form = modelform_factory(BootstrapElement, fields=choice_widgets.keys(), widgets=choice_widgets)
 
     def save_model(self, request, obj, form, change):
         obj.tag_type = self.tag_type
-        if hasattr(self, 'css_class'):
-            obj.class_name = self.css_class
+        if hasattr(self, 'css_classes') and len(self.css_classes) == 1:
+            obj.class_name = self.css_classes[0][0]
         return super(BootstrapPluginBase, self).save_model(request, obj, form, change)
 
 
@@ -43,7 +33,9 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
     render_template = "cms/plugins/bootstrap/naked.html"
     child_classes = ['LinkPlugin']
     tag_type = 'naked'
-    css_class = 'btn'
+    css_classes = (('btn', 'btn'),)
+    extra_classes = tuple((chr(b[0] + 64), 'btn-%s' % b[1])
+        for b in enumerate(('primary', 'info', 'success', 'warning', 'danger', 'inverse', 'link')))
 
 plugin_pool.register_plugin(ButtonWrapperPlugin)
 
@@ -52,7 +44,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row container")
     child_classes = ['BootstrapColumnPlugin']
     tag_type = 'div'
-    css_class = 'row'
+    css_classes = (('row', 'row'),)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
@@ -62,9 +54,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapRowPlugin']
     require_parent = True
     tag_type = 'div'
-    class_name_choices = [2 * ('span%s' % i,) for i in range(1, 13)]
-
-    def __init__(self, *args, **kwargs):
-        super(BootstrapColumnPlugin, self).__init__(*args, **kwargs)
+    css_classes = tuple(2 * ('span%s' % i,) for i in range(1, 13))
+    extra_classes = tuple((chr(o + 64), 'offset%s' % o,) for o in range(1, 12))
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
