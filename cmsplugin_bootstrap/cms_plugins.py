@@ -1,9 +1,16 @@
 from django.forms import widgets
 from django.forms.models import modelform_factory
 from django.utils.translation import ugettext_lazy as _
+from django.utils import simplejson as json
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
 from cmsplugin_bootstrap.models import BootstrapElement
+
+
+class MultipleCheckboxWidget(widgets.CheckboxSelectMultiple):
+    def render(self, name, value, attrs=None):
+        value = json.loads(value)
+        return super(MultipleCheckboxWidget, self).render(name, value, attrs)
 
 
 class BootstrapPluginBase(CMSPluginBase):
@@ -18,7 +25,7 @@ class BootstrapPluginBase(CMSPluginBase):
         if hasattr(self, 'css_classes') and len(self.css_classes) > 1:
             choice_widgets['class_name'] = widgets.Select(choices=self.css_classes)
         if hasattr(self, 'extra_classes'):
-            choice_widgets['extra_classes'] = widgets.CheckboxSelectMultiple(choices=self.extra_classes)
+            choice_widgets['extra_classes'] = MultipleCheckboxWidget(choices=self.extra_classes)
         self.form = modelform_factory(BootstrapElement, fields=choice_widgets.keys(), widgets=choice_widgets)
 
     def save_model(self, request, obj, form, change):
@@ -34,8 +41,8 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
     child_classes = ['LinkPlugin']
     tag_type = 'naked'
     css_classes = (('btn', 'btn'),)
-    extra_classes = tuple((chr(b[0] + 64), 'btn-%s' % b[1])
-        for b in enumerate(('primary', 'info', 'success', 'warning', 'danger', 'inverse', 'link')))
+    extra_classes = tuple(2 * ('btn-%s' % b,)
+        for b in ('primary', 'info', 'success', 'warning', 'danger', 'inverse', 'link'))
 
 plugin_pool.register_plugin(ButtonWrapperPlugin)
 
@@ -55,6 +62,25 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     require_parent = True
     tag_type = 'div'
     css_classes = tuple(2 * ('span%s' % i,) for i in range(1, 13))
-    extra_classes = tuple((chr(o + 64), 'offset%s' % o,) for o in range(1, 12))
+    extra_classes = tuple(2 * ('offset%s' % o,) for o in range(1, 12))
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
+
+
+class BootstrapThumbnailsPlugin(BootstrapPluginBase):
+    name = _("Thumbnails")
+    child_classes = ['BootstrapThumbImagePlugin']
+    tag_type = 'ul'
+    css_classes = (('thumbnails', 'thumbnails'),)
+
+plugin_pool.register_plugin(BootstrapThumbnailsPlugin)
+
+
+class BootstrapThumbImagePlugin(BootstrapPluginBase):
+    name = _("Single thumbnail")
+    parent_classes = ['BootstrapThumbnailsPlugin']
+    require_parent = True
+    tag_type = 'li'
+    css_classes = (('thumbnail', 'thumbnail'),)
+
+plugin_pool.register_plugin(BootstrapThumbImagePlugin)
