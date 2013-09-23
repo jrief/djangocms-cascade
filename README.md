@@ -1,34 +1,42 @@
-djangocms-style
-===============
+djangocms-bootstrap
+===================
 
-A Plugin for django CMS to add CSS classes to other plugins
+A Plugin for django CMS to add various HTML elements from the CSS framework “Twitter Bootstrap” to
+other placeholders.
 
 
 Installation
 ------------
 
-This plugin requires `django CMS` 2.4 or higher to be properly installed.
+This plugin requires `django CMS` 3.0 or higher to be properly installed.
 
-* In your projects `virtualenv`_, run ``pip install djangocms-style``.
-* Add ``'djangocms_style'`` to your ``INSTALLED_APPS`` setting.
-* Run ``manage.py migrate djangocms_style``.
+* In your projects `virtualenv`_, run ``pip install djangocms-bootstrap``.
+* Add ``'cmsplugin_bootstrap'`` to your ``INSTALLED_APPS`` settings, before the line ``cms``.
+* Run ``manage.py migrate cmsplugin_bootstrap``.
 
 
 Usage
 -----
 
-You can define styles in your settings.py:
+When adding plugins to a CMS placeholder, there is a section Bootstrap. In here you find some HTML
+elements which are useful to modify the DOM tree.
+adds a row container to the DOM::
 
-```
-CMS_STYLE_NAMES = (
-    ('info', _("info")),
-    ('new', _("new")),
-    ('hint', _("hint")),
-)
-```
+  <div class="row"></div>
 
-After that you can place other plugins inside this style plugin.
-It will create a div with a class that was prior selected around this plugin.
+Add a column container to the DOM::
+
+  <div class="spanX offsetY"></div>
+
+The CSS classes can vary from span1 through span12. Additionally you may add 11 different offsets,
+from offset1 though offset11.
+
+For details on how to use the basic grid system, continue here: http://getbootstrap.com/2.3.2/scaffolding.html#gridSystem
+
+A button wrapper for the LinkPlugin. Note that this does not add any HTML element. It rather offers
+an additional context ``extra_classes`` to the child plugin, which can only be of kind LinkPlugin.
+Therefore the template for the LinkPlugin has to be overridden by a slightly modified version.
+
 
 Translations
 ------------
