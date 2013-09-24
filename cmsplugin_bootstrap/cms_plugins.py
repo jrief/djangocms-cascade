@@ -9,7 +9,7 @@ from cmsplugin_bootstrap.models import BootstrapElement
 
 class MultipleCheckboxWidget(widgets.CheckboxSelectMultiple):
     def render(self, name, value, attrs=None):
-        value = json.loads(value)
+        value = value and json.loads(value) or []
         return super(MultipleCheckboxWidget, self).render(name, value, attrs)
 
 
