@@ -1,0 +1,7 @@
+{% extends change_form_template|default:"admin/cms/page/plugin/change_form.html" %}
+{% load admin_static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "css/cms.bootstrap.css" %}" />
+{% endblock %}
