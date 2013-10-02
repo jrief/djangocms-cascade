@@ -3,12 +3,13 @@ from django.utils.translation import ugettext_lazy as _
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 
+CSS_STYLE_DIRS = ('top', 'right', 'bottom', 'left')
+
 
 class BootstrapElement(CMSPlugin):
     """
     The container to hold additional bootstrap elements.
     """
-    style_dirs = ('top', 'right', 'bottom', 'left')
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
     tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50)
     class_name = models.CharField(_("class name"), max_length=50, blank=True, null=True)
@@ -30,7 +31,7 @@ class BootstrapElement(CMSPlugin):
         if isinstance(self.extra_styles, list):
             try:
                 margins = ['margin-{0}: {1};'.format(d, self.extra_styles[k])
-                           for k, d in enumerate(BootstrapElement.style_dirs)
+                           for k, d in enumerate(CSS_STYLE_DIRS)
                                 if self.extra_styles[k] is not None]
                 return ' '.join(margins)
             except IndexError:
