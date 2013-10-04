@@ -9,6 +9,7 @@ from cmsplugin_bootstrap.change_form_widgets import (ExtraStylesWidget, Multiple
     MultipleCheckboxesWidget)
 
 CSS_MARGIN_STYLES = ['margin-%s' % s for s in ('top', 'right', 'bottom', 'left')]
+CSS_VERTICAL_SPACING = ['min-height']
 
 
 class BootstrapPluginBase(CMSPluginBase):
@@ -21,8 +22,8 @@ class BootstrapPluginBase(CMSPluginBase):
     def __init__(self, *args, **kwargs):
         super(BootstrapPluginBase, self).__init__(*args, **kwargs)
         change_form_widgets = SortedDict()
-        if hasattr(self, 'css_classes') and len(self.css_classes) > 1:
-            change_form_widgets['class_name'] = widgets.Select(choices=self.css_classes)
+        if hasattr(self, 'css_class_choices') and len(self.css_class_choices) > 1:
+            change_form_widgets['class_name'] = widgets.Select(choices=self.css_class_choices)
         if hasattr(self, 'extra_classes_widget'):
             change_form_widgets['extra_classes'] = self.extra_classes_widget
         if hasattr(self, 'tagged_classes_widget'):
@@ -33,8 +34,8 @@ class BootstrapPluginBase(CMSPluginBase):
 
     def save_model(self, request, obj, form, change):
         obj.tag_type = self.tag_type
-        if hasattr(self, 'css_classes') and len(self.css_classes) == 1:
-            obj.class_name = self.css_classes[0][0]
+        if hasattr(self, 'css_class_choices') and len(self.css_class_choices) == 1:
+            obj.class_name = self.css_class_choices[0][0]
         return super(BootstrapPluginBase, self).save_model(request, obj, form, change)
 
 
@@ -43,14 +44,14 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
     render_template = "cms/plugins/bootstrap/naked.html"
     child_classes = ['LinkPlugin']
     tag_type = 'naked'
-    css_classes = (('btn', 'btn'),)
+    css_class_choices = (('btn', 'btn'),)
     extra_classes_widget = MultipleRadioButtonsWidget((
         ('buttontype', (('', 'unstyled'),) + tuple(2 * ('btn-%s' % b,)
             for b in ('primary', 'info', 'success', 'warning', 'danger', 'inverse', 'link'))),
         ('buttonsize', (('', 'default'),) + tuple(2 * ('btn-%s' % b,)
             for b in ('large', 'small', 'mini',))),
     ))
-    tagged_classes_widget = MultipleCheckboxesWidget((('a', 'A'), ('b', 'B'), ('c', 'C')))
+    tagged_classes_widget = MultipleCheckboxesWidget((('disabled', 'disabled'),('disabled2', 'disabled2'),('disabled3', 'disabled3'),))
     extra_styles_widget = ExtraStylesWidget(CSS_MARGIN_STYLES)
 
 plugin_pool.register_plugin(ButtonWrapperPlugin)
@@ -60,7 +61,8 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row container")
     child_classes = ['BootstrapColumnPlugin']
     tag_type = 'div'
-    css_classes = (('row', 'row'),)
+    css_class_choices = (('row', 'row'),)
+    extra_styles_widget = ExtraStylesWidget(CSS_VERTICAL_SPACING)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
@@ -70,10 +72,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapRowPlugin']
     require_parent = True
     tag_type = 'div'
-    css_classes = tuple(2 * ('span%s' % i,) for i in range(1, 13))
+    css_class_choices = tuple(2 * ('span%s' % i,) for i in range(1, 13))
     extra_classes_widget = MultipleRadioButtonsWidget((
         ('offset', (('', 'no offset'),) + tuple(2 * ('offset%s' % o,) for o in range(1, 12))),
     ))
+    extra_styles_widget = ExtraStylesWidget(CSS_VERTICAL_SPACING)
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
 
@@ -82,7 +85,7 @@ class BootstrapThumbnailsPlugin(BootstrapPluginBase):
     name = _("Thumbnails")
     child_classes = ['BootstrapThumbImagePlugin']
     tag_type = 'ul'
-    css_classes = (('thumbnails', 'thumbnails'),)
+    css_class_choices = (('thumbnails', 'thumbnails'),)
 
 plugin_pool.register_plugin(BootstrapThumbnailsPlugin)
 
@@ -92,6 +95,6 @@ class BootstrapThumbImagePlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapThumbnailsPlugin']
     require_parent = True
     tag_type = 'li'
-    css_classes = (('thumbnail', 'thumbnail'),)
+    css_class_choices = (('thumbnail', 'thumbnail'),)
 
 plugin_pool.register_plugin(BootstrapThumbImagePlugin)

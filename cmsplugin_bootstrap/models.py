@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import Truncator
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 
@@ -16,20 +17,25 @@ class BootstrapElement(CMSPlugin):
     extra_styles = JSONField(null=True, blank=True, help_text='Add extra styles to this HTML element')
 
     def __unicode__(self):
-        return unicode(self.css_classes or '')
+        value = self.css_classes
+        if value:
+            return unicode(Truncator(value).words(3, truncate=' ...'))
+        return u''
 
     @property
     def css_classes(self):
         css_classes = self.class_name and [self.class_name] or []
-        if isinstance(self.extra_classes, list):
-            css_classes += [ec for ec in self.extra_classes if ec]
-        return ' '.join(css_classes)
+        if isinstance(self.extra_classes, dict):
+            css_classes += [ec for ec in self.extra_classes.values() if ec]
+        if isinstance(self.tagged_classes, list):
+            css_classes += [tc for tc in self.tagged_classes if tc]
+        return u' '.join(css_classes)
 
     @property
     def inline_styles(self):
         if isinstance(self.extra_styles, dict):
             try:
-                return ' '.join(['{0}: {1};'.format(*s) for s in self.extra_styles.items() if s[1] is not None])
+                return u' '.join(['{0}: {1};'.format(*s) for s in self.extra_styles.items() if s[1] is not None])
             except IndexError:
                 pass
         return ''
