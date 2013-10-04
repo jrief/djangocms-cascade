@@ -5,8 +5,10 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
 from cmsplugin_bootstrap.models import BootstrapElement
-from cmsplugin_bootstrap.change_form_widgets import (ExtraMarginsWidget, MultipleRadioButtonsWidget,
+from cmsplugin_bootstrap.change_form_widgets import (ExtraStylesWidget, MultipleRadioButtonsWidget,
     MultipleCheckboxesWidget)
+
+CSS_MARGIN_STYLES = ['margin-%s' % s for s in ('top', 'right', 'bottom', 'left')]
 
 
 class BootstrapPluginBase(CMSPluginBase):
@@ -25,7 +27,8 @@ class BootstrapPluginBase(CMSPluginBase):
             change_form_widgets['extra_classes'] = self.extra_classes_widget
         if hasattr(self, 'tagged_classes_widget'):
             change_form_widgets['tagged_classes'] = self.tagged_classes_widget
-        change_form_widgets['extra_styles'] = ExtraMarginsWidget()
+        if hasattr(self, 'extra_styles_widget'):
+            change_form_widgets['extra_styles'] = self.extra_styles_widget
         self.form = modelform_factory(BootstrapElement, fields=change_form_widgets.keys(), widgets=change_form_widgets)
 
     def save_model(self, request, obj, form, change):
@@ -48,6 +51,7 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
             for b in ('large', 'small', 'mini',))),
     ))
     tagged_classes_widget = MultipleCheckboxesWidget((('a', 'A'), ('b', 'B'), ('c', 'C')))
+    extra_styles_widget = ExtraStylesWidget(CSS_MARGIN_STYLES)
 
 plugin_pool.register_plugin(ButtonWrapperPlugin)
 

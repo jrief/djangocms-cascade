@@ -3,8 +3,6 @@ from django.utils.translation import ugettext_lazy as _
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 
-CSS_STYLE_DIRS = ('top', 'right', 'bottom', 'left')
-
 
 class BootstrapElement(CMSPlugin):
     """
@@ -29,12 +27,9 @@ class BootstrapElement(CMSPlugin):
 
     @property
     def inline_styles(self):
-        if isinstance(self.extra_styles, list):
+        if isinstance(self.extra_styles, dict):
             try:
-                margins = ['margin-{0}: {1};'.format(d, self.extra_styles[k])
-                           for k, d in enumerate(CSS_STYLE_DIRS)
-                                if self.extra_styles[k] is not None]
-                return ' '.join(margins)
+                return ' '.join(['{0}: {1};'.format(*s) for s in self.extra_styles.items() if s[1] is not None])
             except IndexError:
                 pass
         return ''

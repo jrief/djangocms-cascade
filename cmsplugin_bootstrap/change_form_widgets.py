@@ -1,29 +1,29 @@
 from django.forms import widgets
 from django.utils import simplejson as json
 from django.utils.safestring import mark_safe
-from cmsplugin_bootstrap.models import CSS_STYLE_DIRS
 
 
-class ExtraMarginsWidget(widgets.MultiWidget):
-    def __init__(self, **kwargs):
-        wdg_attrs = [{ 'placeholder': 'margin-%s' % d } for d in CSS_STYLE_DIRS]
-        margin_widgets = [widgets.TextInput(m) for m in wdg_attrs]
-        super(ExtraMarginsWidget, self).__init__(margin_widgets)
+class ExtraStylesWidget(widgets.MultiWidget):
+    def __init__(self, styles):
+        margin_widgets = [widgets.TextInput({ 'placeholder': s }) for s in styles]
+        super(ExtraStylesWidget, self).__init__(margin_widgets)
+        self.styles = styles[:]
 
     def decompress(self, value):
-        values = value and json.loads(value) or []
-        values += [None] * (len(CSS_STYLE_DIRS) - len(values))
+        values = value and json.loads(value) or {}
+        for style in self.styles:
+            values.setdefault(style, None)
         return values
 
     def value_from_datadict(self, data, files, name):
-        result = [data.get('margin-%s' % d) or None for d in CSS_STYLE_DIRS]
+        result = dict((s, data.get(s) or None) for s in self.styles)
         return result
 
     def render(self, name, value, attrs=None):
         values = self.decompress(value)
         html = '<div class="clearfix">'
-        for k, d in enumerate(CSS_STYLE_DIRS):
-            html += self.widgets[k].render('margin-%s' % d, values[k], attrs)
+        for k, style in enumerate(self.styles):
+            html += self.widgets[k].render(style, values.get(style), attrs)
         html += '</div>'
         return mark_safe(html)
 
