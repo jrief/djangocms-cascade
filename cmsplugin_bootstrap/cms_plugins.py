@@ -51,7 +51,7 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
         ('buttonsize', (('', 'default'),) + tuple(2 * ('btn-%s' % b,)
             for b in ('large', 'small', 'mini',))),
     ))
-    tagged_classes_widget = MultipleCheckboxesWidget((('disabled', 'disabled'),('disabled2', 'disabled2'),('disabled3', 'disabled3'),))
+    tagged_classes_widget = MultipleCheckboxesWidget((('disabled', 'disabled'),))
     extra_styles_widget = ExtraStylesWidget(CSS_MARGIN_STYLES)
 
 plugin_pool.register_plugin(ButtonWrapperPlugin)
