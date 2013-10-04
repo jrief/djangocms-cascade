@@ -1,2 +1,4 @@
-.field-extra_styles input.style-field { width: 100px; margin-right: 20px; }
-.field-extra_classes ul li { list-style: none; float: left; min-width: 95px; }
+.field-extra_styles input { width: 100px; margin-right: 20px; }
+.field-extra_classes ul li, .field-tagged_classes ul li { list-style: none; float: left; min-width: 95px; }
+.field-extra_classes ul:after, .field-tagged_classes ul:after { content: " "; width: 100%; clear: both; display: block; line-height: 0; }
+.field-extra_classes ul:not(:last-child):after { border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 5px; }

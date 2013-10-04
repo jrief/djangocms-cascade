@@ -5,7 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
 from cmsplugin_bootstrap.models import BootstrapElement
-from cmsplugin_bootstrap.change_form_widgets import ExtraStylesWidget, SingleOptionWidget
+from cmsplugin_bootstrap.change_form_widgets import (ExtraMarginsWidget, MultipleRadioButtonsWidget,
+    MultipleCheckboxesWidget)
 
 
 class BootstrapPluginBase(CMSPluginBase):
@@ -22,7 +23,9 @@ class BootstrapPluginBase(CMSPluginBase):
             change_form_widgets['class_name'] = widgets.Select(choices=self.css_classes)
         if hasattr(self, 'extra_classes_widget'):
             change_form_widgets['extra_classes'] = self.extra_classes_widget
-        change_form_widgets['extra_styles'] = ExtraStylesWidget()
+        if hasattr(self, 'tagged_classes_widget'):
+            change_form_widgets['tagged_classes'] = self.tagged_classes_widget
+        change_form_widgets['extra_styles'] = ExtraMarginsWidget()
         self.form = modelform_factory(BootstrapElement, fields=change_form_widgets.keys(), widgets=change_form_widgets)
 
     def save_model(self, request, obj, form, change):
@@ -38,9 +41,13 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
     child_classes = ['LinkPlugin']
     tag_type = 'naked'
     css_classes = (('btn', 'btn'),)
-    extra_classes_widget = SingleOptionWidget(prefix='buttontype',
-        choices=(('', 'unstyled'),) + tuple(2 * ('btn-%s' % b,)
-            for b in ('primary', 'info', 'success', 'warning', 'danger', 'inverse', 'link')))
+    extra_classes_widget = MultipleRadioButtonsWidget((
+        ('buttontype', (('', 'unstyled'),) + tuple(2 * ('btn-%s' % b,)
+            for b in ('primary', 'info', 'success', 'warning', 'danger', 'inverse', 'link'))),
+        ('buttonsize', (('', 'default'),) + tuple(2 * ('btn-%s' % b,)
+            for b in ('large', 'small', 'mini',))),
+    ))
+    tagged_classes_widget = MultipleCheckboxesWidget((('a', 'A'), ('b', 'B'), ('c', 'C')))
 
 plugin_pool.register_plugin(ButtonWrapperPlugin)
 
@@ -60,8 +67,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     require_parent = True
     tag_type = 'div'
     css_classes = tuple(2 * ('span%s' % i,) for i in range(1, 13))
-    extra_classes_widget = SingleOptionWidget(prefix='offset',
-        choices=(('', 'no offset'),) + tuple(2 * ('offset%s' % o,) for o in range(1, 12)))
+    extra_classes_widget = MultipleRadioButtonsWidget((
+        ('offset', (('', 'no offset'),) + tuple(2 * ('offset%s' % o,) for o in range(1, 12))),
+    ))
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
 

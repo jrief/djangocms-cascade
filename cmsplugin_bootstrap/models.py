@@ -14,6 +14,7 @@ class BootstrapElement(CMSPlugin):
     tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50)
     class_name = models.CharField(_("class name"), max_length=50, blank=True, null=True)
     extra_classes = JSONField(null=True, blank=True, help_text='Add extra CSS classes to this HTML element')
+    tagged_classes = JSONField(null=True, blank=True, help_text='Tag special CSS classes to this HTML element')
     extra_styles = JSONField(null=True, blank=True, help_text='Add extra styles to this HTML element')
 
     def __unicode__(self):

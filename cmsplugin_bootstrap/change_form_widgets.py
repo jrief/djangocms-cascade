@@ -4,16 +4,16 @@ from django.utils.safestring import mark_safe
 from cmsplugin_bootstrap.models import CSS_STYLE_DIRS
 
 
-class ExtraStylesWidget(widgets.MultiWidget):
+class ExtraMarginsWidget(widgets.MultiWidget):
     def __init__(self, **kwargs):
-        wdg_attrs = [{ 'placeholder': 'margin-%s' % d, 'class': 'style-field' } for d in CSS_STYLE_DIRS]
+        wdg_attrs = [{ 'placeholder': 'margin-%s' % d } for d in CSS_STYLE_DIRS]
         margin_widgets = [widgets.TextInput(m) for m in wdg_attrs]
-        super(ExtraStylesWidget, self).__init__(margin_widgets)
+        super(ExtraMarginsWidget, self).__init__(margin_widgets)
 
     def decompress(self, value):
-        value = value and json.loads(value) or []
-        value += [None] * (len(CSS_STYLE_DIRS) - len(value))
-        return value
+        values = value and json.loads(value) or []
+        values += [None] * (len(CSS_STYLE_DIRS) - len(values))
+        return values
 
     def value_from_datadict(self, data, files, name):
         result = [data.get('margin-%s' % d) or None for d in CSS_STYLE_DIRS]
@@ -28,21 +28,55 @@ class ExtraStylesWidget(widgets.MultiWidget):
         return mark_safe(html)
 
 
-class SingleOptionWidget(widgets.MultiWidget):
-    def __init__(self, prefix, choices):
-        self.prefix = prefix
-        option_widgets = [widgets.RadioSelect(choices=choices)]
-        super(SingleOptionWidget, self).__init__(option_widgets)
+class MultipleRadioButtonsWidget(widgets.MultiWidget):
+    def __init__(self, widgets_choices):
+        """
+        Creates one or more independent rows of radio button widgets, each of which declares its own
+        choices. widget_choices shall be a tuple of tuples containing the name followed by a tuple
+        of two-choices of choices.
+        """
+        if not widgets_choices or not isinstance(widgets_choices, (list, tuple)) or not isinstance(widgets_choices[0], tuple):
+            raise AttributeError('widgets_choices must be list or tuple of tuples')
+        self.prefixes = []
+        option_widgets = []
+        for prefix, choices in widgets_choices:
+            self.prefixes.append(prefix)
+            option_widgets.append(widgets.RadioSelect(choices=choices))
+        super(MultipleRadioButtonsWidget, self).__init__(option_widgets)
 
     def decompress(self, value):
-        value = value and json.loads(value) or []
-        value += [None] * (1 - len(value))
-        return value
+        values = value and json.loads(value) or []
+        values += [None] * (len(self.prefixes) - len(values))
+        return values
 
     def value_from_datadict(self, data, files, name):
-        return [data.get(self.prefix)]
+        return [data.get(prefix) for prefix in self.prefixes]
 
     def render(self, name, value, attrs=None):
         value = self.decompress(value)
-        html = '<div class="clearfix">' + self.widgets[0].render(self.prefix, value[0], attrs) + '</div>'
+        html = '<div class="radio-row">'
+        for index, prefix in enumerate(self.prefixes):
+            html += self.widgets[index].render(prefix, value[index], attrs)
+        html += '</div>'
+        return mark_safe(html)
+
+
+class MultipleCheckboxesWidget(widgets.CheckboxSelectMultiple):
+    def __init__(self, choices):
+        """
+        Creates one or more independent rows of radio button widgets, each of which declares its own
+        choices. widget_choices shall be a tuple of tuples containing the name followed by a tuple
+        of two-choices of choices.
+        """
+        if not choices or not isinstance(choices, tuple):
+            raise AttributeError('choices must be list or tuple of tuples')
+        self.labels = [c for c, _ in choices]
+        super(MultipleCheckboxesWidget, self).__init__(choices=choices)
+
+    def render(self, name, value, attrs=None):
+        values = value and json.loads(value) or []
+        values += [None] * (len(self.labels) - len(values))
+        html = '<div class="checkboxes-row">'
+        html += super(MultipleCheckboxesWidget, self).render(name, values, attrs)
+        html += '</div>'
         return mark_safe(html)
