@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
+import json
 from django.forms import widgets
-from django.utils import simplejson as json
 from django.utils.safestring import mark_safe
 
 
