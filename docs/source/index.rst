@@ -40,6 +40,7 @@ Contents:
   scaffolding
   buttons
   thumbnails
+  add_plugins
 
 Indices and tables
 ==================
