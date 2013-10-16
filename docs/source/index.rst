@@ -39,7 +39,7 @@ Contents:
   installation
   scaffolding
   buttons
-
+  thumbnails
 
 Indices and tables
 ==================
