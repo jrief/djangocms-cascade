@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.utils.importlib import import_module
 
-plugins = getattr(settings, 'CMSPLUGIN_BOOTSTRAP_PLUGINS', ('buttons', 'container', 'thumbnails'))
-for plugin in plugins:
+bootstrap_plugins = ['buttons', 'container', 'thumbnails']
+
+for plugin in getattr(settings, 'CMSPLUGIN_BOOTSTRAP_PLUGINS', bootstrap_plugins):
     import_module('cmsplugin_bootstrap.' + plugin)
