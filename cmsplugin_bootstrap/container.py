@@ -9,7 +9,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row container")
     child_classes = ['BootstrapColumnPlugin']
     tag_type = 'div'
-    css_class_choices = (('row', 'row'),)
+    css_class_choices = (('row', 'row'), ('row-fluid', 'row-fluid'))
     extra_styles_widget = ExtraStylesWidget(CSS_VERTICAL_SPACING)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
