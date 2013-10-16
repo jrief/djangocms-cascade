@@ -9,16 +9,14 @@ INSTALL_REQUIRES = [
 ]
 
 CLASSIFIERS = [
-    'Development Status :: 5 - Production/Stable',
+    'Development Status :: 4 - Beta',
     'Environment :: Web Environment',
     'Framework :: Django',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: BSD License',
+    'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
-    'Topic :: Communications',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-    'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Message Boards',
     'Programming Language :: Python :: 2.6',
     'Programming Language :: Python :: 2.7',
 ]
@@ -26,13 +24,13 @@ CLASSIFIERS = [
 setup(
     name='djangocms-bootstrap',
     version=__version__,
-    description='Style Plugin for django CMS',
-    author='Divio AG',
-    author_email='info@divio.ch',
+    description='Collection of plugins for DjangoCMS',
+    author='Jacob Rief',
+    author_email='jacob.rief@gmail.com',
     url='https://github.com/jrief/djangocms-bootstrap',
     packages=['cmsplugin_bootstrap', 'cmsplugin_bootstrap.migrations'],
     install_requires=INSTALL_REQUIRES,
-    license='LICENSE.txt',
+    license='LICENSE-MIT',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
     long_description=open('README.md').read(),

@@ -1,5 +1,5 @@
-include LICENSE.txt
+include LICENSE-MIT
 include README.md
-recursive-include cmsplugin_bootstrap/locale *
 recursive-include cmsplugin_bootstrap/templates *
+recursive-include cmsplugin_bootstrap *.py
 recursive-exclude * *.pyc
