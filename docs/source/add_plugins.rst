@@ -17,10 +17,10 @@ Here is a very basic example::
       name = 'My plugin'
       render_template = "cms/plugins/bootstrap/my-plugin.html"
       tag_type = 'div'
-      css_class_choices = # list of tuples
-      extra_classes_widget = # a widget
-      tagged_classes_widget = # a widget
-      extra_styles_widget = # a widget
+      css_class_choices = (('span4', 'span4'), ('span8', 'span8')) # a list of tuples, see below
+      extra_classes_widget = MultipleRadioButtonsWidget(...) # a special widget, see below
+      tagged_classes_widget = MultipleCheckboxesWidget(...) # a special widget, see below
+      extra_styles_widget = ExtraStylesWidget(...) # a special widget, see below
   
   plugin_pool.register_plugin(ButtonWrapperPlugin)
 
@@ -34,20 +34,23 @@ Additionally ``BootstrapPluginBase`` allows the following attributes. The defaul
 you don't specify them, they won't show up in the plugin editor.
 
 :name:
-  This name is shown in the pull down menu.
+  This name is shown in the pull down menu in structure view.
 
 :tag_type: 
-  A HTML element into which this plugin is wrapped. The special tag_type ``naked`` specifies
-  a plugin without wrapping HTML code.
+  A HTML element into which this plugin is wrapped. Typically this is the ``div`` element.
+
+  The special value ``naked`` specifies a plugin without wrapping HTML code.
 
 :css_class_choices:
   This is a list of 2-tuples containing the main class to be added to the HTML tag of this plugin
-  element. In the editor a pull down menu is rendered to choose from this list.
+  element. In the editor a pull down menu is rendered to choose from this list. The first value of
+  this 2-tuple is the class to be rendered in the frontend. The second value is the label in the
+  option field of the select box.
 
 :extra_classes_widget:
   Use a ``MultipleRadioButtonsWidget`` to create this widget. In the plugin editor is renders a list
   of separate radio button groups.
-  
+
   To construct a ``MultipleRadioButtonsWidget``, pass in a list or tuple. This list (or tuple) shall
   contain another tuple, where the first value is a unqiue identifier for this radio button group.
   The second value shall be a list of 2-tuples containing the choices. The first value of this
@@ -57,7 +60,7 @@ you don't specify them, they won't show up in the plugin editor.
 :tagged_classes_widget:
   Use a ``MultipleCheckboxesWidget`` to create this widget. In the plugin editor is renders a list
   of checkboxes.
-  
+
   To construct a ``MultipleCheckboxesWidget``, pass in a list or tuple of 2-tuples. These 2-tuples
   contain the choices which may exclusively be turned on or off. The first value of this 2-tuple is
   the class to be rendered in the frontend. The second value is the label nearby each checkbox
@@ -66,7 +69,7 @@ you don't specify them, they won't show up in the plugin editor.
 :extra_styles_widget:
   Use a ``ExtraStylesWidget`` to create this widget.  In the plugin editor is renders a list of
   input fields, where the user can add extra CSS values.
-  
+
   To construct an ``ExtraStylesWidget``, pass in a list or tuple of strings. These strings contain
   the CSS attributes to be used for adding extra styles to the HTML tag in the frontend.
 
