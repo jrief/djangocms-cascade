@@ -6,7 +6,8 @@ A collection of plugins for DjangoCMS to add various HTML elements from the CSS 
 “Twitter Bootstrap” to placeholders. This allows the editor of a web page to manipulate the DOM,
 without having to edit any HTML template.
 
-You can find detailed documentation on ReadTheDocs.
+You can find detailed documentation on [ReadTheDocs](http://djangocms-bootstrap.readthedocs.org/en/latest/).
+
 
 Features
 --------
