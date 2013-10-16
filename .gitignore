@@ -4,6 +4,7 @@
 .project
 .pydevproject
 .settings
+.DS_Store
 build
 env*
 dist
