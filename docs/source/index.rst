@@ -41,6 +41,7 @@ Contents:
   buttons
   thumbnails
   add_plugins
+  history
 
 Indices and tables
 ==================
