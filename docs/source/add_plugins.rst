@@ -22,7 +22,7 @@ Here is a very basic example::
       tagged_classes_widget = MultipleCheckboxesWidget(...) # a special widget, see below
       extra_styles_widget = ExtraStylesWidget(...) # a special widget, see below
   
-  plugin_pool.register_plugin(ButtonWrapperPlugin)
+  plugin_pool.register_plugin(MyBootstrapPlugin)
 
 
 Plugin Attributes
@@ -48,7 +48,7 @@ you don't specify them, they won't show up in the plugin editor.
   option field of the select box.
 
 :extra_classes_widget:
-  Use a ``MultipleRadioButtonsWidget`` to create this widget. In the plugin editor is renders a list
+  Use a ``MultipleRadioButtonsWidget`` to create this widget. In the plugin editor it renders a list
   of separate radio button groups.
 
   To construct a ``MultipleRadioButtonsWidget``, pass in a list or tuple. This list (or tuple) shall
@@ -58,7 +58,7 @@ you don't specify them, they won't show up in the plugin editor.
   radio button in the plugin editor.
 
 :tagged_classes_widget:
-  Use a ``MultipleCheckboxesWidget`` to create this widget. In the plugin editor is renders a list
+  Use a ``MultipleCheckboxesWidget`` to create this widget. In the plugin editor it renders a list
   of checkboxes.
 
   To construct a ``MultipleCheckboxesWidget``, pass in a list or tuple of 2-tuples. These 2-tuples
@@ -67,7 +67,7 @@ you don't specify them, they won't show up in the plugin editor.
   button in the plugin editor. 
 
 :extra_styles_widget:
-  Use a ``ExtraStylesWidget`` to create this widget.  In the plugin editor is renders a list of
+  Use an ``ExtraStylesWidget`` to create this widget.  In the plugin editor is renders a list of
   input fields, where the user can add extra CSS values.
 
   To construct an ``ExtraStylesWidget``, pass in a list or tuple of strings. These strings contain
