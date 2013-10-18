@@ -2,7 +2,7 @@
 
 Release History
 ===============
-
+* **0.1.1** Added unit tests.
 * **0.1.0** First published revision.
 
 Thanks
