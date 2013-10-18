@@ -4,7 +4,6 @@ from django.test import TestCase
 from django.forms.widgets import RadioSelect, TextInput
 from django.contrib.auth.models import User
 from django.test.client import Client
-from cms.models.pluginmodel import CMSPlugin
 from cms.models.placeholdermodel import Placeholder
 from cmsplugin_bootstrap.buttons import ButtonWrapperPlugin
 from cmsplugin_bootstrap.change_form_widgets import (ExtraStylesWidget, MultipleRadioButtonsWidget,
