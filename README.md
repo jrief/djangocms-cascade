@@ -5,6 +5,10 @@ A collection of plugins for DjangoCMS to add various HTML elements from the CSS 
 “Twitter Bootstrap” to CMS placeholders. This allows the editor of a web page to manipulate the DOM,
 without having to edit HTML templates.
 
+Build status
+------------
+[![Build Status](https://travis-ci.org/jrief/djangocms-bootstrap.png?branch=master)](https://travis-ci.org/jrief/djangocms-bootstrap)
+
 Features
 --------
 * Use the **Bootstrap** scaffolding technique.
