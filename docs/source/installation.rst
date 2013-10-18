@@ -48,6 +48,16 @@ Add to your base template::
 
   <script src="{{ STATIC_URL }}js/bootstrap.min.js" type="text/javascript"></script>
 
+Restrict the plugins to use
+---------------------------
+In case you don't want to offer all available plugins to the backend user, add this configuration
+directive to your settings file. For instance::
+
+  CMSPLUGIN_BOOTSTRAP_PLUGINS = ['container']
+
+only loads the **Bootstraps** container plugins. If you don't define this directive, all plugins
+are loaded.
+
 .. _download bootstrap: _http://getbootstrap.com/2.3.2/getting-started.html#download-bootstrap
 .. _github: https://github.com/jrief/djangocms-bootstrap
 .. _Django: http://djangoproject.com/
