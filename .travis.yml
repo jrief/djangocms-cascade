@@ -1,0 +1,14 @@
+language: python
+
+python:
+  - 2.7
+
+install:
+  - python setup.py -q install
+
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+
+script:
+ - cd tests && ./manage.py test testapp
