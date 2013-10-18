@@ -1,4 +1,4 @@
 transifex-client
--e git+ssh://git@github.com/jrief/django-cms.git@develop#egg=django-cms
+-e githttps+://github.com/jrief/django-cms.git@develop#egg=django-cms
 django-mptt
 jsonfield
