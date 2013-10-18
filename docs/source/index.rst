@@ -14,9 +14,13 @@ With this collection of plugins, a web designer with some basic understanding of
 `Bootstrap grid system`_, can create structured web pages without having to fiddle with HTML
 templates.
 
+Example
+-------
+|column-editor|
+
 DjangoCMS version 3.0
 ---------------------
-Django CMS 3.0 introduces a new frontend editing system as well as a customizable Django admin skin.
+Django CMS 3.0 introduced a new frontend editing system as well as a customizable Django admin skin.
 
 In the new system, placeholders_ and their plugins_ are no longer managed in the admin site, but
 only from the frontend. Now, these plugins can be nested giving the possibility to create plugins
@@ -57,5 +61,7 @@ Indices and tables
 .. _placeholders: https://django-cms.readthedocs.org/en/latest/advanced/templatetags.html#placeholder
 .. _plugins: https://django-cms.readthedocs.org/en/latest/getting_started/plugin_reference.html
 .. _Bootstrap grid system: http://getbootstrap.com/2.3.2/scaffolding.html#gridSystem
+.. |column-editor| image:: _static/bootstrap-column-editor.png
+    :width: 803
 .. |pull-down| image:: _static/edit-plugins.png
     :width: 48
