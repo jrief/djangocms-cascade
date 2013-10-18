@@ -1,2 +1,4 @@
 transifex-client
 django-cms>=3
+django-mptt
+jsonfield
