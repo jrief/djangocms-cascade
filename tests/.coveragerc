@@ -1,0 +1,6 @@
+[run]
+branch = True
+source =
+    cmsplugin_bootstrap
+[report]
+precision = 2
