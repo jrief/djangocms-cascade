@@ -15,6 +15,7 @@ class Migration(SchemaMigration):
             ('class_name', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
             ('extra_classes', self.gf('jsonfield.fields.JSONField')(null=True, blank=True)),
             ('extra_styles', self.gf('jsonfield.fields.JSONField')(null=True, blank=True)),
+            ('tagged_classes', self.gf('jsonfield.fields.JSONField')(null=True, blank=True)),
         ))
         db.send_create_signal(u'cmsplugin_bootstrap', ['BootstrapElement'])
 
@@ -52,7 +53,8 @@ class Migration(SchemaMigration):
             'cmsplugin_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'+'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['cms.CMSPlugin']"}),
             'extra_classes': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
             'extra_styles': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
-            'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+            'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'tagged_classes': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'})
         }
     }
 
