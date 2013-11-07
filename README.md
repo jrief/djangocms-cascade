@@ -17,6 +17,7 @@ Features
 --------
 * Use the **Bootstrap** scaffolding technique.
 * Use **Bootstrap** buttons styles for your links.
+* Insert **Boostrap Carousel** elements into the DOM.
 * Add thumbnails and images using highly customizable **Bootstraps** markup.
 * Its very easy to integrate your own plugin, often with less than 10 lines of code.
 * Can also be used for any other CSS framework.
