@@ -1,7 +1,7 @@
 .. _add_bootstrap_plugins:
 
-Add Bootstrap plugins
-=====================
+Add customized Bootstrap Plugins
+================================
 Since all Bootstrap plugins are derived from the same base class, there is no need to add an
 additional table to the database, when you add your own plugin to this project. The database model
 instead used three JSON fields which can handle arbitrary data. This makes it very easy to add new 

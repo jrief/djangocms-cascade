@@ -46,6 +46,7 @@ Contents:
   scaffolding
   buttons
   thumbnails
+  carousel
   add_plugins
   history
 

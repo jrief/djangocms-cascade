@@ -11,7 +11,7 @@ class CarouselPlugin(BootstrapPluginBase):
     child_classes = ['SlidePlugin']
     css_class_choices = (('slide', 'slide'),)
     extra_styles_widget = ExtraStylesWidget(CSS_MARGIN_STYLES + ['width', 'height'])
-    options_widget = ExtraStylesWidget(['interval', 'slide-to'])
+    options_widget = ExtraStylesWidget(['interval', 'pause'])
 
 plugin_pool.register_plugin(CarouselPlugin)
 
