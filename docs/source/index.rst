@@ -18,6 +18,8 @@ Example
 -------
 |column-editor|
 
+This shows the plugin editor as used for the `Bootstrap grid system`_.
+
 DjangoCMS version 3.0
 ---------------------
 Django CMS 3.0 introduced a new frontend editing system as well as a customizable Django admin skin.

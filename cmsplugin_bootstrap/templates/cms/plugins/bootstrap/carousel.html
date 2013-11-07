@@ -1,0 +1,18 @@
+{% load cms_tags %}
+<div id="cmsplugin_{{ instance.id }}" class="carousel {{ instance.css_classes }}" style="overflow: hidden; {{ instance.inline_styles }}" {{ instance.data_options }}>
+	{% with bootstrap_element="carousel" %}
+	<ol class="carousel-indicators">
+	{% for plugin in instance.child_plugin_instances %}
+		<li data-target="#cmsplugin_{{ instance.id }}" data-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active"{% endif %}></li>
+	{% endfor %}
+	</ol>
+	<div class="carousel-inner">
+	{% for plugin in instance.child_plugin_instances %}
+		{% with inherited_classes=forloop.first|yesno:"active ," %}{% render_plugin plugin %}{% endwith %}
+	{% endfor %}
+	</div>
+	<a class="carousel-control left" href="#cmsplugin_{{ instance.id }}" data-slide="prev">&lsaquo;</a>
+	<a class="carousel-control right" href="#cmsplugin_{{ instance.id }}" data-slide="next">&rsaquo;</a>
+	{# this hack should fix autostart: <script>jQuery('[data-slide-to=0]').trigger('click');</script> (see: https://github.com/twbs/bootstrap/issues/7508) #}
+	{% endwith %}
+</div>

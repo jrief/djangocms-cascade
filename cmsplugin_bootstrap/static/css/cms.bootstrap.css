@@ -2,3 +2,4 @@
 .multi-widget-row:after, .multi-widget-row ul:after { content: " "; clear: both; display: block; }
 .field-extra_classes ul:not(:last-child):after { border-bottom: 1px solid #eee; width: 100%;  padding-bottom: 5px; margin-bottom: 5px; line-height: 0; }
 .field-extra_styles input { width: 100px; margin-right: 20px; }
+.field-options input { width: 100px; margin-right: 20px; }

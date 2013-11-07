@@ -15,6 +15,7 @@ class BootstrapElement(CMSPlugin):
     extra_classes = JSONField(null=True, blank=True, help_text='Add extra CSS classes to this HTML element')
     tagged_classes = JSONField(null=True, blank=True, help_text='Tag special CSS classes to this HTML element')
     extra_styles = JSONField(null=True, blank=True, help_text='Add extra styles to this HTML element')
+    options = JSONField(null=True, blank=True, help_text='Extra data options for this plugin')
 
     def __unicode__(self):
         value = self.css_classes
@@ -26,9 +27,9 @@ class BootstrapElement(CMSPlugin):
     def css_classes(self):
         css_classes = self.class_name and [self.class_name] or []
         if isinstance(self.extra_classes, dict):
-            css_classes += [ec for ec in self.extra_classes.values() if ec]
+            css_classes.extend([ec for ec in self.extra_classes.values() if ec])
         if isinstance(self.tagged_classes, list):
-            css_classes += [tc for tc in self.tagged_classes if tc]
+            css_classes.extend([tc for tc in self.tagged_classes if tc])
         return u' '.join(css_classes)
 
     @property
@@ -36,6 +37,15 @@ class BootstrapElement(CMSPlugin):
         if isinstance(self.extra_styles, dict):
             try:
                 return u' '.join(['{0}: {1};'.format(*s) for s in self.extra_styles.items() if s[1] is not None])
+            except IndexError:
+                pass
+        return ''
+
+    @property
+    def data_options(self):
+        if isinstance(self.options, dict):
+            try:
+                return u' '.join(['data-{0}={1}'.format(*s) for s in self.options.items() if s[1] is not None])
             except IndexError:
                 pass
         return ''

@@ -12,6 +12,7 @@ CSS_VERTICAL_SPACING = ['min-height']
 class BootstrapPluginBase(CMSPluginBase):
     module = 'Bootstrap'
     model = BootstrapElement
+    tag_type = 'div'
     change_form_template = "cms/plugins/bootstrap/change_form.html"
     render_template = "cms/plugins/bootstrap/generic.html"
     allow_children = True
@@ -27,6 +28,8 @@ class BootstrapPluginBase(CMSPluginBase):
             change_form_widgets['tagged_classes'] = self.tagged_classes_widget
         if hasattr(self, 'extra_styles_widget'):
             change_form_widgets['extra_styles'] = self.extra_styles_widget
+        if hasattr(self, 'options_widget'):
+            change_form_widgets['options'] = self.options_widget
         self.form = modelform_factory(BootstrapElement, fields=change_form_widgets.keys(), widgets=change_form_widgets)
 
     def save_model(self, request, obj, form, change):
