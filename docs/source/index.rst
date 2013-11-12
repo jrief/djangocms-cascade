@@ -2,7 +2,6 @@
 
 Welcome to djangocms-bootstrap's documentation!
 ===============================================
-
 `Twitter Bootstrap`_ is a well documented CSS framework which gives web designers lots of
 possibilities to add a consistent structure to their pages. This collection of DjangoCMS plugins
 offers some of these predefined HTML elements to web designers.
@@ -11,8 +10,15 @@ offers some of these predefined HTML elements to web designers.
 structure inside any of the DjangoCMS_ ``{% placeholder %}`` fields.
 
 With this collection of plugins, a web designer with some basic understanding of the DOM_ and the
-`Bootstrap grid system`_, can create structured web pages without having to fiddle with HTML
-templates.
+`Bootstrap grid system`_, can create structured web pages without having to write any extra Django
+template.
+
+The **First Goal of this project** is to make available the full collection of widgets as documented
+for the Bootstrap framework. With this plugin, then in many cases, **DjangoCMS** can be operated
+with one single template, which offers a generic placeholder for the main content of each page.
+
+The **Second Goal of this project** is to create an infrastructure which allows programmers to
+easily add simple widget code, without having to implement an extra DjangoCMS plugin.
 
 Example
 -------

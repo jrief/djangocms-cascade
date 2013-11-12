@@ -33,6 +33,7 @@ class BootstrapDivPlugin(BootstrapPluginBase):
     name = _("Simple div container")
     parent_classes = ['BootstrapColumnPlugin']
     tag_type = 'div'
+    css_class_choices = (('', '---'), ('hero-unit', 'hero-unit'))
     extra_styles_widget = ExtraStylesWidget(CSS_VERTICAL_SPACING)
 
 plugin_pool.register_plugin(BootstrapDivPlugin)

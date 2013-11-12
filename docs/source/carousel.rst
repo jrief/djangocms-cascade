@@ -12,14 +12,29 @@ To add a Carousel use the common frontend editor.
 * Add plugins of any kind to this **Slide** plugin. Normally, this will be an **ImagePlugin**, but
 you may also add a **TextPlugin** or a **VideoPlugin** or anything you like.
 
+Installation
+------------
+The Bootstrap Carousel requires JavaScript to function properly. Therefore make sure that these two
+lines are included somewhere in your templates::
+
+	<script src="//code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js" type="text/javascript"></script>
+
+.. note:: I personally prefer to run Bootstrap with AngularJS_ instead of *jQuery*. Fortunately most
+          UI elements from Bootstrap, which by default require *jQuery*, now are available through
+          the `Angular UI Bootstrap`_ library. I therefore rewrote the Carousel and Slide templates
+          and made them available through the template library djangocms-angular-compendium_ which
+          shall be installed side by side with this **djangocms-bootstrap** library.
+
 Styling
 -------
 A **Carousel** offers the usual CSS styles ``margin-top``, ``margin-right``, ``margin-bottom`` and
-``margin-left``. Additionally it offer a ``width`` and a ``height``. These dimensions are used to
-crop the child slides. This is required, so that slides of different size can be added to the
-Carousel without weird behavior.
+``margin-left``. Additionally it offers two input settings for ``width`` and a ``height``. These
+dimensions are used to crop the child slides. This might be required, so that slides of different
+size can be added to the Carousel without having the screen to jump up and down during a slide
+change.
 
-For a **Slide**, no styling options are available.
+For a **Slide**, currently no styling options are available.
 
 Options
 -------
@@ -48,3 +63,6 @@ directory. Then add the following template code snippet to that template::
 	{% endif %}
 
 .. _Bootstrap Carousel: http://getbootstrap.com/2.3.2/javascript.html#carousel
+.. _AngularJS: http://angularjs.org/
+.. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/#/carousel
+.. _djangocms-angular-compendium: https://github.com/jrief/djangocms-angular-compendium
