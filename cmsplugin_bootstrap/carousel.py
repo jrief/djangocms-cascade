@@ -20,6 +20,7 @@ class SlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     render_template = 'cms/plugins/bootstrap/carousel-slide.html'
     parent_classes = ['CarouselPlugin']
+    require_parent = True
     child_classes = ['TextPlugin', 'FilerImagePlugin']
     css_class_choices = (('item', 'item'),)
 
