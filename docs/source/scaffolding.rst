@@ -24,13 +24,20 @@ configuration settings:
   through ``offset11``.
 * A minimum height in CSS units (``px`` or ``em``).
 
-Generic HTML-element <div>
---------------------------
+Generic HTML element: <div>
+---------------------------
 Use this generic HTML element, when you have to position other components inside it. It currently
 offers one configuration settings:
 
 * A minimum height in CSS units (``px`` or ``em``).
 
 .. note:: The configuration settings for this element will probably change in the future.
+
+Horizontal Rule element <hr>
+----------------------------
+Use this HTML element, to draw a horizontal line. It normally is used to separate two rows from each
+other. It offers two configuration settings:
+
+* margin-top and margin-bottom in CSS units (``px`` or ``em``).
 
 .. _Bootstrap grid system: http://getbootstrap.com/2.3.2/scaffolding.html#gridSystem
