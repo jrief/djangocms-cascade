@@ -38,3 +38,14 @@ class BootstrapDivPlugin(BootstrapPluginBase):
     extra_styles_widget = ExtraStylesWidget(CSS_VERTICAL_SPACING)
 
 plugin_pool.register_plugin(BootstrapDivPlugin)
+
+
+class HorizontalRulePlugin(BootstrapPluginBase):
+    name = _("Horizontal Rule")
+    require_parent = False
+    allow_children = False
+    tag_type = 'hr'
+    render_template = 'cms/plugins/bootstrap/single.html'
+    extra_styles_widget = ExtraStylesWidget(['margin-top', 'margin-bottom'])
+
+plugin_pool.register_plugin(HorizontalRulePlugin)
