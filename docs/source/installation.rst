@@ -3,17 +3,16 @@
 Installation and Configuration
 ==============================
 
-Getting the latest release
---------------------------
-
-The easiest way to get ``djangocms-bootstrap`` is to install it using `pip`_::
+Install the latest stable release::
 
     $ pip install djangocms-bootstrap
 
-Please also check the latest source code from `github`_.
+or the current development release from github::
+
+    $ pip install -e git+https://github.com/jrief/djangocms-bootstrap.git#egg=djangocms-bootstrap
 
 `Download bootstrap`_ files and move the downloaded files into the folders ``static/css`` and
-``static/js`` of your project tree respectively.
+``static/js`` of your project's tree respectively.
 
 Dependencies
 ------------
