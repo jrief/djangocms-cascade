@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from setuptools import setup
+from setuptools import setup, find_packages
 from cmsplugin_bootstrap import __version__
 
-
-INSTALL_REQUIRES = [
-
-]
 
 CLASSIFIERS = [
     'Development Status :: 4 - Beta',
@@ -21,6 +17,10 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 2.7',
 ]
 
+def read(fname):
+    readme_file = os.path.join(os.path.dirname(__file__), fname)
+    return os.popen('pandoc -t rst {0}'.format(readme_file)).read()
+
 setup(
     name='djangocms-bootstrap',
     version=__version__,
@@ -28,12 +28,12 @@ setup(
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     url='https://github.com/jrief/djangocms-bootstrap',
-    packages=['cmsplugin_bootstrap', 'cmsplugin_bootstrap.migrations'],
-    install_requires=INSTALL_REQUIRES,
+    packages=find_packages(exclude=['examples', 'docs']),
+    install_requires=[],
     license='LICENSE-MIT',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
-    long_description=open('README.md').read(),
+    long_description=read('README.md'),
     include_package_data=True,
     zip_safe=False
 )
