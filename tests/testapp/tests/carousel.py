@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.test.client import Client
 from cms.models.placeholdermodel import Placeholder
-from cmsplugin_bootstrap.carousel import CarouselPlugin, SlidePlugin
+from cmsplugin_bootstrap.carousel import CarouselPlugin
 from cmsplugin_bootstrap.change_form_widgets import ExtraStylesWidget
 from cmsplugin_bootstrap.models import BootstrapElement
 
