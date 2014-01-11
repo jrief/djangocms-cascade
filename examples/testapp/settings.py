@@ -1,37 +1,84 @@
 # Django settings for unit test project.
-# Django settings for unit test project.
+import os
 
 DEBUG = True
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'database.sqlite',
-    },
-}
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SITE_ID = 1
 
 ROOT_URLCONF = 'testapp.urls'
 
-SECRET_KEY = 'SSponU8sDrOMjaSCjmQ0D04PlrLugv3vJDjzEipb'
+SECRET_KEY = 'secret'
+
+DATABASES = {
+    'default': {
+        'NAME': 'bootstrap_develop',
+        'USER': 'bootstrap',
+        'PASSWORD': 'twitter',
+        'ENGINE': 'django.db.backends.mysql',
+    },
+}
+
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'djangocms_admin_style',
+    'django.contrib.admin',
+    'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
+    'djangocms_text_ckeditor',
+    'cmsplugin_bootstrap',
+    'cms',
+    'cms.stacks',
+    'menus',
+    'mptt',
+    'south',
+    'filer',
+    'easy_thumbnails',
+    'cms.plugins.link',
+    'cms.plugins.snippet',
+    'cmsplugin_filer_file',  # alternative to 'cms.plugins.file'
+    'cmsplugin_filer_folder',
+    'cmsplugin_filer_image',  # alternative to 'cms.plugins.picture'
+    'sekizai',
+    'testapp',
+)
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = ''
 
+ADMIN_MEDIA_PREFIX = '/static/admin/'
+
 # Absolute path to the directory that holds static files.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/home/static/'
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
 # URL that handles the static files served from STATIC_ROOT.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
+    'cms.context_processors.media',
+    'sekizai.context_processors.sekizai',
+)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -39,25 +86,75 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.request',
-)
-
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_DIR, 'templates'),
 )
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.admin',
-    'django.contrib.staticfiles',
-    'cmsplugin_bootstrap',
-    'cms',
-    'mptt',
-    'testapp',
+# If you set this to False, Django will make some optimizations so as not
+# to load the internationalization machinery.
+USE_I18N = True
+
+# If you set this to False, Django will not format dates, numbers and
+# calendars according to the current locale.
+USE_L10N = True
+
+# If you set this to False, Django will not use timezone-aware datetimes.
+USE_TZ = True
+
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.doc.XViewMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
+    'cms.middleware.user.CurrentUserMiddleware',
+    'cms.middleware.toolbar.ToolbarMiddleware',
+    'cms.middleware.language.LanguageCookieMiddleware',
 )
+
+#############################################################
+# Application specific settings
+
+CMS_TEMPLATES = (
+    ('main.html', 'Default Bootstrap Page'),
+)
+
+CMS_SEO_FIELDS = True
+
+CMS_CACHE_DURATIONS = {
+    'content': 3600,
+    'menus': 3600,
+    'permissions': 86400,
+}
+
+CKEDITOR_SETTINGS = {
+    'language': '{{ language }}',
+    'skin': 'moono',
+    'toolbar': 'CMS',
+}
+
+FILER_ALLOW_REGULAR_USERS_TO_ADD_ROOT_FOLDERS = True
+
+FILER_DUMP_PAYLOAD = True
+
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters',
+)
+
+THUMBNAIL_HIGH_RESOLUTION = True
+
+THUMBNAIL_PRESERVE_EXTENSIONS = True
+
+THUMBNAIL_OPTIMIZE_COMMAND = {
+    'png': '/opt/local/bin/optipng {filename}',
+    'gif': '/opt/local/bin/optipng {filename}',
+    'jpeg': '/opt/local/bin/jpegoptim {filename}',
+}
