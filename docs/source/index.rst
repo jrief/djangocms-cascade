@@ -53,6 +53,7 @@ Contents:
   buttons
   thumbnails
   carousel
+  navbar
   add_plugins
   history
 
