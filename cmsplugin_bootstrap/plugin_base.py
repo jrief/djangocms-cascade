@@ -5,7 +5,6 @@ from cms.plugin_base import CMSPluginBase
 from cmsplugin_bootstrap.models import BootstrapElement
 from cmsplugin_bootstrap.widgets import JSONMultiWidget
 
-CSS_MARGIN_STYLES = ['margin-%s' % s for s in ('top', 'right', 'bottom', 'left')]
 CSS_VERTICAL_SPACING = ['min-height']
 
 
@@ -16,11 +15,11 @@ class BootstrapPluginBase(CMSPluginBase):
     change_form_template = "cms/admin/change_form.html"
     render_template = "cms/plugins/bootstrap/generic.html"
     allow_children = True
-    #fields = ('extra_context', 'tag_type', 'class_name', 'extra_classes', 'tagged_classes', 'extra_styles', 'options')
 
     def __init__(self, *args, **kwargs):
         super(BootstrapPluginBase, self).__init__(*args, **kwargs)
-        widgets = { 'extra_context': JSONMultiWidget(getattr(self, 'context_widgets', [])) }
+        data_widgets = getattr(self, 'context_widgets', [])[:]
+        widgets = { 'extra_context': JSONMultiWidget(data_widgets) }
 
         #if hasattr(self, 'context_widget'):
         #    change_form_widgets['extra_context'] = self.context_widget
@@ -38,13 +37,15 @@ class BootstrapPluginBase(CMSPluginBase):
         self.form = modelform_factory(BootstrapElement, fields=['extra_context'], widgets=widgets)
 
     def save_model(self, request, obj, form, change):
-        obj.tag_type = self.tag_type
-        if hasattr(self, 'css_class_choices') and len(self.css_class_choices) == 1:
-            obj.class_name = self.css_class_choices[0][0]
+        if not isinstance(obj.extra_context, dict):
+            obj.extra_context = {}
+        obj.extra_context.setdefault('tag_type', self.tag_type)
+        if hasattr(self, 'default_css_class'):
+            obj.extra_context.setdefault('default_css_class', self.default_css_class)
         return super(BootstrapPluginBase, self).save_model(request, obj, form, change)
 
-    @staticmethod
-    def get_identifier(model):
+    @classmethod
+    def get_identifier(cls, model):
         """
         Returns the descriptive name for the current model
         """

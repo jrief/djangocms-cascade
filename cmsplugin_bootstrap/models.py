@@ -11,12 +11,12 @@ class BootstrapElement(CMSPlugin):
     The container to hold additional bootstrap elements.
     """
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
-    tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50)
-    class_name = models.CharField(_('class name'), max_length=50, blank=True, null=True)
-    extra_classes = JSONField(null=True, blank=True, help_text=_('Add extra CSS classes to this HTML element'))
-    tagged_classes = JSONField(null=True, blank=True, help_text=_('Tag special CSS classes to this HTML element'))
-    extra_styles = JSONField(null=True, blank=True, help_text=_('Add extra styles to this HTML element'))
-    options = JSONField(null=True, blank=True, help_text=_('Extra data options for this plugin'))
+    #tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50)
+    #class_name = models.CharField(_('class name'), max_length=50, blank=True, null=True)
+    #extra_classes = JSONField(null=True, blank=True, help_text=_('Add extra CSS classes to this HTML element'))
+    #tagged_classes = JSONField(null=True, blank=True, help_text=_('Tag special CSS classes to this HTML element'))
+    #extra_styles = JSONField(null=True, blank=True, help_text=_('Add extra styles to this HTML element'))
+    #options = JSONField(null=True, blank=True, help_text=_('Extra data options for this plugin'))
     extra_context = JSONField(null=True, blank=True)
 
     def __unicode__(self):
@@ -25,6 +25,9 @@ class BootstrapElement(CMSPlugin):
 
     @property
     def css_classes(self):
+        return self.extra_context or {}
+
+        # remove me
         css_classes = self.class_name and [self.class_name] or []
         if isinstance(self.extra_classes, dict):
             css_classes.extend([ec for ec in self.extra_classes.values() if ec])
@@ -35,7 +38,8 @@ class BootstrapElement(CMSPlugin):
     @property
     def inline_styles(self):
         try:
-            return u' '.join(['{0}: {1};'.format(*s) for s in self.extra_styles.items() if s[1]])
+            inline_styles = self.extra_context.get('inline_styles')
+            return u' '.join(['{0}: {1};'.format(*s) for s in inline_styles.items() if s[1]])
         except (IndexError, AttributeError):
             pass
         return ''
