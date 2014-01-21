@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.test.client import Client
 from cms.models.placeholdermodel import Placeholder
 from cmsplugin_bootstrap.buttons import ButtonWrapperPlugin
-from cmsplugin_bootstrap.change_form_widgets import (ExtraStylesWidget, MultipleRadioButtonsWidget,
+from cmsplugin_bootstrap.widgets import (ExtraStylesWidget, MultipleRadioButtonsWidget,
     MultipleCheckboxesWidget)
 from cmsplugin_bootstrap.models import BootstrapElement
 

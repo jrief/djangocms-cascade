@@ -3,3 +3,4 @@
 .field-extra_classes ul:not(:last-child):after { border-bottom: 1px solid #eee; width: 100%;  padding-bottom: 5px; margin-bottom: 5px; line-height: 0; }
 .field-extra_styles input { width: 100px; margin-right: 20px; }
 .field-options input { width: 100px; margin-right: 20px; }
+h3.change-form-title { font-size: 24px; margin-bottom: 10px; }

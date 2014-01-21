@@ -13,7 +13,7 @@ class MainMenu(ShowMenu):
     options = Options(
         IntegerArgument('from_level', default=0, required=False),
         IntegerArgument('to_level', default=100, required=False),
-        StringArgument('template', default='bootstrap/main-menu.html', required=False),
+        StringArgument('template', default='cms/bootstrap/main-menu.html', required=False),
         StringArgument('namespace', default=None, required=False),
         StringArgument('root_id', default=None, required=False),
         Argument('next_page', default=None, required=False),

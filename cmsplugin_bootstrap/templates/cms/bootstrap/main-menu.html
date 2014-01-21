@@ -8,7 +8,6 @@
 			<a href="{{ child.attr.redirect_url|default:child.get_absolute_url }}"><strong>{{ child.get_menu_title }}</strong></a>
 		</li>
 		<li class="divider"></li>
-		{#% show_menu from_level to_level extra_inactive extra_active "bootstrap/main-menu.html" "" "" child %#}
 		{% main_menu from_level to_level template "" "" child %}
 	</ul>
 	{% else %}

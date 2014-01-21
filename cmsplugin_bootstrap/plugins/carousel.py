@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_bootstrap.change_form_widgets import ExtraStylesWidget
-from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase, CSS_MARGIN_STYLES
+from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase
 
 
 class CarouselPlugin(BootstrapPluginBase):
@@ -10,8 +9,8 @@ class CarouselPlugin(BootstrapPluginBase):
     render_template = 'cms/plugins/bootstrap/carousel.html'
     child_classes = ['SlidePlugin']
     css_class_choices = (('slide', 'slide'),)
-    extra_styles_widget = ExtraStylesWidget(CSS_MARGIN_STYLES + ['width', 'height'])
-    options_widget = ExtraStylesWidget(['interval', 'pause'])
+    #extra_styles_widget = ExtraStylesWidget(CSS_MARGIN_STYLES + ['width', 'height'])
+    #options_widget = ExtraStylesWidget(['interval', 'pause'])
 
 plugin_pool.register_plugin(CarouselPlugin)
 

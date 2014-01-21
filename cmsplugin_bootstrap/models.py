@@ -1,8 +1,9 @@
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import Truncator
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
+from cms.plugin_pool import plugin_pool
 
 
 class BootstrapElement(CMSPlugin):
@@ -11,17 +12,16 @@ class BootstrapElement(CMSPlugin):
     """
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
     tag_type = models.CharField(verbose_name=_('tag Type'), max_length=50)
-    class_name = models.CharField(_("class name"), max_length=50, blank=True, null=True)
-    extra_classes = JSONField(null=True, blank=True, help_text='Add extra CSS classes to this HTML element')
-    tagged_classes = JSONField(null=True, blank=True, help_text='Tag special CSS classes to this HTML element')
-    extra_styles = JSONField(null=True, blank=True, help_text='Add extra styles to this HTML element')
-    options = JSONField(null=True, blank=True, help_text='Extra data options for this plugin')
+    class_name = models.CharField(_('class name'), max_length=50, blank=True, null=True)
+    extra_classes = JSONField(null=True, blank=True, help_text=_('Add extra CSS classes to this HTML element'))
+    tagged_classes = JSONField(null=True, blank=True, help_text=_('Tag special CSS classes to this HTML element'))
+    extra_styles = JSONField(null=True, blank=True, help_text=_('Add extra styles to this HTML element'))
+    options = JSONField(null=True, blank=True, help_text=_('Extra data options for this plugin'))
+    extra_context = JSONField(null=True, blank=True)
 
     def __unicode__(self):
-        value = self.css_classes
-        if value:
-            return unicode(Truncator(value).words(3, truncate=' ...'))
-        return u''
+        cls = plugin_pool.get_plugin(self.plugin_type)
+        return cls.get_identifier(self)
 
     @property
     def css_classes(self):
@@ -34,18 +34,33 @@ class BootstrapElement(CMSPlugin):
 
     @property
     def inline_styles(self):
-        if isinstance(self.extra_styles, dict):
-            try:
-                return u' '.join(['{0}: {1};'.format(*s) for s in self.extra_styles.items() if s[1] is not None])
-            except IndexError:
-                pass
+        try:
+            return u' '.join(['{0}: {1};'.format(*s) for s in self.extra_styles.items() if s[1]])
+        except (IndexError, AttributeError):
+            pass
         return ''
 
     @property
     def data_options(self):
-        if isinstance(self.options, dict):
-            try:
-                return u' '.join(['data-{0}={1}'.format(*s) for s in self.options.items() if s[1] is not None])
-            except IndexError:
-                pass
+        try:
+            return u' '.join(['data-{0}={1}'.format(*s) for s in self.options.items() if s[1]])
+        except (IndexError, AttributeError):
+            pass
+        return ''
+
+    def get_context(self):
+        context = {}
+        try:
+            context = BootstrapElement.objects.get(id=self.parent_id).get_context()
+            context.update(self.extra_context or {})
+        except ObjectDoesNotExist:
+            pass
+        return context
+
+    @property
+    def context(self):
+        try:
+            return u' '.join(['{0}: {1};'.format(*s) for s in self.get_context().items() if s[1]])
+        except (IndexError, AttributeError):
+            pass
         return ''
