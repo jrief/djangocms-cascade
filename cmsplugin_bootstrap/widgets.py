@@ -6,6 +6,7 @@ from django.utils.html import escape, format_html, format_html_join
 from django.utils.safestring import mark_safe
 
 CSS_MARGIN_STYLES = ['margin-%s' % s for s in ('top', 'right', 'bottom', 'left')]
+CSS_VERTICAL_SPACING = ['min-height']
 
 
 class JSONMultiWidget(widgets.MultiWidget):
@@ -38,17 +39,13 @@ class JSONMultiWidget(widgets.MultiWidget):
 
     def render(self, name, value, attrs):
         values = self.decompress(value)
-        html = format_html_join('', '<div class="row">{0}</div>',
-            ((self.widgets[index].render(key, values.get(key), attrs), )
-                for index, key in enumerate(self.sorted_widgets.keys()))
+        html = format_html_join('',
+            '<div class="row"><div class="col-sm-12"><h3>{0}</h3></div></div>'
+            '<div class="row"><div class="col-sm-12">{1}</div></div>'
+            '<div class="row"><div class="col-sm-12"><small>{2}</small></div></div>',
+            ((unicode(item.get('label', '')), item['widget'].render(key, values.get(key), attrs), unicode(item.get('help_text', '')))
+                for key, item in self.sorted_widgets.items())
         )
-        return html
-
-
-class MultipleCheckboxesWidget(widgets.CheckboxSelectMultiple):
-    def render(self, name, value, attrs=None):
-        html = format_html('<div class="col-sm-12">{0}</div>',
-                    super(MultipleCheckboxesWidget, self).render(name, value, attrs))
         return html
 
 
@@ -76,5 +73,5 @@ class MultipleTextInputWidget(widgets.MultiWidget):
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
             widgets.append(self.widgets[index].render(label, values.get(key), self.attrs))
-        html = format_html('<div class="col-sm-12">{0}</div>', mark_safe(''.join(widgets)))
+        html = format_html('{0}', mark_safe(''.join(widgets)))
         return html

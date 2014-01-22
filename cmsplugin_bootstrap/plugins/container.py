@@ -6,18 +6,18 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase
-from cmsplugin_bootstrap.widgets import MultipleCheckboxesWidget, MultipleTextInputWidget, CSS_MARGIN_STYLES
+from cmsplugin_bootstrap.widgets import MultipleTextInputWidget, CSS_MARGIN_STYLES, CSS_VERTICAL_SPACING
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
     map_icon = { 'xs': 'mobile-phone', 'sm': 'tablet', 'md': 'laptop', 'lg': 'desktop' }
 
     def render(self):
-        return format_html_join('',
-            '<div class="col-sm-3 text-center">\n<div class="thumbnail">'
-            '<i class="icon-{1}" style="font-size:50pt;"></i><h4>{0}</h4></div>\n'
-            '</div>', [(force_text(w), self.map_icon[w.choice_value]) for w in self]
-        )
+        return format_html('<div class="row">{0}</div>',
+            format_html_join('', '<div class="col-sm-3 text-center">'
+                '<div class="thumbnail"><i class="icon-{1}" style="font-size:50pt;"></i><h4>{0}</h4></div>'
+                '</div>', ((force_text(w), self.map_icon[w.choice_value]) for w in self)
+            ))
 
 
 class BootstrapContainerPlugin(BootstrapPluginBase):
@@ -31,20 +31,20 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     change_form_template = 'cms/admin/change_form.html'
     context_widgets = [{
         'key': 'breakpoint',
-        'label': _('Breakpoint'),
-        'help_text': _('Narrowest Display Breakpoint'),
+        'label': _('Display Breakpoint'),
+        'help_text': _('Narrowest Display Grid'),
         'widget': widgets.RadioSelect(choices=CONTEXT_WIDGET_CHOICES, renderer=ContainerRadioFieldRenderer),
         'initial': 'xs',
     }, {
         'key': 'inline_styles',
-        'label': _('Min. height'),
-        'help_text': _('Minimum height for container'),
+        'label': _('Inline Styles'),
+        'help_text': _('Margins and minimum height for container'),
         'widget': MultipleTextInputWidget(CSS_MARGIN_STYLES),
     }, {
         'key': 'tagged',
         'label': _('Tags'),
         'help_text': _('Tag choices'),
-        'widget': MultipleCheckboxesWidget(choices=(('relative', 'relative'), ('static', 'static'), ('fixed', 'fixed'),)),
+        'widget': widgets.CheckboxSelectMultiple(choices=(('relative', 'relative'), ('static', 'static'), ('fixed', 'fixed'),)),
     }]
 
     @classmethod
@@ -68,19 +68,19 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     CSS_CLASSES_CHOICES = (('a', 'a'), ('b', 'b'))
     context_widgets = [{
         'key': 'columns',
-        'label': _('ColumnsBreakpoint'),
+        'label': _('Number of Columns'),
         'help_text': _('Maximum number of columns for this row'),
         'widget': widgets.Select(choices=COLUMN_WIDGET_CHOICES),
     }, {
         'key': 'inline_styles',
-        'label': _('Inline CSS styles'),
-        'help_text': _('Add extra CSS styles to this HTML tag'),
-        'widget': MultipleTextInputWidget(CSS_MARGIN_STYLES),
+        'label': _('Inline Styles'),
+        'help_text': _('Minimum height for this row'),
+        'widget': MultipleTextInputWidget(CSS_VERTICAL_SPACING),
     }]
 
     @classmethod
     def get_identifier(cls, model):
-        return u'99'
+        return _('with {0} columns').format(model.extra_context.get('columns'))
 
     def save_model(self, request, obj, form, change):
         # on row creation, add columns automatically
@@ -98,7 +98,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     #extra_classes_widget = MultipleRadioButtonsWidget((
     #    ('offset', (('', 'no offset'),) + tuple(2 * ('offset%s' % o,) for o in range(1, 12))),
     #))
-    child_classes = ['TextPlugin', 'CarouselPlugin']
+    child_classes = ['TextPlugin', 'BootstrapRowPlugin', 'CarouselPlugin']
 
     @classmethod
     def get_identifier(cls, model):

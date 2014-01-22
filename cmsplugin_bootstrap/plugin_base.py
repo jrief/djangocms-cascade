@@ -5,8 +5,6 @@ from cms.plugin_base import CMSPluginBase
 from cmsplugin_bootstrap.models import BootstrapElement
 from cmsplugin_bootstrap.widgets import JSONMultiWidget
 
-CSS_VERTICAL_SPACING = ['min-height']
-
 
 class BootstrapPluginBase(CMSPluginBase):
     module = 'Bootstrap'
