@@ -29,7 +29,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         ('md', _('Medium (>992px)')), ('lg', _('Large (>1200px)')),
     )
     change_form_template = 'cms/admin/change_form.html'
-    context_widgets = [{
+    data_widgets = [{
         'key': 'breakpoint',
         'label': _('Display Breakpoint'),
         'help_text': _('Narrowest Display Grid'),
@@ -48,9 +48,9 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     }]
 
     @classmethod
-    def get_identifier(cls, model):
+    def get_identifier(cls, instance):
         try:
-            texts = [d for c, d in cls.CONTEXT_WIDGET_CHOICES if c == model.extra_context.get('breakpoint')]
+            texts = [d for c, d in cls.CONTEXT_WIDGET_CHOICES if c == instance.extra_context.get('breakpoint')]
             return _('Narrowest grid: {0}').format(texts[0].lower())
         except IndexError:
             return u''
@@ -66,7 +66,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     child_classes = ['BootstrapColumnPlugin']
     COLUMN_WIDGET_CHOICES = ((cs, _('{0} columns').format(cs)) for cs in range(1, 13))
     CSS_CLASSES_CHOICES = (('a', 'a'), ('b', 'b'))
-    context_widgets = [{
+    data_widgets = [{
         'key': 'columns',
         'label': _('Number of Columns'),
         'help_text': _('Maximum number of columns for this row'),
@@ -79,8 +79,8 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     }]
 
     @classmethod
-    def get_identifier(cls, model):
-        return _('with {0} columns').format(model.extra_context.get('columns'))
+    def get_identifier(cls, instance):
+        return _('with {0} columns').format(instance.extra_context.get('columns'))
 
     def save_model(self, request, obj, form, change):
         # on row creation, add columns automatically
@@ -94,17 +94,30 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     render_template = "cms/plugins/bootstrap/column.html"
     parent_classes = ['BootstrapRowPlugin']
     require_parent = True
-    css_class_choices = tuple((i, '{0} units'.format(i)) for i in range(1, 13))
+    #css_class_choices = tuple((i, '{0} units'.format(i)) for i in range(1, 13))
     #extra_classes_widget = MultipleRadioButtonsWidget((
     #    ('offset', (('', 'no offset'),) + tuple(2 * ('offset%s' % o,) for o in range(1, 12))),
     #))
     child_classes = ['TextPlugin', 'BootstrapRowPlugin', 'CarouselPlugin']
 
+    def __init__(self, model=None, admin_site=None):
+        data_widgets = [{
+            'key': 'tagged',
+            'label': _('Tags'),
+            'help_text': _('Tag choices'),
+            'widget': widgets.CheckboxSelectMultiple(choices=(('relative', 'relative'), ('static', 'static'), ('fixed', 'fixed'),)),
+        }]
+        super(BootstrapColumnPlugin, self).__init__(model, admin_site, data_widgets)
+
+#     def get_changelist_form(self, request, **kwargs):
+#         form = super(BootstrapColumnPlugin, self).get_changelist_form(request, **kwargs)
+#         return form
+
     @classmethod
-    def get_identifier(cls, model):
+    def get_identifier(cls, instance):
         return u'99'
         try:
-            return [d for c, d in cls.css_class_choices if str(c) == model.class_name][0]
+            return [d for c, d in cls.css_class_choices if str(c) == instance.class_name][0]
         except IndexError:
             return u''
 
