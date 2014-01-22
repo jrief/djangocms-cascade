@@ -39,7 +39,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         'key': 'inline_styles',
         'label': _('Min. height'),
         'help_text': _('Minimum height for container'),
-        'widget': MultipleTextInputWidget(['min-height']),
+        'widget': MultipleTextInputWidget(CSS_MARGIN_STYLES),
     }, {
         'key': 'tagged',
         'label': _('Tags'),
@@ -54,9 +54,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             return _('Narrowest grid: {0}').format(texts[0].lower())
         except IndexError:
             return u''
-
-    def save_model(self, request, obj, form, change):
-        return super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
@@ -78,7 +75,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         'key': 'inline_styles',
         'label': _('Inline CSS styles'),
         'help_text': _('Add extra CSS styles to this HTML tag'),
-        'widget': MultipleTextInputWidget(CSS_MARGIN_STYLES, attrs={ 'class': 'sibling-field' }),
+        'widget': MultipleTextInputWidget(CSS_MARGIN_STYLES),
     }]
 
     @classmethod

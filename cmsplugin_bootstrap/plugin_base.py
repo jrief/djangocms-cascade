@@ -20,20 +20,6 @@ class BootstrapPluginBase(CMSPluginBase):
         super(BootstrapPluginBase, self).__init__(*args, **kwargs)
         data_widgets = getattr(self, 'context_widgets', [])[:]
         widgets = { 'extra_context': JSONMultiWidget(data_widgets) }
-
-        #if hasattr(self, 'context_widget'):
-        #    change_form_widgets['extra_context'] = self.context_widget
-        #if hasattr(self, 'css_class_choices') and len(self.css_class_choices) > 1:
-        #    change_form_widgets['class_name'] = widgets.Select(choices=self.css_class_choices)
-        #if hasattr(self, 'extra_classes_widget'):
-        #    change_form_widgets['extra_classes'] = self.extra_classes_widget
-        #if hasattr(self, 'tagged_classes_widget'):
-        #    change_form_widgets['tagged_classes'] = self.tagged_classes_widget
-        #if hasattr(self, 'extra_styles_widget'):
-        #    change_form_widgets['extra_styles'] = self.extra_styles_widget
-        #if hasattr(self, 'options_widget'):
-        #    change_form_widgets['options'] = self.options_widget
-        #self.form = modelform_factory(BootstrapElement, fields=change_form_widgets.keys(), widgets=change_form_widgets)
         self.form = modelform_factory(BootstrapElement, fields=['extra_context'], widgets=widgets)
 
     def save_model(self, request, obj, form, change):
@@ -55,7 +41,5 @@ class BootstrapPluginBase(CMSPluginBase):
         return u''
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        #for item in getattr(self, 'context_widgets', []):
-        #    context['adminform'].form.fields[item['key']].label = item['label']
         response = super(BootstrapPluginBase, self).render_change_form(request, context, add, change, form_url, obj)
         return response
