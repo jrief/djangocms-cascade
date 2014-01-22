@@ -8,6 +8,24 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Deleting field 'BootstrapElement.extra_classes'
+        db.delete_column(u'cmsplugin_bootstrapelement', 'extra_classes')
+
+        # Deleting field 'BootstrapElement.class_name'
+        db.delete_column(u'cmsplugin_bootstrapelement', 'class_name')
+
+        # Deleting field 'BootstrapElement.tagged_classes'
+        db.delete_column(u'cmsplugin_bootstrapelement', 'tagged_classes')
+
+        # Deleting field 'BootstrapElement.options'
+        db.delete_column(u'cmsplugin_bootstrapelement', 'options')
+
+        # Deleting field 'BootstrapElement.extra_styles'
+        db.delete_column(u'cmsplugin_bootstrapelement', 'extra_styles')
+
+        # Deleting field 'BootstrapElement.tag_type'
+        db.delete_column(u'cmsplugin_bootstrapelement', 'tag_type')
+
         # Adding field 'BootstrapElement.data'
         db.add_column(u'cmsplugin_bootstrapelement', 'data',
                       self.gf('jsonfield.fields.JSONField')(null=True, blank=True),
@@ -15,6 +33,40 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        # Adding field 'BootstrapElement.extra_classes'
+        db.add_column(u'cmsplugin_bootstrapelement', 'extra_classes',
+                      self.gf('jsonfield.fields.JSONField')(null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'BootstrapElement.class_name'
+        db.add_column(u'cmsplugin_bootstrapelement', 'class_name',
+                      self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'BootstrapElement.tagged_classes'
+        db.add_column(u'cmsplugin_bootstrapelement', 'tagged_classes',
+                      self.gf('jsonfield.fields.JSONField')(null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'BootstrapElement.options'
+        db.add_column(u'cmsplugin_bootstrapelement', 'options',
+                      self.gf('jsonfield.fields.JSONField')(null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'BootstrapElement.extra_styles'
+        db.add_column(u'cmsplugin_bootstrapelement', 'extra_styles',
+                      self.gf('jsonfield.fields.JSONField')(null=True, blank=True),
+                      keep_default=False)
+
+
+        # User chose to not deal with backwards NULL issues for 'BootstrapElement.tag_type'
+        raise RuntimeError("Cannot reverse this migration. 'BootstrapElement.tag_type' and its values cannot be restored.")
+        
+        # The following code is provided here to aid in writing a correct migration        # Adding field 'BootstrapElement.tag_type'
+        db.add_column(u'cmsplugin_bootstrapelement', 'tag_type',
+                      self.gf('django.db.models.fields.CharField')(max_length=50),
+                      keep_default=False)
+
         # Deleting field 'BootstrapElement.data'
         db.delete_column(u'cmsplugin_bootstrapelement', 'data')
 
@@ -43,14 +95,8 @@ class Migration(SchemaMigration):
         },
         u'cmsplugin_bootstrap.bootstrapelement': {
             'Meta': {'object_name': 'BootstrapElement', 'db_table': "u'cmsplugin_bootstrapelement'", '_ormbases': ['cms.CMSPlugin']},
-            'class_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'cmsplugin_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'+'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['cms.CMSPlugin']"}),
-            'extra_classes': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
-            'data': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
-            'extra_styles': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
-            'options': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
-            'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'tagged_classes': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'})
+            'data': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'})
         }
     }
 
