@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import string
 from django.forms import widgets
 from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
+from cms.api import add_plugin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase
 from cmsplugin_bootstrap.widgets import MultipleTextInputWidget, CSS_MARGIN_STYLES, CSS_VERTICAL_SPACING
@@ -53,7 +55,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         try:
             texts = [d for c, d in cls.CONTEXT_WIDGET_CHOICES if c == instance.context.get('breakpoint')]
             return _('Narrowest grid: {0}').format(texts[0].lower())
-        except IndexError:
+        except (TypeError, KeyError, ValueError):
             return u''
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
@@ -65,26 +67,36 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapContainerPlugin']
     require_parent = True
     child_classes = ['BootstrapColumnPlugin']
-    COLUMN_WIDGET_CHOICES = ((cs, _('{0} columns').format(cs)) for cs in range(1, 13))
-    CSS_CLASSES_CHOICES = (('a', 'a'), ('b', 'b'))
     context_widgets = [{
-        'key': 'columns',
+        'key': 'num-columns',
         'label': _('Number of Columns'),
-        'help_text': _('Maximum number of columns for this row'),
-        'widget': widgets.Select(choices=COLUMN_WIDGET_CHOICES),
+        'help_text': _('Number of columns to be created together with this row.'),
+        'widget': widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i))
+                                               for i in range(1, 13))),
     }, {
         'key': 'inline_styles',
         'label': _('Inline Styles'),
-        'help_text': _('Minimum height for this row'),
+        'help_text': _('Minimum height for this row.'),
         'widget': MultipleTextInputWidget(CSS_VERTICAL_SPACING),
     }]
 
     @classmethod
     def get_identifier(cls, instance):
-        return _('with {0} columns').format(instance.context.get('columns'))
+        try:
+            num_cols = int(instance.context['num-columns'])
+            return ungettext_lazy('with {0} column', 'with {0} columns', num_cols).format(num_cols)
+        except (TypeError, KeyError, ValueError):
+            return _('unset')
 
     def save_model(self, request, obj, form, change):
         # on row creation, add columns automatically
+        current_cols = obj.get_children().count()
+        wanted_cols = int(obj.context['num-columns'])
+        for _ in range(current_cols, wanted_cols):
+            column = add_plugin(obj.placeholder, BootstrapColumnPlugin, obj.language, target=obj)
+            column.set_defaults(self)
+            column.context.update({ 'xs-column-width': 'col-xs-12' })
+            column.save()
         return super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
@@ -95,31 +107,89 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     render_template = "cms/plugins/bootstrap/column.html"
     parent_classes = ['BootstrapRowPlugin']
     require_parent = True
-    #css_class_choices = tuple((i, '{0} units'.format(i)) for i in range(1, 13))
-    #extra_classes_widget = MultipleRadioButtonsWidget((
-    #    ('offset', (('', 'no offset'),) + tuple(2 * ('offset%s' % o,) for o in range(1, 12))),
-    #))
     child_classes = ['TextPlugin', 'BootstrapRowPlugin', 'CarouselPlugin']
+    default_context_widgets = [{
+        'key': 'xs-column-width',
+        'label': _('Default Width'),
+        'help_text': _('Column width for all devices, down to phones narrower than 768 pixels.'),
+        'widget': widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
+                                               for i in range(1, 13))),
+        'initial': 'col-xs-12',
+    }]
 
-    def get_form(self, request, obj, **kwargs):
-        choices = tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} column', '{0} columns', i).format(i))
-                        for i in range(1, 13))
-        self.context_widgets = [{
-            'key': 'xs-column-width',
-            'label': _('Column width - Tiny Breakpoint'),
-            'help_text': _('Column width for extra small devices Phones(<768px)'),
-            'widget': widgets.Select(choices=choices),
-        }]
-        print obj.get_full_context()
+    def get_form(self, request, obj=None, **kwargs):
+        def get_column_width(prefix):
+            # full_context from closure
+            column_width = full_context.get('{0}-column-width'.format(prefix)) or '12'
+            return int(string.replace(column_width, 'col-{0}-'.format(prefix), ''))
+
+        self.context_widgets = self.default_context_widgets[:]
+        if obj:
+            full_context = obj.get_full_context()
+            breakpoint = full_context.get('breakpoint')
+            if breakpoint in ('lg', 'md', 'sm',):
+                xs_column_width = get_column_width('xs')
+                choices = (('', _('Unset')),) + tuple(('col-sm-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
+                                   for i in range(1, xs_column_width + 1))
+                self.context_widgets.append({
+                    'key': 'sm-column-width',
+                    'label': _('Width for Devices >768px'),
+                    'help_text': _('Column width for all devices wider than 768 pixels, such as tablets.'),
+                    'widget': widgets.Select(choices=choices),
+                })
+                choices = (('', _('No offset')),) + tuple(('col-sm-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
+                                   for i in range(1, xs_column_width))
+                self.context_widgets.append({
+                    'key': 'sm-column-offset',
+                    'label': _('Offset for Devices >768px'),
+                    'help_text': _('Column offset for all devices wider than 768 pixels, such as tablets.'),
+                    'widget': widgets.Select(choices=choices),
+                })
+            if breakpoint in ('lg', 'md',):
+                sm_column_width = get_column_width('sm')
+                choices = (('', _('Unset')),) + tuple(('col-md-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
+                                   for i in range(1, sm_column_width + 1))
+                self.context_widgets.append({
+                    'key': 'md-column-width',
+                    'label': _('Width for Devices >992px'),
+                    'help_text': _('Column width for all devices wider than 992 pixels, such as laptops.'),
+                    'widget': widgets.Select(choices=choices),
+                })
+                choices = (('', _('No offset')),) + tuple(('col-md-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
+                                   for i in range(1, sm_column_width))
+                self.context_widgets.append({
+                    'key': 'md-column-offset',
+                    'label': _('Offset for Devices >992px'),
+                    'help_text': _('Column offset for all devices wider than 992 pixels, such as laptops.'),
+                    'widget': widgets.Select(choices=choices),
+                })
+            if breakpoint in ('lg',):
+                md_column_width = get_column_width('md')
+                choices = (('', _('Unset')),) + tuple(('col-lg-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
+                                   for i in range(1, md_column_width + 1))
+                self.context_widgets.append({
+                    'key': 'lg-column-width',
+                    'label': _('Width for Devices >1200px'),
+                    'help_text': _('Column width for all devices wider than 1200 pixels, such as large desktops.'),
+                    'widget': widgets.Select(choices=choices),
+                })
+                choices = (('', _('No offset')),) + tuple(('col-lg-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
+                                   for i in range(1, md_column_width))
+                self.context_widgets.append({
+                    'key': 'lg-column-offset',
+                    'label': _('Offset for Devices >1200px'),
+                    'help_text': _('Column offset for all devices wider than 1200 pixels, such as large desktops.'),
+                    'widget': widgets.Select(choices=choices),
+                })
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
     @classmethod
     def get_identifier(cls, instance):
-        return u'99'
         try:
-            return [d for c, d in cls.css_class_choices if str(c) == instance.class_name][0]
-        except IndexError:
-            return u''
+            width = int(string.replace(instance.context['xs-column-width'], 'col-xs-', ''))
+            return ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
+        except (TypeError, KeyError, ValueError):
+            return _('unknown width')
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
 

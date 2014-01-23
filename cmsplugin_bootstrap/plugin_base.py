@@ -22,12 +22,7 @@ class BootstrapPluginBase(CMSPluginBase):
             self.context_widgets = []
 
     def save_model(self, request, obj, form, change):
-        # add defaults to context field, which are required for each element
-        if not isinstance(obj.context, dict):
-            obj.context = {}
-        obj.context.setdefault('tag_type', self.tag_type)
-        if hasattr(self, 'default_css_class'):
-            obj.context.setdefault('default_css_class', self.default_css_class)
+        obj.set_defaults(self)
         return super(BootstrapPluginBase, self).save_model(request, obj, form, change)
 
     @classmethod

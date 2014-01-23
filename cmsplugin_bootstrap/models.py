@@ -16,6 +16,14 @@ class BootstrapElement(CMSPlugin):
         cls = plugin_pool.get_plugin(self.plugin_type)
         return cls.get_identifier(self)
 
+    def set_defaults(self, plugin):
+        # add defaults to context field, which are required for each element
+        if not isinstance(self.context, dict):
+            self.context = {}
+        self.context.setdefault('tag_type', plugin.tag_type)
+        if hasattr(plugin, 'default_css_class'):
+            self.context.setdefault('default_css_class', plugin.default_css_class)
+
     @property
     def css_classes(self):
         return self.context or {}
@@ -53,9 +61,9 @@ class BootstrapElement(CMSPlugin):
         try:
             parent = BootstrapElement.objects.get(id=self.parent_id)
             context = parent.get_full_context()
-            context.update(self.context or {})
         except ObjectDoesNotExist:
             pass
+        context.update(self.context or {})
         return context
 
 #     @property

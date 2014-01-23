@@ -40,7 +40,7 @@ class JSONMultiWidget(widgets.MultiWidget):
     def render(self, name, value, attrs):
         values = self.decompress(value)
         html = format_html_join('',
-            '<div class="row"><div class="col-sm-12"><h3>{0}</h3></div></div>'
+            '<div class="row"><div class="col-sm-12"><h4>{0}</h4></div></div>'
             '<div class="row"><div class="col-sm-12">{1}</div></div>'
             '<div class="row"><div class="col-sm-12"><small>{2}</small></div></div>',
             ((unicode(item.get('label', '')), item['widget'].render(key, values.get(key), attrs), unicode(item.get('help_text', '')))
