@@ -4,6 +4,9 @@ A collection of plugins for DjangoCMS to add various HTML elements from the CSS 
 [Twitter Bootstrap](http://getbootstrap.com/2.3.2/) to CMS placeholders. This allows the editor of
 a web page to manipulate the DOM, without having to edit HTML templates.
 
+**Warning:** This branch is work in progress and attempts to add features from Bootstrap-3.0. It 
+currently does not work, use branch bootstrap-2.3.2 instead.
+
 The **First Goal of this project** is to make available the full collection of widgets as documented
 for the Bootstrap framework. With this plugin, then in many cases, **DjangoCMS** can be operated
 with one single template. Such a template has to offer a generic placeholder for the main content of
