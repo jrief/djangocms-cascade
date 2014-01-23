@@ -14,20 +14,20 @@ class BootstrapPluginBase(CMSPluginBase):
     render_template = "cms/plugins/bootstrap/generic.html"
     allow_children = True
 
-    def __init__(self, model=None, admin_site=None, data_widgets=None):
+    def __init__(self, model=None, admin_site=None, context_widgets=None):
         super(BootstrapPluginBase, self).__init__(model, admin_site)
-        if data_widgets:
-            self.data_widgets = data_widgets
-        elif not hasattr(self, 'data_widgets'):
-            self.data_widgets = []
+        if context_widgets:
+            self.context_widgets = context_widgets
+        elif not hasattr(self, 'context_widgets'):
+            self.context_widgets = []
 
     def save_model(self, request, obj, form, change):
-        # add defaults to data field, which are required for each element
-        if not isinstance(obj.extra_context, dict):
-            obj.extra_context = {}
-        obj.extra_context.setdefault('tag_type', self.tag_type)
+        # add defaults to context field, which are required for each element
+        if not isinstance(obj.context, dict):
+            obj.context = {}
+        obj.context.setdefault('tag_type', self.tag_type)
         if hasattr(self, 'default_css_class'):
-            obj.extra_context.setdefault('default_css_class', self.default_css_class)
+            obj.context.setdefault('default_css_class', self.default_css_class)
         return super(BootstrapPluginBase, self).save_model(request, obj, form, change)
 
     @classmethod
@@ -41,6 +41,6 @@ class BootstrapPluginBase(CMSPluginBase):
         return u''
 
     def get_form(self, request, obj=None, **kwargs):
-        widgets = { 'extra_context': JSONMultiWidget(self.data_widgets) }
-        form = modelform_factory(BootstrapElement, fields=['extra_context'], widgets=widgets)
+        widgets = { 'context': JSONMultiWidget(self.context_widgets) }
+        form = modelform_factory(BootstrapElement, fields=['context'], widgets=widgets)
         return form

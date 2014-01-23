@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext_lazy as _
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
@@ -11,7 +10,7 @@ class BootstrapElement(CMSPlugin):
     The container to hold additional bootstrap elements.
     """
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
-    extra_context = JSONField(null=True, blank=True)
+    context = JSONField(null=True, blank=True)
 
     def __unicode__(self):
         cls = plugin_pool.get_plugin(self.plugin_type)
@@ -19,7 +18,7 @@ class BootstrapElement(CMSPlugin):
 
     @property
     def css_classes(self):
-        return self.extra_context or {}
+        return self.context or {}
 
         # remove me
         css_classes = self.class_name and [self.class_name] or []
@@ -32,7 +31,7 @@ class BootstrapElement(CMSPlugin):
     @property
     def inline_styles(self):
         try:
-            inline_styles = self.extra_context.get('inline_styles')
+            inline_styles = self.context.get('inline_styles')
             return u' '.join(['{0}: {1};'.format(*s) for s in inline_styles.items() if s[1]])
         except (IndexError, AttributeError):
             pass
@@ -46,19 +45,23 @@ class BootstrapElement(CMSPlugin):
             pass
         return ''
 
-    def get_context(self):
+    def get_full_context(self):
+        """
+        Return the full data context, up to the root.
+        """
         context = {}
         try:
-            context = BootstrapElement.objects.get(id=self.parent_id).get_context()
-            context.update(self.extra_context or {})
+            parent = BootstrapElement.objects.get(id=self.parent_id)
+            context = parent.get_full_context()
+            context.update(self.context or {})
         except ObjectDoesNotExist:
             pass
         return context
 
-    @property
-    def context(self):
-        try:
-            return u' '.join(['{0}: {1};'.format(*s) for s in self.get_context().items() if s[1]])
-        except (IndexError, AttributeError):
-            pass
-        return ''
+#     @property
+#     def context(self):
+#         try:
+#             return u' '.join(['{0}: {1};'.format(*s) for s in self.get_context().items() if s[1]])
+#         except (IndexError, AttributeError):
+#             pass
+#         return ''

@@ -26,8 +26,8 @@ class Migration(SchemaMigration):
         # Deleting field 'BootstrapElement.tag_type'
         db.delete_column(u'cmsplugin_bootstrapelement', 'tag_type')
 
-        # Adding field 'BootstrapElement.data'
-        db.add_column(u'cmsplugin_bootstrapelement', 'data',
+        # Adding field 'BootstrapElement.context'
+        db.add_column(u'cmsplugin_bootstrapelement', 'context',
                       self.gf('jsonfield.fields.JSONField')(null=True, blank=True),
                       keep_default=False)
 
@@ -67,8 +67,8 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(max_length=50),
                       keep_default=False)
 
-        # Deleting field 'BootstrapElement.data'
-        db.delete_column(u'cmsplugin_bootstrapelement', 'data')
+        # Deleting field 'BootstrapElement.context'
+        db.delete_column(u'cmsplugin_bootstrapelement', 'context')
 
 
     models = {
@@ -96,7 +96,7 @@ class Migration(SchemaMigration):
         u'cmsplugin_bootstrap.bootstrapelement': {
             'Meta': {'object_name': 'BootstrapElement', 'db_table': "u'cmsplugin_bootstrapelement'", '_ormbases': ['cms.CMSPlugin']},
             'cmsplugin_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'+'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['cms.CMSPlugin']"}),
-            'data': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'})
+            'context': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'})
         }
     }
 

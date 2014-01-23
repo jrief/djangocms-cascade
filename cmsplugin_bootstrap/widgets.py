@@ -11,11 +11,11 @@ CSS_VERTICAL_SPACING = ['min-height']
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
-    def __init__(self, data_widgets):
-        self.sorted_widgets = SortedDict(((item['key'], item) for item in data_widgets))
-        if len(data_widgets) > len(self.sorted_widgets):
-            raise AttributeError('List of data_widgets may contain only unique keys')
-        super(JSONMultiWidget, self).__init__((item['widget'] for item in data_widgets))
+    def __init__(self, context_widgets):
+        self.sorted_widgets = SortedDict(((item['key'], item) for item in context_widgets))
+        if len(context_widgets) > len(self.sorted_widgets):
+            raise AttributeError('List of context_widgets may contain only unique keys')
+        super(JSONMultiWidget, self).__init__((item['widget'] for item in context_widgets))
 
     def decompress(self, value):
         values = json.loads(value or '{}')

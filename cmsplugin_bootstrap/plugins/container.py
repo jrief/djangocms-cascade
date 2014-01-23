@@ -4,6 +4,7 @@ from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 from cms.plugin_pool import plugin_pool
 from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase
 from cmsplugin_bootstrap.widgets import MultipleTextInputWidget, CSS_MARGIN_STYLES, CSS_VERTICAL_SPACING
@@ -29,7 +30,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         ('md', _('Medium (>992px)')), ('lg', _('Large (>1200px)')),
     )
     change_form_template = 'cms/admin/change_form.html'
-    data_widgets = [{
+    context_widgets = [{
         'key': 'breakpoint',
         'label': _('Display Breakpoint'),
         'help_text': _('Narrowest Display Grid'),
@@ -50,7 +51,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, instance):
         try:
-            texts = [d for c, d in cls.CONTEXT_WIDGET_CHOICES if c == instance.extra_context.get('breakpoint')]
+            texts = [d for c, d in cls.CONTEXT_WIDGET_CHOICES if c == instance.context.get('breakpoint')]
             return _('Narrowest grid: {0}').format(texts[0].lower())
         except IndexError:
             return u''
@@ -66,7 +67,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     child_classes = ['BootstrapColumnPlugin']
     COLUMN_WIDGET_CHOICES = ((cs, _('{0} columns').format(cs)) for cs in range(1, 13))
     CSS_CLASSES_CHOICES = (('a', 'a'), ('b', 'b'))
-    data_widgets = [{
+    context_widgets = [{
         'key': 'columns',
         'label': _('Number of Columns'),
         'help_text': _('Maximum number of columns for this row'),
@@ -80,7 +81,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, instance):
-        return _('with {0} columns').format(instance.extra_context.get('columns'))
+        return _('with {0} columns').format(instance.context.get('columns'))
 
     def save_model(self, request, obj, form, change):
         # on row creation, add columns automatically
@@ -100,18 +101,17 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     #))
     child_classes = ['TextPlugin', 'BootstrapRowPlugin', 'CarouselPlugin']
 
-    def __init__(self, model=None, admin_site=None):
-        data_widgets = [{
-            'key': 'tagged',
-            'label': _('Tags'),
-            'help_text': _('Tag choices'),
-            'widget': widgets.CheckboxSelectMultiple(choices=(('relative', 'relative'), ('static', 'static'), ('fixed', 'fixed'),)),
+    def get_form(self, request, obj, **kwargs):
+        choices = tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} column', '{0} columns', i).format(i))
+                        for i in range(1, 13))
+        self.context_widgets = [{
+            'key': 'xs-column-width',
+            'label': _('Column width - Tiny Breakpoint'),
+            'help_text': _('Column width for extra small devices Phones(<768px)'),
+            'widget': widgets.Select(choices=choices),
         }]
-        super(BootstrapColumnPlugin, self).__init__(model, admin_site, data_widgets)
-
-#     def get_changelist_form(self, request, **kwargs):
-#         form = super(BootstrapColumnPlugin, self).get_changelist_form(request, **kwargs)
-#         return form
+        print obj.get_full_context()
+        return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
     @classmethod
     def get_identifier(cls, instance):
