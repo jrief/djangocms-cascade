@@ -2,10 +2,4 @@
 #bootstrapelement_form ul li { list-style: none; float: left; min-width: 95px; }
 #bootstrapelement_form input.sibling-field { width: 95px; margin-left: 20px; }
 #bootstrapelement_form input.sibling-field:first-child { margin-left: 0; }
-
-/*
-#bootstrapelement_form .row:after, .container .row ul:after { content: " "; clear: both; display: block; }
-.field-extra_classes ul:not(:last-child):after { border-bottom: 1px solid #eee; width: 100%;  padding-bottom: 5px; margin-bottom: 5px; line-height: 0; }
-.field-options input { width: 100px; margin-right: 20px; }
-h3.change-form-title { font-size: 24px; margin-bottom: 10px; }
-*/
+#bootstrapelement_form h4 { margin-top: 10px !important; margin-bottom: 10px !important; }
