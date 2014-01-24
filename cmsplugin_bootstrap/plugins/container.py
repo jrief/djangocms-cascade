@@ -4,10 +4,10 @@ from django.forms import widgets
 from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.api import add_plugin
 from cms.plugin_pool import plugin_pool
+from cmsplugin_bootstrap import settings
 from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase
 from cmsplugin_bootstrap.widgets import MultipleTextInputWidget, CSS_MARGIN_STYLES, CSS_VERTICAL_SPACING
 
@@ -37,7 +37,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         'label': _('Display Breakpoint'),
         'help_text': _('Narrowest Display Grid'),
         'widget': widgets.RadioSelect(choices=CONTEXT_WIDGET_CHOICES, renderer=ContainerRadioFieldRenderer),
-        'initial': 'xs',
+        'initial': settings.BOOTSTRAP_DEFAULT_BREAKPOINT,
     }, {
         'key': 'inline_styles',
         'label': _('Inline Styles'),
@@ -89,7 +89,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
             return _('unset')
 
     def save_model(self, request, obj, form, change):
-        # on row creation, add columns automatically
+        # adopt number of columns automatically
         current_cols = obj.get_children().count()
         wanted_cols = int(obj.context['num-columns'])
         for _ in range(current_cols, wanted_cols):
@@ -107,7 +107,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     render_template = "cms/plugins/bootstrap/column.html"
     parent_classes = ['BootstrapRowPlugin']
     require_parent = True
-    child_classes = ['TextPlugin', 'BootstrapRowPlugin', 'CarouselPlugin']
+    child_classes = ['TextPlugin', 'BootstrapRowPlugin', 'CarouselPlugin', 'SimpleWrapperPlugin']
     default_context_widgets = [{
         'key': 'xs-column-width',
         'label': _('Default Width'),
@@ -192,23 +192,3 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             return _('unknown width')
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
-
-
-class BootstrapDivPlugin(BootstrapPluginBase):
-    name = _("Simple div container")
-    parent_classes = ['BootstrapColumnPlugin']
-    require_parent = True
-    tag_type = 'div'
-    css_class_choices = (('', '---'), ('hero-unit', 'hero-unit'))
-
-plugin_pool.register_plugin(BootstrapDivPlugin)
-
-
-class HorizontalRulePlugin(BootstrapPluginBase):
-    name = _("Horizontal Rule")
-    require_parent = False
-    allow_children = False
-    tag_type = 'hr'
-    render_template = 'cms/plugins/bootstrap/single.html'
-
-plugin_pool.register_plugin(HorizontalRulePlugin)

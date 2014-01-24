@@ -38,4 +38,18 @@ class BootstrapPluginBase(CMSPluginBase):
     def get_form(self, request, obj=None, **kwargs):
         widgets = { 'context': JSONMultiWidget(self.context_widgets) }
         form = modelform_factory(BootstrapElement, fields=['context'], widgets=widgets)
+        for item in self.context_widgets:
+            if callable(item.get('validator')):
+                form.base_fields['context'].validators.append(item['validator'])
         return form
+
+
+class PartialFormField(object):
+    def __init__(self, key, label, widget, initial=None, help_text=None):
+        if not key:
+            raise AttributeError('The field key may must have a value')
+        self.key = key
+        self.label = label
+        self.widget = widget
+        self.initial = initial
+        self.help_text = help_text

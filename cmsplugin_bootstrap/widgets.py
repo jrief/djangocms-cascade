@@ -50,6 +50,10 @@ class JSONMultiWidget(widgets.MultiWidget):
 
 
 class MultipleTextInputWidget(widgets.MultiWidget):
+    """
+    A widgets accepting multiple input values to be used for rendering CSS inline styles.
+    Additionally this widget validates the input data and raises a ValidationError
+    """
     def __init__(self, labels, attrs={ 'class': 'sibling-field' }):
         text_widgets = [widgets.TextInput({ 'placeholder': label }) for label in labels]
         super(MultipleTextInputWidget, self).__init__(text_widgets, attrs)
@@ -75,3 +79,7 @@ class MultipleTextInputWidget(widgets.MultiWidget):
             widgets.append(self.widgets[index].render(label, values.get(key), self.attrs))
         html = format_html('{0}', mark_safe(''.join(widgets)))
         return html
+
+    @classmethod
+    def validate(cls, value):
+        pass
