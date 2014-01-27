@@ -15,7 +15,7 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
         PartialFormField('extra-bs-classes',
             widgets.Select(choices=tuple((cls, cls) for cls in CLASS_CHOICES)),
             label=_('Extra Bootstrap Classes'),
-            help_text=_('Additional Bootstrap classed to be added to this element.')
+            help_text=_('Main Bootstrap CSS class to be added to this element.')
         ),
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(),
