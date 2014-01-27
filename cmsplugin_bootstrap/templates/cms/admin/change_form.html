@@ -8,8 +8,9 @@
 	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" />
 {% endblock %}
 
-{% block field_sets %}
+{% block field_sets %}{% with line=adminform.first_field|first %}
 <div class="container">
-	{{ adminform.first_field|first }}
+	{{ adminform.first_field.errors }}
+	{{ line }}
 </div>
-{% endblock field_sets %}
+{% endwith %}{% endblock field_sets %}

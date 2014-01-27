@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.forms.models import modelform_factory
+from django.forms import widgets
+from django.forms.util import ErrorList
 from django.utils.text import Truncator
+from django.core.exceptions import ValidationError
 from cms.plugin_base import CMSPluginBase
 from cmsplugin_bootstrap.models import BootstrapElement
 from cmsplugin_bootstrap.widgets import JSONMultiWidget
@@ -14,12 +17,12 @@ class BootstrapPluginBase(CMSPluginBase):
     render_template = "cms/plugins/bootstrap/generic.html"
     allow_children = True
 
-    def __init__(self, model=None, admin_site=None, context_widgets=None):
+    def __init__(self, model=None, admin_site=None, partial_fields=None):
         super(BootstrapPluginBase, self).__init__(model, admin_site)
-        if context_widgets:
-            self.context_widgets = context_widgets
-        elif not hasattr(self, 'context_widgets'):
-            self.context_widgets = []
+        if partial_fields:
+            self.partial_fields = partial_fields
+        elif not hasattr(self, 'partial_fields'):
+            self.partial_fields = []
 
     def save_model(self, request, obj, form, change):
         obj.set_defaults(self)
@@ -36,20 +39,48 @@ class BootstrapPluginBase(CMSPluginBase):
         return u''
 
     def get_form(self, request, obj=None, **kwargs):
-        widgets = { 'context': JSONMultiWidget(self.context_widgets) }
+        widgets = { 'context': JSONMultiWidget(self.partial_fields) }
         form = modelform_factory(BootstrapElement, fields=['context'], widgets=widgets)
-        for item in self.context_widgets:
-            if callable(item.get('validator')):
-                form.base_fields['context'].validators.append(item['validator'])
+        for field in self.partial_fields:
+            form.base_fields['context'].validators.append(field.run_validators)
+        setattr(form, 'partial_fields', self.partial_fields)
         return form
 
 
 class PartialFormField(object):
-    def __init__(self, key, label, widget, initial=None, help_text=None):
-        if not key:
-            raise AttributeError('The field key may must have a value')
-        self.key = key
-        self.label = label
+    """
+    Behave similar to django.forms.Field, encapsulating a partial dictionary, stored as
+    JSONField in the database.
+    """
+    def __init__(self, name, widget, label=None, initial=None, error_class=ErrorList, help_text=''):
+        if not name:
+            raise AttributeError('The field must have a name')
+        self.name = name
+        if not label:
+            self.label = name
+        else:
+            self.label = label
+        if not isinstance(widget, widgets.Widget):
+            raise AttributeError('The field `widget` must be derived from django.forms.name')
         self.widget = widget
-        self.initial = initial
-        self.help_text = help_text
+        self.initial = initial or None
+        self.help_text = help_text or None
+        self.error_class = error_class
+        #self._errors = ErrorDict()
+
+    def run_validators(self, value):
+        if not callable(getattr(self.widget, 'validate', None)):
+            return
+        errors = []
+        for field_name in self.widget:
+            try:
+                self.widget.validate(value.get(self.name), field_name)
+            except ValidationError, e:
+                params = { 'label': self.label }
+                if e.params:
+                    params.update(e.params)
+                messages = self.error_class([m % params for m in e.messages])
+                errors.extend(messages)
+                #self._errors[self.name] = errors
+        if errors:
+            raise ValidationError(errors)

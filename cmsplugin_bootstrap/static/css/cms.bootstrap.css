@@ -1,5 +1,7 @@
 #bootstrapelement_form ul { margin-left: 0; }
 #bootstrapelement_form ul li { list-style: none; float: left; min-width: 95px; }
-#bootstrapelement_form input.sibling-field { width: 95px; margin-left: 20px; }
-#bootstrapelement_form input.sibling-field:first-child { margin-left: 0; }
+#bootstrapelement_form ul.errorlist li { float: none; }
+#bootstrapelement_form div.sibling-field { float: left;  margin-left: 20px; }
+#bootstrapelement_form div.sibling-field:first-child { margin-left: 0; }
+#bootstrapelement_form div.sibling-field input { width: 95px; margin: 0; }
 #bootstrapelement_form h4 { margin-top: 10px !important; margin-bottom: 10px !important; }

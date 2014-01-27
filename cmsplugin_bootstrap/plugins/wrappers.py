@@ -2,8 +2,8 @@
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase
-from cmsplugin_bootstrap.widgets import MultipleTextInputWidget, CSS_MARGIN_STYLES, CSS_VERTICAL_SPACING
+from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase, PartialFormField
+from cmsplugin_bootstrap.widgets import MultipleInlineStylesWidget
 
 
 class SimpleWrapperPlugin(BootstrapPluginBase):
@@ -11,18 +11,18 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     CLASS_CHOICES = ('thumbnail', 'jumbotron',)
-    context_widgets = [{
-        'key': 'extra-bs-classes',
-        'label': _('Extra Bootstrap Classes'),
-        'help_text': _('Additional Bootstrap classed to be added to this element.'),
-        'widget': widgets.Select(choices=tuple((cls, cls) for cls in CLASS_CHOICES)),
-    }, {
-        'key': 'inline_styles',
-        'label': _('Inline Styles'),
-        'help_text': _('Margins and minimum height for container'),
-        'widget': MultipleTextInputWidget(CSS_MARGIN_STYLES + CSS_VERTICAL_SPACING),
-        'validator': MultipleTextInputWidget.validate,
-    }]
+    partial_fields = [
+        PartialFormField('extra-bs-classes',
+            widgets.Select(choices=tuple((cls, cls) for cls in CLASS_CHOICES)),
+            label=_('Extra Bootstrap Classes'),
+            help_text=_('Additional Bootstrap classed to be added to this element.')
+        ),
+        PartialFormField('inline_styles',
+            MultipleInlineStylesWidget(),
+            label=_('Inline Styles'),
+            help_text=_('Margins and minimum height for container.')
+        )
+    ]
 
 plugin_pool.register_plugin(SimpleWrapperPlugin)
 

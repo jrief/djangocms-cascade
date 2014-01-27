@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+import re
 import json
+from django.core.exceptions import ValidationError
 from django.forms import widgets
-from django.utils.datastructures import SortedDict
 from django.utils.html import escape, format_html, format_html_join
-from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 CSS_MARGIN_STYLES = ['margin-%s' % s for s in ('top', 'right', 'bottom', 'left')]
 CSS_VERTICAL_SPACING = ['min-height']
@@ -11,40 +12,42 @@ CSS_VERTICAL_SPACING = ['min-height']
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
-    def __init__(self, context_widgets):
-        self.sorted_widgets = SortedDict(((item['key'], item) for item in context_widgets))
-        if len(context_widgets) > len(self.sorted_widgets):
-            raise AttributeError('List of context_widgets may contain only unique keys')
-        super(JSONMultiWidget, self).__init__((item['widget'] for item in context_widgets))
+    def __init__(self, partial_fields):
+        unique_keys = set([field.name for field in partial_fields])
+        if len(partial_fields) > len(unique_keys):
+            raise AttributeError('List of partial_fields may contain only unique keys')
+        self.partial_fields = partial_fields[:]
+        super(JSONMultiWidget, self).__init__((field.widget for field in partial_fields))
 
     def decompress(self, value):
         values = json.loads(value or '{}')
-        for key, item in self.sorted_widgets.items():
-            if isinstance(item['widget'], widgets.MultiWidget):
-                values[key] = item['widget'].decompress(values.get(key))
+        for field in self.partial_fields:
+            if isinstance(field.widget, widgets.MultiWidget):
+                values[field.name] = field.widget.decompress(values.get(field.name))
             else:
-                values.setdefault(key, item.get('initial'))
+                values.setdefault(field.name, field.initial)
         return values
 
     def value_from_datadict(self, data, files, name):
         result = {}
-        for key, item in self.sorted_widgets.items():
-            if isinstance(item['widget'], widgets.MultiWidget):
-                result[key] = item['widget'].value_from_datadict(data, files, key)
-            elif getattr(item['widget'], 'allow_multiple_selected', False):
-                result[key] = map(escape, data.getlist(key))
+        for field in self.partial_fields:
+            if isinstance(field.widget, widgets.MultiWidget):
+                result[field.name] = field.widget.value_from_datadict(data, files, field.name)
+            elif getattr(field.widget, 'allow_multiple_selected', False):
+                result[field.name] = map(escape, data.getlist(field.name))
             else:
-                result[key] = escape(data.get(key))
+                result[field.name] = escape(data.get(field.name))
         return result
 
-    def render(self, name, value, attrs):
-        values = self.decompress(value)
-        html = format_html_join('',
-            '<div class="row"><div class="col-sm-12"><h4>{0}</h4></div></div>'
-            '<div class="row"><div class="col-sm-12">{1}</div></div>'
-            '<div class="row"><div class="col-sm-12"><small>{2}</small></div></div>',
-            ((unicode(item.get('label', '')), item['widget'].render(key, values.get(key), attrs), unicode(item.get('help_text', '')))
-                for key, item in self.sorted_widgets.items())
+    def render(self, name, values, attrs):
+        if not isinstance(values, dict):
+            values = self.decompress(values)
+        html = format_html_join('\n',
+            '<div class="row"><div class="col-sm-12"><h4>{0}</h4></div></div>\n'
+            '<div class="row"><div class="col-sm-12">{1}</div></div>\n'
+            '<div class="row"><div class="col-sm-12"><small>{2}</small></div></div>\n',
+            ((unicode(field.label), field.widget.render(field.name, values.get(field.name), attrs), unicode(field.help_text))
+                for field in self.partial_fields)
         )
         return html
 
@@ -54,10 +57,16 @@ class MultipleTextInputWidget(widgets.MultiWidget):
     A widgets accepting multiple input values to be used for rendering CSS inline styles.
     Additionally this widget validates the input data and raises a ValidationError
     """
-    def __init__(self, labels, attrs={ 'class': 'sibling-field' }):
+    def __init__(self, labels, attrs=None):
         text_widgets = [widgets.TextInput({ 'placeholder': label }) for label in labels]
         super(MultipleTextInputWidget, self).__init__(text_widgets, attrs)
         self.labels = labels[:]
+        self.validation_errors = []
+
+    def __iter__(self):
+        self.validation_errors = []
+        for label in self.labels:
+            yield label
 
     def decompress(self, values):
         if not isinstance(values, dict):
@@ -76,10 +85,21 @@ class MultipleTextInputWidget(widgets.MultiWidget):
         widgets = []
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
-            widgets.append(self.widgets[index].render(label, values.get(key), self.attrs))
-        html = format_html('{0}', mark_safe(''.join(widgets)))
+            errors = key in self.validation_errors and 'errors' or ''
+            widgets.append((self.widgets[index].render(label, values.get(key), attrs), errors))
+        html = format_html('{0}', format_html_join('\n', '<div class="sibling-field {1}">{0}</div>', widgets))
         return html
 
-    @classmethod
-    def validate(cls, value):
-        pass
+
+class MultipleInlineStylesWidget(MultipleTextInputWidget):
+    message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain only a number, ending with px or em.")
+    prog = re.compile('^\d+(px|em)$')
+
+    def __init__(self):
+        super(MultipleInlineStylesWidget, self).__init__(CSS_MARGIN_STYLES + CSS_VERTICAL_SPACING)
+
+    def validate(self, value, field_name):
+        val = value.get(field_name)
+        if val and not self.prog.match(val):
+            self.validation_errors.append(field_name)
+            raise ValidationError(self.message, code='invalid', params={ 'value': val, 'field': field_name })
