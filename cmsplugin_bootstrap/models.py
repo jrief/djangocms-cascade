@@ -2,7 +2,6 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
-from cms.plugin_pool import plugin_pool
 
 
 class BootstrapElement(CMSPlugin):
@@ -10,36 +9,31 @@ class BootstrapElement(CMSPlugin):
     The container to hold additional bootstrap elements.
     """
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
-    context = JSONField(null=True, blank=True)
+    context = JSONField(null=True, blank=True, default={})
 
     def __unicode__(self):
-        cls = plugin_pool.get_plugin(self.plugin_type)
-        return cls.get_identifier(self)
+        return self.plugin_class.get_identifier(self)
 
-    def set_defaults(self, plugin):
-        # add defaults to context field, which are required for each element
-        if not isinstance(self.context, dict):
-            self.context = {}
-        self.context.setdefault('tag_type', plugin.tag_type)
-        if hasattr(plugin, 'default_css_class'):
-            self.context.setdefault('default_css_class', plugin.default_css_class)
+    @property
+    def plugin_class(self):
+        if not hasattr(self, '_plugin_class'):
+            self._plugin_class = self.get_plugin_class()
+        return self._plugin_class
+
+    @property
+    def tag_type(self):
+        return self.plugin_class.tag_type
 
     @property
     def css_classes(self):
-        return self.context or {}
-
-        # remove me
-        css_classes = self.class_name and [self.class_name] or []
-        if isinstance(self.extra_classes, dict):
-            css_classes.extend([ec for ec in self.extra_classes.values() if ec])
-        if isinstance(self.tagged_classes, list):
-            css_classes.extend([tc for tc in self.tagged_classes if tc])
+        css_classes = self.plugin_class.get_css_classes(self)
         return u' '.join(css_classes)
 
     @property
     def inline_styles(self):
+        inline_styles = self.context.get('inline_styles' or {})
+        inline_styles.update(self.plugin_class.get_inline_styles(self))
         try:
-            inline_styles = self.context.get('inline_styles')
             return u' '.join(['{0}: {1};'.format(*s) for s in inline_styles.items() if s[1]])
         except (IndexError, AttributeError):
             pass
@@ -55,7 +49,7 @@ class BootstrapElement(CMSPlugin):
 
     def get_full_context(self):
         """
-        Return the full data context, up to the root.
+        Return the context recursively, from the root element down to the current element.
         """
         context = {}
         try:

@@ -24,10 +24,6 @@ class BootstrapPluginBase(CMSPluginBase):
         elif not hasattr(self, 'partial_fields'):
             self.partial_fields = []
 
-    def save_model(self, request, obj, form, change):
-        obj.set_defaults(self)
-        return super(BootstrapPluginBase, self).save_model(request, obj, form, change)
-
     @classmethod
     def get_identifier(cls, model):
         """
@@ -37,6 +33,16 @@ class BootstrapPluginBase(CMSPluginBase):
         if value:
             return unicode(Truncator(value).words(3, truncate=' ...'))
         return u''
+
+    @classmethod
+    def get_css_classes(cls, model):
+        if hasattr(cls, 'default_css_class'):
+            return [cls.default_css_class]
+        return []
+
+    @classmethod
+    def get_inline_styles(cls, model):
+        return {}
 
     def get_form(self, request, obj=None, **kwargs):
         widgets = { 'context': JSONMultiWidget(self.partial_fields) }
@@ -66,7 +72,6 @@ class PartialFormField(object):
         self.initial = initial or None
         self.help_text = help_text or None
         self.error_class = error_class
-        #self._errors = ErrorDict()
 
     def run_validators(self, value):
         if not callable(getattr(self.widget, 'validate', None)):
@@ -81,6 +86,5 @@ class PartialFormField(object):
                     params.update(e.params)
                 messages = self.error_class([m % params for m in e.messages])
                 errors.extend(messages)
-                #self._errors[self.name] = errors
         if errors:
             raise ValidationError(errors)
