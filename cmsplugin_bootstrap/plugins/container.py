@@ -34,7 +34,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     partial_fields = (
         PartialFormField('breakpoint',
             widgets.RadioSelect(choices=CONTEXT_WIDGET_CHOICES, renderer=ContainerRadioFieldRenderer),
-            label=_('Display Breakpoint'), initial='xs',  # settings.BOOTSTRAP_DEFAULT_BREAKPOINT,
+            label=_('Display Breakpoint'), initial=settings.BOOTSTRAP_DEFAULT_BREAKPOINT,
             help_text=_("Narrowest display for Bootstrap's grid system.")
         ),
         PartialFormField('inline_styles', MultipleInlineStylesWidget(),
@@ -89,11 +89,11 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         current_cols = obj.get_children().count()
         wanted_cols = int(obj.context['num-columns'])
         del obj.context['num-columns']
+        super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
         for _ in range(current_cols, wanted_cols):
             column = add_plugin(obj.placeholder, BootstrapColumnPlugin, obj.language, target=obj)
             column.context.update({ 'xs-column-width': 'col-xs-12' })
             column.save()
-        return super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
