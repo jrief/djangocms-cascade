@@ -19,8 +19,9 @@ class JSONMultiWidget(widgets.MultiWidget):
         self.partial_fields = partial_fields[:]
         super(JSONMultiWidget, self).__init__((field.widget for field in partial_fields))
 
-    def decompress(self, value):
-        values = json.loads(value or '{}')
+    def decompress(self, values):
+        if not isinstance(values, dict):
+            values = json.loads(values or '{}')
         for field in self.partial_fields:
             if isinstance(field.widget, widgets.MultiWidget):
                 values[field.name] = field.widget.decompress(values.get(field.name))
@@ -40,8 +41,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         return result
 
     def render(self, name, values, attrs):
-        if not isinstance(values, dict):
-            values = self.decompress(values)
+        values = self.decompress(values)
         html = format_html_join('\n',
             '<div class="row"><div class="col-sm-12"><h4>{0}</h4></div></div>\n'
             '<div class="row"><div class="col-sm-12">{1}</div></div>\n'
@@ -83,6 +83,7 @@ class MultipleTextInputWidget(widgets.MultiWidget):
 
     def render(self, name, values, attrs):
         widgets = []
+        values = values or {}
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
             errors = key in self.validation_errors and 'errors' or ''

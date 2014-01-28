@@ -1,8 +1,0 @@
-{% load cms_tags %}
-{% with row_css_class=instance.css_classes inline_styles=instance.inline_styles %}
-<div class="row" {% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
-{% for column in instance.child_plugin_instances %}
-	{% render_plugin column %}
-{% endfor %}
-</div>
-{% endwith %}
