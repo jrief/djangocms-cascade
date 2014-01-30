@@ -13,8 +13,8 @@ class BootstrapPluginBase(CMSPluginBase):
     module = 'Bootstrap'
     model = BootstrapElement
     tag_type = 'div'
-    change_form_template = "cms/admin/change_form.html"
-    render_template = "cms/plugins/bootstrap/generic.html"
+    change_form_template = 'cms/admin/change_form.html'
+    render_template = 'cms/plugins/bootstrap/generic.html'
     allow_children = True
 
     def __init__(self, model=None, admin_site=None, partial_fields=None):
@@ -35,16 +35,58 @@ class BootstrapPluginBase(CMSPluginBase):
         return u''
 
     @classmethod
-    def get_css_classes(cls, model):
+    def get_css_classes(cls, obj):
+        css_classes = []
         if hasattr(cls, 'default_css_class'):
-            return [cls.default_css_class]
-        return []
+            css_classes.append(cls.default_css_class)
+        for attr in getattr(cls, 'default_css_attributes', []):
+            css_class = obj.context.get(attr)
+            if css_class:
+                css_classes.append(css_class)
+        return css_classes
 
     @classmethod
-    def get_inline_styles(cls, model):
-        return {}
+    def get_inline_styles(cls, obj):
+        inline_styles = getattr(cls, 'default_inline_styles', {})
+        css_style = obj.context.get('inline_styles')
+        if css_style:
+            inline_styles.update(css_style)
+        return inline_styles
+
+    def get_object(self, request, object_id):
+        """
+        Get the object and augment its context with the number of children.
+        """
+        obj = super(BootstrapPluginBase, self).get_object(request, object_id)
+        if obj:
+            obj.context['-num-children-'] = obj.get_children().count()
+        return obj
+
+    def save_model(self, request, obj, form, change):
+        """
+        Save the object in the database and remove temporary context item '-num-children-'.
+        """
+        if '-num-children-' in obj.context:
+            del obj.context['-num-children-']
+        super(BootstrapPluginBase, self).save_model(request, obj, form, change)
+
+    def extend_children(self, parent, wanted_children, child_class, child_context=None):
+        """
+        Extend the number of children so that the parent object contains wanted children. No child
+        will be removed.
+        """
+        from cms.api import add_plugin
+        current_children = parent.get_children().count()
+        for _ in range(current_children, wanted_children):
+            child = add_plugin(parent.placeholder, child_class, parent.language, target=parent)
+            if isinstance(child_context, dict):
+                child.context.update(child_context)
+            child.save()
 
     def get_form(self, request, obj=None, **kwargs):
+        """
+        Build the form used for changing the model.
+        """
         widgets = { 'context': JSONMultiWidget(self.partial_fields) }
         form = modelform_factory(BootstrapElement, fields=['context'], widgets=widgets)
         for field in self.partial_fields:
@@ -69,22 +111,31 @@ class PartialFormField(object):
         if not isinstance(widget, widgets.Widget):
             raise AttributeError('The field `widget` must be derived from django.forms.name')
         self.widget = widget
-        self.initial = initial or None
-        self.help_text = help_text or None
+        self.initial = initial or ''
+        self.help_text = help_text or ''
         self.error_class = error_class
 
     def run_validators(self, value):
         if not callable(getattr(self.widget, 'validate', None)):
             return
         errors = []
-        for field_name in self.widget:
+        if callable(getattr(self.widget, '__iter__', None)):
+            for field_name in self.widget:
+                try:
+                    self.widget.validate(value.get(self.name), field_name)
+                except ValidationError, e:
+                    params = { 'label': self.label }
+                    if e.params:
+                        params.update(e.params)
+                    messages = self.error_class([m % params for m in e.messages])
+                    errors.extend(messages)
+        else:
             try:
-                self.widget.validate(value.get(self.name), field_name)
+                self.widget.validate(value.get(self.name))
             except ValidationError, e:
                 params = { 'label': self.label }
                 if e.params:
                     params.update(e.params)
-                messages = self.error_class([m % params for m in e.messages])
-                errors.extend(messages)
+                errors = self.error_class([m % params for m in e.messages])
         if errors:
             raise ValidationError(errors)
