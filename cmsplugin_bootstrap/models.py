@@ -31,13 +31,8 @@ class BootstrapElement(CMSPlugin):
 
     @property
     def inline_styles(self):
-        inline_styles = self.context.get('inline_styles' or {})
-        inline_styles.update(self.plugin_class.get_inline_styles(self))
-        try:
-            return u' '.join(['{0}: {1};'.format(*s) for s in inline_styles.items() if s[1]])
-        except (IndexError, AttributeError):
-            pass
-        return ''
+        inline_styles = self.plugin_class.get_inline_styles(self)
+        return u' '.join(['{0}: {1};'.format(*s) for s in inline_styles.items() if s[1]])
 
     @property
     def data_options(self):
@@ -59,11 +54,3 @@ class BootstrapElement(CMSPlugin):
             pass
         context.update(self.context or {})
         return context
-
-#     @property
-#     def context(self):
-#         try:
-#             return u' '.join(['{0}: {1};'.format(*s) for s in self.get_context().items() if s[1]])
-#         except (IndexError, AttributeError):
-#             pass
-#         return ''
