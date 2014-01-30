@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import json
+from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.html import escape, format_html, format_html_join
@@ -52,6 +53,21 @@ class JSONMultiWidget(widgets.MultiWidget):
         return html
 
 
+if DJANGO_VERSION[0] <= 1 and DJANGO_VERSION[0] <= 5:
+    input_widget = widgets.TextInput
+else:
+    input_widget = widgets.NumberInput
+
+
+class NumberInputWidget(input_widget):
+    validation_pattern = re.compile('^\d+$')
+    validation_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number.")
+
+    def validate(self, value):
+        if not self.validation_pattern.match(value):
+            raise ValidationError(self.validation_message, code='invalid', params={ 'value': value })
+
+
 class MultipleTextInputWidget(widgets.MultiWidget):
     """
     A widgets accepting multiple input values to be used for rendering CSS inline styles.
@@ -91,16 +107,21 @@ class MultipleTextInputWidget(widgets.MultiWidget):
         html = format_html('{0}', format_html_join('\n', '<div class="sibling-field {1}">{0}</div>', widgets))
         return html
 
+    def validate(self, value, field_name):
+        if hasattr(self, 'validation_pattern'):
+            if not hasattr(self, 'validation_message'):
+                raise AttributeError('Widget class is missing element validation_message')
+            val = value.get(field_name)
+            if val and not self.validation_pattern.match(val):
+                self.validation_errors.append(field_name)
+                raise ValidationError(self.validation_message, code='invalid', params={ 'value': val, 'field': field_name })
+
+
+class MultipleNumberWidget(MultipleTextInputWidget):
+    validation_pattern = re.compile('^\d+$')
+    validation_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number.")
+
 
 class MultipleInlineStylesWidget(MultipleTextInputWidget):
-    message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain only a number, ending with px or em.")
-    prog = re.compile('^\d+(px|em)$')
-
-    def __init__(self):
-        super(MultipleInlineStylesWidget, self).__init__(CSS_MARGIN_STYLES + CSS_VERTICAL_SPACING)
-
-    def validate(self, value, field_name):
-        val = value.get(field_name)
-        if val and not self.prog.match(val):
-            self.validation_errors.append(field_name)
-            raise ValidationError(self.message, code='invalid', params={ 'value': val, 'field': field_name })
+    validation_pattern = re.compile(r'^\d+(px|em|%)$')
+    validation_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending with px, em or %%.")
