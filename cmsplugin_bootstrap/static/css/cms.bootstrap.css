@@ -5,3 +5,4 @@
 #bootstrapelement_form div.sibling-field:first-child { margin-left: 0; }
 #bootstrapelement_form div.sibling-field input { width: 95px; margin: 0; }
 #bootstrapelement_form h4 { margin-top: 10px !important; margin-bottom: 10px !important; }
+#bootstrapelement_form input[type="radio"], #bootstrapelement_form input[type="checkbox"] { margin: 0 4px 0 0; }
