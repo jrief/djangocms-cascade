@@ -5,11 +5,10 @@ from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-print 'Now here container'
 from cms.plugin_pool import plugin_pool
 from cmsplugin_bootstrap import settings
 from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase, PartialFormField
-from cmsplugin_bootstrap.widgets import MultipleTextInputWidget, MultipleInlineStylesWidget, CSS_VERTICAL_SPACING
+from cmsplugin_bootstrap.widgets import MultipleInlineStylesWidget
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
@@ -37,9 +36,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             label=_('Display Breakpoint'), initial=settings.BOOTSTRAP_DEFAULT_BREAKPOINT,
             help_text=_("Narrowest display for Bootstrap's grid system.")
         ),
-        PartialFormField('inline_styles', MultipleInlineStylesWidget(),
-            label=_('Inline Styles'), help_text=_('Margins and minimum height for container.')
-        ),
     )
 
     @classmethod
@@ -60,40 +56,24 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     require_parent = True
     child_classes = ['BootstrapColumnPlugin']
     partial_fields = (
-        PartialFormField('num-columns',
+        PartialFormField('-num-children-',  # temporary field, not stored in the database
             widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in range(1, 13))),
             label=_('Number of Columns'), help_text=_('Number of columns to be created with this row.')
         ),
-        PartialFormField('inline_styles', MultipleTextInputWidget(CSS_VERTICAL_SPACING),
+        PartialFormField('inline_styles', MultipleInlineStylesWidget(['min-height']),
             label=_('Inline Styles'), help_text=_('Minimum height for this row.')
         ),
     )
 
     @classmethod
     def get_identifier(cls, obj):
-        try:
-            num_cols = obj.get_children().count()
-            return ungettext_lazy('with {0} column', 'with {0} columns', num_cols).format(num_cols)
-        except (TypeError, KeyError, ValueError):
-            return _('unset')
-
-    def get_object(self, request, object_id):
-        obj = super(BootstrapRowPlugin, self).get_object(request, object_id)
-        if obj:
-            obj.context['num-columns'] = obj.get_children().count()
-        return obj
+        num_cols = obj.get_children().count()
+        return ungettext_lazy('with {0} column', 'with {0} columns', num_cols).format(num_cols)
 
     def save_model(self, request, obj, form, change):
-        from cms.api import add_plugin
-        # adopt number of columns automatically
-        current_cols = obj.get_children().count()
-        wanted_cols = int(obj.context['num-columns'])
-        del obj.context['num-columns']
+        wanted_children = int(obj.context['-num-children-'])
         super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
-        for _ in range(current_cols, wanted_cols):
-            column = add_plugin(obj.placeholder, BootstrapColumnPlugin, obj.language, target=obj)
-            column.context.update({ 'xs-column-width': 'col-xs-12' })
-            column.save()
+        self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_context={ 'xs-column-width': 'col-xs-12' })
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
@@ -102,14 +82,14 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
     require_parent = True
-    child_classes = ['TextPlugin', 'BootstrapRowPlugin', 'CarouselPlugin', 'SimpleWrapperPlugin']
+    child_classes = ['TextPlugin', 'FilerImagePlugin', 'BootstrapRowPlugin', 'SimpleWrapperPlugin', 'ButtonWrapperPlugin', 'CarouselPlugin']
     default_width_widget = PartialFormField('xs-column-width',
         widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                      for i in range(1, 13))),
         label=_('Default Width'), initial='col-xs-12',
         help_text=_('Column width for all devices, down to phones narrower than 768 pixels.'),
     )
-    default_attributes = tuple('{0}-column-width'.format(size) for size in ('xs', 'sm', 'md', 'lg',))
+    default_css_attributes = tuple('{0}-column-width'.format(size) for size in ('xs', 'sm', 'md', 'lg',))
 
     def get_form(self, request, obj=None, **kwargs):
         def get_column_width(prefix):
@@ -173,13 +153,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         except (TypeError, KeyError, ValueError):
             return _('unknown width')
 
-    @classmethod
-    def get_css_classes(cls, obj):
-        css_classes = super(BootstrapColumnPlugin, cls).get_css_classes(obj)
-        for attr in cls.default_attributes:
-            css_class = obj.context.get(attr)
-            if css_class:
-                css_classes.append(css_class)
-        return css_classes
+#     @classmethod
+#     def get_css_classes(cls, obj):
+#         css_classes = super(BootstrapColumnPlugin, cls).get_css_classes(obj)
+#         for attr in cls.default_css_attributes:
+#             css_class = obj.context.get(attr)
+#             if css_class:
+#                 css_classes.append(css_class)
+#         return css_classes
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)

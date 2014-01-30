@@ -10,16 +10,16 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
-    CLASS_CHOICES = ('thumbnail', 'jumbotron',)
-    child_classes = ['FilerImagePlugin', 'TextPlugin']
+    child_classes = ['FilerImagePlugin', 'TextPlugin', 'SlidePlugin']
+    CLASS_CHOICES = ((('', _('Unstyled')),) + tuple((cls, cls.title()) for cls in ('thumbnail', 'jumbotron',)))
     partial_fields = (
         PartialFormField('css_class',
-            widgets.Select(choices=tuple((cls, cls) for cls in CLASS_CHOICES)),
+            widgets.Select(choices=CLASS_CHOICES),
             label=_('Extra Bootstrap Classes'),
             help_text=_('Main Bootstrap CSS class to be added to this element.')
         ),
         PartialFormField('inline_styles',
-            MultipleInlineStylesWidget(),
+            MultipleInlineStylesWidget(['min-height']),
             label=_('Inline Styles'),
             help_text=_('Margins and minimum height for container.')
         ),
@@ -27,7 +27,7 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        name = obj.context.get('css_class') or ''
+        name = obj.context.get('css_class').title() or cls.CLASS_CHOICES[0][1]
         return name.title()
 
     @classmethod

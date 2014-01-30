@@ -14,6 +14,7 @@ class BootstrapPluginBase(CMSPluginBase):
     model = BootstrapElement
     tag_type = 'div'
     change_form_template = 'cms/admin/change_form.html'
+    #change_form_template = 'admin/cms/usersettings/change_form.html'
     render_template = 'cms/plugins/bootstrap/generic.html'
     allow_children = True
 
@@ -29,6 +30,7 @@ class BootstrapPluginBase(CMSPluginBase):
         """
         Returns the descriptive name for the current model
         """
+        return u''
         value = model.css_classes
         if value:
             return unicode(Truncator(value).words(3, truncate=' ...'))
@@ -58,7 +60,7 @@ class BootstrapPluginBase(CMSPluginBase):
         Get the object and augment its context with the number of children.
         """
         obj = super(BootstrapPluginBase, self).get_object(request, object_id)
-        if obj:
+        if obj and isinstance(obj.context, dict):
             obj.context['-num-children-'] = obj.get_children().count()
         return obj
 
@@ -66,7 +68,7 @@ class BootstrapPluginBase(CMSPluginBase):
         """
         Save the object in the database and remove temporary context item '-num-children-'.
         """
-        if '-num-children-' in obj.context:
+        if isinstance(obj.context, dict) and '-num-children-' in obj.context:
             del obj.context['-num-children-']
         super(BootstrapPluginBase, self).save_model(request, obj, form, change)
 

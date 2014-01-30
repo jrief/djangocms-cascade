@@ -1,16 +1,22 @@
-{% extends change_form_template|default:"admin/change_form.html" %}
+{% extends change_form_template|default:"admin/cms/usersettings/change_form.html" %}
 {% load admin_static %}
 
 {% block extrahead %}
-	{{ block.super }}
 	<link rel="stylesheet" type="text/css" href="{% static "css/cms.bootstrap.css" %}" />
 	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" />
+	<script type="text/javascript" src="{% static "admin/js/jquery.js" %}"></script>
+	<script type="text/javascript" src="{% static "admin/js/jquery.init.js" %}"></script>
 {% endblock %}
 
 {% block field_sets %}{% with line=adminform.first_field|first %}
 <div class="container">
+{% if adminform.first_field %}
 	{{ adminform.first_field.errors }}
 	{{ line }}
+{% endif %}
+	<div class="row">
+		<div class="col-xs-12">No no no</div>
+	</div>
 </div>
 {% endwith %}{% endblock field_sets %}
