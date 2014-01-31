@@ -36,11 +36,8 @@ class BootstrapElement(CMSPlugin):
 
     @property
     def data_options(self):
-        try:
-            return u' '.join(['data-{0}={1}'.format(*s) for s in self.options.items() if s[1]])
-        except (IndexError, AttributeError):
-            pass
-        return ''
+        data_options = self.plugin_class.get_data_options(self)
+        return u' '.join(['data-{0}={1}'.format(*o) for o in data_options.items() if o[1]])
 
     def get_full_context(self):
         """

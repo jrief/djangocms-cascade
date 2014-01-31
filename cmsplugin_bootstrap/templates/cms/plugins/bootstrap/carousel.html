@@ -1,6 +1,6 @@
 {% load cms_tags %}
 
-<div id="cmsplugin_{{ instance.id }}" class="carousel slide" style="{{ instance.inline_styles }}" data-ride="carousel">
+<div id="cmsplugin_{{ instance.id }}" class="{{ instance.css_classes }}" style="{{ instance.inline_styles }}"{{ instance.data_options }}>
 	{% with bootstrap_element="carousel" %}
 	<ol class="carousel-indicators">
 	{% for slide in instance.child_plugin_instances %}

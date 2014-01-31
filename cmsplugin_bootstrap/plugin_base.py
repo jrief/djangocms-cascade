@@ -59,6 +59,14 @@ class BootstrapPluginBase(CMSPluginBase):
             inline_styles.update(css_style)
         return inline_styles
 
+    @classmethod
+    def get_data_options(cls, obj):
+        data_options = getattr(cls, 'default_data_options', {})
+        instance_options = obj.context.get('data_options')
+        if instance_options:
+            data_options.update(instance_options)
+        return data_options
+
     def get_object(self, request, object_id):
         """
         Get the object and augment its context with the number of children.

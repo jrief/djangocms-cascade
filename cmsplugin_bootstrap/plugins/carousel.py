@@ -2,7 +2,7 @@
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase, PartialFormField
-from cmsplugin_bootstrap.widgets import NumberInputWidget, MultipleNumberWidget, MultipleInlineStylesWidget
+from cmsplugin_bootstrap.widgets import NumberInputWidget, MultipleTextInputWidget, MultipleInlineStylesWidget
 
 
 class CarouselPlugin(BootstrapPluginBase):
@@ -12,13 +12,14 @@ class CarouselPlugin(BootstrapPluginBase):
     require_parent = True
     render_template = 'cms/plugins/bootstrap/carousel.html'
     default_inline_styles = { 'overflow': 'hidden' }
+    default_data_options = { 'ride': 'carousel' }
     partial_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
             NumberInputWidget(attrs={ 'style': 'width: 30px;' }),
             label=_('Number of Slides'), help_text=_('Number of slides for this carousel.')
         ),
-        PartialFormField('options', MultipleNumberWidget(['interval', 'pause']),
-            label=_('Carousel Options'), help_text=_('Interval and Pause settings.')
+        PartialFormField('data_options', MultipleTextInputWidget(['interval', 'pause']),
+            label=_('Carousel Options'), help_text=_('Adjust interval and pause for the carousel.')
         ),
         PartialFormField('inline_styles', MultipleInlineStylesWidget(['height']),
             label=_('Inline Styles'), help_text=_('Height of carousel.')
