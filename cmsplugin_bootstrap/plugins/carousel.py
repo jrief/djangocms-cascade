@@ -9,13 +9,12 @@ class CarouselPlugin(BootstrapPluginBase):
     name = _("Carousel")
     default_css_class = 'carousel'
     parent_classes = ['BootstrapColumnPlugin']
-    require_parent = True
     render_template = 'cms/plugins/bootstrap/carousel.html'
     default_inline_styles = { 'overflow': 'hidden' }
     default_data_options = { 'ride': 'carousel' }
     partial_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
-            NumberInputWidget(attrs={ 'style': 'width: 30px;' }),
+            NumberInputWidget(attrs={ 'size': '2' }),
             label=_('Number of Slides'), help_text=_('Number of slides for this carousel.')
         ),
         PartialFormField('data_options', MultipleTextInputWidget(['interval', 'pause']),
@@ -43,7 +42,6 @@ class SlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     default_css_class = 'item'
     parent_classes = ['CarouselPlugin']
-    require_parent = True
     generic_child_classes = ['TextPlugin', 'FilerImagePlugin']
 
     @classmethod

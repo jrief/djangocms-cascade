@@ -9,7 +9,6 @@ from cmsplugin_bootstrap.widgets import MultipleInlineStylesWidget
 class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
-    require_parent = True
     generic_child_classes = ['FilerImagePlugin', 'TextPlugin']
     CLASS_CHOICES = ((('', _('Unstyled')),) + tuple((cls, cls.title()) for cls in ('thumbnail', 'jumbotron',)))
     partial_fields = (
@@ -43,7 +42,6 @@ plugin_pool.register_plugin(SimpleWrapperPlugin)
 
 class HorizontalRulePlugin(BootstrapPluginBase):
     name = _("Horizontal Rule")
-    require_parent = False
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     allow_children = False
     tag_type = 'hr'

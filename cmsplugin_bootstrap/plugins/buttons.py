@@ -37,7 +37,6 @@ class ButtonSizeRenderer(RadioFieldRenderer):
 class ButtonWrapperPlugin(BootstrapPluginBase):
     name = _("Button wrapper")
     parent_classes = ['BootstrapColumnPlugin']
-    require_parent = True
     render_template = 'cms/plugins/bootstrap/naked.html'
     generic_child_classes = ['LinkPlugin']
     tag_type = None

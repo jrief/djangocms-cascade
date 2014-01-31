@@ -25,6 +25,7 @@ class ContainerRadioFieldRenderer(RadioFieldRenderer):
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     default_css_class = 'container'
+    require_parent = False
     CONTEXT_WIDGET_CHOICES = (
         ('lg', _('Large (>1200px)')), ('md', _('Medium (>992px)')),
         ('sm', _('Small (>768px)')), ('xs', _('Tiny (<768px)')),
@@ -52,7 +53,6 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
-    require_parent = True
     partial_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
             widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in range(1, 13))),
@@ -79,7 +79,6 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
-    require_parent = True
     generic_child_classes = ['TextPlugin', 'FilerImagePlugin']
     default_width_widget = PartialFormField('xs-column-width',
         widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))

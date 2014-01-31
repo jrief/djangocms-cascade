@@ -15,6 +15,7 @@ class BootstrapPluginBase(CMSPluginBase):
     tag_type = 'div'
     change_form_template = 'cms/admin/change_form.html'
     render_template = 'cms/plugins/bootstrap/generic.html'
+    require_parent = True
     allow_children = True
 
     def _child_classes(self):
