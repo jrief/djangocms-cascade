@@ -11,7 +11,6 @@ class CarouselPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     render_template = 'cms/plugins/bootstrap/carousel.html'
-    child_classes = ['TextPlugin', 'SlidePlugin']
     default_inline_styles = { 'overflow': 'hidden' }
     partial_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
@@ -44,7 +43,7 @@ class SlidePlugin(BootstrapPluginBase):
     default_css_class = 'item'
     parent_classes = ['CarouselPlugin']
     require_parent = True
-    child_classes = ['TextPlugin', 'FilerImagePlugin']
+    generic_child_classes = ['TextPlugin', 'FilerImagePlugin']
 
     @classmethod
     def get_css_classes(cls, obj):

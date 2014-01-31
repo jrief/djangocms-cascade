@@ -24,7 +24,6 @@ class ContainerRadioFieldRenderer(RadioFieldRenderer):
 
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
-    child_classes = ['BootstrapRowPlugin']
     default_css_class = 'container'
     CONTEXT_WIDGET_CHOICES = (
         ('lg', _('Large (>1200px)')), ('md', _('Medium (>992px)')),
@@ -52,9 +51,8 @@ plugin_pool.register_plugin(BootstrapContainerPlugin)
 class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
-    parent_classes = ['BootstrapContainerPlugin']
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     require_parent = True
-    child_classes = ['BootstrapColumnPlugin']
     partial_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
             widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in range(1, 13))),
@@ -82,7 +80,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
     require_parent = True
-    child_classes = ['TextPlugin', 'FilerImagePlugin', 'BootstrapRowPlugin', 'SimpleWrapperPlugin', 'ButtonWrapperPlugin', 'CarouselPlugin']
+    generic_child_classes = ['TextPlugin', 'FilerImagePlugin']
     default_width_widget = PartialFormField('xs-column-width',
         widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                      for i in range(1, 13))),
@@ -152,14 +150,5 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             return ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
         except (TypeError, KeyError, ValueError):
             return _('unknown width')
-
-#     @classmethod
-#     def get_css_classes(cls, obj):
-#         css_classes = super(BootstrapColumnPlugin, cls).get_css_classes(obj)
-#         for attr in cls.default_css_attributes:
-#             css_class = obj.context.get(attr)
-#             if css_class:
-#                 css_classes.append(css_class)
-#         return css_classes
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)

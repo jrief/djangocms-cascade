@@ -3,6 +3,7 @@ from django.forms.models import modelform_factory
 from django.forms import widgets
 from django.forms.util import ErrorList
 from django.core.exceptions import ValidationError
+from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
 from cmsplugin_bootstrap.models import BootstrapElement
 from cmsplugin_bootstrap.widgets import JSONMultiWidget
@@ -13,9 +14,17 @@ class BootstrapPluginBase(CMSPluginBase):
     model = BootstrapElement
     tag_type = 'div'
     change_form_template = 'cms/admin/change_form.html'
-    #change_form_template = 'admin/cms/usersettings/change_form.html'
     render_template = 'cms/plugins/bootstrap/generic.html'
     allow_children = True
+
+    def _child_classes(self):
+        """All registered plugins shall be allowed as children for this plugin"""
+        result = getattr(self, 'generic_child_classes', []) or []
+        for p in plugin_pool.get_all_plugins():
+            if isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes:
+                result.append(p.__name__)
+        return result
+    child_classes = property(_child_classes)
 
     def __init__(self, model=None, admin_site=None, partial_fields=None):
         super(BootstrapPluginBase, self).__init__(model, admin_site)

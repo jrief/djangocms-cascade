@@ -39,7 +39,7 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     render_template = 'cms/plugins/bootstrap/naked.html'
-    child_classes = ['LinkPlugin']
+    generic_child_classes = ['LinkPlugin']
     tag_type = None
     partial_fields = (
         PartialFormField('button-type',
