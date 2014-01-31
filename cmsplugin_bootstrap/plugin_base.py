@@ -2,7 +2,6 @@
 from django.forms.models import modelform_factory
 from django.forms import widgets
 from django.forms.util import ErrorList
-from django.utils.text import Truncator
 from django.core.exceptions import ValidationError
 from cms.plugin_base import CMSPluginBase
 from cmsplugin_bootstrap.models import BootstrapElement
@@ -30,10 +29,6 @@ class BootstrapPluginBase(CMSPluginBase):
         """
         Returns the descriptive name for the current model
         """
-        return u''
-        value = model.css_classes
-        if value:
-            return unicode(Truncator(value).words(3, truncate=' ...'))
         return u''
 
     @classmethod

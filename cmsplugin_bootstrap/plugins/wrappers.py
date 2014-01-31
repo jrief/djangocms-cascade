@@ -10,7 +10,7 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
-    child_classes = ['FilerImagePlugin', 'TextPlugin', 'SlidePlugin']
+    child_classes = ['FilerImagePlugin', 'TextPlugin']
     CLASS_CHOICES = ((('', _('Unstyled')),) + tuple((cls, cls.title()) for cls in ('thumbnail', 'jumbotron',)))
     partial_fields = (
         PartialFormField('css_class',
