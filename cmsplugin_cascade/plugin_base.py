@@ -5,16 +5,16 @@ from django.forms.util import ErrorList
 from django.core.exceptions import ValidationError
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
-from cmsplugin_bootstrap.models import BootstrapElement
-from cmsplugin_bootstrap.widgets import JSONMultiWidget
+from cmsplugin_cascade.models import CascadeElement
+from cmsplugin_cascade.widgets import JSONMultiWidget
 
 
-class BootstrapPluginBase(CMSPluginBase):
+class CascadePluginBase(CMSPluginBase):
     module = 'Bootstrap'
-    model = BootstrapElement
+    model = CascadeElement
     tag_type = 'div'
     change_form_template = 'cms/admin/change_form.html'
-    render_template = 'cms/plugins/bootstrap/generic.html'
+    render_template = 'cms/plugins/generic.html'
     require_parent = True
     allow_children = True
 
@@ -28,7 +28,7 @@ class BootstrapPluginBase(CMSPluginBase):
     child_classes = property(_child_classes)
 
     def __init__(self, model=None, admin_site=None, partial_fields=None):
-        super(BootstrapPluginBase, self).__init__(model, admin_site)
+        super(CascadePluginBase, self).__init__(model, admin_site)
         if partial_fields:
             self.partial_fields = partial_fields
         elif not hasattr(self, 'partial_fields'):
@@ -72,7 +72,7 @@ class BootstrapPluginBase(CMSPluginBase):
         """
         Get the object and augment its context with the number of children.
         """
-        obj = super(BootstrapPluginBase, self).get_object(request, object_id)
+        obj = super(CascadePluginBase, self).get_object(request, object_id)
         if obj and isinstance(obj.context, dict):
             obj.context['-num-children-'] = obj.get_children().count()
         return obj
@@ -83,7 +83,7 @@ class BootstrapPluginBase(CMSPluginBase):
         """
         if isinstance(obj.context, dict) and '-num-children-' in obj.context:
             del obj.context['-num-children-']
-        super(BootstrapPluginBase, self).save_model(request, obj, form, change)
+        super(CascadePluginBase, self).save_model(request, obj, form, change)
 
     def extend_children(self, parent, wanted_children, child_class, child_context=None):
         """
@@ -103,7 +103,7 @@ class BootstrapPluginBase(CMSPluginBase):
         Build the form used for changing the model.
         """
         widgets = { 'context': JSONMultiWidget(self.partial_fields) }
-        form = modelform_factory(BootstrapElement, fields=['context'], widgets=widgets)
+        form = modelform_factory(CascadeElement, fields=['context'], widgets=widgets)
         for field in self.partial_fields:
             form.base_fields['context'].validators.append(field.run_validators)
         setattr(form, 'partial_fields', self.partial_fields)

@@ -4,7 +4,7 @@ from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 
 
-class BootstrapElement(CMSPlugin):
+class CascadeElement(CMSPlugin):
     """
     The container to hold additional bootstrap elements.
     """
@@ -45,7 +45,7 @@ class BootstrapElement(CMSPlugin):
         """
         context = {}
         try:
-            parent = BootstrapElement.objects.get(id=self.parent_id)
+            parent = CascadeElement.objects.get(id=self.parent_id)
             context = parent.get_full_context()
         except ObjectDoesNotExist:
             pass

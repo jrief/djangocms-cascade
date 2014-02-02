@@ -2,11 +2,11 @@
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase, PartialFormField
-from cmsplugin_bootstrap.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
+from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 
 
-class SimpleWrapperPlugin(BootstrapPluginBase):
+class SimpleWrapperPlugin(CascadePluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
     generic_child_classes = ['FilerImagePlugin', 'TextPlugin']
@@ -40,12 +40,12 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(SimpleWrapperPlugin)
 
 
-class HorizontalRulePlugin(BootstrapPluginBase):
+class HorizontalRulePlugin(CascadePluginBase):
     name = _("Horizontal Rule")
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     allow_children = False
     tag_type = 'hr'
-    render_template = 'cms/plugins/bootstrap/single.html'
+    render_template = 'cms/plugins/single.html'
     partial_fields = (
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(['margin-top', 'margin-bottom']),

@@ -6,9 +6,9 @@ from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_bootstrap import settings
-from cmsplugin_bootstrap.plugin_base import BootstrapPluginBase, PartialFormField
-from cmsplugin_bootstrap.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade import settings
+from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
+from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
@@ -22,7 +22,7 @@ class ContainerRadioFieldRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapContainerPlugin(BootstrapPluginBase):
+class BootstrapContainerPlugin(CascadePluginBase):
     name = _("Container")
     default_css_class = 'container'
     require_parent = False
@@ -49,7 +49,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
-class BootstrapRowPlugin(BootstrapPluginBase):
+class BootstrapRowPlugin(CascadePluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
@@ -76,7 +76,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
 
-class BootstrapColumnPlugin(BootstrapPluginBase):
+class BootstrapColumnPlugin(CascadePluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
     generic_child_classes = ['TextPlugin', 'FilerImagePlugin']

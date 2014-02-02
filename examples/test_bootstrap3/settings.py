@@ -7,7 +7,7 @@ PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SITE_ID = 1
 
-ROOT_URLCONF = 'testapp.urls'
+ROOT_URLCONF = 'test_bootstrap3.urls'
 
 SECRET_KEY = 'secret'
 
@@ -17,6 +17,10 @@ DATABASES = {
         'USER': 'bootstrap',
         'PASSWORD': 'twitter',
         'ENGINE': 'django.db.backends.mysql',
+    },
+    'test': {
+        'NAME': 'bootstrap_develop.sqlite',
+        'ENGINE': 'django.db.backends.sqlite3',
     },
 }
 
@@ -31,7 +35,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     'djangocms_text_ckeditor',
-    'cmsplugin_bootstrap',
+    'cmsplugin_cascade',
     'cms',
     'cms.stacks',
     'menus',
@@ -45,7 +49,7 @@ INSTALLED_APPS = (
     'cmsplugin_filer_folder',
     'cmsplugin_filer_image',  # alternative to 'cms.plugins.picture'
     'sekizai',
-    'testapp',
+    'test_bootstrap3',
 )
 
 MIDDLEWARE_CLASSES = (

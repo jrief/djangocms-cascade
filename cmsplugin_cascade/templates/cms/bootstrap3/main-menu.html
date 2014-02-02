@@ -1,4 +1,4 @@
-{% load bootstrap_tags %}
+{% load bootstrap3_tags %}
 {% for child in children %}
 <li class="{% if child.selected or child.ancestor %}active{% endif %}{% if child.children %} dropdown{% endif %}">
 	{% if child.children %}
