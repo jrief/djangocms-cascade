@@ -6,7 +6,9 @@
 .settings
 .coverage
 .DS_Store
+.sass-cache
 build
 env*
 dist
+htmlcov
 djangocms_style.egg-info
