@@ -11,10 +11,9 @@
 
 {% block field_sets %}{% with line=adminform.first_field %}
 <div class="container">
-{% if line.data %}
-	{{ adminform.first_field.errors }}
+	{{ line.errors }}
 	{{ line }}
-{% else %}
+{% if not line.value %}
 	<div class="row">
 		<div class="col-xs-12">
 			<h3>{% trans "There are no further settings for this plugin" %}</h3>
