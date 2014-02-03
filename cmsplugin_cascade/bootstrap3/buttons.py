@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
+from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):
@@ -40,6 +41,8 @@ class ButtonWrapperPlugin(CascadePluginBase):
     render_template = 'cms/plugins/naked.html'
     generic_child_classes = ['LinkPlugin']
     tag_type = None
+    default_css_class = 'btn'
+    default_css_attributes = ('button-type', 'button-size', 'button-options',)
     partial_fields = (
         PartialFormField('button-type',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonTypeRenderer.BUTTON_TYPES.items()),
@@ -55,18 +58,12 @@ class ButtonWrapperPlugin(CascadePluginBase):
             widgets.CheckboxSelectMultiple(choices=(('btn-block', _('Block level')), ('disabled', _('Disabled')),)),
                 label=_('Button Options'),
         ),
+        PartialFormField('inline_styles',
+            MultipleInlineStylesWidget(['margin-top', 'margin-right', 'margin-bottom', 'margin-left']),
+            label=_('Inline Styles'),
+            help_text=_('Margins for this button wrapper.')
+        ),
     )
-
-    @classmethod
-    def get_css_classes(cls, obj):
-        css_classes = ['btn']
-        for attr in ('button-type', 'button-size', 'button-options',):
-            css_class = obj.context.get(attr)
-            if isinstance(css_class, basestring):
-                css_classes.append(css_class)
-            elif isinstance(css_class, list):
-                css_classes.extend(css_class)
-        return css_classes
 
     @classmethod
     def get_identifier(cls, obj):
