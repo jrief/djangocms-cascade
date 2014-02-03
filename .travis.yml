@@ -4,8 +4,8 @@ python:
   - 2.7
 
 env:
-  - DJANGO=1.5.5 TEST=testapp
-  - DJANGO=1.6.1 TEST=testapp.tests
+  - DJANGO=1.5.5 TEST=bootstrap3
+  - DJANGO=1.6.1 TEST=bootstrap3.tests
 
 branches:
   only:
@@ -21,4 +21,4 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
- - cd examples && ./manage.py test $TEST
+ - cd examples && ./manage.py test --settings=bootstrap3.test_settings $TEST

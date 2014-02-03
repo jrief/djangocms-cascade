@@ -1,7 +1,7 @@
 [run]
 branch = True
 source =
-    cmsplugin_bootstrap
+    cmsplugin_cascade
 [report]
 precision = 2
 omit = ../*migrations*
