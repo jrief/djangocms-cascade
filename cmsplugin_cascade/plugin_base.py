@@ -48,8 +48,10 @@ class CascadePluginBase(CMSPluginBase):
             css_classes.append(cls.default_css_class)
         for attr in getattr(cls, 'default_css_attributes', []):
             css_class = obj.context.get(attr)
-            if css_class:
+            if isinstance(css_class, basestring):
                 css_classes.append(css_class)
+            elif isinstance(css_class, list):
+                css_classes.extend(css_class)
         return css_classes
 
     @classmethod
