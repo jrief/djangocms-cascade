@@ -1,54 +1,39 @@
-.. djangocms-bootstrap documentation master file
+.. djangocms-cascade
 
-Welcome to djangocms-bootstrap's documentation!
-===============================================
+Welcome to djangocms-cascade's documentation!
+=============================================
+**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >3.0 to add various HTML elements
+from CSS frameworks, such as `Twitter Bootstrap`_ or the `960 Grid System`_ to the Django CMS
+templatetag placeholder_. Currently Bootstrap-3.x is supported, but this module makes it
+very easy to add other CSS frameworks or to extend an existing collection with additional elements.
+
+**DjangoCMS-Cascade** allows web editors to layout their pages, without having to edit Django
+templates. In most cases, one template with one single placeholder is enough. The editor then
+can subdivide that placeholder into rows and columns, and add additional elements such as buttons,
+rulers, or even the Bootstrap Carousel. Some basic understanding of the DOM_ and the grid system
+from the chosen CSS framework is required though.
+
 `Twitter Bootstrap`_ is a well documented CSS framework which gives web designers lots of
 possibilities to add a consistent structure to their pages. This collection of DjangoCMS plugins
-offers some of these predefined HTML elements to web designers.
+offers a subset of these predefined elements to web designers.
 
-**DjangoCMS-Bootstrap** is a collection of CMS plugins, which can be used to manipulate the
-structure inside any of the DjangoCMS_ ``{% placeholder %}`` fields.
+Project goals
+-------------
+#. Make available a meaningful subset of widgets as documented for the Bootstrap framework. With
+   this module, then in many cases, **DjangoCMS** can be operated with one single template,
+   containing a generic templatetag ``{% placeholder %}`` for the main content of each page.
 
-With this collection of plugins, a web designer with some basic understanding of the DOM_ and the
-`Bootstrap grid system`_, can create structured web pages without having to write any extra Django
-template.
+#. Create a modular system, which allows programmers to add simple widget code, without having to
+   implement an extra DjangoCMS plugin.
 
-The **First Goal of this project** is to make available the full collection of widgets as documented
-for the Bootstrap framework. With this plugin, then in many cases, **DjangoCMS** can be operated
-with one single template, which offers a generic placeholder for the main content of each page.
-
-The **Second Goal of this project** is to create an infrastructure which allows programmers to
-easily add simple widget code, without having to implement an extra DjangoCMS plugin.
-
-Example
--------
-|column-editor|
-
-This shows the plugin editor as used for the `Bootstrap grid system`_.
-
-DjangoCMS version 3.0
----------------------
-Django CMS 3.0 introduced a new frontend editing system as well as a customizable Django admin skin.
-
-In the new system, placeholders_ and their plugins_ are no longer managed in the admin site, but
-only from the frontend. Now, these plugins can be nested giving the possibility to create plugins
-inside other plugins. In addition, the system offer two editing views:
-
-* content view, for editing the configuration and content of plugins.
-* structure view, in which plugins can be added and rearranged.
-
-In structure mode, each placeholder displays a pull down menu on its right side: |pull-down|. When
-the users passes over this icon, a menu pulls out and offers a section of plugins named
-**Bootstrap**. The kind of plugin depends on the configuration and the current plugin type.
-
-.. note:: Not every **Bootstrap** plugin can be added as a child to another plugin.
-
+#. Allow to extend this DjangoCMS extension to be used with other CSS frameworks.
 
 Contents:
 
 .. toctree::
 
   installation
+  usage
   scaffolding
   buttons
   thumbnails
@@ -66,9 +51,10 @@ Indices and tables
 
 .. _Django: https://www.djangoproject.com/
 .. _DjangoCMS: https://www.django-cms.org/
-.. _Twitter Bootstrap: http://getbootstrap.com/2.3.2/
+.. _Twitter Bootstrap: http://getbootstrap.com/
+.. _960 Grid System: http://960.gs/
+.. _placeholder: https://django-cms.readthedocs.org/en/latest/advanced/templatetags.html#placeholder
 .. _DOM: http://www.w3.org/DOM/
-.. _placeholders: https://django-cms.readthedocs.org/en/latest/advanced/templatetags.html#placeholder
 .. _plugins: https://django-cms.readthedocs.org/en/latest/getting_started/plugin_reference.html
 .. _Bootstrap grid system: http://getbootstrap.com/2.3.2/scaffolding.html#gridSystem
 .. |column-editor| image:: _static/bootstrap-column-editor.png
