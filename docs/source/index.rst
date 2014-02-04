@@ -1,45 +1,34 @@
-.. djangocms-cascade
+.. djangocms-cascade:
 
-Welcome to djangocms-cascade's documentation!
-=============================================
-**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >3.0 to add various HTML elements
-from CSS frameworks, such as `Twitter Bootstrap`_ or the `960 Grid System`_ to the Django CMS
-templatetag placeholder_. Currently Bootstrap-3.x is supported, but this module makes it
-very easy to add other CSS frameworks or to extend an existing collection with additional elements.
+Welcome to DjangoCMS-Cascade's documentation
+============================================
 
-**DjangoCMS-Cascade** allows web editors to layout their pages, without having to edit Django
-templates. In most cases, one template with one single placeholder is enough. The editor then
-can subdivide that placeholder into rows and columns, and add additional elements such as buttons,
-rulers, or even the Bootstrap Carousel. Some basic understanding of the DOM_ and the grid system
-from the chosen CSS framework is required though.
+Project's home
+--------------
+Check for the latest release of this project on Github_.
 
-`Twitter Bootstrap`_ is a well documented CSS framework which gives web designers lots of
-possibilities to add a consistent structure to their pages. This collection of DjangoCMS plugins
-offers a subset of these predefined elements to web designers.
+Please report bugs or ask questions using the `Issue Tracker`_.
 
-Project goals
--------------
-#. Make available a meaningful subset of widgets as documented for the Bootstrap framework. With
-   this module, then in many cases, **DjangoCMS** can be operated with one single template,
-   containing a generic templatetag ``{% placeholder %}`` for the main content of each page.
-
+Project's goals
+---------------
 #. Create a modular system, which allows programmers to add simple widget code, without having to
-   implement an extra DjangoCMS plugin.
+   implement an extra Django-CMS_ plugins for each of them.
 
-#. Allow to extend this DjangoCMS extension to be used with other CSS frameworks.
+#. Make available a meaningful subset of widgets as available for different CSS frameworks, such as
+   `Twitter Bootstrap`_. With this module in many configurations, **DjangoCMS** can be operated
+   using one single template, containing one generic placeholder.
+
+#. Extend this DjangoCMS plugin, to be used with other CSS frameworks such as `Foundation 5`_,
+   `Grid System 960`_, Unsemantic_ and others.
 
 Contents:
-
+---------
 .. toctree::
 
+  introduction
   installation
-  usage
-  scaffolding
-  buttons
-  thumbnails
-  carousel
-  navbar
-  add_plugins
+  tutorial
+  customized-plugins
   history
 
 Indices and tables
@@ -49,15 +38,10 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. _Django: https://www.djangoproject.com/
-.. _DjangoCMS: https://www.django-cms.org/
+.. _Github: https://github.com/jrief/djangocms-cascade
+.. _Issue Tracker: https://github.com/jrief/djangocms-cascade/issues
+.. _Django-CMS: https://www.django-cms.org/
 .. _Twitter Bootstrap: http://getbootstrap.com/
-.. _960 Grid System: http://960.gs/
-.. _placeholder: https://django-cms.readthedocs.org/en/latest/advanced/templatetags.html#placeholder
-.. _DOM: http://www.w3.org/DOM/
-.. _plugins: https://django-cms.readthedocs.org/en/latest/getting_started/plugin_reference.html
-.. _Bootstrap grid system: http://getbootstrap.com/2.3.2/scaffolding.html#gridSystem
-.. |column-editor| image:: _static/bootstrap-column-editor.png
-    :width: 803
-.. |pull-down| image:: _static/edit-plugins.png
-    :width: 48
+.. _Foundation 5: http://foundation.zurb.com/
+.. _Grid System 960: http://960.gs/
+.. _Unsemantic: http://unsemantic.com/
