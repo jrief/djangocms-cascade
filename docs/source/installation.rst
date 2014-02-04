@@ -16,7 +16,7 @@ into the folders ``static/css`` and ``static/js`` of the project's tree. Alterna
 using a Content Delivery Network.
 
 .. note:: For simplicity, this configuration assumes, that the Bootstrap framework is used. In case
-          another CSS is used, please adopt some settings accordingly.
+          another CSS is used, please adopt some of the proposed settings accordingly.
 
 Dependencies
 ------------
@@ -47,11 +47,11 @@ Configure the used CSS framework, for instance, when using Bootstrap 3::
 
 	CMS_CASCADE_PLUGINS = ('bootstrap3',)
 
-or if only the grid containers from the Bootstrap 3 framework shall be used::
+or, if only the grid containers from the Bootstrap 3 framework shall be used::
 
 	CMS_CASCADE_PLUGINS = ('bootstrap3.container',)
 
-or if the Grid System 960 shall be used::
+or, if the Grid System 960 shall be used::
 
 	CMS_CASCADE_PLUGINS = ('gs960',)
 

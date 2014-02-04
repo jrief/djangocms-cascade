@@ -21,6 +21,12 @@ offers a subset of these predefined elements to web designers.
 **Grid System 960** is a wildly used CSS framework, which offers a fixed-sized grid system made
 out of 12 or alternatively 16 columns.
 
+Extensibility
+-------------
+This module requires one database table with one column to store all data in a JSON object.
+Therefore it can easily be extended, because new data structures are added to that JSON object
+without requiring a database migration.
+
 .. _Django-CMS: https://github.com/divio/django-cms/
 .. _Twitter Bootstrap: http://getbootstrap.com/
 .. _Grid System 960: http://960.gs/

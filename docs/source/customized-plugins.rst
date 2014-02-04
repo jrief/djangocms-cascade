@@ -4,8 +4,8 @@ Add Customized Plugins
 ======================
 Since all Bootstrap plugins are derived from the same base class, there is no need to add an
 additional database model, when adding a customized plugin to a project. The database model, as
-declared in ``CascadeElementCascadeElement`` stores everything in a single JSON fields, which
-handles all the arbitrary data. This makes it very easy to add new plugins to this project.
+declared in ``CascadeElement`` stores everything in a single JSON fields, which handles all the
+arbitrary data. This makes it very easy to add new plugins to this project.
 
 Simple Example
 --------------
@@ -20,8 +20,9 @@ Simple Example
 	
 	plugin_pool.register_plugin(StylishPlugin)
 
-This plugin is very simple and can not be configured. Thus, if the editor form pops up, a dumb
-message appears, telling that “There are no further settings for this plugin”.
+This plugin is very simple and just renders static content which has been declared in the template.
+Thus, if the editor form pops up, a dumb message appears, telling that “There are no further
+settings for this plugin”. See below, which additional options can be added to this plugin.
 
 Customize Stored Data
 ---------------------
@@ -51,8 +52,9 @@ In the plugin's editor, now the form pops up with a single select box, where the
 between red and green elements.
 
 A ``PartialFormField`` accepts five arguments:
-* The name of the field. It must be unique in the given list ``partial_fields``.
-* The widget. This can be a Django widget or any valid widget derived from it.
+
+* The name of the field. It must be unique in the given list of ``partial_fields``.
+* The widget. This can be a built-in Django widget or any valid widget derived from it.
 * The ``label`` used to describe the field. If omitted, the ``name`` of the partial form field is used.
 * An optional ``initial`` value to be used with Radio- or Select fields.
 * A ``help_text`` to describe the field's purpose.
@@ -61,7 +63,7 @@ Widgets for a Partial Form Field
 --------------------------------
 For single text fields or select boxes, Django's built-in widgets, such as ``widgets.TextInput``
 or ``widgets.RadioSelect`` can be used. Sometimes these simple widgets are not enough, therefore
-some special input widgets have been prepared to be used with **djangocms-cascade**. They are all
+some special input widgets have been prepared to be used with **DjangoCMS-Cascade**. They are all
 part of the module ``cmsplugin_cascade.widgets``.
 
 :MultipleTextInputWidget:
@@ -83,31 +85,31 @@ part of the module ``cmsplugin_cascade.widgets``.
 Plugin Attribute Reference
 --------------------------
 ``CascadePluginBase`` is derived from ``CMSPluginBase``, so all `CMSPluginBase attributes`_ can
-also be overridden by plugins derived from ``CascadePluginBase``. Please refer to the documentation
-for details.
+also be overridden by plugins derived from ``CascadePluginBase``. Please refer to their
+documentation for details.
 
-Additionally ``BootstrapPluginBase`` allows the following attributes. The default is ``None``, so if
-you don't specify them, they won't show up in the plugin editor.
+Additionally ``BootstrapPluginBase`` allows the following attributes:
 
 :name:
 	This name is shown in the pull down menu in structure view. There is not default value.
 
 :tag_type:
-	Default: the ``div`` element.
+	Default: ``div``.
 
-	A HTML element into which this plugin is wrapped. If ``tag_type`` is none, the plugin is
-	considered as “naked” and rendered without a wrapping DOM element.
+	A HTML element into which this plugin is wrapped. If ``tag_type`` is ``None``, then the plugin
+	is 	considered as “naked” and rendered without a wrapping DOM element. This for instance is
+	useful to render the ``<a>`` element as button, using styling classes.
 
 :require_parent:
 	Default: ``True``. This differs from ``CMSPluginBase``.
 
-	Is it required that this plugin is a child of another plugin? Otherwise is can be added to any
-	placeholder.
+	Is it required that this plugin is a child of another plugin? Otherwise the plugin can be added
+	to any placeholder.
 
 :parent_classes:
 	Default: None.
 
-	A list of Plugin Class Names. If this is set, this plugin may only be added to plugins listed
+	A list of Plugin Class Names. If this is set, the plugin may only be added to plugins listed
 	here.
 
 :allow_children:
@@ -117,9 +119,9 @@ you don't specify them, they won't show up in the plugin editor.
 
 :child_classes:
 	Default: A list of plugins, which are allowed as children of this plugin. This differs from
-	``CMSPluginBase``.
+	``CMSPluginBase``, where this attribute is None.
 
-	Do not override this attribute. **djangocms-cascade** automatically generates a list of allowed
+	Do not override this attribute. **DjangoCMS-Cascade** automatically generates a list of allowed
 	children plugins, by evaluating the list ``parent_classes`` from the other plugins in the pool.
 
 	Plugins, which are part of the plugin pool, but which do not specify their parents using the

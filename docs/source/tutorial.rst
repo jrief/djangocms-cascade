@@ -26,10 +26,10 @@ type. The first plugin to add is a container:
 |add-container|
 
 The containers editing form now asks for the minimum width, its underlying grid shall use. If you
-need a grid system, which independently off the display size, maintains all columns without
-stacking, then choose *Tiny*. Otherwise if columns shall stack on smaller displays, then choose a
-larger breakpoint. For details read the section `Stacked to Horizontal`_ on the Bootstrap's
-documentation site.
+need a grid system, which maintains all columns without stacking, independently of the display size,
+then choose *Tiny*. Otherwise if columns shall align on larger display but stack on smaller ones,
+then choose a larger breakpoint. For details read the section `Stacked to Horizontal`_ on the
+Bootstrap's documentation site.
 
 |edit-container|
 
