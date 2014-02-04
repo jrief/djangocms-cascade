@@ -7,10 +7,6 @@ env:
   - DJANGO=1.5.5 TEST=bootstrap3
   - DJANGO=1.6.1 TEST=bootstrap3.tests
 
-branches:
-  only:
-    - bootstrap-2.3.2
-
 install:
   - pip install -q Django==$DJANGO --use-mirrors
   - pip install -r requirements.txt --use-mirrors
