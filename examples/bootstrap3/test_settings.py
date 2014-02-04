@@ -95,3 +95,5 @@ TEMPLATE_DIRS = (
 LANGUAGES = (
     ('en', 'English'),
 )
+
+CMS_CASCADE_PLUGINS = ('bootstrap3',)

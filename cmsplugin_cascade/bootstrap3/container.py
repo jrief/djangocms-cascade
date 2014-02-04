@@ -6,9 +6,9 @@ from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade import settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.bootstrap3 import settings
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
@@ -33,7 +33,7 @@ class BootstrapContainerPlugin(CascadePluginBase):
     partial_fields = (
         PartialFormField('breakpoint',
             widgets.RadioSelect(choices=CONTEXT_WIDGET_CHOICES, renderer=ContainerRadioFieldRenderer),
-            label=_('Display Breakpoint'), initial=settings.BOOTSTRAP_DEFAULT_BREAKPOINT,
+            label=_('Display Breakpoint'), initial=settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINT,
             help_text=_("Narrowest display for Bootstrap's grid system.")
         ),
     )

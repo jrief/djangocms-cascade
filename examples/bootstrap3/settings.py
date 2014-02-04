@@ -137,6 +137,8 @@ CMS_PLACEHOLDER_CONF = {
     },
 }
 
+CMS_CASCADE_PLUGINS = ('bootstrap3',)
+
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono',
