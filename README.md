@@ -51,24 +51,19 @@ The **Second Goal of this project** is to create an infrastructure which allows 
 easily add simple widget code, without having to implement an extra DjangoCMS plugin. This avoids
 almost empty extra database tables.
 
-Example
--------
-This shows the plugin editors to add a Bootstrap column container.
-
-![Example](https://raw.github.com/jrief/djangocms-bootstrap/master/docs/source/_static/bootstrap-column-editor.png)
-
 History
 -------
 This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-text-wrapper) for the
 DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960. 
 
 DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins. This feature made
-it possible to implement a [similar collection of plugins](https://github.com/jrief/djangocms-bootstrap),
-restricted however for Twitter Bootstrap version 2.3.2.
+it possible to implement a [similar collection of plugins](https://github.com/jrief/djangocms-cascade/tree/bootstrap-2.3.2), named **DjangoCMS-Bootstrap**
+and restricted to Twitter Bootstrap version 2.3.2.
 
-With **DjangoCMS-Cascade**, this limitation also has been dropped, enabeling it to be used for every
+In **DjangoCMS-Cascade**, this limitation also has been dropped, enabeling it to be used for every
 kind of CSS framework - thus it has been renamed again. Additionally, the database model has been
-reduced into one single field, which now stores all kind of arbitrary data.
+reduced into one single field, which now stores all kind of arbitrary data and to be extensible in
+a very flexible way.
 
 License
 -------
