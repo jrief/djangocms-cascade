@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 from setuptools import setup, find_packages
-from cmsplugin_bootstrap import __version__
+from cmsplugin_cascade import __version__
 
 
 CLASSIFIERS = [
@@ -23,12 +23,12 @@ def read(fname):
     return os.popen('pandoc -t rst {0}'.format(readme_file)).read()
 
 setup(
-    name='djangocms-bootstrap',
+    name='djangocms-cascade',
     version=__version__,
     description='Collection of plugins for DjangoCMS',
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
-    url='https://github.com/jrief/djangocms-bootstrap',
+    url='https://github.com/jrief/djangocms-cascade',
     packages=find_packages(exclude=['examples', 'docs']),
     install_requires=[],
     license='LICENSE-MIT',
