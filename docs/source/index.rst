@@ -27,6 +27,7 @@ Contents:
 
   introduction
   installation
+  demo
   tutorial
   customized-plugins
   history
