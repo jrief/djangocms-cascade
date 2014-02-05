@@ -22,7 +22,8 @@ class CascadePluginBase(CMSPluginBase):
         """All registered plugins shall be allowed as children for this plugin"""
         result = getattr(self, 'generic_child_classes', []) or []
         for p in plugin_pool.get_all_plugins():
-            if isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes:
+            if isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes \
+                and p.__name__ not in result:
                 result.append(p.__name__)
         return result
     child_classes = property(_child_classes)
