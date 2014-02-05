@@ -7,6 +7,7 @@
 .coverage
 .DS_Store
 .sass-cache
+*.sqlite
 build
 env*
 dist
