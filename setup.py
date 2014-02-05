@@ -25,7 +25,7 @@ def read(fname):
 setup(
     name='djangocms-cascade',
     version=__version__,
-    description='Collection of plugins for DjangoCMS',
+    description='Collection of plugins for DjangoCMS to work on a subset of the DOM inside placeholders',
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     url='https://github.com/jrief/djangocms-cascade',
