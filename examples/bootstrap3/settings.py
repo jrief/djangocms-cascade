@@ -13,10 +13,8 @@ SECRET_KEY = 'secret'
 
 DATABASES = {
     'default': {
-        'NAME': 'bootstrap_develop',
-        'USER': 'bootstrap',
-        'PASSWORD': 'twitter',
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'database.sqlite',
     },
 }
 
