@@ -42,15 +42,6 @@ Build status
 ------------
 [![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
 
-The **First Goal of this project** is to make available the full collection of widgets as documented
-for the Bootstrap framework. With this plugin, then in many cases, **DjangoCMS** can be operated
-with one single template. Such a template has to offer a generic placeholder for the main content of
-each page.
-
-The **Second Goal of this project** is to create an infrastructure which allows programmers to
-easily add simple widget code, without having to implement an extra DjangoCMS plugin. This avoids
-almost empty extra database tables.
-
 History
 -------
 This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-text-wrapper) for the
