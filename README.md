@@ -62,4 +62,4 @@ Released under the terms of MIT License.
 
 Copyright (C) 2014, Jacob Rief <jacob.rief@gmail.com>
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jrief/djangocms-bootstrap/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jrief/djangocms-cascade/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
