@@ -1,5 +1,5 @@
 include LICENSE-MIT
 include README.md
-recursive-include cmsplugin_bootstrap/templates *
-recursive-include cmsplugin_bootstrap *.py
-recursive-exclude * *.pyc
+include setup.py
+recursive-include cmsplugin_cascade/templates *
+recursive-include cmsplugin_cascade *.py
