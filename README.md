@@ -9,8 +9,9 @@ Add DOM elements to a Django-CMS placeholder
 from CSS frameworks, such as [Twitter Bootstrap](http://getbootstrap.com/) or the
 [960 Grid System](http://960.gs/) to any CMS
 [placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
-Currently Bootstrap-3.x is supported, but this module makes it very easy to add other CSS frameworks
-or to extend an existing collection with additional elements.
+Currently **Bootstrap-3.x** and **960.gs** are supported, but this module makes it very easy to
+add your preferred CSS frameworks. It is also very easy to extend an existing collection with
+additional elements.
 
 **DjangoCMS-Cascade** allows web editors to layout their pages, without having to edit Django
 templates. In most cases, one template with one single placeholder is enough. The editor then
@@ -29,7 +30,8 @@ Features
 * Add [thumbnails](http://getbootstrap.com/components/#thumbnails) and images in a responsive way.
 * It is very easy to integrate additional elements from the preferred CSS framework, sometimes with
   less than 20 lines of code.
-* Other CSS frameworks can easy be added in a pluggable manner.
+* Currenty **Bootstrap-3.x** and **960.gs** are supported, but other CSS frameworks can be easily
+  added in a pluggable manner.
 
 For instance, implementing the Bootstrap Carousel, required 50 lines of Python code and a simple
 Django template.
@@ -48,8 +50,9 @@ This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-te
 DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960. 
 
 DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins. This feature made
-it possible to implement a [similar collection of plugins](https://github.com/jrief/djangocms-cascade/tree/bootstrap-2.3.2), named **DjangoCMS-Bootstrap**
-and restricted to Twitter Bootstrap version 2.3.2.
+it possible to implement a
+[similar collection of plugins](https://github.com/jrief/djangocms-cascade/tree/bootstrap-2.3.2),
+named **DjangoCMS-Bootstrap** and restricted to Twitter Bootstrap version 2.3.2.
 
 In **DjangoCMS-Cascade**, this limitation also has been dropped, enabeling it to be used for every
 kind of CSS framework - thus it has been renamed again. Additionally, the database model has been
