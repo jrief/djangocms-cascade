@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'CascadeElement'
-        db.create_table(u'cmsplugin_cascadeelement', (
+        db.create_table(u'cmsplugin_cascade_cascadeelement', (
             ('cmsplugin_ptr', self.gf('django.db.models.fields.related.OneToOneField')(related_name='+', unique=True, primary_key=True, to=orm['cms.CMSPlugin'])),
             ('context', self.gf('jsonfield.fields.JSONField')(default={}, null=True, blank=True)),
         ))
@@ -18,7 +18,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Deleting model 'CascadeElement'
-        db.delete_table(u'cmsplugin_cascadeelement')
+        db.delete_table(u'cmsplugin_cascade_cascadeelement')
 
 
     models = {
@@ -44,7 +44,7 @@ class Migration(SchemaMigration):
             'slot': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'})
         },
         u'cmsplugin_cascade.cascadeelement': {
-            'Meta': {'object_name': 'CascadeElement', 'db_table': "u'cmsplugin_cascadeelement'", '_ormbases': ['cms.CMSPlugin']},
+            'Meta': {'object_name': 'CascadeElement', '_ormbases': ['cms.CMSPlugin']},
             'cmsplugin_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'+'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['cms.CMSPlugin']"}),
             'context': ('jsonfield.fields.JSONField', [], {'default': '{}', 'null': 'True', 'blank': 'True'})
         }

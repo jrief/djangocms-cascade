@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
+from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleTextInputWidget, MultipleInlineStylesWidget
+from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 
 
-class CarouselPlugin(CascadePluginBase):
+class CarouselPlugin(BootstrapPluginBase):
     name = _("Carousel")
     default_css_class = 'carousel'
     parent_classes = ['BootstrapColumnPlugin']
@@ -38,11 +39,11 @@ class CarouselPlugin(CascadePluginBase):
 plugin_pool.register_plugin(CarouselPlugin)
 
 
-class SlidePlugin(CascadePluginBase):
+class SlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     default_css_class = 'item'
     parent_classes = ['CarouselPlugin']
-    generic_child_classes = ['TextPlugin', 'FilerImagePlugin']
+    generic_child_classes = ('TextPlugin', 'FilerImagePlugin',)
 
     @classmethod
     def get_css_classes(cls, obj):
