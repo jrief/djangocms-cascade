@@ -1,0 +1,7 @@
+{% load cms_tags %}
+
+<carousel interval="{{ instance.options.interval|default:5000 }}" style="{{ instance.inline_styles }}">
+	{% for slide in instance.child_plugin_instances %}
+	<slide>{% render_plugin slide %}</slide>
+	{% endfor %}
+</carousel>

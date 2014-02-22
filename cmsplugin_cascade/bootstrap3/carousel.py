@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
+import os
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleTextInputWidget, MultipleInlineStylesWidget
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.cms_plugins import framework
 
 
 class CarouselPlugin(BootstrapPluginBase):
     name = _("Carousel")
     default_css_class = 'carousel'
     parent_classes = ['BootstrapColumnPlugin']
-    render_template = 'cms/bootstrap3/carousel.html'
+    render_template = os.path.join('cms', framework, 'carousel.html')
     default_inline_styles = { 'overflow': 'hidden' }
     default_data_options = { 'ride': 'carousel' }
     partial_fields = (
