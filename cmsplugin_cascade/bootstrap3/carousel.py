@@ -12,6 +12,7 @@ from cmsplugin_cascade.cms_plugins import framework
 class CarouselPlugin(BootstrapPluginBase):
     name = _("Carousel")
     default_css_class = 'carousel'
+    default_css_attributes = ('options',)
     parent_classes = ['BootstrapColumnPlugin']
     render_template = os.path.join('cms', framework, 'carousel.html')
     default_inline_styles = { 'overflow': 'hidden' }
@@ -32,15 +33,6 @@ class CarouselPlugin(BootstrapPluginBase):
             label=_('Inline Styles'), help_text=_('Height of carousel.')
         ),
     )
-
-    @classmethod
-    def get_css_classes(cls, obj):
-        css_classes = super(CarouselPlugin, cls).get_css_classes(obj)
-        options = obj.context.get('options')
-        # add css class 'slide' to animate the carousel
-        if 'slide' in options:
-            css_classes.append('slide')
-        return css_classes
 
     @classmethod
     def get_identifier(cls, obj):
