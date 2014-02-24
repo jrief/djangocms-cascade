@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from django.forms import widgets
 from django.forms.util import flatatt
 from django.utils.encoding import force_text
@@ -8,6 +9,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleTextInputWidget, MultipleInlineStylesWidget
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.cms_plugins import framework
 
 
 class CheckboxInputWidget(widgets.CheckboxInput):
@@ -29,7 +31,7 @@ class CarouselPlugin(BootstrapPluginBase):
     name = _("Carousel")
     default_css_class = 'carousel'
     parent_classes = ['BootstrapColumnPlugin']
-    render_template = 'cms/bootstrap3/carousel.html'
+    render_template = os.path.join('cms', framework, 'carousel.html')
     default_inline_styles = { 'overflow': 'hidden' }
     default_data_options = { 'ride': 'carousel' }
     partial_fields = (

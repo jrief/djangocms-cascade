@@ -93,7 +93,7 @@ TEMPLATE_DIRS = (
 #USE_TZ = True
 
 LANGUAGES = (
-    ('en', 'English'),
+    ('en-us', 'English'),
 )
 
 CMS_CASCADE_PLUGINS = ('bootstrap3',)

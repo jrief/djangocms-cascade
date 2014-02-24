@@ -18,7 +18,7 @@
 <!--[if IE 9 ]> <body class="ie ie9 preload"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <body class="preload"> <!--<![endif]-->
 	{% cms_toolbar %}
-	<article id="wrap">
+	<article id="wrap" {% if framework == 'angular_bootstrap3' %}ng-app="myApp"{% endif %}>
 		{% block sections %}{% endblock %}
 	</article>
 	<footer id="footer">
@@ -30,5 +30,11 @@
 	</body>
 </html>
 
-{% addtoblock "js" %}<script src="//code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>{% endaddtoblock %}
-{% addtoblock "js" %}<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js" type="text/javascript"></script>{% endaddtoblock %}
+{% if framework == 'bootstrap3' %}
+	{% addtoblock "js" %}<script src="//code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>{% endaddtoblock %}
+	{% addtoblock "js" %}<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js" type="text/javascript"></script>{% endaddtoblock %}
+{% elif framework == 'angular_bootstrap3' %}
+	{% addtoblock "js" %}<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js" type="text/javascript"></script>{% endaddtoblock %}
+	{% addtoblock "js" %}<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.js" type="text/javascript"></script>{% endaddtoblock %}
+	{% addtoblock "js" %}<script type="text/javascript">angular.module('myApp', ['ui.bootstrap']);</script>{% endaddtoblock %}
+{% endif %}
