@@ -1,9 +1,28 @@
 # -*- coding: utf-8 -*-
+from django.forms import widgets
+from django.forms.util import flatatt
+from django.utils.encoding import force_text
+from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleTextInputWidget, MultipleInlineStylesWidget
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
+
+
+class CheckboxInputWidget(widgets.CheckboxInput):
+    def render(self, name, value, attrs=None):
+        final_attrs = self.build_attrs(attrs, type='checkbox', name=name)
+        if self.check_test(value):
+            final_attrs['checked'] = 'checked'
+        if not (value is True or value is False or value is None or value == '' or value == 'False' or value == 'None'):
+            # Only add the 'value' attribute if a value is non-empty.
+            final_attrs['value'] = force_text(value)
+        return format_html('<input{0} />', flatatt(final_attrs))
+
+    @classmethod
+    def is_true(self, value):
+        return not (value is False or value is None or value == 'False' or value == 'None' or value == '')
 
 
 class CarouselPlugin(BootstrapPluginBase):
@@ -21,10 +40,21 @@ class CarouselPlugin(BootstrapPluginBase):
         PartialFormField('data_options', MultipleTextInputWidget(['interval', 'pause']),
             label=_('Carousel Options'), help_text=_('Adjust interval and pause for the carousel.')
         ),
+        PartialFormField('data_animate', CheckboxInputWidget(check_test=CheckboxInputWidget.is_true),
+            label=_('Carousel Animate'), help_text=_('Animate the carousel')
+        ),
         PartialFormField('inline_styles', MultipleInlineStylesWidget(['height']),
             label=_('Inline Styles'), help_text=_('Height of carousel.')
         ),
     )
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = super(CarouselPlugin, cls).get_css_classes(obj)
+        val = obj.context.get('data_animate')
+        if CheckboxInputWidget.is_true(val):
+            css_classes.append('slide')
+        return css_classes
 
     @classmethod
     def get_identifier(cls, obj):
