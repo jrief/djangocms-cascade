@@ -43,17 +43,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.gzip.GZipMiddleware',
-#     'cms.middleware.page.CurrentPageMiddleware',
-#     'cms.middleware.user.CurrentUserMiddleware',
-#     'cms.middleware.toolbar.ToolbarMiddleware',
-#     'cms.middleware.language.LanguageCookieMiddleware',
 )
-
-# Absolute path to the directory that holds media.
-#MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a trailing slash.
-#MEDIA_URL = '/media/'
 
 # Absolute path to the directory that holds static files.
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
@@ -81,19 +71,6 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_DIR, 'templates'),
 )
 
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
-#USE_I18N = True
-
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale.
-#USE_L10N = True
-
-# If you set this to False, Django will not use timezone-aware datetimes.
-#USE_TZ = True
-
-LANGUAGES = (
-    ('en-us', 'English'),
-)
+USE_I18N = False
 
 CMS_CASCADE_PLUGINS = ('bootstrap3',)
