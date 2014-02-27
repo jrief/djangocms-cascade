@@ -10,17 +10,14 @@ from cmsplugin_cascade.widgets import JSONMultiWidget
 
 
 class CascadePluginBase(CMSPluginBase):
-    module = 'Bootstrap'
     model = CascadeElement
     tag_type = 'div'
     change_form_template = 'cms/admin/change_form.html'
     render_template = 'cms/plugins/generic.html'
-    require_parent = True
-    allow_children = True
 
     def _child_classes(self):
         """All registered plugins shall be allowed as children for this plugin"""
-        result = getattr(self, 'generic_child_classes', []) or []
+        result = list(getattr(self, 'generic_child_classes', [])) or []
         for p in plugin_pool.get_all_plugins():
             if isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes \
                 and p.__name__ not in result:

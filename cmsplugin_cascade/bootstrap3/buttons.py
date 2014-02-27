@@ -6,8 +6,9 @@ from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
+from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):
@@ -35,11 +36,11 @@ class ButtonSizeRenderer(RadioFieldRenderer):
             ))
 
 
-class ButtonWrapperPlugin(CascadePluginBase):
+class ButtonWrapperPlugin(BootstrapPluginBase):
     name = _("Button wrapper")
     parent_classes = ['BootstrapColumnPlugin']
     render_template = 'cms/plugins/naked.html'
-    generic_child_classes = ['LinkPlugin']
+    generic_child_classes = ('LinkPlugin',)
     tag_type = None
     default_css_class = 'btn'
     default_css_attributes = ('button-type', 'button-size', 'button-options',)

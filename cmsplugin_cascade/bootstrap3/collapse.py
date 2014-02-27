@@ -3,11 +3,12 @@ from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.text import Truncator
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
+from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget
+from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 
 
-class PanelGroupPlugin(CascadePluginBase):
+class PanelGroupPlugin(BootstrapPluginBase):
     name = _("Panel Group")
     default_css_class = 'panel-group'
     parent_classes = ['BootstrapColumnPlugin']
@@ -33,12 +34,12 @@ class PanelGroupPlugin(CascadePluginBase):
 plugin_pool.register_plugin(PanelGroupPlugin)
 
 
-class PanelPlugin(CascadePluginBase):
+class PanelPlugin(BootstrapPluginBase):
     name = _("Panel")
     default_css_class = 'panel-body'
     parent_classes = ['PanelGroupPlugin']
     require_parent = True
-    generic_child_classes = ['TextPlugin']
+    generic_child_classes = ('TextPlugin',)
     partial_fields = (
         PartialFormField('panel_title',
             widgets.TextInput(attrs={ 'size': 150 }),

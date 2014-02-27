@@ -2,14 +2,15 @@
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
+from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 
 
-class SimpleWrapperPlugin(CascadePluginBase):
+class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
-    generic_child_classes = ['FilerImagePlugin', 'TextPlugin']
+    generic_child_classes = ('FilerImagePlugin', 'TextPlugin',)
     CLASS_CHOICES = ((('', _('Unstyled')),) + tuple((cls, cls.title()) for cls in ('thumbnail', 'jumbotron',)))
     partial_fields = (
         PartialFormField('css_class',
@@ -40,7 +41,7 @@ class SimpleWrapperPlugin(CascadePluginBase):
 plugin_pool.register_plugin(SimpleWrapperPlugin)
 
 
-class HorizontalRulePlugin(CascadePluginBase):
+class HorizontalRulePlugin(BootstrapPluginBase):
     name = _("Horizontal Rule")
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     allow_children = False
