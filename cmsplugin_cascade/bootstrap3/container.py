@@ -6,9 +6,9 @@ from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
-from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 
 
@@ -80,7 +80,7 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
-    generic_child_classes = ('TextPlugin', 'FilerImagePlugin',)
+    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
     default_width_widget = PartialFormField('xs-column-width',
         widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                      for i in range(1, 13))),

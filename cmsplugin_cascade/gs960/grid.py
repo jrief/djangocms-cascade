@@ -2,6 +2,7 @@
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.gs960 import settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 
@@ -56,7 +57,7 @@ class Grid960BasePlugin(CascadePluginBase):
     name = _("Grid")
     require_parent = True
     allow_children = True
-    generic_child_classes = ('TextPlugin', 'FilerImagePlugin',)
+    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
     default_css_attributes = ('grid', 'prefix', 'suffix', 'options',)
     OPTION_CHOICES = (('alpha', _('Left aligned')), ('omega', _('Right aligned')),
                       ('clearfix', _('Clearfix')),)

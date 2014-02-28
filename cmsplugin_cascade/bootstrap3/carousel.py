@@ -4,6 +4,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleTextInputWidget, MultipleInlineStylesWidget
+from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.cms_plugins import framework
 
@@ -45,7 +46,7 @@ class SlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     default_css_class = 'item'
     parent_classes = ['CarouselPlugin']
-    generic_child_classes = ('TextPlugin', 'FilerImagePlugin',)
+    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
 
     @classmethod
     def get_css_classes(cls, obj):
