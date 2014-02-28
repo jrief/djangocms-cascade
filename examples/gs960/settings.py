@@ -116,7 +116,7 @@ LANGUAGES = (
 # Application specific settings
 
 CMS_TEMPLATES = (
-    ('main.html', 'Default 960.gs Page'),
+    ('main.html', 'Default Page'),
 )
 
 CMS_SEO_FIELDS = True
