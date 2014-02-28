@@ -1,14 +1,16 @@
 .. _tutorial-bs3:
 
+========================
 Tutorial for Bootstrap 3
 ========================
+
 This tutorial explains how to work with `Twitter Bootstrap version 3`_. Other CSS frameworks may
 behave differently.
 
 .. _Twitter Bootstrap version 3: http://getbootstrap.com/
 
 Frontend editing
-----------------
+================
 Django CMS 3.0 introduced a new frontend editing system as well as a customizable Django admin skin.
 
 In the new system, placeholders and their plugins are no longer managed in the admin site, but
@@ -19,7 +21,7 @@ inside other plugins. In addition, the system offer two editing views:
 * **Structure View**, in which plugins can be added and rearranged.
 
 Container
----------
+=========
 In **Structure View** mode, each placeholder displays a pull down menu on its right top side:
 |pull-down|. When the page editor passes over this icon, a menu pulls out and offers a section of
 plugins named **Bootstrap**. The kind of plugin depends on the configuration and the current plugin
@@ -43,7 +45,7 @@ To the container itself, one can for instance add a **Bootstrap Row**.
 .. _Stacked to Horizontal: http://getbootstrap.com/css/#grid-example-basic
 
 Row
----
+===
 While editing, one can specify the number of columns. If this is bigger than the current number of
 columns, additional columns are added automatically. To delete columns, one must explicitly choose
 the column in the context menu. Reducing the column count in the row's form editor, does not work
@@ -58,7 +60,7 @@ in Pixels ``px`` or ``em``'s.
 .. |edit-row| image:: _static/edit-row.png
 
 Horizontal Rule
----------------
+===============
 A horizontal rule is used to separate rows optically from each other. The form editor accepts two
 inline styles, to specify the top and the bottom margin for such a rule.
 
@@ -67,7 +69,7 @@ inline styles, to specify the top and the bottom margin for such a rule.
 .. |rule-editor| image:: _static/rule-editor.png
 
 Column
-------
+======
 In the column editor, one can specify the width of each column. Since Bootstrap 3 this setting can
 have more than one value, depending on the chosen display breakpoint.
 
@@ -80,7 +82,7 @@ where the new `grid system`_ is explained detailed.
 .. _grid system: http://getbootstrap.com/css/#grid
 
 Complete DOM Structure
-----------------------
+======================
 After having added a container with different rows and columns, you may add the leaf plugins. These
 hold the actual content, such as text and images.
 

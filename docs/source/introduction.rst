@@ -1,11 +1,13 @@
 .. _introduction:
 
+============
 Introduction
 ============
+
 **DjangoCMS-Cascade** is a collection of plugins for Django-CMS_ >3.0 to add various HTML elements
 from CSS frameworks, such as `Twitter Bootstrap`_ or the `Grid System 960`_ to the Django
-templatetag_ placeholder_. Currently only **Bootstrap-3.x** is supported, but this module makes
-it very easy to add other CSS frameworks or to extend an existing collection with additional elements.
+templatetag_ placeholder_. This Django App makes it very easy to add other CSS frameworks, or to
+extend an existing collection with additional elements.
 
 **DjangoCMS-Cascade** allows web editors to layout their pages, without having to create different
 `Django templates`_ for each layout modification. In most cases, one template with one single
@@ -21,7 +23,7 @@ offers a subset of these predefined elements to web designers.
 out of 12 or alternatively 16 columns.
 
 Extensibility
--------------
+=============
 This module requires one database table with one column to store all data in a JSON object.
 Therefore it can easily be extended, because new data structures are added to that JSON object
 without requiring a database migration.

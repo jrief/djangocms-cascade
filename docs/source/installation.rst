@@ -1,9 +1,10 @@
 .. _installation_and_configuration:
 
+============
 Installation
 ============
 
-I strongly recommended to
+A strong recommendation is to
 
 Use pip together with virtualenv
 --------------------------------
@@ -47,7 +48,12 @@ this adds a single table named ``cmsplugin_cascadeelement`` to the database.
 Configuration
 =============
 Add ``'cmsplugin_cascade'`` to the list of ``INSTALLED_APPS`` in the project’s ``settings.py``
-file. Make sure that this entry is located before the entry ``cms``::
+file. Make sure that this entry is located before the entry ``cms``.
+
+Activate the CMS plugin
+-----------------------
+
+.. code-block:: python
 
 	INSTALLED_APPS = (
 	    ...
@@ -56,20 +62,32 @@ file. Make sure that this entry is located before the entry ``cms``::
 	    ...
 	)
 
-Configure the used CSS framework, for instance, when using Bootstrap 3::
+Configure the CSS Framwork
+--------------------------
+When using the Bootstrap 3 framework
+
+.. code-block:: python
 
 	CMS_CASCADE_PLUGINS = ('bootstrap3',)
 
-or, if only the grid containers from the Bootstrap 3 framework shall be used::
+or, if only the grid containers from the Bootstrap 3 framework shall be used
+
+.. code-block:: python
 
 	CMS_CASCADE_PLUGINS = ('bootstrap3.container',)
 
-or, if the Grid System 960 shall be used::
+or, if the Grid System 960 shall be used
+
+.. code-block:: python
 
 	CMS_CASCADE_PLUGINS = ('gs960',)
 
+Restrict plugins to particular a placeholder
+--------------------------------------------
 This setting is optional, but strongly recommended. It exclusively restricts the plugin
-``BootstrapContainerPlugin`` to the placeholder ``Page Section`` (see below)::
+``BootstrapContainerPlugin`` to the placeholder ``Page Section`` (see below)
+
+.. code-block:: python
 
 	CMS_PLACEHOLDER_CONF = {
 	    'Page Section': {
@@ -80,8 +98,18 @@ This setting is optional, but strongly recommended. It exclusively restricts the
 If this setting is omitted, then one can add any plugin to the named placeholder, which normally is
 undesired, because it can break the page's grid.
 
-Adopt the templates
--------------------
+Define the leaf plugins
+-----------------------
+Leaf plugins are those, which contain real data, say text or images. Hence the default setting
+is to allow the **TextPlugin** and the **FilerImagePlugin** as leafs. This can be overridden using
+the configuration directive
+
+.. code-block:: python
+
+	CMS_CASCADE_LEAF_PLUGINS = ('TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin',)
+
+Template Customization
+======================
 Make sure that the style sheets are referenced correctly by the used templates. Django-CMS uses 
 Django-Sekizai_ to organize these includes, so a strong recommendation is to use that tool.
 

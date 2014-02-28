@@ -1,10 +1,12 @@
 .. demo
 
-Run the demo for DjangoCMS-Cascade
-==================================
+============
+Run the demo
+============
 
-Prepare the environment. Assuming that you run Python in a `virtual environment`_ , make sure these
-packages are installed
+Prepare the environment
+-----------------------
+Assuming that you run Python in a `virtual environment`_ , make sure these packages are installed.
 
 .. _virtual environment: http://www.virtualenv.org/en/latest/
 
@@ -12,6 +14,8 @@ packages are installed
 
 	pip install -r requirements.txt
 
+Prefill the database
+--------------------
 Change into the directory ``examples`` and populate the database
 
 .. code-block:: bash
@@ -28,11 +32,18 @@ or, if you prefer to play with 960.gs
 
 .. code-block:: bash
 
+Run the demo server
+-------------------
+
+.. code-block:: bash
+
 	./manage.py runserver --settings=gs960.settings
 
 As usual, this command shall only be used for development.
 
-Point your browser onto http://localhost:8000/ and add a page to the CMS using the template
+Browse the demo site
+--------------------
+Point a browser onto http://localhost:8000/ and add a page to the CMS using the template
 **Default Page**. This template contains a header with a menu bar, a footer and a single
 DjangoCMS placeholder, named **Page Content**.
 

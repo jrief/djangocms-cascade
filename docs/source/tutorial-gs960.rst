@@ -1,14 +1,16 @@
 .. _tutorial-gs960:
 
+============================
 Tutorial for Grid System 960
 ============================
+
 This tutorial explains how to work with the `Grid System 960`_. Other CSS frameworks may
 behave differently.
 
 .. _Grid System 960: http://960.gs/
 
 Frontend editing
-----------------
+================
 Django CMS 3.0 introduced a new frontend editing system as well as a customizable Django admin skin.
 
 In the new system, placeholders and their plugins are no longer managed in the admin site, but
@@ -19,7 +21,7 @@ inside other plugins. In addition, the system offer two editing views:
 * **Structure View**, in which plugins can be added and rearranged.
 
 Container
----------
+=========
 In **Structure View** mode, each placeholder displays a pull down menu on its right top side:
 |pull-down|. When the page editor passes over this icon, a menu pulls out and offers a section of
 plugins named **960.gs**. The kind of plugin depends on the configuration and the current plugin
@@ -39,7 +41,7 @@ Now, for each chosen column, a **Grid** plugin is added automatically with the r
 .. _Stacked to Horizontal: http://getbootstrap.com/css/#grid-example-basic
 
 Grid
-----
+====
 While editing, one can specify the number of columns. If this is bigger than the current number of
 columns, additional columns are added automatically. To delete columns, one must explicitly choose
 the column in the context menu. Reducing the column count in the container's form editor, does not
