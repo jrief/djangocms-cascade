@@ -51,8 +51,9 @@ Double clicking on one of the **Grid** plugins, opens a Grid Editor. Here one ca
 grid's *width* and the *left* as well as the *right offset*.
 
 If **Grid** plugins are nested, usually the margins have to be collapsed. This can be done by
-activating the checkboxes named **Left aligned** and/or **Right aligned**. Activating **Clearfix**
-adds the class ``clearfix`` to the grid's ``<div>`` element.
+activating the checkboxes named **Left aligned** adding class ``alpha``, and/or **Right aligned**
+adding class ``omega`` to the grid's ``<div>`` element. By activating **Clearfix**, the class
+``clearfix`` is added to the grid's ``<div>`` element.
 
 |edit-grid|
 
