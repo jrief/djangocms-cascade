@@ -28,7 +28,8 @@ Contents:
   introduction
   installation
   demo
-  tutorial
+  tutorial-bs3
+  tutorial-gs960
   customized-plugins
   history
 

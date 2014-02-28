@@ -1,9 +1,11 @@
-.. _tutorial
+.. _tutorial-bs3:
 
-Tutorial
-========
-This tutorial explains how to work with **Twitter Bootstrap**. Other CSS frameworks may behave
-somehow differently.
+Tutorial for Bootstrap 3
+========================
+This tutorial explains how to work with `Twitter Bootstrap version 3`_. Other CSS frameworks may
+behave differently.
+
+.. _Twitter Bootstrap version 3: http://getbootstrap.com/
 
 Frontend editing
 ----------------
@@ -76,3 +78,21 @@ where the new `grid system`_ is explained detailed.
 
 .. |column-editor| image:: _static/column-editor.png
 .. _grid system: http://getbootstrap.com/css/#grid
+
+Complete DOM Structure
+----------------------
+After having added a container with different rows and columns, you may add the leaf plugins. These
+hold the actual content, such as text and images.
+
+|structure-demo|
+
+.. |structure-demo| image:: _static/structure-demo.png
+
+After pressing the button **Publish changes**, the single blocks are regrouped and displayed using
+the Bootstrap's grid system.
+
+|live-demo|
+
+.. |live-demo| image:: _static/live-demo.png
+
+This gives you a small idea on the possibilities of this DjangoCMS extension.

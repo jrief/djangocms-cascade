@@ -3,6 +3,19 @@
 Installation
 ============
 
+I strongly recommended to
+
+Use pip together with virtualenv
+--------------------------------
+
+.. code-block:: bash
+
+	#!/bin/sh
+	sudo pip install --upgrade virtualenv
+	virtualenv --distribute --no-site-packages myvirtualenv
+	source myvirtualenv/bin/activate
+	(myvirtualenv)$ 
+
 Install the latest stable release::
 
 	$ pip install djangocms-cascade
