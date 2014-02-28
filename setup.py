@@ -30,7 +30,7 @@ setup(
     author_email='jacob.rief@gmail.com',
     url='https://github.com/jrief/djangocms-cascade',
     packages=find_packages(exclude=['examples', 'docs']),
-    install_requires=[],
+    install_requires=['jsonfield'],
     license='LICENSE-MIT',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
