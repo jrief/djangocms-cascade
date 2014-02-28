@@ -8,8 +8,8 @@ env:
   - DJANGO=1.6.1 TEST=bootstrap3.tests
 
 install:
-  - pip install -q Django==$DJANGO --use-mirrors
-  - pip install -r requirements.txt --use-mirrors
+  - pip install -q Django==$DJANGO
+  - pip install -r requirements.txt
   - python setup.py -q install
 
 before_script:
