@@ -18,11 +18,14 @@ class CascadePluginBase(CMSPluginBase):
     def _child_classes(self):
         """All registered plugins shall be allowed as children for this plugin"""
         result = list(getattr(self, 'generic_child_classes', [])) or []
-        for p in plugin_pool.get_all_plugins():
-            if isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes \
-                and p.__name__ not in result:
-                result.append(p.__name__)
-        return result
+        if result:
+            for p in plugin_pool.get_all_plugins():
+                if isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes \
+                    and p.__name__ not in result:
+                    result.append(p.__name__)
+            return result
+        else:
+            return None  # All classes will be available
     child_classes = property(_child_classes)
 
     def __init__(self, model=None, admin_site=None, partial_fields=None):
