@@ -14,7 +14,7 @@ SECRET_KEY = 'secret'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'database.sqlite',
+        'NAME': 'bootstrap3/database.sqlite',
     },
 }
 
