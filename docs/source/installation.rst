@@ -4,6 +4,9 @@
 Installation
 ============
 
+Install pandoc_ dependency on your system. It is required to convert **Markdown** into
+**reStructured** text.
+
 A strong recommendation is to
 
 Use pip together with virtualenv
@@ -128,3 +131,4 @@ template coding anymore.
 .. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/
 .. _pip: http://pypi.python.org/pypi/pip
 .. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/
+.. _pandoc: http://johnmacfarlane.net/pandoc/
