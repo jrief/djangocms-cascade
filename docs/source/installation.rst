@@ -3,6 +3,10 @@
 Installation
 ============
 
+Install pandoc dependency on your system. For example on Debian::
+
+	$ sudo aptitude install pandoc
+
 Install the latest stable release::
 
 	$ pip install djangocms-cascade
