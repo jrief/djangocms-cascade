@@ -85,6 +85,9 @@ or, if the Grid System 960 shall be used
 
 	CMS_CASCADE_PLUGINS = ('gs960',)
 
+.. note:: If ``cmsplugin_cascade`` has been added to ``INSTALLED_APPS``, ``CMS_CASCADE_PLUGINS``
+          *must* be set.
+
 Restrict plugins to particular a placeholder
 --------------------------------------------
 This setting is optional, but strongly recommended. It exclusively restricts the plugin
