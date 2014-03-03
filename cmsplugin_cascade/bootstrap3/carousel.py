@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
+from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleTextInputWidget, MultipleInlineStylesWidget
+from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.cms_plugins import framework
 
@@ -11,6 +13,7 @@ from cmsplugin_cascade.cms_plugins import framework
 class CarouselPlugin(BootstrapPluginBase):
     name = _("Carousel")
     default_css_class = 'carousel'
+    default_css_attributes = ('options',)
     parent_classes = ['BootstrapColumnPlugin']
     render_template = os.path.join('cms', framework, 'carousel.html')
     default_inline_styles = { 'overflow': 'hidden' }
@@ -22,6 +25,10 @@ class CarouselPlugin(BootstrapPluginBase):
         ),
         PartialFormField('data_options', MultipleTextInputWidget(['interval', 'pause']),
             label=_('Carousel Options'), help_text=_('Adjust interval and pause for the carousel.')
+        ),
+        PartialFormField('options',
+            widgets.CheckboxSelectMultiple(choices=(('slide', _('Animate')),)),
+                label=_('Options'),
         ),
         PartialFormField('inline_styles', MultipleInlineStylesWidget(['height']),
             label=_('Inline Styles'), help_text=_('Height of carousel.')
@@ -45,7 +52,7 @@ class SlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     default_css_class = 'item'
     parent_classes = ['CarouselPlugin']
-    generic_child_classes = ('TextPlugin', 'FilerImagePlugin',)
+    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
 
     @classmethod
     def get_css_classes(cls, obj):

@@ -4,13 +4,14 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 
 
 class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
-    generic_child_classes = ('FilerImagePlugin', 'TextPlugin',)
+    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
     CLASS_CHOICES = ((('', _('Unstyled')),) + tuple((cls, cls.title()) for cls in ('thumbnail', 'jumbotron',)))
     partial_fields = (
         PartialFormField('css_class',

@@ -6,9 +6,9 @@ from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
-from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
 
 
@@ -54,9 +54,10 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
+    ROW_NUM_COLUMNS = (1, 2, 3, 4, 6, 12,)
     partial_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
-            widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in range(1, 13))),
+            widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS)),
             label=_('Number of Columns'), help_text=_('Number of columns to be created with this row.')
         ),
         PartialFormField('inline_styles', MultipleInlineStylesWidget(['min-height']),
@@ -72,7 +73,8 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     def save_model(self, request, obj, form, change):
         wanted_children = int(obj.context['-num-children-'])
         super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_context={ 'xs-column-width': 'col-xs-12' })
+        child_context = { 'xs-column-width': 'col-xs-{0}'.format(12 // wanted_children) }
+        self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_context=child_context)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
@@ -80,7 +82,7 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
-    generic_child_classes = settings.CMS_CASCADE_BOOTSTRAP3_COLUMN_ALLOW_PLUGINS
+    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
     default_width_widget = PartialFormField('xs-column-width',
         widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                      for i in range(1, 13))),

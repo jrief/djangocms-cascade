@@ -1,5 +1,6 @@
 .. _release_history:
 
+===============
 Release History
 ===============
 * **0.3.0** Complete rewrite. Now offers elements for Bootstrap 3 and other CSS frameworks.
@@ -9,7 +10,8 @@ Release History
 * **0.1.0** First published revision.
 
 Thanks
-------
+======
+
 This DjangoCMS plugin originally was derived from https://github.com/divio/djangocms-style, so the
 honor for the idea of this software goes to Divio and specially to Patrick Lauber, aka digi604.
 

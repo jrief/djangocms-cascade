@@ -1,44 +1,59 @@
 .. demo
 
-Run the demo for DjangoCMS-Cascade
-==================================
+============
+Run the demo
+============
 
-Prepare the environment. Assuming that you run Python in a `virtual environment`_ , make sure these
-packages are installed::
+Prepare the environment
+-----------------------
+Assuming that you run Python in a `virtual environment`_ , make sure these packages are installed.
 
-	pip install django-filer cmsplugin-filer easy-thumbnails south djangocms-admin-style \
-	    djangocms-text-ckeditor html5lib six Pillow django-polymorphic
-	pip install -e git+https://github.com/divio/django-cms.git#egg=django-cms
+.. _virtual environment: http://www.virtualenv.org/en/latest/
 
-Change into the directory ``examples`` and populate the database::
+.. code-block:: bash
+
+	pip install -r requirements.txt
+
+Prefill the database
+--------------------
+Change into the directory ``examples`` and populate the database
+
+.. code-block:: bash
 
 	./manage.py syncdb --migrate
 
-Answer the questions about admin user, then start the Django development server::
+Answer the questions about the admin user, then start the Django development server
 
-	./manage.py runserver
+.. code-block:: bash
+
+	./manage.py runserver --settings=bootstrap3.settings
+
+or, if you prefer to play with 960.gs
+
+.. code-block:: bash
+
+Run the demo server
+-------------------
+
+.. code-block:: bash
+
+	./manage.py runserver --settings=gs960.settings
 
 As usual, this command shall only be used for development.
 
-Point your browser onto http://localhost:8000/ and add a page to the CMS using the template
-**Default Bootstrap Page**. This template contains a header with a menu bar, a footer and a single
-DjangoCMS placeholder, named **PAGE SECTION**.
+Browse the demo site
+--------------------
+Point a browser onto http://localhost:8000/ and add a page to the CMS using the template
+**Default Page**. This template contains a header with a menu bar, a footer and a single
+DjangoCMS placeholder, named **Page Content**.
 
-Start to populate this placeholder with the plugins **Container**, **Row** and **Column** found in
-the context menus on the right hand sides. Use the plugin **Text** to insert a text field below a
-**Column**.
+Start to populate this placeholder with some plugins as found in the context menu on the right hand
+side. 
 
-|structure-demo|
+**960.gs** allows to add a **Container 12** or a **Container 16**, followed by a **Grid** plugin.
+For details, please have a look at the :ref:`tutorial-gs960`.
 
-.. |structure-demo| image:: _static/structure-demo.png
+Bootstrap allows to add a **Container**, followed by a **Row**, followed by a **Column** plugin.
+For details, please have a look at the :ref:`tutorial-bs3`.
 
-After pressing the button **Publish changes**, the single blocks are regrouped and displayed using
-the Bootstrap's grid system.
-
-|live-demo|
-
-.. |live-demo| image:: _static/live-demo.png
-
-This gives you a small idea on the possibilities of this DjangoCMS extension.
-
-.. _virtual environment: http://www.virtualenv.org/en/latest/
+Finally add one of the leafs, such as the well known **Text** or **Image** plugins.

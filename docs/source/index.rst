@@ -14,12 +14,13 @@ Project's goals
 #. Create a modular system, which allows programmers to add simple widget code, without having to
    implement an extra Django-CMS_ plugins for each of them.
 
-#. Make available a meaningful subset of widgets as available for different CSS frameworks, such as
-   `Twitter Bootstrap`_. With this module in many configurations, **DjangoCMS** can be operated
-   using one single template, containing one generic placeholder.
+#. Make available a meaningful subset of widgets as available for the mode common CSS frameworks,
+   such as `Twitter Bootstrap`_ and `Grid System 960`_. With this special **DjangoCMS Plugin**, in
+   many configurations, **DjangoCMS** can be operated using one single template, containing one
+   generic placeholder.
 
 #. Extend this DjangoCMS plugin, to be used with other CSS frameworks such as `Foundation 5`_,
-   `Grid System 960`_, Unsemantic_ and others.
+   Unsemantic_ and others.
 
 Contents:
 ---------
@@ -28,7 +29,8 @@ Contents:
   introduction
   installation
   demo
-  tutorial
+  tutorial-bs3
+  tutorial-gs960
   customized-plugins
   history
 

@@ -2,6 +2,7 @@
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.gs960 import settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 
@@ -11,16 +12,19 @@ class Container960BasePlugin(CascadePluginBase):
     require_parent = False
     allow_children = True
     default_css_attributes = ('options',)
-    partial_fields = (
-        PartialFormField('options',
-            widgets.CheckboxSelectMultiple(choices=(('clearfix', _('Clearfix')),)),
-            label=_('Options'),
-        ),
-        PartialFormField('-num-children-',  # temporary field, not stored in the database
-            widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in range(1, 17))),
-            label=_('Number of Columns'), help_text=_('Number of columns to be created with this row.')
-        ),
-    )
+
+    def __init__(self, model=None, admin_site=None):
+        partial_fields = (
+            PartialFormField('options',
+                widgets.CheckboxSelectMultiple(choices=(('clearfix', _('Clearfix')),)),
+                label=_('Options'),
+            ),
+            PartialFormField('-num-children-',  # temporary field, not stored in the database
+                widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in self.CONTAINER_NUM_COLUMNS)),
+                label=_('Number of Columns'), help_text=_('Number of columns to be created with this row.')
+            ),
+        )
+        super(Container960BasePlugin, self).__init__(model, admin_site, partial_fields)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(obj.context['-num-children-'])
@@ -34,6 +38,7 @@ class Container12Plugin(Container960BasePlugin):
     name = _("Container 12")
     default_css_class = 'container_12'
     CONTAINER_WIDTH = 12
+    CONTAINER_NUM_COLUMNS = (1, 2, 3, 4, 6, 12,)
 
 plugin_pool.register_plugin(Container12Plugin)
 
@@ -42,6 +47,7 @@ class Container16Plugin(Container960BasePlugin):
     name = _("Container 16")
     default_css_class = 'container_16'
     CONTAINER_WIDTH = 16
+    CONTAINER_NUM_COLUMNS = (1, 2, 3, 4, 8, 16,)
 
 plugin_pool.register_plugin(Container16Plugin)
 
@@ -51,7 +57,7 @@ class Grid960BasePlugin(CascadePluginBase):
     name = _("Grid")
     require_parent = True
     allow_children = True
-    generic_child_classes = ('TextPlugin', 'FilerImagePlugin',)
+    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
     default_css_attributes = ('grid', 'prefix', 'suffix', 'options',)
     OPTION_CHOICES = (('alpha', _('Left aligned')), ('omega', _('Right aligned')),
                       ('clearfix', _('Clearfix')),)

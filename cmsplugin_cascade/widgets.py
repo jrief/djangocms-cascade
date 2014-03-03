@@ -53,7 +53,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         return html
 
 
-if DJANGO_VERSION[0] <= 1 and DJANGO_VERSION[0] <= 5:
+if DJANGO_VERSION[0] <= 1 and DJANGO_VERSION[1] <= 5:
     input_widget = widgets.TextInput
 else:
     input_widget = widgets.NumberInput
