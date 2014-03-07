@@ -91,12 +91,12 @@ or, if the Grid System 960 shall be used
 Restrict plugins to particular a placeholder
 --------------------------------------------
 This setting is optional, but strongly recommended. It exclusively restricts the plugin
-``BootstrapContainerPlugin`` to the placeholder ``Page Section`` (see below)
+``BootstrapContainerPlugin`` to the placeholder ``Page Content`` (see below)
 
 .. code-block:: python
 
 	CMS_PLACEHOLDER_CONF = {
-	    'Page Section': {
+	    'Page Content': {
 	        'plugins': ['BootstrapContainerPlugin'],
 	    },
 	}
@@ -121,9 +121,9 @@ Django-Sekizai_ to organize these includes, so a strong recommendation is to use
 
 The templates used for a Django-CMS project shall include a header, footer and the menu bar, but
 should leave out an empty working area. When using HTML5, wrap this area into an ``<article>`` or
-``<section>`` element. This placeholder can use a generic, meaningless name, say "Page Section"::
+``<section>`` element. This placeholder can use a generic, meaningless name, say "Page Content"::
 
-	<section>{% placeholder "Page Section" %}</section>
+	<section>{% placeholder "Page Content" %}</section>
 
 From now on, the page layout can be adopted inside this placeholder, without having to fiddle with
 template coding anymore.

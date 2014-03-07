@@ -129,7 +129,7 @@ CMS_CACHE_DURATIONS = {
 }
 
 CMS_PLACEHOLDER_CONF = {
-    'Page Section': {
+    'Page Content': {
         'plugins': ['BootstrapContainerPlugin'],
     },
 }
