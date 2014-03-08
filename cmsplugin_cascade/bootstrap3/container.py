@@ -10,6 +10,7 @@ from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.cms_plugins import framework
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
@@ -82,7 +83,10 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
-    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
+    try:
+        generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS[framework]['BootstrapColumnPlugin']
+    except KeyError:
+        generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS.get('default')
     default_width_widget = PartialFormField('xs-column-width',
         widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                      for i in range(1, 13))),

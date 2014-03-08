@@ -5,6 +5,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.gs960 import settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.cms_plugins import framework
 
 
 class Container960BasePlugin(CascadePluginBase):
@@ -57,7 +58,10 @@ class Grid960BasePlugin(CascadePluginBase):
     name = _("Grid")
     require_parent = True
     allow_children = True
-    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
+    try:
+        generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS[framework]['Grid960BasePlugin']
+    except KeyError:
+        generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS.get('default')
     default_css_attributes = ('grid', 'prefix', 'suffix', 'options',)
     OPTION_CHOICES = (('alpha', _('Left aligned')), ('omega', _('Right aligned')),
                       ('clearfix', _('Clearfix')),)

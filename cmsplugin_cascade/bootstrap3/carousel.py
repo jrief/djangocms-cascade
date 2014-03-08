@@ -52,7 +52,10 @@ class SlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     default_css_class = 'item'
     parent_classes = ['CarouselPlugin']
-    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
+    try:
+        generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS[framework]['SlidePlugin']
+    except KeyError:
+        generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS.get('default')
 
     @classmethod
     def get_css_classes(cls, obj):

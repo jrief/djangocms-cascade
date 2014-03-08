@@ -6,12 +6,16 @@ from cmsplugin_cascade.plugin_base import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.cms_plugins import framework
 
 
 class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
-    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
+    try:
+        generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS[framework]['SimpleWrapperPlugin']
+    except KeyError:
+        generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS.get('default')
     CLASS_CHOICES = ((('', _('Unstyled')),) + tuple((cls, cls.title()) for cls in ('thumbnail', 'jumbotron',)))
     partial_fields = (
         PartialFormField('css_class',
