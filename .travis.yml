@@ -5,7 +5,7 @@ python:
 
 env:
   - DJANGO=1.5.5 TEST=bootstrap3
-  - DJANGO=1.6.1 TEST=bootstrap3.tests
+  - DJANGO=1.6.2 TEST=bootstrap3.tests
 
 install:
   - pip install -q Django==$DJANGO
