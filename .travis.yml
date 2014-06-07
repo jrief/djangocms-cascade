@@ -4,8 +4,8 @@ python:
   - 2.7
 
 env:
-  - DJANGO=1.5.5 TEST=bootstrap3
-  - DJANGO=1.6.2 TEST=bootstrap3.tests
+  - DJANGO=1.5.8
+  - DJANGO=1.6.5
 
 install:
   - pip install -q Django==$DJANGO
@@ -17,4 +17,4 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
- - cd examples && ./manage.py test --settings=bootstrap3.tests.settings $TEST
+ - cd examples && ./manage.py test bootstrap3 --settings=bootstrap3.tests.settings
