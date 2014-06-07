@@ -1,9 +1,5 @@
 # Django settings for unit test project.
-import os
-
 DEBUG = True
-
-PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SITE_ID = 1
 
@@ -26,7 +22,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.staticfiles',
-    'django.contrib.sitemaps',
     'cmsplugin_cascade',
     'cms',
     'menus',
@@ -45,9 +40,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
 )
 
-# Absolute path to the directory that holds static files.
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
-
 # URL that handles the static files served from STATIC_ROOT. Make sure to use a trailing slash.
 STATIC_URL = '/static/'
 
@@ -64,11 +56,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_DIRS = (
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_DIR, 'templates'),
 )
 
 USE_I18N = False
