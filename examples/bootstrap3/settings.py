@@ -65,8 +65,6 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a trailing slash.
 MEDIA_URL = '/media/'
 
-#ADMIN_MEDIA_PREFIX = '/static/admin/'
-
 # Absolute path to the directory that holds static files.
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
