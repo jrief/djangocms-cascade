@@ -1,17 +1,4 @@
-Pillow
-django
-django-filer
-django-sekizai
+django-cms
 django-mptt
-django-classy-tags
-django-jsonfield
-easy_thumbnails
-cmsplugin-filer
-django-polymorphic
-djangocms-text-ckeditor
-djangocms-admin-style
-html5lib
-six
-south
--e git://github.com/divio/django-cms.git@develop#egg=django-cms
--e git://github.com/divio/djangocms-link.git#egg=djangocms-link
+jsonfield
+
