@@ -99,7 +99,7 @@ class Grid960BasePlugin(CascadePluginBase):
             texts = [d for c, d in cls.GRID_CHOICES if c == obj.context.get('grid')]
             return texts[0]
         except (TypeError, KeyError, ValueError):
-            return u''
+            return ''
 
 
 class Grid12Plugin(Grid960BasePlugin):

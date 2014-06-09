@@ -27,17 +27,17 @@ class CascadeElement(CMSPlugin):
     @property
     def css_classes(self):
         css_classes = self.plugin_class.get_css_classes(self)
-        return u' '.join(css_classes)
+        return ' '.join(css_classes)
 
     @property
     def inline_styles(self):
         inline_styles = self.plugin_class.get_inline_styles(self)
-        return u' '.join(['{0}: {1};'.format(*s) for s in inline_styles.items() if s[1]])
+        return ' '.join(['{0}: {1};'.format(*s) for s in inline_styles.items() if s[1]])
 
     @property
     def data_options(self):
         data_options = self.plugin_class.get_data_options(self)
-        return u' '.join(['data-{0}={1}'.format(*o) for o in data_options.items() if o[1]])
+        return ' '.join(['data-{0}={1}'.format(*o) for o in data_options.items() if o[1]])
 
     def get_full_context(self):
         """

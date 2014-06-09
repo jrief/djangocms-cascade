@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import six
 import json
 from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
@@ -36,7 +37,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             if isinstance(field.widget, widgets.MultiWidget):
                 result[field.name] = field.widget.value_from_datadict(data, files, field.name)
             elif getattr(field.widget, 'allow_multiple_selected', False):
-                result[field.name] = map(escape, data.getlist(field.name))
+                result[field.name] = list(map(escape, data.getlist(field.name)))
             else:
                 result[field.name] = escape(data.get(field.name))
         return result
@@ -47,7 +48,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             '<div class="row"><div class="col-sm-12"><h4>{0}</h4></div></div>\n'
             '<div class="row"><div class="col-sm-12">{1}</div></div>\n'
             '<div class="row"><div class="col-sm-12"><small>{2}</small></div></div>\n',
-            ((unicode(field.label), field.widget.render(field.name, values.get(field.name), attrs), unicode(field.help_text))
+            ((six.text_type(field.label), field.widget.render(field.name, values.get(field.name), attrs), six.text_type(field.help_text))
                 for field in self.partial_fields)
         )
         return html

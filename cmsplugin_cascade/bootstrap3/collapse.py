@@ -52,6 +52,6 @@ class PanelPlugin(BootstrapPluginBase):
         value = obj.context.get('panel_title')
         if value:
             return unicode(Truncator(value).words(3, truncate=' ...'))
-        return u''
+        return ''
 
 plugin_pool.register_plugin(PanelPlugin)

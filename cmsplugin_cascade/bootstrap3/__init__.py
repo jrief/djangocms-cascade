@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import buttons
-import carousel
-import collapse
-import container
-import wrappers
+from . import buttons
+from . import carousel
+from . import collapse
+from . import container
+from . import wrappers

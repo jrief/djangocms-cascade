@@ -45,7 +45,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             texts = [d for c, d in cls.CONTEXT_WIDGET_CHOICES if c == obj.context.get('breakpoint')]
             return _('Narrowest grid: {0}').format(texts[0].lower())
         except (TypeError, KeyError, ValueError):
-            return u''
+            return ''
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 

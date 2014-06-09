@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import six
 from django.forms.models import modelform_factory
 from django.forms import widgets
 from django.forms.util import ErrorList
@@ -40,7 +41,7 @@ class CascadePluginBase(CMSPluginBase):
         """
         Returns the descriptive name for the current model
         """
-        return u''
+        return ''
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -49,7 +50,7 @@ class CascadePluginBase(CMSPluginBase):
             css_classes.append(cls.default_css_class)
         for attr in getattr(cls, 'default_css_attributes', []):
             css_class = obj.context.get(attr)
-            if isinstance(css_class, basestring):
+            if isinstance(css_class, six.string_types):
                 css_classes.append(css_class)
             elif isinstance(css_class, list):
                 css_classes.extend(css_class)
@@ -84,8 +85,10 @@ class CascadePluginBase(CMSPluginBase):
         """
         Save the object in the database and remove temporary context item '-num-children-'.
         """
-        if isinstance(obj.context, dict) and '-num-children-' in obj.context:
+        try:
             del obj.context['-num-children-']
+        except (TypeError, KeyError):
+            pass
         super(CascadePluginBase, self).save_model(request, obj, form, change)
 
     def extend_children(self, parent, wanted_children, child_class, child_context=None):
@@ -141,19 +144,17 @@ class PartialFormField(object):
             for field_name in self.widget:
                 try:
                     self.widget.validate(value.get(self.name), field_name)
-                except ValidationError, e:
-                    params = { 'label': self.label }
-                    if e.params:
-                        params.update(e.params)
-                    messages = self.error_class([m % params for m in e.messages])
+                except ValidationError as e:
+                    if isinstance(getattr(e.params, None), dict):
+                        e.params.update(label=self.label)
+                    messages = self.error_class([m for m in e.messages])
                     errors.extend(messages)
         else:
             try:
                 self.widget.validate(value.get(self.name))
-            except ValidationError, e:
-                params = { 'label': self.label }
-                if e.params:
-                    params.update(e.params)
-                errors = self.error_class([m % params for m in e.messages])
+            except ValidationError as e:
+                if isinstance(getattr(e.params, None), dict):
+                    e.params.update(label=self.label)
+                errors = self.error_class([m for m in e.messages])
         if errors:
             raise ValidationError(errors)

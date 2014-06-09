@@ -52,17 +52,17 @@ class ButtonWrapperPluginTest(TestCase):
 
     def test_save_button(self):
         add_url = '/admin/cms/page/add-plugin/'
-        post_data = {u'plugin_parent': [u''], u'csrfmiddlewaretoken': [u'PQ7M8GfaJs4SdlsFRLz7XrNwC23mtD0D'], u'plugin_type': [u'ButtonWrapperPlugin'], u'plugin_language': [u'en'], u'placeholder_id': [str(self.placeholder.id)]}
+        post_data = {'plugin_parent': [''], 'csrfmiddlewaretoken': ['PQ7M8GfaJs4SdlsFRLz7XrNwC23mtD0D'], 'plugin_type': ['ButtonWrapperPlugin'], 'plugin_language': ['en'], 'placeholder_id': [str(self.placeholder.id)]}
         response = self.client.post(add_url, post_data)
         self.assertContains(response, '/admin/cms/page/edit-plugin/')
-        change_url = json.loads(response.content)['url']
+        change_url = json.loads(response.content.decode('utf-8'))['url']
         obj_id = change_url.split('/')[-2]
-        post_data = { u'csrfmiddlewaretoken': [u'PQ7M8GfaJs4SdlsFRLz7XrNwC23mtD0D'], u'inline_styles-margin-left': [u''], u'button-type': [u'btn-default'], u'_continue': [True], u'_popup': [u'1'], u'button-size': [u'btn-lg'], u'inline_styles-margin-bottom': [u''], u'inline_styles-margin-right': [u''], u'button-options': [u'btn-block'], u'inline_styles-margin-top': [u'50px'], u'_save': [u'Save']}
+        post_data = {'csrfmiddlewaretoken': ['PQ7M8GfaJs4SdlsFRLz7XrNwC23mtD0D'], 'inline_styles-margin-left': [''], 'button-type': ['btn-default'], '_continue': [True], '_popup': ['1'], 'button-size': ['btn-lg'], 'inline_styles-margin-bottom': [''], 'inline_styles-margin-right': [''], 'inline_styles-margin-top': ['50px'], 'button-options': ['btn-block'], '_save': ['Save']}
         response = self.client.post(change_url, post_data)
-        self.assertInHTML('<title>Change a page</title>', response.content)
+        self.assertInHTML('<title>Change a page</title>', response.content.decode('utf-8'))
         model = CascadeElement.objects.get(id=obj_id)
-        self.assertDictContainsSubset({ 'button-type': 'btn-default', 'button-size': 'btn-lg' }, model.context)
-        self.assertListEqual(model.context.get('button-options'), [u'btn-block'])
-        self.assertDictContainsSubset({ 'margin-top': '50px' }, model.context.get('inline_styles'))
-        self.assertEquals(model.css_classes, u'btn btn-default btn-lg btn-block')
-        self.assertEquals(model.inline_styles, u'margin-top: 50px;')
+        self.assertDictContainsSubset({'button-type': 'btn-default', 'button-size': 'btn-lg'}, model.context)
+        self.assertListEqual(model.context.get('button-options'), ['btn-block'])
+        self.assertDictContainsSubset({'margin-top': '50px'}, model.context.get('inline_styles'))
+        self.assertListEqual(model.css_classes.split(), ['btn', 'btn-default', 'btn-lg', 'btn-block'])
+        self.assertEqual(model.inline_styles, 'margin-top: 50px;')
