@@ -156,7 +156,7 @@ Additionally ``BootstrapPluginBase`` allows the following attributes:
 
 	    @classmethod
 	    def get_identifier(cls, obj):
-	        return u'A plugin name'
+	        return 'A plugin name'
 
 	This method shall be used to name the plugin in structured view.
 
