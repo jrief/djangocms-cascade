@@ -14,8 +14,8 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-    'Programming Language :: Python :: 2.6',
     'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3.3',
 ]
 
 def read(fname):
@@ -25,7 +25,7 @@ def read(fname):
 setup(
     name='djangocms-cascade',
     version=__version__,
-    description='Collection of plugins for DjangoCMS to work on a subset of the DOM inside placeholders',
+    description='Collection of plugins for DjangoCMS >3.0 to add various HTML elements from CSS frameworks to any CMS placeholder',
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     url='https://github.com/jrief/djangocms-cascade',
