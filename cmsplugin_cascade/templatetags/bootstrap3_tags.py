@@ -12,14 +12,13 @@ class MainMenu(ShowMenu):
 
     options = Options(
         IntegerArgument('from_level', default=0, required=False),
-        IntegerArgument('to_level', default=100, required=False),
         StringArgument('template', default='cms/bootstrap3/main-menu.html', required=False),
         StringArgument('namespace', default=None, required=False),
         StringArgument('root_id', default=None, required=False),
         Argument('next_page', default=None, required=False),
     )
 
-    def get_context(self, context, from_level, to_level, template, namespace, root_id, next_page):
-        return super(MainMenu, self).get_context(context, from_level, to_level, 100, 100, template, namespace, root_id, next_page)
+    def get_context(self, context, from_level, template, namespace, root_id, next_page):
+        return super(MainMenu, self).get_context(context, from_level, 1, 1, 1, template, namespace, root_id, next_page)
 
 register.tag(MainMenu)
