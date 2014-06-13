@@ -157,6 +157,6 @@ on mobile devices.
           menu. Here the menu item for the page named “Dropdown” is rendered again. Clicking on this
           item, finally loads that page from the CMS.
 
-.. note:: Bootstrap3 does not support nested menues, because they wouldn't be usable on mobile
+.. note:: Bootstrap3 does not support nested menus, because they wouldn't be usable on mobile
           devices. Therefore the template tag ``main_menu`` renders only one level of children, no
           matter how deep the page hierarchy is in DjangoCMS.
