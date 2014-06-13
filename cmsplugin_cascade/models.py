@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+import six
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from jsonfield.fields import JSONField
@@ -12,7 +14,7 @@ class CascadeElement(CMSPlugin):
     context = JSONField(null=True, blank=True, default={})
 
     def __unicode__(self):
-        return self.plugin_class.get_identifier(self)
+        return six.u(self.plugin_class.get_identifier(self))
 
     @property
     def plugin_class(self):
