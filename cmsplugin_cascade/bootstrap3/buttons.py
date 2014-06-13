@@ -48,12 +48,14 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
         PartialFormField('button-type',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonTypeRenderer.BUTTON_TYPES.items()),
                                 renderer=ButtonTypeRenderer),
-                label=_('Button Type'), initial='default'
+                label=_('Button Type'),
+                initial='btn-default'
         ),
         PartialFormField('button-size',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonSizeRenderer.BUTTON_SIZES.items()),
                                 renderer=ButtonSizeRenderer),
-                label=_('Button Size'), initial=''
+                label=_('Button Size'),
+                initial=''
         ),
         PartialFormField('button-options',
             widgets.CheckboxSelectMultiple(choices=(('btn-block', _('Block level')), ('disabled', _('Disabled')),)),
