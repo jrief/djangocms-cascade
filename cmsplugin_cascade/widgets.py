@@ -111,7 +111,7 @@ class MultipleTextInputWidget(widgets.MultiWidget):
     def validate(self, value, field_name):
         if hasattr(self, 'validation_pattern'):
             if not hasattr(self, 'validation_message'):
-                raise AttributeError('Widget class is missing element validation_message')
+                raise AttributeError("Widget class is missing element: 'validation_message'")
             val = value.get(field_name)
             if val and not self.validation_pattern.match(val):
                 self.validation_errors.append(field_name)
