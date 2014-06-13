@@ -41,7 +41,7 @@ class CascadePluginBase(CMSPluginBase):
         """
         Returns the descriptive name for the current model
         """
-        return ''
+        return six.u('')
 
     @classmethod
     def get_css_classes(cls, obj):
