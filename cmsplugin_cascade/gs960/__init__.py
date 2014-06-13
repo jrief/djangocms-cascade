@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-import grid
+all_plugins = ('grid',)
