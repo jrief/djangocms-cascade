@@ -145,7 +145,7 @@ class PartialFormField(object):
                 try:
                     self.widget.validate(value.get(self.name), field_name)
                 except ValidationError as e:
-                    if isinstance(getattr(e.params, None), dict):
+                    if isinstance(getattr(e, 'params', None), dict):
                         e.params.update(label=self.label)
                     messages = self.error_class([m for m in e.messages])
                     errors.extend(messages)
@@ -153,7 +153,7 @@ class PartialFormField(object):
             try:
                 self.widget.validate(value.get(self.name))
             except ValidationError as e:
-                if isinstance(getattr(e.params, None), dict):
+                if isinstance(getattr(e, 'params', None), dict):
                     e.params.update(label=self.label)
                 errors = self.error_class([m for m in e.messages])
         if errors:
