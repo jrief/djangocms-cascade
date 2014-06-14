@@ -5,12 +5,14 @@ from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 
 
-class CascadeElement(CMSPlugin):
+class CascadeModelBase(CMSPlugin):
     """
     The container to hold additional bootstrap elements.
     """
+    class Meta:
+        abstract = True
+
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
-    context = JSONField(null=True, blank=True, default={})
 
     def __unicode__(self):
         return self.plugin_class.get_identifier(self)
@@ -39,6 +41,10 @@ class CascadeElement(CMSPlugin):
     def data_options(self):
         data_options = self.plugin_class.get_data_options(self)
         return ' '.join(['data-{0}={1}'.format(*o) for o in data_options.items() if o[1]])
+
+
+class CascadeElement(CascadeModelBase):
+    context = JSONField(null=True, blank=True, default={})
 
     def get_full_context(self):
         """

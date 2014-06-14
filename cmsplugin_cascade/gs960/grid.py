@@ -2,9 +2,10 @@
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.gs960 import settings
-from cmsplugin_cascade.plugin_base import CascadePluginBase, PartialFormField
+from cmsplugin_cascade.plugin_base import CascadePluginBase
+from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from . import settings
 
 
 class Container960BasePlugin(CascadePluginBase):

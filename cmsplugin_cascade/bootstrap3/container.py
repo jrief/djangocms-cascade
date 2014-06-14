@@ -6,10 +6,10 @@ from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.bootstrap3 import settings
-from cmsplugin_cascade.plugin_base import PartialFormField
+from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
-from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
+from .plugin_base import BootstrapPluginBase
+from . import settings
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):

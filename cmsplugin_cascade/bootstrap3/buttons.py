@@ -6,9 +6,9 @@ from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import PartialFormField
+from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
-from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
+from .plugin_base import BootstrapPluginBase
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):

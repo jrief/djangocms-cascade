@@ -3,11 +3,10 @@ import os
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import PartialFormField
+from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleTextInputWidget, MultipleInlineStylesWidget
-from cmsplugin_cascade.bootstrap3 import settings
-from cmsplugin_cascade.bootstrap3.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.cms_plugins import framework
+from .plugin_base import BootstrapPluginBase
+from . import settings
 
 
 class CarouselPlugin(BootstrapPluginBase):
@@ -15,7 +14,7 @@ class CarouselPlugin(BootstrapPluginBase):
     default_css_class = 'carousel'
     default_css_attributes = ('options',)
     parent_classes = ['BootstrapColumnPlugin']
-    render_template = os.path.join('cms', framework, 'carousel.html')
+    render_template = os.path.join('cms', settings.CMS_CASCADE_TEMPLATE_DIR, 'carousel.html')
     default_inline_styles = { 'overflow': 'hidden' }
     default_data_options = { 'ride': 'carousel' }
     partial_fields = (

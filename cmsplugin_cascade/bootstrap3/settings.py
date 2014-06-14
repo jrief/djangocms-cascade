@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 
+CMS_CASCADE_PLUGINS = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_PLUGINS',
+                              ('buttons', 'carousel', 'collapse', 'container', 'wrappers',))
+CMS_CASCADE_TEMPLATE_DIR = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR', 'bootstrap3')
 CMS_CASCADE_BOOTSTRAP3_BREAKPOINT = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_BREAKPOINT', 'lg')
 CMS_CASCADE_LEAF_PLUGINS = getattr(settings, 'CMS_CASCADE_LEAF_PLUGINS', [])
 
