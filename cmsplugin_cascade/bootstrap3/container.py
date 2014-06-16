@@ -16,8 +16,8 @@ class ContainerRadioFieldRenderer(RadioFieldRenderer):
     map_icon = { 'xs': 'mobile-phone', 'sm': 'tablet', 'md': 'laptop', 'lg': 'desktop' }
 
     def render(self):
-        return format_html('<div class="row">{0}</div>',
-            format_html_join('', '<div class="col-sm-3 text-center">'
+        return format_html('<div class="form-row">{0}</div>',
+            format_html_join('', '<div class="field-box text-center">'
                 '<div class="thumbnail"><i class="icon-{1}" style="font-size:50pt;"></i><h4>{0}</h4></div>'
                 '</div>', ((force_text(w), self.map_icon[w.choice_value]) for w in self)
             ))

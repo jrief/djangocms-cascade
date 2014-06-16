@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import six
-from django.forms.models import modelform_factory
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
 from .widgets import JSONMultiWidget
@@ -103,8 +102,10 @@ class CascadePluginBase(CMSPluginBase):
         """
         Build the form used for changing the model.
         """
-        widgets = {'context': JSONMultiWidget(self.partial_fields)}
-        form = modelform_factory(self.model, fields=['context'], widgets=widgets)
+        kwargs.update(widgets={'context': JSONMultiWidget(self.partial_fields)}, labels={'context': ''})
+        form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
+        # help_text can not be overridden by empty string in modelform_factory
+        form.base_fields['context'].help_text = ''
         for field in self.partial_fields:
             form.base_fields['context'].validators.append(field.run_validators)
         setattr(form, 'partial_fields', self.partial_fields)
