@@ -61,32 +61,48 @@ Activate the CMS plugin
 	INSTALLED_APPS = (
 	    ...
 	    'cmsplugin_cascade',
+	    'cmsplugin_cascade.bootstrap3',
 	    'cms',
 	    ...
 	)
 
-Configure the CSS Framwork
---------------------------
-When using the Bootstrap 3 framework
+For other CSS frameworks, replace ``'cmsplugin_cascade.bootstrap3'`` against the corresponding
+sub-module.
+
+Configure the Bootstrap 3 Framework
+-----------------------------------
+
+By default, all Bootstrap 3 plugins are activated. If for some reason, only a subset of these
+plugins shall be activated, add a list of plugins to your ``settings.py``:
 
 .. code-block:: python
 
-	CMS_CASCADE_PLUGINS = ('bootstrap3',)
+	CMS_CASCADE_BOOTSTRAP3_PLUGINS = ('buttons', 'container',)
 
-or, if only the grid containers from the Bootstrap 3 framework shall be used
+only allows buttons and the Bootstrap's grid system.
 
-.. code-block:: python
+To replace Bootstrap's jQuery code against `Angular UI Bootstrap`_, add 
 
-	CMS_CASCADE_PLUGINS = ('bootstrap3.container',)
-
-or, if the Grid System 960 shall be used
+.. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/
 
 .. code-block:: python
 
-	CMS_CASCADE_PLUGINS = ('gs960',)
+	CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR = 'angular_bootstrap3'
 
-.. note:: If ``cmsplugin_cascade`` has been added to ``INSTALLED_APPS``, ``CMS_CASCADE_PLUGINS``
-          *must* be set.
+to your ``settings.py``. This will load the rendering templates created for AngularJS from a
+different directory.
+
+If you plan to only support small mobile devices, consider to reduce the choice overhead by adding
+
+	CMS_CASCADE_BOOTSTRAP3_BREAKPOINT = 'xs'
+
+to your ``settings.py``.
+
+Configure the 960.gs Framework
+------------------------------
+
+Currently the 960.gs framework has no meaningful user settings.
+
 
 Restrict plugins to particular a placeholder
 --------------------------------------------
