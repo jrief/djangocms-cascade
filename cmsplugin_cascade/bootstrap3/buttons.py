@@ -17,8 +17,10 @@ class ButtonTypeRenderer(RadioFieldRenderer):
         ('btn-danger', _('Danger')), ('btn-link', _('Link')),))
 
     def render(self):
-        return format_html('<div class="row">{0}</div>',
-            format_html_join('\n', '<div class="col-sm-2 text-center"><button class="btn {1}">{2}</button><h4>{0}</h4></div>',
+        return format_html('<div class="form-row">{0}</div>',
+            format_html_join('\n', '<div class="field-box">'
+                             '<span class="btn {1}">{2}</span>'
+                             '<div class="label">{0}</div></div>',
                 ((force_text(w), w.choice_value, force_text(self.BUTTON_TYPES[w.choice_value])) for w in self)
             ))
 
@@ -28,16 +30,19 @@ class ButtonSizeRenderer(RadioFieldRenderer):
         ('btn-xs', _('Extra small')),))
 
     def render(self):
-        return format_html('<div class="row">{0}</div>',
-            format_html_join('\n', '<div class="col-sm-3 text-center">'
-                '<p><button class="btn btn-primary {1}">{2}</button> <button class="btn btn-default {1}">{2}</button></p>'
-                '<h4>{0}</h4></div>',
+        return format_html('<div class="form-row">{0}</div>',
+            format_html_join('\n',
+                '<div class="field-box"><div class="button-samples">'
+                    '<span class="btn btn-primary {1}">{2}</span>'
+                    '<span class="btn btn-default {1}">{2}</span></div>'
+                    '<div class="label">{0}</div>'
+                '</div>',
                 ((force_text(w), w.choice_value, force_text(self.BUTTON_SIZES[w.choice_value])) for w in self)
             ))
 
 
-class ButtonWrapperPlugin(BootstrapPluginBase):
-    name = _("Button wrapper")
+class BootstrapButtonPlugin(BootstrapPluginBase):
+    name = _("Button")
     parent_classes = ['BootstrapColumnPlugin']
     render_template = 'cms/plugins/naked.html'
     generic_child_classes = ('LinkPlugin',)
@@ -48,14 +53,14 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
         PartialFormField('button-type',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonTypeRenderer.BUTTON_TYPES.items()),
                                 renderer=ButtonTypeRenderer),
-                label=_('Button Type'),
-                initial='btn-default'
+                label=_('Button Type'), initial='btn-default',
+                help_text=_("Display Link using this Button Style")
         ),
         PartialFormField('button-size',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonSizeRenderer.BUTTON_SIZES.items()),
                                 renderer=ButtonSizeRenderer),
-                label=_('Button Size'),
-                initial=''
+                label=_('Button Size'), initial='',
+                help_text=_("Display Link using this Button Size")
         ),
         PartialFormField('button-options',
             widgets.CheckboxSelectMultiple(choices=(('btn-block', _('Block level')), ('disabled', _('Disabled')),)),
@@ -72,4 +77,4 @@ class ButtonWrapperPlugin(BootstrapPluginBase):
     def get_identifier(cls, obj):
         return ButtonTypeRenderer.BUTTON_TYPES.get(obj.context.get('button-type'), '')
 
-plugin_pool.register_plugin(ButtonWrapperPlugin)
+plugin_pool.register_plugin(BootstrapButtonPlugin)

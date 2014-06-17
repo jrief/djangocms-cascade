@@ -104,7 +104,7 @@ class CascadePluginBase(CMSPluginBase):
         """
         kwargs.update(widgets={'context': JSONMultiWidget(self.partial_fields)}, labels={'context': ''})
         form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
-        # help_text can not be overridden by empty string in modelform_factory
+        # help_text can not be cleared using an empty string in modelform_factory
         form.base_fields['context'].help_text = ''
         for field in self.partial_fields:
             form.base_fields['context'].validators.append(field.run_validators)
