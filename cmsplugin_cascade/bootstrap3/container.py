@@ -17,8 +17,8 @@ class ContainerRadioFieldRenderer(RadioFieldRenderer):
 
     def render(self):
         return format_html('<div class="form-row">{0}</div>',
-            format_html_join('', '<div class="field-box text-center">'
-                '<div class="thumbnail"><i class="icon-{1}" style="font-size:50pt;"></i><h4>{0}</h4></div>'
+            format_html_join('', '<div class="field-box">'
+                '<div class="container-thumbnail"><i class="icon-{1}"></i><div class="label">{0}</div></div>'
                 '</div>', ((force_text(w), self.map_icon[w.choice_value]) for w in self)
             ))
 

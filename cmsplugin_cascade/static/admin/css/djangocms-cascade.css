@@ -1,0 +1,16 @@
+form .context-widget { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+form .context-widget h1 { clear: both; margin: 10px 0; }
+form .context-widget label { width: inherit; padding-left: 10px; }
+form .context_breakpoint .container-thumbnail { text-align: center; }
+form .context_breakpoint .container-thumbnail i[class^="icon"] { font-size: 70px; }
+form .context_button-type .field-box { margin-right: 10px; }
+form .context_button-size .button-samples { min-height: 100px; max-width: 100px; }
+form .context_button-type .btn, .context_button-size .btn { margin-bottom: 5px; }
+form .context-widget ul { margin-left: 0; padding-left: 0; }
+form .context-widget ul li { list-style: none; float: left; min-width: 95px; }
+form .context-widget ul.errorlist li { float: none; }
+form .context-widget div.sibling-field { float: left;  margin-left: 20px; }
+form .context-widget div.sibling-field:first-child { margin-left: 0; }
+form .context-widget div.sibling-field input { width: 95px; margin: 0; }
+form .context-widget h4 { margin-top: 10px !important; margin-bottom: 10px !important; }
+form .context-widget input[type="radio"], #cascadeelement_form input[type="checkbox"] { margin: 0 4px 0 0; }
