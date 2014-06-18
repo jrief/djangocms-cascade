@@ -15,11 +15,11 @@ class CarouselPlugin(BootstrapPluginBase):
     default_css_attributes = ('options',)
     parent_classes = ['BootstrapColumnPlugin']
     render_template = os.path.join('cms', settings.CMS_CASCADE_TEMPLATE_DIR, 'carousel.html')
-    default_inline_styles = { 'overflow': 'hidden' }
-    default_data_options = { 'ride': 'carousel' }
+    default_inline_styles = {'overflow': 'hidden'}
+    default_data_options = {'ride': 'carousel'}
     partial_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
-            NumberInputWidget(attrs={ 'size': '2' }),
+            NumberInputWidget(attrs={'size': '2'}),
             label=_('Number of Slides'), help_text=_('Number of slides for this carousel.')
         ),
         PartialFormField('data_options', MultipleTextInputWidget(['interval', 'pause']),
