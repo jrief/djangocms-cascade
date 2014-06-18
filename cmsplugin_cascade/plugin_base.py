@@ -71,8 +71,10 @@ class CascadePluginBase(CMSPluginBase):
         Get the object and augment its context with the number of children.
         """
         obj = super(CascadePluginBase, self).get_object(request, object_id)
-        if obj and isinstance(obj.context, dict):
+        try:
             obj.context['-num-children-'] = obj.get_children().count()
+        except AttributeError:
+            pass
         return obj
 
     def save_model(self, request, obj, form, change):
