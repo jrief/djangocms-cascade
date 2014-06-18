@@ -1,0 +1,12 @@
+{% extends "cms/admin/change_form.html" %}
+
+{% block after_field_sets %}
+<script type="text/javascript">
+(function($) {
+	$("#id_link_type").change(function(evt) {
+		var val = $("#id_link_type").val();
+		console.log('val: ' + evt.target.value);
+	});
+})(django.jQuery);
+</script>
+{% endblock %}
