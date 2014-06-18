@@ -54,7 +54,7 @@ class JSONMultiWidget(widgets.MultiWidget):
                 field.widget.render(field.name, values.get(field.name), field_attrs),
                 six.text_type(field.help_text)
             ))
-        html = format_html_join('\n', '<div class="context-widget context_{0}"><h1>{1}</h1>{2}<small>{3}</small></div>', fields)
+        html = format_html_join('\n', '<div class="context-widget context_{0}"><h1>{1}</h1><div class="context-box">{2}</div><small>{3}</small></div>', fields)
         return html
 
 
@@ -109,8 +109,7 @@ class MultipleTextInputWidget(widgets.MultiWidget):
             label = '{0}-{1}'.format(name, key)
             errors = key in self.validation_errors and 'errors' or ''
             widgets.append((self.widgets[index].render(label, values.get(key), attrs), errors))
-        html = format_html('<div class="clearfix">{0}</div>', format_html_join('\n', '<div class="sibling-field {1}">{0}</div>', widgets))
-        return html
+        return format_html('<div class="clearfix">{0}</div>', format_html_join('\n', '<div class="sibling-field {1}">{0}</div>', widgets))
 
     def validate(self, value, field_name):
         if hasattr(self, 'validation_pattern'):
