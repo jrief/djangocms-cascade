@@ -1,6 +1,8 @@
+form .field-box { min-height: 42px; }
 form .context-widget { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
 form .context-widget h1 { clear: both; margin: 10px 0; }
 form .context-widget label { width: inherit; padding-left: 10px; }
+form .context-widget small { margin-left: 0; }
 form .context_breakpoint .container-thumbnail { text-align: center; }
 form .context_breakpoint .container-thumbnail i[class^="icon"] { font-size: 70px; }
 form .context_button-type .field-box { margin-right: 10px; }
