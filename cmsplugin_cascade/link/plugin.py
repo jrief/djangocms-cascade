@@ -66,8 +66,6 @@ class TextLinkPlugin(CascadePluginBase):
     name = _("TextLink")
     model = LinkElement
     render_template = "cms/plugins/link.html"
-    change_form_template = "cms/admin/link_change_form.html"
-    #change_form_template = "admin/cms/page/plugin/change_form.html"
     text_enabled = True
     allow_children = False
     TYPE_CHOICES = (('int', _("Internal")), ('ext', _("External")), ('mail', _("Mail To")),)
@@ -77,6 +75,9 @@ class TextLinkPlugin(CascadePluginBase):
             widgets.TextInput(), label=_("Link"), help_text=_("Content of Link")
         ),
     )
+
+    class Media:
+        js = ['admin/js/cascade-linkplugin.js']
 
     def get_site(self):
         try:
@@ -91,6 +92,7 @@ class TextLinkPlugin(CascadePluginBase):
     def get_form(self, request, obj=None, **kwargs):
         page_link = PageSelectFormField(queryset=Page.objects.drafts().on_site(self.get_site()),
                                         label=_("page"), required=False)
+        # create a Form class on the fly, containing our page_link field
         kwargs.update(form=type('PageLinkForm', (LinkForm,), {'page_link': page_link}))
         return super(TextLinkPlugin, self).get_form(request, obj, **kwargs)
 

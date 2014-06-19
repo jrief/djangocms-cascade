@@ -13,7 +13,7 @@ from . import settings
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
-    map_icon = { 'xs': 'mobile-phone', 'sm': 'tablet', 'md': 'laptop', 'lg': 'desktop' }
+    map_icon = {'xs': 'mobile-phone', 'sm': 'tablet', 'md': 'laptop', 'lg': 'desktop'}
 
     def render(self):
         return format_html('<div class="form-row">{0}</div>',
@@ -38,6 +38,9 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             help_text=_("Narrowest display for Bootstrap's grid system.")
         ),
     )
+
+    class Media:
+        css = {'all': ('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css',)}
 
     @classmethod
     def get_identifier(cls, obj):

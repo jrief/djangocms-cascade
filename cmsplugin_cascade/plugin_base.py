@@ -7,9 +7,11 @@ from .widgets import JSONMultiWidget
 
 class CascadePluginBase(CMSPluginBase):
     tag_type = 'div'
-    change_form_template = 'cms/admin/change_form.html'
     render_template = 'cms/plugins/generic.html'
     _cached_child_classes = None
+
+    class Media:
+        css = {'all': ('admin/css/djangocms-cascade.css',)}
 
     def _child_classes(self):
         """All registered plugins shall be allowed as children for this plugin"""

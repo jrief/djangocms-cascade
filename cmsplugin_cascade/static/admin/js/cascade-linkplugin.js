@@ -1,8 +1,4 @@
-{% extends "cms/admin/change_form.html" %}
-
-{% block after_field_sets %}
-<script type="text/javascript">
-(function($) {
+django.jQuery(function($) {
 	var $link_type = $("#id_link_type"),
 		$field_pagelink = $("#linkelement_form .field-box.field-page_link"),
 		$field_url = $("#linkelement_form .field-box.field-url"),
@@ -30,8 +26,11 @@
 			$field_url.hide();
 			$field_email.show();
 			break;
+		default:
+			$field_pagelink.hide();
+			$field_url.hide();
+			$field_email.hide();
+			break;
 		}
 	}
-})(django.jQuery);
-</script>
-{% endblock %}
+});

@@ -45,7 +45,7 @@ class BootstrapButtonPlugin(BootstrapPluginBase):
     name = _("Button")
     parent_classes = ['BootstrapColumnPlugin']
     render_template = 'cms/plugins/naked.html'
-    generic_child_classes = ('LinkPlugin',)
+    generic_child_classes = ('TextLinkPlugin',)
     tag_type = None
     default_css_class = 'btn'
     default_css_attributes = ('button-type', 'button-size', 'button-options',)
@@ -72,6 +72,9 @@ class BootstrapButtonPlugin(BootstrapPluginBase):
             help_text=_('Margins for this button wrapper.')
         ),
     )
+
+    class Media:
+        css = {'all': ('admin/css/bootstrap.min.css', 'admin/css/bootstrap-theme.min.css',)}
 
     @classmethod
     def get_identifier(cls, obj):
