@@ -12,9 +12,8 @@ from . import settings
 
 
 class ImageForm(LinkForm):
-    responsive = fields.BooleanField(initial=True)
-    TYPE_CHOICES = (('none', _("Not Linked")), ('int', _("Internal")), ('ext', _("External")), ('email', _("Mail To")),)
-    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='none')
+    TYPE_CHOICES = (('null', _("Not Linked")), ('int', _("Internal")), ('ext', _("External")), ('email', _("Mail To")),)
+    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='null')
 
     class Meta:
         model = ImageElement
@@ -32,12 +31,13 @@ class BootstrapImagePlugin(LinkPluginBase):
     text_enabled = True
     admin_preview = False
     render_template = 'cms/plugins/generic.html'
-    fields = ('image', 'responsive', 'glossary', ('link_type', 'page_link', 'url', 'email'),)
-    CLASS_CHOICES = (('thumbnail', 'Thumbnail'), ('blah', 'Blah'),)
+    fields = ('image', 'glossary', ('link_type', 'page_link', 'url', 'email'),)
+    SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
+                     ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')))
     glossary_fields = (
         PartialFormField('image-shapes',
-            widgets.CheckboxSelectMultiple(choices=(('img-rounded', _('Rounded')), ('img-rounded', _('Circle')), ('img-thumbnail', _('Thumbnail')))),
-                label=_('Image Shapes'),
+            widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
+                label=_('Image Shapes'), initial='img-responsive'
         ),
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(['min-height']),
@@ -48,7 +48,6 @@ class BootstrapImagePlugin(LinkPluginBase):
 
     def render(self, context, instance, placeholder):
         #screen_dimensions = self.get_screen_dimensions(context)
-        max_width = self.guess_max_image_size(instance)
         context.update({
             'instance': instance,
             'placeholder': placeholder
