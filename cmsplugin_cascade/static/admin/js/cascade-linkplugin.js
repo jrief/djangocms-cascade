@@ -1,8 +1,8 @@
 django.jQuery(function($) {
 	var $link_type = $("#id_link_type"),
-		$field_pagelink = $("#linkelement_form .field-box.field-page_link"),
-		$field_url = $("#linkelement_form .field-box.field-url"),
-		$field_email = $("#linkelement_form .field-box.field-email");
+		$field_pagelink = $("#id_page_link_0").parent(".field-box"),
+		$field_url = $("#id_url").parent(".field-box"),
+		$field_email = $("#id_email").parent(".field-box");
 
 	$link_type.change(function(evt) {
 		toggleLinkTypes(evt.target.value);

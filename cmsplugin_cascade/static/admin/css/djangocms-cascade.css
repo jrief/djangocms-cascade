@@ -1,4 +1,5 @@
 form input, form textarea { padding: 3px 5px; }
+form .form-row.field-link_type { min-height: 50px; }
 form .field-box label.inline { text-align: right; }
 form .glossary-widget { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
 form .glossary-widget h1 { clear: both; margin: 10px 0; }

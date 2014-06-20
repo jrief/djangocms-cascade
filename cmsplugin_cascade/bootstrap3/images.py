@@ -1,17 +1,30 @@
 # -*- coding: utf-8 -*-
 from django.forms import widgets
+from django.forms import fields
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from cmsplugin_cascade.image.models import ImageElement
-from .plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.link.forms import LinkForm
+from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 from . import settings
 
 
-class ThumbnailPlugin(BootstrapPluginBase):
-    name = _("Thumbnail")
+class ImageForm(LinkForm):
+    responsive = fields.BooleanField(initial=True)
+    TYPE_CHOICES = (('none', _("Not Linked")), ('int', _("Internal")), ('ext', _("External")), ('email', _("Mail To")),)
+    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='none')
+
+    class Meta:
+        model = ImageElement
+        fields = ('page_link', 'image', 'glossary',)
+
+
+class BootstrapImagePlugin(LinkPluginBase):
+    name = _("Image")
     model = ImageElement
+    form = ImageForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
     allow_children = False
@@ -19,12 +32,12 @@ class ThumbnailPlugin(BootstrapPluginBase):
     text_enabled = True
     admin_preview = False
     render_template = 'cms/plugins/generic.html'
-    fields = ('image', 'glossary',)
+    fields = ('image', 'responsive', 'glossary', ('link_type', 'page_link', 'url', 'email'),)
     CLASS_CHOICES = (('thumbnail', 'Thumbnail'), ('blah', 'Blah'),)
     glossary_fields = (
-        PartialFormField('css_class',
-            widgets.Select(choices=CLASS_CHOICES),
-            label=_('Extra Thumbnail Classes')
+        PartialFormField('image-shapes',
+            widgets.CheckboxSelectMultiple(choices=(('img-rounded', _('Rounded')), ('img-rounded', _('Circle')), ('img-thumbnail', _('Thumbnail')))),
+                label=_('Image Shapes'),
         ),
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(['min-height']),
@@ -129,10 +142,10 @@ class ThumbnailPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(ThumbnailPlugin, cls).get_css_classes(obj)
+        css_classes = super(BootstrapImagePlugin, cls).get_css_classes(obj)
         css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)
         return css_classes
 
-plugin_pool.register_plugin(ThumbnailPlugin)
+plugin_pool.register_plugin(BootstrapImagePlugin)
