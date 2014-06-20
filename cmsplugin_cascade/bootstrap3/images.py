@@ -103,25 +103,6 @@ class BootstrapImagePlugin(LinkPluginBase):
                 'upscale': upscale,
                 'subject_location': subject_location}
 
-    def guess_max_image_size(self, instance):
-        """
-        Using the class context this image shall be rendered in, guess the maximum image size.
-        Remember: In Bootstrap 3 images usually are rendered into a column, whose width is
-        responsive, thus the image size shall be no more than its maximum size.
-        """
-        glossary = instance.get_glossary()
-        breakpoints = ('lg', 'md', 'sm', 'xs')
-        container_bp = glossary.get('breakpoint', 'lg')
-        breakpoints = breakpoints[breakpoints.index(container_bp):]
-        max_width = 0
-        for bp in breakpoints:
-            column_width = glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
-            if not column_width.isdigit():
-                column_width = 12
-            width = settings.CMS_CASCADE_BOOTSTRAP3_COLUMN_WIDTHS[bp] * int(column_width)
-            max_width = max(max_width, int(width))
-        return max_width
-
 #     def get_screen_dimensions(self, context):
 #         """
 #         Attempt to find out the browser's screen dimensions. This requires a cookie set by
@@ -146,5 +127,30 @@ class BootstrapImagePlugin(LinkPluginBase):
         if css_class:
             css_classes.append(css_class)
         return css_classes
+
+#     def save_model(self, request, obj, form, change):
+#         if 'img-responsive' in form.cleaned_data['glossary'].get('image-shapes', []):
+#             obj.glossary.update(estimated_max_width=self._estimate_max_image_size(obj))
+#         super(BootstrapImagePlugin, self).save_model(request, obj, form, change)
+
+    @classmethod
+    def resize_image(cls, obj):
+        """
+        By using the glossary this image shall be rendered in, estimate the maximum image size.
+        Remember: In Bootstrap 3, images usually are rendered into a column, whose width is
+        responsive, thus the image size shall be no more than its maximum size.
+        """
+        glossary = obj.get_glossary()
+        breakpoints = ('lg', 'md', 'sm', 'xs')
+        container_bp = glossary.get('breakpoint', 'lg')
+        breakpoints = breakpoints[breakpoints.index(container_bp):]
+        max_width = 0
+        for bp in breakpoints:
+            column_width = glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
+            if not column_width.isdigit():
+                column_width = 12
+            width = settings.CMS_CASCADE_BOOTSTRAP3_COLUMN_WIDTHS[bp] * int(column_width)
+            max_width = max(max_width, int(round(width)))
+        obj.glossary.update(estimated_max_width=max_width)
 
 plugin_pool.register_plugin(BootstrapImagePlugin)

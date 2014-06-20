@@ -52,6 +52,10 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         except (TypeError, KeyError, ValueError):
             return ''
 
+    def save_model(self, request, obj, form, change):
+        super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
+        obj.refresh_children()
+
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
@@ -149,6 +153,10 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     help_text=_('Column offset for all devices wider than 1200 pixels, such as large desktops.')
                 ))
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        super(BootstrapColumnPlugin, self).save_model(request, obj, form, change)
+        obj.refresh_children()
 
     @classmethod
     def get_identifier(cls, obj):

@@ -59,10 +59,22 @@ class CascadeModelBase(CMSPlugin):
         glossary.update(self.glossary or {})
         return glossary
 
+    def refresh_children(self):
+        """
+        Recursively walk down the plugin tree, and invoke this method. If the model of a child
+        plugin must be refreshed after the model of a parent has been updated, then overload this
+        method and to whatever has to be done.
+        """
+        for model in CascadeModelBase._get_cascade_elements():
+            for child in model.objects.filter(parent_id=self.id):
+                child.refresh_children()
+
     @classmethod
     def _get_cascade_elements(cls):
         """
-        Returns a list of models which are derived from CascadeModelBase
+        Returns a set of models which are derived from CascadeModelBase. This set shall be used
+        for traversing the plugin tree, since children can be interconnected using different
+        plugins.
         """
         if not hasattr(cls, '_cached_cascade_elements'):
             setattr(cls, '_cached_cascade_elements',
