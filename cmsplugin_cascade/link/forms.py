@@ -14,12 +14,15 @@ class LinkForm(ModelForm):
     """
     TYPE_CHOICES = (('int', _("Internal")), ('ext', _("External")), ('email', _("Mail To")),)
     link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='int')
-    url = fields.URLField(required=False)
-    email = fields.EmailField(required=False)
+    url = fields.URLField(required=False, help_text=_("Link onto external page"))
+    email = fields.EmailField(required=False, help_text=_("Open Email program"))
 
     class Meta:
         model = LinkElement
         fields = ('page_link', 'text_link', 'glossary',)
+
+    class Media:
+        js = ['admin/js/cascade-linkplugin.js']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
