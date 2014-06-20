@@ -8,6 +8,10 @@ from .models import LinkElement
 
 
 class LinkForm(ModelForm):
+    """
+    Form class to add fake fields for rendering the ModelAdmin's form, when later are combined
+    with the model data.
+    """
     TYPE_CHOICES = (('int', _("Internal")), ('ext', _("External")), ('email', _("Mail To")),)
     link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='int')
     url = fields.URLField(required=False)
