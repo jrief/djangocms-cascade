@@ -49,7 +49,7 @@ class BootstrapButtonPlugin(BootstrapPluginBase):
     tag_type = None
     default_css_class = 'btn'
     default_css_attributes = ('button-type', 'button-size', 'button-options',)
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('button-type',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonTypeRenderer.BUTTON_TYPES.items()),
                                 renderer=ButtonTypeRenderer),

@@ -25,12 +25,12 @@ class CascadePluginBase(CMSPluginBase):
         return self._cached_child_classes
     child_classes = property(_child_classes)
 
-    def __init__(self, model=None, admin_site=None, partial_fields=None):
+    def __init__(self, model=None, admin_site=None, glossary_fields=None):
         super(CascadePluginBase, self).__init__(model, admin_site)
-        if partial_fields:
-            self.partial_fields = partial_fields
-        elif not hasattr(self, 'partial_fields'):
-            self.partial_fields = []
+        if glossary_fields:
+            self.glossary_fields = glossary_fields
+        elif not hasattr(self, 'glossary_fields'):
+            self.glossary_fields = []
 
     @classmethod
     def get_identifier(cls, model):
@@ -106,11 +106,11 @@ class CascadePluginBase(CMSPluginBase):
         """
         Build the form used for changing the model.
         """
-        kwargs.update(widgets={'glossary': JSONMultiWidget(self.partial_fields)}, labels={'glossary': ''})
+        kwargs.update(widgets={'glossary': JSONMultiWidget(self.glossary_fields)}, labels={'glossary': ''})
         form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
         # help_text can not be cleared using an empty string in modelform_factory
         form.base_fields['glossary'].help_text = ''
-        for field in self.partial_fields:
+        for field in self.glossary_fields:
             form.base_fields['glossary'].validators.append(field.run_validators)
-        setattr(form, 'partial_fields', self.partial_fields)
+        setattr(form, 'glossary_fields', self.glossary_fields)
         return form

@@ -13,7 +13,7 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
     CLASS_CHOICES = ((('', _('Unstyled')),) + tuple((cls, cls.title()) for cls in ('thumbnail', 'jumbotron',)))
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('css_class',
             widgets.Select(choices=CLASS_CHOICES),
             label=_('Extra Bootstrap Classes'),
@@ -48,7 +48,7 @@ class HorizontalRulePlugin(BootstrapPluginBase):
     allow_children = False
     tag_type = 'hr'
     render_template = 'cms/plugins/single.html'
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(['margin-top', 'margin-bottom']),
             label=_('Inline Styles'),

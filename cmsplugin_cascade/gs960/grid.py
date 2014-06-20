@@ -15,7 +15,7 @@ class Container960BasePlugin(CascadePluginBase):
     default_css_attributes = ('options',)
 
     def __init__(self, model=None, admin_site=None):
-        partial_fields = (
+        glossary_fields = (
             PartialFormField('options',
                 widgets.CheckboxSelectMultiple(choices=(('clearfix', _('Clearfix')),)),
                 label=_('Options'),
@@ -25,7 +25,7 @@ class Container960BasePlugin(CascadePluginBase):
                 label=_('Number of Columns'), help_text=_('Number of columns to be created with this row.')
             ),
         )
-        super(Container960BasePlugin, self).__init__(model, admin_site, partial_fields)
+        super(Container960BasePlugin, self).__init__(model, admin_site, glossary_fields)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(obj.glossary['-num-children-'])
@@ -70,7 +70,7 @@ class Grid960BasePlugin(CascadePluginBase):
         return super(Grid960BasePlugin, cls).__new__(cls, *args, **kwargs)
 
     def __init__(self, model=None, admin_site=None):
-        partial_fields = (
+        glossary_fields = (
             PartialFormField('grid',
                 widgets.Select(choices=self.GRID_CHOICES),
                 label=_('Column Grid'), initial='grid_4',
@@ -92,7 +92,7 @@ class Grid960BasePlugin(CascadePluginBase):
                 label=_('Inline Styles'), help_text=_('Minimum height for this column.')
             ),
         )
-        super(Grid960BasePlugin, self).__init__(model, admin_site, partial_fields=partial_fields)
+        super(Grid960BasePlugin, self).__init__(model, admin_site, glossary_fields=glossary_fields)
 
     @classmethod
     def get_identifier(cls, obj):

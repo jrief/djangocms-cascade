@@ -16,7 +16,7 @@ class PanelGroupPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     render_template = os.path.join('cms', settings.CMS_CASCADE_TEMPLATE_DIR, 'collapse.html')
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
             NumberInputWidget(attrs={'style': 'width: 30px;'}),
             label=_('Number of Panels'), help_text=_('Number of panels for this panel group.')
@@ -42,7 +42,7 @@ class PanelPlugin(BootstrapPluginBase):
     parent_classes = ['PanelGroupPlugin']
     require_parent = True
     generic_child_classes = ('TextPlugin',)
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('panel_title',
             widgets.TextInput(attrs={ 'size': 150 }),
             label=_('Panel Title')

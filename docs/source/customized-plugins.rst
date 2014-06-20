@@ -39,7 +39,7 @@ This list of partial form fields is added to the plugin as::
 	
 	class StylishPlugin(CascadePluginBase):
 	    ...
-	    partial_fields = [
+	    glossary_fields = [
 	        PartialFormField('color',
 	            widgets.Select(choices=(('red', 'Red'), ('green', 'Green'),)),
 	            label="Element's Color", initial='red',
@@ -53,7 +53,7 @@ between red and green elements.
 
 A ``PartialFormField`` accepts five arguments:
 
-* The name of the field. It must be unique in the given list of ``partial_fields``.
+* The name of the field. It must be unique in the given list of ``glossary_fields``.
 * The widget. This can be a built-in Django widget or any valid widget derived from it.
 * The ``label`` used to describe the field. If omitted, the ``name`` of the partial form field is used.
 * An optional ``initial`` value to be used with Radio- or Select fields.
@@ -134,7 +134,7 @@ Additionally ``BootstrapPluginBase`` allows the following attributes:
 	A list of plugins which shall be added as children to a plugin, but which themselves do not
 	declare this plugin in their ``parent_classes``.
 
-:partial_fields:
+:glossary_fields:
 	Default: None
 
 	A list of ``PartialFormField``'s. See the documentation above for details.

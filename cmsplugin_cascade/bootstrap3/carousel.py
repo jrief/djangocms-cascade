@@ -17,7 +17,7 @@ class CarouselPlugin(BootstrapPluginBase):
     render_template = os.path.join('cms', settings.CMS_CASCADE_TEMPLATE_DIR, 'carousel.html')
     default_inline_styles = {'overflow': 'hidden'}
     default_data_options = {'ride': 'carousel'}
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
             NumberInputWidget(attrs={'size': '2'}),
             label=_('Number of Slides'), help_text=_('Number of slides for this carousel.')

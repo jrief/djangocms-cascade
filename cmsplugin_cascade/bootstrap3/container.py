@@ -33,7 +33,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         ('sm', _("Small (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
         ('xs', _("Tiny (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
     )
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('breakpoint',
             widgets.RadioSelect(choices=WIDGET_CHOICES, renderer=ContainerRadioFieldRenderer),
             label=_('Display Breakpoint'), initial=settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINT,
@@ -60,7 +60,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     ROW_NUM_COLUMNS = (1, 2, 3, 4, 6, 12,)
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('-num-children-',  # temporary field, not stored in the database
             widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS)),
             label=_('Number of Columns'), help_text=_('Number of columns to be created with this row.')
@@ -102,7 +102,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             column_width = full_glossary.get('{0}-column-width'.format(prefix)) or '12'
             return int(string.replace(column_width, 'col-{0}-'.format(prefix), ''))
 
-        self.partial_fields = [self.default_width_widget]
+        self.glossary_fields = [self.default_width_widget]
         if obj:
             full_glossary = obj.get_glossary()
             breakpoint = full_glossary.get('breakpoint')
@@ -110,13 +110,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 xs_column_width = get_column_width('xs')
                 choices = (('', _('Unset')),) + tuple(('col-sm-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, xs_column_width + 1))
-                self.partial_fields.append(PartialFormField('sm-column-width',
+                self.glossary_fields.append(PartialFormField('sm-column-width',
                     widgets.Select(choices=choices), label=_('Width for Devices >768px'),
                     help_text=_('Column width for all devices wider than 768 pixels, such as tablets.')
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-sm-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, xs_column_width))
-                self.partial_fields.append(PartialFormField('sm-column-offset',
+                self.glossary_fields.append(PartialFormField('sm-column-offset',
                     widgets.Select(choices=choices), label=_('Offset for Devices >768px'),
                     help_text=_('Column offset for all devices wider than 768 pixels, such as tablets.')
                 ))
@@ -124,13 +124,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 sm_column_width = get_column_width('sm')
                 choices = (('', _('Unset')),) + tuple(('col-md-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, sm_column_width + 1))
-                self.partial_fields.append(PartialFormField('md-column-width',
+                self.glossary_fields.append(PartialFormField('md-column-width',
                     widgets.Select(choices=choices), label=_('Width for Devices >992px'),
                     help_text=_('Column width for all devices wider than 992 pixels, such as laptops.')
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-md-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, sm_column_width))
-                self.partial_fields.append(PartialFormField('md-column-offset',
+                self.glossary_fields.append(PartialFormField('md-column-offset',
                     widgets.Select(choices=choices), label=_('Offset for Devices >992px'),
                     help_text=_('Column offset for all devices wider than 992 pixels, such as laptops.')
                 ))
@@ -138,13 +138,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 md_column_width = get_column_width('md')
                 choices = (('', _('Unset')),) + tuple(('col-lg-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, md_column_width + 1))
-                self.partial_fields.append(PartialFormField('lg-column-width',
+                self.glossary_fields.append(PartialFormField('lg-column-width',
                     widgets.Select(choices=choices), label=_('Width for Devices >1200px'),
                     help_text=_('Column width for all devices wider than 1200 pixels, such as large desktops.'),
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-lg-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, md_column_width))
-                self.partial_fields.append(PartialFormField('lg-column-offset',
+                self.glossary_fields.append(PartialFormField('lg-column-offset',
                     widgets.Select(choices=choices), label=_('Offset for Devices >1200px'),
                     help_text=_('Column offset for all devices wider than 1200 pixels, such as large desktops.')
                 ))

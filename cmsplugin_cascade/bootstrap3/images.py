@@ -21,7 +21,7 @@ class ThumbnailPlugin(BootstrapPluginBase):
     render_template = 'cms/plugins/generic.html'
     fields = ('image', 'glossary',)
     CLASS_CHOICES = (('thumbnail', 'Thumbnail'), ('blah', 'Blah'),)
-    partial_fields = (
+    glossary_fields = (
         PartialFormField('css_class',
             widgets.Select(choices=CLASS_CHOICES),
             label=_('Extra Thumbnail Classes')

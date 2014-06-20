@@ -14,17 +14,17 @@ CSS_VERTICAL_SPACING = ['min-height']
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
-    def __init__(self, partial_fields):
-        unique_keys = set([field.name for field in partial_fields])
-        if len(partial_fields) > len(unique_keys):
-            raise AttributeError('List of partial_fields may contain only unique keys')
-        self.partial_fields = partial_fields[:]
-        super(JSONMultiWidget, self).__init__((field.widget for field in partial_fields))
+    def __init__(self, glossary_fields):
+        unique_keys = set([field.name for field in glossary_fields])
+        if len(glossary_fields) > len(unique_keys):
+            raise AttributeError('List of glossary_fields may contain only unique keys')
+        self.glossary_fields = glossary_fields[:]
+        super(JSONMultiWidget, self).__init__((field.widget for field in glossary_fields))
 
     def decompress(self, values):
         if not isinstance(values, dict):
             values = json.loads(values or '{}')
-        for field in self.partial_fields:
+        for field in self.glossary_fields:
             if isinstance(field.widget, widgets.MultiWidget):
                 values[field.name] = field.widget.decompress(values.get(field.name))
             else:
@@ -33,7 +33,7 @@ class JSONMultiWidget(widgets.MultiWidget):
 
     def value_from_datadict(self, data, files, name):
         result = {}
-        for field in self.partial_fields:
+        for field in self.glossary_fields:
             if isinstance(field.widget, widgets.MultiWidget):
                 result[field.name] = field.widget.value_from_datadict(data, files, field.name)
             elif getattr(field.widget, 'allow_multiple_selected', False):
@@ -46,7 +46,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         values = self.decompress(values)
         field_attrs = dict(**attrs)
         render_fields = []
-        for field in self.partial_fields:
+        for field in self.glossary_fields:
             field_attrs['id'] = attrs['id'] + '_' + field.name
             render_fields.append((
                 field.name,

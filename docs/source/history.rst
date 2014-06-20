@@ -8,6 +8,8 @@ Release History
 * Renamed ``context`` from model ``CascadeElement`` to ``glossary`. The identifier ``context`` lead
   to too much confusion, since it is used all way long in other CMS plugins, where it has a
   complete different meaning.
+* Renamed ``partial_fields`` in all plugins to ``glossary_fields``, since that's the model field
+  where they keep their information.
 
 0.3.2
 -----

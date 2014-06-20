@@ -8,7 +8,7 @@ from django.test.client import Client
 from cms.models.placeholdermodel import Placeholder
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from cmsplugin_cascade.models import CascadeElement
-from cmsplugin_cascade.bootstrap3.buttons import ButtonWrapperPlugin
+from cmsplugin_cascade.bootstrap3.buttons import BootstrapButtonPlugin
 
 
 class ButtonWrapperPluginTest(TestCase):
@@ -32,16 +32,16 @@ class ButtonWrapperPluginTest(TestCase):
     def test_change_form(self):
         context = {'button-type': 'btn-primary', 'button-options': ['btn-block'], 'button-size': 'btn-lg',}
         obj_id = CascadeElement.objects.create(context=context).id
-        model = ButtonWrapperPlugin().get_object(self.request, obj_id)
+        model = BootstrapButtonPlugin().get_object(self.request, obj_id)
         self.assertEqual(model.context.get('-num-children-'), 0)
-        self.assertListEqual(ButtonWrapperPlugin.get_css_classes(model), ['btn', 'btn-primary', 'btn-lg', 'btn-block'])
-        self.assertEqual(ButtonWrapperPlugin.get_identifier(model), 'Primary')
-        button_wrapper = ButtonWrapperPlugin(model=model)
-        self.assertEqual(len(button_wrapper.partial_fields), 4)
-        self.assertIsInstance(button_wrapper.partial_fields[0].widget, widgets.RadioSelect)
-        self.assertIsInstance(button_wrapper.partial_fields[1].widget, widgets.RadioSelect)
-        self.assertIsInstance(button_wrapper.partial_fields[2].widget, widgets.CheckboxSelectMultiple)
-        self.assertIsInstance(button_wrapper.partial_fields[3].widget, MultipleInlineStylesWidget)
+        self.assertListEqual(BootstrapButtonPlugin.get_css_classes(model), ['btn', 'btn-primary', 'btn-lg', 'btn-block'])
+        self.assertEqual(BootstrapButtonPlugin.get_identifier(model), 'Primary')
+        button_wrapper = BootstrapButtonPlugin(model=model)
+        self.assertEqual(len(button_wrapper.glossary_fields), 4)
+        self.assertIsInstance(button_wrapper.glossary_fields[0].widget, widgets.RadioSelect)
+        self.assertIsInstance(button_wrapper.glossary_fields[1].widget, widgets.RadioSelect)
+        self.assertIsInstance(button_wrapper.glossary_fields[2].widget, widgets.CheckboxSelectMultiple)
+        self.assertIsInstance(button_wrapper.glossary_fields[3].widget, MultipleInlineStylesWidget)
         self.assertListEqual(button_wrapper.child_classes, ['LinkPlugin'])
         form = button_wrapper.get_form(self.request)
         html = form(instance=model).as_table()
