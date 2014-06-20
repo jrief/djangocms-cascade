@@ -40,7 +40,7 @@ class CarouselPlugin(BootstrapPluginBase):
         return ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(obj.context['-num-children-'])
+        wanted_children = int(obj.glossary['-num-children-'])
         super(CarouselPlugin, self).save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, SlidePlugin)
 

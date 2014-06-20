@@ -3,6 +3,12 @@
 ===============
 Release History
 ===============
+0.4.0
+-----
+* Renamed ``context`` from model ``CascadeElement`` to ``glossary`. The identifier ``context`` lead
+  to too much confusion, since it is used all way long in other CMS plugins, where it has a
+  complete different meaning.
+
 0.3.2
 -----
 * Fixed: Missing unicode conversion for method ``get_identifier()``

@@ -19,7 +19,7 @@ class LinkForm(ModelForm):
 
     class Meta:
         model = LinkElement
-        fields = ('page_link', 'text_link', 'context',)
+        fields = ('page_link', 'text_link', 'glossary',)
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')

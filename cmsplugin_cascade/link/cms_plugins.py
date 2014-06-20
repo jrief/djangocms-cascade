@@ -22,7 +22,7 @@ class TextLinkPlugin(CascadePluginBase):
     text_enabled = True
     allow_children = False
     TYPE_CHOICES = (('int', _("Internal")), ('ext', _("External")), ('mail', _("Mail To")),)
-    fields = (('link_type', 'page_link', 'url', 'email'), 'context',)
+    fields = (('link_type', 'page_link', 'url', 'email'), 'glossary',)
     partial_fields = (
         PartialFormField('text',
             widgets.TextInput(), label=_("Link"), help_text=_("Content of Link")

@@ -27,7 +27,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     default_css_class = 'container'
     require_parent = False
-    CONTEXT_WIDGET_CHOICES = (
+    WIDGET_CHOICES = (
         ('lg', _("Large (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['lg']))),
         ('md', _("Medium (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['md']))),
         ('sm', _("Small (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
@@ -35,7 +35,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     )
     partial_fields = (
         PartialFormField('breakpoint',
-            widgets.RadioSelect(choices=CONTEXT_WIDGET_CHOICES, renderer=ContainerRadioFieldRenderer),
+            widgets.RadioSelect(choices=WIDGET_CHOICES, renderer=ContainerRadioFieldRenderer),
             label=_('Display Breakpoint'), initial=settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINT,
             help_text=_("Narrowest display for Bootstrap's grid system.")
         ),
@@ -47,7 +47,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         try:
-            texts = [d for c, d in cls.CONTEXT_WIDGET_CHOICES if c == obj.context.get('breakpoint')]
+            texts = [d for c, d in cls.WIDGET_CHOICES if c == obj.glossary.get('breakpoint')]
             return _('Narrowest grid: {0}').format(texts[0].lower())
         except (TypeError, KeyError, ValueError):
             return ''
@@ -76,10 +76,10 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         return ungettext_lazy('with {0} column', 'with {0} columns', num_cols).format(num_cols)
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(obj.context['-num-children-'])
+        wanted_children = int(obj.glossary['-num-children-'])
         super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
-        child_context = { 'xs-column-width': 'col-xs-{0}'.format(12 // wanted_children) }
-        self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_context=child_context)
+        child_glossary = {'xs-column-width': 'col-xs-{0}'.format(12 // wanted_children)}
+        self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
@@ -98,14 +98,14 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         def get_column_width(prefix):
-            # full_context from closure
-            column_width = full_context.get('{0}-column-width'.format(prefix)) or '12'
+            # full_glossary from closure
+            column_width = full_glossary.get('{0}-column-width'.format(prefix)) or '12'
             return int(string.replace(column_width, 'col-{0}-'.format(prefix), ''))
 
         self.partial_fields = [self.default_width_widget]
         if obj:
-            full_context = obj.get_full_context()
-            breakpoint = full_context.get('breakpoint')
+            full_glossary = obj.get_glossary()
+            breakpoint = full_glossary.get('breakpoint')
             if breakpoint in ('lg', 'md', 'sm',):
                 xs_column_width = get_column_width('xs')
                 choices = (('', _('Unset')),) + tuple(('col-sm-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
@@ -153,7 +153,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         try:
-            width = int(string.replace(obj.context['xs-column-width'], 'col-xs-', ''))
+            width = int(string.replace(obj.glossary['xs-column-width'], 'col-xs-', ''))
             return ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
         except (TypeError, KeyError, ValueError):
             return _('unknown width')

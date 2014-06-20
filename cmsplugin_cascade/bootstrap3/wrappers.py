@@ -28,13 +28,13 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        name = obj.context.get('css_class').title() or cls.CLASS_CHOICES[0][1]
+        name = obj.glossary.get('css_class').title() or cls.CLASS_CHOICES[0][1]
         return name.title()
 
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = super(SimpleWrapperPlugin, cls).get_css_classes(obj)
-        css_class = obj.context.get('css_class')
+        css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)
         return css_classes

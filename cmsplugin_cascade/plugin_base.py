@@ -45,7 +45,7 @@ class CascadePluginBase(CMSPluginBase):
         if hasattr(cls, 'default_css_class'):
             css_classes.append(cls.default_css_class)
         for attr in getattr(cls, 'default_css_attributes', []):
-            css_class = obj.context.get(attr)
+            css_class = obj.glossary.get(attr)
             if isinstance(css_class, six.string_types):
                 css_classes.append(css_class)
             elif isinstance(css_class, list):
@@ -55,7 +55,7 @@ class CascadePluginBase(CMSPluginBase):
     @classmethod
     def get_inline_styles(cls, obj):
         inline_styles = getattr(cls, 'default_inline_styles', {})
-        css_style = obj.context.get('inline_styles')
+        css_style = obj.glossary.get('inline_styles')
         if css_style:
             inline_styles.update(css_style)
         return inline_styles
@@ -63,33 +63,33 @@ class CascadePluginBase(CMSPluginBase):
     @classmethod
     def get_data_options(cls, obj):
         data_options = getattr(cls, 'default_data_options', {})
-        instance_options = obj.context.get('data_options')
+        instance_options = obj.glossary.get('data_options')
         if instance_options:
             data_options.update(instance_options)
         return data_options
 
     def get_object(self, request, object_id):
         """
-        Get the object and augment its context with the number of children.
+        Get the object and enrich the glossary with the number of children.
         """
         obj = super(CascadePluginBase, self).get_object(request, object_id)
         try:
-            obj.context['-num-children-'] = obj.get_children().count()
+            obj.glossary['-num-children-'] = obj.get_children().count()
         except AttributeError:
             pass
         return obj
 
     def save_model(self, request, obj, form, change):
         """
-        Save the object in the database and remove temporary context item '-num-children-'.
+        Save the object in the database and remove temporary item ``glossary['-num-children-']``.
         """
         try:
-            del obj.context['-num-children-']
+            del obj.glossary['-num-children-']
         except (TypeError, KeyError):
             pass
         super(CascadePluginBase, self).save_model(request, obj, form, change)
 
-    def extend_children(self, parent, wanted_children, child_class, child_context=None):
+    def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
         """
         Extend the number of children so that the parent object contains wanted children. No child
         will be removed.
@@ -98,19 +98,19 @@ class CascadePluginBase(CMSPluginBase):
         current_children = parent.get_children().count()
         for _ in range(current_children, wanted_children):
             child = add_plugin(parent.placeholder, child_class, parent.language, target=parent)
-            if isinstance(child_context, dict):
-                child.context.update(child_context)
+            if isinstance(child_glossary, dict):
+                child.glossary.update(child_glossary)
             child.save()
 
     def get_form(self, request, obj=None, **kwargs):
         """
         Build the form used for changing the model.
         """
-        kwargs.update(widgets={'context': JSONMultiWidget(self.partial_fields)}, labels={'context': ''})
+        kwargs.update(widgets={'glossary': JSONMultiWidget(self.partial_fields)}, labels={'glossary': ''})
         form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
         # help_text can not be cleared using an empty string in modelform_factory
-        form.base_fields['context'].help_text = ''
+        form.base_fields['glossary'].help_text = ''
         for field in self.partial_fields:
-            form.base_fields['context'].validators.append(field.run_validators)
+            form.base_fields['glossary'].validators.append(field.run_validators)
         setattr(form, 'partial_fields', self.partial_fields)
         return form

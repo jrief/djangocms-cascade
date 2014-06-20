@@ -14,7 +14,7 @@ class CascadeModelBase(CMSPlugin):
         abstract = True
 
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
-    context = JSONField(null=True, blank=True, default={})
+    glossary = JSONField(null=True, blank=True, default={})
 
     def __unicode__(self):
         return self.plugin_class.get_identifier(self)
@@ -44,20 +44,20 @@ class CascadeModelBase(CMSPlugin):
         data_options = self.plugin_class.get_data_options(self)
         return ' '.join(['data-{0}={1}'.format(*o) for o in data_options.items() if o[1]])
 
-    def get_full_context(self):
+    def get_glossary(self):
         """
-        Return the context recursively, from the root element down to the current element.
+        Return the glossary recursively, from the root element down to the current element.
         """
-        context = {}
+        glossary = {}
         for model in CascadeModelBase._get_cascade_elements():
             try:
                 parent = model.objects.get(id=self.parent_id)
-                context = parent.get_full_context()
+                glossary = parent.get_glossary()
                 break
             except ObjectDoesNotExist:
                 pass
-        context.update(self.context or {})
-        return context
+        glossary.update(self.glossary or {})
+        return glossary
 
     @classmethod
     def _get_cascade_elements(cls):

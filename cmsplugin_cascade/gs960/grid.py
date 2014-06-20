@@ -28,11 +28,11 @@ class Container960BasePlugin(CascadePluginBase):
         super(Container960BasePlugin, self).__init__(model, admin_site, partial_fields)
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(obj.context['-num-children-'])
+        wanted_children = int(obj.glossary['-num-children-'])
         super(Container960BasePlugin, self).save_model(request, obj, form, change)
         child_plugin = eval('Grid{0}Plugin'.format(self.CONTAINER_WIDTH))
-        child_context = { 'grid': 'grid_{0}'.format(self.CONTAINER_WIDTH // wanted_children) }
-        self.extend_children(obj, wanted_children, child_plugin, child_context=child_context)
+        child_glossary = {'grid': 'grid_{0}'.format(self.CONTAINER_WIDTH // wanted_children)}
+        self.extend_children(obj, wanted_children, child_plugin, child_glossary=child_glossary)
 
 
 class Container12Plugin(Container960BasePlugin):
@@ -97,7 +97,7 @@ class Grid960BasePlugin(CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         try:
-            texts = [d for c, d in cls.GRID_CHOICES if c == obj.context.get('grid')]
+            texts = [d for c, d in cls.GRID_CHOICES if c == obj.glossary.get('grid')]
             return texts[0]
         except (TypeError, KeyError, ValueError):
             return ''

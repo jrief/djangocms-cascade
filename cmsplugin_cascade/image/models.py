@@ -6,8 +6,7 @@ from cmsplugin_cascade.link.models_base import LinkElementBase
 
 class ImageElement(LinkElementBase):
     """
-    A model class to refer to a Django-Filer images, adding an optional Link and arbitrary context
-    data.
+    A model class to refer to a Django-Filer image together with the cascade glossary and an optional Link.
     """
     class Meta:
         app_label = 'cmsplugin_cascade'

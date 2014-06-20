@@ -78,6 +78,6 @@ class BootstrapButtonPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        return ButtonTypeRenderer.BUTTON_TYPES.get(obj.context.get('button-type'), '')
+        return ButtonTypeRenderer.BUTTON_TYPES.get(obj.glossary.get('button-type'), '')
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)

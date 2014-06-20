@@ -29,7 +29,7 @@ class PanelGroupPlugin(BootstrapPluginBase):
         return ungettext_lazy('with {0} panel', 'with {0} panels', num_cols).format(num_cols)
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(obj.context['-num-children-'])
+        wanted_children = int(obj.glossary['-num-children-'])
         super(PanelGroupPlugin, self).save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, PanelPlugin)
 
@@ -51,7 +51,7 @@ class PanelPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        value = obj.context.get('panel_title')
+        value = obj.glossary.get('panel_title')
         if value:
             return unicode(Truncator(value).words(3, truncate=' ...'))
         return ''
