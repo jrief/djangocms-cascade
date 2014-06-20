@@ -61,50 +61,33 @@ Activate the CMS plugin
 	INSTALLED_APPS = (
 	    ...
 	    'cmsplugin_cascade',
-	    'cmsplugin_cascade.bootstrap3',
+	    'cmsplugin_cascade.link',  # recommended
+	    'cmsplugin_cascade.image',  # optionally
 	    'cms',
 	    ...
 	)
 
-For other CSS frameworks, replace ``'cmsplugin_cascade.bootstrap3'`` against the corresponding
-sub-module.
+Activate the plugins
+--------------------
 
-Configure the Bootstrap 3 Framework
------------------------------------
-
-By default, all Bootstrap 3 plugins are activated. If for some reason, only a subset of these
-plugins shall be activated, add a list of plugins to your ``settings.py``:
+By default, all **djangocms-cascase** plugins are deactivated. They must explicitly be activated
+using the directive ``CMS_CASCADE_PLUGINS`` in ``settings.py``. To activate all available Bootstrap
+plugins, use:
 
 .. code-block:: python
 
-	CMS_CASCADE_BOOTSTRAP3_PLUGINS = ('buttons', 'container',)
+	CMS_CASCADE_PLUGINS = ('link', 'bootstrap3',)
 
-only allows buttons and the Bootstrap's grid system.
-
-To replace Bootstrap's jQuery code against `Angular UI Bootstrap`_, add 
-
-.. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/
+If for some reason, only a subset of these plugins shall be activated, name each of them. For
+example:
 
 .. code-block:: python
 
-	CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR = 'angular_bootstrap3'
+	CMS_CASCADE_PLUGINS = ('link', 'bootstrap3.container',)
 
-to your ``settings.py``. This will load the rendering templates created for AngularJS from a
-different directory.
+only activates the ``LinkPlugin`` and the Bootstrap's grid system.
 
-If you plan to only support small mobile devices, consider to reduce the choice overhead by adding
-
-	CMS_CASCADE_BOOTSTRAP3_BREAKPOINT = 'xs'
-
-to your ``settings.py``.
-
-Configure the 960.gs Framework
-------------------------------
-
-Currently the 960.gs framework has no meaningful user settings.
-
-
-Restrict plugins to particular a placeholder
+Restrict plugins to a particular placeholder
 --------------------------------------------
 This setting is optional, but strongly recommended. It exclusively restricts the plugin
 ``BootstrapContainerPlugin`` to the placeholder ``Page Content`` (see below)
@@ -129,6 +112,32 @@ the configuration directive
 .. code-block:: python
 
 	CMS_CASCADE_LEAF_PLUGINS = ('TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin',)
+
+Configure the Bootstrap 3 Framework
+-----------------------------------
+
+To replace Bootstrap's jQuery code against `Angular UI Bootstrap`_, add 
+
+.. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/
+
+.. code-block:: python
+
+	CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR = 'angular_bootstrap3'
+
+to your ``settings.py``. This will load the rendering templates created for AngularJS from a
+different directory.
+
+If you plan to only support small mobile devices, consider to reduce the choice overhead by adding
+
+	CMS_CASCADE_BOOTSTRAP3_BREAKPOINT = 'xs'
+
+to your ``settings.py``.
+
+Configure the 960.gs Framework
+------------------------------
+
+Currently the 960.gs framework has no meaningful user settings.
+
 
 Template Customization
 ======================
