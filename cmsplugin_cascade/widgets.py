@@ -8,9 +8,6 @@ from django.forms import widgets
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 
-CSS_MARGIN_STYLES = ['margin-%s' % s for s in ('top', 'right', 'bottom', 'left')]
-CSS_VERTICAL_SPACING = ['min-height']
-
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
