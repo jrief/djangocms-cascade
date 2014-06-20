@@ -18,3 +18,7 @@ if not 'FilerImagePlugin' in CMS_CASCADE_LEAF_PLUGINS:
         CMS_CASCADE_LEAF_PLUGINS.append('FilerImagePlugin')
     except ImportError:
         pass
+
+CMS_CASCADE_BOOTSTRAP3_BREAKPOINT = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_BREAKPOINT', 'lg')
+CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS = {'lg': 1200, 'md': 992, 'sm': 768}
+CMS_CASCADE_BOOTSTRAP3_COLUMN_WIDTHS = {'lg': 95, 'md': 78, 'sm': 60, 'xs': 53.5}

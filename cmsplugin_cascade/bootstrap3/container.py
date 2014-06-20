@@ -28,8 +28,10 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     default_css_class = 'container'
     require_parent = False
     CONTEXT_WIDGET_CHOICES = (
-        ('lg', _('Large (>1200px)')), ('md', _('Medium (>992px)')),
-        ('sm', _('Small (>768px)')), ('xs', _('Tiny (<768px)')),
+        ('lg', _("Large (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['lg']))),
+        ('md', _("Medium (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['md']))),
+        ('sm', _("Small (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
+        ('xs', _("Tiny (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
     )
     partial_fields = (
         PartialFormField('breakpoint',
