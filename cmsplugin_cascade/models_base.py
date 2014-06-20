@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
+from cms.plugin_pool import plugin_pool
 
 
 class CascadeModelBase(CMSPlugin):
@@ -48,10 +49,22 @@ class CascadeModelBase(CMSPlugin):
         Return the context recursively, from the root element down to the current element.
         """
         context = {}
-        try:
-            parent = self.__class__.objects.get(id=self.parent_id)
-            context = parent.get_full_context()
-        except ObjectDoesNotExist:
-            pass
+        for model in CascadeModelBase._get_cascade_elements():
+            try:
+                parent = model.objects.get(id=self.parent_id)
+                context = parent.get_full_context()
+                break
+            except ObjectDoesNotExist:
+                pass
         context.update(self.context or {})
         return context
+
+    @classmethod
+    def _get_cascade_elements(cls):
+        """
+        Returns a list of models which are derived from CascadeModelBase
+        """
+        if not hasattr(cls, '_cached_cascade_elements'):
+            setattr(cls, '_cached_cascade_elements',
+                set([p.model for p in plugin_pool.get_all_plugins() if issubclass(p.model, cls)]))
+        return cls._cached_cascade_elements
