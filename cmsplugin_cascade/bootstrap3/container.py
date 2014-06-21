@@ -101,53 +101,45 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     default_css_attributes = tuple('{0}-column-width'.format(size) for size in ('xs', 'sm', 'md', 'lg',))
 
     def get_form(self, request, obj=None, **kwargs):
-        def get_column_width(prefix):
-            # full_glossary from closure
-            column_width = full_glossary.get('{0}-column-width'.format(prefix)) or '12'
-            return int(string.replace(column_width, 'col-{0}-'.format(prefix), ''))
-
         self.glossary_fields = [self.default_width_widget]
         if obj:
             full_glossary = obj.get_glossary()
             breakpoint = full_glossary.get('breakpoint')
             if breakpoint in ('lg', 'md', 'sm',):
-                xs_column_width = get_column_width('xs')
                 choices = (('', _('Unset')),) + tuple(('col-sm-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, xs_column_width + 1))
+                                   for i in range(1, 13))
                 self.glossary_fields.append(PartialFormField('sm-column-width',
                     widgets.Select(choices=choices), label=_('Width for Devices >768px'),
                     help_text=_('Column width for all devices wider than 768 pixels, such as tablets.')
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-sm-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, xs_column_width))
+                                   for i in range(1, 12))
                 self.glossary_fields.append(PartialFormField('sm-column-offset',
                     widgets.Select(choices=choices), label=_('Offset for Devices >768px'),
                     help_text=_('Column offset for all devices wider than 768 pixels, such as tablets.')
                 ))
             if breakpoint in ('lg', 'md',):
-                sm_column_width = get_column_width('sm')
                 choices = (('', _('Unset')),) + tuple(('col-md-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, sm_column_width + 1))
+                                   for i in range(1, 13))
                 self.glossary_fields.append(PartialFormField('md-column-width',
                     widgets.Select(choices=choices), label=_('Width for Devices >992px'),
                     help_text=_('Column width for all devices wider than 992 pixels, such as laptops.')
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-md-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, sm_column_width))
+                                   for i in range(1, 12))
                 self.glossary_fields.append(PartialFormField('md-column-offset',
                     widgets.Select(choices=choices), label=_('Offset for Devices >992px'),
                     help_text=_('Column offset for all devices wider than 992 pixels, such as laptops.')
                 ))
             if breakpoint in ('lg',):
-                md_column_width = get_column_width('md')
                 choices = (('', _('Unset')),) + tuple(('col-lg-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, md_column_width + 1))
+                                   for i in range(1, 13))
                 self.glossary_fields.append(PartialFormField('lg-column-width',
                     widgets.Select(choices=choices), label=_('Width for Devices >1200px'),
                     help_text=_('Column width for all devices wider than 1200 pixels, such as large desktops.'),
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-lg-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, md_column_width))
+                                   for i in range(1, 12))
                 self.glossary_fields.append(PartialFormField('lg-column-offset',
                     widgets.Select(choices=choices), label=_('Offset for Devices >1200px'),
                     help_text=_('Column offset for all devices wider than 1200 pixels, such as large desktops.')
