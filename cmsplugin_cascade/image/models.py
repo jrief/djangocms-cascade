@@ -12,11 +12,3 @@ class ImageElement(LinkElementBase):
         app_label = 'cmsplugin_cascade'
 
     image = FilerImageField(null=True, blank=True, default=None, verbose_name=_("Image"))
-
-    def save(self, *args, **kwargs):
-        self.plugin_class.resize_image(self)
-        super(ImageElement, self).save(*args, **kwargs)
-
-    def refresh_children(self):
-        self.save(no_signals=True)
-        super(ImageElement, self).refresh_children()

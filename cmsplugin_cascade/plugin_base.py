@@ -79,15 +79,18 @@ class CascadePluginBase(CMSPluginBase):
             pass
         return obj
 
-    def save_model(self, request, obj, form, change):
+    @classmethod
+    def sanizite_model(cls, obj):
         """
-        Save the object in the database and remove temporary item ``glossary['-num-children-']``.
+        This method is called, before the model is written to the database. It can be overloaded
+        to sanitize your own models. This method shall return True, in case it sanitized the model.
+        Otherwise it shall return False to prevent a useless update in the database.
         """
         try:
             del obj.glossary['-num-children-']
+            return True
         except (TypeError, KeyError):
-            pass
-        super(CascadePluginBase, self).save_model(request, obj, form, change)
+            return False
 
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
         """

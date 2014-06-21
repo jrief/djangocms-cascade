@@ -44,30 +44,45 @@ class CascadeModelBase(CMSPlugin):
         data_options = self.plugin_class.get_data_options(self)
         return ' '.join(['data-{0}={1}'.format(*o) for o in data_options.items() if o[1]])
 
-    def get_glossary(self):
+    def get_complete_glossary(self):
         """
-        Return the glossary recursively, from the root element down to the current element.
+        Return the complete glossary for this model object. This is done by starting from the root
+        element down to the current element and enriching the glossary with each models's own
+        glossary.
         """
-        glossary = {}
+        complete_glossary = {}
         for model in CascadeModelBase._get_cascade_elements():
             try:
                 parent = model.objects.get(id=self.parent_id)
-                glossary = parent.get_glossary()
+                complete_glossary = parent.get_complete_glossary()
                 break
             except ObjectDoesNotExist:
                 pass
-        glossary.update(self.glossary or {})
-        return glossary
+        complete_glossary.update(self.glossary or {})
+        return complete_glossary
 
-    def refresh_children(self):
+    def sanitize_children(self):
         """
-        Recursively walk down the plugin tree, and invoke this method. If the model of a child
-        plugin must be refreshed after the model of a parent has been updated, then overload this
-        method and to whatever has to be done.
+        Recursively walk down the plugin tree and invoke method ``save(sanitize_only=True)`` for
+        each child.
         """
         for model in CascadeModelBase._get_cascade_elements():
             for child in model.objects.filter(parent_id=self.id):
-                child.refresh_children()
+                child.save(sanitize_only=True)
+                child.sanitize_children()
+
+    def save(self, sanitize_only=False, *args, **kwargs):
+        """
+        A hook which let the plugin instance sanitize to current object model while saving it.
+        With ``sanitize_only=True``, the current model object only is saved when the method
+        ``sanizite_model()`` from the corresponding plugin actually changed the glossary.
+        """
+        sanitized = self.plugin_class.sanizite_model(self)
+        if sanitize_only:
+            if sanitized:
+                super(CascadeModelBase, self).save(no_signals=True)
+        else:
+            super(CascadeModelBase, self).save(*args, **kwargs)
 
     @classmethod
     def _get_cascade_elements(cls):

@@ -54,7 +54,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     def save_model(self, request, obj, form, change):
         super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
-        obj.refresh_children()
+        obj.sanitize_children()
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
@@ -96,59 +96,73 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                      for i in range(1, 13))),
         label=_('Default Width'), initial='col-xs-12',
-        help_text=_('Column width for all devices, down to phones narrower than 768 pixels.'),
+        help_text=_("Column units for all devices, down to phones narrower than 768 pixels."),
     )
     default_css_attributes = tuple('{0}-column-width'.format(size) for size in ('xs', 'sm', 'md', 'lg',))
 
     def get_form(self, request, obj=None, **kwargs):
         self.glossary_fields = [self.default_width_widget]
         if obj:
-            full_glossary = obj.get_glossary()
-            breakpoint = full_glossary.get('breakpoint')
+            breakpoint = obj.get_complete_glossary().get('breakpoint')
             if breakpoint in ('lg', 'md', 'sm',):
                 choices = (('', _('Unset')),) + tuple(('col-sm-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, 13))
                 self.glossary_fields.append(PartialFormField('sm-column-width',
-                    widgets.Select(choices=choices), label=_('Width for Devices >768px'),
-                    help_text=_('Column width for all devices wider than 768 pixels, such as tablets.')
+                    widgets.Select(choices=choices),
+                    label=_('Override width for devices >768px'),
+                    help_text=_('Override column width for devices wider than 768 pixels, such as tablets.')
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-sm-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, 12))
                 self.glossary_fields.append(PartialFormField('sm-column-offset',
-                    widgets.Select(choices=choices), label=_('Offset for Devices >768px'),
-                    help_text=_('Column offset for all devices wider than 768 pixels, such as tablets.')
+                    widgets.Select(choices=choices),
+                    label=_('Offset for devices >768px'),
+                    help_text=_('Column offset for devices wider than 768 pixels, such as tablets.')
                 ))
             if breakpoint in ('lg', 'md',):
                 choices = (('', _('Unset')),) + tuple(('col-md-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, 13))
                 self.glossary_fields.append(PartialFormField('md-column-width',
-                    widgets.Select(choices=choices), label=_('Width for Devices >992px'),
-                    help_text=_('Column width for all devices wider than 992 pixels, such as laptops.')
+                    widgets.Select(choices=choices),
+                    label=_('Override width for devices >992px'),
+                    help_text=_('Override column width for devices wider than 992 pixels, such as laptops.')
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-md-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, 12))
                 self.glossary_fields.append(PartialFormField('md-column-offset',
-                    widgets.Select(choices=choices), label=_('Offset for Devices >992px'),
-                    help_text=_('Column offset for all devices wider than 992 pixels, such as laptops.')
+                    widgets.Select(choices=choices),
+                    label=_('Override offset for Devices >992px'),
+                    help_text=_('Override column offset for devices wider than 992 pixels, such as laptops.')
                 ))
             if breakpoint in ('lg',):
                 choices = (('', _('Unset')),) + tuple(('col-lg-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, 13))
                 self.glossary_fields.append(PartialFormField('lg-column-width',
-                    widgets.Select(choices=choices), label=_('Width for Devices >1200px'),
-                    help_text=_('Column width for all devices wider than 1200 pixels, such as large desktops.'),
+                    widgets.Select(choices=choices),
+                    label=_('Override width for Devices >1200px'),
+                    help_text=_('Override column width for devices wider than 1200 pixels, such as large desktops.'),
                 ))
                 choices = (('', _('No offset')),) + tuple(('col-lg-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
                                    for i in range(1, 12))
                 self.glossary_fields.append(PartialFormField('lg-column-offset',
-                    widgets.Select(choices=choices), label=_('Offset for Devices >1200px'),
-                    help_text=_('Column offset for all devices wider than 1200 pixels, such as large desktops.')
+                    widgets.Select(choices=choices),
+                    label=_('Override offset for devices >1200px'),
+                    help_text=_('Override column offset for devices wider than 1200 pixels, such as large desktops.')
                 ))
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         super(BootstrapColumnPlugin, self).save_model(request, obj, form, change)
-        obj.refresh_children()
+        obj.sanitize_children()
+
+    @classmethod
+    def sanitize_model(cls, obj):
+        sanitized = super(BootstrapColumnPlugin, cls).sanizite_model(obj)
+        return sanitized
+        # TODO:
+        complete_glossary = obj.get_complete_glossary()
+        column_width = full_glossary.get('{0}-column-width'.format(prefix)) or '12'
+        return int(string.replace(column_width, 'col-{0}-'.format(prefix), ''))
 
     @classmethod
     def get_identifier(cls, obj):
