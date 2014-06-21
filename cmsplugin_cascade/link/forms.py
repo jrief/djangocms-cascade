@@ -13,6 +13,7 @@ class LinkForm(ModelForm):
     with the model data.
     """
     TYPE_CHOICES = (('int', _("Internal")), ('ext', _("External")), ('email', _("Mail To")),)
+    link_content = fields.CharField(required=False, label=_("Link Content"), help_text=_("Content of Link"))
     link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='int')
     url = fields.URLField(required=False, help_text=_("Link onto external page"))
     email = fields.EmailField(required=False, help_text=_("Open Email program"))
@@ -28,7 +29,7 @@ class LinkForm(ModelForm):
         instance = kwargs.get('instance')
         mailto = 'mailto: '
         urlvalidator = URLValidator()
-        initial = {}
+        initial = {'link_content': instance.glossary.get('link_content', '')}
         try:
             if instance.text_link.startswith(mailto):
                 initial['link_type'] = 'email'

@@ -52,4 +52,6 @@ class LinkPluginBase(CascadePluginBase):
         else:
             obj.page_link = None
             obj.text_link = ''
+        # transfer link_content from our LinkForm to glossary
+        obj.glossary.update(link_content=form.cleaned_data.get('link_content', ''))
         super(LinkPluginBase, self).save_model(request, obj, form, change)
