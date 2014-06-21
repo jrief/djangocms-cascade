@@ -38,6 +38,20 @@ class LinkPluginBase(CascadePluginBase):
         # TODO: return the line name
         return six.u('')
 
+    def render(self, context, instance, placeholder):
+        if instance.page_link:
+            link = instance.page_link.get_absolute_url()
+        else:
+            link = instance.text_link
+        context.update({
+            'instance': instance,
+            'placeholder': placeholder,
+            'link': link,
+            'content': instance.glossary.get('link_content', ''),
+            'target': instance.glossary.get('target'),
+        })
+        return context
+
     def save_model(self, request, obj, form, change):
         # depending on the 'link_type', save the form's data into page_link or text_link
         link_type = form.cleaned_data.get('link_type')

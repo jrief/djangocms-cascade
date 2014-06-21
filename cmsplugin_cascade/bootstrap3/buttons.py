@@ -8,7 +8,9 @@ from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
-from .plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.link.models import LinkElement
+from cmsplugin_cascade.link.forms import LinkForm
+from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):
@@ -41,14 +43,19 @@ class ButtonSizeRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapButtonPlugin(BootstrapPluginBase):
+class BootstrapButtonPlugin(LinkPluginBase):
+    module = 'Bootstrap'
     name = _("Button")
+    model = LinkElement
+    form = LinkForm
     parent_classes = ['BootstrapColumnPlugin']
-    render_template = 'cms/plugins/naked.html'
-    generic_child_classes = ('TextLinkPlugin',)
+    render_template = 'cms/bootstrap3/button.html'
+    allow_children = False
+    text_enabled = True
     tag_type = None
     default_css_class = 'btn'
     default_css_attributes = ('button-type', 'button-size', 'button-options',)
+    fields = ('link_content', ('link_type', 'page_link', 'url', 'email'), 'glossary',)
     glossary_fields = (
         PartialFormField('button-type',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonTypeRenderer.BUTTON_TYPES.items()),
@@ -78,6 +85,10 @@ class BootstrapButtonPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        return ButtonTypeRenderer.BUTTON_TYPES.get(obj.glossary.get('button-type'), '')
+        button_type = ButtonTypeRenderer.BUTTON_TYPES.get(obj.glossary.get('button-type'))
+        if button_type:
+            button_type = ' ({0})'.format(force_text(button_type))
+        link_content = obj.glossary.get('link_content', '')
+        return link_content + button_type
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)

@@ -15,10 +15,19 @@ class TextLinkPlugin(LinkPluginBase):
     render_template = "cms/plugins/link.html"
     text_enabled = True
     allow_children = False
-    fields = (('link_type', 'page_link', 'url', 'email'), 'glossary',)
+    fields = ('link_content', ('link_type', 'page_link', 'url', 'email'), 'glossary',)
     glossary_fields = (
         PartialFormField('text',
-            widgets.TextInput(), label=_("Link"), help_text=_("Content of Link")
+            widgets.TextInput(),
+            label=_("Title"),
+            help_text=_("Link's Title")
+        ),
+        PartialFormField('target',
+            widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
+                                  ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
+            initial='',
+            label=_('Link Target'),
+            help_text=_("Open Link in other target.")
         ),
     )
 
