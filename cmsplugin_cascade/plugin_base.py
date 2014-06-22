@@ -8,6 +8,7 @@ from .widgets import JSONMultiWidget
 class CascadePluginBase(CMSPluginBase):
     tag_type = 'div'
     render_template = 'cms/plugins/generic.html'
+    glossary_variables = []
     _cached_child_classes = None
 
     class Media:
@@ -117,3 +118,11 @@ class CascadePluginBase(CMSPluginBase):
             form.base_fields['glossary'].validators.append(field.run_validators)
         setattr(form, 'glossary_fields', self.glossary_fields)
         return form
+
+    def save_model(self, request, obj, form, change):
+        if self.glossary_variables:
+            # transfer listed glossary variables from the current object to the new object
+            old_obj = super(CascadePluginBase, self).get_object(request, form.instance.id)
+            variables = dict((k, v) for k, v in old_obj.glossary.items() if k in self.glossary_variables)
+            obj.glossary.update(variables)
+        super(CascadePluginBase, self).save_model(request, obj, form, change)
