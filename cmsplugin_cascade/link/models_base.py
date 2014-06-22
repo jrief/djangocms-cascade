@@ -12,3 +12,18 @@ class LinkElementBase(CascadeModelBase):
     page_link = models.ForeignKey(Page, verbose_name=_("Internal Page"), blank=True, null=True,
                     help_text=_("An internal link for this site"), on_delete=models.SET_NULL)
     text_link = models.CharField(max_length=255, blank=True, null=True)
+
+    @property
+    def link(self):
+        if self.page_link:
+            return self.page_link.get_absolute_url()
+        else:
+            return self.text_link
+
+    @property
+    def content(self):
+        return self.glossary.get('link_content', '')
+
+    @property
+    def target(self):
+        return self.glossary.get('target'),
