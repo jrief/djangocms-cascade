@@ -92,6 +92,6 @@ class CascadeModelBase(CMSPlugin):
         plugins.
         """
         if not hasattr(cls, '_cached_cascade_elements'):
-            setattr(cls, '_cached_cascade_elements',
-                set([p.model for p in plugin_pool.get_all_plugins() if issubclass(p.model, cls)]))
+            cce = set([p.model for p in plugin_pool.get_all_plugins() if issubclass(p.model, cls)])
+            setattr(cls, '_cached_cascade_elements', cce)
         return cls._cached_cascade_elements
