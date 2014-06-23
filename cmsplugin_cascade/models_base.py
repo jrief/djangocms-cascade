@@ -44,20 +44,28 @@ class CascadeModelBase(CMSPlugin):
         data_options = self.plugin_class.get_data_options(self)
         return ' '.join(['data-{0}={1}'.format(*o) for o in data_options.items() if o[1]])
 
+    def get_parent(self):
+        """
+        Get the parent model. Returns None if current element is the root element.
+        """
+        if self.parent_id:
+            for model in CascadeModelBase._get_cascade_elements():
+                try:
+                    return model.objects.get(id=self.parent_id)
+                except ObjectDoesNotExist:
+                    pass
+
     def get_complete_glossary(self):
         """
-        Return the complete glossary for this model object. This is done by starting from the root
-        element down to the current element and enriching the glossary with each models's own
-        glossary.
+        Return the parent glossary for this model object merged with the current object.
+        This is done by starting from the root element down to the current element and enriching
+        the glossary with each models's own glossary.
         """
-        complete_glossary = {}
-        for model in CascadeModelBase._get_cascade_elements():
-            try:
-                parent = model.objects.get(id=self.parent_id)
-                complete_glossary = parent.get_complete_glossary()
-                break
-            except ObjectDoesNotExist:
-                pass
+        parent = self.get_parent()
+        if parent:
+            complete_glossary = parent.get_complete_glossary()
+        else:
+            complete_glossary = {}
         complete_glossary.update(self.glossary or {})
         return complete_glossary
 
@@ -75,9 +83,9 @@ class CascadeModelBase(CMSPlugin):
         """
         A hook which let the plugin instance sanitize to current object model while saving it.
         With ``sanitize_only=True``, the current model object only is saved when the method
-        ``sanizite_model()`` from the corresponding plugin actually changed the glossary.
+        ``sanitize_model()`` from the corresponding plugin actually changed the glossary.
         """
-        sanitized = self.plugin_class.sanizite_model(self)
+        sanitized = self.plugin_class.sanitize_model(self)
         if sanitize_only:
             if sanitized:
                 super(CascadeModelBase, self).save(no_signals=True)
