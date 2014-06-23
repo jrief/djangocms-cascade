@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import six
 import string
 from django.forms import widgets
 from django.forms.widgets import RadioFieldRenderer
@@ -11,15 +12,16 @@ from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from .plugin_base import BootstrapPluginBase
 from . import settings
 
+BREAKPOINTS_DICT = dict(tp for tp in settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
+BREAKPOINTS_LIST = list(tp[0] for tp in settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
+
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
-    MAP_ICON = {'xs': 'mobile-phone', 'sm': 'tablet', 'md': 'laptop', 'lg': 'desktop'}
-
     def render(self):
         return format_html('<div class="form-row">{0}</div>',
             format_html_join('', '<div class="field-box">'
                 '<div class="container-thumbnail"><i class="icon-{1}"></i><div class="label">{0}</div></div>'
-                '</div>', ((force_text(w), self.MAP_ICON[w.choice_value]) for w in self)
+                '</div>', ((force_text(w), BREAKPOINTS_DICT[w.choice_value][1]) for w in self)
             ))
 
 
@@ -27,23 +29,22 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     default_css_class = 'container'
     require_parent = False
-    BREAKPOINTS = ('xs', 'sm', 'md', 'lg')
-    WIDGET_CHOICES_BREAKPOINT = (
-        ('lg', _("Large (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['lg']))),
-        ('md', _("Medium (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['md']))),
-        ('sm', _("Small (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
-        ('xs', _("Tiny (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
+    WIDGET_CHOICES_WIDEST = (
+        ('lg', _("Large (>{0}px)".format(*BREAKPOINTS_DICT['lg']))),
+        ('md', _("Medium (>{0}px)".format(*BREAKPOINTS_DICT['md']))),
+        ('sm', _("Small (>{0}px)".format(*BREAKPOINTS_DICT['sm']))),
+        ('xs', _("Tiny (<{0}px)".format(*BREAKPOINTS_DICT['sm']))),
     )
     WIDGET_CHOICES_NARROW = (
-        ('lg', _("Large (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['lg']))),
-        ('md', _("Medium (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['lg']))),
-        ('sm', _("Small (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['md']))),
-        ('xs', _("Tiny (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
+        ('lg', _("Large (>{0}px)".format(*BREAKPOINTS_DICT['lg']))),
+        ('md', _("Medium (<{0}px)".format(*BREAKPOINTS_DICT['lg']))),
+        ('sm', _("Small (<{0}px)".format(*BREAKPOINTS_DICT['md']))),
+        ('xs', _("Tiny (<{0}px)".format(*BREAKPOINTS_DICT['sm']))),
     )
     glossary_fields = (
-        PartialFormField('breakpoint',
-            widgets.RadioSelect(choices=WIDGET_CHOICES_BREAKPOINT, renderer=ContainerRadioFieldRenderer),
-            label=_('Display Breakpoint'), initial='lg',
+        PartialFormField('widest',
+            widgets.RadioSelect(choices=WIDGET_CHOICES_WIDEST, renderer=ContainerRadioFieldRenderer),
+            label=_('Widest Display'), initial='lg',
             help_text=_("Widest supported display for Bootstrap's grid system.")
         ),
         PartialFormField('narrowest',
@@ -52,6 +53,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             help_text=_("Narrowest supported display for Bootstrap's grid system.")
         ),
     )
+    glossary_variables = ['container_max_widths']
 
     class Media:
         css = {'all': ('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css',)}
@@ -59,19 +61,33 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        return six.u('')
+        # TODO:
         try:
-            texts = [d for c, d in cls.WIDGET_CHOICES_BREAKPOINT if c == obj.glossary.get('breakpoint')]
+            texts = [d for c, d in cls.WIDGET_CHOICES_WIDEST if c == obj.glossary.get('widest')]
             return _('Narrowest grid: {0}').format(texts[0].lower())
         except (TypeError, KeyError, ValueError):
             return ''
 
     def save_model(self, request, obj, form, change):
-        breakpoint = self.BREAKPOINTS.index(obj.glossary['breakpoint'])
-        narrowest = self.BREAKPOINTS.index(obj.glossary['narrowest'])
-        breakpoints = [bp for i, bp in enumerate(self.BREAKPOINTS) if i <= breakpoint and i >= narrowest]
+        widest = BREAKPOINTS_LIST.index(obj.glossary['widest'])
+        narrowest = BREAKPOINTS_LIST.index(obj.glossary['narrowest'])
+        breakpoints = [bp for i, bp in enumerate(BREAKPOINTS_LIST) if i <= widest and i >= narrowest]
         obj.glossary.update(breakpoints=breakpoints)
         super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
         obj.sanitize_children()
+
+    @classmethod
+    def sanitize_model(cls, obj):
+        sanitized = super(BootstrapContainerPlugin, cls).sanitize_model(obj)
+        complete_glossary = obj.get_complete_glossary()
+        obj.glossary['container_max_widths'] = {}
+        for bp in complete_glossary['breakpoints']:
+            try:
+                obj.glossary['container_max_widths'][bp] = complete_glossary['container_max_widths'][bp]
+            except KeyError:
+                obj.glossary['container_max_widths'][bp] = BREAKPOINTS_DICT[bp][4]
+        return sanitized
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
@@ -109,63 +125,43 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
     generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
-    default_width_widget = PartialFormField('xs-column-width',
-        widgets.Select(choices=tuple(('col-xs-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                     for i in range(1, 13))),
-        label=_('Default Width'), initial='col-xs-12',
-        help_text=_("Column units for all devices, down to phones narrower than 768 pixels."),
-    )
-    default_css_attributes = tuple('{0}-column-width'.format(size) for size in ('xs', 'sm', 'md', 'lg',))
+    default_css_attributes = tuple('{0}-column-width'.format(size) for size in BREAKPOINTS_LIST)
+    glossary_variables = ['container_max_widths']
 
     def get_form(self, request, obj=None, **kwargs):
-        self.glossary_fields = [self.default_width_widget]
+        self.glossary_fields = []
         if obj:
-            breakpoint = obj.get_complete_glossary().get('breakpoint')
-            if breakpoint in ('lg', 'md', 'sm',):
-                choices = (('', _('Unset')),) + tuple(('col-sm-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, 13))
-                self.glossary_fields.append(PartialFormField('sm-column-width',
-                    widgets.Select(choices=choices),
-                    label=_('Override width for devices >768px'),
-                    help_text=_('Override column width for devices wider than 768 pixels, such as tablets.')
-                ))
-                choices = (('', _('No offset')),) + tuple(('col-sm-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, 12))
-                self.glossary_fields.append(PartialFormField('sm-column-offset',
-                    widgets.Select(choices=choices),
-                    label=_('Offset for devices >768px'),
-                    help_text=_('Column offset for devices wider than 768 pixels, such as tablets.')
-                ))
-            if breakpoint in ('lg', 'md',):
-                choices = (('', _('Unset')),) + tuple(('col-md-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, 13))
-                self.glossary_fields.append(PartialFormField('md-column-width',
-                    widgets.Select(choices=choices),
-                    label=_('Override width for devices >992px'),
-                    help_text=_('Override column width for devices wider than 992 pixels, such as laptops.')
-                ))
-                choices = (('', _('No offset')),) + tuple(('col-md-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, 12))
-                self.glossary_fields.append(PartialFormField('md-column-offset',
-                    widgets.Select(choices=choices),
-                    label=_('Override offset for Devices >992px'),
-                    help_text=_('Override column offset for devices wider than 992 pixels, such as laptops.')
-                ))
-            if breakpoint in ('lg',):
-                choices = (('', _('Unset')),) + tuple(('col-lg-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, 13))
-                self.glossary_fields.append(PartialFormField('lg-column-width',
-                    widgets.Select(choices=choices),
-                    label=_('Override width for Devices >1200px'),
-                    help_text=_('Override column width for devices wider than 1200 pixels, such as large desktops.'),
-                ))
-                choices = (('', _('No offset')),) + tuple(('col-lg-offset-{0}'.format(i), ungettext_lazy('{0} unit', '{0} units', i).format(i))
-                                   for i in range(1, 12))
-                self.glossary_fields.append(PartialFormField('lg-column-offset',
-                    widgets.Select(choices=choices),
-                    label=_('Override offset for devices >1200px'),
-                    help_text=_('Override column offset for devices wider than 1200 pixels, such as large desktops.')
-                ))
+            complete_glossary = obj.get_complete_glossary()
+            for bp in complete_glossary['breakpoints']:
+                desc = list(BREAKPOINTS_DICT[bp])
+                desc[2] = force_text(desc[2])
+                if bp == complete_glossary['breakpoints'][0]:
+                    # first element
+                    choices = tuple(('col-{0}-{1}'.format(bp, i),
+                        ungettext_lazy('{0} unit', '{0} units', i).format(i)) for i in range(1, 13))
+                    label = _("Default column width")
+                    if bp == 'xs':
+                        help_text = _("Number of column units for devices, narrower than {0} pixels, such as {2}.".format(*desc))
+                    else:
+                        help_text = _("Number of column units for devices wider than {0} pixels, such as {2}.".format(*desc))
+                    self.glossary_fields.append(PartialFormField('{0}-column-width'.format(bp),
+                        widgets.Select(choices=choices),
+                        initial='col-{0}-12'.format(bp), label=label, help_text=help_text))
+                else:
+                    choices = (('', _('Unset')),) + tuple(('col-{0}-{1}'.format(bp, i),
+                        ungettext_lazy('{0} unit', '{0} units', i).format(i)) for i in range(1, 13))
+                    label = _("Column width for {2}".format(*desc))
+                    help_text = _("Override column units for devices wider than {0} pixels, such as {2}.".format(*desc))
+                    self.glossary_fields.append(PartialFormField('{0}-column-width'.format(bp),
+                        widgets.Select(choices=choices),
+                        initial='', label=label, help_text=help_text))
+                if bp != 'xs':
+                    choices = (('', _('No offset')),) + tuple(('col-{0}-offset-{1}'.format(bp, i),
+                        ungettext_lazy('{0} unit', '{0} units', i).format(i)) for i in range(1, 12))
+                    label = _("Offset for {2}".format(*desc))
+                    help_text = _("Number of offset units for devices wider than {0} pixels, such as {2}.".format(*desc))
+                    self.glossary_fields.append(PartialFormField('{0}-column-offset'.format(bp),
+                        widgets.Select(choices=choices), label=label, help_text=help_text))
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
@@ -174,12 +170,34 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     @classmethod
     def sanitize_model(cls, obj):
-        sanitized = super(BootstrapColumnPlugin, cls).sanizite_model(obj)
+        sanitized = super(BootstrapColumnPlugin, cls).sanitize_model(obj)
+        parent_glossary = obj.get_parent().get_complete_glossary()
+        column_units = 12
+        obj.glossary['container_max_widths'] = {}
+        for bp in BREAKPOINTS_LIST:
+            width_key = '{0}-column-width'.format(bp)
+            offset_key = '{0}-column-offset'.format(bp)
+            if bp in parent_glossary['breakpoints']:
+                # if miss-set, reduce column width for larger displays
+                width_val = obj.glossary.get(width_key, '').lstrip('col-{0}-'.format(bp))
+                if width_val.isdigit():
+                    if int(width_val) > column_units:
+                        obj.glossary[width_key] = 'col-{0}-{1}'.format(bp, column_units)
+                        sanitized = True
+                    column_units = int(width_val)
+            else:
+                # remove obsolete entries from glossary
+                if width_key in obj.glossary:
+                    del obj.glossary[width_key]
+                    sanitized = True
+                if offset_key in obj.glossary:
+                    del obj.glossary[offset_key]
+                    sanitized = True
+            new_width = parent_glossary['container_max_widths'][bp] * column_units / 12
+            if new_width != obj.glossary['container_max_widths'].get(bp):
+                obj.glossary['container_max_widths'][bp] = new_width
+                sanitized = True
         return sanitized
-        # TODO:
-        complete_glossary = obj.get_complete_glossary()
-        column_width = full_glossary.get('{0}-column-width'.format(prefix)) or '12'
-        return int(string.replace(column_width, 'col-{0}-'.format(prefix), ''))
 
     @classmethod
     def get_identifier(cls, obj):

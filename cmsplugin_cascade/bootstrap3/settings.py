@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 CMS_CASCADE_PLUGINS = ('buttons', 'carousel', 'collapse', 'container', 'wrappers', 'images',)
 CMS_CASCADE_TEMPLATE_DIR = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR', 'bootstrap3')
-CMS_CASCADE_BOOTSTRAP3_BREAKPOINT = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_BREAKPOINT', 'lg')
 CMS_CASCADE_LEAF_PLUGINS = getattr(settings, 'CMS_CASCADE_LEAF_PLUGINS', [])
 
 if not 'TextPlugin' in CMS_CASCADE_LEAF_PLUGINS:
@@ -19,6 +19,9 @@ if not 'FilerImagePlugin' in CMS_CASCADE_LEAF_PLUGINS:
     except ImportError:
         pass
 
-CMS_CASCADE_BOOTSTRAP3_BREAKPOINT = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_BREAKPOINT', 'lg')
-CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS = {'lg': 1200, 'md': 992, 'sm': 768}
-CMS_CASCADE_BOOTSTRAP3_COLUMN_WIDTHS = {'lg': 92.5, 'md': 77.5, 'sm': 57.5, 'xs': 53.3333}
+CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS = (
+    ('xs', (768, 'mobile-phone', _("mobile phones"), 60, 720)),
+    ('sm', (768, 'tablet', _("tablets"), 60, 720)),
+    ('md', (992, 'laptop', _("laptops"), 78, 940)),
+    ('lg', (1200, 'desktop', _("large desktops"), 95, 1140)),
+)

@@ -4,17 +4,17 @@ django.jQuery(function($) {
 	var breakpoints = ['lg', 'md', 'sm', 'xs'], k;
 
 	(function() {
-		var $elem, checked_breakpoint, checked_narrowest, data;
+		var $elem, checked_widest, checked_narrowest, data;
 		for (k = 0; k < 4; k++) {
 			data = {'selgroup': 'narrowest'};
-			$elem = $('#id_glossary_breakpoint_' + k);
+			$elem = $('#id_glossary_widest_' + k);
 			$elem.change(data, adoptSelection);
 			if ($elem.prop('checked')) {
-				checked_breakpoint = k;
+				checked_widest = k;
 			}
 		}
 		for (k = 0; k < 4; k++) {
-			data = {'selgroup': 'breakpoint'};
+			data = {'selgroup': 'widest'};
 			$elem = $('#id_glossary_narrowest_' + k);
 			$elem.change(data, adoptSelection);
 			if ($elem.prop('checked')) {
@@ -22,17 +22,17 @@ django.jQuery(function($) {
 			}
 		}
 		for (k = 0; k < 4; k++) {
-			setProperties($('#id_glossary_breakpoint_' + k), k > checked_narrowest);
-			setProperties($('#id_glossary_narrowest_' + k), k < checked_breakpoint);
+			setProperties($('#id_glossary_widest_' + k), k > checked_narrowest);
+			setProperties($('#id_glossary_narrowest_' + k), k < checked_widest);
 		}
 	})();
 
 	function adoptSelection(evt) {
 		var i, index = breakpoints.indexOf(evt.target.value);
 		console.log(evt);
-		if (evt.data.selgroup === 'breakpoint') {
+		if (evt.data.selgroup === 'widest') {
 			for (i = 0; i < 4; i++) {
-				setProperties($('#id_glossary_breakpoint_' + i), i > index);
+				setProperties($('#id_glossary_widest_' + i), i > index);
 			}
 		} else if (evt.data.selgroup === 'narrowest') {
 			for (i = 0; i < 4; i++) {
