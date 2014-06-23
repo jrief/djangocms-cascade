@@ -1,4 +1,6 @@
 django.jQuery(function($) {
+	'use strict';
+
 	var $link_type = $("#id_link_type"),
 		$field_pagelink = $("#id_page_link_0").parent(".field-box"),
 		$field_url = $("#id_url").parent(".field-box"),
