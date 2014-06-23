@@ -13,13 +13,13 @@ from . import settings
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
-    map_icon = {'xs': 'mobile-phone', 'sm': 'tablet', 'md': 'laptop', 'lg': 'desktop'}
+    MAP_ICON = {'xs': 'mobile-phone', 'sm': 'tablet', 'md': 'laptop', 'lg': 'desktop'}
 
     def render(self):
         return format_html('<div class="form-row">{0}</div>',
             format_html_join('', '<div class="field-box">'
                 '<div class="container-thumbnail"><i class="icon-{1}"></i><div class="label">{0}</div></div>'
-                '</div>', ((force_text(w), self.map_icon[w.choice_value]) for w in self)
+                '</div>', ((force_text(w), self.MAP_ICON[w.choice_value]) for w in self)
             ))
 
 
@@ -27,32 +27,49 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     default_css_class = 'container'
     require_parent = False
-    WIDGET_CHOICES = (
+    BREAKPOINTS = ('xs', 'sm', 'md', 'lg')
+    WIDGET_CHOICES_BREAKPOINT = (
         ('lg', _("Large (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['lg']))),
         ('md', _("Medium (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['md']))),
         ('sm', _("Small (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
         ('xs', _("Tiny (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
     )
+    WIDGET_CHOICES_NARROW = (
+        ('lg', _("Large (>{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['lg']))),
+        ('md', _("Medium (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['lg']))),
+        ('sm', _("Small (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['md']))),
+        ('xs', _("Tiny (<{0}px)".format(settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS['sm']))),
+    )
     glossary_fields = (
         PartialFormField('breakpoint',
-            widgets.RadioSelect(choices=WIDGET_CHOICES, renderer=ContainerRadioFieldRenderer),
-            label=_('Display Breakpoint'), initial=settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINT,
-            help_text=_("Narrowest display for Bootstrap's grid system.")
+            widgets.RadioSelect(choices=WIDGET_CHOICES_BREAKPOINT, renderer=ContainerRadioFieldRenderer),
+            label=_('Display Breakpoint'), initial='lg',
+            help_text=_("Widest supported display for Bootstrap's grid system.")
+        ),
+        PartialFormField('narrowest',
+            widgets.RadioSelect(choices=WIDGET_CHOICES_NARROW, renderer=ContainerRadioFieldRenderer),
+            label=_('Narrowest Display'), initial='xs',
+            help_text=_("Narrowest supported display for Bootstrap's grid system.")
         ),
     )
 
     class Media:
         css = {'all': ('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css',)}
+        js = ['admin/js/cascade-containerplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):
         try:
-            texts = [d for c, d in cls.WIDGET_CHOICES if c == obj.glossary.get('breakpoint')]
+            texts = [d for c, d in cls.WIDGET_CHOICES_BREAKPOINT if c == obj.glossary.get('breakpoint')]
             return _('Narrowest grid: {0}').format(texts[0].lower())
         except (TypeError, KeyError, ValueError):
             return ''
 
     def save_model(self, request, obj, form, change):
+        breakpoint = self.BREAKPOINTS.index(obj.glossary['breakpoint'])
+        narrowest = self.BREAKPOINTS.index(obj.glossary['narrowest'])
+        breakpoints = [bp for i, bp in enumerate(self.BREAKPOINTS) if i <= breakpoint and i >= narrowest]
+        obj.glossary.update(breakpoints=breakpoints)
         super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
         obj.sanitize_children()
 

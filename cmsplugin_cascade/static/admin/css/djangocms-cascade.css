@@ -5,8 +5,10 @@ form .glossary-widget { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
 form .glossary-widget h1 { clear: both; margin: 10px 0; }
 form .glossary-widget label { width: inherit; padding-left: 10px; }
 form .glossary-widget small { margin-left: 0; }
-form .glossary_breakpoint .container-thumbnail { text-align: center; }
-form .glossary_breakpoint .container-thumbnail i[class^="icon"] { font-size: 70px; }
+form .glossary-widget .field-box.disabled { color: #aaa; }
+form .container-thumbnail { text-align: center; }
+form .container-thumbnail i[class^="icon"] { font-size: 70px; }
+/*form .container-thumbnail label { color: black; }*/
 form .glossary_button-type .field-box { margin-right: 10px; }
 form .glossary_button-size .button-samples { min-height: 100px; max-width: 100px; }
 form .glossary_button-type .btn, .glossary_button-size .btn { margin-bottom: 5px; }
