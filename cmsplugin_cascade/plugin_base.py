@@ -81,7 +81,7 @@ class CascadePluginBase(CMSPluginBase):
         return obj
 
     @classmethod
-    def sanizite_model(cls, obj):
+    def sanitize_model(cls, obj):
         """
         This method is called, before the model is written to the database. It can be overloaded
         to sanitize your own models. This method shall return True, in case it sanitized the model.
@@ -123,7 +123,7 @@ class CascadePluginBase(CMSPluginBase):
         if self.glossary_variables:
             old_obj = super(CascadePluginBase, self).get_object(request, form.instance.id)
             for key in self.glossary_variables:
-                if key not in new_obj.glossary:
+                if key not in new_obj.glossary and key in old_obj.glossary:
                     # transfer listed glossary variable from the old to new object
-                    new_obj.glossary.update(key=old_obj.glossary.get(key))
+                    new_obj.glossary.update({key: old_obj.glossary[key]})
         super(CascadePluginBase, self).save_model(request, new_obj, form, change)
