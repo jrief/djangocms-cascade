@@ -8,11 +8,12 @@ from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from cmsplugin_cascade.image.models import ImageElement
 from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
+from cmsplugin_cascade.widgets import NumberInputWidget
 from . import settings
 
 
-class ImageForm(LinkForm):
-    TYPE_CHOICES = (('null', _("Not Linked")), ('int', _("Internal")), ('ext', _("External")), ('email', _("Mail To")),)
+class PictureForm(LinkForm):
+    TYPE_CHOICES = (('null', _("No Link")), ('int', _("Internal")), ('ext', _("External")),)
     link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='null')
 
     class Meta:
@@ -20,17 +21,18 @@ class ImageForm(LinkForm):
         fields = ('page_link', 'image', 'glossary',)
 
 
-class BootstrapImagePlugin(LinkPluginBase):
-    name = _("Image")
+class BootstrapPicturePlugin(LinkPluginBase):
+    name = _("Picture")
     model = ImageElement
-    form = ImageForm
+    form = PictureForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
+    require_parent = True
     allow_children = False
     raw_id_fields = ('image',)
     text_enabled = True
     admin_preview = False
-    render_template = 'cms/plugins/generic.html'
+    render_template = 'cmsplugin_filer_image/plugins/image/default.html'
     fields = ('image', 'glossary', ('link_type', 'page_link', 'url', 'email'),)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')))
@@ -38,6 +40,10 @@ class BootstrapImagePlugin(LinkPluginBase):
         PartialFormField('image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
                 label=_('Image Shapes'), initial='img-responsive'
+        ),
+        PartialFormField('image-height',
+            NumberInputWidget(),
+                label=_('Relative Height'), initial=100,
         ),
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(['min-height']),
@@ -47,9 +53,14 @@ class BootstrapImagePlugin(LinkPluginBase):
     )
 
     def render(self, context, instance, placeholder):
+        #options = self._get_thumbnail_options(context, instance)
+        options = {'size': (100, 100), 'crop': False, 'upscale': False, 'subject_location': False}
+
         context.update({
             'instance': instance,
-            'placeholder': placeholder
+            'placeholder': placeholder,
+            'opts': options,
+            'size': options.get('size', None),
         })
         return context
 
@@ -110,20 +121,20 @@ class BootstrapImagePlugin(LinkPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapImagePlugin, cls).get_css_classes(obj)
+        css_classes = super(BootstrapPicturePlugin, cls).get_css_classes(obj)
         css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)
         return css_classes
 
     @classmethod
-    def sanizite_model(cls, obj):
+    def x_sanitize_model(cls, obj):
         """
         By using the full glossary context this image will be rendered into, estimate the maximum
         image size. Remember: In Bootstrap 3, images usually are rendered into a column, whose width
         is responsive, thus the image size shall be no more than its maximum size.
         """
-        sanitized = super(BootstrapImagePlugin, cls).sanizite_model(obj)
+        sanitized = super(BootstrapPicturePlugin, cls).sanitize_model(obj)
         complete_glossary = obj.get_complete_glossary()
         breakpoints = ('xs', 'sm', 'md', 'lg')
         container_bp = complete_glossary.get('breakpoint', 'lg')
@@ -144,4 +155,4 @@ class BootstrapImagePlugin(LinkPluginBase):
         obj.glossary.update(estimated_max_width=max_width)
         return sanitized or estimated_max_width != max_width
 
-plugin_pool.register_plugin(BootstrapImagePlugin)
+plugin_pool.register_plugin(BootstrapPicturePlugin)
