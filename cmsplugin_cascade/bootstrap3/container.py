@@ -148,7 +148,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         widgets.Select(choices=choices),
                         initial='col-{0}-12'.format(bp), label=label, help_text=help_text))
                 else:
-                    choices = (('', _('Unset')),) + tuple(('col-{0}-{1}'.format(bp, i),
+                    choices = (('', _('Inherit from above')),) + tuple(('col-{0}-{1}'.format(bp, i),
                         ungettext_lazy('{0} unit', '{0} units', i).format(i)) for i in range(1, 13))
                     label = _("Column width for {2}".format(*desc))
                     help_text = _("Override column units for devices wider than {0} pixels, such as {2}.".format(*desc))
