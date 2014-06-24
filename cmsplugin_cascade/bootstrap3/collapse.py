@@ -15,7 +15,7 @@ from . import settings
 
 class PanelGroupForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
-        widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 30px;'}),
+        widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em;'}),
         label=_('Panels'),
         help_text=_('Number of panels for this panel group.'))
 

@@ -32,18 +32,19 @@ class BootstrapPicturePlugin(LinkPluginBase):
     raw_id_fields = ('image',)
     text_enabled = True
     admin_preview = False
-    render_template = 'cmsplugin_filer_image/plugins/image/default.html'
+    render_template = 'cms/bootstrap3/picture.html'
     fields = ('image', 'glossary', ('link_type', 'page_link', 'url', 'email'),)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')))
     glossary_fields = (
         PartialFormField('image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
-                label=_('Image Shapes'), initial='img-responsive'
+            label=_('Image Shapes'), initial='img-responsive'
         ),
         PartialFormField('image-height',
-            NumberInputWidget(),
-                label=_('Relative Height'), initial=100,
+            NumberInputWidget(attrs={'size': '3', 'style': 'width: 50px;', 'min': 1, 'max': 100}),
+            label=_('Relative Height'), initial=100,
+            help_text=_('Percentuale image height in relation to its width.'),
         ),
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(['min-height']),
@@ -53,18 +54,31 @@ class BootstrapPicturePlugin(LinkPluginBase):
     )
 
     def render(self, context, instance, placeholder):
-        #options = self._get_thumbnail_options(context, instance)
-        options = {'size': (100, 100), 'crop': False, 'upscale': False, 'subject_location': False}
-
+        appearance = self._responsive_appearance(context, instance)
         context.update({
             'instance': instance,
             'placeholder': placeholder,
-            'opts': options,
-            'size': options.get('size', None),
+            'appearance': appearance,
         })
         return context
 
-    def _responsive_image_options(self, context, instance):
+    def _responsive_appearance(self, context, instance):
+        complete_glossary = instance.get_complete_glossary()
+        aspect_ratio = float(instance.image.height) / float(instance.image.width)
+        relative_height = float(instance.glossary.get('image-height', 100)) / 100
+        crop = relative_height < 1.0
+        size = {}
+        min_width = 100.0
+        for bp in complete_glossary['breakpoints']:
+            width = float(complete_glossary['container_max_widths'][bp])
+            min_width = min(min_width, round(width))
+            height = round(width * aspect_ratio * relative_height)
+            size[bp] = (int(width), int(height))
+        # create a relatively small default image as fallback
+        size['default'] = (int(min_width), int(round(min_width * aspect_ratio * relative_height)))
+        return {'size': size, 'crop': crop, 'upscale': False, 'subject_location': False}
+
+    def _get_thumbnail_options(self, context, instance):
         """
         Return the size and options of the thumbnail that should be inserted
         """
