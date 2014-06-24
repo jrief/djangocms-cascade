@@ -6,7 +6,10 @@ from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.forms.models import ModelForm
+from django.forms.fields import ChoiceField
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from .plugin_base import BootstrapPluginBase
@@ -92,16 +95,23 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
+class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
+    """
+    Form class to add non-materialized field to count the number of children.
+    """
+    ROW_NUM_COLUMNS = (1, 2, 3, 4, 6, 12,)
+    num_children = ChoiceField(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS),
+        initial=3, label=_('Columns'),
+        help_text=_('Number of columns to be created with this row.'))
+
+
 class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
-    ROW_NUM_COLUMNS = (1, 2, 3, 4, 6, 12,)
+    form = BootstrapRowForm
+    fields = ('num_children', 'glossary',)
     glossary_fields = (
-        PartialFormField('-num-children-',  # temporary field, not stored in the database
-            widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS)),
-            label=_('Number of Columns'), help_text=_('Number of columns to be created with this row.')
-        ),
         PartialFormField('inline_styles', MultipleInlineStylesWidget(['min-height']),
             label=_('Inline Styles'), help_text=_('Minimum height for this row.')
         ),
@@ -113,7 +123,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         return ungettext_lazy('with {0} column', 'with {0} columns', num_cols).format(num_cols)
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(obj.glossary['-num-children-'])
+        wanted_children = int(form.cleaned_data.get('num_children'))
         super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
         child_glossary = {'xs-column-width': 'col-xs-{0}'.format(12 // wanted_children)}
         self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)

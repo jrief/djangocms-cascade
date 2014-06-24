@@ -69,29 +69,16 @@ class CascadePluginBase(CMSPluginBase):
             data_options.update(instance_options)
         return data_options
 
-    def get_object(self, request, object_id):
-        """
-        Get the object and enrich the glossary with the number of children.
-        """
-        obj = super(CascadePluginBase, self).get_object(request, object_id)
-        try:
-            obj.glossary['-num-children-'] = obj.get_children().count()
-        except AttributeError:
-            pass
-        return obj
-
     @classmethod
     def sanitize_model(cls, obj):
         """
         This method is called, before the model is written to the database. It can be overloaded
-        to sanitize your own models. This method shall return True, in case it sanitized the model.
-        Otherwise it shall return False to prevent a useless update in the database.
+        to sanitize your the current models, in case a parent model changed in a way, which might
+        affect this plugin.
+        This method shall return ``True``, in case a model change was necessary, otherwise it shall
+        return ``False`` to prevent a useless database update.
         """
-        try:
-            del obj.glossary['-num-children-']
-            return True
-        except (TypeError, KeyError):
-            return False
+        return False
 
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
         """

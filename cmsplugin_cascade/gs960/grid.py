@@ -1,15 +1,30 @@
 # -*- coding: utf-8 -*-
 from django.forms import widgets
+from django.forms.models import ModelForm
+from django.forms.fields import ChoiceField
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import CascadePluginBase
+from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from . import settings
 
 
+class GS960RowForm(ManageChildrenFormMixin, ModelForm):
+    """
+    Form class to add non-materialized field to count the number of children.
+    """
+    ROW_NUM_COLUMNS = (1, 2, 3, 4, 6, 12,)
+    num_children = ChoiceField(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS),
+        initial=3, label=_('Columns'),
+        help_text=_('Number of columns to be created with this row.'))
+
+
 class Container960BasePlugin(CascadePluginBase):
     module = '960.gs'
+    form = GS960RowForm
+    fields = ('num_children', 'glossary',)
     require_parent = False
     allow_children = True
     default_css_attributes = ('options',)
@@ -20,15 +35,11 @@ class Container960BasePlugin(CascadePluginBase):
                 widgets.CheckboxSelectMultiple(choices=(('clearfix', _('Clearfix')),)),
                 label=_('Options'),
             ),
-            PartialFormField('-num-children-',  # temporary field, not stored in the database
-                widgets.Select(choices=tuple((i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in self.CONTAINER_NUM_COLUMNS)),
-                label=_('Number of Columns'), help_text=_('Number of columns to be created with this row.')
-            ),
         )
         super(Container960BasePlugin, self).__init__(model, admin_site, glossary_fields)
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(obj.glossary['-num-children-'])
+        wanted_children = int(form.cleaned_data.get('num_children'))
         super(Container960BasePlugin, self).save_model(request, obj, form, change)
         child_plugin = eval('Grid{0}Plugin'.format(self.CONTAINER_WIDTH))
         child_glossary = {'grid': 'grid_{0}'.format(self.CONTAINER_WIDTH // wanted_children)}
