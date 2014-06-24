@@ -9,7 +9,6 @@ class CascadePluginBase(CMSPluginBase):
     tag_type = 'div'
     render_template = 'cms/plugins/generic.html'
     glossary_variables = []
-    _cached_child_classes = None
 
     class Media:
         css = {'all': ('admin/css/djangocms-cascade.css',)}
@@ -32,6 +31,7 @@ class CascadePluginBase(CMSPluginBase):
             self.glossary_fields = glossary_fields
         elif not hasattr(self, 'glossary_fields'):
             self.glossary_fields = []
+        self._cached_child_classes = None
 
     @classmethod
     def get_identifier(cls, model):
