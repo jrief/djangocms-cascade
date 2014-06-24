@@ -69,7 +69,7 @@ class NumberInputWidget(input_widget):
 
     def validate(self, value):
         if not self.validation_pattern.match(value):
-            raise ValidationError(self.validation_message, code='invalid', params={ 'value': value })
+            raise ValidationError(self.validation_message, code='invalid', params={'value': value})
 
 
 class MultipleTextInputWidget(widgets.MultiWidget):
@@ -118,7 +118,7 @@ class MultipleTextInputWidget(widgets.MultiWidget):
             val = value.get(field_name)
             if val and not self.validation_pattern.match(val):
                 self.validation_errors.append(field_name)
-                raise ValidationError(self.validation_message, code='invalid', params={ 'value': val, 'field': field_name })
+                raise ValidationError(self.validation_message, code='invalid', params={'value': val, 'field': field_name})
 
 
 class MultipleNumberWidget(MultipleTextInputWidget):
