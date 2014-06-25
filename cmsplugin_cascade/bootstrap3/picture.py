@@ -8,8 +8,10 @@ from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from cmsplugin_cascade.image.models import ImageElement
 from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
-from cmsplugin_cascade.widgets import NumberInputWidget
+from cmsplugin_cascade.widgets import CascadingSizeWidget
 from . import settings
+
+BREAKPOINTS_DICT = dict(tp for tp in settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
 
 
 class PictureForm(LinkForm):
@@ -26,25 +28,56 @@ class BootstrapPicturePlugin(LinkPluginBase):
     model = ImageElement
     form = PictureForm
     module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ['BootstrapColumnPlugin', 'CarouselSlidePlugin']
     require_parent = True
     allow_children = False
     raw_id_fields = ('image',)
     text_enabled = True
     admin_preview = False
     render_template = 'cms/bootstrap3/picture.html'
+    default_css_attributes = ('image-shapes',)
+    glossary_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
     fields = ('image', 'glossary', ('link_type', 'page_link', 'url', 'email'),)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')))
+    APPEARANCE = {
+        'xs': {'media': '(max-width: {0}px)'.format(BREAKPOINTS_DICT['sm'][0])},
+        'sm': {'media': '(max-width: {0}px)'.format(BREAKPOINTS_DICT['md'][0])},
+        'md': {'media': '(max-width: {0}px)'.format(BREAKPOINTS_DICT['lg'][0])},
+        'lg': {'media': '(min-width: {0}px)'.format(BREAKPOINTS_DICT['lg'][0])},
+    }
     glossary_fields = (
+        PartialFormField('image-title',
+            widgets.TextInput(),
+            label=_('Image Title'),
+            help_text=_("Caption text added to the 'title' attribute of the <img> element."),
+        ),
+        PartialFormField('alt-tag',
+            widgets.TextInput(),
+            label=_('Alternative Description'),
+            help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
+        ),
         PartialFormField('image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
-            label=_('Image Shapes'), initial='img-responsive'
+            label=_('Image Shapes'),
+            initial='img-responsive'
         ),
         PartialFormField('image-height',
-            NumberInputWidget(attrs={'size': '3', 'style': 'width: 50px;', 'min': 1, 'max': 100}),
-            label=_('Relative Height'), initial=100,
-            help_text=_('Percentuale image height in relation to its width.'),
+            CascadingSizeWidget(allowed_units=['px', '%']),
+            label=_('Image Height'),
+            initial='100%',
+            help_text=_("Specifiy image height in '%' (percent) or 'px' (pixels)."),
+        ),
+        PartialFormField('upscale',
+            widgets.CheckboxInput(),
+            label=_('Upscale Image'),
+            help_text=_("Upscale small images to the estimated boundaries."),
+        ),
+        PartialFormField('subject_location',
+            widgets.CheckboxInput(),
+            label=_('Subject Location'),
+            initial=True,
+            help_text=_("Use subject location to adjust the image's center to its most interesting part."),
         ),
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(['min-height']),
@@ -54,29 +87,48 @@ class BootstrapPicturePlugin(LinkPluginBase):
     )
 
     def render(self, context, instance, placeholder):
-        appearance = self._responsive_appearance(context, instance)
+        appearances = self._responsive_appearances(context, instance)
+        print appearances
         context.update({
             'instance': instance,
             'placeholder': placeholder,
-            'appearance': appearance,
+            'appearances': appearances,
         })
         return context
 
-    def _responsive_appearance(self, context, instance):
+    def _responsive_appearances(self, context, instance):
         complete_glossary = instance.get_complete_glossary()
         aspect_ratio = float(instance.image.height) / float(instance.image.width)
-        relative_height = float(instance.glossary.get('image-height', 100)) / 100
-        crop = relative_height < 1.0
-        size = {}
+        image_height = instance.glossary['image-height'].strip()
+        if image_height.endswith('%'):
+            relative_height = float(image_height.rstrip('%')) / 100
+            crop = relative_height < 1.0
+        elif image_height.endswith('px'):
+            relative_height = None
+            image_height = int(image_height.rstrip('px'))
+            crop = True
+        else:
+            raise ValueError("Image height '{0}' can't be interpreted!".format(image_height))
+        upscale = instance.glossary['upscale']
+        subject_location = instance.glossary['subject_location']
         min_width = 100.0
+        appearance = {}
         for bp in complete_glossary['breakpoints']:
             width = float(complete_glossary['container_max_widths'][bp])
             min_width = min(min_width, round(width))
-            height = round(width * aspect_ratio * relative_height)
-            size[bp] = (int(width), int(height))
+            if relative_height:
+                size = (int(width), int(round(width * aspect_ratio * relative_height)))
+            else:
+                size = (int(width), image_height)
+            appearance[bp] = self.APPEARANCE[bp]
+            appearance[bp].update(size=size, crop=crop, upscale=upscale, subject_location=subject_location)
         # create a relatively small default image as fallback
-        size['default'] = (int(min_width), int(round(min_width * aspect_ratio * relative_height)))
-        return {'size': size, 'crop': crop, 'upscale': False, 'subject_location': False}
+        if relative_height:
+            size = (int(min_width), int(round(min_width * aspect_ratio * relative_height)))
+        else:
+            size = (int(min_width), int(image_height))
+        appearance['default'] = {'size': size, 'crop': crop, 'upscale': False, 'subject_location': False}
+        return appearance
 
     def _get_thumbnail_options(self, context, instance):
         """
