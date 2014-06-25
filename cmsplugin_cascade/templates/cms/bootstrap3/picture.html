@@ -21,7 +21,7 @@
 		{% endif %}
 	{% endfor %}
 	{% thumbnail instance.image appearance.default.size as thumb %}
-	<img srcset="{{ thumb.url }}" {{ instance.tag_attributes }} class="{{ instance.css_classes }}">
+	<img srcset="{{ thumb.url }}" {{ instance.html_attributes }} class="{{ instance.css_classes }}">
 </picture>
 {% if link %}</a>{% endif %}
 

@@ -1,7 +1,7 @@
 {% load cms_tags %}
 
 {% with bootstrap_element="carousel" inline_styles=instance.inline_styles %}
-<div id="cmsplugin_{{ instance.id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %} {{ instance.data_options }}>
+<div id="cmsplugin_{{ instance.id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %} {{ instance.html_attributes }}>
 	<ol class="carousel-indicators">
 	{% for slide in instance.child_plugin_instances %}
 		<li data-target="#cmsplugin_{{ instance.id }}" data-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active"{% endif %}></li>

@@ -62,12 +62,12 @@ class CascadePluginBase(CMSPluginBase):
         return inline_styles
 
     @classmethod
-    def get_data_options(cls, obj):
-        data_options = getattr(cls, 'default_data_options', {})
-        instance_options = obj.glossary.get('data_options')
-        if instance_options:
-            data_options.update(instance_options)
-        return data_options
+    def get_html_attributes(cls, obj):
+        glossary_attributes = getattr(cls, 'glossary_attributes', {})
+        html_attributes = {}
+        for key, attr in glossary_attributes.items():
+            html_attributes[attr] = obj.glossary.get(key, '')
+        return html_attributes
 
     @classmethod
     def sanitize_model(cls, obj):
