@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.html import mark_safe, format_html_join
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
@@ -32,17 +33,22 @@ class CascadeModelBase(CMSPlugin):
     @property
     def css_classes(self):
         css_classes = self.plugin_class.get_css_classes(self)
-        return ' '.join(css_classes)
+        return mark_safe(' '.join(css_classes))
 
     @property
     def inline_styles(self):
         inline_styles = self.plugin_class.get_inline_styles(self)
-        return ' '.join(['{0}: {1};'.format(*s) for s in inline_styles.items() if s[1]])
+        return format_html_join(' ', '{0}: {1};', (s for s in inline_styles.items() if s[1]))
 
     @property
     def data_options(self):
         data_options = self.plugin_class.get_data_options(self)
         return ' '.join(['data-{0}={1}'.format(*o) for o in data_options.items() if o[1]])
+
+    @property
+    def tag_attributes(self):
+        tag_attributes = self.plugin_class.get_tag_attributes(self)
+        return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in tag_attributes.items() if val))
 
     def get_parent(self):
         """
