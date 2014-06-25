@@ -29,7 +29,7 @@ class LinkForm(ModelForm):
         instance = kwargs.get('instance')
         mailto = 'mailto: '
         urlvalidator = URLValidator()
-        initial = {'link_content': instance.glossary.get('link_content', '')}
+        initial = {'link_content': instance and instance.glossary.get('link_content', '') or ''}
         try:
             if instance.text_link.startswith(mailto):
                 initial['link_type'] = 'email'
