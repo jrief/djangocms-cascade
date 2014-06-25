@@ -57,4 +57,6 @@ class LinkForm(ModelForm):
             self.data.update({'page_link': None, 'email': ''})
         elif link_type == 'email':
             self.data.update({'page_link': None, 'url': ''})
+        else:
+            self.data.update({'page_link': None, 'url': '', 'email': ''})
         super(LinkForm, self).full_clean()
