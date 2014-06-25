@@ -107,10 +107,10 @@ class CascadePluginBase(CMSPluginBase):
         return form
 
     def save_model(self, request, new_obj, form, change):
-        if self.glossary_variables:
+        if change and self.glossary_variables:
             old_obj = super(CascadePluginBase, self).get_object(request, form.instance.id)
             for key in self.glossary_variables:
                 if key not in new_obj.glossary and key in old_obj.glossary:
                     # transfer listed glossary variable from the old to new object
-                    new_obj.glossary.update({key: old_obj.glossary[key]})
+                    new_obj.glossary[key] = old_obj.glossary[key]
         super(CascadePluginBase, self).save_model(request, new_obj, form, change)
