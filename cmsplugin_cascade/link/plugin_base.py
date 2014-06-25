@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import six
 from django.contrib.sites.models import Site
+from django.forms.widgets import RadioSelect
+from django.utils.translation import ugettext_lazy as _
+from cmsplugin_cascade.fields import PartialFormField
 from cms.models import Page
 try:
     from djangocms_link.fields import PageSearchField as PageSelectFormField
@@ -11,6 +14,13 @@ from cmsplugin_cascade.plugin_base import CascadePluginBase
 
 class LinkPluginBase(CascadePluginBase):
     require_parent = True
+    LINK_TARGET = PartialFormField('target',
+        RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
+                              ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
+        initial='',
+        label=_('Link Target'),
+        help_text=_("Open Link in other target.")
+    )
 
     def get_site(self):
         try:

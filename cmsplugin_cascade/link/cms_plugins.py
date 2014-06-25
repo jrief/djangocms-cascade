@@ -22,13 +22,7 @@ class TextLinkPlugin(LinkPluginBase):
             label=_("Title"),
             help_text=_("Link's Title")
         ),
-        PartialFormField('target',
-            widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
-                                  ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
-            initial='',
-            label=_('Link Target'),
-            help_text=_("Open Link in other target.")
-        ),
+        LinkPluginBase.LINK_TARGET,
     )
 
 plugin_pool.register_plugin(TextLinkPlugin)

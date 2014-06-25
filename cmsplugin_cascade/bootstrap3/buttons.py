@@ -73,6 +73,7 @@ class BootstrapButtonPlugin(LinkPluginBase):
             widgets.CheckboxSelectMultiple(choices=(('btn-block', _('Block level')), ('disabled', _('Disabled')),)),
                 label=_('Button Options'),
         ),
+        LinkPluginBase.LINK_TARGET,
         PartialFormField('inline_styles',
             MultipleInlineStylesWidget(['margin-top', 'margin-right', 'margin-bottom', 'margin-left']),
             label=_('Inline Styles'),
