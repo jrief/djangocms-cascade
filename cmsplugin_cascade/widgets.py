@@ -72,6 +72,33 @@ class NumberInputWidget(input_widget):
             raise ValidationError(self.validation_message, code='invalid', params={'value': value})
 
 
+class CascadingSizeWidget(widgets.TextInput):
+    """
+    Use this field for validating Input Fields containing a value ending in ``px``, ``em`` or ``%``.
+    Use it for values representing a margin, padding, width or height.
+    """
+    POSSIBLE_UNITS = ['px', 'em', '%']
+    DEFAULT_ATTRS = {'style': 'width: 5em;'}
+
+    def __init__(self, allowed_units=POSSIBLE_UNITS, attrs=DEFAULT_ATTRS, is_required=True, *args, **kwargs):
+        for u in allowed_units:
+            if u not in self.POSSIBLE_UNITS:
+                raise ValidationError('{0} is not a valid unit for CascadingSizeField'.format(u))
+        self.allowed_units = allowed_units
+        self.validation_pattern = re.compile(r'^(\d+)\s*({0})$'.format('|'.join(allowed_units)))
+        self.is_required = is_required
+        super(CascadingSizeWidget, self).__init__(attrs=attrs, *args, **kwargs)
+
+    def validate(self, value):
+        if not value and self.is_required:
+            raise ValidationError(_("In '%(label)s': This field is required."), params={})
+        match = self.validation_pattern.match(value)
+        if not (match and match.group(1).isdigit()):
+            endings = _("or").join(" '%s' " % u for u in self.allowed_units)
+            params = {'value': value, 'endings': endings}
+            raise ValidationError(_("In '%(label)s': Value '%(value)s' shall contain a valid number, ending in%(endings)s."), params=params)
+
+
 class MultipleTextInputWidget(widgets.MultiWidget):
     """
     A widgets accepting multiple input values to be used for rendering CSS inline styles.
