@@ -25,3 +25,6 @@ CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS = (
     ('md', (992, 'laptop', _("laptops"), 78, 940)),
     ('lg', (1200, 'desktop', _("large desktops"), 95, 1140)),
 )
+
+CASCADE_BREAKPOINTS_DICT = dict(tp for tp in CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
+CASCADE_BREAKPOINTS_LIST = list(tp[0] for tp in CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)

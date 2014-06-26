@@ -13,10 +13,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
 from .plugin_base import BootstrapPluginBase
-from . import settings
-
-BREAKPOINTS_DICT = dict(tp for tp in settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
-BREAKPOINTS_LIST = list(tp[0] for tp in settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
+from .settings import CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST, CMS_CASCADE_LEAF_PLUGINS
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
@@ -24,7 +21,7 @@ class ContainerRadioFieldRenderer(RadioFieldRenderer):
         return format_html('<div class="form-row">{0}</div>',
             format_html_join('', '<div class="field-box">'
                 '<div class="container-thumbnail"><i class="icon-{1}"></i><div class="label">{0}</div></div>'
-                '</div>', ((force_text(w), BREAKPOINTS_DICT[w.choice_value][1]) for w in self)
+                '</div>', ((force_text(w), CASCADE_BREAKPOINTS_DICT[w.choice_value][1]) for w in self)
             ))
 
 
@@ -33,16 +30,16 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     default_css_class = 'container'
     require_parent = False
     WIDGET_CHOICES_WIDEST = (
-        ('lg', _("Large (>{0}px)".format(*BREAKPOINTS_DICT['lg']))),
-        ('md', _("Medium (>{0}px)".format(*BREAKPOINTS_DICT['md']))),
-        ('sm', _("Small (>{0}px)".format(*BREAKPOINTS_DICT['sm']))),
-        ('xs', _("Tiny (<{0}px)".format(*BREAKPOINTS_DICT['sm']))),
+        ('lg', _("Large (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['lg']))),
+        ('md', _("Medium (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['md']))),
+        ('sm', _("Small (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['sm']))),
+        ('xs', _("Tiny (<{0}px)".format(*CASCADE_BREAKPOINTS_DICT['sm']))),
     )
     WIDGET_CHOICES_NARROW = (
-        ('lg', _("Large (>{0}px)".format(*BREAKPOINTS_DICT['lg']))),
-        ('md', _("Medium (<{0}px)".format(*BREAKPOINTS_DICT['lg']))),
-        ('sm', _("Small (<{0}px)".format(*BREAKPOINTS_DICT['md']))),
-        ('xs', _("Tiny (<{0}px)".format(*BREAKPOINTS_DICT['sm']))),
+        ('lg', _("Large (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['lg']))),
+        ('md', _("Medium (<{0}px)".format(*CASCADE_BREAKPOINTS_DICT['lg']))),
+        ('sm', _("Small (<{0}px)".format(*CASCADE_BREAKPOINTS_DICT['md']))),
+        ('xs', _("Tiny (<{0}px)".format(*CASCADE_BREAKPOINTS_DICT['sm']))),
     )
     glossary_fields = (
         PartialFormField('widest',
@@ -73,9 +70,9 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             return ''
 
     def save_model(self, request, obj, form, change):
-        widest = BREAKPOINTS_LIST.index(obj.glossary['widest'])
-        narrowest = BREAKPOINTS_LIST.index(obj.glossary['narrowest'])
-        breakpoints = [bp for i, bp in enumerate(BREAKPOINTS_LIST) if i <= widest and i >= narrowest]
+        widest = CASCADE_BREAKPOINTS_LIST.index(obj.glossary['widest'])
+        narrowest = CASCADE_BREAKPOINTS_LIST.index(obj.glossary['narrowest'])
+        breakpoints = [bp for i, bp in enumerate(CASCADE_BREAKPOINTS_LIST) if i <= widest and i >= narrowest]
         obj.glossary.update(breakpoints=breakpoints)
         super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
         obj.sanitize_children()
@@ -89,7 +86,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             try:
                 obj.glossary['container_max_widths'][bp] = complete_glossary['container_max_widths'][bp]
             except KeyError:
-                obj.glossary['container_max_widths'][bp] = BREAKPOINTS_DICT[bp][4]
+                obj.glossary['container_max_widths'][bp] = CASCADE_BREAKPOINTS_DICT[bp][4]
         return sanitized
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
@@ -134,8 +131,8 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
-    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
-    default_css_attributes = tuple('{0}-column-width'.format(size) for size in BREAKPOINTS_LIST)
+    generic_child_classes = CMS_CASCADE_LEAF_PLUGINS
+    default_css_attributes = tuple('{0}-column-width'.format(size) for size in CASCADE_BREAKPOINTS_LIST)
     glossary_variables = ['container_max_widths']
 
     def get_form(self, request, obj=None, **kwargs):
@@ -143,7 +140,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         if obj:
             complete_glossary = obj.get_complete_glossary()
             for bp in complete_glossary['breakpoints']:
-                desc = list(BREAKPOINTS_DICT[bp])
+                desc = list(CASCADE_BREAKPOINTS_DICT[bp])
                 desc[2] = force_text(desc[2])
                 if bp == complete_glossary['breakpoints'][0]:
                     # first element
@@ -184,7 +181,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         parent_glossary = obj.get_parent().get_complete_glossary()
         column_units = 12
         obj.glossary['container_max_widths'] = {}
-        for bp in BREAKPOINTS_LIST:
+        for bp in CASCADE_BREAKPOINTS_LIST:
             width_key = '{0}-column-width'.format(bp)
             offset_key = '{0}-column-offset'.format(bp)
             if bp in parent_glossary['breakpoints']:

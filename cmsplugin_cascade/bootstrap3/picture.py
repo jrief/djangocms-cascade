@@ -9,9 +9,7 @@ from cmsplugin_cascade.image.models import ImageElement
 from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 from cmsplugin_cascade.widgets import CascadingSizeWidget
-from . import settings
-
-BREAKPOINTS_DICT = dict(tp for tp in settings.CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
+from .settings import CASCADE_BREAKPOINTS_DICT
 
 
 class PictureForm(LinkForm):
@@ -41,10 +39,10 @@ class BootstrapPicturePlugin(LinkPluginBase):
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')))
     APPEARANCE = {
-        'xs': {'media': '(max-width: {0}px)'.format(BREAKPOINTS_DICT['sm'][0])},
-        'sm': {'media': '(max-width: {0}px)'.format(BREAKPOINTS_DICT['md'][0])},
-        'md': {'media': '(max-width: {0}px)'.format(BREAKPOINTS_DICT['lg'][0])},
-        'lg': {'media': '(min-width: {0}px)'.format(BREAKPOINTS_DICT['lg'][0])},
+        'xs': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['sm'][0])},
+        'sm': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['md'][0])},
+        'md': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['lg'][0])},
+        'lg': {'media': '(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['lg'][0])},
     }
     glossary_fields = (
         PartialFormField('image-title',
