@@ -7,7 +7,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from . import settings
 
 
@@ -99,7 +99,7 @@ class Grid960BasePlugin(CascadePluginBase):
                 widgets.CheckboxSelectMultiple(choices=self.OPTION_CHOICES),
                 label=_('Options'),
             ),
-            PartialFormField('inline_styles', MultipleInlineStylesWidget(['min-height', 'margin-top', 'margin-bottom']),
+            PartialFormField('inline_styles', MultipleCascadingSizeWidget(['min-height', 'margin-top', 'margin-bottom']),
                 label=_('Inline Styles'), help_text=_('Minimum height for this column.')
             ),
         )

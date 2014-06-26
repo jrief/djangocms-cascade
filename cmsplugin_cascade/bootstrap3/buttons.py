@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.models import LinkElement
 from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
@@ -75,8 +75,9 @@ class BootstrapButtonPlugin(LinkPluginBase):
         ),
         LinkPluginBase.LINK_TARGET,
         PartialFormField('inline_styles',
-            MultipleInlineStylesWidget(['margin-top', 'margin-right', 'margin-bottom', 'margin-left']),
-            label=_('Inline Styles'),
+            MultipleCascadingSizeWidget(['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
+                allowed_units=['px', 'em'], required=False),
+            label=_('Margins'),
             help_text=_('Margins for this button wrapper.')
         ),
     )

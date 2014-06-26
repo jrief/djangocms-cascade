@@ -7,7 +7,7 @@ from django.forms.models import ModelForm
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.widgets import NumberInputWidget, MultipleInlineStylesWidget
+from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from . import settings
 

@@ -6,7 +6,7 @@ from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.html import escape, format_html, format_html_join
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 
 class JSONMultiWidget(widgets.MultiWidget):
@@ -65,11 +65,27 @@ else:
 
 class NumberInputWidget(input_widget):
     validation_pattern = re.compile('^\d+$')
-    validation_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number.")
+    required = True
+    required_message = _("In '%(label)s': This field is required.")
+    invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number.")
 
     def validate(self, value):
         if not self.validation_pattern.match(value):
             raise ValidationError(self.validation_message, code='invalid', params={'value': value})
+
+
+def _compile_validation_pattern(widget, units):
+    """
+    Assure that passed in units are valid size units.
+    Return a tuple with a regular expression to be used for validating and a message if this
+    validation failed.
+    """
+    for u in units:
+        if u not in widget.POSSIBLE_UNITS:
+            raise ValidationError('{0} is not a valid unit for CascadingSizeField'.format(u))
+    endings = (' %s ' % ugettext("or")).join("'%s'" % u.replace('%', '%%') for u in units)
+    params = {'label': '%(label)s', 'value': '%(value)s', 'field': '%(field)s', 'endings': endings}
+    return re.compile(r'^(\d+)\s*({0})$'.format('|'.join(units))), widget.invalid_message % params
 
 
 class CascadingSizeWidget(widgets.TextInput):
@@ -79,24 +95,23 @@ class CascadingSizeWidget(widgets.TextInput):
     """
     POSSIBLE_UNITS = ['px', 'em', '%']
     DEFAULT_ATTRS = {'style': 'width: 5em;'}
+    required_message = _("In '%(label)s': This field is required.")
+    invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number, ending in %(endings)s.")
 
-    def __init__(self, allowed_units=POSSIBLE_UNITS, attrs=DEFAULT_ATTRS, is_required=True, *args, **kwargs):
-        for u in allowed_units:
-            if u not in self.POSSIBLE_UNITS:
-                raise ValidationError('{0} is not a valid unit for CascadingSizeField'.format(u))
-        self.allowed_units = allowed_units
-        self.validation_pattern = re.compile(r'^(\d+)\s*({0})$'.format('|'.join(allowed_units)))
-        self.is_required = is_required
-        super(CascadingSizeWidget, self).__init__(attrs=attrs, *args, **kwargs)
+    def __init__(self, allowed_units=POSSIBLE_UNITS, attrs=DEFAULT_ATTRS, required=True):
+        self.validation_pattern, self.invalid_message = _compile_validation_pattern(self, allowed_units)
+        self.required = required
+        super(CascadingSizeWidget, self).__init__(attrs=attrs)
 
     def validate(self, value):
-        if not value and self.is_required:
-            raise ValidationError(_("In '%(label)s': This field is required."), params={})
+        if not value:
+            if self.required:
+                raise ValidationError(self.required_message, code='required', params={})
+            return
         match = self.validation_pattern.match(value)
         if not (match and match.group(1).isdigit()):
-            endings = _("or").join(" '%s' " % u for u in self.allowed_units)
-            params = {'value': value, 'endings': endings}
-            raise ValidationError(_("In '%(label)s': Value '%(value)s' shall contain a valid number, ending in%(endings)s."), params=params)
+            params = {'value': value}
+            raise ValidationError(self.invalid_message, code='invalid', params=params)
 
 
 class MultipleTextInputWidget(widgets.MultiWidget):
@@ -104,11 +119,20 @@ class MultipleTextInputWidget(widgets.MultiWidget):
     A widgets accepting multiple input values to be used for rendering CSS inline styles.
     Additionally this widget validates the input data and raises a ValidationError
     """
-    def __init__(self, labels, attrs=None):
-        text_widgets = [widgets.TextInput({ 'placeholder': label }) for label in labels]
+    required = False
+
+    def __init__(self, labels, required=None, attrs=None):
+        text_widgets = [widgets.TextInput({'placeholder': label}) for label in labels]
         super(MultipleTextInputWidget, self).__init__(text_widgets, attrs)
         self.labels = labels[:]
+        if required is not None:
+            self.required = required
         self.validation_errors = []
+        # check if derived classes contain proper error messages
+        if hasattr(self, 'validation_pattern') and not hasattr(self, 'invalid_message'):
+            raise AttributeError("Multiple...InputWidget class is missing element: 'invalid_message'")
+        if self.required and not hasattr(self, 'required_message'):
+            raise AttributeError("Multiple...InputWidget class is missing element: 'required_message'")
 
     def __iter__(self):
         self.validation_errors = []
@@ -140,19 +164,24 @@ class MultipleTextInputWidget(widgets.MultiWidget):
 
     def validate(self, value, field_name):
         if hasattr(self, 'validation_pattern'):
-            if not hasattr(self, 'validation_message'):
-                raise AttributeError("Widget class is missing element: 'validation_message'")
             val = value.get(field_name)
+            if not val:
+                if self.required:
+                    raise ValidationError(self.required_message, code='required', params={'field': field_name})
+                return
             if val and not self.validation_pattern.match(val):
                 self.validation_errors.append(field_name)
-                raise ValidationError(self.validation_message, code='invalid', params={'value': val, 'field': field_name})
+                params = {'value': val, 'field': field_name}
+                raise ValidationError(self.invalid_message, code='invalid', params=params)
 
 
-class MultipleNumberWidget(MultipleTextInputWidget):
-    validation_pattern = re.compile('^\d+$')
-    validation_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number.")
+class MultipleCascadingSizeWidget(MultipleTextInputWidget):
+    POSSIBLE_UNITS = ['px', 'em', '%']
+    DEFAULT_ATTRS = {'style': 'width: 4em;'}
+    required_message = _("In '%(label)s': Field '%(field)s' is required.")
+    invalid_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending in %(endings)s.")
 
-
-class MultipleInlineStylesWidget(MultipleTextInputWidget):
-    validation_pattern = re.compile(r'^\d+(px|em|%)$')
-    validation_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending with px, em or %%.")
+    def __init__(self, labels, allowed_units=POSSIBLE_UNITS, attrs=DEFAULT_ATTRS, required=True):
+        self.validation_pattern, self.invalid_message = _compile_validation_pattern(self, allowed_units)
+        self.required = required
+        super(MultipleCascadingSizeWidget, self).__init__(labels, attrs=attrs)

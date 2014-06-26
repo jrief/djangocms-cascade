@@ -3,7 +3,7 @@ from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.widgets import MultipleInlineStylesWidget
+from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from . import settings
 
@@ -20,7 +20,7 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
             help_text=_('Main Bootstrap CSS class to be added to this element.')
         ),
         PartialFormField('inline_styles',
-            MultipleInlineStylesWidget(['min-height']),
+            MultipleCascadingSizeWidget(['min-height']),
             label=_('Inline Styles'),
             help_text=_('Margins and minimum height for container.')
         ),
@@ -50,7 +50,7 @@ class HorizontalRulePlugin(BootstrapPluginBase):
     render_template = 'cms/plugins/single.html'
     glossary_fields = (
         PartialFormField('inline_styles',
-            MultipleInlineStylesWidget(['margin-top', 'margin-bottom']),
+            MultipleCascadingSizeWidget(['margin-top', 'margin-bottom']),
             label=_('Inline Styles'),
             help_text=_('Margins for this horizontal rule.')
         ),
