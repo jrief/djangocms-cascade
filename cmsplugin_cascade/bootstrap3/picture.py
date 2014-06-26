@@ -36,7 +36,9 @@ class BootstrapPicturePlugin(LinkPluginBase):
     glossary_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
     fields = ('image', 'glossary', ('link_type', 'page_link', 'url', 'email'),)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
-                     ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')))
+                     ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
+    RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
+                      ('subject_location', _("With subject location")),)
     APPEARANCE = {
         'xs': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['sm'][0])},
         'sm': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['md'][0])},
@@ -56,76 +58,108 @@ class BootstrapPicturePlugin(LinkPluginBase):
         ),
         PartialFormField('image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
-            label=_('Image Shapes'),
-            initial='img-responsive'
+            label=_("Image Shapes"),
+            initial=['img-responsive']
         ),
-        PartialFormField('image-height',
-            CascadingSizeWidget(allowed_units=['px', '%']),
-            label=_('Image Height'),
-            initial='100%',
-            help_text=_("Specifiy image height in '%' (percent) or 'px' (pixels)."),
+        PartialFormField('responsive-height',
+            CascadingSizeWidget(allowed_units=['px', '%'], required=False),
+            label=_("Override Container Height"),
+            help_text=_("An optional image height in '%' (percent) or 'px' (pixels) to override the container's size."),
         ),
-        PartialFormField('upscale',
-            widgets.CheckboxInput(),
-            label=_('Upscale Image'),
-            help_text=_("Upscale small images to the estimated boundaries."),
-        ),
-        PartialFormField('subject_location',
-            widgets.CheckboxInput(),
-            label=_('Subject Location'),
-            initial=True,
-            help_text=_("Use subject location to adjust the image's center to its most interesting part."),
-        ),
-        PartialFormField('inline_styles',
-            MultipleInlineStylesWidget(['min-height']),
-            label=_('Inline Styles'),
-            help_text=_('Margins and minimum height for thumbnail image.')
+        PartialFormField('resize-options',
+            widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
+            label=_("Resize Options"),
+            help_text=_("Options to use when resizing the image."),
+            initial=['subject_location']
         ),
     )
 
     def render(self, context, instance, placeholder):
-        appearances = self._responsive_appearances(context, instance)
-        print appearances
-        context.update({
-            'instance': instance,
-            'placeholder': placeholder,
-            'appearances': appearances,
-        })
+        if 'img-responsive' in instance.glossary.get('image-shapes', []):
+            # image shall be rendered in a responsive context using the picture element
+            appearances, default_appearance = self._responsive_appearances(context, instance)
+            context.update({
+                'is_responsive': True,
+                'instance': instance,
+                'placeholder': placeholder,
+                'appearances': appearances,
+                'default_appearance': default_appearance,
+            })
+        else:
+            # image shall be rendered using fixed sizes
+            appearance = self._static_appearance(context, instance)
+            context.update({
+                'is_responsive': False,
+                'instance': instance,
+                'placeholder': placeholder,
+                'appearance': appearance,
+            })
         return context
 
     def _responsive_appearances(self, context, instance):
+        """
+        Create the appearance context, used to render a <picture> element which automatically adopts
+        its sizes to the current column width.
+        """
         complete_glossary = instance.get_complete_glossary()
         aspect_ratio = float(instance.image.height) / float(instance.image.width)
-        image_height = instance.glossary['image-height'].strip()
-        if image_height.endswith('%'):
-            relative_height = float(image_height.rstrip('%')) / 100
-            crop = relative_height < 1.0
-        elif image_height.endswith('px'):
-            relative_height = None
-            image_height = int(image_height.rstrip('px'))
-            crop = True
-        else:
-            raise ValueError("Image height '{0}' can't be interpreted!".format(image_height))
-        upscale = instance.glossary['upscale']
-        subject_location = instance.glossary['subject_location']
+        image_height = self._parse_image_height(instance.glossary['responsive-height'])
+        container_max_heights = complete_glossary.get('container_max_heights', {})
+        resize_options = instance.glossary.get('resize-options', {})
+        crop = 'crop' in resize_options
+        upscale = 'upscale' in resize_options
+        subject_location = 'subject_location' in resize_options
         min_width = 100.0
-        appearance = {}
+        appearances = {}
         for bp in complete_glossary['breakpoints']:
             width = float(complete_glossary['container_max_widths'][bp])
             min_width = min(min_width, round(width))
-            if relative_height:
-                size = (int(width), int(round(width * aspect_ratio * relative_height)))
-            else:
-                size = (int(width), image_height)
-            appearance[bp] = self.APPEARANCE[bp]
-            appearance[bp].update(size=size, crop=crop, upscale=upscale, subject_location=subject_location)
-        # create a relatively small default image as fallback
-        if relative_height:
-            size = (int(min_width), int(round(min_width * aspect_ratio * relative_height)))
+            size = None
+            if image_height[0]:
+                size = (int(width), image_height[0])
+            elif image_height[1]:
+                size = (int(width), int(round(width * aspect_ratio * image_height[1])))
+            elif bp in container_max_heights:
+                container_height = self._parse_image_height(container_max_heights[bp])
+                if container_height[0]:
+                    size = (int(width), container_height[0])
+                elif container_height[1]:
+                    size = (int(width), int(round(width * aspect_ratio * container_height[1])))
+            if size is None:
+                # as fallback, adopt height to current width
+                size = (int(width), int(round(width * aspect_ratio)))
+            appearances[bp] = self.APPEARANCE[bp].copy()
+            appearances[bp].update(size=size, crop=crop, upscale=upscale, subject_location=subject_location)
+        # create a relatively small image for the default img tag.
+        if image_height[1]:
+            size = (int(min_width), int(round(min_width * aspect_ratio * image_height[1])))
         else:
-            size = (int(min_width), int(image_height))
-        appearance['default'] = {'size': size, 'crop': crop, 'upscale': False, 'subject_location': False}
+            size = (int(min_width), int(round(min_width * aspect_ratio)))
+        default_appearance = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+        return appearances, default_appearance
+
+    def _static_appearance(self, context, instance):
+        size = (100, 100)  # TODO!
+        resize_options = instance.glossary.get('resize-options', {})
+        crop = 'crop' in resize_options
+        upscale = 'upscale' in resize_options
+        subject_location = 'subject_location' in resize_options
+        appearance = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
         return appearance
+
+    @staticmethod
+    def _parse_image_height(image_height):
+        """
+        Takes a string containing the image height in pixels or percent and parses it to obtain
+        a computational height. It return a tuple with the height in pixels and its relative height,
+        where depending on the input value, one or both elements are None.
+        """
+        image_height = image_height.strip()
+        if image_height.endswith('px'):
+            return (int(image_height.rstrip('px')), None)
+        elif image_height.endswith('%'):
+            return (None, float(image_height.rstrip('%')) / 100)
+        return (None, None)
 
     def _get_thumbnail_options(self, context, instance):
         """
