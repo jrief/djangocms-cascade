@@ -80,6 +80,9 @@ class BootstrapPicturePlugin(LinkPluginBase):
         ),
     )
 
+    class Media:
+        js = ['admin/js/cascade-pictureplugin.js']
+
     def render(self, context, instance, placeholder):
         if 'img-responsive' in instance.glossary.get('image-shapes', []):
             # image shall be rendered in a responsive context using the picture element
