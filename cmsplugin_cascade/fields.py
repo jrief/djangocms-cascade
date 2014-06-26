@@ -9,19 +9,16 @@ class PartialFormField(object):
     Behave similar to django.forms.Field, encapsulating a partial dictionary, stored as
     JSONField in the database.
     """
-    def __init__(self, name, widget, label=None, initial=None, error_class=ErrorList, help_text=''):
+    def __init__(self, name, widget, label=None, initial='', help_text='', error_class=ErrorList):
         if not name:
             raise AttributeError('The field must have a name')
         self.name = name
-        if not label:
-            self.label = name
-        else:
-            self.label = label
         if not isinstance(widget, widgets.Widget):
             raise AttributeError('The field `widget` must be derived from django.forms.name')
+        self.label = label or name
         self.widget = widget
-        self.initial = initial or ''
-        self.help_text = help_text or ''
+        self.initial = initial
+        self.help_text = help_text
         self.error_class = error_class
 
     def run_validators(self, value):
