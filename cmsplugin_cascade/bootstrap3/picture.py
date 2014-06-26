@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import six
 from django.forms import widgets
 from django.forms import fields
 from django.utils.translation import ugettext_lazy as _
@@ -7,7 +8,7 @@ from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.image.models import ImageElement
 from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
-from cmsplugin_cascade.widgets import CascadingSizeWidget
+from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
 from .settings import CASCADE_BREAKPOINTS_DICT
 
 
@@ -65,6 +66,11 @@ class BootstrapPicturePlugin(LinkPluginBase):
             CascadingSizeWidget(allowed_units=['px', '%'], required=False),
             label=_("Override Container Height"),
             help_text=_("An optional image height in '%' (percent) or 'px' (pixels) to override the container's size."),
+        ),
+        PartialFormField('image-size',
+            MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px'], required=False),
+            label=_("Image Size"),
+            help_text=_("Specify image width and height in 'px' (pixels)."),
         ),
         PartialFormField('resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
@@ -139,7 +145,14 @@ class BootstrapPicturePlugin(LinkPluginBase):
         return appearances, default_appearance
 
     def _static_appearance(self, context, instance):
-        size = (100, 100)  # TODO!
+        size = instance.glossary.get('image-size', {})
+        width = int(size.get('width', '').strip().rstrip('px') or 0)
+        height = int(size.get('height', '').strip().rstrip('px') or 0)
+        if width == 0 and height == 0:
+            # use the original image's dimensions
+            width = instance.image.width
+            height = instance.image.height
+        size = (width, height)
         resize_options = instance.glossary.get('resize-options', {})
         crop = 'crop' in resize_options
         upscale = 'upscale' in resize_options
@@ -161,60 +174,9 @@ class BootstrapPicturePlugin(LinkPluginBase):
             return (None, float(image_height.rstrip('%')) / 100)
         return (None, None)
 
-    def _get_thumbnail_options(self, context, instance):
-        """
-        Return the size and options of the thumbnail that should be inserted
-        """
-        width, height = None, None
-        crop, upscale = False, False
-        subject_location = False
-        placeholder_width = context.get('width', None)
-        placeholder_height = context.get('height', None)
-        if instance.thumbnail_option:
-            # thumbnail option overrides everything else
-            if instance.thumbnail_option.width:
-                width = instance.thumbnail_option.width
-            if instance.thumbnail_option.height:
-                height = instance.thumbnail_option.height
-            crop = instance.thumbnail_option.crop
-            upscale = instance.thumbnail_option.upscale
-        else:
-            if instance.use_autoscale and placeholder_width:
-                # use the placeholder width as a hint for sizing
-                width = int(placeholder_width)
-            elif instance.width:
-                width = instance.width
-            if instance.use_autoscale and placeholder_height:
-                height = int(placeholder_height)
-            elif instance.height:
-                height = instance.height
-            crop = instance.crop
-            upscale = instance.upscale
-        if instance.image:
-            if instance.image.subject_location:
-                subject_location = instance.image.subject_location
-            if not height and width:
-                # height was not externally defined: use ratio to scale it by the width
-                height = int( float(width)*float(instance.image.height)/float(instance.image.width) )
-            if not width and height:
-                # width was not externally defined: use ratio to scale it by the height
-                width = int( float(height)*float(instance.image.width)/float(instance.image.height) )
-            if not width:
-                # width is still not defined. fallback the actual image width
-                width = instance.image.width
-            if not height:
-                # height is still not defined. fallback the actual image height
-                height = instance.image.height
-        return {'size': (width, height),
-                'crop': crop,
-                'upscale': upscale,
-                'subject_location': subject_location}
-
     @classmethod
     def get_identifier(cls, obj):
-        return u'Blah blah'
-        #name = obj.glossary.get('css_class').title() or cls.CLASS_CHOICES[0][1]
-        #return name.title()
+        return six.u(str(obj.image))
 
     @classmethod
     def get_css_classes(cls, obj):
