@@ -61,13 +61,11 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        container_max_widths = obj.glossary.get('container_max_widths')
+        if container_max_widths:
+            values = container_max_widths.values()
+            return _("ranging from {0} through {1} pixels").format(min(values), max(values))
         return six.u('')
-        # TODO:
-        try:
-            texts = [d for c, d in cls.WIDGET_CHOICES_WIDEST if c == obj.glossary.get('widest')]
-            return _('Narrowest grid: {0}').format(texts[0].lower())
-        except (TypeError, KeyError, ValueError):
-            return ''
 
     def save_model(self, request, obj, form, change):
         widest = CASCADE_BREAKPOINTS_LIST.index(obj.glossary['widest'])
