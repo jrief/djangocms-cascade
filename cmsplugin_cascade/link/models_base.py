@@ -23,7 +23,3 @@ class LinkElementBase(CascadeModelBase):
     @property
     def content(self):
         return self.glossary.get('link_content', '')
-
-    @property
-    def target(self):
-        return self.glossary.get('target'),
