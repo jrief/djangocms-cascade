@@ -112,7 +112,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
         """
         complete_glossary = instance.get_complete_glossary()
         aspect_ratio = float(instance.image.height) / float(instance.image.width)
-        image_height = self._parse_image_height(instance.glossary['responsive-height'])
+        image_height = self._parse_responsive_height(instance.glossary.get('responsive-height', ''))
         container_max_heights = complete_glossary.get('container_max_heights', {})
         resize_options = instance.glossary.get('resize-options', {})
         crop = 'crop' in resize_options
@@ -129,7 +129,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
             elif image_height[1]:
                 size = (int(width), int(round(width * aspect_ratio * image_height[1])))
             elif bp in container_max_heights:
-                container_height = self._parse_image_height(container_max_heights[bp])
+                container_height = self._parse_responsive_height(container_max_heights[bp])
                 if container_height[0]:
                     size = (int(width), container_height[0])
                 elif container_height[1]:
@@ -164,17 +164,17 @@ class BootstrapPicturePlugin(LinkPluginBase):
         return appearance
 
     @staticmethod
-    def _parse_image_height(image_height):
+    def _parse_responsive_height(responsive_height):
         """
         Takes a string containing the image height in pixels or percent and parses it to obtain
         a computational height. It return a tuple with the height in pixels and its relative height,
         where depending on the input value, one or both elements are None.
         """
-        image_height = image_height.strip()
-        if image_height.endswith('px'):
-            return (int(image_height.rstrip('px')), None)
-        elif image_height.endswith('%'):
-            return (None, float(image_height.rstrip('%')) / 100)
+        responsive_height = responsive_height.strip()
+        if responsive_height.endswith('px'):
+            return (int(responsive_height.rstrip('px')), None)
+        elif responsive_height.endswith('%'):
+            return (None, float(responsive_height.rstrip('%')) / 100)
         return (None, None)
 
     @classmethod
@@ -188,33 +188,5 @@ class BootstrapPicturePlugin(LinkPluginBase):
         if css_class:
             css_classes.append(css_class)
         return css_classes
-
-    @classmethod
-    def x_sanitize_model(cls, obj):
-        """
-        By using the full glossary context this image will be rendered into, estimate the maximum
-        image size. Remember: In Bootstrap 3, images usually are rendered into a column, whose width
-        is responsive, thus the image size shall be no more than its maximum size.
-        """
-        sanitized = super(BootstrapPicturePlugin, cls).sanitize_model(obj)
-        complete_glossary = obj.get_complete_glossary()
-        breakpoints = ('xs', 'sm', 'md', 'lg')
-        container_bp = complete_glossary.get('breakpoint', 'lg')
-        breakpoints = breakpoints[:breakpoints.index(container_bp) + 1]
-        estimated_max_width = obj.glossary.get('estimated_max_width')
-        max_width = 0
-        column_width = None
-        for bp in breakpoints:
-            # find out the width in column units, if missing use a smaller width
-            width = complete_glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
-            if width.isdigit():
-                column_width = width
-            elif column_width is None:
-                column_width = 12
-            # estimate the largest width in pixels this image ever might be rendered
-            width = settings.CMS_CASCADE_BOOTSTRAP3_COLUMN_WIDTHS[bp] * int(column_width)
-            max_width = max(max_width, int(round(width)))
-        obj.glossary.update(estimated_max_width=max_width)
-        return sanitized or estimated_max_width != max_width
 
 plugin_pool.register_plugin(BootstrapPicturePlugin)
