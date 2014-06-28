@@ -31,4 +31,8 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         setattr(form, 'shared_glossary_fields', shared_glossary_fields)
         return form
 
+    def has_add_permission(self, request):
+        # always False, since a SharedGlossary can only be added by a plugin
+        return False
+
 admin.site.register(SharedGlossary, SharedGlossaryAdmin)
