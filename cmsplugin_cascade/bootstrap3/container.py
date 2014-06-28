@@ -107,8 +107,10 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     form = BootstrapRowForm
     fields = ('num_children', 'glossary',)
     glossary_fields = (
-        PartialFormField('inline_styles', MultipleCascadingSizeWidget(['min-height']),
-            label=_('Inline Styles'), help_text=_('Minimum height for this row.')
+        PartialFormField('inline_styles',
+            MultipleCascadingSizeWidget(['min-height'], required=False),
+            label=_('Inline Styles'),
+            help_text=_('Minimum height for this row.')
         ),
     )
 

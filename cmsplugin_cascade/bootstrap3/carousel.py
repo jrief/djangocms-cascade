@@ -16,7 +16,8 @@ class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
         widget=NumberInputWidget(attrs={'size': '2', 'style': 'width: 4em;'}),
         label=_('Slides'),
-        help_text=_('Number of slides for this carousel.'))
+        help_text=_('Number of slides for this carousel.'),
+    )
 
 
 class CarouselPlugin(BootstrapPluginBase):
