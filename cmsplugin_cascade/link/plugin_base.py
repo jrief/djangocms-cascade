@@ -16,7 +16,7 @@ class LinkPluginBase(CascadePluginBase):
     require_parent = True
     LINK_TARGET = PartialFormField('target',
         RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
-                              ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
+                             ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
         initial='',
         label=_('Link Target'),
         help_text=_("Open Link in other target.")
@@ -33,11 +33,12 @@ class LinkPluginBase(CascadePluginBase):
             return Site.objects.get_current()
 
     def get_form(self, request, obj=None, **kwargs):
+        # create a Form class on the fly, containing our page_link field
         page_link_field = self.model.page_link.field
         page_link = PageSelectFormField(queryset=Page.objects.drafts().on_site(self.get_site()),
             label=page_link_field.verbose_name, help_text=page_link_field.help_text, required=False)
-        # create a Form class on the fly, containing our page_link field
-        kwargs.update(form=type('PageLinkForm', (self.form,), {'page_link': page_link}))
+        form = kwargs.pop('form', self.form)
+        kwargs.update(form=type('PageLinkForm', (form,), {'page_link': page_link}))
         return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
 
     @classmethod
