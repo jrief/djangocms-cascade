@@ -8,7 +8,7 @@ from .widgets import JSONMultiWidget
 class CascadePluginBase(CMSPluginBase):
     tag_type = 'div'
     render_template = 'cms/plugins/generic.html'
-    glossary_variables = []
+    glossary_variables = []  # entries in glossary not handled by a form editor
 
     class Media:
         css = {'all': ('admin/css/djangocms-cascade.css',)}
@@ -19,9 +19,10 @@ class CascadePluginBase(CMSPluginBase):
             return self._cached_child_classes
         self._cached_child_classes = list(getattr(self, 'generic_child_classes', [])) or []
         for p in plugin_pool.get_all_plugins():
-            if isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes \
+            if isinstance(p.parent_classes, (list, tuple)) \
+                and self.__class__.__name__ in p.parent_classes \
                 and p.__name__ not in self._cached_child_classes:
-                self._cached_child_classes.append(p.__name__)
+                    self._cached_child_classes.append(p.__name__)
         return self._cached_child_classes
     child_classes = property(_child_classes)
 
@@ -63,6 +64,11 @@ class CascadePluginBase(CMSPluginBase):
 
     @classmethod
     def get_html_attributes(cls, obj):
+        """
+        Returns a dictionary of attributes, which shall be added to the current HTML tag.
+        It typically is called by CascadeModel.html_attributes() which enriches the HTML tag
+        with those attributes converted to a list as: ``attr1="val1" attr2="val2" ...``.
+        """
         glossary_attributes = getattr(cls, 'glossary_attributes', {})
         html_attributes = {}
         for key, attr in glossary_attributes.items():
