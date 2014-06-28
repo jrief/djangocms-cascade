@@ -1,4 +1,5 @@
 form input, form textarea { padding: 3px 5px; }
+form input:disabled, form textarea:disabled { color: #888; }
 form .form-row.field-link_type { min-height: 50px; }
 form .field-box label.inline { text-align: right; }
 form .glossary-widget { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
@@ -8,7 +9,6 @@ form .glossary-widget small { margin-left: 0; }
 form .glossary-widget .field-box.disabled { color: #aaa; }
 form .container-thumbnail { text-align: center; }
 form .container-thumbnail i[class^="icon"] { font-size: 70px; }
-/*form .container-thumbnail label { color: black; }*/
 form .glossary_button-type .field-box { margin-right: 10px; }
 form .glossary_button-size .button-samples { min-height: 100px; max-width: 100px; }
 form .glossary_button-type .btn, .glossary_button-size .btn { margin-bottom: 5px; }
