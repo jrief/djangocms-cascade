@@ -14,7 +14,7 @@ class PartialFormField(object):
             raise AttributeError('The field must have a name')
         self.name = name
         if not isinstance(widget, widgets.Widget):
-            raise AttributeError('The field `widget` must be derived from django.forms.name')
+            raise AttributeError('The field `widget` must be derived from django.forms.widgets.Widget')
         self.label = label or name
         self.widget = widget
         self.initial = initial
