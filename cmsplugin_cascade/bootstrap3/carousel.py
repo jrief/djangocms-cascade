@@ -98,6 +98,7 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     default_css_class = 'item'
     parent_classes = ['CarouselPlugin']
+    change_form_template = 'cms/admin/change_form-empty.html'
 
     @classmethod
     def get_css_classes(cls, obj):
