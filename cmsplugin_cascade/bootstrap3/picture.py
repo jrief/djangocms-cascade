@@ -100,17 +100,17 @@ class BootstrapPicturePlugin(LinkPluginBase):
             label=_("Image Shapes"),
             initial=['img-responsive']
         ),
-        PartialFormField('responsive-height',
-            CascadingSizeWidget(allowed_units=['px', '%'], required=False),
-            label=_("Override Container Height"),
-            help_text=_("An optional image height in '%' (percent) or 'px' (pixels) to override the container's size."),
-        ),
     )
     shared_glossary_fields = (
         PartialFormField('image-size',
             MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px'], required=False),
             label=_("Image Size"),
             help_text=_("Specify image width and height in 'px' (pixels)."),
+        ),
+        PartialFormField('responsive-height',
+            CascadingSizeWidget(allowed_units=['px', '%'], required=False),
+            label=_("Override Container Height"),
+            help_text=_("An optional image height in '%' (percent) or 'px' (pixels) to override the container's size."),
         ),
         PartialFormField('resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),

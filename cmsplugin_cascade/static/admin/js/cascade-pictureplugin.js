@@ -43,9 +43,9 @@ django.jQuery(function($) {
 			if (glossary) {
 				$('#imageelement_form .glossary_image-size input').each(function(idx, elem) {
 					var name = $(elem).attr('name').replace('image-size-', '');
-					$(elem).val(glossary['image-size'][name])
-					$(elem).prop('disabled', 'disabled');
+					$(elem).val(glossary['image-size'][name]).prop('disabled', 'disabled');
 				});
+				$('#id_glossary_responsive-height').val(glossary['responsive-height']).prop('disabled', 'disabled');
 				$('#imageelement_form .glossary_resize-options input').each(function(idx, elem) {
 					$(elem).prop('checked', glossary['resize-options'].indexOf($(elem).val()) >=0);
 					$(elem).prop('disabled', 'disabled');
