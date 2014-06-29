@@ -36,7 +36,7 @@ class LinkPluginBase(CascadePluginBase):
         # create a Form class on the fly, containing our page_link field
         page_link_field = self.model.page_link.field
         page_link = PageSelectFormField(queryset=Page.objects.drafts().on_site(self.get_site()),
-            label=page_link_field.verbose_name, help_text=page_link_field.help_text, required=False)
+            label='', help_text=page_link_field.help_text, required=False)
         form = kwargs.pop('form', self.form)
         kwargs.update(form=type('PageLinkForm', (form,), {'page_link': page_link}))
         return super(LinkPluginBase, self).get_form(request, obj, **kwargs)

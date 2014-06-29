@@ -9,8 +9,8 @@ class LinkElementBase(CascadeModelBase):
     class Meta:
         abstract = True
 
-    page_link = models.ForeignKey(Page, verbose_name=_("Internal Page"), blank=True, null=True,
-                    help_text=_("An internal link for this site"), on_delete=models.SET_NULL)
+    page_link = models.ForeignKey(Page, blank=True, null=True, on_delete=models.SET_NULL,
+                    help_text=_("An internal link for this site"))
     text_link = models.CharField(max_length=255, blank=True, null=True)
 
     @property

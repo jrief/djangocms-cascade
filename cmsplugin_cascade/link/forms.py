@@ -12,11 +12,11 @@ class LinkForm(ModelForm):
     Form class to add fake fields for rendering the ModelAdmin's form, when later are combined
     with the model data.
     """
-    TYPE_CHOICES = (('int', _("Internal")), ('ext', _("External")), ('email', _("Mail To")),)
+    TYPE_CHOICES = (('int', _("Internal Page")), ('ext', _("External URL")), ('email', _("Mail To")),)
     link_content = fields.CharField(required=False, label=_("Link Content"), help_text=_("Content of Link"))
     link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='int')
-    url = fields.URLField(required=False, help_text=_("Link onto external page"))
-    email = fields.EmailField(required=False, help_text=_("Open Email program"))
+    url = fields.URLField(required=False, label='', help_text=_("Link onto external page"))
+    email = fields.EmailField(required=False, label='', help_text=_("Open Email program with this address"))
 
     class Meta:
         model = LinkElement
