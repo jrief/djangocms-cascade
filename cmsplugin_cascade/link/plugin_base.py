@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import PartialFormField
 from cms.models import Page
 try:
-    from djangocms_link.fields import PageSearchField as PageSelectFormField
+    from .fields import PageSearchField as PageSelectFormField
 except ImportError:
     from cms.forms.fields import PageSelectFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
@@ -21,6 +21,9 @@ class LinkPluginBase(CascadePluginBase):
         label=_('Link Target'),
         help_text=_("Open Link in other target.")
     )
+
+    class Media:
+        js = ['cms/js/libs/jquery.min.js']
 
     def get_site(self):
         try:
