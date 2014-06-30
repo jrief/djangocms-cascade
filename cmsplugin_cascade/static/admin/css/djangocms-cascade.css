@@ -1,7 +1,8 @@
 form input, form textarea { padding: 3px 5px; }
 form input:disabled, form textarea:disabled { color: #888; }
 form .form-row.field-link_type { min-height: 50px; }
-form .form-row.field-link_type .field-box label.inline { width: 0; }
+form .form-row.field-link_type .field-box label.inline,
+	form .form-row .field-box.field-save_as_identifier label.inline { width: 0; }
 form .form-row.field-link_type .field-box input { height: 25px; margin-top: 0; }
 form .form-row.field-link_type .field-box .help { margin-left: 2em; padding-left: 0; }
 form .field-box label.inline { text-align: right; }

@@ -20,9 +20,9 @@ from .settings import CASCADE_BREAKPOINTS_DICT
 
 
 class PictureForm(LinkForm):
-    TYPE_CHOICES = (('', _("No Link")), ('int', _("Internal")), ('ext', _("External")),)
-    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='')
-    save_shared_glossary = fields.BooleanField(label=_("Remember image sizes as:"), required=False)
+    TYPE_CHOICES = (('none', _("No Link")), ('int', _("Internal Page")), ('ext', _("External URL")),)
+    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='none')
+    save_shared_glossary = fields.BooleanField(label=_("Remember these sizing options as:"), required=False)
     save_as_identifier = fields.CharField(label='', required=False)
 
     class Meta:
@@ -154,7 +154,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
             widget=SelectSharedGlossary(),
             label=_("Stored sizes"),
             required=False,
-            empty_label=_("use sizes below"),
+            empty_label=_("Use own sizing options"),
             help_text=_("Use remembered image sizes"))
         kwargs.update(form=type('PictureFormExtended', (kwargs.pop('form', self.form),),
                                 {'shared_glossary': shared_glossary_choice}))
