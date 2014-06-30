@@ -1,6 +1,9 @@
 django.jQuery(function($) {
 	'use strict';
 
+	// reorganize layout to be more intuitive to use
+	$('#id_glossary_target').parents('.glossary-widget').before($('#id_link_type').parents('.form-row'));
+
 	// if checkbox Image Shapes: Responsive is active, replace 'Image Size' against 'Container Height'
 	(function() {
 		var $image_responsive = $('#id_glossary_image-shapes_0'),
@@ -27,7 +30,7 @@ django.jQuery(function($) {
 		var $shared_glossary = $('#id_shared_glossary'),
 			$save_as_identifier = $('#id_save_as_identifier');
 		if ($shared_glossary.children('option').length > 1) {
-			// move the select box below 'Image Shapes'
+			// move the select box for Shared Glossary just below 'Image Shapes'
 			$('#id_glossary_image-shapes').parents('.glossary-widget').after($shared_glossary.parents('.form-row'));
 			$shared_glossary.change(function(evt) {
 				toggleSharedGlossary($(this).children('option:selected'));

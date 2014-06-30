@@ -20,8 +20,8 @@ from .settings import CASCADE_BREAKPOINTS_DICT
 
 
 class PictureForm(LinkForm):
-    TYPE_CHOICES = (('null', _("No Link")), ('int', _("Internal")), ('ext', _("External")),)
-    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='null')
+    TYPE_CHOICES = (('', _("No Link")), ('int', _("Internal")), ('ext', _("External")),)
+    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='')
     save_shared_glossary = fields.BooleanField(label=_("Remember image sizes as:"), required=False)
     save_as_identifier = fields.CharField(label='', required=False)
 
@@ -95,6 +95,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
             label=_('Alternative Description'),
             help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
         ),
+        LinkPluginBase.LINK_TARGET,
         PartialFormField('image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
             label=_("Image Shapes"),
@@ -104,8 +105,8 @@ class BootstrapPicturePlugin(LinkPluginBase):
     shared_glossary_fields = (
         PartialFormField('image-size',
             MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px'], required=False),
-            label=_("Image Size"),
-            help_text=_("Specify image width and height in 'px' (pixels)."),
+            label=_("Absolute Image Sizes"),
+            help_text=_("Specify an absolute image width and height in 'px' (pixels)."),
         ),
         PartialFormField('responsive-height',
             CascadingSizeWidget(allowed_units=['px', '%'], required=False),
