@@ -2,9 +2,9 @@ django.jQuery(function($) {
 	'use strict';
 
 	var $link_type = $("#id_link_type"),
-		$field_pagelink = $("#linkelement_form .field-box.field-page_link"),
-		$field_url = $("#linkelement_form .field-box.field-url"),
-		$field_email = $("#linkelement_form .field-box.field-email");
+		$field_pagelink = $(".form-row.field-link_type .field-box.field-page_link"),
+		$field_url = $(".form-row.field-link_type .field-box.field-url"),
+		$field_email = $(".form-row.field-link_type .field-box.field-email");
 
 	$link_type.change(function(evt) {
 		toggleLinkTypes(evt.target.value);
