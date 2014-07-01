@@ -21,6 +21,7 @@ class LinkPluginBase(CascadePluginBase):
         label=_('Link Target'),
         help_text=_("Open Link in other target.")
     )
+    glossary_attributes = {'target': 'target', 'title': 'title'}
 
     class Media:
         js = ['cms/js/libs/jquery.min.js']
