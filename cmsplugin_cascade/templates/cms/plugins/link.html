@@ -1,1 +1,3 @@
-<span class="plugin_link"><a href="{{ link }}"{% if target %} target="{{ target }}"{% endif %} {% if instance_css_classes %} class="{{ instance_css_classes }}"{% endif %}{% if instance_inline_styles %} style="{{ instance_inline_styles }}"{% endif %}>{{ name }}</a></span>
+{% spaceless %}{% with instance_css_classes=instance.css_classes instance_inline_styles=instance.inline_styles %}
+<a href="{{ instance.link }}" {{ instance.html_attributes }} {% if instance_css_classes %} class="{{ instance_css_classes }}"{% endif %}{% if instance_inline_styles %} style="{{ instance_inline_styles }}"{% endif %}>{{ instance.name }}</a>
+{% endwith %}{% endspaceless %}
