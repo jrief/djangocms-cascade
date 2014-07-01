@@ -19,10 +19,10 @@ class CascadePluginBase(CMSPluginBase):
             return self._cached_child_classes
         self._cached_child_classes = list(getattr(self, 'generic_child_classes', [])) or []
         for p in plugin_pool.get_all_plugins():
-            if isinstance(p.parent_classes, (list, tuple)) \
-                and self.__class__.__name__ in p.parent_classes \
-                and p.__name__ not in self._cached_child_classes:
-                    self._cached_child_classes.append(p.__name__)
+            if (isinstance(p.parent_classes, (list, tuple))
+              and self.__class__.__name__ in p.parent_classes
+              and p.__name__ not in self._cached_child_classes):
+                self._cached_child_classes.append(p.__name__)
         return self._cached_child_classes
     child_classes = property(_child_classes)
 
@@ -88,8 +88,8 @@ class CascadePluginBase(CMSPluginBase):
 
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
         """
-        Extend the number of children so that the parent object contains wanted children. No child
-        will be removed.
+        Extend the number of children so that the parent object contains wanted children.
+        No child will be removed if wanted_children is smaller than the current number of children.
         """
         from cms.api import add_plugin
         current_children = parent.get_children().count()
