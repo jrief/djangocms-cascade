@@ -17,12 +17,14 @@ class LinkPlugin(LinkPluginBase):
     allow_children = False
     fields = ('link_content', ('link_type', 'page_link', 'url', 'email'), 'glossary',)
     glossary_fields = (
-        PartialFormField('text',
+        PartialFormField('title',
             widgets.TextInput(),
             label=_("Title"),
             help_text=_("Link's Title")
         ),
         LinkPluginBase.LINK_TARGET,
     )
+    parent_classes = None
+    require_parent = False
 
-plugin_pool.register_plugin(TextLinkPlugin)
+plugin_pool.register_plugin(LinkPlugin)
