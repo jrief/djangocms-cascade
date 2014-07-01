@@ -8,8 +8,8 @@ from .plugin_base import LinkPluginBase
 from .forms import LinkForm
 
 
-class TextLinkPlugin(LinkPluginBase):
-    name = _("TextLink")
+class LinkPlugin(LinkPluginBase):
+    name = _("Link")
     model = LinkElement
     form = LinkForm
     render_template = "cms/plugins/link.html"
