@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.forms import fields
+from django.forms import widgets
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
@@ -13,7 +14,10 @@ class LinkForm(ModelForm):
     with the model data.
     """
     TYPE_CHOICES = (('int', _("Internal Page")), ('ext', _("External URL")), ('email', _("Mail To")),)
-    link_content = fields.CharField(required=False, label=_("Link Content"), help_text=_("Content of Link"))
+    link_content = fields.CharField(required=False, label=_("Link Content"),
+            # replace auto-generated id so that CKEditor automatically transfers the text into this input field
+            widget=widgets.TextInput(attrs={'id': 'id_name'}),
+            help_text=_("Content of Link"))
     link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='int')
     url = fields.URLField(required=False, label='', help_text=_("Link onto external page"))
     email = fields.EmailField(required=False, label='', help_text=_("Open Email program with this address"))
