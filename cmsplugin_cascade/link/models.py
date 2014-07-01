@@ -8,3 +8,6 @@ class LinkElement(LinkElementBase):
     """
     class Meta:
         app_label = 'cmsplugin_cascade'
+
+    def __unicode__(self):
+        return self.name

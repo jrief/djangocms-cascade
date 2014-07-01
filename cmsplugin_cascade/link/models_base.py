@@ -21,5 +21,5 @@ class LinkElementBase(CascadeModelBase):
             return self.text_link
 
     @property
-    def content(self):
+    def name(self):
         return self.glossary.get('link_content', '')
