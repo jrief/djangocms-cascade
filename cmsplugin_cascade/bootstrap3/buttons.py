@@ -93,10 +93,4 @@ class BootstrapButtonPlugin(LinkPluginBase):
         link_content = obj.glossary.get('link_content', '')
         return link_content + button_type
 
-    @classmethod
-    def get_html_attributes(cls, obj):
-        html_attributes = super(BootstrapButtonPlugin, cls).get_html_attributes(obj)
-        html_attributes['target'] = obj.glossary.get('target')
-        return html_attributes
-
 plugin_pool.register_plugin(BootstrapButtonPlugin)
