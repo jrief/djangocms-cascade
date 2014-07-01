@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 CMS_CASCADE_PLUGINS = ('buttons', 'carousel', 'collapse', 'container', 'wrappers', 'picture',)
 CMS_CASCADE_TEMPLATE_DIR = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR', 'bootstrap3')
-CMS_CASCADE_LEAF_PLUGINS = getattr(settings, 'CMS_CASCADE_LEAF_PLUGINS', [])
+CMS_CASCADE_LEAF_PLUGINS = list(getattr(settings, 'CMS_CASCADE_LEAF_PLUGINS', ()))
 
 if not 'TextPlugin' in CMS_CASCADE_LEAF_PLUGINS:
     try:
@@ -12,12 +12,12 @@ if not 'TextPlugin' in CMS_CASCADE_LEAF_PLUGINS:
         CMS_CASCADE_LEAF_PLUGINS.append('TextPlugin')
     except ImportError:
         pass
-if not 'FilerImagePlugin' in CMS_CASCADE_LEAF_PLUGINS:
-    try:
-        import filer
-        CMS_CASCADE_LEAF_PLUGINS.append('FilerImagePlugin')
-    except ImportError:
-        pass
+# if not 'FilerImagePlugin' in CMS_CASCADE_LEAF_PLUGINS:
+#     try:
+#         import filer
+#         CMS_CASCADE_LEAF_PLUGINS.append('FilerImagePlugin')
+#     except ImportError:
+#         pass
 
 CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS = (
     ('xs', (768, 'mobile-phone', _("mobile phones"), 60, 720)),
