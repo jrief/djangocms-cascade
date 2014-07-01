@@ -66,14 +66,11 @@ class CascadePluginBase(CMSPluginBase):
     def get_html_attributes(cls, obj):
         """
         Returns a dictionary of attributes, which shall be added to the current HTML tag.
-        It typically is called by CascadeModel.html_attributes() which enriches the HTML tag
+        This method normally is called by CascadeModel.html_attributes() which enriches the HTML tag
         with those attributes converted to a list as: ``attr1="val1" attr2="val2" ...``.
         """
-        glossary_attributes = getattr(cls, 'glossary_attributes', {})
-        html_attributes = {}
-        for key, attr in glossary_attributes.items():
-            html_attributes[attr] = obj.glossary.get(key, '')
-        return html_attributes
+        attributes = getattr(cls, 'glossary_attributes', {})
+        return dict((attr, obj.glossary.get(key, '')) for key, attr in attributes.items())
 
     @classmethod
     def sanitize_model(cls, obj):
