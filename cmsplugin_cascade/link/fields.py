@@ -7,7 +7,7 @@ else:
 
 
 class PageSearchField(AutoModelSelect2Field):
-    empty_values = []
+    empty_value = []
     search_fields = ['title_set__title__icontains', 'title_set__menu_title__icontains', 'title_set__slug__icontains']
 
     def security_check(self, request, *args, **kwargs):
