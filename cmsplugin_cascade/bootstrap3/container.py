@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import six
 import string
+import itertools
 from django.forms import widgets
 from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
@@ -132,7 +133,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
     generic_child_classes = CMS_CASCADE_LEAF_PLUGINS
-    default_css_attributes = tuple('{0}-column-width'.format(size) for size in CASCADE_BREAKPOINTS_LIST)
+    default_css_attributes = list(itertools.chain(*(('{0}-column-width'.format(s), '{0}-responsive-utils'.format(s),) for s in CASCADE_BREAKPOINTS_LIST)))
     glossary_variables = ['container_max_widths']
 
     def get_form(self, request, obj=None, **kwargs):
@@ -169,6 +170,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     help_text = _("Number of offset units for devices wider than {0} pixels, such as {2}.".format(*desc))
                     self.glossary_fields.append(PartialFormField('{0}-column-offset'.format(bp),
                         widgets.Select(choices=choices), label=label, help_text=help_text))
+                self.glossary_fields.append(PartialFormField('{0}-responsive-utils'.format(bp),
+                    widgets.CheckboxSelectMultiple(choices=(('visible-{0}'.format(bp), _("Visible")),
+                                                            ('hidden-{0}'.format(bp), _("Hidden")),)),
+                    label=_("Responsive utilities for {2}").format(*desc)
+                ))
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
