@@ -50,7 +50,7 @@ class PanelPlugin(BootstrapPluginBase):
     generic_child_classes = ('TextPlugin',)
     glossary_fields = (
         PartialFormField('panel_title',
-            widgets.TextInput(attrs={ 'size': 150 }),
+            widgets.TextInput(attrs={'size': 150}),
             label=_('Panel Title')
         ),
     )
