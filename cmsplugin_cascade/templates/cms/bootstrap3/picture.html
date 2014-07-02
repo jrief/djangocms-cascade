@@ -1,18 +1,7 @@
 {% load thumbnail filer_tags filer_image_tags %}{% spaceless %}
-{% comment %}
-	You may change the image size for special cases in your project by overriding
-	this template. There are a few size manipulation filters for this in
-	`filer_image_tags`:
-
-	{% if placeholder == 'my_special_sidebar' %}
-		{% thumbnail instance.image opts.size|extra_padding_y:10 crop=opts.crop upscale=opts.upscale as thumbnail %}
-	{% else %}
-		{% thumbnail instance.image opts.size crop=opts.crop upscale=opts.upscale as thumbnail %}
-	{% endif %}
-	{% if link %}<a href="{{ link }}"{% if instance.target_blank %} target="_blank"{% endif %}>{% endif %}<img{% if instance.alignment %} class="{{ instance.alignment }}"{% endif %} alt="{% if instance.alt %}{{ instance.alt }}{% endif %}" src="{{ thumbnail.url }}"{% if instance.caption %} title="{{ instance.caption }}"{% endif %} />{% if link %}</a>{% endif %}
-{% endcomment %}
 
 {% if instance.link %}<a href="{{ instance.link }}"{% if instance.target_blank %} target="_blank"{% endif %}>{% endif %}
+
 {% if is_responsive %}
 <picture>
 	{% for breakpoint, app in appearances.items %}
@@ -28,17 +17,7 @@
 	{% thumbnail instance.image appearance.size crop=appearance.crop upscale=appearance.upscale subject_location=appearance.subject_location as thumb %}
 	<img src="{{ thumb.url }}" {{ instance.html_tag_attributes }} class="{{ instance.css_classes }}" width="{{ instance.width }}" height="{{ instance.height }}" />
 {% endif %}
+
 {% if link %}</a>{% endif %}
-
-{% comment %}
-		<img class="filer_image {% if instance.alignment %}{{ instance.alignment }}{% endif %}" alt="{% if instance.alt %}{{ instance.alt }}{% endif %}" src="{{ thumbnail.url }}"{% if instance.width %} width="{{ instance.width }}"{% endif %}{% if instance.height %} height="{{ instance.height }}"{% endif %}{% if instance.caption %} title="{{ instance.caption }}"{% endif %} />
-{% if instance.caption or instance.description %}
-	<span class="filer_image_info">
-		{% if instance.caption %}<span class="title">{{ instance.caption }}</span>{% endif %}
-		{% if instance.description %}<span class="desc">{{ instance.description }}</span>{% endif %}
-	</span>
-{% endif %}
-
-{% endcomment %}
 
 {% endspaceless %}
