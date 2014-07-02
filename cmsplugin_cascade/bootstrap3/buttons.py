@@ -54,7 +54,7 @@ class BootstrapButtonPlugin(LinkPluginBase):
     text_enabled = True
     tag_type = None
     default_css_class = 'btn'
-    default_css_attributes = ('button-type', 'button-size', 'button-options',)
+    default_css_attributes = ('button-type', 'button-size', 'button-options', 'quick-float',)
     fields = ('link_content', ('link_type', 'page_link', 'url', 'email'), 'glossary',)
     glossary_fields = (
         PartialFormField('button-type',
@@ -72,6 +72,11 @@ class BootstrapButtonPlugin(LinkPluginBase):
         PartialFormField('button-options',
             widgets.CheckboxSelectMultiple(choices=(('btn-block', _('Block level')), ('disabled', _('Disabled')),)),
                 label=_('Button Options'),
+        ),
+        PartialFormField('quick-float',
+            widgets.RadioSelect(choices=(('', _("Do not float")), ('pull-left', _("Pull left")), ('pull-right', _("Pull right")),)),
+                label=_('Quick Float'), initial='',
+                help_text=_("Float the button to the left or right.")
         ),
         LinkPluginBase.LINK_TARGET,
         PartialFormField('inline_styles',
