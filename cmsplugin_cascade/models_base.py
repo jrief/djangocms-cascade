@@ -33,7 +33,7 @@ class CascadeModelBase(CMSPlugin):
     @property
     def css_classes(self):
         css_classes = self.plugin_class.get_css_classes(self)
-        return mark_safe(' '.join(css_classes))
+        return mark_safe(' '.join(c for c in css_classes if c))
 
     @property
     def inline_styles(self):
