@@ -71,7 +71,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
     admin_preview = False
     render_template = 'cms/bootstrap3/picture.html'
     default_css_attributes = ('image-shapes',)
-    glossary_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
+    html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
     fields = ('image', 'glossary', ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',
               ('link_type', 'page_link', 'url', 'email'),)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),

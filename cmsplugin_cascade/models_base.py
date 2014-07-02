@@ -41,10 +41,9 @@ class CascadeModelBase(CMSPlugin):
         return format_html_join(' ', '{0}: {1};', (s for s in inline_styles.items() if s[1]))
 
     @property
-    def html_attributes(self):
-        html_attributes = self.plugin_class.get_html_attributes(self)
-        return format_html_join(' ', '{0}="{1}"',
-                                ((attr, val) for attr, val in html_attributes.items() if val))
+    def html_tag_attributes(self):
+        attributes = self.plugin_class.get_html_tag_attributes(self)
+        return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
 
     def get_parent(self):
         """

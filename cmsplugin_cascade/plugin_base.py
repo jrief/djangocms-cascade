@@ -63,13 +63,14 @@ class CascadePluginBase(CMSPluginBase):
         return inline_styles
 
     @classmethod
-    def get_html_attributes(cls, obj):
+    def get_html_tag_attributes(cls, obj):
         """
         Returns a dictionary of attributes, which shall be added to the current HTML tag.
-        This method normally is called by CascadeModel.html_attributes() which enriches the HTML tag
-        with those attributes converted to a list as: ``attr1="val1" attr2="val2" ...``.
+        This method normally is called by the models's property method ``html_tag_ attributes``,
+        which enriches the HTML tag with those attributes converted to a list as
+        ``attr1="val1" attr2="val2" ...``.
         """
-        attributes = getattr(cls, 'glossary_attributes', {})
+        attributes = getattr(cls, 'html_tag_attributes', {})
         return dict((attr, obj.glossary.get(key, '')) for key, attr in attributes.items())
 
     @classmethod

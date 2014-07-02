@@ -21,12 +21,12 @@
 	{% endfor %}
 	{% with app=default_appearance %}
 		{% thumbnail instance.image app.size crop=app.crop upscale=app.upscale subject_location=app.subject_location as thumb %}
-	<img srcset="{{ thumb.url }}" {{ instance.html_attributes }} class="{{ instance.css_classes }}" />
+	<img srcset="{{ thumb.url }}" {{ instance.html_tag_attributes }} class="{{ instance.css_classes }}" />
 	{% endwith %}
 </picture>
 {% else %}
 	{% thumbnail instance.image appearance.size crop=appearance.crop upscale=appearance.upscale subject_location=appearance.subject_location as thumb %}
-	<img src="{{ thumb.url }}" {{ instance.html_attributes }} class="{{ instance.css_classes }}" width="{{ instance.width }}" height="{{ instance.height }}" />
+	<img src="{{ thumb.url }}" {{ instance.html_tag_attributes }} class="{{ instance.css_classes }}" width="{{ instance.width }}" height="{{ instance.height }}" />
 {% endif %}
 {% if link %}</a>{% endif %}
 

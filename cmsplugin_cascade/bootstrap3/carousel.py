@@ -70,14 +70,14 @@ class CarouselPlugin(BootstrapPluginBase):
         return css_classes
 
     @classmethod
-    def get_html_attributes(cls, obj):
-        html_attributes = super(CarouselPlugin, cls).get_html_attributes(obj)
-        html_attributes.update(cls.DEFAULT_CAROUSEL_ATTRIBUTES)
-        html_attributes['data-interval'] = 1000 * int(obj.glossary.get('interval', 5))
+    def get_html_tag_attributes(cls, obj):
+        attributes = super(CarouselPlugin, cls).get_html_tag_attributes(obj)
+        attributes.update(cls.DEFAULT_CAROUSEL_ATTRIBUTES)
+        attributes['data-interval'] = 1000 * int(obj.glossary.get('interval', 5))
         options = obj.glossary.get('options', [])
-        html_attributes['data-pause'] = 'pause' in options and 'hover' or 'false'
-        html_attributes['data-wrap'] = 'wrap' in options and 'true' or 'false'
-        return html_attributes
+        attributes['data-pause'] = 'pause' in options and 'hover' or 'false'
+        attributes['data-wrap'] = 'wrap' in options and 'true' or 'false'
+        return attributes
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
