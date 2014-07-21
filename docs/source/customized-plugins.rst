@@ -2,10 +2,10 @@
 
 Add Customized Plugins
 ======================
-Since all Bootstrap plugins are derived from the same base class, there is no need to add an
-additional database model, when adding a customized plugin to a project. The database model, as
-declared in ``CascadeElement`` stores everything in a single JSON fields, which handles all the
-arbitrary data. This makes it very easy to add new plugins to this project.
+Since all Bootstrap plugins are derived from the same base class ``CascadeModelBase``, there rarely
+is a need to create or extend a database model, when adding customized plugins to a project. The
+database model ``CascadeModelBase`` stores all the plugin settings in a single JSON field named
+``glossary``. This makes it very easy to add new plugins or extend existing ones for this project.
 
 Simple Example
 --------------
@@ -22,12 +22,17 @@ Simple Example
 
 This plugin is very simple and just renders static content which has been declared in the template.
 Thus, if the editor form pops up, a dumb message appears, telling that “There are no further
-settings for this plugin”. See below, which additional options can be added to this plugin.
+settings for this plugin”.
 
 Customize Stored Data
 ---------------------
-In order to make the plugin remember DOM attributes and other optional data, which shall be stored
-in the database and rendered by the frontend templates, one must add a list of special form fields
+In order to make the plugin remember its settings and other optional data, one must add a list of
+special form fields to this plugin. These fields then are used to build the editor for this
+DjangoCMS plugin.
+
+editing
+models
+
 to the plugin, handling a partial part of the model associated with the plugin. Each of those form
 fields handles a special field value, or in some cases a list of field values. They all require a
 widget, which is used while rendering the editors form.
