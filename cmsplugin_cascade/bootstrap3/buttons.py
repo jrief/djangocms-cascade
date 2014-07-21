@@ -54,29 +54,33 @@ class BootstrapButtonPlugin(LinkPluginBase):
     text_enabled = True
     tag_type = None
     default_css_class = 'btn'
-    default_css_attributes = ('button-type', 'button-size', 'button-options', 'quick-float',)
+    default_css_attributes = ('button-type', 'button-size', 'button-options', 'quick-float', 'special-class')
     fields = ('link_content', ('link_type', 'page_link', 'url', 'email'), 'glossary',)
     glossary_fields = (
         PartialFormField('button-type',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonTypeRenderer.BUTTON_TYPES.items()),
                                 renderer=ButtonTypeRenderer),
-                label=_('Button Type'), initial='btn-default',
-                help_text=_("Display Link using this Button Style")
+            label=_('Button Type'), initial='btn-default',
+            help_text=_("Display Link using this Button Style")
         ),
         PartialFormField('button-size',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonSizeRenderer.BUTTON_SIZES.items()),
                                 renderer=ButtonSizeRenderer),
-                label=_('Button Size'), initial='',
-                help_text=_("Display Link using this Button Size")
+            label=_('Button Size'), initial='',
+            help_text=_("Display Link using this Button Size")
         ),
         PartialFormField('button-options',
             widgets.CheckboxSelectMultiple(choices=(('btn-block', _('Block level')), ('disabled', _('Disabled')),)),
-                label=_('Button Options'),
+            label=_('Button Options'),
         ),
         PartialFormField('quick-float',
             widgets.RadioSelect(choices=(('', _("Do not float")), ('pull-left', _("Pull left")), ('pull-right', _("Pull right")),)),
-                label=_('Quick Float'), initial='',
-                help_text=_("Float the button to the left or right.")
+            label=_('Quick Float'), initial='',
+            help_text=_("Float the button to the left or right.")
+        ),
+        PartialFormField('special-class',
+            widgets.TextInput(),
+            label=_('Special class'),
         ),
         LinkPluginBase.LINK_TARGET,
         PartialFormField('inline_styles',
