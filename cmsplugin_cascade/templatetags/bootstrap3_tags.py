@@ -44,7 +44,7 @@ class MainMenu(InclusionTag):
     template = 'menu/dummy.html'
 
     options = Options(
-        StringArgument('template', default='cms/bootstrap3/main-menu.html', required=False),
+        StringArgument('template', default='cms/bootstrap3/navbar-menu.html', required=False),
         StringArgument('namespace', default=None, required=False),
         StringArgument('root_id', default=None, required=False),
     )
@@ -82,7 +82,7 @@ class MainMenuBelowId(MainMenu):
     name = 'main_menu_below_id'
     options = Options(
         Argument('root_id', default=None, required=False),
-        StringArgument('template', default='cms/bootstrap3/main-menu.html', required=False),
+        StringArgument('template', default='cms/bootstrap3/navbar-menu.html', required=False),
         StringArgument('namespace', default=None, required=False),
     )
 
