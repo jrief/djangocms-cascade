@@ -6,9 +6,9 @@ CMS_CASCADE_PLUGINS = ('buttons', 'carousel', 'collapse', 'container', 'wrappers
 CMS_CASCADE_TEMPLATE_DIR = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR', 'bootstrap3')
 CMS_CASCADE_LEAF_PLUGINS = list(getattr(settings, 'CMS_CASCADE_LEAF_PLUGINS', ()))
 
-if not 'TextPlugin' in CMS_CASCADE_LEAF_PLUGINS:
+if 'TextPlugin' not in CMS_CASCADE_LEAF_PLUGINS:
     try:
-        import djangocms_text_ckeditor
+        import djangocms_text_ckeditor as unused
         CMS_CASCADE_LEAF_PLUGINS.append('TextPlugin')
     except ImportError:
         pass

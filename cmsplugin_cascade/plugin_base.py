@@ -43,6 +43,9 @@ class CascadePluginBase(CMSPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
+        """
+        Returns a list of CSS classes to be added as class="..." to the current HTML tag.
+        """
         css_classes = []
         if hasattr(cls, 'default_css_class'):
             css_classes.append(cls.default_css_class)
@@ -56,6 +59,9 @@ class CascadePluginBase(CMSPluginBase):
 
     @classmethod
     def get_inline_styles(cls, obj):
+        """
+        Returns a dictionary of CSS attributes to be added as style="..." to the current HTML tag.
+        """
         inline_styles = getattr(cls, 'default_inline_styles', {})
         css_style = obj.glossary.get('inline_styles')
         if css_style:

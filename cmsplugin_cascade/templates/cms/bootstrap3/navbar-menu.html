@@ -15,7 +15,7 @@
 		recursion has been dropped intentionally. Read https://github.com/twbs/bootstrap/pull/6342 for details.
 		{% endcomment %}
 		{% for grandchild in child.children %}
-			<li class="{% if grandchild.selected %}active{% endif %} dropdown">
+			<li{% if grandchild.selected %} class="active"{% endif %}>
 				<a href="{{ grandchild.attr.redirect_url|default:grandchild.get_absolute_url }}">{{ grandchild.get_menu_title }}</a>
 			</li>
 		{% endfor %}
