@@ -29,10 +29,14 @@ def cut_levels(nodes, start_level):
         elif node.level == start_level + 1:
             # remove nodes that are deeper than one level
             node.children = []
-            if not node.visible:
-                remove(node, removed)
         else:
             remove(node, removed)
+        if not node.visible:
+            keep_node = False
+            for child in node.children:
+                keep_node = keep_node or child.visible
+            if not keep_node:
+                remove(node, removed)
     for node in removed:
         if node in final:
             final.remove(node)
