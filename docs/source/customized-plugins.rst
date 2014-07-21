@@ -79,10 +79,6 @@ part of the module ``cmsplugin_cascade.widgets``.
 	The same as Django's ``TextInput``-widget, but doing field validation. This checks if the
 	entered input data is a valid number.
 
-:MultipleNumberWidget:
-	The same as the ``MultipleTextInputWidget``, but doing field validation. This checks if the
-	entered input data is a valid number.
-
 :MultipleInlineStylesWidget:
 	The same as the ``MultipleTextInputWidget``, but doing field validation. This checks if the
 	entered input data ends with ``px`` or ``em``.

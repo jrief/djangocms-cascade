@@ -30,8 +30,8 @@ class ButtonWrapperPluginTest(TestCase):
         self.assertTrue(logged_in, 'User is not logged in')
 
     def test_change_form(self):
-        context = {'button-type': 'btn-primary', 'button-options': ['btn-block'], 'button-size': 'btn-lg',}
-        obj_id = CascadeElement.objects.create(context=context).id
+        glossary = {'button-type': 'btn-primary', 'button-options': ['btn-block'], 'button-size': 'btn-lg',}
+        obj_id = CascadeElement.objects.create(glossary=glossary).id
         model = BootstrapButtonPlugin().get_object(self.request, obj_id)
         self.assertEqual(model.context.get('-num-children-'), 0)
         self.assertListEqual(BootstrapButtonPlugin.get_css_classes(model), ['btn', 'btn-primary', 'btn-lg', 'btn-block'])
