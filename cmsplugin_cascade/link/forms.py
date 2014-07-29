@@ -50,36 +50,42 @@ class LinkForm(ModelForm):
         kwargs.update(initial=initial)
         super(LinkForm, self).__init__(*args, **kwargs)
 
-    @classmethod
-    def get_link_cmspage(cls, data):
-        return {'type': 'cmspage', 'pk': data['cms_page'].pk, 'model': 'cms.Page'}
+    def clean(self):
+        cleaned_data = super(LinkForm, self).clean()
+        cleaned_data['glossary'].update(link=cleaned_data['link_data'])
+        del self.cleaned_data['link_data']
+        return cleaned_data
 
-    @classmethod
-    def set_initial_cmspage(cls, initial):
-        link = initial.get('link', {})
+    def clean_cms_page(self):
+        if self.cleaned_data['link_type'] == 'cmspage':
+            self.cleaned_data['link_data'] = {'type': 'cmspage', 'pk': self.cleaned_data['cms_page'].pk, 'model': 'cms.Page'}
+
+    def clean_ext_url(self):
+        if self.cleaned_data['link_type'] == 'exturl':
+            self.cleaned_data['link_data'] = {'type': 'exturl', 'url': self.cleaned_data['ext_url']}
+
+    def clean_mail_to(self):
+        if self.cleaned_data['link_type'] == 'email':
+            self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
+
+    def set_initial_cmspage(self, initial):
         try:
-            Model = get_model(*link['model'].split('.'))
-            initial['cms_page'] = Model.objects.get(pk=link['pk'])
+            Model = get_model(*initial['link']['model'].split('.'))
+            initial['cms_page'] = Model.objects.get(pk=initial['link']['pk'])
         except (KeyError, ObjectDoesNotExist):
-            initial['cms_page'] = None
+            pass
 
-    @classmethod
-    def get_link_exturl(cls, data):
-        return {'type': 'exturl', 'url': data['ext_url']}
+    def set_initial_exturl(self, initial):
+        try:
+            initial['ext_url'] = initial['link']['url']
+        except KeyError:
+            pass
 
-    @classmethod
-    def set_initial_exturl(cls, initial):
-        link = initial.get('link', {})
-        initial['ext_url'] = link.get('url', '')
-
-    @classmethod
-    def get_link_email(cls, data):
-        return {'type': 'email', 'email': data['mail_to']}
-
-    @classmethod
-    def set_initial_email(cls, initial):
-        link = initial.get('link', {})
-        initial['mail_to'] = link.get('email', '')
+    def set_initial_email(self, initial):
+        try:
+            initial['mail_to'] = initial['link']['email']
+        except KeyError:
+            pass
 
 
 class TextLinkForm(LinkForm):

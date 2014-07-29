@@ -29,9 +29,3 @@ class LinkPluginBase(CascadePluginBase):
         """
         # TODO: return the line name
         return six.u('')
-
-    def save_model(self, request, obj, form, change):
-        link_type = form.cleaned_data.get('link_type')
-        link_data = getattr(self.form, 'get_link_{0}'.format(link_type))(form.cleaned_data)
-        obj.glossary.update(link=link_data)
-        super(LinkPluginBase, self).save_model(request, obj, form, change)
