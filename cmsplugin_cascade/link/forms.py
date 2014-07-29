@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from django.contrib.sites.models import Site
 from django.db.models import get_model
 from django.forms import fields
-from django.forms import widgets
+from django.forms.widgets import TextInput
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,13 +16,10 @@ from .models import LinkElement
 
 class LinkForm(ModelForm):
     """
-    Form class to add fake fields for rendering the ModelAdmin's form, when later are combined
-    with the model data.
+    Form class to add fake fields for rendering the ModelAdmin's form, which later are used to
+    populate the glossary of the model.
     """
     TYPE_CHOICES = (('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To")),)
-    link_content = fields.CharField(required=False, label=_("Link Content"),
-        # replace auto-generated id so that CKEditor automatically transfers the text into this input field
-        widget=widgets.TextInput(attrs={'id': 'id_name'}), help_text=_("Content of Link"))
     link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='cmspage')
     cms_page = PageSelectFormField(required=False, label='',
         help_text=_("An internal link onto CMS pages of this site"))
@@ -37,12 +35,18 @@ class LinkForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
-        self.base_fields['cms_page'].queryset = Page.objects.drafts().on_site(instance.get_site())
-        initial = instance.glossary and instance.glossary.copy() or {}
-        initial.setdefault('link_content', '')
-        link = initial.get('link', {})
-        initial['link_type'] = link.get('type', 'cmspage')
-        getattr(self, 'set_initial_{link_type}'.format(**initial))(initial)
+        try:
+            link_type = instance.glossary['link']['type']
+        except (KeyError, AttributeError):
+            link_type = 'cmspage'
+        if instance:
+            cms_page_queryset = Page.objects.drafts().on_site(instance.get_site())
+            initial = dict(instance.glossary, link_type=link_type)
+        else:
+            cms_page_queryset = Page.objects.drafts().on_site(Site.objects.get_current())
+            initial = {'link_type': link_type}
+        self.base_fields['cms_page'].queryset = cms_page_queryset
+        getattr(self, 'set_initial_{0}'.format(link_type))(initial)
         kwargs.update(initial=initial)
         super(LinkForm, self).__init__(*args, **kwargs)
 
@@ -53,10 +57,10 @@ class LinkForm(ModelForm):
     @classmethod
     def set_initial_cmspage(cls, initial):
         link = initial.get('link', {})
-        Model = get_model(*link['model'].split('.'))
         try:
+            Model = get_model(*link['model'].split('.'))
             initial['cms_page'] = Model.objects.get(pk=link['pk'])
-        except ObjectDoesNotExist:
+        except (KeyError, ObjectDoesNotExist):
             initial['cms_page'] = None
 
     @classmethod
@@ -76,3 +80,17 @@ class LinkForm(ModelForm):
     def set_initial_email(cls, initial):
         link = initial.get('link', {})
         initial['mail_to'] = link.get('email', '')
+
+
+class TextLinkForm(LinkForm):
+    """
+    Form class with the additional fake field ``link_content`` used to store the content of pure
+    text links.
+    """
+    link_content = fields.CharField(required=False, label=_("Link Content"),
+        # replace auto-generated id so that CKEditor automatically transfers the text into this input field
+        widget=TextInput(attrs={'id': 'id_name'}), help_text=_("Content of Link"))
+
+    def __init__(self, *args, **kwargs):
+        super(TextLinkForm, self).__init__(*args, **kwargs)
+        self.initial.setdefault('link_content', '')

@@ -5,13 +5,13 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from .models import LinkElement
 from .plugin_base import LinkPluginBase
-from .forms import LinkForm
+from .forms import TextLinkForm
 
 
 class LinkPlugin(LinkPluginBase):
     name = _("Link")
     model = LinkElement
-    form = LinkForm
+    form = TextLinkForm
     render_template = "cms/plugins/link.html"
     text_enabled = True
     allow_children = False
