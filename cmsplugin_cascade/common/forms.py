@@ -1,0 +1,88 @@
+# -*- coding: utf-8 -*-
+import json
+from django import forms
+from django.forms import fields
+from django.core.exceptions import ValidationError
+from django.utils.html import format_html
+from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
+from django.utils.encoding import force_text
+from .models import SharedGlossary
+
+
+class SelectSharedGlossary(forms.Select):
+    def render_option(self, selected_choices, option_value, option_label):
+        if option_value:
+            glossary = self.choices.queryset.get(pk=option_value).glossary
+            data = format_html(' data-glossary="{0}"', json.dumps(glossary))
+        else:
+            data = mark_safe('')
+        option_value = force_text(option_value)
+        if option_value in selected_choices:
+            selected_html = mark_safe(' selected="selected"')
+            if not self.allow_multiple_selected:
+                # Only allow for a single selection.
+                selected_choices.remove(option_value)
+        else:
+            selected_html = ''
+        return format_html('<option value="{0}"{1}{2}>{3}</option>',
+                           option_value,
+                           selected_html,
+                           data,
+                           force_text(option_label))
+
+
+class SharableCascadeForm(forms.ModelForm):
+    save_shared_glossary = fields.BooleanField(required=False, label=_("Remember these sizing options as:"))
+    save_as_identifier = fields.CharField(required=False, label='')
+    shared_glossary_choice = forms.ModelChoiceField(required=False,
+        label=_("Stored sizes"),
+        queryset=SharedGlossary.objects.all(),
+        widget=SelectSharedGlossary(),
+        empty_label=_("Use own sizing options"),
+        help_text=_("Use remembered image sizes"))
+
+    def clean_save_as_identifier(self):
+        identifier = self.cleaned_data['save_as_identifier']
+        if SharedGlossary.objects.filter(identifier=identifier).exclude(pk=self.instance.pk).exists():
+            raise ValidationError(_("The identifier '{0}' has already been used, please choose another name.").format(identifier))
+        return identifier
+
+
+class SharableGlossaryMixin(object):
+    class Media:
+        js = ['admin/js/cascade-sharable-glossary.js']
+
+    def get_form(self, request, obj=None, **kwargs):
+        ExtSharableForm = type('ExtSharableForm', (kwargs.pop('form', self.form), SharableCascadeForm), {})
+        sgc = ExtSharableForm.base_fields['shared_glossary_choice']
+        sgc.queryset = sgc.queryset.filter(plugin_type=self.__class__.__name__)
+        kwargs.update(form=ExtSharableForm)
+#             'save_shared_glossary': fields.BooleanField(required=False, label=_("Remember these sizing options as:")),
+#             'save_as_identifier': fields.CharField(required=False, label=''),
+#             'shared_glossary': ModelChoiceField(required=False,
+#                 label=_("Stored sizes"),
+#                 widget=SelectSharedGlossary(),
+#                 empty_label=_("Use own sizing options"),
+#                 help_text=_("Use remembered image sizes"),
+#                 queryset=queryset)
+#         }))
+        return super(SharableGlossaryMixin, self).get_form(request, obj, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        super(SharableGlossaryMixin, self).save_model(request, obj, form, change)
+        # in case checkbox for ``save_shared_glossary`` was set, create an entry in ``SharedGlossary``
+        identifier = form.cleaned_data['save_as_identifier']
+        if form.cleaned_data['save_shared_glossary'] and identifier:
+            # move data from form glossary to shared glossary
+            glossary = {}
+            for fieldname in self.sharable_fields:
+                if fieldname in obj.glossary:
+                    glossary[fieldname] = obj.glossary[fieldname]
+                    del obj.glossary[fieldname]
+            # create a new entry SharedGlossary in the database and refer to it
+            shared_glossary, created = SharedGlossary.objects.get_or_create(plugin_type=self.__class__.__name__, identifier=identifier)
+            shared_glossary.glossary = glossary
+            shared_glossary.save()
+            obj.shared_glossary = shared_glossary
+            obj.save()

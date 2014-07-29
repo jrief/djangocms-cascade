@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 from django.db.models import get_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import python_2_unicode_compatible
-from cmsplugin_cascade.models import CascadeElement
+from cmsplugin_cascade.common.models import SharableCascadeElement
 
 
 @python_2_unicode_compatible
-class LinkElement(CascadeElement):
+class LinkElement(SharableCascadeElement):
     """
     A model class to adding an internal or external Link plus a glossary.
     """
