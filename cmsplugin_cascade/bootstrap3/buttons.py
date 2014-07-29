@@ -9,7 +9,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.models import LinkElement
-from cmsplugin_cascade.link.forms import LinkForm
+from cmsplugin_cascade.link.forms import TextLinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 
 
@@ -47,15 +47,15 @@ class BootstrapButtonPlugin(LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
     model = LinkElement
-    form = LinkForm
+    form = TextLinkForm
     parent_classes = ['BootstrapColumnPlugin']
     render_template = 'cms/bootstrap3/button.html'
     allow_children = False
     text_enabled = True
     tag_type = None
     default_css_class = 'btn'
-    default_css_attributes = ('button-type', 'button-size', 'button-options', 'quick-float', 'special-class')
-    fields = ('link_content', ('link_type', 'page_link', 'url', 'email'), 'glossary',)
+    default_css_attributes = ('button-type', 'button-size', 'button-options', 'quick-float',)
+    fields = ('link_content', ('link_type', 'cms_page', 'ext_url', 'mail_to'), 'glossary',)
     glossary_fields = (
         PartialFormField('button-type',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonTypeRenderer.BUTTON_TYPES.items()),
@@ -78,11 +78,7 @@ class BootstrapButtonPlugin(LinkPluginBase):
             label=_('Quick Float'), initial='',
             help_text=_("Float the button to the left or right.")
         ),
-        PartialFormField('special-class',
-            widgets.TextInput(),
-            label=_('Special class'),
-        ),
-        LinkPluginBase.LINK_TARGET,
+    ) + LinkPluginBase.glossary_fields + (
         PartialFormField('inline_styles',
             MultipleCascadingSizeWidget(['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
                 allowed_units=['px', 'em'], required=False),
@@ -101,5 +97,9 @@ class BootstrapButtonPlugin(LinkPluginBase):
             button_type = ' ({0})'.format(force_text(button_type))
         link_content = obj.glossary.get('link_content', '')
         return link_content + button_type
+
+    def save_model(self, request, obj, form, change):
+        obj.glossary.update(link_content=form.cleaned_data.get('link_content', ''))
+        super(BootstrapButtonPlugin, self).save_model(request, obj, form, change)
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
