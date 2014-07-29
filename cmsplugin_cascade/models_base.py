@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.db import models
+from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import mark_safe, format_html_join
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
 
 
+@python_2_unicode_compatible
 class CascadeModelBase(CMSPlugin):
     """
     The container to hold additional bootstrap elements.
@@ -17,7 +21,7 @@ class CascadeModelBase(CMSPlugin):
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
     glossary = JSONField(null=True, blank=True, default={})
 
-    def __unicode__(self):
+    def __str__(self):
         return self.plugin_class.get_identifier(self)
 
     @property
@@ -92,6 +96,12 @@ class CascadeModelBase(CMSPlugin):
                 super(CascadeModelBase, self).save(no_signals=True)
         else:
             super(CascadeModelBase, self).save(*args, **kwargs)
+
+    def get_site(self):
+        try:
+            return self.page.site
+        except AttributeError:
+            return Site.objects.get_current()
 
     @classmethod
     def _get_cascade_elements(cls):
