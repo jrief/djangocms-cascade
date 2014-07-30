@@ -50,6 +50,11 @@ class SharableCascadeForm(forms.ModelForm):
 
 
 class SharableGlossaryMixin(object):
+    """
+    Add this mixin class to Plugin classes which refer to the model ``SharableCascadeElement`` or
+    inherit from it. This class adds the appropriate methods to the plugin class in order to store
+    an assortment of glossary values as a glossary reusable by other plugin instances.
+    """
     class Media:
         js = ['admin/js/cascade-sharable-glossary.js']
 
@@ -58,15 +63,6 @@ class SharableGlossaryMixin(object):
         sgc = ExtSharableForm.base_fields['shared_glossary_choice']
         sgc.queryset = sgc.queryset.filter(plugin_type=self.__class__.__name__)
         kwargs.update(form=ExtSharableForm)
-#             'save_shared_glossary': fields.BooleanField(required=False, label=_("Remember these sizing options as:")),
-#             'save_as_identifier': fields.CharField(required=False, label=''),
-#             'shared_glossary': ModelChoiceField(required=False,
-#                 label=_("Stored sizes"),
-#                 widget=SelectSharedGlossary(),
-#                 empty_label=_("Use own sizing options"),
-#                 help_text=_("Use remembered image sizes"),
-#                 queryset=queryset)
-#         }))
         return super(SharableGlossaryMixin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
@@ -74,15 +70,12 @@ class SharableGlossaryMixin(object):
         # in case checkbox for ``save_shared_glossary`` was set, create an entry in ``SharedGlossary``
         identifier = form.cleaned_data['save_as_identifier']
         if form.cleaned_data['save_shared_glossary'] and identifier:
-            # move data from form glossary to shared glossary
-            glossary = {}
-            for fieldname in self.sharable_fields:
-                if fieldname in obj.glossary:
-                    glossary[fieldname] = obj.glossary[fieldname]
-                    del obj.glossary[fieldname]
-            # create a new entry SharedGlossary in the database and refer to it
+            # move data from form glossary to a SharedGlossary and refer to it
             shared_glossary, created = SharedGlossary.objects.get_or_create(plugin_type=self.__class__.__name__, identifier=identifier)
-            shared_glossary.glossary = glossary
+            if not created:
+                raise RuntimeError("SharableCascadeForm.clean_save_as_identifier() erroneously validated identifier '%s' as unique".format(identifier))
+            glry = form.cleaned_data['glossary']
+            shared_glossary.glossary = dict((key, glry[key]) for key in self.sharable_fields if key in glry)
             shared_glossary.save()
             obj.shared_glossary = shared_glossary
             obj.save()
