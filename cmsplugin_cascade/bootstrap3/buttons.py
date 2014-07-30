@@ -98,8 +98,4 @@ class BootstrapButtonPlugin(LinkPluginBase):
         link_content = obj.glossary.get('link_content', '')
         return link_content + button_type
 
-    def save_model(self, request, obj, form, change):
-        obj.glossary.update(link_content=form.cleaned_data.get('link_content', ''))
-        super(BootstrapButtonPlugin, self).save_model(request, obj, form, change)
-
 plugin_pool.register_plugin(BootstrapButtonPlugin)
