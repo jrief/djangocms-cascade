@@ -58,7 +58,11 @@ class LinkForm(ModelForm):
 
     def clean_cms_page(self):
         if self.cleaned_data['link_type'] == 'cmspage':
-            self.cleaned_data['link_data'] = {'type': 'cmspage', 'pk': self.cleaned_data['cms_page'].pk, 'model': 'cms.Page'}
+            self.cleaned_data['link_data'] = {
+                'type': 'cmspage',
+                'model': 'cms.Page',
+                'pk': self.cleaned_data['cms_page'] and self.cleaned_data['cms_page'].pk or None
+            }
 
     def clean_ext_url(self):
         if self.cleaned_data['link_type'] == 'exturl':
@@ -100,3 +104,12 @@ class TextLinkForm(LinkForm):
     def __init__(self, *args, **kwargs):
         super(TextLinkForm, self).__init__(*args, **kwargs)
         self.initial.setdefault('link_content', '')
+
+    def clean(self):
+        """
+        link_content intentionally was rendered outside the glossary field, move its content
+        back to the ``glossary``.
+        """
+        cleaned_data = super(TextLinkForm, self).clean()
+        cleaned_data['glossary'].update(link_content=cleaned_data['link_content'])
+        return cleaned_data
