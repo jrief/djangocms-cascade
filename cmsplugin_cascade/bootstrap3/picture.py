@@ -4,86 +4,83 @@ import json
 from django import forms
 from django.forms import widgets
 from django.forms import fields
+from django.db.models import get_model
+from django.db.models.fields.related import ManyToOneRel
 from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
+from filer.fields.image import AdminImageFormField, FilerImageField
+from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.image.models import ImageElement
+from cmsplugin_cascade.link.models import LinkElement
 from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
-from cmsplugin_cascade.common.models import SharedGlossary
-from .settings import CASCADE_BREAKPOINTS_DICT
+from cmsplugin_cascade.common.forms import SharableGlossaryMixin
+from .settings import CASCADE_BREAKPOINT_APPEARANCES
+
+
+class CascadeImageFormField(AdminImageFormField):
+    def __init__(self, *args, **kwargs):
+        defaults = {
+            'rel': ManyToOneRel(FilerImageField, Image, 'file_ptr'),
+            'to_field_name': 'file_ptr',
+            'queryset': Image.objects.all(),
+        }
+        defaults.update(kwargs)
+        super(CascadeImageFormField, self).__init__(*args, **defaults)
+        pass
 
 
 class PictureForm(LinkForm):
-    TYPE_CHOICES = (('none', _("No Link")), ('int', _("Internal Page")), ('ext', _("External URL")),)
-    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='none')
-    save_shared_glossary = fields.BooleanField(label=_("Remember these sizing options as:"), required=False)
-    save_as_identifier = fields.CharField(label='', required=False)
+    TYPE_CHOICES = (('none', _("No Link")), ('cmspage', _("CMS Page")), ('exturl', _("External URL")),)
+    #image_file = FilerImageField(null=True, blank=True, default=None, verbose_name=_("Image"))
+    #image_file = forms.ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
+    image_file = CascadeImageFormField(required=False, label=_("Image"))
 
-    class Meta:
-        model = ImageElement
-        fields = ('page_link', 'image', 'glossary',)
-
-    def clean_save_as_identifier(self):
-        identifier = self.cleaned_data['save_as_identifier']
-        if SharedGlossary.objects.filter(identifier=identifier).exclude(pk=self.instance.pk).exists():
-            raise ValidationError(_("The identifier '{0}' has already been used, please choose another name.").format(identifier))
-        return identifier
-
-
-class SelectSharedGlossary(forms.Select):
-    def render_option(self, selected_choices, option_value, option_label):
-        if option_value:
-            glossary = self.choices.queryset.get(pk=option_value).glossary
-            data = format_html(' data-glossary="{0}"', json.dumps(glossary))
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        if instance:
+            initial = dict(instance.glossary)
         else:
-            data = mark_safe('')
-        option_value = force_text(option_value)
-        if option_value in selected_choices:
-            selected_html = mark_safe(' selected="selected"')
-            if not self.allow_multiple_selected:
-                # Only allow for a single selection.
-                selected_choices.remove(option_value)
-        else:
-            selected_html = ''
-        return format_html('<option value="{0}"{1}{2}>{3}</option>',
-                           option_value,
-                           selected_html,
-                           data,
-                           force_text(option_label))
+            initial = {}
+        kwargs.update(initial=initial)
+        super(PictureForm, self).__init__(*args, **kwargs)
+        self.initial.setdefault('image_file')
+
+    def clean(self):
+        cleaned_data = super(LinkForm, self).clean()
+        image_data = {'pk': self.cleaned_data['image_file'].pk, 'model': 'filer.Image'}
+        cleaned_data['glossary'].update(image=image_data)
+        del self.cleaned_data['image_file']
+        return cleaned_data
 
 
-class BootstrapPicturePlugin(LinkPluginBase):
+class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     name = _("Picture")
-    model = ImageElement
+    model = LinkElement
     form = PictureForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin', 'CarouselSlidePlugin']
     require_parent = True
     allow_children = False
-    raw_id_fields = ('image',)
+    raw_id_fields = ('image_file',)
     text_enabled = True
     admin_preview = False
     render_template = 'cms/bootstrap3/picture.html'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
-    fields = ('image', 'glossary', ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',
-              ('link_type', 'page_link', 'url', 'email'),)
+    #fields = ('image', 'glossary', ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',
+    #          ('link_type', 'page_link', 'url', 'email'),)
+    fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),
+              ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),)
-    APPEARANCE = {
-        'xs': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['sm'][0])},
-        'sm': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['md'][0])},
-        'md': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['lg'][0])},
-        'lg': {'media': '(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['lg'][0])},
-    }
     glossary_fields = (
         PartialFormField('image-title',
             widgets.TextInput(),
@@ -95,14 +92,12 @@ class BootstrapPicturePlugin(LinkPluginBase):
             label=_('Alternative Description'),
             help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
         ),
-        LinkPluginBase.LINK_TARGET,
+    ) + LinkPluginBase.glossary_fields + (
         PartialFormField('image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
             label=_("Image Shapes"),
             initial=['img-responsive']
         ),
-    )
-    shared_glossary_fields = (
         PartialFormField('image-size',
             MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px'], required=False),
             label=_("Absolute Image Sizes"),
@@ -120,7 +115,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
             initial=['subject_location']
         ),
     )
-    glossary_fields += shared_glossary_fields
+    sharable_fields = ('image-shapes', 'image-size', 'responsive-height', 'resize-options',)
 
     class Media:
         js = ['admin/js/cascade-pictureplugin.js']
@@ -147,43 +142,15 @@ class BootstrapPicturePlugin(LinkPluginBase):
             })
         return context
 
-    def get_form(self, request, obj=None, **kwargs):
-        queryset = SharedGlossary.objects.filter(plugin_type=self.__class__.__name__)
-        shared_glossary_choice = forms.ModelChoiceField(
-            queryset=queryset,
-            widget=SelectSharedGlossary(),
-            label=_("Stored sizes"),
-            required=False,
-            empty_label=_("Use own sizing options"),
-            help_text=_("Use remembered image sizes"))
-        kwargs.update(form=type('PictureFormExtended', (kwargs.pop('form', self.form),),
-                                {'shared_glossary': shared_glossary_choice}))
-        return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
-
-    def save_model(self, request, obj, form, change):
-        # in case save_shared_glossary was set, create an entry in model SharedGlossary
-        identifier = form.cleaned_data['save_as_identifier']
-        if form.cleaned_data['save_shared_glossary'] and identifier:
-            # move data from form glossary to shared glossary
-            glossary = {}
-            for field in self.shared_glossary_fields:
-                if field.name in form.cleaned_data['glossary']:
-                    glossary[field.name] = form.cleaned_data['glossary'][field.name]
-                    del form.cleaned_data['glossary'][field.name]
-            # create a new entry SharedGlossary in the database and refer to it
-            shared_glossary = SharedGlossary(plugin_type=self.__class__.__name__, identifier=identifier, glossary=glossary)
-            shared_glossary.save()
-            obj.shared_glossary = shared_glossary
-            del form.cleaned_data['shared_glossary']
-        super(BootstrapPicturePlugin, self).save_model(request, obj, form, change)
-
     def _responsive_appearances(self, context, instance):
         """
         Create the appearance context, used to render a <picture> element which automatically adopts
         its sizes to the current column width.
         """
+        ImageModel = get_model(*instance.glossary['image']['model'].split('.'))
+        image = ImageModel.objects.get(pk=instance.glossary['image']['pk'])
         complete_glossary = instance.get_complete_glossary()
-        aspect_ratio = float(instance.image.height) / float(instance.image.width)
+        aspect_ratio = float(image.height) / float(image.width)
         image_height = self._parse_responsive_height(instance.glossary.get('responsive-height', ''))
         container_max_heights = complete_glossary.get('container_max_heights', {})
         if instance.shared_glossary:
@@ -212,7 +179,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
             if size is None:
                 # as fallback, adopt height to current width
                 size = (int(width), int(round(width * aspect_ratio)))
-            appearances[bp] = self.APPEARANCE[bp].copy()
+            appearances[bp] = CASCADE_BREAKPOINT_APPEARANCES[bp].copy()
             appearances[bp].update(size=size, crop=crop, upscale=upscale, subject_location=subject_location)
         # create a relatively small image for the default img tag.
         if image_height[1]:
