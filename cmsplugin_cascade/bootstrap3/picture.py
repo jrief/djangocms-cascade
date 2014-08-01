@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 import six
-import json
 from django import forms
 from django.forms import widgets
-from django.forms import fields
 from django.db.models import get_model
 from django.db.models.fields.related import ManyToOneRel
-from django.core.exceptions import ValidationError
-from django.utils.html import format_html
+from django.contrib.admin.sites import site
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
-from django.utils.encoding import force_text
-from filer.fields.image import AdminImageFormField, FilerImageField
+from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
@@ -23,33 +18,20 @@ from cmsplugin_cascade.common.forms import SharableGlossaryMixin
 from .settings import CASCADE_BREAKPOINT_APPEARANCES
 
 
-class CascadeImageFormField(AdminImageFormField):
-    def __init__(self, *args, **kwargs):
-        defaults = {
-            'rel': ManyToOneRel(FilerImageField, Image, 'file_ptr'),
-            'to_field_name': 'file_ptr',
-            'queryset': Image.objects.all(),
-        }
-        defaults.update(kwargs)
-        super(CascadeImageFormField, self).__init__(*args, **defaults)
-        pass
-
-
 class PictureForm(LinkForm):
     TYPE_CHOICES = (('none', _("No Link")), ('cmspage', _("CMS Page")), ('exturl', _("External URL")),)
-    #image_file = FilerImageField(null=True, blank=True, default=None, verbose_name=_("Image"))
-    #image_file = forms.ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-    image_file = CascadeImageFormField(required=False, label=_("Image"))
+    image_file = forms.ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
-        if instance:
-            initial = dict(instance.glossary)
-        else:
-            initial = {}
+        initial = instance and dict(instance.glossary) or {}
         kwargs.update(initial=initial)
+        try:
+            self.base_fields['image_file'].initial = initial['image']['pk']
+        except KeyError:
+            pass
+        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
         super(PictureForm, self).__init__(*args, **kwargs)
-        self.initial.setdefault('image_file')
 
     def clean(self):
         cleaned_data = super(LinkForm, self).clean()
