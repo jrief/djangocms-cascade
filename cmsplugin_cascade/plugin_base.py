@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import six
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
@@ -39,7 +40,7 @@ class CascadePluginBase(CMSPluginBase):
         """
         Returns the descriptive name for the current model
         """
-        return six.u('')
+        return ''
 
     @classmethod
     def get_css_classes(cls, obj):
