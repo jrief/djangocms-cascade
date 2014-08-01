@@ -1,6 +1,7 @@
+{% extends "cms/plugins/link.html" %}
 {% load thumbnail filer_tags filer_image_tags %}{% spaceless %}
 
-{% if instance.link %}<a href="{{ instance.link }}"{% if instance.target_blank %} target="_blank"{% endif %}>{% endif %}
+{% block link_content %}
 
 {% if is_responsive %}
 <picture>
@@ -18,6 +19,6 @@
 	<img src="{{ thumb.url }}" {{ instance.html_tag_attributes }} class="{{ instance.css_classes }}" width="{{ instance.width }}" height="{{ instance.height }}" />
 {% endif %}
 
-{% if link %}</a>{% endif %}
+{% endblock link_content %}
 
 {% endspaceless %}
