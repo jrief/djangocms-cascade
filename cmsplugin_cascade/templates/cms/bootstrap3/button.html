@@ -1,3 +1,5 @@
-{% with instance_css_classes=instance.css_classes instance_inline_styles=instance.inline_styles %}
-<a href="{{ instance.link }}" {{ instance.html_tag_attributes }} {% if instance_css_classes %} class="{{ instance_css_classes }}"{% endif %}{% if instance_inline_styles %} style="{{ instance_inline_styles }}"{% endif %}>{{ instance.name }}</a>
-{% endwith %}
+{% extends "cms/plugins/link.html" %}
+
+{% block link_link %}{% with instance_link=instance.link|default:"#" %}
+{{ block.super }}
+{% endwith %}{% endblock link_link %}
