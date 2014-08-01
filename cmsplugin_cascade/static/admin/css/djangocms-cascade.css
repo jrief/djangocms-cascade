@@ -7,8 +7,7 @@ form .form-row.field-link_type .field-box input { height: 25px; margin-top: 0; }
 form .form-row.field-link_type .field-box .help { margin-left: 2em; padding-left: 0; }
 form .field-box label.inline { text-align: right; }
 form .field-glossary { padding: 0; }
-form .field-glossary .glossary-widget { border-top: 1px solid #f3f3f3; padding: 8px 12px; }
-form label[for^="id_glossary"] + .glossary-widget { border-top: none; }
+form .field-glossary .glossary-widget { border-bottom: 1px solid #f3f3f3; padding: 8px 12px; }
 form .glossary-widget h1 { clear: both; margin: 8px 0 4px; font-size: 120%; }
 form .glossary-widget label { width: inherit; padding-left: 10px; }
 form .glossary-widget small { margin-left: 0; }
