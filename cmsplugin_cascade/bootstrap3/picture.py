@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import six
 from django import forms
 from django.forms import widgets
 from django.db.models import get_model
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin.sites import site
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
@@ -19,31 +20,54 @@ from .settings import CASCADE_BREAKPOINT_APPEARANCES
 
 
 class PictureForm(LinkForm):
-    TYPE_CHOICES = (('none', _("No Link")), ('cmspage', _("CMS Page")), ('exturl', _("External URL")),)
+    LINK_TYPE_CHOICES = (('none', _("No Link")), ('cmspage', _("CMS Page")), ('exturl', _("External URL")),)
     image_file = forms.ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
-        initial = instance and dict(instance.glossary) or {}
-        kwargs.update(initial=initial)
+        initial = instance and dict(instance.glossary) or {'link': {'type': 'none'}}
+        initial.update(kwargs.pop('initial', {}))
         try:
             self.base_fields['image_file'].initial = initial['image']['pk']
         except KeyError:
-            pass
+            self.base_fields['image_file'].initial = None
         self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
+        kwargs.update(initial=initial)
         super(PictureForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        cleaned_data = super(LinkForm, self).clean()
+        cleaned_data = super(PictureForm, self).clean()
         image_data = {'pk': self.cleaned_data['image_file'].pk, 'model': 'filer.Image'}
         cleaned_data['glossary'].update(image=image_data)
         del self.cleaned_data['image_file']
         return cleaned_data
 
 
+@python_2_unicode_compatible
+class PictureElement(LinkElement):
+    """
+    A proxy model for the ``<img>`` or ``<picture>`` element wrapped in an optional LinkElement.
+    """
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return self.image and str(self.image) or ''
+
+    @property
+    def image(self):
+        if not hasattr(self, '_image_model'):
+            Model = get_model(*self.glossary['image']['model'].split('.'))
+            try:
+                self._image_model = Model.objects.get(pk=self.glossary['image']['pk'])
+            except (KeyError, ObjectDoesNotExist):
+                self._image_model = None
+        return self._image_model
+
+
 class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     name = _("Picture")
-    model = LinkElement
+    model = PictureElement
     form = PictureForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin', 'CarouselSlidePlugin']
@@ -55,8 +79,6 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     render_template = 'cms/bootstrap3/picture.html'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
-    #fields = ('image', 'glossary', ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',
-    #          ('link_type', 'page_link', 'url', 'email'),)
     fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),
               ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
@@ -129,10 +151,8 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         Create the appearance context, used to render a <picture> element which automatically adopts
         its sizes to the current column width.
         """
-        ImageModel = get_model(*instance.glossary['image']['model'].split('.'))
-        image = ImageModel.objects.get(pk=instance.glossary['image']['pk'])
         complete_glossary = instance.get_complete_glossary()
-        aspect_ratio = float(image.height) / float(image.width)
+        aspect_ratio = float(instance.image.height) / float(instance.image.width)
         image_height = self._parse_responsive_height(instance.glossary.get('responsive-height', ''))
         container_max_heights = complete_glossary.get('container_max_heights', {})
         if instance.shared_glossary:
@@ -204,10 +224,6 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         elif responsive_height.endswith('%'):
             return (None, float(responsive_height.rstrip('%')) / 100)
         return (None, None)
-
-    @classmethod
-    def get_identifier(cls, obj):
-        return six.u(str(obj.image))
 
     @classmethod
     def get_css_classes(cls, obj):

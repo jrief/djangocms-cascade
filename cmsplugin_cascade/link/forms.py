@@ -19,8 +19,8 @@ class LinkForm(ModelForm):
     Form class to add fake fields for rendering the ModelAdmin's form, which later are used to
     populate the glossary of the model.
     """
-    TYPE_CHOICES = (('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To")),)
-    link_type = fields.ChoiceField(choices=TYPE_CHOICES, initial='cmspage')
+    LINK_TYPE_CHOICES = (('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To")),)
+    link_type = fields.ChoiceField()
     cms_page = PageSelectFormField(required=False, label='',
         help_text=_("An internal link onto CMS pages of this site"))
     ext_url = fields.URLField(required=False, label='', help_text=_("Link onto external page"))
@@ -35,16 +35,15 @@ class LinkForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
-        try:
-            link_type = instance.glossary['link']['type']
-        except (KeyError, AttributeError):
-            link_type = 'cmspage'
+        initial = instance and dict(instance.glossary) or {'link': {'type': 'cmspage'}}
+        initial.update(kwargs.pop('initial', {}))
+        link_type = initial['link']['type']
         if instance:
             cms_page_queryset = Page.objects.drafts().on_site(instance.get_site())
-            initial = dict(instance.glossary, link_type=link_type)
         else:
             cms_page_queryset = Page.objects.drafts().on_site(Site.objects.get_current())
-            initial = {'link_type': link_type}
+        self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
+        self.base_fields['link_type'].initial = link_type
         self.base_fields['cms_page'].queryset = cms_page_queryset
         getattr(self, 'set_initial_{0}'.format(link_type))(initial)
         kwargs.update(initial=initial)
@@ -52,8 +51,11 @@ class LinkForm(ModelForm):
 
     def clean(self):
         cleaned_data = super(LinkForm, self).clean()
-        cleaned_data['glossary'].update(link=cleaned_data['link_data'])
-        del self.cleaned_data['link_data']
+        if 'link_data' in cleaned_data:
+            cleaned_data['glossary'].update(link=cleaned_data['link_data'])
+            del self.cleaned_data['link_data']
+        else:
+            cleaned_data['glossary'].update(link={'type': 'none'})
         return cleaned_data
 
     def clean_cms_page(self):
@@ -71,6 +73,9 @@ class LinkForm(ModelForm):
     def clean_mail_to(self):
         if self.cleaned_data['link_type'] == 'email':
             self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
+
+    def set_initial_none(self, initial):
+        pass
 
     def set_initial_cmspage(self, initial):
         try:
@@ -103,7 +108,8 @@ class TextLinkForm(LinkForm):
 
     def __init__(self, *args, **kwargs):
         super(TextLinkForm, self).__init__(*args, **kwargs)
-        self.initial.setdefault('link_content', '')
+        self.base_fields['link_type'].initial = 'cmspage'
+        #self.initial.setdefault('link_content', '')
 
     def clean(self):
         """

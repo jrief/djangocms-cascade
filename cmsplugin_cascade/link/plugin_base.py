@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import six
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import PartialFormField
@@ -21,11 +20,3 @@ class LinkPluginBase(CascadePluginBase):
 
     class Media:
         js = ['cms/js/libs/jquery.min.js']
-
-    @classmethod
-    def get_identifier(cls, model):
-        """
-        Returns the descriptive name for the current model
-        """
-        # TODO: return the line name
-        return six.u('')
