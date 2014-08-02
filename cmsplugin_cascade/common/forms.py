@@ -26,21 +26,12 @@ class SelectSharedGlossary(forms.Select):
         else:
             selected_html = ''
         return format_html('<option value="{0}"{1}{2}>{3}</option>',
-                           option_value,
-                           selected_html,
-                           data,
-                           force_text(option_label))
+                           option_value, selected_html, data, force_text(option_label))
 
 
 class SharableCascadeForm(forms.ModelForm):
-    save_shared_glossary = fields.BooleanField(required=False, label=_("Remember these sizing options as:"))
+    save_shared_glossary = fields.BooleanField(required=False, label=_("Remember these settings as:"))
     save_as_identifier = fields.CharField(required=False, label='')
-    shared_glossary_choice = forms.ModelChoiceField(required=False,
-        label=_("Stored sizes"),
-        queryset=SharedGlossary.objects.all(),
-        widget=SelectSharedGlossary(),
-        empty_label=_("Use own sizing options"),
-        help_text=_("Use remembered image sizes"))
 
     def clean_save_as_identifier(self):
         identifier = self.cleaned_data['save_as_identifier']
@@ -55,13 +46,15 @@ class SharableGlossaryMixin(object):
     inherit from it. This class adds the appropriate methods to the plugin class in order to store
     an assortment of glossary values as a glossary reusable by other plugin instances.
     """
-    class Media:
-        js = ['admin/js/cascade-sharable-glossary.js']
-
     def get_form(self, request, obj=None, **kwargs):
-        ExtSharableForm = type('ExtSharableForm', (kwargs.pop('form', self.form), SharableCascadeForm), {})
-        sgc = ExtSharableForm.base_fields['shared_glossary_choice']
-        sgc.queryset = sgc.queryset.filter(plugin_type=self.__class__.__name__)
+        form = kwargs.pop('form', self.form)
+        shared_glossary = forms.ModelChoiceField(required=False,
+            label=_("Shared Settings"),
+            queryset=SharedGlossary.objects.filter(plugin_type=self.__class__.__name__),
+            widget=SelectSharedGlossary(),
+            empty_label=_("Use individual settings"),
+            help_text=_("Use settings shared with other plugins of this type"))
+        ExtSharableForm = type('ExtSharableForm', (form, SharableCascadeForm), {'shared_glossary': shared_glossary})
         kwargs.update(form=ExtSharableForm)
         return super(SharableGlossaryMixin, self).get_form(request, obj, **kwargs)
 
