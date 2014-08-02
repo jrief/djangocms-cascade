@@ -106,11 +106,6 @@ class TextLinkForm(LinkForm):
         # replace auto-generated id so that CKEditor automatically transfers the text into this input field
         widget=TextInput(attrs={'id': 'id_name'}), help_text=_("Content of Link"))
 
-    def __init__(self, *args, **kwargs):
-        super(TextLinkForm, self).__init__(*args, **kwargs)
-        self.base_fields['link_type'].initial = 'cmspage'
-        #self.initial.setdefault('link_content', '')
-
     def clean(self):
         """
         link_content intentionally was rendered outside the glossary field, move its content
