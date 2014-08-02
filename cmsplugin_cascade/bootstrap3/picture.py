@@ -122,7 +122,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     sharable_fields = ('image-shapes', 'image-size', 'responsive-height', 'resize-options',)
 
     class Media:
-        js = ['admin/js/cascade-pictureplugin.js']
+        js = ['admin/js/cascade-pictureplugin.js', 'admin/js/cascade-sharable-glossary.js']
 
     def render(self, context, instance, placeholder):
         if 'img-responsive' in instance.glossary.get('image-shapes', []):
