@@ -36,7 +36,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             elif getattr(field.widget, 'allow_multiple_selected', False):
                 result[field.name] = list(map(escape, data.getlist(field.name)))
             else:
-                result[field.name] = escape(data.get(field.name))
+                result[field.name] = escape(data.get(field.name, ''))
         return result
 
     def render(self, name, values, attrs):
@@ -149,7 +149,7 @@ class MultipleTextInputWidget(widgets.MultiWidget):
     def value_from_datadict(self, data, files, name):
         values = {}
         for key in self.labels:
-            values[key] = escape(data.get('{0}-{1}'.format(name, key)))
+            values[key] = escape(data.get('{0}-{1}'.format(name, key), ''))
         return values
 
     def render(self, name, values, attrs):
