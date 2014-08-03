@@ -6,6 +6,7 @@ from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin.sites import site
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
@@ -52,7 +53,7 @@ class PictureElement(LinkElement):
         proxy = True
 
     def __str__(self):
-        return self.image and str(self.image) or ''
+        return six.text_type(self.image and self.image or '')
 
     @property
     def image(self):
