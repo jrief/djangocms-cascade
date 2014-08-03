@@ -30,9 +30,6 @@ class LinkForm(ModelForm):
         model = LinkElement
         fields = ('glossary',)
 
-    class Media:
-        js = ['admin/js/cascade-linkplugin.js']
-
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
         initial = instance and dict(instance.glossary) or {'link': {'type': 'cmspage'}}

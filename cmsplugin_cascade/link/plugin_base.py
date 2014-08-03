@@ -17,6 +17,3 @@ class LinkPluginBase(CascadePluginBase):
         ),
     )
     html_tag_attributes = {'target': 'target'}
-
-    class Media:
-        js = ['cms/js/libs/jquery.min.js']

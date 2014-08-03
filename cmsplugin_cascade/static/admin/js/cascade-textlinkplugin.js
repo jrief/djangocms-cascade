@@ -1,23 +1,30 @@
-django.cascade = django.cascade || {};
 
 django.jQuery(function($) {
 	'use strict';
 
-	django.cascade.toggleSharedGlossary = function($option) {
+	django.cascade.TextLinkPlugin = function() {
+		django.cascade.SharableLinkPlugin.call(this);
+
+		// move the select box for Shared Glossary just after 'LinkContent'
+		$('.field-link_content').after($('.field-shared_glossary'));
+	}
+	django.cascade.TextLinkPlugin.prototype = Object.create(django.cascade.SharableLinkPlugin.prototype);
+	django.cascade.TextLinkPlugin.prototype.toggleSharedGlossary = function($option) {
 		var glossary = $option.data('glossary');
 		if (glossary) {
-			console.log(glossary);
-			
 			$('#id_link_type').val(glossary['link']['type']);
 			$('#id_link_type').prop('disabled', 'disabled');
-			//django.cascade.toggleLinkTypes(glossary['link']['type']);
+			this.toggleLinkTypes(glossary['link']['type']);
 			try {
-				$('#id_cms_page').select2({'enabled': false});
+				$("#id_cms_page").select2('enable', false);
 			} catch(err) {
-				console.log(typeof err);
+				console.log(err);
 			}
+			$('#id_ext_url').val(glossary['link']['url']);
 			$('#id_ext_url').prop('disabled', 'disabled');
+			$('#id_mail_to').val(glossary['link']['email']);
 			$('#id_mail_to').prop('disabled', 'disabled');
+			$('#id_glossary_title').val(glossary['title']);
 			$('#id_glossary_title').prop('disabled', 'disabled');
 			$('#id_glossary_target input').each(function(idx, elem) {
 				$(elem).prop('checked', glossary['target'] === $(elem).val());
@@ -27,15 +34,18 @@ django.jQuery(function($) {
 		} else {
 			$('#id_link_type').prop('disabled', '');
 			try {
-				$('#id_cms_page').select2({'enabled': true});
+				$("#id_cms_page").select2('enable', true);
 			} catch(err) {
 				console.log(typeof err);
 			}
 			$('#id_ext_url').prop('disabled', '');
 			$('#id_mail_to').prop('disabled', '');
-			$('#id_glossary_title').prop('disabled', 'disabled');
+			$('#id_glossary_title').prop('disabled', '');
 			$('#id_glossary_target input').prop('disabled', '');
 			$('.field-save_shared_glossary.field-save_as_identifier').show();
 		}
+		django.cascade.SharableLinkPlugin.prototype.toggleSharedGlossary.call(this, $option);
 	};
+
+	new django.cascade.TextLinkPlugin();
 });
