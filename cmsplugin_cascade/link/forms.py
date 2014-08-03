@@ -38,10 +38,8 @@ class LinkForm(ModelForm):
         initial = instance and dict(instance.glossary) or {'link': {'type': 'cmspage'}}
         initial.update(kwargs.pop('initial', {}))
         link_type = initial['link']['type']
-        if instance:
-            cms_page_queryset = Page.objects.drafts().on_site(instance.get_site())
-        else:
-            cms_page_queryset = Page.objects.drafts().on_site(Site.objects.get_current())
+        site = instance and instance.get_site() or Site.objects.get_current()
+        cms_page_queryset = Page.objects.drafts().on_site(site)
         self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
         self.base_fields['link_type'].initial = link_type
         self.base_fields['cms_page'].queryset = cms_page_queryset
