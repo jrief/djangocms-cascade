@@ -54,7 +54,7 @@ class LinkForm(ModelForm):
         return cleaned_data
 
     def clean_cms_page(self):
-        if self.cleaned_data['link_type'] == 'cmspage':
+        if self.cleaned_data.get('link_type') == 'cmspage':
             self.cleaned_data['link_data'] = {
                 'type': 'cmspage',
                 'model': 'cms.Page',
@@ -62,11 +62,11 @@ class LinkForm(ModelForm):
             }
 
     def clean_ext_url(self):
-        if self.cleaned_data['link_type'] == 'exturl':
+        if self.cleaned_data.get('link_type') == 'exturl':
             self.cleaned_data['link_data'] = {'type': 'exturl', 'url': self.cleaned_data['ext_url']}
 
     def clean_mail_to(self):
-        if self.cleaned_data['link_type'] == 'email':
+        if self.cleaned_data.get('link_type') == 'email':
             self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
 
     def set_initial_none(self, initial):
