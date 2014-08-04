@@ -138,8 +138,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         self.glossary_fields = []
-        if obj:
-            complete_glossary = obj.get_complete_glossary()
+        parent_obj, parent_plugin = self.parent.get_plugin_instance()
+        if isinstance(parent_plugin, BootstrapPluginBase):
+            complete_glossary = parent_obj.get_complete_glossary()
             for bp in complete_glossary['breakpoints']:
                 desc = list(CASCADE_BREAKPOINTS_DICT[bp])
                 desc[2] = force_text(desc[2])
