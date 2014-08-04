@@ -30,7 +30,7 @@ class LinkForm(ModelForm):
         model = LinkElement
         fields = ('glossary',)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, raw_data=None, *args, **kwargs):
         instance = kwargs.get('instance')
         initial = instance and dict(instance.glossary) or {'link': {'type': 'cmspage'}}
         initial.update(kwargs.pop('initial', {}))
@@ -39,10 +39,13 @@ class LinkForm(ModelForm):
         cms_page_queryset = Page.objects.drafts().on_site(site)
         self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
         self.base_fields['link_type'].initial = link_type
+        if raw_data and raw_data.get('shared_glossary'):
+            # convert this into an optional field since it is disabled with ``shared_glossary`` set
+            self.base_fields['link_type'].required = False
         self.base_fields['cms_page'].queryset = cms_page_queryset
         getattr(self, 'set_initial_{0}'.format(link_type))(initial)
         kwargs.update(initial=initial)
-        super(LinkForm, self).__init__(*args, **kwargs)
+        super(LinkForm, self).__init__(raw_data, *args, **kwargs)
 
     def clean(self):
         cleaned_data = super(LinkForm, self).clean()
