@@ -13,6 +13,7 @@ class CascadePluginBase(CMSPluginBase):
 
     class Media:
         css = {'all': ('cascade/css/admin/editplugin.css',)}
+        js = ['cascade/js/admin/underscore.js', 'cascade/js/admin/ring.js']
 
     def _child_classes(self):
         """All registered plugins shall be allowed as children for this plugin"""
