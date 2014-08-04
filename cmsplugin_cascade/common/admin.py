@@ -9,7 +9,7 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     list_display = ('identifier', 'plugin_type',)
 
     class Media:
-        css = {'all': ('admin/css/djangocms-cascade.css',)}
+        css = {'all': ('cascade/css/admin/editplugin.css',)}
 
     def get_form(self, request, obj=None, **kwargs):
         """

@@ -88,7 +88,8 @@ class BootstrapButtonPlugin(LinkPluginBase):
     )
 
     class Media:
-        css = {'all': ('admin/css/bootstrap.min.css', 'admin/css/bootstrap-theme.min.css',)}
+        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
+        js = ['cascade/js/admin/linkplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):

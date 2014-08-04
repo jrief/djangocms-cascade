@@ -31,6 +31,6 @@ class LinkPlugin(SharableGlossaryMixin, LinkPluginBase):
     require_parent = False
 
     class Media:
-        js = ['admin/js/cascade-linkplugin.js', 'admin/js/cascade-sharable-linkplugin.js', 'admin/js/cascade-textlinkplugin.js']
+        js = ['cascade/js/admin/linkplugin.js', 'cascade/js/admin/sharable-linkplugin.js', 'cascade/js/admin/textlinkplugin.js']
 
 plugin_pool.register_plugin(LinkPlugin)

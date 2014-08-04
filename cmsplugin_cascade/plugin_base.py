@@ -12,7 +12,7 @@ class CascadePluginBase(CMSPluginBase):
     glossary_variables = []  # entries in glossary not handled by a form editor
 
     class Media:
-        css = {'all': ('admin/css/djangocms-cascade.css',)}
+        css = {'all': ('cascade/css/admin/editplugin.css',)}
 
     def _child_classes(self):
         """All registered plugins shall be allowed as children for this plugin"""

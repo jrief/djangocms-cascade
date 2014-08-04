@@ -58,7 +58,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     class Media:
         css = {'all': ('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css',)}
-        js = ['admin/js/cascade-containerplugin.js']
+        js = ['cascade/js/admin/containerplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):
