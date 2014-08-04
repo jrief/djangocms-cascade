@@ -2,7 +2,8 @@
 import json
 from django import forms
 from django.forms import fields
-from django.core.exceptions import ValidationError
+from django.db.models import get_model
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -14,6 +15,7 @@ class SelectSharedGlossary(forms.Select):
     def render_option(self, selected_choices, option_value, option_label):
         if option_value:
             glossary = self.choices.queryset.get(pk=option_value).glossary
+            self._enrich_link(glossary)
             data = format_html(' data-glossary="{0}"', json.dumps(glossary))
         else:
             data = mark_safe('')
@@ -27,6 +29,17 @@ class SelectSharedGlossary(forms.Select):
             selected_html = ''
         return format_html('<option value="{0}"{1}{2}>{3}</option>',
                            option_value, selected_html, data, force_text(option_label))
+
+    def _enrich_link(self, glossary):
+        """
+        Enrich the dict glossary['link'] with an identifier onto the model
+        """
+        try:
+            Model = get_model(*glossary['link']['model'].split('.'))
+            obj = Model.objects.get(pk=glossary['link']['pk'])
+            glossary['link'].update(identifier=str(obj))
+        except (KeyError, ObjectDoesNotExist):
+            pass
 
 
 class SharableCascadeForm(forms.ModelForm):

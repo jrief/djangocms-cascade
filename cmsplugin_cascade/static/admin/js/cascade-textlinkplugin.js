@@ -16,9 +16,11 @@ django.jQuery(function($) {
 			$('#id_link_type').prop('disabled', 'disabled');
 			this.toggleLinkTypes(glossary['link']['type']);
 			try {
+				$("#id_cms_page").select2("data", {id: glossary['link']['pk'], text: glossary['link']['identifier']});
 				$("#id_cms_page").select2('enable', false);
 			} catch(err) {
-				console.log(err);
+				$("#id_cms_page").val(glossary['link']['pk']);
+				$('#id_cms_page').prop('disabled', 'disabled');
 			}
 			$('#id_ext_url').val(glossary['link']['url']);
 			$('#id_ext_url').prop('disabled', 'disabled');
@@ -36,7 +38,7 @@ django.jQuery(function($) {
 			try {
 				$("#id_cms_page").select2('enable', true);
 			} catch(err) {
-				console.log(typeof err);
+				$('#id_cms_page').prop('disabled', '');
 			}
 			$('#id_ext_url').prop('disabled', '');
 			$('#id_mail_to').prop('disabled', '');
