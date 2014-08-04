@@ -4,11 +4,11 @@ from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.widgets import JSONMultiWidget
-from .models import SharedGlossary
+from .models import SharedGlossary, SharableCascadeElement
 
 
 class SharedGlossaryAdmin(admin.ModelAdmin):
-    list_display = ('identifier', 'plugin_type',)
+    list_display = ('identifier', 'plugin_type', 'used_by',)
 
     class Media:
         css = {'all': ('cascade/css/admin/editplugin.css',)}
@@ -40,8 +40,15 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context={}):
         obj = self.get_object(request, object_id)
-        extra_context['title'] = _('Change %s') % force_text(str(obj.plugin_type))
+        extra_context['title'] = _("Change %s") % force_text(str(obj.plugin_type))
         return super(SharedGlossaryAdmin, self).change_view(request, object_id,
             form_url, extra_context=extra_context)
+
+    def used_by(self, obj):
+        """
+        Returns the number of plugins using this shared glossary
+        """
+        return SharableCascadeElement.objects.filter(shared_glossary=obj).count()
+    used_by.short_description = _("Used by plugins")
 
 admin.site.register(SharedGlossary, SharedGlossaryAdmin)
