@@ -11,7 +11,6 @@ try:
     from .fields import PageSearchField as PageSelectFormField
 except ImportError:
     from cms.forms.fields import PageSelectFormField
-from .models import LinkElement
 
 
 class LinkForm(ModelForm):
@@ -27,7 +26,6 @@ class LinkForm(ModelForm):
     mail_to = fields.EmailField(required=False, label='', help_text=_("Open Email program with this address"))
 
     class Meta:
-        model = LinkElement
         fields = ('glossary',)
 
     def __init__(self, raw_data=None, *args, **kwargs):

@@ -13,11 +13,12 @@ from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.link.models import LinkElement
 from cmsplugin_cascade.link.forms import LinkForm
+from cmsplugin_cascade.link.models import LinkElementMixin
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
-from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
+from cmsplugin_cascade.sharable.models import SharableCascadeElement
 from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
+from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
 from .settings import CASCADE_BREAKPOINT_APPEARANCES
 
 
@@ -46,9 +47,9 @@ class PictureForm(LinkForm):
 
 
 @python_2_unicode_compatible
-class PictureElement(LinkElement):
+class PictureElement(LinkElementMixin, SharableCascadeElement):
     """
-    A proxy model for the ``<img>`` or ``<picture>`` element wrapped in an optional LinkElement.
+    A proxy model for the ``<img>`` or ``<picture>`` element wrapped in an sharable link element.
     """
     class Meta:
         proxy = True

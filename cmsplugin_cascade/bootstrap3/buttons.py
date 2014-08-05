@@ -9,8 +9,8 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
-from cmsplugin_cascade.link.models import LinkElement
 from cmsplugin_cascade.link.forms import TextLinkForm
+from cmsplugin_cascade.link.models import SimpleLinkElement
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 
 
@@ -47,7 +47,7 @@ class ButtonSizeRenderer(RadioFieldRenderer):
 class BootstrapButtonPlugin(LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
-    model = LinkElement
+    model = SimpleLinkElement
     form = TextLinkForm
     parent_classes = ['BootstrapColumnPlugin']
     render_template = 'cascade/bootstrap3/button.html'
