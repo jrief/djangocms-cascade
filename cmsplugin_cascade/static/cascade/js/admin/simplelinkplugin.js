@@ -1,5 +1,6 @@
 django.jQuery(function($) {
 	'use strict';
 
-	new django.cascade.LinkPlugin();
+	var LinkPlugin = django.cascade.LinkPluginBase;
+	new LinkPlugin();
 });

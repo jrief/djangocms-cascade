@@ -2,7 +2,7 @@
 django.jQuery(function($) {
 	'use strict';
 
-	var PicturePlugin = ring.create([django.cascade.LinkPlugin, django.cascade.SharableGlossary], {
+	var PicturePlugin = ring.create([django.cascade.LinkPluginBase, django.cascade.SharableGlossary], {
 		constructor: function() {
 			var self = this, $image_responsive = $('#id_glossary_image-shapes_0');
 			this.$super();

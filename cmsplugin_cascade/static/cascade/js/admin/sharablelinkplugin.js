@@ -2,7 +2,7 @@
 django.jQuery(function($) {
 	'use strict';
 
-	var TextLinkPlugin = ring.create([django.cascade.LinkPlugin, django.cascade.SharableGlossary], {
+	var LinkPlugin = ring.create([django.cascade.LinkPluginBase, django.cascade.SharableGlossary], {
 		constructor: function() {
 			// move the select box for Shared Glossary just after 'LinkContent'
 			$('.field-link_content').after($('.field-shared_glossary'));
@@ -50,5 +50,5 @@ django.jQuery(function($) {
 		}
 	});
 
-	new TextLinkPlugin();
+	new LinkPlugin();
 });

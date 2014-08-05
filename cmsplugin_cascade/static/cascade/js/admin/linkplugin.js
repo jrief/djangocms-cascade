@@ -5,7 +5,7 @@ django.cascade = django.cascade || {};
 django.jQuery(function($) {
 	'use strict';
 
-	django.cascade.LinkPlugin = ring.create({
+	django.cascade.LinkPluginBase = ring.create({
 		constructor: function() {
 			var self = this, $link_type = $("#id_link_type");
 			this.$super();
