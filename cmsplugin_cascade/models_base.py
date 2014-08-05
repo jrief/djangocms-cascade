@@ -71,6 +71,8 @@ class CascadeModelBase(CMSPlugin):
             if parent:
                 self._complete_glossary_cache = parent.get_complete_glossary()
             else:
+                # TODO: if https://github.com/divio/django-cms/issues/3284 will be fixed
+                # use self.placeholder.glossary as a starting point
                 self._complete_glossary_cache = {}
             self._complete_glossary_cache.update(self.glossary or {})
         return self._complete_glossary_cache
