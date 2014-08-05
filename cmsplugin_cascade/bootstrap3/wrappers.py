@@ -50,7 +50,8 @@ class HorizontalRulePlugin(BootstrapPluginBase):
     render_template = 'cms/plugins/single.html'
     glossary_fields = (
         PartialFormField('inline_styles',
-            MultipleCascadingSizeWidget(['margin-top', 'margin-bottom']),
+            MultipleCascadingSizeWidget(['margin-top', 'margin-bottom'],
+                allowed_units=['px', 'em'], required=False),
             label=_('Inline Styles'),
             help_text=_('Margins for this horizontal rule.')
         ),
