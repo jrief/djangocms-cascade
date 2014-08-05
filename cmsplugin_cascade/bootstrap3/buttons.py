@@ -50,7 +50,7 @@ class BootstrapButtonPlugin(LinkPluginBase):
     model = LinkElement
     form = TextLinkForm
     parent_classes = ['BootstrapColumnPlugin']
-    render_template = 'cms/bootstrap3/button.html'
+    render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
     text_enabled = True
     tag_type = None

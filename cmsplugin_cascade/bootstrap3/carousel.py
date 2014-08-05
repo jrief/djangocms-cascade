@@ -27,7 +27,7 @@ class CarouselPlugin(BootstrapPluginBase):
     default_css_class = 'carousel'
     default_css_attributes = ('options',)
     parent_classes = ['BootstrapColumnPlugin']
-    render_template = os.path.join('cms', CMS_CASCADE_TEMPLATE_DIR, 'carousel.html')
+    render_template = os.path.join(CMS_CASCADE_TEMPLATE_DIR, 'carousel.html')
     default_inline_styles = {'overflow': 'hidden'}
     fields = ('num_children', 'glossary',)
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}

@@ -10,7 +10,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
-from . import settings
+from .settings import CMS_CASCADE_TEMPLATE_DIR
 
 
 class PanelGroupForm(ManageChildrenFormMixin, ModelForm):
@@ -26,7 +26,7 @@ class PanelGroupPlugin(BootstrapPluginBase):
     default_css_class = 'panel-group'
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
-    render_template = os.path.join('cms', settings.CMS_CASCADE_TEMPLATE_DIR, 'collapse.html')
+    render_template = os.path.join(CMS_CASCADE_TEMPLATE_DIR, 'collapse.html')
     fields = ('num_children', 'glossary',)
 
     @classmethod

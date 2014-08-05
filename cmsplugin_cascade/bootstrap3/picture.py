@@ -78,7 +78,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     raw_id_fields = ('image_file',)
     text_enabled = True
     admin_preview = False
-    render_template = 'cms/bootstrap3/picture.html'
+    render_template = 'cascade/bootstrap3/picture.html'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
     fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),
