@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.common.forms import SharableGlossaryMixin
+from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
 from .models import LinkElement
 from .plugin_base import LinkPluginBase
 from .forms import TextLinkForm
