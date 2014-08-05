@@ -3,6 +3,7 @@ from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.common.forms import SharableGlossaryMixin
 from .models import LinkElement
 from .plugin_base import LinkPluginBase
@@ -31,6 +32,6 @@ class LinkPlugin(SharableGlossaryMixin, LinkPluginBase):
     require_parent = False
 
     class Media:
-        js = ['cascade/js/admin/linkplugin.js', 'cascade/js/admin/sharableglossary.js', 'cascade/js/admin/textlinkplugin.js']
+        js = resolve_dependencies('cascade/js/admin/textlinkplugin.js')
 
 plugin_pool.register_plugin(LinkPlugin)

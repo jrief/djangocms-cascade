@@ -12,6 +12,7 @@ from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.link.models import LinkElement
 from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
@@ -123,7 +124,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     sharable_fields = ('image-shapes', 'image-size', 'responsive-height', 'resize-options',)
 
     class Media:
-        js = ['cascade/js/admin/linkplugin.js', 'cascade/js/admin/sharableglossary.js', 'cascade/js/admin/pictureplugin.js']
+        js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
 
     def render(self, context, instance, placeholder):
         if 'img-responsive' in instance.glossary.get('image-shapes', []):
