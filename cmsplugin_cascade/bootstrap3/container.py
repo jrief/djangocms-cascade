@@ -216,10 +216,17 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        try:
-            width = int(string.replace(obj.glossary['xs-column-width'], 'col-xs-', ''))
+        parent_glossary = obj.get_parent().get_complete_glossary()
+        widths = []
+        for bp in parent_glossary.get('breakpoints', []):
+            width = string.replace(obj.glossary.get('{0}-column-width'.format(bp), ''), 'col-{0}-'.format(bp), '')
+            if width:
+                widths.append(width)
+        if len(widths) > 1:
+            return _('widths: {0} units').format(' / '.join(widths))
+        elif len(widths) == 1:
+            width = int(widths[0])
             return ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
-        except (TypeError, KeyError, ValueError):
-            return _('unknown width')
+        return _('unknown width')
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
