@@ -172,9 +172,10 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     self.glossary_fields.append(PartialFormField('{0}-column-offset'.format(bp),
                         widgets.Select(choices=choices), label=label, help_text=help_text))
                 self.glossary_fields.append(PartialFormField('{0}-responsive-utils'.format(bp),
-                    widgets.CheckboxSelectMultiple(choices=(('visible-{0}'.format(bp), _("Visible")),
-                                                            ('hidden-{0}'.format(bp), _("Hidden")),)),
-                    label=_("Responsive utilities for {2}").format(*desc)
+                    widgets.RadioSelect(choices=(('', _("Default")), ('visible-{0}'.format(bp), _("Visible")), ('hidden-{0}'.format(bp), _("Hidden")),)),
+                    label=_("Responsive utilities for {2}").format(*desc),
+                    initial='',
+                    help_text=_("Utility classes for showing and hiding content by device via media query.")
                 ))
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
