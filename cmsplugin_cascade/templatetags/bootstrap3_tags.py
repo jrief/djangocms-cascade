@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import template
 from menus.menu_pool import menu_pool
-from classytags.arguments import StringArgument, Argument
+from classytags.arguments import IntegerArgument, StringArgument, Argument
 from classytags.helpers import InclusionTag
 from classytags.core import Options
 from menus.templatetags.menu_tags import flatten, remove
@@ -91,3 +91,33 @@ class MainMenuBelowId(MainMenu):
     )
 
 register.tag(MainMenuBelowId)
+
+
+class Paginator(InclusionTag):
+    name = 'paginator'
+    template = 'cascade/bootstrap3/paginator.html'
+
+    options = Options(
+        IntegerArgument('page_range', default=5, required=False),
+        StringArgument('template', default=None, required=False),
+    )
+
+    def get_context(self, context, page_range, template):
+        try:
+            current_page = int(context['request'].GET['page'])
+        except (KeyError, TypeError):
+            current_page = 1
+        page_range -= 1
+        paginator = context.get('paginator')
+        first_page = max(1, min(current_page - page_range / 2, paginator.num_pages - page_range))
+        last_page = min(first_page + page_range, paginator.num_pages)
+        template = template or self.template
+        context.update({
+            'template': template,
+            'pages': [{'num': p, 'active': p == current_page} for p in range(first_page, last_page + 1)],
+            'laquo': {'num': first_page - 1, 'paginate': first_page > 1},
+            'raquo': {'num': last_page + 1, 'paginate': last_page < paginator.num_pages},
+        })
+        return context
+
+register.tag(Paginator)
