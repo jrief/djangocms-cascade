@@ -9,6 +9,7 @@ from .models import SharedGlossary, SharableCascadeElement
 
 class SharedGlossaryAdmin(admin.ModelAdmin):
     list_display = ('identifier', 'plugin_type', 'used_by',)
+    list_filter = ('plugin_type',)
 
     class Media:
         css = {'all': ('cascade/css/admin/editplugin.css',)}
