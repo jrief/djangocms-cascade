@@ -105,7 +105,7 @@ class Paginator(InclusionTag):
     def get_context(self, context, page_range, template):
         try:
             current_page = int(context['request'].GET['page'])
-        except (KeyError, TypeError):
+        except (KeyError, ValueError):
             current_page = 1
         page_range -= 1
         paginator = context.get('paginator')
@@ -114,6 +114,8 @@ class Paginator(InclusionTag):
         template = template or self.template
         context.update({
             'template': template,
+            'show_paginator': paginator.num_pages > 1,
+            'show_aquos': paginator.num_pages > page_range + 1,
             'pages': [{'num': p, 'active': p == current_page} for p in range(first_page, last_page + 1)],
             'laquo': {'num': first_page - 1, 'paginate': first_page > 1},
             'raquo': {'num': last_page + 1, 'paginate': last_page < paginator.num_pages},
