@@ -20,6 +20,10 @@ def cut_levels(nodes, start_level):
             # remove and ignore nodes that don't have level information
             remove(node, removed)
             continue
+        if node.attr.get('soft_root', False):
+            # remove and ignore nodes that are behind a node marked as 'soft_root'
+            remove(node, removed)
+            continue
         if node.level == start_level:
             # turn nodes that are on from_level into root nodes
             final.append(node)
