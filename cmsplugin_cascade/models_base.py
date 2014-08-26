@@ -8,6 +8,7 @@ from django.utils.html import mark_safe, format_html_join
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
+from cms.utils.placeholder import get_placeholder_conf
 
 
 @python_2_unicode_compatible
@@ -71,9 +72,10 @@ class CascadeModelBase(CMSPlugin):
             if parent:
                 self._complete_glossary_cache = parent.get_complete_glossary()
             else:
-                # TODO: if https://github.com/divio/django-cms/issues/3284 will be fixed
-                # use self.placeholder.glossary as a starting point
-                self._complete_glossary_cache = {}
+                # use self.placeholder.glossary as the starting dictionary
+                template = self.placeholder.page and self.placeholder.page.template or None
+                self._complete_glossary_cache = get_placeholder_conf('glossary',
+                    self.placeholder.slot, template=template, default={})
             self._complete_glossary_cache.update(self.glossary or {})
         return self._complete_glossary_cache
 

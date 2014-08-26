@@ -16,7 +16,7 @@ class CascadePluginBase(CMSPluginBase):
 
     def _child_classes(self):
         """All registered plugins shall be allowed as children for this plugin"""
-        if self._cached_child_classes is not None:
+        if getattr(self, '_cached_child_classes', None) is not None:
             return self._cached_child_classes
         self._cached_child_classes = list(getattr(self, 'generic_child_classes', [])) or []
         for p in plugin_pool.get_all_plugins():
@@ -33,7 +33,6 @@ class CascadePluginBase(CMSPluginBase):
             self.glossary_fields = glossary_fields
         elif not hasattr(self, 'glossary_fields'):
             self.glossary_fields = []
-        self._cached_child_classes = None
 
     @classmethod
     def get_identifier(cls, model):
