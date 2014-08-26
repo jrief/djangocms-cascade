@@ -29,7 +29,7 @@ class LinkElementMixin(object):
             if self._link_model:
                 return self._link_model.get_absolute_url()
         if linktype == 'exturl':
-            return link['url']
+            return '{url}'.format(**link)
         if linktype == 'email':
             return 'mailto:{email}'.format(**link)
         return link.get(linktype, '')
@@ -47,3 +47,8 @@ class SimpleLinkElement(LinkElementMixin, CascadeElement):
 class SharableLinkElement(LinkElementMixin, SharableCascadeElement):
     class Meta:
         proxy = True
+
+    @property
+    def link(self):
+        # TODO: fetch from shared glossary, if that exists
+        return super(SharableLinkElement, self).link
