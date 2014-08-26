@@ -26,7 +26,7 @@ class LinkPluginBase(CascadePluginBase):
 class TextLinkPluginBase(LinkPluginBase):
     name = _("Link")
     form = TextLinkForm
-    render_template = "cms/plugins/link.html"
+    render_template = 'cascade/plugins/link.html'
     text_enabled = True
     allow_children = False
     parent_classes = None
