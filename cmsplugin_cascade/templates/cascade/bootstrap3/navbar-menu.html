@@ -2,7 +2,7 @@
 {% for child in children %}
 <li class="{% if child.selected or child.ancestor %}active{% endif %}{% if child.children %} dropdown{% endif %}">
 	{% if child.children %}
-	<a href="{{ child.get_absolute_url }}" class="dropdown" data-toggle="dropdown">{{ child.get_menu_title }} <b class="caret"></b></a>
+	<a href="{{ child.get_absolute_url }}" class="dropdown-toggle" data-toggle="dropdown">{{ child.get_menu_title }} <b class="caret"></b></a>
 	<ul class="dropdown-menu">
 		{% if child.visible %}
 		<li class="{% if child.selected %}active{% endif %}">
