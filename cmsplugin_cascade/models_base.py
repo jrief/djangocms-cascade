@@ -70,12 +70,12 @@ class CascadeModelBase(CMSPlugin):
         if not hasattr(self, '_complete_glossary_cache'):
             parent = self.get_parent()
             if parent:
-                self._complete_glossary_cache = parent.get_complete_glossary()
+                parent_glossary = parent.get_complete_glossary()
             else:
                 # use self.placeholder.glossary as the starting dictionary
                 template = self.placeholder.page and self.placeholder.page.template or None
-                self._complete_glossary_cache = get_placeholder_conf('glossary',
-                    self.placeholder.slot, template=template, default={})
+                parent_glossary = get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
+            self._complete_glossary_cache = parent_glossary.copy()
             self._complete_glossary_cache.update(self.glossary or {})
         return self._complete_glossary_cache
 
