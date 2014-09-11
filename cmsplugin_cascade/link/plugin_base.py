@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.forms import widgets
+from django.utils.translation import ugettext_lazy as _
 from django.db.models import get_model
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from .forms import TextLinkForm
@@ -21,6 +20,25 @@ class LinkPluginBase(CascadePluginBase):
         ),
     )
     html_tag_attributes = {'target': 'target'}
+
+    @classmethod
+    def get_link(cls, obj):
+        link = obj.glossary.get('link', {})
+        linktype = link.get('type')
+        if linktype == 'exturl':
+            return '{url}'.format(**link)
+        if linktype == 'email':
+            return 'mailto:{email}'.format(**link)
+        # otherwise try to resolve by model
+        if 'model' in link and 'pk' in link:
+            if not hasattr(obj, '_link_model'):
+                Model = get_model(*link['model'].split('.'))
+                try:
+                    obj._link_model = Model.objects.get(pk=link['pk'])
+                except ObjectDoesNotExist:
+                    obj._link_model = None
+            if obj._link_model:
+                return obj._link_model.get_absolute_url()
 
 
 class TextLinkPluginBase(LinkPluginBase):
