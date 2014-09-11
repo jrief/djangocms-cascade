@@ -82,15 +82,20 @@ class CarouselPlugin(BootstrapPluginBase):
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
-        if obj:
-            # fill all unset maximum heights for this container to meaningful values
-            breakpoints = obj.get_complete_glossary().get('breakpoints', CASCADE_BREAKPOINTS_LIST)
-            max_height = max(obj.glossary['container_max_heights'].values())
-            for bp in breakpoints:
-                if not obj.glossary['container_max_heights'][bp]:
-                    obj.glossary['container_max_heights'][bp] = max_height
         super(CarouselPlugin, self).save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, CarouselSlidePlugin)
+
+    @classmethod
+    def sanitize_model(cls, obj):
+        sanitized = super(CarouselPlugin, cls).sanitize_model(obj)
+        complete_glossary = obj.get_complete_glossary()
+        # fill all unset maximum heights for this container to meaningful values
+        breakpoints = complete_glossary.get('breakpoints', CASCADE_BREAKPOINTS_LIST)
+        max_height = max(obj.glossary['container_max_heights'].values())
+        for bp in breakpoints:
+            if not obj.glossary['container_max_heights'][bp]:
+                obj.glossary['container_max_heights'][bp] = max_height
+        return sanitized
 
 plugin_pool.register_plugin(CarouselPlugin)
 
