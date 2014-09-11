@@ -83,7 +83,7 @@ class CascadePluginBase(CMSPluginBase):
     def sanitize_model(cls, obj):
         """
         This method is called, before the model is written to the database. It can be overloaded
-        to sanitize your the current models, in case a parent model changed in a way, which might
+        to sanitize the current models, in case a parent model changed in a way, which might
         affect this plugin.
         This method shall return ``True``, in case a model change was necessary, otherwise it shall
         return ``False`` to prevent a useless database update.

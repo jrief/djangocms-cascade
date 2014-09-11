@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.forms import widgets
 from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
