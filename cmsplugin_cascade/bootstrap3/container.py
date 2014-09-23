@@ -67,7 +67,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         if container_max_widths:
             values = container_max_widths.values()
             return _("ranging from {0} through {1} pixels").format(min(values), max(values))
-        return six.u('')
+        return ''
 
     def save_model(self, request, obj, form, change):
         widest = CASCADE_BREAKPOINTS_LIST.index(obj.glossary['widest'])
