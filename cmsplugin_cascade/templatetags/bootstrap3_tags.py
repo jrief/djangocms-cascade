@@ -112,18 +112,19 @@ class Paginator(InclusionTag):
         except (KeyError, ValueError):
             current_page = 1
         page_range -= 1
-        paginator = context.get('paginator')
-        first_page = max(1, min(current_page - page_range / 2, paginator.num_pages - page_range))
-        last_page = min(first_page + page_range, paginator.num_pages)
         template = template or self.template
-        context.update({
-            'template': template,
-            'show_paginator': paginator.num_pages > 1,
-            'show_aquos': paginator.num_pages > page_range + 1,
-            'pages': [{'num': p, 'active': p == current_page} for p in range(first_page, last_page + 1)],
-            'laquo': {'num': first_page - 1, 'paginate': first_page > 1},
-            'raquo': {'num': last_page + 1, 'paginate': last_page < paginator.num_pages},
-        })
+        context.update({'template': template})
+        paginator = context.get('paginator')
+        if paginator:
+            first_page = max(1, min(current_page - page_range / 2, paginator.num_pages - page_range))
+            last_page = min(first_page + page_range, paginator.num_pages)
+            context.update({
+                'show_paginator': paginator.num_pages > 1,
+                'show_aquos': paginator.num_pages > page_range + 1,
+                'pages': [{'num': p, 'active': p == current_page} for p in range(first_page, last_page + 1)],
+                'laquo': {'num': first_page - 1, 'paginate': first_page > 1},
+                'raquo': {'num': last_page + 1, 'paginate': last_page < paginator.num_pages},
+            })
         return context
 
 register.tag(Paginator)
