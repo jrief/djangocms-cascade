@@ -1,6 +1,6 @@
 djangocms-cascade
 =================
-**DjangoCMS-Cascade** Version 0.3.2 is the latest stable release. The upcoming new release is available under the 0.4.0 branch. It adds a huge amount of new features and has a much cleaner code base. If you start with cascade, please start with the new branch.
+**DjangoCMS-Cascade** Version 0.3.2 is the latest stable release. The upcoming new release is available under the 0.4.0 branch. It adds a huge amount of new features and has a much cleaner code base. If you start with **djangocms-cascade**, please start with the new branch.
 
 When I find some time, I'll adopt the documentation and the unit tests. In my current projects, version 0.4.0 is already heavily used.
 
