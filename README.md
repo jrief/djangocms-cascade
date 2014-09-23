@@ -1,7 +1,8 @@
 djangocms-cascade
 =================
-**DjangoCMS-Cascade** is the successor of **DjangoCMS-Bootstrap** which is still available under
-this [repository branch](https://github.com/jrief/djangocms-cascade/tree/bootstrap-2.3.2).
+**DjangoCMS-Cascade** Version 0.3.2 is the latest stable release. The upcoming new release is available under the 0.4.0 branch. It adds a huge amount of new features and has a much cleaner code base. If you start with cascade, please start with the new branch.
+
+When I find some time, I'll adopt the documentation and the unit tests. In my current projects, version 0.4.0 is already heavily used.
 
 Add DOM elements to a Django-CMS placeholder
 ---------------------------------------------
