@@ -92,6 +92,14 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
+class BootstrapContainerFluidPlugin(BootstrapPluginBase):
+    name = _("Container (Fluid)")
+    default_css_class = 'container-fluid'
+    require_parent = False
+
+plugin_pool.register_plugin(BootstrapContainerFluidPlugin)
+
+
 class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
     """
     Form class to add non-materialized field to count the number of children.
@@ -105,7 +113,7 @@ class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
 class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
-    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapContainerFluidPlugin', 'BootstrapColumnPlugin']
     form = BootstrapRowForm
     fields = ('num_children', 'glossary',)
     glossary_fields = (
