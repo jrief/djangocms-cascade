@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import six
 import string
 import itertools
 from django.forms import widgets
@@ -29,7 +28,6 @@ class ContainerRadioFieldRenderer(RadioFieldRenderer):
 
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
-    default_css_class = 'container'
     require_parent = False
     WIDGET_CHOICES_WIDEST = (
         ('lg', _("Large (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['lg']))),
@@ -54,6 +52,11 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             label=_('Narrowest Display'), initial='xs',
             help_text=_("Narrowest supported display for Bootstrap's grid system.")
         ),
+        PartialFormField('fluid',
+            widgets.CheckboxInput(),
+            label=_('Fluid Container'), initial=False,
+            help_text=_("Changing your outermost '.container' to '.container-fluid'.")
+        ),
     )
     glossary_variables = ['container_max_widths']
 
@@ -64,10 +67,20 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         container_max_widths = obj.glossary.get('container_max_widths')
+        fluid = obj.glossary.get('fluid') and '(fluid) ' or ''
         if container_max_widths:
             values = container_max_widths.values()
-            return _("ranging from {0} through {1} pixels").format(min(values), max(values))
-        return ''
+            return _("{0}ranging from {1} through {2} pixels").format(fluid, min(values), max(values))
+        return fluid
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = super(BootstrapContainerPlugin, cls).get_css_classes(obj)
+        if obj.glossary.get('fluid'):
+            css_classes.append('container-fluid')
+        else:
+            css_classes.append('container')
+        return css_classes
 
     def save_model(self, request, obj, form, change):
         widest = CASCADE_BREAKPOINTS_LIST.index(obj.glossary['widest'])
