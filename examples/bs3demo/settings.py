@@ -7,14 +7,14 @@ PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SITE_ID = 1
 
-ROOT_URLCONF = 'bootstrap3.urls'
+ROOT_URLCONF = 'bs3demo.urls'
 
 SECRET_KEY = 'secret'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'bootstrap3/database.sqlite',
+        'NAME': 'bs3demo/database.sqlite',
     },
 }
 
@@ -36,12 +36,12 @@ INSTALLED_APPS = (
     'south',
     'filer',
     'easy_thumbnails',
-    'djangocms_link',
-    'cmsplugin_filer_file',  # alternative to 'cms.plugins.file'
-    'cmsplugin_filer_folder',
-    'cmsplugin_filer_image',  # alternative to 'cms.plugins.picture'
+    #'djangocms_link',
+    #'cmsplugin_filer_file',  # alternative to 'cms.plugins.file'
+    #'cmsplugin_filer_folder',
+    #'cmsplugin_filer_image',  # alternative to 'cms.plugins.picture'
     'sekizai',
-    'bootstrap3',
+    'bs3demo',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -82,7 +82,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'cms.context_processors.media',
     'sekizai.context_processors.sekizai',
-    'bootstrap3.context_processors.cascade',
+    'cmsplugin_cascade',
+    #'cmsplugin_cascade.link',
+    'cmsplugin_cascade.sharable',
+    #'bootstrap3.context_processors.cascade',
 )
 
 # List of callables that know how to import templates from various sources.
@@ -132,7 +135,7 @@ CMS_PLACEHOLDER_CONF = {
     },
 }
 
-CMS_CASCADE_PLUGINS = ('bootstrap3',)
+CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
