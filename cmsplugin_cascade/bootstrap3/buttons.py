@@ -16,6 +16,9 @@ from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):
+    """
+    Render sample buttons in different colors in the button's backend editor.
+    """
     BUTTON_TYPES = SortedDict((('btn-default', _('Default')), ('btn-primary', _('Primary')),
         ('btn-success', _('Success')), ('btn-info', _('Info')), ('btn-warning', _('Warning')),
         ('btn-danger', _('Danger')), ('btn-link', _('Link')),))
@@ -30,6 +33,9 @@ class ButtonTypeRenderer(RadioFieldRenderer):
 
 
 class ButtonSizeRenderer(RadioFieldRenderer):
+    """
+    Render sample buttons in different sizes in the button's backend editor.
+    """
     BUTTON_SIZES = SortedDict((('btn-lg', _('Large')), ('', _('Default')), ('btn-sm', _('Small')),
         ('btn-xs', _('Extra small')),))
 
