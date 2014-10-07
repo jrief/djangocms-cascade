@@ -3,7 +3,7 @@ DEBUG = True
 
 SITE_ID = 1
 
-ROOT_URLCONF = 'bootstrap3.urls'
+ROOT_URLCONF = 'bs3demo.urls'
 
 SECRET_KEY = 'secret'
 
@@ -23,10 +23,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'cmsplugin_cascade',
+    'cmsplugin_cascade.sharable',
     'cms',
     'menus',
     'mptt',
-    'bootstrap3',
+    'bs3demo',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -60,4 +61,4 @@ TEMPLATE_LOADERS = (
 
 USE_I18N = False
 
-CMS_CASCADE_PLUGINS = ('bootstrap3',)
+CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
