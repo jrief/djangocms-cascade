@@ -91,7 +91,7 @@ class CascadeModelBase(CMSPlugin):
 
     def save(self, sanitize_only=False, *args, **kwargs):
         """
-        A hook which let the plugin instance sanitize to current object model while saving it.
+        A hook which let the plugin instance sanitize the current object model while saving it.
         With ``sanitize_only=True``, the current model object only is saved when the method
         ``sanitize_model()`` from the corresponding plugin actually changed the glossary.
         """
