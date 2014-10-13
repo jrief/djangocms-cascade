@@ -27,7 +27,7 @@ INSTALLED_APPS = (
     'cms',
     'menus',
     'mptt',
-    'bs3demo',
+    'bs3demo.tests',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -60,5 +60,9 @@ TEMPLATE_LOADERS = (
 )
 
 USE_I18N = False
+
+CMS_TEMPLATES = (
+    ('main.html', 'Default Page'),
+)
 
 CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
