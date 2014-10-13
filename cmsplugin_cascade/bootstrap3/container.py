@@ -83,8 +83,8 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         return css_classes
 
     def save_model(self, request, obj, form, change):
-        widest = CASCADE_BREAKPOINTS_LIST.index(obj.glossary['widest'])
-        narrowest = CASCADE_BREAKPOINTS_LIST.index(obj.glossary['narrowest'])
+        widest = CASCADE_BREAKPOINTS_LIST.index(form.cleaned_data['glossary']['widest'])
+        narrowest = CASCADE_BREAKPOINTS_LIST.index(form.cleaned_data['glossary']['narrowest'])
         breakpoints = [bp for i, bp in enumerate(CASCADE_BREAKPOINTS_LIST) if i <= widest and i >= narrowest]
         obj.glossary.update(breakpoints=breakpoints)
         super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
@@ -137,7 +137,12 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
-        child_glossary = {'xs-column-width': 'col-xs-{0}'.format(12 // wanted_children)}
+        parent_glossary = obj.get_complete_glossary()
+        column_width = 12 // wanted_children
+        child_glossary = {
+            '{narrowest}-column-width'.format(**parent_glossary):
+                'col-{narrowest}-{0}'.format(column_width, **parent_glossary)
+        }
         self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
@@ -147,7 +152,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
     generic_child_classes = CMS_CASCADE_LEAF_PLUGINS
-    default_css_attributes = list(itertools.chain(*(('{0}-column-width'.format(s), '{0}-responsive-utils'.format(s),) for s in CASCADE_BREAKPOINTS_LIST)))
+    default_css_attributes = list(itertools.chain(
+        *(('{0}-column-width'.format(s), '{0}-column-offset'.format(s), '{0}-responsive-utils'.format(s),)
+          for s in CASCADE_BREAKPOINTS_LIST)))
     glossary_variables = ['container_max_widths']
 
     def get_form(self, request, obj=None, **kwargs):
@@ -200,7 +207,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = super(BootstrapColumnPlugin, cls).sanitize_model(obj)
-        parent_glossary = obj.get_parent().get_complete_glossary()
+        parent_glossary = obj.get_complete_glossary()
         column_units = 12
         obj.glossary['container_max_widths'] = {}
         for bp in CASCADE_BREAKPOINTS_LIST:
@@ -214,23 +221,23 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         obj.glossary[width_key] = 'col-{0}-{1}'.format(bp, column_units)
                         sanitized = True
                     column_units = int(width_val)
+                new_width = parent_glossary['container_max_widths'][bp] * column_units / 12
+                if new_width != obj.glossary['container_max_widths'].get(bp):
+                    obj.glossary['container_max_widths'][bp] = new_width
+                    sanitized = True
             else:
-                # remove obsolete entries from glossary
+                # remove obsolete entries from own glossary
                 if width_key in obj.glossary:
                     del obj.glossary[width_key]
                     sanitized = True
                 if offset_key in obj.glossary:
                     del obj.glossary[offset_key]
                     sanitized = True
-            new_width = parent_glossary['container_max_widths'][bp] * column_units / 12
-            if new_width != obj.glossary['container_max_widths'].get(bp):
-                obj.glossary['container_max_widths'][bp] = new_width
-                sanitized = True
         return sanitized
 
     @classmethod
     def get_identifier(cls, obj):
-        parent_glossary = obj.get_parent().get_complete_glossary()
+        parent_glossary = obj.get_complete_glossary()
         widths = []
         for bp in parent_glossary.get('breakpoints', []):
             width = string.replace(obj.glossary.get('{0}-column-width'.format(bp), ''), 'col-{0}-'.format(bp), '')
