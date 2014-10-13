@@ -27,4 +27,4 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
- - cd examples && ./manage.py test bootstrap3 --settings=bootstrap3.tests.settings
+ - cd examples && ./manage.py test bs3demo --settings=bs3demo.tests.settings
