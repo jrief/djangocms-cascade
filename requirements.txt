@@ -1,3 +1,4 @@
+django==1.6.7
 transifex-client
 -e git+https://github.com/jrief/django-cms.git@develop#egg=django-cms
 django-mptt

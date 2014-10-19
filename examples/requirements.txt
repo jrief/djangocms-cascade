@@ -1,4 +1,4 @@
 django-cms
 django-mptt
+django-pytest
 jsonfield
-

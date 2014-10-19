@@ -30,7 +30,7 @@ Contents:
   installation
   demo
   tutorial-bs3
-  tutorial-gs960
+  bs3-grid
   customized-plugins
   history
 
