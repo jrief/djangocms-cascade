@@ -14,7 +14,7 @@ Project's goals
 #. Create a modular system, which allows programmers to add simple widget code, without having to
    implement an extra Django-CMS_ plugins for each of them.
 
-#. Make available a meaningful subset of widgets as available for the mode common CSS frameworks,
+#. Make available a meaningful subset of widgets as available for the most common CSS frameworks,
    such as `Twitter Bootstrap`_ and `Grid System 960`_. With this special **DjangoCMS Plugin**, in
    many configurations, **DjangoCMS** can be operated using one single template, containing one
    generic placeholder.
@@ -30,6 +30,8 @@ Contents:
   installation
   demo
   tutorial-bs3
+  link-plugin
+  sharable-content
   bs3-grid
   customized-plugins
   history

@@ -1,16 +1,13 @@
-.. _installation_and_configuration:
+.. _installation:
 
 ============
 Installation
 ============
 
-Install pandoc_ dependency on your system. It is required to convert **Markdown** into
-**reStructured** text.
+A strong recommendation is to use
 
-A strong recommendation is to
-
-Use pip together with virtualenv
---------------------------------
+pip with virtualenv
+-------------------
 
 .. code-block:: bash
 
@@ -20,38 +17,45 @@ Use pip together with virtualenv
 	source myvirtualenv/bin/activate
 	(myvirtualenv)$ 
 
-Install the latest stable release::
+Install the latest stable release
+
+.. code-block:: bash
 
 	$ pip install djangocms-cascade
 
-or the current development release from github::
+or the current development release from github
+
+.. code-block:: bash
 
 	$ pip install -e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
 
 Remember to download the CSS and Javascript files for the preferred CSS framework and place them
-into the folders ``static/css`` and ``static/js`` of the project's tree. Alternatively refer them
+into the folders ``static/css`` and ``static/js`` of the project's tree. Alternatively refer them,
 using a Content Delivery Network.
 
 .. note:: For simplicity, this configuration assumes, that the Bootstrap framework is used. In case
-          another CSS is used, please adopt some of the proposed settings accordingly.
+          another CSS shall be used, adopt the proposed settings accordingly.
 
 Dependencies
 ------------
-* Django_ >=1.5
-* DjangoCMS_ >=3.0
+* Django_ >=1.6
+* DjangoCMS_ >=3.0.5
 
 Update the database schema
 --------------------------
-run::
 
-  ./manage.py migrate cmsplugin_cascade
+.. code-block:: bash
 
-this adds a single table named ``cmsplugin_cascadeelement`` to the database.
+	./manage.py migrate cmsplugin_cascade
+
 
 Configuration
 =============
-Add ``'cmsplugin_cascade'`` to the list of ``INSTALLED_APPS`` in the project’s ``settings.py``
-file. Make sure that this entry is located before the entry ``cms``.
+
+Add ``'cmsplugin_cascade'`` and optionally ``'cmsplugin_cascade.sharable'`` to the list of
+``INSTALLED_APPS`` in the project’s ``settings.py`` file. Make sure that this entry is located
+before the entry ``cms``.
+
 
 Activate the CMS plugin
 -----------------------
@@ -61,34 +65,50 @@ Activate the CMS plugin
 	INSTALLED_APPS = (
 	    ...
 	    'cmsplugin_cascade',
-	    'cmsplugin_cascade.link',  # recommended
-	    'cmsplugin_cascade.image',  # optionally
+	    'cmsplugin_cascade.sharable',  # optionally, if a plugin uses sharable content
 	    'cms',
 	    ...
 	)
 
+
 Activate the plugins
 --------------------
 
-By default, all **djangocms-cascase** plugins are deactivated. They must explicitly be activated
-using the directive ``CMS_CASCADE_PLUGINS`` in ``settings.py``. To activate all available Bootstrap
-plugins, use:
+By default, no **djangocms-cascade** plugins is activated. Activate them in the project’s
+``settings.py`` with the directive ``CMS_CASCADE_PLUGINS``.
+
+To activate all available Bootstrap plugins, use:
 
 .. code-block:: python
 
-	CMS_CASCADE_PLUGINS = ('link', 'bootstrap3',)
+	CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
 
-If for some reason, only a subset of these plugins shall be activated, name each of them. For
-example:
+A useful generic plugin is the Link-plugin. It replaces the djangocms-link_-plugin, normally used
+together with the CMS.
 
 .. code-block:: python
 
-	CMS_CASCADE_PLUGINS = ('link', 'bootstrap3.container',)
+	CMS_CASCADE_PLUGINS += ('cmsplugin_cascade.link.simple',)
 
-only activates the ``LinkPlugin`` and the Bootstrap's grid system.
+an alternative to the simple link is the sharable link:
+
+	CMS_CASCADE_PLUGINS += ('cmsplugin_cascade.link.sharable',)
+
+A sharable link is one, which remembers its settings to be shared among other sharable Link plugins.
+More about sharable content in the specially named section.
+
+If for some reason, only a subset of these plugins shall be activated, name each of them. If for
+example only the Bootstrap grid system shall be used, but no other Bootstrap plugins, then
+configure:
+
+.. code-block:: python
+
+	CMS_CASCADE_PLUGINS = (''cmsplugin_cascade.bootstrap3.container',)
+
 
 Restrict plugins to a particular placeholder
 --------------------------------------------
+
 This setting is optional, but strongly recommended. It exclusively restricts the plugin
 ``BootstrapContainerPlugin`` to the placeholder ``Page Content`` (see below)
 
@@ -103,8 +123,10 @@ This setting is optional, but strongly recommended. It exclusively restricts the
 If this setting is omitted, then one can add any plugin to the named placeholder, which normally is
 undesired, because it can break the page's grid.
 
+
 Define the leaf plugins
 -----------------------
+
 Leaf plugins are those, which contain real data, say text or images. Hence the default setting
 is to allow the **TextPlugin** and the **FilerImagePlugin** as leafs. This can be overridden using
 the configuration directive
@@ -113,40 +135,37 @@ the configuration directive
 
 	CMS_CASCADE_LEAF_PLUGINS = ('TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin',)
 
-Configure the Bootstrap 3 Framework
------------------------------------
 
-To replace Bootstrap's jQuery code against `Angular UI Bootstrap`_, add 
+Bootstrap 3 with AngularJS
+--------------------------
 
-.. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/
+To replace Bootstrap's jQuery code against the very popular `Angular UI Bootstrap`_, add 
 
 .. code-block:: python
 
-	CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR = 'angular_bootstrap3'
+	CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR = 'cascade/angular-ui'
 
 to your ``settings.py``. This will load the rendering templates created for AngularJS from a
 different directory.
 
-If you plan to only support small mobile devices, consider to reduce the choice overhead by adding
-
-	CMS_CASCADE_BOOTSTRAP3_BREAKPOINT = 'xs'
-
-to your ``settings.py``.
-
 Configure the 960.gs Framework
-------------------------------
+==============================
 
 Currently the 960.gs framework has no meaningful user settings.
 
 
 Template Customization
 ======================
+
 Make sure that the style sheets are referenced correctly by the used templates. Django-CMS uses 
 Django-Sekizai_ to organize these includes, so a strong recommendation is to use that tool.
 
 The templates used for a Django-CMS project shall include a header, footer and the menu bar, but
 should leave out an empty working area. When using HTML5, wrap this area into an ``<article>`` or
-``<section>`` element. This placeholder can use a generic, meaningless name, say "Page Content"::
+``<section>`` element. This placeholder shall be named using a meaningless identifier, for instance
+"Page Content" or similar:
+
+.. code-block:: html
 
 	<section>{% placeholder "Page Content" %}</section>
 
@@ -156,7 +175,7 @@ template coding anymore.
 .. _github: https://github.com/jrief/djangocms-cascade
 .. _Django: http://djangoproject.com/
 .. _DjangoCMS: https://www.django-cms.org/
-.. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/
+.. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/
 .. _pip: http://pypi.python.org/pypi/pip
 .. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/
-.. _pandoc: http://johnmacfarlane.net/pandoc/
+.. _djangocms-link: https://github.com/divio/djangocms-link
