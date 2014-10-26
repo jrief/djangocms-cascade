@@ -15,7 +15,7 @@ class SharedGlossary(models.Model):
     class Meta:
         app_label = 'cmsplugin_cascade'
         unique_together = ('plugin_type', 'identifier')
-        verbose_name = _("Shared between Plugins")
+        verbose_name_plural = verbose_name = _("Shared between Plugins")
 
     plugin_type = models.CharField(_("Plugin Name"), max_length=50, db_index=True, editable=False)
     identifier = models.CharField(_("Identifier"), max_length=50, unique=True)
