@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
+from django import forms
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
@@ -11,8 +12,9 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     list_display = ('identifier', 'plugin_type', 'used_by',)
     list_filter = ('plugin_type',)
 
-    class Media:
-        css = {'all': ('cascade/css/admin/editplugin.css',)}
+    def get_fieldsets(self, request, obj=None):
+        """Return the fieldsets from associated plugin"""
+        return getattr(self._plugin, 'sharable_fieldsets', [])
 
     def get_form(self, request, obj=None, **kwargs):
         """
@@ -20,19 +22,17 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         edit the content inside the model field `glossary`. The layout and validation for these
         dynamic fields is borrowed from the corresponding plugin.
         """
-        try:
-            plugin = plugin_pool.get_plugin(obj.plugin_type)
-            shared_glossary_fields = [field for field in plugin.glossary_fields if field.name in plugin.sharable_fields]
-        except AttributeError:
-            shared_glossary_fields = []
-        else:
-            kwargs.update(widgets={'glossary': JSONMultiWidget(shared_glossary_fields)}, labels={'glossary': ''})
+        self._plugin = plugin_pool.get_plugin(obj.plugin_type)
+        sharable_fields = getattr(self._plugin, 'sharable_fields', [])
+        glossary_fields = [field for field in self._plugin.glossary_fields if field.name in sharable_fields]
+        kwargs.update(widgets={'glossary': JSONMultiWidget(glossary_fields)}, labels={'glossary': ''})
+        if hasattr(self._plugin, 'sharable_form'):
+            kwargs.update(form=self._plugin.sharable_form)
         form = super(SharedGlossaryAdmin, self).get_form(request, obj, **kwargs)
         # help_text can not be cleared using an empty string in modelform_factory
         form.base_fields['glossary'].help_text = ''
-        for field in shared_glossary_fields:
+        for field in glossary_fields:
             form.base_fields['glossary'].validators.append(field.run_validators)
-        setattr(form, 'shared_glossary_fields', shared_glossary_fields)
         return form
 
     def has_add_permission(self, request):
@@ -44,6 +44,14 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         extra_context['title'] = _("Change %s") % force_text(str(obj.plugin_type))
         return super(SharedGlossaryAdmin, self).change_view(request, object_id,
             form_url, extra_context=extra_context)
+
+    @property
+    def media(self):
+        media = super(SharedGlossaryAdmin, self).media
+        media += forms.Media(css={'all': ('cascade/css/admin/editplugin.css',)})
+        if hasattr(self._plugin, 'sharable_media'):
+            media += self._plugin.sharable_media
+        return media
 
     def used_by(self, obj):
         """

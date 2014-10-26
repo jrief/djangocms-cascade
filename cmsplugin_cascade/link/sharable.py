@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from django import forms
 from cms.plugin_pool import plugin_pool
+from cms.utils.helpers import classproperty
 from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
 from .plugin_base import TextLinkPluginBase
@@ -11,8 +13,15 @@ class LinkPlugin(SharableGlossaryMixin, TextLinkPluginBase):
     fields = ('link_content', ('link_type', 'cms_page', 'ext_url', 'mail_to'), 'glossary',
               ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
     sharable_fields = ('title', 'link', 'target',)
+    sharable_fieldsets = [(None, {'fields': [('link_type', 'cms_page', 'ext_url', 'mail_to',), 'glossary']})]
+    sharable_media = forms.Media(js=resolve_dependencies('cascade/js/admin/simplelinkplugin.js'))
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/sharablelinkplugin.js')
+
+    @classproperty
+    def sharable_form(cls):
+        """pass the customized admin form to the SharedGlossaryAdmin"""
+        return cls.form
 
 plugin_pool.register_plugin(LinkPlugin)
