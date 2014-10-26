@@ -38,7 +38,10 @@ class LinkForm(ModelForm):
         if raw_data and raw_data.get('shared_glossary'):
             # convert this into an optional field since it is disabled with ``shared_glossary`` set
             self.base_fields['link_type'].required = False
-        site = instance and instance.get_site() or Site.objects.get_current()
+        try:
+            site = instance.get_site()
+        except AttributeError:
+            site = Site.objects.get_current()
         self.base_fields['cms_page'].queryset = Page.objects.drafts().on_site(site)
         set_initial_linktype = getattr(self, 'set_initial_{0}'.format(link_type), None)
         if callable(set_initial_linktype):
