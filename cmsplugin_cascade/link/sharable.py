@@ -13,7 +13,7 @@ class LinkPlugin(SharableGlossaryMixin, TextLinkPluginBase):
     fields = ('link_content', ('link_type', 'cms_page', 'ext_url', 'mail_to'), 'glossary',
               ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
     sharable_fields = ('title', 'link', 'target',)
-    sharable_fieldsets = [(None, {'fields': [('link_type', 'cms_page', 'ext_url', 'mail_to',), 'glossary']})]
+    sharable_fieldset = {'fields': [('link_type', 'cms_page', 'ext_url', 'mail_to',), 'glossary']}
     sharable_media = forms.Media(js=resolve_dependencies('cascade/js/admin/simplelinkplugin.js'))
 
     class Media:
