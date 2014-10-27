@@ -30,8 +30,8 @@ Contents:
   installation
   tutorial
   link-plugin
-  sharable-content
   bootstrap3/grid
+  bootstrap3/navbar
   customized-plugins
   history
 

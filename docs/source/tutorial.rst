@@ -154,16 +154,12 @@ Complete DOM Structure
 After having added a container with different rows and columns, you may add the leaf plugins. These
 hold the actual content, such as text and images.
 
-|structure-demo|
+|structure-container|
 
-.. |structure-demo| image:: _static/structure-demo.png
+.. |structure-container| image:: _static/structure-container.png
 
-After pressing the button **Publish changes**, the single blocks are regrouped and displayed using
+By pressing the button **Publish changes**, the single blocks are regrouped and displayed using
 the Bootstrap's grid system.
-
-|live-demo|
-
-.. |live-demo| image:: _static/live-demo.png
 
 This gives you a small idea on the possibilities of this DjangoCMS extension.
 
