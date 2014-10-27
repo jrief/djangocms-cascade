@@ -35,19 +35,19 @@ Assume, the page hierarchy in DjangoCMS is set up like this:
 
 |page-hierarchy|
 
-.. |page-hierarchy| image:: _static/page-hierarchy.png
+.. |page-hierarchy| image:: /_static/page-hierarchy.png
 
 then in the front-end, the navigation bar will be rendered as
 
 |navbar|
 
-.. |navbar| image:: _static/navbar.png
+.. |navbar| image:: /_static/navbar.png
 
 on computer displays, and as
 
 |navbar-mobile|
 
-.. |navbar-mobile| image:: _static/navbar-mobile.png
+.. |navbar-mobile| image:: /_static/navbar-mobile.png
 
 on mobile devices.
 
