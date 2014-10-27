@@ -1,0 +1,18 @@
+django==1.6.8
+Django-Select2
+Pillow
+South
+Unidecode
+django-classy-tags
+django-cms
+-e git://github.com/stefanfoulis/django-filer.git#egg=django-filer
+django-mptt
+django-polymorphic
+django-sekizai
+djangocms-admin-style
+djangocms-text-ckeditor
+easy-thumbnails
+html5lib
+jsonfield
+six
+wsgiref

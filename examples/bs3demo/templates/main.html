@@ -12,7 +12,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">Project name</a>
+			<a class="navbar-brand" href="#">Cascade Demo</a>
 		</div>
 		<!-- menu bar for large screens -->
 		<div class="collapse navbar-collapse">
@@ -21,6 +21,16 @@
 	</div>
 </div>
 <section>
-	{% placeholder "Page Content" or %}Add a Bootstrap container here{% endplaceholder %}
+	{% placeholder "Main Content Container" or %}
+	<div class="container">
+		<div class="row starter-template">
+			<div class="col-xs-12">
+				<h1>Add Bootstrap container here</h1>
+				<p class="lead">Use this placeholder as a quick way to start editing a new CMS page.<br/>
+				All you have to do is to append <code>?edit</code> to the URL and switch to “Structure” mode.</p>
+			</div>
+		</div>
+	</div>
+	{% endplaceholder %}
 </section>
 {% endblock sections %}

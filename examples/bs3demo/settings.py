@@ -29,17 +29,15 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     'djangocms_text_ckeditor',
+    'django_select2',
     'cmsplugin_cascade',
+    'cmsplugin_cascade.sharable',
     'cms',
     'menus',
     'mptt',
     'south',
     'filer',
     'easy_thumbnails',
-    #'djangocms_link',
-    #'cmsplugin_filer_file',  # alternative to 'cms.plugins.file'
-    #'cmsplugin_filer_folder',
-    #'cmsplugin_filer_image',  # alternative to 'cms.plugins.picture'
     'sekizai',
     'bs3demo',
 )
@@ -80,12 +78,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
-    'cms.context_processors.media',
+    'cms.context_processors.cms_settings',
     'sekizai.context_processors.sekizai',
-    'cmsplugin_cascade',
-    #'cmsplugin_cascade.link',
-    'cmsplugin_cascade.sharable',
-    #'bootstrap3.context_processors.cascade',
 )
 
 # List of callables that know how to import templates from various sources.
@@ -118,7 +112,7 @@ LANGUAGES = (
 # Application specific settings
 
 CMS_TEMPLATES = (
-    ('main.html', 'Default Page'),
+    ('main.html', 'Main Content Container'),
 )
 
 CMS_SEO_FIELDS = True
@@ -130,12 +124,12 @@ CMS_CACHE_DURATIONS = {
 }
 
 CMS_PLACEHOLDER_CONF = {
-    'Page Content': {
+    'Main Content Container': {
         'plugins': ['BootstrapContainerPlugin'],
     },
 }
 
-CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
+CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.link.sharable', 'cmsplugin_cascade.bootstrap3',)
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',

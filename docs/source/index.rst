@@ -28,11 +28,10 @@ Contents:
 
   introduction
   installation
-  demo
-  tutorial-bs3
+  tutorial
   link-plugin
   sharable-content
-  bs3-grid
+  bootstrap3/grid
   customized-plugins
   history
 
