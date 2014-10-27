@@ -19,7 +19,7 @@ The editor window for a Container element offers three options which affect all 
 
 |edit-container|
 
-.. |edit-container| image:: _static/edit-container.png
+.. |edit-container| image:: /_static/edit-container.png
 
 Small devices exclusively
 -------------------------
@@ -75,7 +75,7 @@ Specifying the ``min-height`` in section **Inline Styles**, will add a style att
 ``<div>`` element, rendering the row, using the chosen minimum height. The height must be specified
 in Pixels ``px`` or ``em``'s.
 
-.. |edit-row| image:: _static/edit-row.png
+.. |edit-row| image:: /_static/edit-row.png
 
 Horizontal Rule
 ===============
@@ -84,7 +84,7 @@ inline styles, to specify the top and the bottom margin for such a rule.
 
 |rule-editor|
 
-.. |rule-editor| image:: _static/rule-editor.png
+.. |rule-editor| image:: /_static/rule-editor.png
 
 Column
 ======
@@ -99,7 +99,7 @@ widths and offsets for tiny rather than large displays.
 
 |edit-column|
 
-.. |edit-column| image:: _static/edit-column.png
+.. |edit-column| image:: /_static/edit-column.png
 
 .. note:: If the current column is member of a container which differs from the default breakpoint
           settings (*large* for the widest, and *tiny* for the smallest display), then that column
@@ -173,7 +173,7 @@ rendered, it would look like:
 
 |nested-rows|
 
-.. |nested-rows| image:: _static/nested-rows.png
+.. |nested-rows| image:: /_static/nested-rows.png
 
 If a responsive image shall be placed inside a column, we must estimate the width of this image, so
 that when rendered, it fits exactly into that column. We want easy-thumbnails_ to resize our images
