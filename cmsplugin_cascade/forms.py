@@ -4,10 +4,11 @@ from cmsplugin_cascade.models import CascadeElement
 
 class ManageChildrenFormMixin(object):
     """
-    Classes derived from ``CascadePluginBase`` may optionally declare a ``django.forms.Form`` class
-    which offers one or more temporary input fields in their plugin editor, which are not managed by
-    the plugin's model. This FormMixin handles one such field, namely the number of child plugins.
-    This allows the client to modify the number of children attached to this plugin.
+    Classes derived from ``CascadePluginBase`` may optionally declare a class derived from
+    ``forms.models.ModelForm`` offering one or more temporary input fields in their plugin
+    editor, which are not managed by the plugin's model.
+    This FormMixin handles one such a field, namely the number of child plugins.
+    It allows the client to modify the number of children attached to this plugin.
     """
     class Meta:
         model = CascadeElement
