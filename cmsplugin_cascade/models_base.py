@@ -61,6 +61,18 @@ class CascadeModelBase(CMSPlugin):
                 except ObjectDoesNotExist:
                     pass
 
+    def get_parent_glossary(self):
+        """
+        Return the glossary from the parent of this object.
+        """
+        parent = self.get_parent()
+        if parent:
+            return parent.get_complete_glossary()
+        else:
+            # use self.placeholder.glossary as the starting dictionary
+            template = self.placeholder.page and self.placeholder.page.template or None
+            return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
+
     def get_complete_glossary(self):
         """
         Return the parent glossary for this model object merged with the current object.
@@ -68,14 +80,7 @@ class CascadeModelBase(CMSPlugin):
         the glossary with each models's own glossary.
         """
         if not hasattr(self, '_complete_glossary_cache'):
-            parent = self.get_parent()
-            if parent:
-                parent_glossary = parent.get_complete_glossary()
-            else:
-                # use self.placeholder.glossary as the starting dictionary
-                template = self.placeholder.page and self.placeholder.page.template or None
-                parent_glossary = get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
-            self._complete_glossary_cache = parent_glossary.copy()
+            self._complete_glossary_cache = self.get_parent_glossary().copy()
             self._complete_glossary_cache.update(self.glossary or {})
         return self._complete_glossary_cache
 

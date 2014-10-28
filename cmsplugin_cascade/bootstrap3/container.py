@@ -207,7 +207,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = super(BootstrapColumnPlugin, cls).sanitize_model(obj)
-        parent_glossary = obj.get_complete_glossary()
+        parent_glossary = obj.get_parent_glossary()
         column_units = 12
         obj.glossary['container_max_widths'] = {}
         for bp in CASCADE_BREAKPOINTS_LIST:
@@ -237,9 +237,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        parent_glossary = obj.get_complete_glossary()
+        glossary = obj.get_complete_glossary()
         widths = []
-        for bp in parent_glossary.get('breakpoints', []):
+        for bp in glossary.get('breakpoints', []):
             width = string.replace(obj.glossary.get('{0}-column-width'.format(bp), ''), 'col-{0}-'.format(bp), '')
             if width:
                 widths.append(width)
