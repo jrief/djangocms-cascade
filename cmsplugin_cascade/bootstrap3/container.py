@@ -14,7 +14,8 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
-from .settings import CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST, CMS_CASCADE_LEAF_PLUGINS
+from .settings import (CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST,
+    CASCADE_BOOTSTRAP3_GUTTER, CMS_CASCADE_LEAF_PLUGINS)
 
 
 class ContainerRadioFieldRenderer(RadioFieldRenderer):
@@ -99,7 +100,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             try:
                 obj.glossary['container_max_widths'][bp] = complete_glossary['container_max_widths'][bp]
             except KeyError:
-                obj.glossary['container_max_widths'][bp] = CASCADE_BREAKPOINTS_DICT[bp][4]
+                obj.glossary['container_max_widths'][bp] = CASCADE_BREAKPOINTS_DICT[bp][3]
         return sanitized
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
@@ -221,7 +222,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         obj.glossary[width_key] = 'col-{0}-{1}'.format(bp, column_units)
                         sanitized = True
                     column_units = int(width_val)
-                new_width = parent_glossary['container_max_widths'][bp] * column_units / 12
+                new_width = parent_glossary['container_max_widths'][bp] * column_units / 12 - CASCADE_BOOTSTRAP3_GUTTER
                 if new_width != obj.glossary['container_max_widths'].get(bp):
                     obj.glossary['container_max_widths'][bp] = new_width
                     sanitized = True

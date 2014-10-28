@@ -20,11 +20,12 @@ if 'TextPlugin' not in CMS_CASCADE_LEAF_PLUGINS:
 #         pass
 
 CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS = (
-    ('xs', (768, 'mobile-phone', _("mobile phones"), 60, 720)),
-    ('sm', (768, 'tablet', _("tablets"), 60, 720)),
-    ('md', (992, 'laptop', _("laptops"), 78, 940)),
-    ('lg', (1200, 'desktop', _("large desktops"), 95, 1140)),
+    ('xs', (768, 'mobile-phone', _("mobile phones"), 750)),
+    ('sm', (768, 'tablet', _("tablets"), 750)),
+    ('md', (992, 'laptop', _("laptops"), 970)),
+    ('lg', (1200, 'desktop', _("large desktops"), 1170)),
 )
+CASCADE_BOOTSTRAP3_GUTTER = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_GUTTER', 30)
 
 CASCADE_BREAKPOINTS_DICT = dict(tp for tp in CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
 CASCADE_BREAKPOINTS_LIST = list(tp[0] for tp in CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)

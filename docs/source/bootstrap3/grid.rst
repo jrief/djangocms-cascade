@@ -130,7 +130,7 @@ the containers extensions shall be. This must be hard-coded using the following 
 	        'require_parent': False,
 	        'glossary': {
 	            'breakpoints': ['xs', 'sm', 'md', 'lg'],
-	            'container_max_widths': {'xs': 720, 'sm': 720, 'md': 940, 'lg': 1140},
+	            'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
 	        }
 	    }
 	}
