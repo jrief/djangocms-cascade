@@ -159,9 +159,9 @@ class MultipleTextInputWidget(widgets.MultiWidget):
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
             errors = key in self.validation_errors and 'errors' or ''
-            widgets.append((self.widgets[index].render(label, values.get(key), attrs), errors))
+            widgets.append((self.widgets[index].render(label, values.get(key), attrs), key, label, errors))
         return format_html('<div class="clearfix">{0}</div>',
-                    format_html_join('\n', '<div class="sibling-field {1}">{0}</div>', widgets))
+                    format_html_join('\n', '<div class="sibling-field {3}"><label for="{2}">{1}</label>{0}</div>', widgets))
 
     def validate(self, value, field_name):
         if hasattr(self, 'validation_pattern'):
