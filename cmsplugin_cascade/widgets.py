@@ -24,7 +24,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             values = json.loads(values or '{}')
         for field in self.glossary_fields:
             if isinstance(field.widget, widgets.MultiWidget):
-                values[field.name] = field.widget.decompress(values.get(field.name))
+                values[field.name] = field.widget.decompress(values.get(field.name, field.initial))
             else:
                 values.setdefault(field.name, field.initial)
         return values
