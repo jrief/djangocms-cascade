@@ -5,7 +5,6 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
@@ -48,7 +47,7 @@ class CarouselPlugin(BootstrapPluginBase):
     )
 
     def get_form(self, request, obj=None, **kwargs):
-        complete_glossary = CascadeElement.objects.get(cmsplugin_ptr=self.parent).get_complete_glossary()
+        complete_glossary = self.get_parent_instance().get_complete_glossary()
         breakpoints = complete_glossary.get('breakpoints', CASCADE_BREAKPOINTS_LIST)
         self.glossary_fields = list(self.GLOSSARY_FIELDS)
         self.glossary_fields.append(PartialFormField('container_max_heights',

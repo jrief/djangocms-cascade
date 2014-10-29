@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import six
+from django.core.exceptions import ObjectDoesNotExist
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
+from .models_base import CascadeModelBase
 from .widgets import JSONMultiWidget
 
 
@@ -124,3 +126,14 @@ class CascadePluginBase(CMSPluginBase):
                     # transfer listed glossary variable from the old to new object
                     new_obj.glossary[key] = old_obj.glossary[key]
         super(CascadePluginBase, self).save_model(request, new_obj, form, change)
+
+    def get_parent_instance(self):
+        """
+        Get the parent model instance corresponding to this plugin. Returns None if the current
+        plugin instance is the root model.
+        """
+        for model in CascadeModelBase._get_cascade_elements():
+            try:
+                return model.objects.get(id=self.parent.id)
+            except ObjectDoesNotExist:
+                pass
