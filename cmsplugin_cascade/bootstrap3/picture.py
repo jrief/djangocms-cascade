@@ -18,8 +18,8 @@ from cmsplugin_cascade.link.models import LinkElementMixin
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 from cmsplugin_cascade.sharable.models import SharableCascadeElement
 from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
-from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
-from .settings import CASCADE_BREAKPOINT_APPEARANCES
+from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
+from .settings import CASCADE_BREAKPOINT_APPEARANCES, CASCADE_BREAKPOINTS_LIST
 
 
 class PictureForm(LinkForm):
@@ -87,8 +87,9 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
-                      ('subject_location', _("With subject location")),)
-    glossary_fields = (
+                      ('subject_location', _("With subject location")),
+                      ('high_resolution', _("Optimized for Retina")),)
+    GLOSSARY_FIELDS = (
         PartialFormField('image-title',
             widgets.TextInput(),
             label=_('Image Title'),
@@ -110,22 +111,30 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
             label=_("Absolute Image Sizes"),
             help_text=_("Specify an absolute image width and height in 'px' (pixels)."),
         ),
-        PartialFormField('responsive-height',
-            CascadingSizeWidget(allowed_units=['px', '%'], required=False),
-            label=_("Override Container Height"),
-            help_text=_("An optional image height in '%' (percent) or 'px' (pixels) to override the container's size."),
-        ),
         PartialFormField('resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
             label=_("Resize Options"),
             help_text=_("Options to use when resizing the image."),
-            initial=['subject_location']
+            initial=['subject_location', 'high_resolution']
         ),
     )
-    sharable_fields = ('image-shapes', 'image-size', 'responsive-height', 'resize-options',)
+    sharable_fields = ('image-shapes', 'image-size', 'responsive-heights', 'resize-options',)
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
+
+    def get_form(self, request, obj=None, **kwargs):
+        complete_glossary = self.get_parent_instance().get_complete_glossary()
+        breakpoints = complete_glossary.get('breakpoints', CASCADE_BREAKPOINTS_LIST)
+        self.glossary_fields = list(self.GLOSSARY_FIELDS[:4])
+        self.glossary_fields.append(PartialFormField('responsive-heights',
+            MultipleCascadingSizeWidget(breakpoints),
+            label=_("Override Picture Heights"),
+            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
+            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
+        ))
+        self.glossary_fields.extend(self.GLOSSARY_FIELDS[4:])
+        return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         if 'img-responsive' in instance.glossary.get('image-shapes', []):
@@ -156,7 +165,6 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         """
         complete_glossary = instance.get_complete_glossary()
         aspect_ratio = float(instance.image.height) / float(instance.image.width)
-        image_height = self._parse_responsive_height(instance.glossary.get('responsive-height', ''))
         container_max_heights = complete_glossary.get('container_max_heights', {})
         if instance.shared_glossary:
             resize_options = instance.shared_glossary.glossary.get('resize-options', {})
@@ -167,25 +175,37 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         subject_location = 'subject_location' in resize_options
         min_width = 100.0
         appearances = {}
-        for bp in complete_glossary['breakpoints']:
-            width = float(complete_glossary['container_max_widths'][bp])
-            min_width = min(min_width, round(width))
-            size = None
-            if image_height[0]:
-                size = (int(width), image_height[0])
-            elif image_height[1]:
-                size = (int(width), int(round(width * aspect_ratio * image_height[1])))
-            elif bp in container_max_heights:
-                container_height = self._parse_responsive_height(container_max_heights[bp])
-                if container_height[0]:
-                    size = (int(width), container_height[0])
-                elif container_height[1]:
-                    size = (int(width), int(round(width * aspect_ratio * container_height[1])))
-            if size is None:
-                # as fallback, adopt height to current width
-                size = (int(width), int(round(width * aspect_ratio)))
-            appearances[bp] = CASCADE_BREAKPOINT_APPEARANCES[bp].copy()
-            appearances[bp].update(size=size, crop=crop, upscale=upscale, subject_location=subject_location)
+        resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
+        for high_res in resolutions:
+            for bp in complete_glossary['breakpoints']:
+                width = float(complete_glossary['container_max_widths'][bp])
+                min_width = min(min_width, round(width))
+                size = None
+                try:
+                    image_height = self._parse_responsive_height(instance.glossary['responsive-heights'][bp])
+                except KeyError:
+                    image_height = (None, None)
+                if image_height[0]:
+                    size = (int(width), image_height[0])
+                elif image_height[1]:
+                    size = (int(width), int(round(width * aspect_ratio * image_height[1])))
+                elif bp in container_max_heights:
+                    container_height = self._parse_responsive_height(container_max_heights[bp])
+                    if container_height[0]:
+                        size = (int(width), container_height[0])
+                    elif container_height[1]:
+                        size = (int(width), int(round(width * aspect_ratio * container_height[1])))
+                if size is None:
+                    # as fallback, adopt height to current width
+                    size = (int(width), int(round(width * aspect_ratio)))
+                key = high_res and bp + '-retina' or bp
+                appearances[key] = CASCADE_BREAKPOINT_APPEARANCES[bp].copy()
+                if high_res:
+                    size = (size[0] * 2, size[1] * 2)
+                    appearances[key]['media'] += ' and (min-resolution: 1.5dppx)'
+                elif True in resolutions:
+                    appearances[key]['media'] += ' and (max-resolution: 1.5dppx)'
+                appearances[key].update(size=size, crop=crop, upscale=upscale, subject_location=subject_location)
         # create a relatively small image for the default img tag.
         if image_height[1]:
             size = (int(min_width), int(round(min_width * aspect_ratio * image_height[1])))

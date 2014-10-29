@@ -1,6 +1,7 @@
 
 django.jQuery(function($) {
 	'use strict';
+	var breakpoints = ['xs', 'sm', 'md', 'lg'];
 
 	var PicturePlugin = ring.create([django.cascade.LinkPluginBase, django.cascade.SharableGlossary], {
 		constructor: function() {
@@ -27,7 +28,9 @@ django.jQuery(function($) {
 					$(elem).prop('disabled', 'disabled');
 				});
 				this.toggleResponsive($('#id_glossary_image-shapes_0').prop('checked'));
-				$('#id_glossary_responsive-height').val(glossary['responsive-height']).prop('disabled', 'disabled');
+				$.each(breakpoints, function(idx, bp) {
+					$('#id_glossary_responsive-heights[name$=' + bp + ']').val(glossary['responsive-heights'][bp]).prop('disabled', 'disabled');
+				});
 				$('#id_glossary_image-size[name$="width"]').val(glossary['image-size']['width']).prop('disabled', 'disabled');
 				$('#id_glossary_image-size[name$="height"]').val(glossary['image-size']['height']).prop('disabled', 'disabled');
 				$('#id_glossary_resize-options input').each(function(idx, elem) {
@@ -36,7 +39,9 @@ django.jQuery(function($) {
 				});
 			} else {
 				$('#id_glossary_image-shapes input').prop('disabled', '');
-				$('#id_glossary_responsive-height').prop('disabled', '');
+				$.each(breakpoints, function(idx, bp) {
+					$('#id_glossary_responsive-heights[name$=' + bp + ']').prop('disabled', '');
+				});
 				$('#id_glossary_image-size[name$="width"]').prop('disabled', '');
 				$('#id_glossary_image-size[name$="height"]').prop('disabled', '');
 				$('#id_glossary_resize-options input').prop('disabled', '');
@@ -44,7 +49,7 @@ django.jQuery(function($) {
 			this.$super($option);
 		},
 		toggleResponsive: function(checked) {
-			var $glossary_responsive = $('.glossary-widget.glossary_responsive-height'),
+			var $glossary_responsive = $('.glossary-widget.glossary_responsive-heights'),
 				$glossary_static = $('.glossary-widget.glossary_image-size');
 
 			// if checkbox Image Shapes: Responsive is active, replace 'Image Size' against 'Container Height'
