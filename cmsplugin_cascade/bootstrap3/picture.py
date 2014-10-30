@@ -167,7 +167,11 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         its sizes to the current column width.
         """
         complete_glossary = instance.get_complete_glossary()
-        aspect_ratio = float(instance.image.height) / float(instance.image.width)
+        if instance.image.exif.get('Orientation', 1) > 4:
+            # image is rotated by 90 degrees, while keeping width and height
+            aspect_ratio = float(instance.image.width) / float(instance.image.height)
+        else:
+            aspect_ratio = float(instance.image.height) / float(instance.image.width)
         container_max_heights = complete_glossary.get('container_max_heights', {})
         if instance.shared_glossary:
             resize_options = instance.shared_glossary.glossary.get('resize-options', {})
