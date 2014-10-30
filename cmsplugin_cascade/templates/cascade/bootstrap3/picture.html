@@ -4,14 +4,14 @@
 {% block link_content %}
 
 {% if is_responsive %}
-<picture>
+<picture {{ instance.html_tag_attributes }}>
 	{% for breakpoint, app in appearances.items %}
 		{% thumbnail instance.image app.size crop=app.crop upscale=app.upscale subject_location=app.subject_location as thumb %}
 	<source srcset="{{ thumb.url }}" media="{{ app.media }}" />
 	{% endfor %}
 	{% with app=default_appearance %}
 		{% thumbnail instance.image app.size crop=app.crop upscale=app.upscale subject_location=app.subject_location as thumb %}
-	<img srcset="{{ thumb.url }}" {{ instance.html_tag_attributes }} class="{{ instance.css_classes }}" />
+	<img srcset="{{ thumb.url }}" class="{{ instance.css_classes }}" />
 	{% endwith %}
 </picture>
 {% else %}
