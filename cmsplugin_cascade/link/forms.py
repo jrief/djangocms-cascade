@@ -51,11 +51,12 @@ class LinkForm(ModelForm):
 
     def clean(self):
         cleaned_data = super(LinkForm, self).clean()
-        if 'link_data' in cleaned_data:
-            cleaned_data['glossary'].update(link=cleaned_data['link_data'])
-            del self.cleaned_data['link_data']
-        else:
-            cleaned_data['glossary'].update(link={'type': 'none'})
+        if self.is_valid():
+            if 'link_data' in cleaned_data:
+                cleaned_data['glossary'].update(link=cleaned_data['link_data'])
+                del self.cleaned_data['link_data']
+            else:
+                cleaned_data['glossary'].update(link={'type': 'none'})
         return cleaned_data
 
     def clean_cms_page(self):
@@ -108,9 +109,10 @@ class TextLinkForm(LinkForm):
 
     def clean(self):
         """
-        link_content intentionally was rendered outside the glossary field, move its content
+        link_content intentionally was rendered outside the glossary field, now move this content
         back to the ``glossary``.
         """
         cleaned_data = super(TextLinkForm, self).clean()
-        cleaned_data['glossary'].update(link_content=cleaned_data['link_content'])
+        if self.is_valid():
+            cleaned_data['glossary'].update(link_content=cleaned_data['link_content'])
         return cleaned_data

@@ -40,9 +40,10 @@ class PictureForm(LinkForm):
 
     def clean(self):
         cleaned_data = super(PictureForm, self).clean()
-        image_data = {'pk': self.cleaned_data['image_file'].pk, 'model': 'filer.Image'}
-        cleaned_data['glossary'].update(image=image_data)
-        del self.cleaned_data['image_file']
+        if self.is_valid():
+            image_data = {'pk': self.cleaned_data['image_file'].pk, 'model': 'filer.Image'}
+            cleaned_data['glossary'].update(image=image_data)
+            del self.cleaned_data['image_file']
         return cleaned_data
 
 
