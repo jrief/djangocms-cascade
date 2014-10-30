@@ -15,9 +15,9 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     def get_fieldsets(self, request, obj=None):
         """Return the fieldsets from associated plugin"""
         fieldsets = [(None, {'fields': ['identifier']})]
-        if hasattr(self._plugin, 'sharable_fieldset'):
-            sharable_fieldset = self._plugin.sharable_fieldset
-        else:
+        try:
+            sharable_fieldset = self.plugin_instance.sharable_fieldset
+        except AttributeError:
             sharable_fieldset = {'fields': ('glossary',)}
         fieldsets.append((_("Shared Fields"), sharable_fieldset))
         return fieldsets
@@ -28,12 +28,14 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         edit the content inside the model field `glossary`. The layout and validation for these
         dynamic fields is borrowed from the corresponding plugin.
         """
-        self._plugin = plugin_pool.get_plugin(obj.plugin_type)
-        sharable_fields = getattr(self._plugin, 'sharable_fields', [])
-        glossary_fields = [field for field in self._plugin.glossary_fields if field.name in sharable_fields]
+        self.plugin_instance = plugin_pool.get_plugin(obj.plugin_type)
+        sharable_fields = getattr(self.plugin_instance, 'sharable_fields', [])
+        glossary_fields = [field for field in self.plugin_instance.glossary_fields if field.name in sharable_fields]
         kwargs.update(widgets={'glossary': JSONMultiWidget(glossary_fields)}, labels={'glossary': ''})
-        if hasattr(self._plugin, 'sharable_form'):
-            kwargs.update(form=self._plugin.sharable_form)
+        try:
+            kwargs.update(form=self.plugin_instance.sharable_form)
+        except AttributeError:
+            pass
         form = super(SharedGlossaryAdmin, self).get_form(request, obj, **kwargs)
         # help_text can not be cleared using an empty string in modelform_factory
         form.base_fields['glossary'].help_text = ''
@@ -55,8 +57,10 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     def media(self):
         media = super(SharedGlossaryAdmin, self).media
         media += forms.Media(css={'all': ('cascade/css/admin/editplugin.css',)})
-        if hasattr(self._plugin, 'sharable_media'):
-            media += self._plugin.sharable_media
+        try:
+            media += self.plugin_instance.sharable_media
+        except AttributeError:
+            pass
         return media
 
     def used_by(self, obj):
