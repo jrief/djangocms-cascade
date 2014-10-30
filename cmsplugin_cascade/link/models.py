@@ -30,8 +30,3 @@ class SimpleLinkElement(LinkElementMixin, CascadeElement):
 class SharableLinkElement(LinkElementMixin, SharableCascadeElement):
     class Meta:
         proxy = True
-
-    @property
-    def link(self):
-        # TODO: fetch from shared glossary, if that exists
-        return super(SharableLinkElement, self).link

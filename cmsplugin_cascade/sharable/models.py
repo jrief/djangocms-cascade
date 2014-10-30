@@ -33,3 +33,12 @@ class SharableCascadeElement(CascadeModelBase):
         app_label = 'cmsplugin_cascade'
 
     shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL)
+
+    def __getattribute__(self, name):
+        """
+        Update glossary with content from SharedGlossary model if that exists.
+        """
+        attribute = object.__getattribute__(self, name)
+        if name == 'glossary' and self.shared_glossary:
+            attribute.update(self.shared_glossary.glossary)
+        return attribute
