@@ -90,7 +90,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
-    GLOSSARY_FIELDS = (
+    glossary_fields = (
         PartialFormField('image-title',
             widgets.TextInput(),
             label=_('Image Title'),
@@ -107,6 +107,12 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
             label=_("Image Shapes"),
             initial=['img-responsive']
         ),
+        PartialFormField('responsive-heights',
+            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['%', 'px'], required=False),
+            label=_("Override Picture Heights"),
+            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
+            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
+        ),
         PartialFormField('image-size',
             MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px'], required=False),
             label=_("Absolute Image Sizes"),
@@ -119,7 +125,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
             initial=['subject_location', 'high_resolution']
         ),
     )
-    sharable_fields = ('image-shapes', 'image-size', 'responsive-heights', 'resize-options',)
+    sharable_fields = ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
@@ -127,14 +133,10 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     def get_form(self, request, obj=None, **kwargs):
         complete_glossary = self.get_parent_instance().get_complete_glossary()
         breakpoints = complete_glossary.get('breakpoints', CASCADE_BREAKPOINTS_LIST)
-        self.glossary_fields = list(self.GLOSSARY_FIELDS[:4])
-        self.glossary_fields.append(PartialFormField('responsive-heights',
-            MultipleCascadingSizeWidget(breakpoints),
-            label=_("Override Picture Heights"),
-            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
-            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
-        ))
-        self.glossary_fields.extend(self.GLOSSARY_FIELDS[4:])
+        # find the glossary_field named 'responsive-heights' and restrict its breakpoint to the available ones
+        rh_widget = [f for f in self.glossary_fields if f.name == 'responsive-heights'][0].widget
+        temp = [(l, rh_widget.widgets[k]) for k, l in enumerate(rh_widget.labels) if l in breakpoints]
+        rh_widget.labels, rh_widget.widgets = (list(t) for t in zip(*temp))
         return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
