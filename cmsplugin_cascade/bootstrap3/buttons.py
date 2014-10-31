@@ -68,13 +68,15 @@ class BootstrapButtonPlugin(LinkPluginBase):
         PartialFormField('button-type',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonTypeRenderer.BUTTON_TYPES.items()),
                                 renderer=ButtonTypeRenderer),
-            label=_('Button Type'), initial='btn-default',
+            label=_('Button Type'),
+            initial='btn-default',
             help_text=_("Display Link using this Button Style")
         ),
         PartialFormField('button-size',
             widgets.RadioSelect(choices=((k, v) for k, v in ButtonSizeRenderer.BUTTON_SIZES.items()),
                                 renderer=ButtonSizeRenderer),
-            label=_('Button Size'), initial='',
+            label=_('Button Size'),
+            initial='',
             help_text=_("Display Link using this Button Size")
         ),
         PartialFormField('button-options',
@@ -83,7 +85,8 @@ class BootstrapButtonPlugin(LinkPluginBase):
         ),
         PartialFormField('quick-float',
             widgets.RadioSelect(choices=(('', _("Do not float")), ('pull-left', _("Pull left")), ('pull-right', _("Pull right")),)),
-            label=_('Quick Float'), initial='',
+            label=_('Quick Float'),
+            initial='',
             help_text=_("Float the button to the left or right.")
         ),
     ) + LinkPluginBase.glossary_fields + (
