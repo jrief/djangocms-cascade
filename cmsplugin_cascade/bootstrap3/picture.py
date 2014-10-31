@@ -20,6 +20,7 @@ from cmsplugin_cascade.sharable.models import SharableCascadeElement
 from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from .settings import CASCADE_BREAKPOINT_APPEARANCES, CASCADE_BREAKPOINTS_LIST
+from . import utils
 
 
 class PictureForm(LinkForm):
@@ -131,12 +132,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
-        complete_glossary = self.get_parent_instance().get_complete_glossary()
-        breakpoints = complete_glossary.get('breakpoints', CASCADE_BREAKPOINTS_LIST)
-        # find the glossary_field named 'responsive-heights' and restrict its breakpoint to the available ones
-        rh_widget = [f for f in self.glossary_fields if f.name == 'responsive-heights'][0].widget
-        temp = [(l, rh_widget.widgets[k]) for k, l in enumerate(rh_widget.labels) if l in breakpoints]
-        rh_widget.labels, rh_widget.widgets = (list(t) for t in zip(*temp))
+        utils.reduce_breakpoints(self, 'responsive-heights')
         return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
@@ -183,15 +179,19 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         min_width = 100.0
         appearances = {}
         resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
+        image_height = (None, None)
         for high_res in resolutions:
             for bp in complete_glossary['breakpoints']:
-                width = float(complete_glossary['container_max_widths'][bp])
+                try:
+                    width = float(complete_glossary['container_max_widths'][bp])
+                except KeyError:
+                    width = 0
                 min_width = min(min_width, round(width))
                 size = None
                 try:
                     image_height = self._parse_responsive_height(instance.glossary['responsive-heights'][bp])
                 except KeyError:
-                    image_height = (None, None)
+                    pass
                 if image_height[0]:
                     size = (int(width), image_height[0])
                 elif image_height[1]:
@@ -241,8 +241,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         appearance = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
         return appearance
 
-    @staticmethod
-    def _parse_responsive_height(responsive_height):
+    def _parse_responsive_height(self, responsive_height):
         """
         Takes a string containing the image height in pixels or percent and parses it to obtain
         a computational height. It return a tuple with the height in pixels and its relative height,
