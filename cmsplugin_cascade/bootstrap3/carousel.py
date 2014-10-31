@@ -10,6 +10,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from .settings import CASCADE_BREAKPOINTS_LIST, CMS_CASCADE_TEMPLATE_DIR
+from . import utils
 
 
 class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
@@ -31,7 +32,7 @@ class CarouselPlugin(BootstrapPluginBase):
     fields = ('num_children', 'glossary',)
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
     OPTION_CHOICES = (('slide', _("Animate")), ('pause', _("Pause")), ('wrap', _("Wrap")),)
-    GLOSSARY_FIELDS = (
+    glossary_fields = (
         PartialFormField('interval',
             NumberInputWidget(attrs={'size': '2', 'style': 'width: 4em;', 'min': '1'}),
             label=_("Interval"),
@@ -44,17 +45,16 @@ class CarouselPlugin(BootstrapPluginBase):
             initial=['slide', 'wrap', 'pause'],
             help_text=_("Adjust interval for the carousel."),
         ),
+        PartialFormField('container_max_heights',
+            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['px']),
+            label=_("Carousel heights"),
+            initial={'xs': '100px', 'sm': '150px', 'md': '200px', 'lg': '300px'},
+            help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
+        )
     )
 
     def get_form(self, request, obj=None, **kwargs):
-        complete_glossary = self.get_parent_instance().get_complete_glossary()
-        breakpoints = complete_glossary.get('breakpoints', CASCADE_BREAKPOINTS_LIST)
-        self.glossary_fields = list(self.GLOSSARY_FIELDS)
-        self.glossary_fields.append(PartialFormField('container_max_heights',
-            MultipleCascadingSizeWidget(breakpoints),
-            label=_("Carousel heights"),
-            help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
-        ))
+        utils.reduce_breakpoints(self, 'container_max_heights')
         return super(CarouselPlugin, self).get_form(request, obj, **kwargs)
 
     @classmethod
