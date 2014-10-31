@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import string
 import itertools
 from django.forms import widgets
-from django.forms.widgets import RadioFieldRenderer
+from django.core.exceptions import ValidationError
 from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -18,7 +18,7 @@ from .settings import (CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST,
     CASCADE_BOOTSTRAP3_GUTTER, CMS_CASCADE_LEAF_PLUGINS)
 
 
-class ContainerRadioFieldRenderer(RadioFieldRenderer):
+class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
     def render(self):
         return format_html('<div class="form-row">{0}</div>',
             format_html_join('', '<div class="field-box">'
@@ -27,31 +27,32 @@ class ContainerRadioFieldRenderer(RadioFieldRenderer):
             ))
 
 
+class BootstrapContainerForm(ModelForm):
+    """
+    Form class to validate the container.
+    """
+    def clean_glossary(self):
+        if len(self.cleaned_data['glossary']['breakpoints']) == 0:
+            raise ValidationError(_("At least one breakpoint must be selected."))
+        return self.cleaned_data['glossary']
+
+
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     require_parent = False
-    WIDGET_CHOICES_WIDEST = (
-        ('lg', _("Large (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['lg']))),
-        ('md', _("Medium (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['md']))),
-        ('sm', _("Small (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['sm']))),
-        ('xs', _("Tiny (<{0}px)".format(*CASCADE_BREAKPOINTS_DICT['sm']))),
-    )
-    WIDGET_CHOICES_NARROW = (
-        ('lg', _("Large (>{0}px)".format(*CASCADE_BREAKPOINTS_DICT['lg']))),
-        ('md', _("Medium (<{0}px)".format(*CASCADE_BREAKPOINTS_DICT['lg']))),
-        ('sm', _("Small (<{0}px)".format(*CASCADE_BREAKPOINTS_DICT['md']))),
-        ('xs', _("Tiny (<{0}px)".format(*CASCADE_BREAKPOINTS_DICT['sm']))),
+    form = BootstrapContainerForm
+    WIDGET_CHOICES = (
+        ('xs', _("Tiny (<{sm[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('sm', _("Small (≥{sm[0]}px and <{md[0]}px))".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('md', _("Medium (≥{md[0]}px and <{lg[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('lg', _("Large (≥{lg[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
     )
     glossary_fields = (
-        PartialFormField('widest',
-            widgets.RadioSelect(choices=WIDGET_CHOICES_WIDEST, renderer=ContainerRadioFieldRenderer),
-            label=_('Widest Display'), initial='lg',
-            help_text=_("Widest supported display for Bootstrap's grid system.")
-        ),
-        PartialFormField('narrowest',
-            widgets.RadioSelect(choices=WIDGET_CHOICES_NARROW, renderer=ContainerRadioFieldRenderer),
-            label=_('Narrowest Display'), initial='xs',
-            help_text=_("Narrowest supported display for Bootstrap's grid system.")
+        PartialFormField('breakpoints',
+            widgets.CheckboxSelectMultiple(choices=WIDGET_CHOICES, renderer=ContainerBreakpointsRenderer),
+            label=_('Available Breakpoints'),
+            initial=['lg', 'md', 'sm', 'xs'],
+            help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
         PartialFormField('fluid',
             widgets.CheckboxInput(),
@@ -67,11 +68,11 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        container_max_widths = obj.glossary.get('container_max_widths')
+        breakpoints = obj.glossary.get('breakpoints')
         fluid = obj.glossary.get('fluid') and '(fluid) ' or ''
-        if container_max_widths:
-            values = container_max_widths.values()
-            return _("{0}ranging from {1} through {2} pixels").format(fluid, min(values), max(values))
+        if breakpoints:
+            devices = ', '.join([force_text(CASCADE_BREAKPOINTS_DICT[bp][2]) for bp in breakpoints])
+            return _("{0}for {1}").format(fluid, devices)
         return fluid
 
     @classmethod
@@ -84,10 +85,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         return css_classes
 
     def save_model(self, request, obj, form, change):
-        widest = CASCADE_BREAKPOINTS_LIST.index(form.cleaned_data['glossary']['widest'])
-        narrowest = CASCADE_BREAKPOINTS_LIST.index(form.cleaned_data['glossary']['narrowest'])
-        breakpoints = [bp for i, bp in enumerate(CASCADE_BREAKPOINTS_LIST) if i <= widest and i >= narrowest]
-        obj.glossary.update(breakpoints=breakpoints)
         super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
         obj.sanitize_children()
 
@@ -96,11 +93,13 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         sanitized = super(BootstrapContainerPlugin, cls).sanitize_model(obj)
         complete_glossary = obj.get_complete_glossary()
         obj.glossary['container_max_widths'] = {}
-        for bp in complete_glossary['breakpoints']:
+        max_widths = CASCADE_BREAKPOINTS_DICT['lg'][3]
+        for bp in CASCADE_BREAKPOINTS_LIST[::-1]:
             try:
                 obj.glossary['container_max_widths'][bp] = complete_glossary['container_max_widths'][bp]
             except KeyError:
-                obj.glossary['container_max_widths'][bp] = CASCADE_BREAKPOINTS_DICT[bp][3]
+                obj.glossary['container_max_widths'][bp] = max_widths
+                max_widths = CASCADE_BREAKPOINTS_DICT[bp][3]
         return sanitized
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
@@ -139,10 +138,10 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
         parent_glossary = obj.get_complete_glossary()
+        narrowest = parent_glossary['breakpoints'][0]
         column_width = 12 // wanted_children
         child_glossary = {
-            '{narrowest}-column-width'.format(**parent_glossary):
-                'col-{narrowest}-{0}'.format(column_width, **parent_glossary)
+            '{0}-column-width'.format(narrowest): 'col-{0}-{1}'.format(narrowest, column_width)
         }
         self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
 
@@ -162,43 +161,66 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         self.glossary_fields = []
         parent_obj, parent_plugin = self.parent.get_plugin_instance()
         if isinstance(parent_plugin, BootstrapPluginBase):
-            complete_glossary = parent_obj.get_complete_glossary()
-            for bp in complete_glossary['breakpoints']:
-                desc = list(CASCADE_BREAKPOINTS_DICT[bp])
-                desc[2] = force_text(desc[2])
-                if bp == complete_glossary['breakpoints'][0]:
-                    # first element
+            breakpoints = parent_obj.get_complete_glossary()['breakpoints']
+            for bp in breakpoints:
+                try:
+                    next_bp = breakpoints[breakpoints.index(bp) + 1]
+                    first = CASCADE_BREAKPOINTS_LIST.index(bp)
+                    last = CASCADE_BREAKPOINTS_LIST.index(next_bp)
+                except IndexError:
+                    next_bp = None
+                    first = CASCADE_BREAKPOINTS_LIST.index(bp)
+                    last = None
+                finally:
+                    devices = ', '.join([force_text(CASCADE_BREAKPOINTS_DICT[b][2]) for b in CASCADE_BREAKPOINTS_LIST[first:last]])
+                if breakpoints.index(bp) == 0:
+                    # first breakpoint
                     choices = tuple(('col-{0}-{1}'.format(bp, i),
                         ungettext_lazy('{0} unit', '{0} units', i).format(i)) for i in range(1, 13))
                     label = _("Default column width")
-                    if bp == 'xs':
-                        help_text = _("Number of column units for devices, narrower than {0} pixels, such as {2}.".format(*desc))
+                    if next_bp:
+                        help_text = _("Number of column units for devices narrower than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[next_bp])
+                    elif len(breakpoints) > 1:
+                        help_text = _("Number of column units for devices wider than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[bp])
                     else:
-                        help_text = _("Number of column units for devices wider than {0} pixels, such as {2}.".format(*desc))
+                        help_text = _("Number of column units for all devices.")
                     self.glossary_fields.append(PartialFormField('{0}-column-width'.format(bp),
                         widgets.Select(choices=choices),
                         initial='col-{0}-12'.format(bp), label=label, help_text=help_text))
                 else:
                     choices = (('', _('Inherit from above')),) + tuple(('col-{0}-{1}'.format(bp, i),
                         ungettext_lazy('{0} unit', '{0} units', i).format(i)) for i in range(1, 13))
-                    label = _("Column width for {2}".format(*desc))
-                    help_text = _("Override column units for devices wider than {0} pixels, such as {2}.".format(*desc))
+                    label = _("Column width for {0}").format(devices)
+                    if next_bp:
+                        help_text = _("Override column units for devices narrower than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[next_bp])
+                    elif len(breakpoints) > 1:
+                        help_text = _("Override column units for devices wider than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[bp])
+                    else:
+                        help_text = _("Override column units for all devices.")
                     self.glossary_fields.append(PartialFormField('{0}-column-width'.format(bp),
                         widgets.Select(choices=choices),
                         initial='', label=label, help_text=help_text))
                 if bp != 'xs':
                     choices = (('', _('No offset')),) + tuple(('col-{0}-offset-{1}'.format(bp, i),
                         ungettext_lazy('{0} unit', '{0} units', i).format(i)) for i in range(1, 12))
-                    label = _("Offset for {2}".format(*desc))
-                    help_text = _("Number of offset units for devices wider than {0} pixels, such as {2}.".format(*desc))
+                    label = _("Offset for {0}").format(devices)
+                    if next_bp:
+                        help_text = _("Number of offset units for devices narrower than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[next_bp])
+                    elif len(breakpoints) > 1:
+                        help_text = _("Number of offset units for devices wider than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[bp])
+                    else:
+                        help_text = _("Number of offset units for all devices.")
                     self.glossary_fields.append(PartialFormField('{0}-column-offset'.format(bp),
                         widgets.Select(choices=choices), label=label, help_text=help_text))
+                if next_bp:
+                    help_text = _("Utility classes for showing and hiding content by devices narrower than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[next_bp])
+                elif len(breakpoints) > 1:
+                    help_text = _("Utility classes for showing and hiding content by devices wider than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[bp])
+                else:
+                    help_text = _("Utility classes for showing and hiding content for all devices.")
                 self.glossary_fields.append(PartialFormField('{0}-responsive-utils'.format(bp),
                     widgets.RadioSelect(choices=(('', _("Default")), ('visible-{0}'.format(bp), _("Visible")), ('hidden-{0}'.format(bp), _("Hidden")),)),
-                    label=_("Responsive utilities for {2}").format(*desc),
-                    initial='',
-                    help_text=_("Utility classes for showing and hiding content by device via media query.")
-                ))
+                    label=_("Responsive utilities for {0}").format(devices), help_text=help_text, initial=''))
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
