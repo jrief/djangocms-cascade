@@ -39,7 +39,7 @@ class LinkForm(ModelForm):
             # convert this into an optional field since it is disabled with ``shared_glossary`` set
             self.base_fields['link_type'].required = False
         try:
-            site = instance.get_site()
+            site = instance.page.site
         except AttributeError:
             site = Site.objects.get_current()
         self.base_fields['cms_page'].queryset = Page.objects.drafts().on_site(site)

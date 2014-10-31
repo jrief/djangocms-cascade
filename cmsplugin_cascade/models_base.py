@@ -107,12 +107,6 @@ class CascadeModelBase(CMSPlugin):
         else:
             super(CascadeModelBase, self).save(*args, **kwargs)
 
-    def get_site(self):
-        try:
-            return self.page.site
-        except AttributeError:
-            return Site.objects.get_current()
-
     @classmethod
     def _get_cascade_elements(cls):
         """
