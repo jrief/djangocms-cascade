@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from django import forms
-from django.forms import widgets
+from django.forms import widgets, ModelChoiceField
+from django.forms.models import ModelForm
 from django.db.models import get_model
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin.sites import site
@@ -13,49 +13,19 @@ from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
+from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.models import LinkElementMixin
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 from cmsplugin_cascade.sharable.models import SharableCascadeElement
 from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
-from .settings import CASCADE_BREAKPOINT_APPEARANCES, CASCADE_BREAKPOINTS_LIST
+from .settings import CASCADE_BREAKPOINTS_LIST
 from . import utils
 
 
-class PictureForm(LinkForm):
-    LINK_TYPE_CHOICES = (('none', _("No Link")), ('cmspage', _("CMS Page")), ('exturl', _("External URL")),)
-    image_file = forms.ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-
-    def __init__(self, *args, **kwargs):
-        instance = kwargs.get('instance')
-        initial = instance and dict(instance.glossary) or {'link': {'type': 'none'}}
-        initial.update(kwargs.pop('initial', {}))
-        try:
-            self.base_fields['image_file'].initial = initial['image']['pk']
-        except KeyError:
-            self.base_fields['image_file'].initial = None
-        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-        kwargs.update(initial=initial)
-        super(PictureForm, self).__init__(*args, **kwargs)
-
-    def clean(self):
-        cleaned_data = super(PictureForm, self).clean()
-        if self.is_valid():
-            image_data = {'pk': self.cleaned_data['image_file'].pk, 'model': 'filer.Image'}
-            cleaned_data['glossary'].update(image=image_data)
-            del self.cleaned_data['image_file']
-        return cleaned_data
-
-
 @python_2_unicode_compatible
-class PictureElement(LinkElementMixin, SharableCascadeElement):
-    """
-    A proxy model for the ``<img>`` or ``<picture>`` element wrapped in an sharable link element.
-    """
-    class Meta:
-        proxy = True
-
+class ImagePropertyMixin(object):
     def __str__(self):
         return six.text_type(self.image and self.image or '')
 
@@ -70,10 +40,75 @@ class PictureElement(LinkElementMixin, SharableCascadeElement):
         return self._image_model
 
 
+class PictureElement(ImagePropertyMixin, CascadeElement):
+    """
+    A proxy model for the ``<img>`` or ``<picture>`` element.
+    """
+    class Meta:
+        proxy = True
+
+
+class SharablePictureElement(ImagePropertyMixin, LinkElementMixin, SharableCascadeElement):
+    """
+    A proxy model for the ``<img>`` or ``<picture>`` element wrapped in an sharable link element.
+    """
+    class Meta:
+        proxy = True
+
+
+class PictureFormMixin(object):
+    def __init__(self, *args, **kwargs):
+        try:
+            self.base_fields['image_file'].initial = kwargs['initial']['image']['pk']
+        except KeyError:
+            self.base_fields['image_file'].initial = None
+        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
+        super(PictureFormMixin, self).__init__(*args, **kwargs)
+
+    def clean_glossary(self):
+        if self.cleaned_data['glossary'] is None:
+            return {}
+        return self.cleaned_data['glossary']
+
+    def clean(self):
+        cleaned_data = super(PictureFormMixin, self).clean()
+        if self.is_valid():
+            image_data = {'pk': cleaned_data['image_file'].pk, 'model': 'filer.Image'}
+            cleaned_data['glossary'].update(image=image_data)
+            del self.cleaned_data['image_file']
+        return cleaned_data
+
+
+class PictureForm(PictureFormMixin, ModelForm):
+    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
+
+    def __init__(self, *args, **kwargs):
+        try:
+            initial = dict(kwargs['instance'].glossary)
+        except KeyError:
+            initial = {}
+        initial.update(kwargs.pop('initial', {}))
+        super(PictureForm, self).__init__(initial=initial, *args, **kwargs)
+
+
+class LinkedPictureForm(PictureFormMixin, LinkForm):
+    LINK_TYPE_CHOICES = (('none', _("No Link")), ('cmspage', _("CMS Page")), ('exturl', _("External URL")),)
+    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
+
+    def __init__(self, *args, **kwargs):
+        try:
+            initial = dict(kwargs['instance'].glossary)
+        except KeyError:
+            initial = {}
+        initial.setdefault('link', {'type': 'none'})
+        initial.update(kwargs.pop('initial', {}))
+        super(LinkedPictureForm, self).__init__(initial=initial, *args, **kwargs)
+
+
 class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     name = _("Picture")
-    model = PictureElement
-    form = PictureForm
+    model = SharablePictureElement
+    form = LinkedPictureForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin', 'CarouselSlidePlugin']
     require_parent = True
@@ -138,7 +173,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     def render(self, context, instance, placeholder):
         if 'img-responsive' in instance.glossary.get('image-shapes', []):
             # image shall be rendered in a responsive context using the picture element
-            appearances, default_appearance = self._responsive_appearances(context, instance)
+            appearances, default_appearance = utils.get_responsive_appearances(context, instance)
             context.update({
                 'is_responsive': True,
                 'instance': instance,
@@ -148,7 +183,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
             })
         else:
             # image shall be rendered using fixed sizes
-            appearance = self._static_appearance(context, instance)
+            appearance = utils.get_static_appearance(context, instance)
             context.update({
                 'is_responsive': False,
                 'instance': instance,
@@ -156,103 +191,6 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
                 'appearance': appearance,
             })
         return context
-
-    def _responsive_appearances(self, context, instance):
-        """
-        Create the appearance context, used to render a <picture> element which automatically adopts
-        its sizes to the current column width.
-        """
-        complete_glossary = instance.get_complete_glossary()
-        if instance.image.exif.get('Orientation', 1) > 4:
-            # image is rotated by 90 degrees, while keeping width and height
-            aspect_ratio = float(instance.image.width) / float(instance.image.height)
-        else:
-            aspect_ratio = float(instance.image.height) / float(instance.image.width)
-        container_max_heights = complete_glossary.get('container_max_heights', {})
-        if instance.shared_glossary:
-            resize_options = instance.shared_glossary.glossary.get('resize-options', {})
-        else:
-            resize_options = instance.glossary.get('resize-options', {})
-        crop = 'crop' in resize_options
-        upscale = 'upscale' in resize_options
-        subject_location = 'subject_location' in resize_options
-        min_width = 100.0
-        appearances = {}
-        resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
-        image_height = (None, None)
-        for high_res in resolutions:
-            for bp in complete_glossary['breakpoints']:
-                try:
-                    width = float(complete_glossary['container_max_widths'][bp])
-                except KeyError:
-                    width = 0
-                min_width = min(min_width, round(width))
-                size = None
-                try:
-                    image_height = self._parse_responsive_height(instance.glossary['responsive-heights'][bp])
-                except KeyError:
-                    pass
-                if image_height[0]:
-                    size = (int(width), image_height[0])
-                elif image_height[1]:
-                    size = (int(width), int(round(width * aspect_ratio * image_height[1])))
-                elif bp in container_max_heights:
-                    container_height = self._parse_responsive_height(container_max_heights[bp])
-                    if container_height[0]:
-                        size = (int(width), container_height[0])
-                    elif container_height[1]:
-                        size = (int(width), int(round(width * aspect_ratio * container_height[1])))
-                if size is None:
-                    # as fallback, adopt height to current width
-                    size = (int(width), int(round(width * aspect_ratio)))
-                key = high_res and bp + '-retina' or bp
-                appearances[key] = CASCADE_BREAKPOINT_APPEARANCES[bp].copy()
-                if high_res:
-                    size = (size[0] * 2, size[1] * 2)
-                    appearances[key]['media'] += ' and (min-resolution: 1.5dppx)'
-                elif True in resolutions:
-                    appearances[key]['media'] += ' and (max-resolution: 1.5dppx)'
-                appearances[key].update(size=size, crop=crop, upscale=upscale, subject_location=subject_location)
-        # create a relatively small image for the default img tag.
-        if image_height[1]:
-            size = (int(min_width), int(round(min_width * aspect_ratio * image_height[1])))
-        else:
-            size = (int(min_width), int(round(min_width * aspect_ratio)))
-        default_appearance = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
-        return appearances, default_appearance
-
-    def _static_appearance(self, context, instance):
-        if instance.shared_glossary:
-            size = instance.shared_glossary.glossary.get('image-size', {})
-            resize_options = instance.shared_glossary.glossary.get('resize-options', {})
-        else:
-            size = instance.glossary.get('image-size', {})
-            resize_options = instance.glossary.get('resize-options', {})
-        width = int(size.get('width', '').strip().rstrip('px') or 0)
-        height = int(size.get('height', '').strip().rstrip('px') or 0)
-        if width == 0 and height == 0:
-            # use the original image's dimensions
-            width = instance.image.width
-            height = instance.image.height
-        size = (width, height)
-        crop = 'crop' in resize_options
-        upscale = 'upscale' in resize_options
-        subject_location = 'subject_location' in resize_options
-        appearance = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
-        return appearance
-
-    def _parse_responsive_height(self, responsive_height):
-        """
-        Takes a string containing the image height in pixels or percent and parses it to obtain
-        a computational height. It return a tuple with the height in pixels and its relative height,
-        where depending on the input value, one or both elements are None.
-        """
-        responsive_height = responsive_height.strip()
-        if responsive_height.endswith('px'):
-            return (int(responsive_height.rstrip('px')), None)
-        elif responsive_height.endswith('%'):
-            return (None, float(responsive_height.rstrip('%')) / 100)
-        return (None, None)
 
     @classmethod
     def get_css_classes(cls, obj):
