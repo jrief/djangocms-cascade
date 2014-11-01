@@ -43,7 +43,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     form = BootstrapContainerForm
     WIDGET_CHOICES = (
         ('xs', _("Tiny (<{sm[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
-        ('sm', _("Small (≥{sm[0]}px and <{md[0]}px))".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('sm', _("Small (≥{sm[0]}px and <{md[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
         ('md', _("Medium (≥{md[0]}px and <{lg[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
         ('lg', _("Large (≥{lg[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
     )
