@@ -180,13 +180,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             for bp in breakpoints:
                 try:
                     next_bp = breakpoints[breakpoints.index(bp) + 1]
-                    first = CASCADE_BREAKPOINTS_LIST.index(bp)
                     last = CASCADE_BREAKPOINTS_LIST.index(next_bp)
                 except IndexError:
                     next_bp = None
-                    first = CASCADE_BREAKPOINTS_LIST.index(bp)
                     last = None
                 finally:
+                    first = CASCADE_BREAKPOINTS_LIST.index(bp)
                     devices = ', '.join([force_text(CASCADE_BREAKPOINTS_DICT[b][2]) for b in CASCADE_BREAKPOINTS_LIST[first:last]])
                 if breakpoints.index(bp) == 0:
                     # first breakpoint
