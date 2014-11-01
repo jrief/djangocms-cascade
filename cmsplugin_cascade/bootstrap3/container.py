@@ -60,7 +60,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             help_text=_("Changing your outermost '.container' to '.container-fluid'.")
         ),
     )
-    glossary_variables = ['container_max_widths']
+    glossary_variables = ['container_max_widths', 'media_queries']
 
     class Media:
         css = {'all': ('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css',)}
@@ -92,6 +92,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     def sanitize_model(cls, obj):
         sanitized = super(BootstrapContainerPlugin, cls).sanitize_model(obj)
         complete_glossary = obj.get_complete_glossary()
+        # compute the max width for each chosen breakpoint
         obj.glossary['container_max_widths'] = {}
         max_widths = CASCADE_BREAKPOINTS_DICT['lg'][3]
         for bp in CASCADE_BREAKPOINTS_LIST[::-1]:
@@ -100,6 +101,20 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             except KeyError:
                 obj.glossary['container_max_widths'][bp] = max_widths
                 max_widths = CASCADE_BREAKPOINTS_DICT[bp][3]
+        # determine the media queries elements which require them
+        obj.glossary['media_queries'] = media = {}
+        last_index = len(complete_glossary['breakpoints']) - 1
+        if last_index > 0:
+            for index, bp in enumerate(complete_glossary['breakpoints']):
+                if index == 0:
+                    next_bp = complete_glossary['breakpoints'][1]
+                    media[bp] = ['(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
+                elif index == last_index:
+                    media[bp] = ['(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[bp][0])]
+                else:
+                    next_bp = complete_glossary['breakpoints'][index + 1]
+                    media[bp] = ['(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[bp][0]),
+                                 '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
         return sanitized
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)

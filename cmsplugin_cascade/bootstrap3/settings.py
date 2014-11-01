@@ -26,9 +26,9 @@ CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS = (
     ('lg', (1200, 'desktop', _("large desktops"), 1170)),
 )
 CASCADE_BOOTSTRAP3_GUTTER = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_GUTTER', 30)
-
 CASCADE_BREAKPOINTS_DICT = dict(tp for tp in CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
 CASCADE_BREAKPOINTS_LIST = list(tp[0] for tp in CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS)
+
 CASCADE_BREAKPOINT_APPEARANCES = {
     'xs': {'media': '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['sm'][0])},
     'sm': {'media': '(min-width: {0}px) and (max-width: {1}px)'.format(CASCADE_BREAKPOINTS_DICT['sm'][0], CASCADE_BREAKPOINTS_DICT['md'][0])},
