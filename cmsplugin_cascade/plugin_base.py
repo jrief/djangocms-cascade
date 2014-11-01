@@ -31,7 +31,7 @@ class CascadePluginBase(CMSPluginBase):
 
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
         super(CascadePluginBase, self).__init__(model, admin_site)
-        if glossary_fields:
+        if isinstance(glossary_fields, (list, tuple)):
             self.glossary_fields = glossary_fields
         elif not hasattr(self, 'glossary_fields'):
             self.glossary_fields = []
