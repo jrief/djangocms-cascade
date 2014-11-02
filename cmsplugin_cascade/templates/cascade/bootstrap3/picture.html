@@ -1,7 +1,4 @@
-{% extends "cascade/plugins/link.html" %}
 {% load thumbnail filer_tags filer_image_tags %}{% spaceless %}
-
-{% block link_content %}
 
 {% if is_responsive %}
 <picture {{ instance.html_tag_attributes }}>
@@ -18,7 +15,5 @@
 	{% thumbnail instance.image appearance.size crop=appearance.crop upscale=appearance.upscale subject_location=appearance.subject_location as thumb %}
 	<img src="{{ thumb.url }}" {{ instance.html_tag_attributes }} class="{{ instance.css_classes }}" width="{{ instance.width }}" height="{{ instance.height }}" />
 {% endif %}
-
-{% endblock link_content %}
 
 {% endspaceless %}
