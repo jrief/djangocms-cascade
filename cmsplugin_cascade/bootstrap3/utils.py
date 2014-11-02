@@ -13,7 +13,7 @@ def reduce_breakpoints(plugin, field_name):
     complete_glossary = plugin.get_parent_instance().get_complete_glossary()
     if 'breakpoints' not in complete_glossary:
         return
-    # find the glossary_field named 'responsive-heights' and restrict its breakpoint to the available ones
+    # find the glossary_field named field_name and restrict its breakpoint to the available ones
     widget = [f for f in plugin.glossary_fields if f.name == field_name][0].widget
     if not isinstance(widget, widgets.MultiWidget):
         raise ValueError('Widget for glossary_field {0} does not a multiple values')

@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
+from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from .settings import CASCADE_BREAKPOINTS_LIST, CMS_CASCADE_TEMPLATE_DIR
+from .picture import PictureForm, PictureElement, BootstrapPicturePlugin
 from . import utils
 
 
@@ -50,7 +53,13 @@ class CarouselPlugin(BootstrapPluginBase):
             label=_("Carousel heights"),
             initial={'xs': '100px', 'sm': '150px', 'md': '200px', 'lg': '300px'},
             help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
-        )
+        ),
+        PartialFormField('resize-options',
+            widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
+            label=_("Resize Options"),
+            help_text=_("Options to use when resizing the image."),
+            initial=['upscale', 'crop', 'subject_location', 'high_resolution']
+        ),
     )
 
     def get_form(self, request, obj=None, **kwargs):
@@ -88,11 +97,11 @@ class CarouselPlugin(BootstrapPluginBase):
     def sanitize_model(cls, obj):
         sanitized = super(CarouselPlugin, cls).sanitize_model(obj)
         complete_glossary = obj.get_complete_glossary()
-        # fill all unset maximum heights for this container to meaningful values
-        breakpoints = complete_glossary.get('breakpoints', CASCADE_BREAKPOINTS_LIST)
+        # fill all invalid heights for this container to a meaningful value
         max_height = max(obj.glossary['container_max_heights'].values())
-        for bp in breakpoints:
-            if not obj.glossary['container_max_heights'][bp]:
+        pattern = re.compile(r'^(\d+)px$')
+        for bp in complete_glossary['breakpoints']:
+            if not pattern.match(obj.glossary['container_max_heights'].get(bp, '')):
                 obj.glossary['container_max_heights'][bp] = max_height
         return sanitized
 
@@ -101,15 +110,39 @@ plugin_pool.register_plugin(CarouselPlugin)
 
 class CarouselSlidePlugin(BootstrapPluginBase):
     name = _("Slide")
+    model = PictureElement
+    form = PictureForm
     default_css_class = 'item'
     parent_classes = ['CarouselPlugin']
-    change_form_template = 'cascade/admin/change_form-empty.html'
+    raw_id_fields = ('image_file',)
+    fields = ('image_file', 'glossary',)
+    render_template = os.path.join(CMS_CASCADE_TEMPLATE_DIR, 'picture.html')
+
+    def render(self, context, instance, placeholder):
+        # image shall be rendered in a responsive context using the picture element
+        appearances, default_appearance = utils.get_responsive_appearances(context, instance)
+        context.update({
+            'is_responsive': True,
+            'instance': instance,
+            'placeholder': placeholder,
+            'appearances': appearances,
+            'default_appearance': default_appearance,
+        })
+        return context
 
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = super(CarouselSlidePlugin, cls).get_css_classes(obj)
+        css_classes.append('img-responsive')  # always for slides
         if obj.get_previous_sibling() is None:
             css_classes.append('active')
         return css_classes
+
+    @classmethod
+    def sanitize_model(cls, obj):
+        sanitized = super(CarouselSlidePlugin, cls).sanitize_model(obj)
+        complete_glossary = obj.get_complete_glossary()
+        obj.glossary.update({'resize-options': complete_glossary.get('resize-options', [])})
+        return sanitized
 
 plugin_pool.register_plugin(CarouselSlidePlugin)
