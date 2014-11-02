@@ -21,8 +21,8 @@ if 'TextPlugin' not in CMS_CASCADE_LEAF_PLUGINS:
 
 CMS_CASCADE_BOOTSTRAP3_BREAKPOINTS = (
     ('xs', (768, 'mobile-phone', _("mobile phones"), 750)),
-    ('sm', (768, 'tablet', _("tablets"), 970)),
-    ('md', (992, 'laptop', _("laptops"), 1170)),
+    ('sm', (768, 'tablet', _("tablets"), 750)),
+    ('md', (992, 'laptop', _("laptops"), 970)),
     ('lg', (1200, 'desktop', _("large desktops"), 1170)),
 )
 CASCADE_BOOTSTRAP3_GUTTER = getattr(settings, 'CMS_CASCADE_BOOTSTRAP3_GUTTER', 30)
