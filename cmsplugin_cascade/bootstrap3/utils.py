@@ -26,6 +26,8 @@ def get_responsive_appearances(context, instance):
     Create the appearance context, used to render a <picture> element which automatically adopts
     its sizes to the current column width.
     """
+    if not instance.image:
+        return None, None
     complete_glossary = instance.get_complete_glossary()
     if instance.image.exif.get('Orientation', 1) > 4:
         # image is rotated by 90 degrees, while keeping width and height
