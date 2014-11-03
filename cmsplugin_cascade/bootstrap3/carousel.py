@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+try:
+    from html.parser import HTMLParser  # py3
+except ImportError:
+    from HTMLParser import HTMLParser  # py2
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
+from djangocms_text_ckeditor.widgets import TextEditorWidget
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
@@ -116,14 +121,28 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
-    render_template = os.path.join(CMS_CASCADE_TEMPLATE_DIR, 'picture.html')
+    render_template = os.path.join(CMS_CASCADE_TEMPLATE_DIR, 'carousel-slide.html')
+    glossary_fields = (
+        PartialFormField('caption',
+            TextEditorWidget(),
+            label=_("Slide Caption"),
+            help_text=_("Caption text to be laid over the backgroud image."),
+        ),
+    )
+
+    def get_form(self, request, obj=None, **kwargs):
+        caption = HTMLParser().unescape(obj.glossary.get('caption', ''))
+        obj.glossary.update(caption=caption)
+        return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element
         appearances, default_appearance = utils.get_responsive_appearances(context, instance)
+        caption = HTMLParser().unescape(instance.glossary.get('caption', ''))
         context.update({
             'is_responsive': True,
             'instance': instance,
+            'caption': caption,
             'placeholder': placeholder,
             'appearances': appearances,
             'default_appearance': default_appearance,

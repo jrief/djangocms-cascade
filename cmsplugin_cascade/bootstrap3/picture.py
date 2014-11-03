@@ -110,7 +110,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     model = SharablePictureElement
     form = LinkedPictureForm
     module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin', 'CarouselSlidePlugin']
+    parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)
