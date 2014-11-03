@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import json
 from django.contrib import admin
 from django.template import Template, RequestContext
 from django.template.loader import get_template
+from django.http import QueryDict
 from cms.api import add_plugin, create_page
 from cms.models.placeholdermodel import Placeholder
 from cms.plugin_base import CMSPlugin
@@ -30,16 +32,17 @@ class ContainerPluginTest(CMSTestCase):
         container_plugin = container_model.get_plugin_class_instance(self.admin_site)
         self.assertIsInstance(container_plugin, BootstrapContainerPlugin)
         ModelForm = container_plugin.get_form(self.request, container_model)
-        post_data = {'widest': 'md', 'narrowest': 'sm'}
+        post_data = QueryDict('', mutable=True)
+        post_data.setlist('breakpoints', ['sm', 'md'])
         form = ModelForm(post_data, None, instance=container_model)
         html = form.as_p()
-        self.assertInHTML('<input id="id_glossary_widest_0" name="widest" type="radio" value="lg" />', html)
-        self.assertInHTML('<input id="id_glossary_narrowest_3" name="narrowest" type="radio" value="xs" />', html)
+        self.assertInHTML('<input id="id_glossary_breakpoints_0" name="breakpoints" type="checkbox" value="xs" />', html)
+        self.assertInHTML('<input checked="checked" id="id_glossary_breakpoints_2" name="breakpoints" type="checkbox" value="md" />', html)
         self.assertInHTML('<input id="id_glossary_fluid" name="fluid" type="checkbox" />', html)
         container_plugin.save_model(self.request, container_model, form, False)
         self.assertListEqual(container_model.glossary['breakpoints'], ['sm', 'md'])
         self.assertTrue('fluid' in container_model.glossary)
-        self.assertEqual(str(container_model), 'ranging from 720 through 1140 pixels')
+        self.assertEqual(str(container_model), 'for tablets, laptops')
 
         # add a RowPlugin with 3 Columns
         row_model = add_plugin(self.placeholder, BootstrapRowPlugin, 'en', target=container_model)
