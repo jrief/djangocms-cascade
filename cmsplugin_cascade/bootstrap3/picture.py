@@ -32,8 +32,8 @@ class ImagePropertyMixin(object):
     @property
     def image(self):
         if not hasattr(self, '_image_model'):
-            Model = get_model(*self.glossary['image']['model'].split('.'))
             try:
+                Model = get_model(*self.glossary['image']['model'].split('.'))
                 self._image_model = Model.objects.get(pk=self.glossary['image']['pk'])
             except (KeyError, ObjectDoesNotExist):
                 self._image_model = None
