@@ -68,7 +68,10 @@ def get_responsive_appearances(context, instance):
             if size is None:
                 # as fallback, adopt height to current width
                 size = (int(width), int(round(width * aspect_ratio)))
-            media_queries = complete_glossary['media_queries'][bp][:]
+            try:
+                media_queries = complete_glossary['media_queries'][bp][:]
+            except KeyError:
+                media_queries = []
             if high_res:
                 size = (size[0] * 2, size[1] * 2)
                 media_queries.append('(min-resolution: 1.5dppx)')
