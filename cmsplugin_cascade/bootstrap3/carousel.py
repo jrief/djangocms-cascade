@@ -153,8 +153,6 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     def get_css_classes(cls, obj):
         css_classes = super(CarouselSlidePlugin, cls).get_css_classes(obj)
         css_classes.append('img-responsive')  # always for slides
-        if obj.get_previous_sibling() is None:
-            css_classes.append('active')
         return css_classes
 
     @classmethod
