@@ -31,6 +31,7 @@ Contents:
   tutorial
   link-plugin
   bootstrap3/grid
+  bootstrap3/picture
   bootstrap3/navbar
   customized-plugins
   history
