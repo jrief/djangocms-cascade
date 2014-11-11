@@ -34,7 +34,7 @@ INSTALLED_APPS = (
     'cmsplugin_cascade.sharable',
     'cms',
     'menus',
-    'mptt',
+    'treebeard',
     'south',
     'filer',
     'easy_thumbnails',
@@ -130,6 +130,12 @@ CMS_PLACEHOLDER_CONF = {
 }
 
 CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.link.sharable', 'cmsplugin_cascade.bootstrap3',)
+
+CMS_CASCADE_LEAF_PLUGINS = ('LinkPlugin',)
+
+CMSPLUGIN_CASCADE_DEPENDENCIES = {
+    'stofferia/js/admin/linkplugin.js': 'cascade/js/ring.js',
+}
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',

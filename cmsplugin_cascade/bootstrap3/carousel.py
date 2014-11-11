@@ -9,7 +9,6 @@ from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
-from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.widgets import TextEditorWidget
 from cmsplugin_cascade.fields import PartialFormField
