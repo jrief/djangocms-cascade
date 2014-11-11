@@ -31,6 +31,7 @@ class SharableCascadeElement(CascadeModelBase):
     """
     class Meta:
         app_label = 'cmsplugin_cascade'
+        db_table = 'cmsplugin_cascade_sharableelement'
 
     shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL)
 
