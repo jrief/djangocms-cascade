@@ -85,7 +85,7 @@ class PictureForm(PictureFormMixin, ModelForm):
     def __init__(self, *args, **kwargs):
         try:
             initial = dict(kwargs['instance'].glossary)
-        except KeyError:
+        except (KeyError, AttributeError):
             initial = {}
         initial.update(kwargs.pop('initial', {}))
         super(PictureForm, self).__init__(initial=initial, *args, **kwargs)
