@@ -115,6 +115,25 @@ class CascadingSizeWidget(widgets.TextInput):
             raise ValidationError(self.invalid_message, code='invalid', params=params)
 
 
+class ColorPickerWidget(widgets.TextInput):
+    """
+    Use this field to enter a color value. Clicking onto this widget will pop up a color picker.
+    The value passed to the PartialField is guaranteed to be in #rgb format.
+    """
+    input_type = 'color'
+    DEFAULT_ATTRS = {'style': 'width: 15em;', 'value': '#ffffff'}
+    validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
+    invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
+
+    def __init__(self, attrs=DEFAULT_ATTRS, required=True):
+        self.required = required
+        super(ColorPickerWidget, self).__init__(attrs=attrs)
+
+    def validate(self, value):
+        if not self.validation_pattern.match(value):
+            raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
+
+
 class MultipleTextInputWidget(widgets.MultiWidget):
     """
     A widgets accepting multiple input values to be used for rendering CSS inline styles.
