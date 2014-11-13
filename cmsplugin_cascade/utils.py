@@ -30,3 +30,18 @@ def resolve_dependencies(filenames):
             dependencies.extend(resolve_dependencies(dependency_list))
         dependencies.append(filename)
     return remove_duplicates(dependencies)
+
+
+def rectify_partial_form_field(base_field, partial_form_fields):
+    """
+    In base_field reset the attributes label and help_text, since they are overriden by the
+    partial field. Additionally, from the list, or list of lists of partial_form_fields
+    append the bound validator methods to the given base field.
+    """
+    base_field.label = ''
+    base_field.help_text = ''
+    for fieldset in partial_form_fields:
+        if not isinstance(fieldset, (list, tuple)):
+            fieldset = [fieldset]
+        for field in fieldset:
+            base_field.validators.append(field.run_validators)
