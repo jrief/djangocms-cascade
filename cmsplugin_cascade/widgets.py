@@ -8,16 +8,19 @@ from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
+from .fields import PartialFormField
 
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
     def __init__(self, partial_fields):
-        unique_keys = set([field.name for field in partial_fields])
+        self.partial_fields = [field for field in partial_fields if isinstance(field, PartialFormField)]
+        if len(partial_fields) != len(self.partial_fields):
+            raise ValueError('Given fields must be of type PartialFormField')
+        unique_keys = set([field.name for field in self.partial_fields])
         if len(partial_fields) > len(unique_keys):
-            raise AttributeError('List of partial_fields may contain only unique keys')
-        self.partial_fields = partial_fields[:]
-        super(JSONMultiWidget, self).__init__((field.widget for field in partial_fields))
+            raise ValueError('List of partial_fields may contain only unique keys')
+        super(JSONMultiWidget, self).__init__((field.widget for field in self.partial_fields))
 
     def decompress(self, values):
         if not isinstance(values, dict):
