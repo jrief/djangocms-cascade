@@ -14,18 +14,24 @@ from .fields import PartialFormField
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
     def __init__(self, partial_fields):
-        self.partial_fields = [field for field in partial_fields if isinstance(field, PartialFormField)]
-        if len(partial_fields) != len(self.partial_fields):
-            raise ValueError('Given fields must be of type PartialFormField')
-        unique_keys = set([field.name for field in self.partial_fields])
-        if len(partial_fields) > len(unique_keys):
+        self.partial_fields = partial_fields[:]
+        self.normalized_fields = []
+        for field in self.partial_fields:
+            if isinstance(field, PartialFormField):
+                self.normalized_fields.append(field)
+            elif isinstance(field, (list, tuple)):
+                self.normalized_fields.extend([f for f in partial_fields if isinstance(f, PartialFormField)])
+            else:
+                raise ValueError('Given fields must be of type PartialFormField or list of thereof')
+        unique_keys = set([field.name for field in self.normalized_fields])
+        if len(self.normalized_fields) > len(unique_keys):
             raise ValueError('List of partial_fields may contain only unique keys')
-        super(JSONMultiWidget, self).__init__((field.widget for field in self.partial_fields))
+        super(JSONMultiWidget, self).__init__((field.widget for field in self.normalized_fields))
 
     def decompress(self, values):
         if not isinstance(values, dict):
             values = json.loads(values or '{}')
-        for field in self.partial_fields:
+        for field in self.normalized_fields:
             if isinstance(field.widget, widgets.MultiWidget):
                 values[field.name] = field.widget.decompress(values.get(field.name, field.initial))
             else:
@@ -34,7 +40,7 @@ class JSONMultiWidget(widgets.MultiWidget):
 
     def value_from_datadict(self, data, files, name):
         result = {}
-        for field in self.partial_fields:
+        for field in self.normalized_fields:
             if isinstance(field.widget, widgets.MultiWidget):
                 result[field.name] = field.widget.value_from_datadict(data, files, field.name)
             elif getattr(field.widget, 'allow_multiple_selected', False):
@@ -46,19 +52,24 @@ class JSONMultiWidget(widgets.MultiWidget):
     def render(self, name, values, attrs):
         values = self.decompress(values)
         field_attrs = dict(**attrs)
-        render_fields = []
-        for field in self.partial_fields:
-            field_attrs['id'] = attrs['id'] + '_' + field.name
-            render_fields.append((
-                field.name,
-                six.text_type(field.label),
-                field.widget.render(field.name, values.get(field.name), field_attrs),
-                six.text_type(field.help_text)
-            ))
-        html = format_html_join('\n',
-            '<div class="glossary-widget"><div glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div></div>',
-            render_fields)
-        return html
+        render_fieldsets = []
+        for fieldset in self.partial_fields:
+            render_fields = []
+            if not isinstance(fieldset, (list, tuple)):
+                fieldset = [fieldset]
+            for field in fieldset:
+                field_attrs['id'] = attrs['id'] + '_' + field.name
+                render_fields.append((
+                    field.name,
+                    six.text_type(field.label),
+                    field.widget.render(field.name, values.get(field.name), field_attrs),
+                    six.text_type(field.help_text),
+                ))
+            html = format_html_join('',
+                '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',
+                render_fields)
+            render_fieldsets.append((html,))
+        return format_html_join('\n', '<div class="glossary-widget">{0}</div>', render_fieldsets)
 
 
 if DJANGO_VERSION[0] <= 1 and DJANGO_VERSION[1] <= 5:
