@@ -20,7 +20,7 @@ django.jQuery(function($) {
 			var $field_cmspage = $(".form-row.field-link_type .field-box.field-cms_page"),
 				$field_exturl = $(".form-row.field-link_type .field-box.field-ext_url"),
 				$field_mailto = $(".form-row.field-link_type .field-box.field-mail_to"),
-				$link_target = $(".glossary-widget.glossary_target");
+				$link_target = $(".glossary-widget .glossary_target");
 
 			switch(linkType) {
 			case 'cmspage':

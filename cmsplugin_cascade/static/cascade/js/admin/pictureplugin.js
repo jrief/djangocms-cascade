@@ -9,9 +9,9 @@ django.jQuery(function($) {
 			this.$super();
 
 			// be more intuitive, reorganize layout by moving radio boxes for 'Link Target'
-			$('.glossary-widget.glossary_target').before($('.form-row.field-link_type'));
+			$('.glossary-widget .glossary_target').before($('.form-row.field-link_type'));
 			// move the select box for Shared Glossary just before 'Image Shapes'
-			$('.glossary-widget.glossary_image-shapes').before($('.form-row.field-shared_glossary'));
+			$('.glossary-widget .glossary_image-shapes').before($('.form-row.field-shared_glossary'));
 
 			// install event handlers
 			$image_responsive.change(function(evt) {
@@ -49,8 +49,8 @@ django.jQuery(function($) {
 			this.$super($option);
 		},
 		toggleResponsive: function(checked) {
-			var $glossary_responsive = $('.glossary-widget.glossary_responsive-heights'),
-				$glossary_static = $('.glossary-widget.glossary_image-size');
+			var $glossary_responsive = $('.glossary-widget .glossary_responsive-heights'),
+				$glossary_static = $('.glossary-widget .glossary_image-size');
 
 			// if checkbox Image Shapes: Responsive is active, replace 'Image Size' against 'Container Height'
 			if (checked) {
