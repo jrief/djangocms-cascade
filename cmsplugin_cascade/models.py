@@ -27,5 +27,5 @@ class PluginExtraFields(models.Model):
 
     plugin_type = models.CharField(_("Plugin Name"), max_length=50, db_index=True, choices=plugins_for_site())
     site = models.ForeignKey(Site, verbose_name=_("Site"))
-    css_classes = JSONField(default={})
-    inline_styles = JSONField(default={})
+    css_classes = JSONField(null=True, blank=True, default={})
+    inline_styles = JSONField(null=True, blank=True, default={})

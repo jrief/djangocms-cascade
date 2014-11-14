@@ -31,7 +31,8 @@ class ClassNamesWidget(widgets.TextInput):
 
 class PluginExtraFieldsAdmin(admin.ModelAdmin):
     list_display = ('plugin_type', 'site')
-    DISTANCE_CHOICES = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")), ('px', _("px")), ('%', _("%")),)
+    DISTANCE_UNITS = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")), ('px', _("px")), ('%', _("%")),)
+    CSS_DIRECTIONS = ('top', 'right', 'bottom', 'left',)
     classname_fields = ((
         PartialFormField('class_names',
             ClassNamesWidget(),
@@ -43,25 +44,28 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
             label=_("Allow multiple"),
         ),
     ),)
-    style_fields = ((
-        PartialFormField('margins',
-            widgets.CheckboxSelectMultiple(choices=(
-                ('margin-top', 'margin-top'), ('margin-right', 'margin-right'),
-                ('margin-bottom', 'margin-bottom'), ('margin-left', 'margin-left'),
-            )),
-            label=_('Customized margins'),
-            help_text=_("Add customized CSS margins to this plugin"),
-        ),
-        PartialFormField('margin-units',
-            widgets.Select(choices=DISTANCE_CHOICES),
-            label=_('Margins units'),
-            initial=['px', 'em', '%'],
-            help_text=_("Units for customized CSS margins"),
-        ),
-    ),)
 
     class Media:
         css = {'all': ('cascade/css/admin/partialfields.css',)}
+
+    def __init__(self, model, admin_site):
+        super(PluginExtraFieldsAdmin, self).__init__(model, admin_site)
+        self.style_fields = []
+        for style in ('margin', 'padding',):
+            choices = [(c, c) for c in ('{0}-{1}'.format(style, d) for d in self.CSS_DIRECTIONS)]
+            self.style_fields.append((
+                PartialFormField('{0}-fields'.format(style),
+                    widgets.CheckboxSelectMultiple(choices=choices),
+                    label=_('Customized {0} fields').format(style),
+                    help_text=_("Add customized CSS styles to this plugin"),
+                ),
+                PartialFormField('{0}-units'.format(style),
+                    widgets.Select(choices=self.DISTANCE_UNITS),
+                    label=_('Units for {0} fields').format(style),
+                    initial=self.DISTANCE_UNITS[0][0],
+                    help_text=_("Units for customized CSS styles"),
+                ),
+            ))
 
     def get_form(self, request, obj=None, **kwargs):
         """
