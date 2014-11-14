@@ -20,7 +20,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             if isinstance(field, PartialFormField):
                 self.normalized_fields.append(field)
             elif isinstance(field, (list, tuple)):
-                self.normalized_fields.extend([f for f in partial_fields if isinstance(f, PartialFormField)])
+                self.normalized_fields.extend([f for f in field if isinstance(f, PartialFormField)])
             else:
                 raise ValueError('Given fields must be of type PartialFormField or list of thereof')
         unique_keys = set([field.name for field in self.normalized_fields])
