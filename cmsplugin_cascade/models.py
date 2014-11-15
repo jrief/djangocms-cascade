@@ -15,7 +15,7 @@ class CascadeElement(CascadeModelBase):
         db_table = 'cmsplugin_cascade_element'
 
 
-def plugins_for_site():
+def _plugins_for_site():
     cascade_plugins = set([p for p in plugin_pool.get_all_plugins() if issubclass(p, ExtraFieldsMixin)])
     return [(p.__name__, '{0} {1}'.format(force_text(p.module), force_text(p.name))) for p in cascade_plugins]
 
@@ -25,7 +25,8 @@ class PluginExtraFields(models.Model):
         app_label = 'cmsplugin_cascade'
         verbose_name = verbose_name_plural = _("Custom CSS classes and styles")
 
-    plugin_type = models.CharField(_("Plugin Name"), max_length=50, db_index=True, choices=plugins_for_site())
+    CUSTOMIZABLE_PLUGINS = _plugins_for_site()
+    plugin_type = models.CharField(_("Plugin Name"), max_length=50, db_index=True, choices=CUSTOMIZABLE_PLUGINS)
     site = models.ForeignKey(Site, verbose_name=_("Site"))
     css_classes = JSONField(null=True, blank=True, default={})
     inline_styles = JSONField(null=True, blank=True, default={})
