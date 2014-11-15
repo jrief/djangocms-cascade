@@ -14,7 +14,7 @@ SECRET_KEY = 'secret'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'bs3demo/database.sqlite',
+        'NAME': 'bs3demo/sqlite.db',
     },
 }
 
@@ -130,12 +130,6 @@ CMS_PLACEHOLDER_CONF = {
 }
 
 CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.link.sharable', 'cmsplugin_cascade.bootstrap3',)
-
-CMS_CASCADE_LEAF_PLUGINS = ('LinkPlugin',)
-
-CMSPLUGIN_CASCADE_DEPENDENCIES = {
-    'stofferia/js/admin/linkplugin.js': 'cascade/js/ring.js',
-}
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
