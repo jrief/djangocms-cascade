@@ -80,4 +80,10 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         setattr(form, 'style_fields', self.style_fields)
         return form
 
+    def has_add_permission(self, request):
+        """
+        Only if at least one plugin uses the class ExtraFieldsMixin, allow to add an instance.
+        """
+        return len(PluginExtraFields.CUSTOMIZABLE_PLUGINS) > 0
+
 admin.site.register(PluginExtraFields, PluginExtraFieldsAdmin)
