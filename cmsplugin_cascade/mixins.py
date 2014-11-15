@@ -13,6 +13,7 @@ class ExtraFieldsMixin(object):
     This mixin class shall be added to plugins which shall offer extra fields for customizes
     CSS classes and styles.
     """
+    EXTRA_INLINE_STYLES = ('margin', 'padding', 'width', 'height',)
 
     def __init__(self, model=None, admin_site=None, **kwargs):
         from cmsplugin_cascade.models import PluginExtraFields
@@ -31,15 +32,33 @@ class ExtraFieldsMixin(object):
                 widget = widgets.SelectMultiple(choices=choices)
             else:
                 widget = widgets.Select(choices=((None, _("Select CSS")),) + choices)
-            self.glossary_fields.append(PartialFormField('custom_css_classes',
+            self.glossary_fields.append(PartialFormField('extra_css_classes',
                 widget,
                 label=_("Customized CSS Classes"),
                 help_text=_("Customized CSS classes to be added to this element.")
             ))
             # add input fields to let the user enter styling information
-            for style in ('margin', 'padding',):
-                inline_styles = extra_fields.inline_styles.get('{0}-fields'.format(style))
+            for style in self.EXTRA_INLINE_STYLES:
+                inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
                 if inline_styles:
-                    allowed_units = extra_fields.inline_styles.get('{0}-units'.format(style)).split(',')
-                    widget = MultipleCascadingSizeWidget(inline_styles, allowed_units=allowed_units)
-                    self.glossary_fields.append(PartialFormField(style, widget, label=style.capitalize()))
+                    allowed_units = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
+                    widget = MultipleCascadingSizeWidget(inline_styles, allowed_units=allowed_units, required=False)
+                    key = 'extra_inline_styles:{0}'.format(style)
+                    label = style.capitalize()
+                    self.glossary_fields.append(PartialFormField(key, widget, label=label))
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        """Enrich list of CSS classes with customized ones"""
+        css_classes = super(ExtraFieldsMixin, cls).get_css_classes(obj)
+        css_classes.extend(obj.glossary.get('extra_css_classes', []))
+        return css_classes
+
+    @classmethod
+    def get_inline_styles(cls, obj):
+        """Enrich inline CSS styles with customized ones"""
+        inline_styles = super(ExtraFieldsMixin, cls).get_inline_styles(obj)
+        for key, eis in obj.glossary.items():
+            if key.startswith('extra_inline_styles:'):
+                inline_styles.update(dict((k, v) for k, v in eis.items() if v))
+        return inline_styles

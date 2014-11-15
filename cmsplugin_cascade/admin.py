@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from .fields import PartialFormField
 from .models import PluginExtraFields
 from .widgets import JSONMultiWidget
+from .mixins import ExtraFieldsMixin
 from .utils import rectify_partial_form_field
 
 
@@ -51,19 +52,20 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     def __init__(self, model, admin_site):
         super(PluginExtraFieldsAdmin, self).__init__(model, admin_site)
         self.style_fields = []
-        for style in ('margin', 'padding',):
-            choices = [(c, c) for c in ('{0}-{1}'.format(style, d) for d in self.CSS_DIRECTIONS)]
+        for style in ExtraFieldsMixin.EXTRA_INLINE_STYLES:
+            if style in ('width', 'height',):
+                choices = [(c, c) for c in ('{0}{1}'.format(m, style) for m in ('min-', '', 'max-'))]
+            else:
+                choices = [(c, c) for c in ('{0}-{1}'.format(style, d) for d in self.CSS_DIRECTIONS)]
             self.style_fields.append((
-                PartialFormField('{0}-fields'.format(style),
+                PartialFormField('extra_fields:{0}'.format(style),
                     widgets.CheckboxSelectMultiple(choices=choices),
                     label=_('Customized {0} fields').format(style),
-                    help_text=_("Add customized CSS styles to this plugin"),
                 ),
-                PartialFormField('{0}-units'.format(style),
+                PartialFormField('extra_units:{0}'.format(style),
                     widgets.Select(choices=self.DISTANCE_UNITS),
                     label=_('Units for {0} fields').format(style),
                     initial=self.DISTANCE_UNITS[0][0],
-                    help_text=_("Units for customized CSS styles"),
                 ),
             ))
 
