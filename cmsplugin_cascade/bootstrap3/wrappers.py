@@ -3,12 +3,13 @@ from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.mixins import ExtraFieldsMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from . import settings
 
 
-class SimpleWrapperPlugin(BootstrapPluginBase):
+class SimpleWrapperPlugin(ExtraFieldsMixin, BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
     generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
