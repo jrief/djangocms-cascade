@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from collections import OrderedDict
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import PartialFormField
-from .widgets import MultipleCascadingSizeWidget
+from .widgets import MultipleCascadingSizeWidget, ColorPickerWidget
 
 
 class ExtraFieldsMixin(object):
@@ -13,7 +14,13 @@ class ExtraFieldsMixin(object):
     This mixin class shall be added to plugins which shall offer extra fields for customizes
     CSS classes and styles.
     """
-    EXTRA_INLINE_STYLES = ('margin', 'padding', 'width', 'height',)
+    EXTRA_INLINE_STYLES = OrderedDict((
+        ('Margins', (('margin-top', 'margin-right', 'margin-bottom', 'margin-left',), MultipleCascadingSizeWidget)),
+        ('Paddings', (('padding-top', 'padding-right', 'padding-bottom', 'padding-left',), MultipleCascadingSizeWidget)),
+        ('Widths', (('min-width', 'width', 'max-width',), MultipleCascadingSizeWidget)),
+        ('Heights', (('min-height', 'height', 'max-height',), MultipleCascadingSizeWidget)),
+        ('Colors', (('color', 'background-color',), ColorPickerWidget)),
+    ))
 
     def __init__(self, model=None, admin_site=None, **kwargs):
         from cmsplugin_cascade.models import PluginExtraFields
@@ -27,25 +34,34 @@ class ExtraFieldsMixin(object):
             pass
         else:
             # add a select box to let the user choose one or more CSS classes
-            choices = [(clsname, clsname) for clsname in extra_fields.css_classes.get('class_names', '').replace(' ', '').split(',')]
-            if extra_fields.css_classes.get('multiple'):
-                widget = widgets.SelectMultiple(choices=choices)
-            else:
-                widget = widgets.Select(choices=((None, _("Select CSS")),) + choices)
-            self.glossary_fields.append(PartialFormField('extra_css_classes',
-                widget,
-                label=_("Customized CSS Classes"),
-                help_text=_("Customized CSS classes to be added to this element.")
-            ))
+            class_names = extra_fields.css_classes.get('class_names', '').replace(' ', '')
+            if class_names:
+                choices = [(clsname, clsname) for clsname in class_names.split(',')]
+                if extra_fields.css_classes.get('multiple'):
+                    widget = widgets.SelectMultiple(choices=choices)
+                else:
+                    widget = widgets.Select(choices=((None, _("Select CSS")),) + choices)
+                self.glossary_fields.append(PartialFormField('extra_css_classes',
+                    widget,
+                    label=_("Customized CSS Classes"),
+                    help_text=_("Customized CSS classes to be added to this element.")
+                ))
             # add input fields to let the user enter styling information
-            for style in self.EXTRA_INLINE_STYLES:
+            for style, choices_tuples in self.EXTRA_INLINE_STYLES.items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
-                if inline_styles:
-                    allowed_units = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
-                    widget = MultipleCascadingSizeWidget(inline_styles, allowed_units=allowed_units, required=False)
+                if not inline_styles:
+                    continue
+                Widget = choices_tuples[1]
+                if issubclass(Widget, MultipleCascadingSizeWidget):
                     key = 'extra_inline_styles:{0}'.format(style)
-                    label = style.capitalize()
-                    self.glossary_fields.append(PartialFormField(key, widget, label=label))
+                    allowed_units = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
+                    widget = Widget(inline_styles, allowed_units=allowed_units, required=False)
+                    self.glossary_fields.append(PartialFormField(key, widget, label=style))
+                else:
+                    for inline_style in inline_styles:
+                        key = 'extra_inline_styles:{0}'.format(inline_style)
+                        label = '{0}: {1}'.format(style, inline_style)
+                        self.glossary_fields.append(PartialFormField(key, Widget(), label=label))
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -60,5 +76,8 @@ class ExtraFieldsMixin(object):
         inline_styles = super(ExtraFieldsMixin, cls).get_inline_styles(obj)
         for key, eis in obj.glossary.items():
             if key.startswith('extra_inline_styles:'):
-                inline_styles.update(dict((k, v) for k, v in eis.items() if v))
+                if isinstance(eis, dict):
+                    inline_styles.update(dict((k, v) for k, v in eis.items() if v))
+                elif isinstance(eis, basestring):
+                    inline_styles.update({key.split(':')[1]: eis})
         return inline_styles

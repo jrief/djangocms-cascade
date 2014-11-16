@@ -135,7 +135,7 @@ class ColorPickerWidget(widgets.TextInput):
     The value passed to the PartialField is guaranteed to be in #rgb format.
     """
     input_type = 'color'
-    DEFAULT_ATTRS = {'style': 'width: 15em;', 'value': '#ffffff'}
+    DEFAULT_ATTRS = {'style': 'width: 5em;', 'value': '#ffffff'}
     validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
     invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
 

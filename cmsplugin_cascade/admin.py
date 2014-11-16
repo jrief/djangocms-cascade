@@ -7,7 +7,7 @@ from django.forms import widgets
 from django.core.exceptions import ValidationError
 from .fields import PartialFormField
 from .models import PluginExtraFields
-from .widgets import JSONMultiWidget
+from .widgets import JSONMultiWidget, MultipleCascadingSizeWidget
 from .mixins import ExtraFieldsMixin
 from .utils import rectify_partial_form_field
 
@@ -26,14 +26,13 @@ class ClassNamesWidget(widgets.TextInput):
 
     def validate(self, value):
         for val in value.split(','):
-            if not self.validation_pattern.match(val.strip()):
+            if val and not self.validation_pattern.match(val.strip()):
                 raise ValidationError(_("'%s' is not a valid CSS class name.") % val)
 
 
 class PluginExtraFieldsAdmin(admin.ModelAdmin):
     list_display = ('plugin_type', 'site')
     DISTANCE_UNITS = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")), ('px', _("px")), ('%', _("%")),)
-    CSS_DIRECTIONS = ('top', 'right', 'bottom', 'left',)
     classname_fields = ((
         PartialFormField('class_names',
             ClassNamesWidget(),
@@ -52,22 +51,23 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     def __init__(self, model, admin_site):
         super(PluginExtraFieldsAdmin, self).__init__(model, admin_site)
         self.style_fields = []
-        for style in ExtraFieldsMixin.EXTRA_INLINE_STYLES:
-            if style in ('width', 'height',):
-                choices = [(c, c) for c in ('{0}{1}'.format(m, style) for m in ('min-', '', 'max-'))]
+        for style, choices_tuples in ExtraFieldsMixin.EXTRA_INLINE_STYLES.items():
+            extra_field = PartialFormField('extra_fields:{0}'.format(style),
+                widgets.CheckboxSelectMultiple(choices=((c, c) for c in choices_tuples[0])),
+                label=_("Customized {0} Fields:").format(style),
+            )
+            Widget = choices_tuples[1]
+            if issubclass(Widget, MultipleCascadingSizeWidget):
+                self.style_fields.append((
+                    extra_field,
+                    PartialFormField('extra_units:{0}'.format(style),
+                        widgets.Select(choices=self.DISTANCE_UNITS),
+                        label=_("Units for {0} Fields:").format(style),
+                        initial=self.DISTANCE_UNITS[0][0],
+                    ),
+                ))
             else:
-                choices = [(c, c) for c in ('{0}-{1}'.format(style, d) for d in self.CSS_DIRECTIONS)]
-            self.style_fields.append((
-                PartialFormField('extra_fields:{0}'.format(style),
-                    widgets.CheckboxSelectMultiple(choices=choices),
-                    label=_('Customized {0} fields').format(style),
-                ),
-                PartialFormField('extra_units:{0}'.format(style),
-                    widgets.Select(choices=self.DISTANCE_UNITS),
-                    label=_('Units for {0} fields').format(style),
-                    initial=self.DISTANCE_UNITS[0][0],
-                ),
-            ))
+                self.style_fields.append(extra_field)
 
     def get_form(self, request, obj=None, **kwargs):
         """
