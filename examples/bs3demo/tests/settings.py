@@ -14,6 +14,9 @@ DATABASES = {
     },
 }
 
+from cms import __version__ as CMS_VERSION
+CMS_VERSION = CMS_VERSION.split('.')
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -26,7 +29,7 @@ INSTALLED_APPS = (
     'cmsplugin_cascade.sharable',
     'cms',
     'menus',
-    'mptt',
+    int(CMS_VERSION[1]) >= 1 and 'treebeard' or 'mptt',
     'bs3demo.tests',
 )
 
