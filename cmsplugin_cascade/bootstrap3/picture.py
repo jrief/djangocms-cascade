@@ -152,7 +152,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         PartialFormField('image-size',
             MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px'], required=False),
             label=_("Absolute Image Sizes"),
-            help_text=_("Specify an absolute image width and height in 'px' (pixels)."),
+            help_text=_("Specify the image width and height in 'px', or keep the original size if left empty."),
         ),
         PartialFormField('resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),

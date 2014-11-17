@@ -21,6 +21,14 @@ def reduce_breakpoints(plugin, field_name):
     widget.labels, widget.widgets = (list(t) for t in zip(*temp))
 
 
+def compute_aspect_ratio(image):
+    if image.exif.get('Orientation', 1) > 4:
+        # image is rotated by 90 degrees, while keeping width and height
+        return float(image.width) / float(image.height)
+    else:
+        return float(image.height) / float(image.width)
+
+
 def get_responsive_appearances(context, instance):
     """
     Create the appearance context, used to render a <picture> element which automatically adopts
@@ -29,11 +37,7 @@ def get_responsive_appearances(context, instance):
     if not instance.image:
         return None, None
     complete_glossary = instance.get_complete_glossary()
-    if instance.image.exif.get('Orientation', 1) > 4:
-        # image is rotated by 90 degrees, while keeping width and height
-        aspect_ratio = float(instance.image.width) / float(instance.image.height)
-    else:
-        aspect_ratio = float(instance.image.height) / float(instance.image.width)
+    aspect_ratio = compute_aspect_ratio(instance.image)
     container_max_heights = complete_glossary.get('container_max_heights', {})
     resize_options = instance.glossary.get('resize-options', {})
     crop = 'crop' in resize_options
@@ -91,6 +95,7 @@ def get_responsive_appearances(context, instance):
 
 
 def get_static_appearance(context, instance):
+    aspect_ratio = compute_aspect_ratio(instance.image)
     size = instance.glossary.get('image-size', {})
     resize_options = instance.glossary.get('resize-options', {})
     width = int(size.get('width', '').strip().rstrip('px') or 0)
@@ -99,6 +104,10 @@ def get_static_appearance(context, instance):
         # use the original image's dimensions
         width = instance.image.width
         height = instance.image.height
+    elif width == 0:
+        width = int(round(height / aspect_ratio, 0))
+    elif height == 0:
+        height = int(round(width * aspect_ratio, 0))
     size = (width, height)
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options

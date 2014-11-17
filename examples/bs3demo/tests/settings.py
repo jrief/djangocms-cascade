@@ -30,6 +30,8 @@ INSTALLED_APPS = (
     'cms',
     'menus',
     int(CMS_VERSION[1]) >= 1 and 'treebeard' or 'mptt',
+    'filer',
+    'easy_thumbnails',
     'bs3demo.tests',
 )
 
@@ -69,3 +71,14 @@ CMS_TEMPLATES = (
 )
 
 CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
+
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters',
+)
+
+THUMBNAIL_HIGH_RESOLUTION = True
+
+THUMBNAIL_PRESERVE_EXTENSIONS = True

@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import json
 from django.contrib import admin
-from django.template import Template, RequestContext
-from django.template.loader import get_template
+from django.template import RequestContext
 from django.http import QueryDict
 from cms.api import add_plugin, create_page
-from cms.models.placeholdermodel import Placeholder
-from cms.plugin_base import CMSPlugin
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import CascadeElement
-from cmsplugin_cascade.link.models import SimpleLinkElement
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
          BootstrapRowForm, BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.settings import CASCADE_BREAKPOINTS_LIST

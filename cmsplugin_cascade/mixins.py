@@ -4,6 +4,7 @@ from collections import OrderedDict
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import PartialFormField
 from .widgets import MultipleCascadingSizeWidget, ColorPickerWidget
@@ -78,6 +79,6 @@ class ExtraFieldsMixin(object):
             if key.startswith('extra_inline_styles:'):
                 if isinstance(eis, dict):
                     inline_styles.update(dict((k, v) for k, v in eis.items() if v))
-                elif isinstance(eis, basestring):
+                elif isinstance(eis, six.string_types):
                     inline_styles.update({key.split(':')[1]: eis})
         return inline_styles
