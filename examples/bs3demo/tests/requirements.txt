@@ -1,9 +1,15 @@
 Pillow
+Unidecode
 beautifulsoup4
 django-classy-tags
 django-cms
 django-filer
 django-mptt
+django-polymorphic
 django-sekizai
+django-select2
+djangocms-text-ckeditor
 easy-thumbnails
+html5lib
 jsonfield
+six
