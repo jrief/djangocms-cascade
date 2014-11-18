@@ -13,3 +13,4 @@ env*
 dist
 htmlcov
 djangocms_style.egg-info
+bower_components/

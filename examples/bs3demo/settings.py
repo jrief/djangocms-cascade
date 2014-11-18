@@ -72,6 +72,10 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 # URL that handles the static files served from STATIC_ROOT. Make sure to use a trailing slash.
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    os.path.abspath(os.path.join(PROJECT_DIR, os.pardir, os.pardir, 'bower_components')),
+)
+
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
