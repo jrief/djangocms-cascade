@@ -244,10 +244,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         parent_glossary = obj.get_parent_glossary()
         column_units = 12
         obj.glossary['container_max_widths'] = {}
+        breakpoints = parent_glossary.get('breakpoints', [])
         for bp in CASCADE_BREAKPOINTS_LIST:
             width_key = '{0}-column-width'.format(bp)
             offset_key = '{0}-column-offset'.format(bp)
-            if bp in parent_glossary['breakpoints']:
+            if bp in breakpoints:
                 # if miss-set, reduce column width for larger displays
                 width_val = obj.glossary.get(width_key, '').lstrip('col-{0}-'.format(bp))
                 if width_val.isdigit():
