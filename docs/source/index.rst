@@ -34,6 +34,7 @@ Contents:
   bootstrap3/picture
   bootstrap3/navbar
   customized-plugins
+  customize-styles
   history
 
 Indices and tables
