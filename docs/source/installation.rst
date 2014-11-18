@@ -36,6 +36,10 @@ using a Content Delivery Network.
 .. note:: For simplicity, this configuration assumes, that the Bootstrap framework is used. In case
           another CSS shall be used, adopt the proposed settings accordingly.
 
+With bower_ install the Bootstrap CSS and JavaScript files into the root directory of your project
+or to any other meaningful location. Ensure that the directory ``bower_components`` can be found by
+your StaticFileFinder. In doubt, add that directory to your ``STATICFILES_DIRS``.
+
 Dependencies
 ------------
 * Django_ >=1.6
@@ -179,3 +183,4 @@ template coding anymore.
 .. _pip: http://pypi.python.org/pypi/pip
 .. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/
 .. _djangocms-link: https://github.com/divio/djangocms-link
+.. _bower: http://bower.io/

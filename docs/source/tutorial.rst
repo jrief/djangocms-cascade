@@ -31,6 +31,12 @@ checkout the sources from github:
 
 and change into that directory.
 
+Install missing dependencies not handled by pip:
+
+.. code-block:: bash
+
+	$ bower install bootstrap
+
 Prepare the environment
 -----------------------
 It is assumed that you run Python in a `virtual environment`_. To run this tutorial, it is strongly
