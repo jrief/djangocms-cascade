@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import six
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import six
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
 from .models_base import CascadeModelBase

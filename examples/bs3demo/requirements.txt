@@ -14,5 +14,4 @@ djangocms-text-ckeditor
 easy-thumbnails
 html5lib
 jsonfield
-six
 wsgiref

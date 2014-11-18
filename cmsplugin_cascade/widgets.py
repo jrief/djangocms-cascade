@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import re
-import six
 import json
 from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
 from django.forms import widgets
+from django.utils import six
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
 from .fields import PartialFormField
