@@ -29,16 +29,16 @@ checkout the sources from github:
 
 	$ git clone https://github.com/jrief/djangocms-cascade.git
 
-and change into that directory.
-
-Install missing dependencies not handled by pip:
+and change into that directory:
 
 .. code-block:: bash
 
-	$ bower install bootstrap
+	$ cd djangocms-cascade
+
 
 Prepare the environment
 -----------------------
+
 It is assumed that you run Python in a `virtual environment`_. To run this tutorial, it is strongly
 recommended to create a new virtual environment:
 
@@ -53,6 +53,12 @@ Change into the directory ``examples`` and install the required dependencies:
 	(cascadedemo)$ pip install -r bs3demo/requirements.txt
 
 this take some time, as pip has to download quite a lot of third party packages.
+
+Install dependencies not handled by pip:
+
+.. code-block:: bash
+
+	$ bower install bootstrap
 
 .. _virtual environment: http://www.virtualenv.org/en/latest/
 
