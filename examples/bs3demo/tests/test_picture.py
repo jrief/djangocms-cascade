@@ -70,7 +70,6 @@ class PicturePluginTest(CascadeTestCase):
         context = RequestContext(self.request, {})
         html = container_model.render_plugin(context)
         soup = BeautifulSoup(html)
-        print soup.img['src']
         self.assertEqual(soup.img['height'], '100')
         self.assertEqual(soup.img['width'], '300')
         self.assertTrue(soup.img['src'].endswith('demo_image.png__300x100_q85_subsampling-2.png'))
