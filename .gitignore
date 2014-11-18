@@ -14,3 +14,4 @@ dist
 htmlcov
 djangocms_style.egg-info
 bower_components/
+filer_public*
