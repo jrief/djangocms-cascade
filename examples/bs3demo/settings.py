@@ -38,7 +38,6 @@ INSTALLED_APPS = (
     'cms',
     'menus',
     int(CMS_VERSION[1]) >= 1 and 'treebeard' or 'mptt',
-    'south',
     'filer',
     'easy_thumbnails',
     'sekizai',
@@ -163,4 +162,10 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
     'png': '/opt/local/bin/optipng {filename}',
     'gif': '/opt/local/bin/optipng {filename}',
     'jpeg': '/opt/local/bin/jpegoptim {filename}',
+}
+
+MIGRATION_MODULES = {
+    'cms': 'cms.migrations_django',
+    'menus': 'menus.migrations_django',
+    'cmsplugin_cascade': 'cmsplugin_cascade.migrations',
 }

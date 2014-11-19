@@ -82,3 +82,11 @@ THUMBNAIL_PROCESSORS = (
 THUMBNAIL_HIGH_RESOLUTION = True
 
 THUMBNAIL_PRESERVE_EXTENSIONS = True
+
+MIGRATION_MODULES = {
+    'cms': 'cms.migrations_django',
+    'menus': 'menus.migrations_django',
+    'cmsplugin_cascade': 'cmsplugin_cascade.migrations',
+}
+
+TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
