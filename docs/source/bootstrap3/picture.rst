@@ -75,7 +75,7 @@ Here the option “Responsive_” has a special meaning. The problem with respon
 their size depends on the media width of the device displaying the image. Therefore we can not use
 the well known ``<img ... />`` element any more. Instead, when rendering responsive images,
 **djangocms-cascade** uses a ``<picture>...</picture>`` element, which is supported since Google's
-Chrome 37 and can be emulated on legacy browsers using this shim: picturefill.js_.
+Chrome 38 and can be emulated on legacy browsers using the shim picturefill.js_.
 
 .. _Responsive: http://getbootstrap.com/css/#images-responsive
 .. _picturefill.js: http://scottjehl.github.io/picturefill/
