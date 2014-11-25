@@ -22,12 +22,14 @@ def reduce_breakpoints(plugin, field_name):
 
 
 def compute_aspect_ratio(image):
-    if image.exif.get('Orientation', 1) > 4:
-        # image is rotated by 90 degrees, while keeping width and height
-        return float(image.width) / float(image.height)
-    else:
+    try:
+        if image.exif.get('Orientation', 1) > 4:
+            # image is rotated by 90 degrees, while keeping width and height
+            return float(image.width) / float(image.height)
+        else:
+            return float(image.height) / float(image.width)
+    except:
         return float(image.height) / float(image.width)
-
 
 def get_responsive_appearances(context, instance):
     """
