@@ -28,7 +28,7 @@ def compute_aspect_ratio(image):
             return float(image.width) / float(image.height)
         else:
             return float(image.height) / float(image.width)
-    except:
+    except NotImplementedError:
         return float(image.height) / float(image.width)
 
 def get_responsive_appearances(context, instance):
