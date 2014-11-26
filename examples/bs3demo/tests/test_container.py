@@ -14,7 +14,7 @@ from cms.test_utils.testcases import CMSTestCase
 
 class ContainerPluginTest(CMSTestCase):
     def setUp(self):
-        page = create_page('HOME', 'main.html', 'en-us', published=True, in_navigation=True)
+        page = create_page('HOME', 'testing.html', 'en-us', published=True, in_navigation=True)
         self.placeholder = page.placeholders.get(slot='Main Content')
         self.request = self.get_request(language='en-us', page=page)
         self.admin_site = admin.sites.AdminSite()

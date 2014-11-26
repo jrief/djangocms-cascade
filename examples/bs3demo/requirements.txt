@@ -1,6 +1,8 @@
-Django
+Django-Select2
 Pillow
 Unidecode
+South
+argparse
 beautifulsoup4
 django-classy-tags
 django-cms
@@ -8,11 +10,11 @@ django-filer
 django-mptt
 django-polymorphic
 django-sekizai
-django-select2
 djangocms-admin-style
 djangocms-text-ckeditor
 easy-thumbnails
 html5lib
 jsonfield
+pyflakes
 six
 wsgiref

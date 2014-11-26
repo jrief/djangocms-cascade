@@ -2,11 +2,11 @@ language: python
 
 python:
   - 2.7
-  - 3.3
+#  - 3.3
 
 env:
-  - DJANGO=1.6.8
-  - DJANGO=1.7.1
+  - DJANGO=1.6.8 MIGRATE='true'
+  - DJANGO=1.7 MIGRATE='./manage.py migrate --settings=bs3demo.settings'
 
 branches:
   only:
@@ -14,7 +14,7 @@ branches:
 
 install:
   - pip install -q Django==$DJANGO
-  - pip install -r examples/bs3demo/tests/requirements.txt
+  - pip install -r examples/bs3demo/requirements.txt
   - python setup.py -q install
 
 before_script:
@@ -22,4 +22,4 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
- - cd examples && ./manage.py test bs3demo --settings=bs3demo.tests.settings
+ - cd examples && $MIGRATE && ./manage.py test bs3demo --settings=bs3demo.settings

@@ -1,5 +1,6 @@
 # Django settings for unit test project.
 import os
+import sys
 
 DEBUG = True
 
@@ -14,9 +15,11 @@ SECRET_KEY = 'secret'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'bs3demo/sqlite.db',
+        'NAME': 'sqlite.db',
     },
 }
+
+from django import VERSION as DJANGO_VERSION
 
 from cms import __version__ as CMS_VERSION
 CMS_VERSION = CMS_VERSION.split('.')
@@ -43,6 +46,15 @@ INSTALLED_APPS = (
     'sekizai',
     'bs3demo',
 )
+if DJANGO_VERSION[0] >= 1 and DJANGO_VERSION[1] > 6:
+    MIGRATION_MODULES = {
+        'cms': 'cms.migrations_django',
+        'menus': 'menus.migrations_django',
+        'djangocms_text_ckeditor': 'djangocms_text_ckeditor.migrations_django',
+        'cmsplugin_cascade': 'cmsplugin_cascade.migrations',
+    }
+else:
+    INSTALLED_APPS += ('south',)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -118,7 +130,7 @@ LANGUAGES = (
 # Application specific settings
 
 CMS_TEMPLATES = (
-    ('main.html', 'Main Content Container'),
+    sys.argv[1] == 'test' and ('testing.html', 'Default Page') or ('main.html', 'Main Content Container'),
 )
 
 CMS_SEO_FIELDS = True
@@ -162,10 +174,4 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
     'png': '/opt/local/bin/optipng {filename}',
     'gif': '/opt/local/bin/optipng {filename}',
     'jpeg': '/opt/local/bin/jpegoptim {filename}',
-}
-
-MIGRATION_MODULES = {
-    'cms': 'cms.migrations_django',
-    'menus': 'menus.migrations_django',
-    'cmsplugin_cascade': 'cmsplugin_cascade.migrations',
 }

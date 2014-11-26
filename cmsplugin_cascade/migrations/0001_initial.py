@@ -11,8 +11,8 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('cms', '0003_auto_20140926_2347'),
         ('sites', '0001_initial'),
-        ('cms', '0004_auto_20141118_0959'),
     ]
 
     operations = [
