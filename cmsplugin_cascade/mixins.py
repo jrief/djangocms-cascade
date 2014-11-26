@@ -41,7 +41,7 @@ class ExtraFieldsMixin(object):
                 if extra_fields.css_classes.get('multiple'):
                     widget = widgets.SelectMultiple(choices=choices)
                 else:
-                    widget = widgets.Select(choices=((None, _("Select CSS")),) + choices)
+                    widget = widgets.Select(choices=((None, _("Select CSS")),) + tuple(choices))
                 self.glossary_fields.append(PartialFormField('extra_css_classes',
                     widget,
                     label=_("Customized CSS Classes"),
