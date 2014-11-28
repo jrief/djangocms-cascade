@@ -19,10 +19,9 @@ DATABASES = {
     },
 }
 
-from django import VERSION as DJANGO_VERSION
-
+import django
 from cms import __version__ as CMS_VERSION
-CMS_VERSION = CMS_VERSION.split('.')
+CMS_VERSION = tuple(int(n) for n in CMS_VERSION.split('.')[:2])
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -40,13 +39,13 @@ INSTALLED_APPS = (
     'cmsplugin_cascade.sharable',
     'cms',
     'menus',
-    int(CMS_VERSION[1]) >= 1 and 'treebeard' or 'mptt',
+    CMS_VERSION >= (3, 1) and 'treebeard' or 'mptt',
     'filer',
     'easy_thumbnails',
     'sekizai',
     'bs3demo',
 )
-if DJANGO_VERSION[0] >= 1 and DJANGO_VERSION[1] > 6:
+if django.VERSION > (1, 6):
     MIGRATION_MODULES = {
         'cms': 'cms.migrations_django',
         'menus': 'menus.migrations_django',
