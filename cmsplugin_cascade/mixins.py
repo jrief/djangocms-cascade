@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from collections import OrderedDict
-from django.contrib.sites.models import Site
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
 from django.utils import six
@@ -23,13 +23,12 @@ class ExtraFieldsMixin(object):
         ('Colors', (('color', 'background-color',), ColorPickerWidget)),
     ))
 
-    def __init__(self, model=None, admin_site=None, **kwargs):
+    def get_form(self, request, obj=None, **kwargs):
         from cmsplugin_cascade.models import PluginExtraFields
 
-        super(ExtraFieldsMixin, self).__init__(model=model, admin_site=admin_site, **kwargs)
-        self.glossary_fields = list(self.glossary_fields)
+        glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
         try:
-            site = Site.objects.get_current()
+            site = get_current_site(request)
             extra_fields = PluginExtraFields.objects.get(plugin_type=self.__class__.__name__, site=site)
         except ObjectDoesNotExist:
             pass
@@ -42,7 +41,7 @@ class ExtraFieldsMixin(object):
                     widget = widgets.SelectMultiple(choices=choices)
                 else:
                     widget = widgets.Select(choices=((None, _("Select CSS")),) + tuple(choices))
-                self.glossary_fields.append(PartialFormField('extra_css_classes',
+                glossary_fields.append(PartialFormField('extra_css_classes',
                     widget,
                     label=_("Customized CSS Classes"),
                     help_text=_("Customized CSS classes to be added to this element.")
@@ -57,18 +56,24 @@ class ExtraFieldsMixin(object):
                     key = 'extra_inline_styles:{0}'.format(style)
                     allowed_units = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
                     widget = Widget(inline_styles, allowed_units=allowed_units, required=False)
-                    self.glossary_fields.append(PartialFormField(key, widget, label=style))
+                    glossary_fields.append(PartialFormField(key, widget, label=style))
                 else:
                     for inline_style in inline_styles:
                         key = 'extra_inline_styles:{0}'.format(inline_style)
                         label = '{0}: {1}'.format(style, inline_style)
-                        self.glossary_fields.append(PartialFormField(key, Widget(), label=label))
+                        glossary_fields.append(PartialFormField(key, Widget(), label=label))
+        kwargs.update(glossary_fields=glossary_fields)
+        return super(ExtraFieldsMixin, self).get_form(request, obj, **kwargs)
 
     @classmethod
     def get_css_classes(cls, obj):
         """Enrich list of CSS classes with customized ones"""
         css_classes = super(ExtraFieldsMixin, cls).get_css_classes(obj)
-        css_classes.extend(obj.glossary.get('extra_css_classes', []))
+        extra_css_classes = obj.glossary.get('extra_css_classes')
+        if isinstance(extra_css_classes, six.string_types):
+            css_classes.append(extra_css_classes)
+        elif isinstance(extra_css_classes, (list, tuple)):
+            css_classes.extend(extra_css_classes)
         return css_classes
 
     @classmethod

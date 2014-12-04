@@ -109,13 +109,14 @@ class CascadePluginBase(CMSPluginBase):
         """
         Build the form used for changing the model.
         """
-        kwargs.update(widgets={'glossary': JSONMultiWidget(self.glossary_fields)}, labels={'glossary': ''})
+        glossary_fields = kwargs.pop('glossary_fields', self.glossary_fields)
+        kwargs.update(widgets={'glossary': JSONMultiWidget(glossary_fields)}, labels={'glossary': ''})
         form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
         # help_text can not be cleared using an empty string in modelform_factory
         form.base_fields['glossary'].help_text = ''
-        for field in self.glossary_fields:
+        for field in glossary_fields:
             form.base_fields['glossary'].validators.append(field.run_validators)
-        setattr(form, 'glossary_fields', self.glossary_fields)
+        setattr(form, 'glossary_fields', glossary_fields)
         return form
 
     def save_model(self, request, new_obj, form, change):

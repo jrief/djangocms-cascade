@@ -170,7 +170,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     glossary_variables = ['container_max_widths']
 
     def get_form(self, request, obj=None, **kwargs):
-        self.glossary_fields = []
+        glossary_fields = []
         parent_obj, parent_plugin = self.parent.get_plugin_instance()
         if isinstance(parent_plugin, BootstrapPluginBase):
             breakpoints = parent_obj.get_complete_glossary()['breakpoints']
@@ -195,7 +195,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         help_text = _("Number of column units for devices wider than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[bp])
                     else:
                         help_text = _("Number of column units for all devices.")
-                    self.glossary_fields.append(PartialFormField('{0}-column-width'.format(bp),
+                    glossary_fields.append(PartialFormField('{0}-column-width'.format(bp),
                         widgets.Select(choices=choices),
                         initial='col-{0}-12'.format(bp), label=label, help_text=help_text))
                 else:
@@ -208,7 +208,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         help_text = _("Override column units for devices wider than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[bp])
                     else:
                         help_text = _("Override column units for all devices.")
-                    self.glossary_fields.append(PartialFormField('{0}-column-width'.format(bp),
+                    glossary_fields.append(PartialFormField('{0}-column-width'.format(bp),
                         widgets.Select(choices=choices),
                         initial='', label=label, help_text=help_text))
                 if bp != 'xs':
@@ -221,7 +221,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         help_text = _("Number of offset units for devices wider than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[bp])
                     else:
                         help_text = _("Number of offset units for all devices.")
-                    self.glossary_fields.append(PartialFormField('{0}-column-offset'.format(bp),
+                    glossary_fields.append(PartialFormField('{0}-column-offset'.format(bp),
                         widgets.Select(choices=choices), label=label, help_text=help_text))
                 if next_bp:
                     help_text = _("Utility classes for showing and hiding content by devices narrower than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[next_bp])
@@ -229,9 +229,10 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     help_text = _("Utility classes for showing and hiding content by devices wider than {0} pixels.").format(*CASCADE_BREAKPOINTS_DICT[bp])
                 else:
                     help_text = _("Utility classes for showing and hiding content for all devices.")
-                self.glossary_fields.append(PartialFormField('{0}-responsive-utils'.format(bp),
+                glossary_fields.append(PartialFormField('{0}-responsive-utils'.format(bp),
                     widgets.RadioSelect(choices=(('', _("Default")), ('visible-{0}'.format(bp), _("Visible")), ('hidden-{0}'.format(bp), _("Hidden")),)),
                     label=_("Responsive utilities for {0}").format(devices), help_text=help_text, initial=''))
+        kwargs.update(glossary_fields=glossary_fields)
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
