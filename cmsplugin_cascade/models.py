@@ -24,6 +24,7 @@ class PluginExtraFields(models.Model):
     class Meta:
         app_label = 'cmsplugin_cascade'
         verbose_name = verbose_name_plural = _("Custom CSS classes and styles")
+        unique_together = ('plugin_type', 'site')
 
     CUSTOMIZABLE_PLUGINS = _plugins_for_site()
     plugin_type = models.CharField(_("Plugin Name"), max_length=50, db_index=True, choices=CUSTOMIZABLE_PLUGINS)
