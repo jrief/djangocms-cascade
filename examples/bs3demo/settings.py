@@ -12,14 +12,18 @@ ROOT_URLCONF = 'bs3demo.urls'
 
 SECRET_KEY = 'secret'
 
+import django
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'sqlite.db',
     },
 }
+if django.VERSION[:2] > (1, 6):
+    DATABASES['default'].update({'NAME': 'sqlite17.db'})
+else:
+    DATABASES['default'].update({'NAME': 'sqlite16.db'})
 
-import django
 from cms import __version__ as CMS_VERSION
 CMS_VERSION = tuple(int(n) for n in CMS_VERSION.split('.')[:2])
 
@@ -45,7 +49,7 @@ INSTALLED_APPS = (
     'sekizai',
     'bs3demo',
 )
-if django.VERSION > (1, 6):
+if django.VERSION[:2] > (1, 6):
     MIGRATION_MODULES = {
         'cms': 'cms.migrations_django',
         'menus': 'menus.migrations_django',
@@ -162,10 +166,11 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.colorspace',
     'easy_thumbnails.processors.autocrop',
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    #'easy_thumbnails.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',
 )
 
-THUMBNAIL_HIGH_RESOLUTION = True
+THUMBNAIL_HIGH_RESOLUTION = False
 
 THUMBNAIL_PRESERVE_EXTENSIONS = True
 
@@ -174,3 +179,5 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
     'gif': '/opt/local/bin/optipng {filename}',
     'jpeg': '/opt/local/bin/jpegoptim {filename}',
 }
+
+#THUMBNAIL_DEBUG = True
