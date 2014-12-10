@@ -32,13 +32,75 @@ def compute_aspect_ratio(image):
         return float(image.height) / float(image.width)
 
 
-def get_responsive_appearances(context, instance):
+def get_image_tags(context, instance, is_responsive):
     """
-    Create the appearance context, used to render a <picture> element which automatically adopts
-    its sizes to the current column width.
+    Create a context returning the tags to render an <img ...> element:
+    ``sizes``, ``srcset``, a fallback ``src`` and if required inline styles.
     """
     if not instance.image:
-        return None, None
+        return
+    complete_glossary = instance.get_complete_glossary()
+    aspect_ratio = compute_aspect_ratio(instance.image)
+    resize_options = instance.glossary.get('resize-options', {})
+    crop = 'crop' in resize_options
+    upscale = 'upscale' in resize_options
+    subject_location = 'subject_location' in resize_options
+    resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
+    tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
+    if is_responsive:
+        image_width = _parse_responsive_length(instance.glossary.get('image-width-responsive') or '100%')
+        assert(image_width[1]), "The given image has no valid width"
+        if image_width[1] != 1.0:
+            tags['extra_styles'].update({'max-width': '{:.0f}%'.format(100 * image_width[1])})
+    else:
+        image_width = _parse_responsive_length(instance.glossary.get('image-width-fixed'))
+        if not image_width[0]:
+            image_width[0] = instance.image.width
+    try:
+        image_height = _parse_responsive_length(instance.glossary['image-height'])
+    except KeyError:
+        image_height = (None, None)
+    if is_responsive:
+        max_width = 0
+        for bp in complete_glossary['breakpoints']:
+            try:
+                width = int(round(image_width[1] * complete_glossary['container_max_widths'][bp]))
+            except KeyError:
+                continue
+            max_width = max(max_width, width)
+            size = _get_image_size(width, image_height, aspect_ratio)
+            tags['sizes'].append('{0} {1}px'.format(' and '.join(complete_glossary['media_queries'][bp]), width))
+            for high_res in resolutions:
+                if high_res:
+                    size = (size[0] * 2, size[1] * 2)
+                key = '{0}w'.format(size[0])
+                tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+        # use an existing image as fallback for the <img ...> element
+        size = (int(round(max_width)), int(round(max_width * aspect_ratio)))
+    else:
+        size = _get_image_size(image_width[0], image_height, aspect_ratio)
+        if len(resolutions) > 1:
+            for high_res in resolutions:
+                if high_res:
+                    tags['srcsets']['2x'] = {'size': (size[0] * 2, size[1] * 2), 'crop': crop,
+                        'upscale': upscale, 'subject_location': subject_location}
+                else:
+                    tags['srcsets']['1x'] = {'size': size, 'crop': crop,
+                        'upscale': upscale, 'subject_location': subject_location}
+    tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+    return tags
+
+
+def get_picture_elements(context, instance):
+    """
+    Create a context, used to render a <picture> together with all its ``<source>`` elements:
+    It returns a list of HTML elements, each containing the information to render a ``<source>``
+    element.
+    The purpose of this HTML entity is to display images with art directions. For normal images use
+    the ``<img>`` element.
+    """
+    if not instance.image:
+        return
     complete_glossary = instance.get_complete_glossary()
     aspect_ratio = compute_aspect_ratio(instance.image)
     container_max_heights = complete_glossary.get('container_max_heights', {})
@@ -46,32 +108,39 @@ def get_responsive_appearances(context, instance):
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
     subject_location = 'subject_location' in resize_options
-    min_width = 100.0
-    appearances = {}
+    max_width = 0
+    max_zoom = 0
+    elements = []
     resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
-    image_height = (None, None)
     for high_res in resolutions:
         for bp in complete_glossary['breakpoints']:
             try:
                 width = float(complete_glossary['container_max_widths'][bp])
             except KeyError:
                 width = 0
-            min_width = min(min_width, round(width))
+            max_width = max(max_width, round(width))
             size = None
             try:
-                image_height = _parse_responsive_height(instance.glossary['responsive-heights'][bp])
+                image_height = _parse_responsive_length(instance.glossary['responsive-heights'][bp])
             except KeyError:
-                pass
-            if image_height[0]:
+                image_height = (None, None)
+            if image_height[0]:  # height was given in px
                 size = (int(width), image_height[0])
-            elif image_height[1]:
+            elif image_height[1]:  # height was given in %
                 size = (int(width), int(round(width * aspect_ratio * image_height[1])))
             elif bp in container_max_heights:
-                container_height = _parse_responsive_height(container_max_heights[bp])
+                container_height = _parse_responsive_length(container_max_heights[bp])
                 if container_height[0]:
                     size = (int(width), container_height[0])
                 elif container_height[1]:
                     size = (int(width), int(round(width * aspect_ratio * container_height[1])))
+            try:
+                zoom = instance.glossary['responsive-zoom'][bp].strip()
+                if zoom.endswith('%'):
+                    zoom = int(zoom.rstrip('%'))
+            except (AttributeError, KeyError):
+                zoom = 0
+            max_zoom = max(max_zoom, zoom)
             if size is None:
                 # as fallback, adopt height to current width
                 size = (int(width), int(round(width * aspect_ratio)))
@@ -84,50 +153,40 @@ def get_responsive_appearances(context, instance):
                 media_queries.append('(min-resolution: 1.5dppx)')
             elif True in resolutions:
                 media_queries.append('(max-resolution: 1.5dppx)')
-            key = high_res and bp + '-retina' or bp
             media = ' and '.join(media_queries)
-            appearances[key] = {'size': size, 'crop': crop, 'upscale': upscale,
-                                'subject_location': subject_location, 'media': media}
-    # create a relatively small image for the default img tag.
+            elements.append({'tag': 'source', 'size': size, 'zoom': zoom, 'crop': crop,
+                    'upscale': upscale, 'subject_location': subject_location, 'media': media})
     if image_height[1]:
-        size = (int(min_width), int(round(min_width * aspect_ratio * image_height[1])))
+        size = (int(max_width), int(round(max_width * aspect_ratio * image_height[1])))
     else:
-        size = (int(min_width), int(round(min_width * aspect_ratio)))
-    default_appearance = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
-    return appearances, default_appearance
+        size = (int(max_width), int(round(max_width * aspect_ratio)))
+    elements.append({'tag': 'img', 'size': size, 'zoom': max_zoom, 'crop': crop, 'upscale': upscale,
+                     'subject_location': subject_location})
+    return elements
 
 
-def get_static_appearance(context, instance):
-    aspect_ratio = compute_aspect_ratio(instance.image)
-    size = instance.glossary.get('image-size', {})
-    resize_options = instance.glossary.get('resize-options', {})
-    width = int(size.get('width', '').strip().rstrip('px') or 0)
-    height = int(size.get('height', '').strip().rstrip('px') or 0)
-    if width == 0 and height == 0:
-        # use the original image's dimensions
-        width = instance.image.width
-        height = instance.image.height
-    elif width == 0:
-        width = int(round(height / aspect_ratio, 0))
-    elif height == 0:
-        height = int(round(width * aspect_ratio, 0))
-    size = (width, height)
-    crop = 'crop' in resize_options
-    upscale = 'upscale' in resize_options
-    subject_location = 'subject_location' in resize_options
-    appearance = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
-    return appearance
+def _get_image_size(width, image_height, aspect_ratio):
+    if image_height[0]:
+        # height was given in px
+        return (width, image_height[0])
+    elif image_height[1]:
+        # height was given in %
+        return (width, int(round(width * image_height[1])))
+    else:
+        # as fallback, adopt height to current width
+        return (width, int(round(width * aspect_ratio)))
 
 
-def _parse_responsive_height(responsive_height):
+def _parse_responsive_length(responsive_length):
     """
-    Takes a string containing the image height in pixels or percent and parses it to obtain
-    a computational height. It return a tuple with the height in pixels and its relative height,
-    where depending on the input value, one or both elements are None.
+    Takes a string containing a length definition in pixels or percent and parses it to obtain
+    a computational length. It returns a tuple where the first element is the length in pixels and
+    the second element is its length in percent divided by 100.
+    Note that one of both returned elements is None.
     """
-    responsive_height = responsive_height.strip()
-    if responsive_height.endswith('px'):
-        return (int(responsive_height.rstrip('px')), None)
-    elif responsive_height.endswith('%'):
-        return (None, float(responsive_height.rstrip('%')) / 100)
+    responsive_length = responsive_length.strip()
+    if responsive_length.endswith('px'):
+        return (int(responsive_length.rstrip('px')), None)
+    elif responsive_length.endswith('%'):
+        return (None, float(responsive_length.rstrip('%')) / 100)
     return (None, None)

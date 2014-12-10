@@ -10,14 +10,6 @@ django.jQuery(function($) {
 
 			// be more intuitive, reorganize layout by moving radio boxes for 'Link Target'
 			$('.glossary-widget .glossary_target').before($('.form-row.field-link_type'));
-			// move the select box for Shared Glossary just before 'Image Shapes'
-			$('.glossary-widget .glossary_image-shapes').before($('.form-row.field-shared_glossary'));
-
-			// install event handlers
-			$image_responsive.change(function(evt) {
-				self.toggleResponsive(evt.target.checked);
-			});
-			this.toggleResponsive($image_responsive.prop('checked'));
 		},
 		toggleSharedGlossary: function($option) {
 			var glossary = $option.data('glossary');
@@ -27,7 +19,6 @@ django.jQuery(function($) {
 					$(elem).prop('checked', glossary['image-shapes'].indexOf($(elem).val()) >= 0);
 					$(elem).prop('disabled', 'disabled');
 				});
-				this.toggleResponsive($('#id_glossary_image-shapes_0').prop('checked'));
 				$.each(breakpoints, function(idx, bp) {
 					$('#id_glossary_responsive-heights[name$=' + bp + ']').val(glossary['responsive-heights'][bp]).prop('disabled', 'disabled');
 				});
@@ -47,19 +38,6 @@ django.jQuery(function($) {
 				$('#id_glossary_resize-options input').prop('disabled', '');
 			}
 			this.$super($option);
-		},
-		toggleResponsive: function(checked) {
-			var $glossary_responsive = $('.glossary-widget .glossary_responsive-heights'),
-				$glossary_static = $('.glossary-widget .glossary_image-size');
-
-			// if checkbox Image Shapes: Responsive is active, replace 'Image Size' against 'Container Height'
-			if (checked) {
-				$glossary_responsive.show();
-				$glossary_static.hide();
-			} else {
-				$glossary_responsive.hide();
-				$glossary_static.show();
-			}
 		}
 	});
 

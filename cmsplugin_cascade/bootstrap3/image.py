@@ -148,23 +148,17 @@ class BootstrapImagePlugin(SharableGlossaryMixin, LinkPluginBase):
             CascadingSizeWidget(allowed_units=['%'], required=False),
             label=_("Responsive Image Width"),
             initial='100%',
-            help_text=_("Specify the image width in percent relative to containing element."),
+            help_text=_("Set the image width in percent relative to containing element."),
         ),
         PartialFormField('image-width-fixed',
             CascadingSizeWidget(allowed_units=['px'], required=False),
             label=_("Fixed Image Width"),
-            help_text=_("Specify a fixed image width in pixels."),
+            help_text=_("Set a fixed image width in pixels."),
         ),
-        PartialFormField('image-heights-responsive',
-            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['px', '%'], required=False),
-            label=_("Responsive Image Heights"),
-            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
-            help_text=_("Adopt relative heights of image for distinct Bootstrap's breakpoints."),
-        ),
-        PartialFormField('image-height-fixed',
+        PartialFormField('image-height',
             CascadingSizeWidget(allowed_units=['px', '%'], required=False),
-            label=_("Fixed Image Height"),
-            help_text=_("Specify a fixed image height in pixels, or percent relative to its width."),
+            label=_("Adapt Image Height"),
+            help_text=_("Set a fixed height in pixels, or percent relative to the image width."),
         ),
         PartialFormField('resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
@@ -184,23 +178,12 @@ class BootstrapImagePlugin(SharableGlossaryMixin, LinkPluginBase):
 
     def render(self, context, instance, placeholder):
         is_responsive = 'img-responsive' in instance.glossary.get('image-shapes', [])
-        if is_responsive:
-            sizes, srcsets, fallback_src, extra_styles = utils.get_responsive_image(context, instance)
-            if extra_styles:
-                inline_styles = instance.glossary.get('inline_styles', {})
-                inline_styles.update(extra_styles)
-                instance.glossary['inline_styles'] = inline_styles
-        else:
-            sizes = None
-            srcsets, fallback_src = utils.get_fixedsized_image(context, instance)
-        context.update({
-            'is_responsive': is_responsive,
-            'instance': instance,
-            'placeholder': placeholder,
-            'sizes': sizes,
-            'srcsets': srcsets,
-            'fallback_src': fallback_src,
-        })
+        tags = utils.get_image_tags(context, instance, is_responsive)
+        extra_styles = tags.pop('extra_styles')
+        inline_styles = instance.glossary.get('inline_styles', {})
+        inline_styles.update(extra_styles)
+        instance.glossary['inline_styles'] = inline_styles
+        context.update(dict(instance=instance, placeholder=placeholder, **tags))
         return context
 
     @classmethod

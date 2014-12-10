@@ -1,19 +1,15 @@
 {% load thumbnail %}{% spaceless %}
 
-{% if is_responsive %}
 <picture {{ instance.html_tag_attributes }}>
-	{% for breakpoint, app in appearances.items %}
-		{% thumbnail instance.image app.size crop=app.crop upscale=app.upscale subject_location=app.subject_location as thumb %}
-	<source srcset="{{ thumb.url }}" media="{{ app.media }}" />
+	{% for elem in elements %}
+		{% thumbnail instance.image elem.size zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
+		<!-- {{ elem.size }} {{ elem.zoom }} {{ elem.crop }} {{ elem.upscale }} {{ elem.subject_location }} -->
+		{% if elem.tag == "source" %}
+	<source srcset="{{ thumb.url }}" media="{{ elem.media }}">
+		{% elif elem.tag == "img" %}
+	<img srcset="{{ thumb.url }}" class="{{ instance.css_classes }}" />
+		{% endif %}
 	{% endfor %}
-	{% with app=default_appearance %}
-		{% thumbnail instance.image app.size crop=app.crop upscale=app.upscale subject_location=app.subject_location as thumb %}
-	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}" />
-	{% endwith %}
 </picture>
-{% else %}
-	{% thumbnail instance.image appearance.size crop=appearance.crop upscale=appearance.upscale subject_location=appearance.subject_location as thumb %}
-<img src="{{ thumb.url }}" {{ instance.html_tag_attributes }} class="{{ instance.css_classes }}" width="{{ appearance.size.0 }}" height="{{ appearance.size.1 }}" />
-{% endif %}
 
 {% endspaceless %}

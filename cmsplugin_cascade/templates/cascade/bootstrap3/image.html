@@ -5,7 +5,7 @@
 	srcset="{% for key, srcset in srcsets.items %}
 		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=srcset.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
 	{% endfor %}"
-	{% thumbnail instance.image fallback_src.size crop=fallback_src.crop upscale=fallback_src.upscale subject_location=fallback_src.subject_location as thumb %}
+	{% thumbnail instance.image src.size crop=src.crop upscale=src.upscale subject_location=src.subject_location as thumb %}
 	src="{{ thumb.url }}" />
 {% endwith %}
 {% endspaceless %}

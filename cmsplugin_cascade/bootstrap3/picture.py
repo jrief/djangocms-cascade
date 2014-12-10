@@ -117,12 +117,11 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     text_enabled = True
     admin_preview = False
     render_template = 'cascade/bootstrap3/linked-picture.html'
+    default_css_class = 'img-responsive'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
     fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),
               ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
-    SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
-                     ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
@@ -138,21 +137,17 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
             help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
         ),
     ) + LinkPluginBase.glossary_fields + (
-        PartialFormField('image-shapes',
-            widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
-            label=_("Image Shapes"),
-            initial=['img-responsive']
-        ),
         PartialFormField('responsive-heights',
             MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['%', 'px'], required=False),
-            label=_("Override Picture Heights"),
+            label=_("Adapt Picture Heights"),
             initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
             help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
         ),
-        PartialFormField('image-size',
-            MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px'], required=False),
-            label=_("Absolute Image Sizes"),
-            help_text=_("Specify the image width and height in 'px', or keep the original size if left empty."),
+        PartialFormField('responsive-zoom',
+            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['%'], required=False),
+            label=_("Adapt Picture Zoom"),
+            initial={'xs': '0%', 'sm': '0%', 'md': '0%', 'lg': '0%'},
+            help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),
         ),
         PartialFormField('resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
@@ -171,25 +166,15 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
-        if 'img-responsive' in instance.glossary.get('image-shapes', []):
-            # image shall be rendered in a responsive context using the picture element
-            appearances, default_appearance = utils.get_responsive_appearances(context, instance)
-            context.update({
-                'is_responsive': True,
-                'instance': instance,
-                'placeholder': placeholder,
-                'appearances': appearances,
-                'default_appearance': default_appearance,
-            })
-        else:
-            # image shall be rendered using fixed sizes
-            appearance = utils.get_static_appearance(context, instance)
-            context.update({
-                'is_responsive': False,
-                'instance': instance,
-                'placeholder': placeholder,
-                'appearance': appearance,
-            })
+        # image shall be rendered in a responsive context using the picture element
+        elements = utils.get_picture_elements(context, instance)
+        print 'elements', elements
+        context.update({
+            'is_responsive': True,
+            'instance': instance,
+            'placeholder': placeholder,
+            'elements': elements,
+        })
         return context
 
     @classmethod
