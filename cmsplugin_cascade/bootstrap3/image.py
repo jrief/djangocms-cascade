@@ -19,8 +19,7 @@ from cmsplugin_cascade.link.models import LinkElementMixin
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 from cmsplugin_cascade.sharable.models import SharableCascadeElement
 from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
-from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
-from .settings import CASCADE_BREAKPOINTS_LIST
+from cmsplugin_cascade.widgets import CascadingSizeWidget
 from . import utils
 
 
