@@ -117,7 +117,7 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     model = PictureElement
     form = PictureForm
-    default_css_class = 'item'
+    default_css_class = 'img-responsive'
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
@@ -136,24 +136,17 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
-        # image shall be rendered in a responsive context using the picture element
-        appearances, default_appearance = utils.get_responsive_appearances(context, instance)
+        # image shall be rendered in a responsive context using the ``<picture>`` element
+        elements = utils.get_picture_elements(context, instance)
         caption = HTMLParser().unescape(instance.glossary.get('caption', ''))
         context.update({
             'is_responsive': True,
             'instance': instance,
             'caption': caption,
             'placeholder': placeholder,
-            'appearances': appearances,
-            'default_appearance': default_appearance,
+            'elements': elements,
         })
         return context
-
-    @classmethod
-    def get_css_classes(cls, obj):
-        css_classes = super(CarouselSlidePlugin, cls).get_css_classes(obj)
-        css_classes.append('img-responsive')  # always for slides
-        return css_classes
 
     @classmethod
     def sanitize_model(cls, obj):
