@@ -3,9 +3,25 @@ from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
 from cms.plugin_pool import plugin_pool
-from cms.plugin_base import CMSPluginBase
+from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from .models_base import CascadeModelBase
+from .mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
+
+
+class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
+    """
+    All plugins from djangocms-cascade can be instantiated in different ways. In order to allow this
+    by a user defined configuration, this meta-class conditionally inherits from additional mixin
+    classes.
+    """
+    plugins_with_extrafields = []
+
+    def __new__(cls, name, bases, attrs):
+        if name in cls.plugins_with_extrafields:
+            bases = (ExtraFieldsMixin,) + bases
+        new_class = super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
+        return new_class
 
 
 class CascadePluginBase(CMSPluginBase):
