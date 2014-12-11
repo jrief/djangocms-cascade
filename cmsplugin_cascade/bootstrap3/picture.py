@@ -138,7 +138,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         ),
     ) + LinkPluginBase.glossary_fields + (
         PartialFormField('responsive-heights',
-            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['%', 'px'], required=False),
+            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['px', '%'], required=False),
             label=_("Adapt Picture Heights"),
             initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
             help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
@@ -168,7 +168,6 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element
         elements = utils.get_picture_elements(context, instance)
-        print 'elements', elements
         context.update({
             'is_responsive': True,
             'instance': instance,
