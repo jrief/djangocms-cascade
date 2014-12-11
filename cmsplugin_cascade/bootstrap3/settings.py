@@ -35,3 +35,7 @@ CASCADE_BREAKPOINT_APPEARANCES = {
     'md': {'media': '(min-width: {0}px) and (max-width: {1}px)'.format(CASCADE_BREAKPOINTS_DICT['md'][0], CASCADE_BREAKPOINTS_DICT['lg'][0])},
     'lg': {'media': '(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['lg'][0])},
 }
+
+CASCADE_PLUGINS_WITH_EXTRAFIELDS = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS', [
+    'SimpleWrapperPlugin',
+])
