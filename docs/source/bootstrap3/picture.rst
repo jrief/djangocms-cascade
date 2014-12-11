@@ -1,6 +1,6 @@
-=======================
-HTML5 <picture> element
-=======================
+==========================================
+HTML5 <picture> and the new <img> elements
+==========================================
 
 Bootstrap's responsive grid system, helps developers to adapt their site layout to a wide range of
 devices, from smart-phones to large displays. This works fine as long as the content can adopt to
@@ -15,8 +15,9 @@ Adaptive resizing the images
 
 An obvious idea would be to let the server decide, which image resolution fits best to the browsing
 device. This however is bad practice. Images are static content and thus predestined to be cached
-by proxies on the way to the client. A URL, serving different images, depending on a cookie's value
-is not idempotent and thus is a very bad idea.
+by proxies on the way to the client. Images typically are served upon a GET-request and a URL,
+serving different images, depending on a cookie's value is not idempotent and thus is a very bad
+idea.
 
 Since the sever side approach doesn't work, it is the browsers responsibility to select the
 appropriate image size. An ideal adaptive image strategy should do the following:
@@ -30,9 +31,29 @@ appropriate image size. An ideal adaptive image strategy should do the following
    detail. When displaying an image on a mobile device, you might want to crop only the interesting
    part of it.
 
-As these criteria can't be fulfilled using the well known ``<img .../>`` element,
-**djangocms-cascade** offers a responsive variant, recently added to the HTML5 standard, namely the
-``<picture>`` element. Using this element, the browser always fetches the image which best fits the
+As these criteria can't be fulfilled using the well known ``<img src="..." />`` element,
+**djangocms-cascade** offers two responsive variants recently added to the HTML5 standard:
+
+One is the ``<img>`` tag, but with the additional attributes ``sizes`` and ``srcset``. This element
+can be used as a direct replacement for ``<img src="...">``.
+
+The other is a new element named ``<picture>``. Use this element, if the image's shape or details
+shall adopt their shape and/or details to the displaying media device. The correct terminology for
+this kind of behavior is `art direction`_.
+
+|art-direction|
+
+.. |art-direction| image:: /_static/edit-picture.png
+
+
+, but in the majority of use cases, you won't need it
+anyway.
+
+ The ``<picture>`` element is only required, if 
+
+.. _art direction: http://usecases.responsiveimages.org/#art-direction
+
+Using this element, the browser always fetches the image which best fits the
 current layout. Additionally, if the browser runs on a high resolution (Retina) display, an image
 with double resolution is downloaded. This results in much sharper images.
 
