@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.forms import widgets
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
@@ -28,8 +29,9 @@ class SimpleWrapperPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        name = obj.glossary.get('css_class').title() or cls.CLASS_CHOICES[0][1]
-        return name.title()
+        identifier = super(SimpleWrapperPlugin, cls).get_identifier(obj)
+        name = obj.glossary.get('css_class') or cls.CLASS_CHOICES[0][1]
+        return format_html('{0}{1}', identifier, name.title())
 
     @classmethod
     def get_css_classes(cls, obj):

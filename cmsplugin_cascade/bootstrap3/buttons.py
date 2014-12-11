@@ -102,10 +102,11 @@ class BootstrapButtonPlugin(LinkPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super(BootstrapButtonPlugin, cls).get_identifier(obj)
+        link_content = obj.glossary.get('link_content', '')
         button_type = ButtonTypeRenderer.BUTTON_TYPES.get(obj.glossary.get('button-type'))
         if button_type:
-            button_type = ' ({0})'.format(force_text(button_type))
-        link_content = obj.glossary.get('link_content', '')
-        return link_content + button_type
+            return format_html('{0}{1} ({2})', identifier, link_content, force_text(button_type))
+        return format_html('{0}{1}', identifier, link_content)
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)

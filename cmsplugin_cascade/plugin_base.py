@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
+from django.utils.safestring import SafeText
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from .models_base import CascadeModelBase
@@ -60,9 +61,9 @@ class CascadePluginBase(CMSPluginBase):
     @classmethod
     def get_identifier(cls, model):
         """
-        Returns the descriptive name for the current model
+        Hook to return a description for the current model.
         """
-        return ''
+        return SafeText()
 
     @classmethod
     def get_css_classes(cls, obj):

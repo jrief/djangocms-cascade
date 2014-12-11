@@ -8,6 +8,7 @@ except ImportError:
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
 from django.utils import six
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import PartialFormField
 from .widgets import MultipleCascadingSizeWidget, ColorPickerWidget
@@ -106,3 +107,11 @@ class ExtraFieldsMixin(object):
         if extra_element_id:
             attributes.update(id=extra_element_id)
         return attributes
+
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(ExtraFieldsMixin, cls).get_identifier(obj)
+        extra_element_id = obj.glossary.get('extra_element_id')
+        if extra_element_id:
+            return format_html('{0}<em>{1}:</em> ', identifier, extra_element_id)
+        return identifier

@@ -11,7 +11,7 @@ class LinkElementMixin(object):
     A proxy model for the ``<a>`` element.
     """
     def __str__(self):
-        return self.content
+        return self.plugin_class.get_identifier(self)
 
     @property
     def link(self):
