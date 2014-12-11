@@ -1,15 +1,32 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.forms import widgets
-from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+from django import forms
 from django.db.models import get_model
+from django.forms import widgets
+from django.utils.six import with_metaclass
+from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.plugin_base import CascadePluginBase
-from .forms import TextLinkForm
+from cmsplugin_cascade.plugin_base import CascadePluginBaseMetaclass, CascadePluginBase
+from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
+from cmsplugin_cascade.utils import resolve_dependencies
+from .models import SimpleLinkElement, SharableLinkElement
 
 
-class LinkPluginBase(CascadePluginBase):
+class LinkPluginBaseMetaclass(CascadePluginBaseMetaclass):
+    plugins_with_extrafields = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS', [])
+    plugins_with_sharables = {'BootstrapButtonPlugin': ('title', 'link', 'target',)}
+
+    def __new__(cls, name, bases, attrs):
+        if name in cls.plugins_with_sharables:
+            attrs.setdefault('model', SharableLinkElement)
+        else:
+            attrs.setdefault('model', SimpleLinkElement)
+        return super(LinkPluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
+
+
+class LinkPluginBase(with_metaclass(LinkPluginBaseMetaclass, CascadePluginBase)):
     glossary_fields = (
         PartialFormField('target',
             widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
@@ -20,6 +37,10 @@ class LinkPluginBase(CascadePluginBase):
         ),
     )
     html_tag_attributes = {'target': 'target'}
+
+    # fields to auto-generate a form in admin > Cmsplugin_cascade > Shared between Plugins
+    sharable_fieldset = {'fields': [('link_type', 'cms_page', 'ext_url', 'mail_to',), 'glossary']}
+    sharable_media = forms.Media(js=resolve_dependencies('cascade/js/admin/simplelinkplugin.js'))
 
     @classmethod
     def get_link(cls, obj):
@@ -40,20 +61,11 @@ class LinkPluginBase(CascadePluginBase):
             if obj._link_model:
                 return obj._link_model.get_absolute_url()
 
-
-class TextLinkPluginBase(LinkPluginBase):
-    name = _("Link")
-    form = TextLinkForm
-    render_template = 'cascade/plugins/link.html'
-    text_enabled = True
-    allow_children = False
-    parent_classes = None
-    require_parent = False
-    glossary_fields = (
-        PartialFormField('title',
-            widgets.TextInput(),
-            label=_("Title"),
-            help_text=_("Link's Title")
-        ),
-    ) + LinkPluginBase.glossary_fields
-    html_tag_attributes = dict(title='title', **LinkPluginBase.html_tag_attributes)
+    @property
+    def media(self):
+        media = super(LinkPluginBase, self).media
+        if isinstance(self, SharableGlossaryMixin):
+            media.add_js(resolve_dependencies('cascade/js/admin/sharablelinkplugin.js'))
+        else:
+            media.add_js(resolve_dependencies('cascade/js/admin/simplelinkplugin.js'))
+        return media

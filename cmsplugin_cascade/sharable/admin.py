@@ -33,7 +33,7 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         glossary_fields = [field for field in self.plugin_instance.glossary_fields if field.name in sharable_fields]
         kwargs.update(widgets={'glossary': JSONMultiWidget(glossary_fields)}, labels={'glossary': ''})
         try:
-            kwargs.update(form=self.plugin_instance.sharable_form)
+            kwargs.update(form=self.plugin_instance.form)  # TODO: this was self.plugin_instance.sharable_form
         except AttributeError:
             pass
         form = super(SharedGlossaryAdmin, self).get_form(request, obj, **kwargs)

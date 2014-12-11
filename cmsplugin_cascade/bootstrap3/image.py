@@ -18,7 +18,6 @@ from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.models import LinkElementMixin
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 from cmsplugin_cascade.sharable.models import SharableCascadeElement
-from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from . import utils
 
@@ -105,7 +104,7 @@ class LinkedImageForm(ImageFormMixin, LinkForm):
         super(LinkedImageForm, self).__init__(initial=initial, *args, **kwargs)
 
 
-class BootstrapImagePlugin(SharableGlossaryMixin, LinkPluginBase):
+class BootstrapImagePlugin(LinkPluginBase):
     name = _("Image")
     model = SharableImageElement
     form = LinkedImageForm
@@ -166,7 +165,7 @@ class BootstrapImagePlugin(SharableGlossaryMixin, LinkPluginBase):
             initial=['subject_location', 'high_resolution']
         ),
     )
-    sharable_fields = ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
+    #sharable_fields = ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/imageplugin.js')

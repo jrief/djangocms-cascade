@@ -5,6 +5,7 @@ from django.utils import six
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from .models_base import CascadeModelBase
+from .sharable.forms import SharableGlossaryMixin
 from .mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
 
@@ -16,12 +17,16 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     classes.
     """
     plugins_with_extrafields = []
+    plugins_with_sharables = {}
 
     def __new__(cls, name, bases, attrs):
         if name in cls.plugins_with_extrafields:
             bases = (ExtraFieldsMixin,) + bases
-        new_class = super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
-        return new_class
+        if name in cls.plugins_with_sharables:
+            bases = (SharableGlossaryMixin,) + bases
+            attrs['fields'] += (('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
+            attrs.update(sharable_fields=cls.plugins_with_sharables[name])
+        return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
 class CascadePluginBase(CMSPluginBase):

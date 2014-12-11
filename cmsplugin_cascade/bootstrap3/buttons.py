@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.forms import TextLinkForm
 from cmsplugin_cascade.link.models import SimpleLinkElement
@@ -100,7 +99,6 @@ class BootstrapButtonPlugin(LinkPluginBase):
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
-        js = resolve_dependencies('cascade/js/admin/simplelinkplugin.js')
 
     @classmethod
     def get_identifier(cls, obj):
