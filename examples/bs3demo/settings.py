@@ -150,7 +150,7 @@ CMS_PLACEHOLDER_CONF = {
     },
 }
 
-CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.link.sharable', 'cmsplugin_cascade.bootstrap3',)
+CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
