@@ -29,5 +29,6 @@ class PluginExtraFields(models.Model):
     CUSTOMIZABLE_PLUGINS = _plugins_for_site()
     plugin_type = models.CharField(_("Plugin Name"), max_length=50, db_index=True, choices=CUSTOMIZABLE_PLUGINS)
     site = models.ForeignKey(Site, verbose_name=_("Site"))
+    allow_id_tag = models.BooleanField(default=False)
     css_classes = JSONField(null=True, blank=True, default={})
     inline_styles = JSONField(null=True, blank=True, default={})

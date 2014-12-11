@@ -36,6 +36,13 @@ class ExtraFieldsMixin(object):
         except ObjectDoesNotExist:
             pass
         else:
+            # add a text input field to let the user name an ID tag for this HTML element
+            if extra_fields.allow_id_tag:
+                glossary_fields.append(PartialFormField('extra_element_id',
+                    widgets.TextInput(),
+                    label=_("Named Element ID"),
+                ))
+
             # add a select box to let the user choose one or more CSS classes
             class_names = extra_fields.css_classes.get('class_names', '').replace(' ', '')
             if class_names:
@@ -49,6 +56,7 @@ class ExtraFieldsMixin(object):
                     label=_("Customized CSS Classes"),
                     help_text=_("Customized CSS classes to be added to this element.")
                 ))
+
             # add input fields to let the user enter styling information
             for style, choices_tuples in self.EXTRA_INLINE_STYLES.items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
@@ -90,3 +98,11 @@ class ExtraFieldsMixin(object):
                 elif isinstance(eis, six.string_types):
                     inline_styles.update({key.split(':')[1]: eis})
         return inline_styles
+
+    @classmethod
+    def get_html_tag_attributes(cls, obj):
+        attributes = super(ExtraFieldsMixin, cls).get_html_tag_attributes(obj)
+        extra_element_id = obj.glossary.get('extra_element_id')
+        if extra_element_id:
+            attributes.update(id=extra_element_id)
+        return attributes
