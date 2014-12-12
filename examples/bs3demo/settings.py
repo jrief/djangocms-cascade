@@ -152,6 +152,15 @@ CMS_PLACEHOLDER_CONF = {
 
 CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
+CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS = ['BootstrapButtonPlugin', 'BootstrapContainerPlugin',
+    'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin']
+
+CMS_CASCADE_PLUGINS_WITH_SHARABLES = {
+    'BootstrapButtonPlugin': ('title', 'link', 'target',),
+    'BootstrapImagePlugin': ('title', 'link', 'target',),
+    'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
+}
+
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono',
