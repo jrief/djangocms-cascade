@@ -7,6 +7,8 @@ try:
 except ImportError:
     from HTMLParser import HTMLParser  # py2
 from django.forms import widgets
+from django.utils.encoding import force_text
+from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
@@ -73,8 +75,10 @@ class CarouselPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super(CarouselPlugin, cls).get_identifier(obj)
         num_cols = obj.get_children().count()
-        return ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
+        content = ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
+        return format_html('{0}{1}', identifier, content)
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -154,5 +158,11 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         complete_glossary = obj.get_complete_glossary()
         obj.glossary.update({'resize-options': complete_glossary.get('resize-options', [])})
         return sanitized
+
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(CarouselSlidePlugin, cls).get_identifier(obj)
+        content = obj.image and force_text(obj.image) or _("No Slide")
+        return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(CarouselSlidePlugin)
