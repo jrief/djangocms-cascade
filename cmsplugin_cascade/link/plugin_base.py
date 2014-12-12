@@ -1,32 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.conf import settings
 from django import forms
 from django.db.models import get_model
 from django.forms import widgets
-from django.utils.six import with_metaclass
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.plugin_base import CascadePluginBaseMetaclass, CascadePluginBase
+from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
 from cmsplugin_cascade.utils import resolve_dependencies
-from .models import SimpleLinkElement, SharableLinkElement
 
 
-class LinkPluginBaseMetaclass(CascadePluginBaseMetaclass):
-    plugins_with_extrafields = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS', [])
-    plugins_with_sharables = {'BootstrapButtonPlugin': ('title', 'link', 'target',)}
-
-    def __new__(cls, name, bases, attrs):
-        if name in cls.plugins_with_sharables:
-            attrs.setdefault('model', SharableLinkElement)
-        else:
-            attrs.setdefault('model', SimpleLinkElement)
-        return super(LinkPluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
-
-
-class LinkPluginBase(with_metaclass(LinkPluginBaseMetaclass, CascadePluginBase)):
+class LinkPluginBase(CascadePluginBase):
     glossary_fields = (
         PartialFormField('target',
             widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
@@ -69,3 +55,20 @@ class LinkPluginBase(with_metaclass(LinkPluginBaseMetaclass, CascadePluginBase))
         else:
             media.add_js(resolve_dependencies('cascade/js/admin/simplelinkplugin.js'))
         return media
+
+
+@python_2_unicode_compatible
+class LinkElementMixin(object):
+    """
+    A proxy model for the ``<a>`` element.
+    """
+    def __str__(self):
+        return self.plugin_class.get_identifier(self)
+
+    @property
+    def link(self):
+        return self.plugin_class.get_link(self)
+
+    @property
+    def content(self):
+        return self.glossary.get('link_content', '')

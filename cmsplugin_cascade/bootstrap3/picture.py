@@ -1,58 +1,21 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.forms import widgets, ModelChoiceField
 from django.forms.models import ModelForm
-from django.db.models import get_model
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin.sites import site
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.link.forms import LinkForm
-from cmsplugin_cascade.link.models import LinkElementMixin
-from cmsplugin_cascade.link.plugin_base import LinkPluginBase
-from cmsplugin_cascade.sharable.models import SharableCascadeElement
+from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from .settings import CASCADE_BREAKPOINTS_LIST
 from . import utils
-
-
-@python_2_unicode_compatible
-class ImagePropertyMixin(object):
-    def __str__(self):
-        return six.text_type(self.image and self.image or '')
-
-    @property
-    def image(self):
-        if not hasattr(self, '_image_model'):
-            try:
-                Model = get_model(*self.glossary['image']['model'].split('.'))
-                self._image_model = Model.objects.get(pk=self.glossary['image']['pk'])
-            except (KeyError, ObjectDoesNotExist):
-                self._image_model = None
-        return self._image_model
-
-
-class PictureElement(ImagePropertyMixin, CascadeElement):
-    """
-    A proxy model for the ``<img>`` or ``<picture>`` element.
-    """
-    class Meta:
-        proxy = True
-
-
-class SharablePictureElement(ImagePropertyMixin, LinkElementMixin, SharableCascadeElement):
-    """
-    A proxy model for the ``<img>`` or ``<picture>`` element wrapped in an sharable link element.
-    """
-    class Meta:
-        proxy = True
 
 
 class PictureFormMixin(object):
@@ -106,7 +69,7 @@ class LinkedPictureForm(PictureFormMixin, LinkForm):
 
 class BootstrapPicturePlugin(LinkPluginBase):
     name = _("Picture")
-    model = SharablePictureElement
+    model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     form = LinkedPictureForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
@@ -119,8 +82,8 @@ class BootstrapPicturePlugin(LinkPluginBase):
     default_css_class = 'img-responsive'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
-    fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),
-              ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
+    fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),)
+              #('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
@@ -155,7 +118,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
             initial=['subject_location', 'high_resolution']
         ),
     )
-    # TODO sharable_fields = ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
+    #sharable_fields = ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')

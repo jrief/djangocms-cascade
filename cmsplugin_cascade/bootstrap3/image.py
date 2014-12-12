@@ -1,58 +1,20 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.forms import widgets, ModelChoiceField
 from django.forms.models import ModelForm
-from django.db.models import get_model
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin.sites import site
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.models import CascadeElement
+from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.link.forms import LinkForm
-from cmsplugin_cascade.link.models import LinkElementMixin
-from cmsplugin_cascade.link.plugin_base import LinkPluginBase
-from cmsplugin_cascade.sharable.models import SharableCascadeElement
+from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from . import utils
-
-
-@python_2_unicode_compatible
-class ImagePropertyMixin(object):
-    def __str__(self):
-        return six.text_type(self.image and self.image or '')
-
-    @property
-    def image(self):
-        if not hasattr(self, '_image_model'):
-            try:
-                Model = get_model(*self.glossary['image']['model'].split('.'))
-                self._image_model = Model.objects.get(pk=self.glossary['image']['pk'])
-            except (KeyError, ObjectDoesNotExist):
-                self._image_model = None
-        return self._image_model
-
-
-class ImageElement(ImagePropertyMixin, CascadeElement):
-    """
-    A proxy model for the ``<img>`` element using additional attributes for responsive design.
-    """
-    class Meta:
-        proxy = True
-
-
-class SharableImageElement(ImagePropertyMixin, LinkElementMixin, SharableCascadeElement):
-    """
-    A proxy model for the ``<img>`` element using additional attributes for responsive design
-    wrapped in an sharable link element.
-    """
-    class Meta:
-        proxy = True
 
 
 class ImageFormMixin(object):
@@ -106,7 +68,7 @@ class LinkedImageForm(ImageFormMixin, LinkForm):
 
 class BootstrapImagePlugin(LinkPluginBase):
     name = _("Image")
-    model = SharableImageElement
+    model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     form = LinkedImageForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
@@ -118,8 +80,8 @@ class BootstrapImagePlugin(LinkPluginBase):
     render_template = 'cascade/bootstrap3/linked-image.html'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
-    fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),
-              ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
+    fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),)
+              # ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),

@@ -17,7 +17,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from .settings import CASCADE_BREAKPOINTS_LIST, CMS_CASCADE_TEMPLATE_DIR
-from .picture import PictureForm, PictureElement, BootstrapPicturePlugin
+from .picture import PictureForm, ImagePropertyMixin, BootstrapPicturePlugin
 from . import utils
 
 
@@ -115,7 +115,7 @@ plugin_pool.register_plugin(CarouselPlugin)
 
 class CarouselSlidePlugin(BootstrapPluginBase):
     name = _("Slide")
-    model = PictureElement
+    model_mixins = (ImagePropertyMixin,)
     form = PictureForm
     default_css_class = 'img-responsive'
     parent_classes = ['CarouselPlugin']

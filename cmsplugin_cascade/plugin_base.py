@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
 from django.utils.safestring import SafeText
@@ -7,8 +8,14 @@ from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from .models_base import CascadeModelBase
 from .sharable.forms import SharableGlossaryMixin
+from .sharable.models import SharableCascadeElement
 from .mixins import ExtraFieldsMixin
+from .models import CascadeElement
 from .widgets import JSONMultiWidget
+
+
+CASCADE_PLUGINS_WITH_EXTRAFIELDS = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS', [])
+CASCADE_PLUGINS_WITH_SHARABLES = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_SHARABLES', {})
 
 
 class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
@@ -17,8 +24,8 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     by a user defined configuration, this meta-class conditionally inherits from additional mixin
     classes.
     """
-    plugins_with_extrafields = []
-    plugins_with_sharables = {}
+    plugins_with_extrafields = CASCADE_PLUGINS_WITH_EXTRAFIELDS
+    plugins_with_sharables = CASCADE_PLUGINS_WITH_SHARABLES
 
     def __new__(cls, name, bases, attrs):
         if name in cls.plugins_with_extrafields:
@@ -26,14 +33,34 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         if name in cls.plugins_with_sharables:
             bases = (SharableGlossaryMixin,) + bases
             attrs['fields'] += (('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
-            attrs.update(sharable_fields=cls.plugins_with_sharables[name])
+            attrs['sharable_fields'] = cls.plugins_with_sharables[name]
+            base_model = SharableCascadeElement
+        else:
+            base_model = CascadeElement
+        model_mixins = attrs.pop('model_mixins', ())
+        attrs['model'] = CascadePluginBaseMetaclass.create_model(name, model_mixins, base_model)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
+    @staticmethod
+    def create_model(name, model_mixins, base_model):
+        """
+        Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
+        """
+        class Meta:
+            proxy = True
 
-class CascadePluginBase(CMSPluginBase):
+        name += b'Model'
+        bases = model_mixins + (base_model,)
+        attrs = {'Meta': Meta, '__module__': getattr(base_model, '__module__')}
+        model = type(name, bases, attrs)
+        return model
+
+
+class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPluginBase)):
     tag_type = 'div'
     render_template = 'cms/plugins/generic.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
+    model_mixins = ()  # model mixins added to the final Django model
 
     class Media:
         css = {'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)}
