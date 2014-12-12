@@ -9,7 +9,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import get_model
 from django.forms import widgets
 from django.utils import six
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import PartialFormField
@@ -119,11 +118,7 @@ class ExtraFieldsMixin(object):
         return identifier
 
 
-@python_2_unicode_compatible
 class ImagePropertyMixin(object):
-    def __str__(self):
-        return six.text_type(self.image and self.image or '')
-
     @property
     def image(self):
         if not hasattr(self, '_image_model'):

@@ -4,6 +4,8 @@ from django.forms import widgets, ModelChoiceField
 from django.forms.models import ModelForm
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin.sites import site
+from django.utils.encoding import force_text
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
@@ -145,5 +147,11 @@ class BootstrapPicturePlugin(LinkPluginBase):
         if css_class:
             css_classes.append(css_class)
         return css_classes
+
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(BootstrapPicturePlugin, cls).get_identifier(obj)
+        content = obj.image and force_text(obj.image) or _("No Picture")
+        return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapPicturePlugin)
