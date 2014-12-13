@@ -3,6 +3,7 @@ import os
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.text import Truncator
+from django.utils.html import format_html
 from django.forms.models import ModelForm
 from django.forms.fields import IntegerField
 from cms.plugin_pool import plugin_pool
@@ -31,8 +32,10 @@ class PanelGroupPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super(PanelGroupPlugin, cls).get_identifier(obj)
         num_cols = obj.get_children().count()
-        return ungettext_lazy('with {0} panel', 'with {0} panels', num_cols).format(num_cols)
+        content = ungettext_lazy('with {0} panel', 'with {0} panels', num_cols).format(num_cols)
+        return format_html('{0}{1}', identifier, content)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
@@ -57,9 +60,10 @@ class PanelPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        value = obj.glossary.get('panel_title')
-        if value:
-            return unicode(Truncator(value).words(3, truncate=' ...'))
-        return ''
+        identifier = super(PanelGroupPlugin, cls).get_identifier(obj)
+        content = obj.glossary.get('panel_title', '')
+        if content:
+            content = unicode(Truncator(content).words(3, truncate=' ...'))
+        return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(PanelPlugin)
