@@ -189,8 +189,10 @@ class MultipleTextInputWidget(widgets.MultiWidget):
     def render(self, name, values, attrs):
         widgets = []
         values = values or {}
+        elem_id = attrs['id']
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
+            attrs['id'] = '{0}_{1}'.format(elem_id, key)
             errors = key in self.validation_errors and 'errors' or ''
             widgets.append((self.widgets[index].render(label, values.get(key), attrs), key, label, errors))
         return format_html('<div class="clearfix">{0}</div>',

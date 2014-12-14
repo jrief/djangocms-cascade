@@ -2,12 +2,14 @@
 import json
 from django import forms
 from django.forms import fields
+from django.forms.widgets import Media as DjangoMedia
 from django.db.models import get_model
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
+from cmsplugin_cascade.utils import resolve_dependencies
 from .models import SharedGlossary
 
 
@@ -45,6 +47,9 @@ class SelectSharedGlossary(forms.Select):
 class SharableCascadeForm(forms.ModelForm):
     save_shared_glossary = fields.BooleanField(required=False, label=_("Remember these settings as:"))
     save_as_identifier = fields.CharField(required=False, label='')
+
+    class Media:
+        js = resolve_dependencies('cascade/js/admin/sharableglossary.js')
 
     def clean_save_as_identifier(self):
         identifier = self.cleaned_data['save_as_identifier']
@@ -84,3 +89,23 @@ class SharableGlossaryMixin(object):
             shared_glossary.save()
             obj.shared_glossary = shared_glossary
             obj.save()
+
+    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        # create a list of sharable fields, so that the JS class SharableGlossaryMixin
+        # knows which ones to disable, whenever a Shared Setting is active
+        form = context['adminform'].form
+        share_fields = []
+        for key in self.sharable_fields:
+            glossary_field_map = getattr(self, 'glossary_field_map', {})
+            if key in glossary_field_map:
+                for basekey in glossary_field_map[key]:
+                    #shared_fields.append((form[basekey].auto_id, form[basekey].field.widget))
+                    share_fields.append(form[basekey].auto_id)
+        for glossary_field in self.glossary_fields:
+            if glossary_field.name in self.sharable_fields:
+                share_fields.extend(glossary_field.get_element_ids(form['glossary'].auto_id))
+                #auto_id = '{0}_{1}'.format(form['glossary'].auto_id, glossary_field.name)
+                #shared_fields.append((auto_id, glossary_field.widget))
+        #data = dict((i, w.__class__.__name__) for i, w in shared_fields)
+        context.update(sharable_fields=mark_safe(json.dumps(share_fields)))
+        return super(SharableGlossaryMixin, self).render_change_form(request, context, add, change, form_url, obj)
