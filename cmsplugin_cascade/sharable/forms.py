@@ -78,8 +78,7 @@ class SharableGlossaryMixin(object):
         if form.cleaned_data['save_shared_glossary'] and identifier:
             # move data from form glossary to a SharedGlossary and refer to it
             shared_glossary, created = SharedGlossary.objects.get_or_create(plugin_type=self.__class__.__name__, identifier=identifier)
-            if not created:
-                raise RuntimeError("SharableCascadeForm.clean_save_as_identifier() erroneously validated identifier '%s' as unique".format(identifier))
+            assert created, "SharableCascadeForm.clean_save_as_identifier() erroneously validated identifier '%s' as unique".format(identifier)
             glry = form.cleaned_data['glossary']
             shared_glossary.glossary = dict((key, glry[key]) for key in self.sharable_fields if key in glry)
             shared_glossary.save()
