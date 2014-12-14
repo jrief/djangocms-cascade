@@ -120,7 +120,6 @@ class BootstrapPicturePlugin(LinkPluginBase):
             initial=['subject_location', 'high_resolution']
         ),
     )
-    #sharable_fields = ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
