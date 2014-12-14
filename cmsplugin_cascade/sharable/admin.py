@@ -58,7 +58,7 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         media = super(SharedGlossaryAdmin, self).media
         media += forms.Media(css={'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)})
         try:
-            media += self.plugin_instance.sharable_media
+            media += self.plugin_instance().media
         except AttributeError:
             pass
         return media

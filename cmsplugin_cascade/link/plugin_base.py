@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django import forms
 from django.db.models import get_model
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
 from cmsplugin_cascade.utils import resolve_dependencies
 
 
@@ -25,7 +23,9 @@ class LinkPluginBase(CascadePluginBase):
 
     # fields to auto-generate a form in admin > Cmsplugin_cascade > Shared between Plugins
     sharable_fieldset = {'fields': [('link_type', 'cms_page', 'ext_url', 'mail_to',), 'glossary']}
-    sharable_media = forms.Media(js=resolve_dependencies('cascade/js/admin/simplelinkplugin.js'))
+
+    class Media:
+        js = resolve_dependencies('cascade/js/admin/simplelinkplugin.js')
 
     @classmethod
     def get_link(cls, obj):
@@ -45,15 +45,6 @@ class LinkPluginBase(CascadePluginBase):
                     obj._link_model = None
             if obj._link_model:
                 return obj._link_model.get_absolute_url()
-
-    @property
-    def media(self):
-        media = super(LinkPluginBase, self).media
-        if isinstance(self, SharableGlossaryMixin):
-            media.add_js(resolve_dependencies('cascade/js/admin/sharablelinkplugin.js'))
-        else:
-            media.add_js(resolve_dependencies('cascade/js/admin/simplelinkplugin.js'))
-        return media
 
 
 class LinkElementMixin(object):
