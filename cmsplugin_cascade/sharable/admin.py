@@ -14,13 +14,16 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
 
     def get_fieldsets(self, request, obj=None):
         """Return the fieldsets from associated plugin"""
-        fieldsets = [(None, {'fields': ['identifier']})]
-        try:
-            sharable_fieldset = self.plugin_instance.sharable_fieldset
-        except AttributeError:
-            sharable_fieldset = {'fields': ('glossary',)}
-        fieldsets.append((_("Shared Fields"), sharable_fieldset))
-        return fieldsets
+        fields = []
+        for key in self.plugin_instance.sharable_fields:
+            try:
+                fields.append(self.plugin_instance.glossary_field_map[key])
+            except KeyError:
+                continue
+            except AttributeError:
+                break
+        fields.append('glossary')
+        return [(None, {'fields': ['identifier']}), (_("Shared Fields"), {'fields': fields})]
 
     def get_form(self, request, obj=None, **kwargs):
         """

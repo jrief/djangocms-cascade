@@ -20,9 +20,8 @@ class LinkPluginBase(CascadePluginBase):
         ),
     )
     html_tag_attributes = {'target': 'target'}
-
-    # fields to auto-generate a form in admin > Cmsplugin_cascade > Shared between Plugins
-    sharable_fieldset = {'fields': [('link_type', 'cms_page', 'ext_url', 'mail_to',), 'glossary']}
+    # map field from glossary to these form fields
+    glossary_field_map = {'link': ('link_type', 'cms_page', 'ext_url', 'mail_to',)}
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/simplelinkplugin.js')
