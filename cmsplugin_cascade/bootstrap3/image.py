@@ -35,10 +35,13 @@ class ImageFormMixin(object):
 
     def clean(self):
         cleaned_data = super(ImageFormMixin, self).clean()
-        if self.is_valid():
+        if self.is_valid() and cleaned_data['image_file']:
             image_data = {'pk': cleaned_data['image_file'].pk, 'model': 'filer.Image'}
             cleaned_data['glossary'].update(image=image_data)
+        try:
             del self.cleaned_data['image_file']
+        except KeyError:
+            pass
         return cleaned_data
 
 
