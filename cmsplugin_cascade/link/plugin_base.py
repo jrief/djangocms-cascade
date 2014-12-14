@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django import forms
 from django.db.models import get_model
 from django.forms import widgets
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from cmsplugin_cascade.fields import PartialFormField
@@ -57,14 +56,10 @@ class LinkPluginBase(CascadePluginBase):
         return media
 
 
-@python_2_unicode_compatible
 class LinkElementMixin(object):
     """
     A proxy model for the ``<a>`` element.
     """
-    def __str__(self):
-        return self.plugin_class.get_identifier(self)
-
     @property
     def link(self):
         return self.plugin_class.get_link(self)
