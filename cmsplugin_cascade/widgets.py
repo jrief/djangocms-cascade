@@ -58,7 +58,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             if not isinstance(fieldset, (list, tuple)):
                 fieldset = [fieldset]
             for field in fieldset:
-                field_attrs['id'] = attrs['id'] + '_' + field.name
+                field_attrs['id'] = '{id}_{0}'.format(field.name, **attrs)
                 render_fields.append((
                     field.name,
                     six.text_type(field.label),
