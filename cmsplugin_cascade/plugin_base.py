@@ -58,6 +58,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
 
 class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPluginBase)):
     tag_type = 'div'
+    change_form_template = 'cascade/admin/change_form.html'
     render_template = 'cms/plugins/generic.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
