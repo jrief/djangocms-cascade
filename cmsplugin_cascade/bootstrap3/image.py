@@ -83,7 +83,6 @@ class BootstrapImagePlugin(LinkPluginBase):
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
     fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),)
-              # ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
@@ -129,7 +128,6 @@ class BootstrapImagePlugin(LinkPluginBase):
             initial=['subject_location', 'high_resolution']
         ),
     )
-    #sharable_fields = ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/imageplugin.js')
