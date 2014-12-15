@@ -67,7 +67,6 @@ django.jQuery(function($) {
 				} catch(err) {
 				}
 			}
-			console.log(glossary);
 			if (this.$super) {
 				this.$super($option);
 			} else {
