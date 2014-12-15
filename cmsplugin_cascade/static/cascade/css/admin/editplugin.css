@@ -9,6 +9,7 @@ form .field-box label.inline { text-align: right; }
 form .field-glossary { padding: 0 10px; }
 form .container-thumbnail { text-align: center; }
 form .container-thumbnail i[class^="icon"] { font-size: 70px; }
+form label[for=id_glossary_0] { float: none; }
 form .glossary_button-type .field-box { margin-right: 10px; }
 form .glossary_button-size .button-samples { min-height: 100px; max-width: 100px; }
 form .glossary_button-type .btn, .glossary_button-size .btn { margin-bottom: 5px; }

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
-from django.utils.safestring import SafeText
+from django.utils.safestring import SafeText, mark_safe
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from .models_base import CascadeModelBase
@@ -191,3 +191,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
                 return model.objects.get(id=self.parent.id)
             except ObjectDoesNotExist:
                 pass
+
+    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        context.setdefault('sharable_fields', mark_safe('[]'))
+        return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)

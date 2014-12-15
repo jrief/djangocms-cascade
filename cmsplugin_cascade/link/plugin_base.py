@@ -24,7 +24,7 @@ class LinkPluginBase(CascadePluginBase):
     glossary_field_map = {'link': ('link_type', 'cms_page', 'ext_url', 'mail_to',)}
 
     class Media:
-        js = resolve_dependencies('cascade/js/admin/simplelinkplugin.js')
+        js = resolve_dependencies('cascade/js/admin/linkplugin.js')
 
     @classmethod
     def get_link(cls, obj):
