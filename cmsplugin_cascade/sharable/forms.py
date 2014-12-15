@@ -99,13 +99,11 @@ class SharableGlossaryMixin(object):
             glossary_field_map = getattr(self, 'glossary_field_map', {})
             if key in glossary_field_map:
                 for basekey in glossary_field_map[key]:
-                    #shared_fields.append((form[basekey].auto_id, form[basekey].field.widget))
                     share_fields.append(form[basekey].auto_id)
         for glossary_field in self.glossary_fields:
             if glossary_field.name in self.sharable_fields:
                 share_fields.extend(glossary_field.get_element_ids(form['glossary'].auto_id))
-                #auto_id = '{0}_{1}'.format(form['glossary'].auto_id, glossary_field.name)
-                #shared_fields.append((auto_id, glossary_field.widget))
-        #data = dict((i, w.__class__.__name__) for i, w in shared_fields)
         context.update(sharable_fields=mark_safe(json.dumps(share_fields)))
+        context.setdefault('base_plugins', [])
+        context['base_plugins'].append('django.cascade.SharableGlossaryMixin')
         return super(SharableGlossaryMixin, self).render_change_form(request, context, add, change, form_url, obj)

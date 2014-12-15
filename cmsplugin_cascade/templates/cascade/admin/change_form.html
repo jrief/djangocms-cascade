@@ -4,6 +4,8 @@
 {% block after_field_sets %}
 	{{ block.super }}
 	<script type="text/javascript">
+	django.cascade = django.cascade || {};
 	django.cascade.sharable_fields = {{ sharable_fields }};
+	django.cascade.base_plugins = "[{{ base_plugins|join:", " }}]";
 	</script>
 {% endblock %}
