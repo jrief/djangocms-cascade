@@ -157,8 +157,8 @@ CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS = ['BootstrapButtonPlugin', 'BootstrapConta
 
 CMS_CASCADE_PLUGINS_WITH_SHARABLES = {
     'BootstrapButtonPlugin': ('title', 'link', 'target',),
-    'BootstrapImagePlugin': ('title', 'link', 'target',),
-    'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
+    'BootstrapImagePlugin': ('link', 'image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options', 'target'),
+    'BootstrapPicturePlugin': ('link', 'image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 }
 
 CKEDITOR_SETTINGS = {
