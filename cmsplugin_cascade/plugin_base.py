@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.forms.widgets import media_property
 from django.utils import six
 from django.utils.safestring import SafeText
 from cms.plugin_pool import plugin_pool
@@ -29,8 +30,10 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
 
     def __new__(cls, name, bases, attrs):
         if name in cls.plugins_with_extrafields:
+            ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)
             bases = (ExtraFieldsMixin,) + bases
         if name in cls.plugins_with_sharables:
+            SharableGlossaryMixin.media = media_property(SharableGlossaryMixin)
             bases = (SharableGlossaryMixin,) + bases
             attrs['fields'] += (('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
             attrs['sharable_fields'] = cls.plugins_with_sharables[name]

@@ -48,9 +48,6 @@ class SharableCascadeForm(forms.ModelForm):
     save_shared_glossary = fields.BooleanField(required=False, label=_("Remember these settings as:"))
     save_as_identifier = fields.CharField(required=False, label='')
 
-    class Media:
-        js = resolve_dependencies('cascade/js/admin/sharableglossary.js')
-
     def clean_save_as_identifier(self):
         identifier = self.cleaned_data['save_as_identifier']
         if SharedGlossary.objects.filter(identifier=identifier).exclude(pk=self.instance.pk).exists():
@@ -64,6 +61,9 @@ class SharableGlossaryMixin(object):
     inherit from it. This class adds the appropriate methods to the plugin class in order to store
     an assortment of glossary values as a glossary reusable by other plugin instances.
     """
+    class Media:
+            js = resolve_dependencies('cascade/js/admin/sharableglossary.js')
+
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.pop('form', self.form)
         shared_glossary = forms.ModelChoiceField(required=False,
