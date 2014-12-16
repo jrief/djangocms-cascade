@@ -162,7 +162,10 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(CarouselSlidePlugin, cls).get_identifier(obj)
-        content = obj.image and force_text(obj.image) or _("No Slide")
+        try:
+            content = force_text(obj.image)
+        except AttributeError:
+            content = _("No Slide")
         return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(CarouselSlidePlugin)
