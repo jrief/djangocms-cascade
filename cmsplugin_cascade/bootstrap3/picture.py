@@ -36,10 +36,13 @@ class PictureFormMixin(object):
 
     def clean(self):
         cleaned_data = super(PictureFormMixin, self).clean()
-        if self.is_valid():
+        if self.is_valid() and cleaned_data['image_file']:
             image_data = {'pk': cleaned_data['image_file'].pk, 'model': 'filer.Image'}
             cleaned_data['glossary'].update(image=image_data)
+        try:
             del self.cleaned_data['image_file']
+        except KeyError:
+            pass
         return cleaned_data
 
 
@@ -85,7 +88,6 @@ class BootstrapPicturePlugin(LinkPluginBase):
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
     fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),)
-              #('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
