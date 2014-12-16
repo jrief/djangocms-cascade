@@ -107,6 +107,6 @@ class SharableGlossaryMixin(object):
         return super(SharableGlossaryMixin, self).render_change_form(request, context, add, change, form_url, obj)
 
     def get_ring_bases(self):
-        bases = super(SharableGlossaryMixin, self).get_ring_dependencies()
+        bases = super(SharableGlossaryMixin, self).get_ring_bases()
         bases.append('SharableGlossaryMixin')
         return bases

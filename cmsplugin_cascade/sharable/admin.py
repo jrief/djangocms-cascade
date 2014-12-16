@@ -76,6 +76,8 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         bases = self.plugin_instance().get_ring_bases()
+        # since the Sharable Admin reuses the JavaScript plugins, remove the one, regarding shareability itself
+        bases.remove('SharableGlossaryMixin')
         context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
         return super(SharedGlossaryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
