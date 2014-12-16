@@ -4,13 +4,14 @@ from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from .plugin_base import LinkPluginBase
+from .plugin_base import LinkPluginBase, LinkElementMixin
 from .forms import TextLinkForm
 
 
 class TextLinkPlugin(LinkPluginBase):
     name = _("Link")
     form = TextLinkForm
+    model_mixins = (LinkElementMixin,)
     render_template = 'cascade/plugins/link.html'
     text_enabled = True
     allow_children = False
