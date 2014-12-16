@@ -89,7 +89,9 @@ class CascadeModelBase(CMSPlugin):
         each child.
         """
         for model in CascadeModelBase._get_cascade_elements():
-            for child in model.objects.filter(parent_id=self.id):
+            # execute query, don't iterate over SELECT ... FROM while updating other models
+            children = list(model.objects.filter(parent_id=self.id))
+            for child in children:
                 child.save(sanitize_only=True)
                 child.sanitize_children()
 
