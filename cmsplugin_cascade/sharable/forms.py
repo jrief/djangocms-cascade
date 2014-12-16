@@ -104,6 +104,9 @@ class SharableGlossaryMixin(object):
             if glossary_field.name in self.sharable_fields:
                 share_fields.extend(glossary_field.get_element_ids(form['glossary'].auto_id))
         context.update(sharable_fields=mark_safe(json.dumps(share_fields)))
-        context.setdefault('base_plugins', [])
-        context['base_plugins'].append('django.cascade.SharableGlossaryMixin')
         return super(SharableGlossaryMixin, self).render_change_form(request, context, add, change, form_url, obj)
+
+    def get_ring_bases(self):
+        bases = super(SharableGlossaryMixin, self).get_ring_dependencies()
+        bases.append('SharableGlossaryMixin')
+        return bases

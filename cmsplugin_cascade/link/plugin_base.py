@@ -46,10 +46,10 @@ class LinkPluginBase(CascadePluginBase):
             if obj._link_model:
                 return obj._link_model.get_absolute_url()
 
-    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        context.setdefault('base_plugins', [])
-        context['base_plugins'].append('django.cascade.LinkPluginBase')
-        return super(LinkPluginBase, self).render_change_form(request, context, add, change, form_url, obj)
+    def get_ring_bases(self):
+        bases = super(LinkPluginBase, self).get_ring_bases()
+        bases.append('LinkPluginBase')
+        return bases
 
 
 @python_2_unicode_compatible

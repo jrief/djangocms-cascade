@@ -193,5 +193,13 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
                 pass
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        context.setdefault('sharable_fields', mark_safe('[]'))
+        bases = self.get_ring_bases()
+        context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
         return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
+
+    def get_ring_bases(self):
+        """
+        Hook to return a list of base plugins required to build the JavaScript counterpart for the
+        current plugin. The named JavaScript plugin must have been created using ``ring.create``.
+        """
+        return []

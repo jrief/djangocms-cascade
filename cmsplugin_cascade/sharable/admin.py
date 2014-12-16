@@ -9,6 +9,7 @@ from .models import SharedGlossary, SharableCascadeElement
 
 
 class SharedGlossaryAdmin(admin.ModelAdmin):
+    change_form_template = 'cascade/admin/change_form.html'
     list_display = ('identifier', 'plugin_type', 'used_by',)
     list_filter = ('plugin_type',)
 
@@ -72,5 +73,10 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         """
         return SharableCascadeElement.objects.filter(shared_glossary=obj).count()
     used_by.short_description = _("Used by plugins")
+
+    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        bases = self.plugin_instance().get_ring_bases()
+        context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
+        return super(SharedGlossaryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
 admin.site.register(SharedGlossary, SharedGlossaryAdmin)

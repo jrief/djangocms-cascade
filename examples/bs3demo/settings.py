@@ -161,6 +161,8 @@ CMS_CASCADE_PLUGINS_WITH_SHARABLES = {
     'BootstrapPicturePlugin': ('link', 'image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 }
 
+CMS_CASCADE_LEAF_PLUGINS = ('TextLinkPlugin',)
+
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono',
