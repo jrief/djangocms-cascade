@@ -12,7 +12,7 @@ from django.utils import six
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import PartialFormField
-from .widgets import MultipleCascadingSizeWidget, ColorPickerWidget
+from .widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
 
 class ExtraFieldsMixin(object):
@@ -26,6 +26,7 @@ class ExtraFieldsMixin(object):
         ('Widths', (('min-width', 'width', 'max-width',), MultipleCascadingSizeWidget)),
         ('Heights', (('min-height', 'height', 'max-height',), MultipleCascadingSizeWidget)),
         ('Colors', (('color', 'background-color',), ColorPickerWidget)),
+        ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
     ))
 
     def get_form(self, request, obj=None, **kwargs):

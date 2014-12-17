@@ -148,6 +148,13 @@ class ColorPickerWidget(widgets.TextInput):
             raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
 
 
+class SelectOverflowWidget(widgets.Select):
+    CHOICES = (('auto', 'auto'), ('scroll', 'scroll'), ('hidden', 'hidden'),)
+
+    def __init__(self, attrs=None):
+        super(SelectOverflowWidget, self).__init__(attrs, choices=self.CHOICES)
+
+
 class MultipleTextInputWidget(widgets.MultiWidget):
     """
     A widgets accepting multiple input values to be used for rendering CSS inline styles.
