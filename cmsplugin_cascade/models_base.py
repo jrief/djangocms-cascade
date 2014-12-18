@@ -13,7 +13,7 @@ from cms.utils.placeholder import get_placeholder_conf
 @python_2_unicode_compatible
 class CascadeModelBase(CMSPlugin):
     """
-    The container to hold additional bootstrap elements.
+    The container to hold additional HTML element tags.
     """
     class Meta:
         abstract = True
