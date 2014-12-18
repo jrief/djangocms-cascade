@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
@@ -13,10 +12,7 @@ from .sharable.models import SharableCascadeElement
 from .mixins import ExtraFieldsMixin
 from .models import CascadeElement
 from .widgets import JSONMultiWidget
-
-
-CASCADE_PLUGINS_WITH_EXTRAFIELDS = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS', [])
-CASCADE_PLUGINS_WITH_SHARABLES = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_SHARABLES', {})
+from . import settings
 
 
 class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
@@ -25,8 +21,8 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     by a user defined configuration, this meta-class conditionally inherits from additional mixin
     classes.
     """
-    plugins_with_extrafields = CASCADE_PLUGINS_WITH_EXTRAFIELDS
-    plugins_with_sharables = CASCADE_PLUGINS_WITH_SHARABLES
+    plugins_with_extrafields = list(settings.CASCADE_PLUGINS_WITH_EXTRAFIELDS)
+    plugins_with_sharables = dict(settings.CASCADE_PLUGINS_WITH_SHARABLES)
 
     def __new__(cls, name, bases, attrs):
         if name in cls.plugins_with_extrafields:

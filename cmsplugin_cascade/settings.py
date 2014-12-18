@@ -10,3 +10,6 @@ CASCADE_PLUGIN_DEPENDENCIES = {
     'cascade/js/admin/pictureplugin.js': ('cascade/js/admin/linkpluginbase.js',),
 }
 CASCADE_PLUGIN_DEPENDENCIES.update(getattr(settings, 'CMSPLUGIN_CASCADE_DEPENDENCIES', {}))
+
+CASCADE_PLUGINS_WITH_EXTRAFIELDS = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS', ['SimpleWrapperPlugin'])
+CASCADE_PLUGINS_WITH_SHARABLES = getattr(settings, 'CMS_CASCADE_PLUGINS_WITH_SHARABLES', {})
