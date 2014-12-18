@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from cms.api import add_plugin, create_page
 from cms.models.placeholdermodel import Placeholder
-from cmsplugin_cascade.link.models import SimpleLinkElement
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.bootstrap3.buttons import BootstrapButtonPlugin
 
 
@@ -17,9 +17,9 @@ class ButtonWrapperPluginTest(TestCase):
         button_plugin = model_instance.get_plugin_class_instance()
         context = button_plugin.render({}, model_instance, None)
         self.assertIn('instance', context)
-        self.assertIsInstance(context['instance'], SimpleLinkElement)
+        self.assertIsInstance(context['instance'], LinkElementMixin)
         self.assertListEqual(button_plugin.get_css_classes(model_instance), ['btn', 'btn-default'])
-        self.assertEqual(button_plugin.get_identifier(model_instance), 'Knopf (Default)')
+        self.assertEqual(button_plugin.get_identifier(model_instance), 'Knopf')
 
     def test_external_link(self):
         glossary = {'link_content': 'Django', 'button-type': 'btn-primary',

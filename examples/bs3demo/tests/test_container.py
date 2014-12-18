@@ -67,28 +67,30 @@ class ContainerPluginTest(CMSTestCase):
             '<div class="col-sm-4"></div><div class="col-sm-4"></div><div class="col-sm-4"></div>' +
             '</div></div>')
 
-        # change data inside the Columns
+        # change data inside the first column
         column_model = columns_qs[0]
+        delattr(column_model, '_inst')
         column_plugin = column_model.get_plugin_class_instance(self.admin_site)
         column_plugin.cms_plugin_instance = column_model
-        ModelForm = column_plugin.get_form(self.request, column_model)
-        post_data = column_model.glossary.copy()
+        post_data = QueryDict('', mutable=True)
         post_data.update({'sm-column-offset': 'col-sm-offset-1', 'sm-column-width': 'col-sm-3'})
+        ModelForm = column_plugin.get_form(self.request, column_model)
         form = ModelForm(post_data, None, instance=column_model)
-        column_plugin.save_model(self.request, column_model, form, False)
         self.assertTrue(form.is_valid())
+        column_plugin.save_model(self.request, column_model, form, True)
 
+        # change data inside the second column
         column_model = columns_qs[1]
+        delattr(column_model, '_inst')
         column_plugin = column_model.get_plugin_class_instance(self.admin_site)
         column_plugin.cms_plugin_instance = column_model
+        post_data = QueryDict('', mutable=True)
+        post_data.update({'sm-responsive-utils': 'hidden-sm', 'sm-column-width': 'col-sm-4'})
         ModelForm = column_plugin.get_form(self.request, column_model)
-        post_data = column_model.glossary.copy()
-        post_data.update({'md-responsive-utils': 'hidden-md'})
         form = ModelForm(post_data, None, instance=column_model)
-        column_plugin.save_model(self.request, column_model, form, False)
         self.assertTrue(form.is_valid())
-
+        column_plugin.save_model(self.request, column_model, form, False)
         html = container_model.render_plugin(context)
         self.assertHTMLEqual(html, '<div class="container"><div class="row">' +
-            '<div class="col-sm-3 col-sm-offset-1"></div><div class="col-sm-4 hidden-md"></div><div class="col-sm-4"></div>' +
+            '<div class="col-sm-3 col-sm-offset-1"></div><div class="col-sm-4 hidden-sm"></div><div class="col-sm-4"></div>' +
             '</div></div>')
