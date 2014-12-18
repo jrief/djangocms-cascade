@@ -132,9 +132,15 @@ LANGUAGES = (
 #############################################################
 # Application specific settings
 
-CMS_TEMPLATES = (
-    sys.argv[1] == 'test' and ('testing.html', 'Default Page') or ('main.html', 'Main Content Container'),
-)
+if sys.argv[1] == 'test':
+    CMS_TEMPLATES = (
+         ('testing.html', 'Default Page'),
+    )
+else:
+    CMS_TEMPLATES = (
+         ('main.html', 'Main Content Container'),
+         ('wrapped.html', 'Wrapped Bootstrap Column'),
+    )
 
 CMS_SEO_FIELDS = True
 
