@@ -55,7 +55,7 @@ class LinkPluginBase(CascadePluginBase):
 @python_2_unicode_compatible
 class LinkElementMixin(object):
     """
-    A proxy model for the ``<a>`` element.
+    A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
     """
     def __str__(self):
         """Required representation of this model as a Link inside the Text Editor Plugin"""
