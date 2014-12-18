@@ -150,7 +150,7 @@ class CarouselSlidePlugin(BootstrapPluginBase):
             'placeholder': placeholder,
             'elements': elements,
         })
-        return context
+        return super(CarouselSlidePlugin, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):
