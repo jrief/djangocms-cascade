@@ -11,10 +11,12 @@ from django.forms import widgets
 from django.utils import six
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from cms.utils.compat.dj import python_2_unicode_compatible
 from cmsplugin_cascade.fields import PartialFormField
 from .widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
 
+@python_2_unicode_compatible
 class ExtraFieldsMixin(object):
     """
     This mixin class shall be added to plugins which shall offer extra fields for customizes
@@ -28,6 +30,9 @@ class ExtraFieldsMixin(object):
         ('Colors', (('color', 'background-color',), ColorPickerWidget)),
         ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
     ))
+
+    def __str__(self):
+        return self.plugin_class.get_identifier(self)
 
     def get_form(self, request, obj=None, **kwargs):
         from cmsplugin_cascade.models import PluginExtraFields
@@ -119,7 +124,14 @@ class ExtraFieldsMixin(object):
         return identifier
 
 
+@python_2_unicode_compatible
 class ImagePropertyMixin(object):
+    """
+    A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
+    """
+    def __str__(self):
+        return self.plugin_class.get_identifier(self)
+
     @property
     def image(self):
         if not hasattr(self, '_image_model'):
