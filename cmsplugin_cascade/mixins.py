@@ -103,6 +103,10 @@ class ExtraFieldsMixin(object):
             if key.startswith('extra_inline_styles:'):
                 if isinstance(eis, dict):
                     inline_styles.update(dict((k, v) for k, v in eis.items() if v))
+                if isinstance(eis, (list, tuple)):
+                    # the first entry of a sequence is used to disable an inline style
+                    if eis[0] != 'on':
+                        inline_styles.update({key.split(':')[1]: eis[1]})
                 elif isinstance(eis, six.string_types):
                     inline_styles.update({key.split(':')[1]: eis})
         return inline_styles

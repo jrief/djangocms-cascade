@@ -146,35 +146,32 @@ class ColorPickerWidget(widgets.MultiWidget):
         super(ColorPickerWidget, self).__init__(widget_list)
 
     def decompress(self, values):
-        if not isinstance(values, dict):
-            values = {}
-        values.setdefault('color', self.DEFAULT_COLOR)
-        values.setdefault('enabled', False)
+        if not isinstance(values, (list, tuple)) or len(values) != 2:
+            values = ('disabled', self.DEFAULT_COLOR,)
         return values
 
     def value_from_datadict(self, data, files, name):
-        values = {
-            'color': escape(data.get('{0}_color'.format(name), self.DEFAULT_COLOR)),
-            'enabled': escape(data.get('{0}_enabled'.format(name), False)),
-        }
+        values = (
+            escape(data.get('{0}_disabled'.format(name), '')),
+            escape(data.get('{0}_color'.format(name), self.DEFAULT_COLOR)),
+        )
         return values
 
     def render(self, name, values, attrs):
-        values = values or {}
+        disabled, color = values
         elem_id = attrs['id']
         attrs = dict(attrs)
-        color, enabled = values.get('color'), values.get('enabled')
         html = '<div class="clearfix">'
         key, attrs['id'] = '{0}_color'.format(name), '{0}_color'.format(elem_id)
         html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, color, attrs))
-        key, attrs['id'] = '{0}_enabled'.format(name), '{0}_enabled'.format(elem_id)
+        key, attrs['id'] = '{0}_disabled'.format(name), '{0}_disabled'.format(elem_id)
         html += format_html('<div class="sibling-field"><label for="{0}">{1}{2}</label></div>',
-                            key, self.widgets[1].render(key, enabled, attrs), _("Enabled"))
+                            key, self.widgets[1].render(key, disabled, attrs), _("Disabled"))
         html += '</div>'
         return mark_safe(html)
 
     def validate(self, values):
-        color = values.get('color')
+        color = values[1]
         if not self.validation_pattern.match(color):
             raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
 
