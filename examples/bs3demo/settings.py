@@ -158,8 +158,11 @@ CMS_PLACEHOLDER_CONF = {
 
 CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
-CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS = ['BootstrapButtonPlugin', 'BootstrapContainerPlugin',
-    'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin']
+CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS = [
+    'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
+    'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin',
+    'SimpleWrapperPlugin',
+]
 
 CMS_CASCADE_PLUGINS_WITH_SHARABLES = {
     'BootstrapButtonPlugin': ('title', 'link', 'target',),
@@ -168,6 +171,27 @@ CMS_CASCADE_PLUGINS_WITH_SHARABLES = {
 }
 
 CMS_CASCADE_LEAF_PLUGINS = ('TextLinkPlugin',)
+
+COLUMN_GLOSSARY = {
+    'breakpoints': ['xs', 'sm', 'md', 'lg'],
+    'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
+    'fluid': False,
+    'media_queries': {
+        'xs': ['(max-width: 768px)'],
+        'sm': ['(min-width: 768px)', '(max-width: 992px)'],
+        'md': ['(min-width: 992px)', '(max-width: 1200px)'],
+        'lg': ['(min-width: 1200px)'],
+    },
+}
+
+CMS_PLACEHOLDER_CONF = {
+    'Bootstrap Column': {
+        'plugins': ['BootstrapRowPlugin', 'TextPlugin'],
+        'parent_classes': {'BootstrapRowPlugin': []},
+        'require_parent': False,
+        'glossary': COLUMN_GLOSSARY,
+    },
+}
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
