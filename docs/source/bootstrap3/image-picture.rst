@@ -8,7 +8,7 @@ the different widths. Adding the CSS class ``img-responsive`` to an ``<img ... /
 that image to fit into the surrounding column. However, since images are delivered by the server
 in one specific size, they either are too small and must be upscaled, resulting in an grainy image,
 or are too big, resulting in a waste of bandwidth and slowing down the user experience, when surfing
-over a 3G network.
+over slow networks.
 
 Adaptive resizing the images
 ============================
@@ -44,22 +44,40 @@ this kind of behavior is `art direction`_.
 |art-direction|
 
 .. |art-direction| image:: /_static/edit-picture.png
-
-
-, but in the majority of use cases, you won't need it
-anyway.
-
- The ``<picture>`` element is only required, if 
-
 .. _art direction: http://usecases.responsiveimages.org/#art-direction
 
-Using this element, the browser always fetches the image which best fits the
-current layout. Additionally, if the browser runs on a high resolution (Retina) display, an image
-with double resolution is downloaded. This results in much sharper images.
+But in the majority of use cases, the **Bootstrap Image Plugin** will work for you. Use the
+**Bootstrap Picture Plugin** only in those few cases, where in addition to the image width,
+you also want to change the aspect ratio and/or zoom factor, depending on the display's sizes.
 
-|edit-picture|
+Using these new elements, the browser always fetches the image which best fits the current layout.
+Additionally, if the browser runs on a high resolution (Retina) display, an image with double
+resolution is downloaded. This results in much sharper images.
 
-.. |edit-picture| image:: /_static/edit-picture.png
+Browser support
+---------------
+Since Chrome 38, the ``<img ... />`` element fully supports `srcset and sizes`_. It also supports
+the ``<picture>`` element right out of the box. Here is a list of native browser support for the
+picture_ and the image element with attribute srcset_.
+
+.. _srcset and sizes: http://ericportis.com/posts/2014/srcset-sizes/
+.. _picture: http://caniuse.com/#feat=picture
+.. _srcset: http://caniuse.com/#feat=srcset
+
+For legacy browsers, there is a JavaScript library named picturefill.js_, which emulates the built
+in behavior of these new features. But even without that library, **djangocms-cascade** renders
+these HTML elements in a way to fall back on a sensible default image.
+
+.. _picturefill.js: http://scottjehl.github.io/picturefill/
+
+
+Image Plugin Reference
+========================
+
+
+|edit-image|
+
+.. |edit-image| image:: /_static/edit-image.png
 
 Picture Plugin Reference
 ========================
@@ -99,7 +117,6 @@ the well known ``<img ... />`` element any more. Instead, when rendering respons
 Chrome 38 and can be emulated on legacy browsers using the shim picturefill.js_.
 
 .. _Responsive: http://getbootstrap.com/css/#images-responsive
-.. _picturefill.js: http://scottjehl.github.io/picturefill/
 
 More details about this new HTML element can be found here:
 https://html.spec.whatwg.org/multipage/embedded-content.html#the-picture-element
