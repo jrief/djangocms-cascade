@@ -12,7 +12,6 @@ from django.forms.fields import ChoiceField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from .settings import (CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST,
     CASCADE_BOOTSTRAP3_GUTTER, CMS_CASCADE_LEAF_PLUGINS)
@@ -134,13 +133,6 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     form = BootstrapRowForm
     fields = ('num_children', 'glossary',)
-    glossary_fields = (
-        PartialFormField('inline_styles',
-            MultipleCascadingSizeWidget(['min-height'], required=False),
-            label=_('Inline Styles'),
-            help_text=_('Minimum height for this row.')
-        ),
-    )
 
     @classmethod
     def get_identifier(cls, obj):
