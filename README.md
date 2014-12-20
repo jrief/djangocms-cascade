@@ -1,8 +1,7 @@
 djangocms-cascade
 =================
 **DjangoCMS-Cascade** Version 0.3.2 is the latest stable release. The upcoming new release is available under the 0.4.0 branch. It adds a huge amount of new features and has a much cleaner code base. If you start with **djangocms-cascade**, please start with the new branch.
-
-When I find some time, I'll adopt the documentation and the unit tests. In my current projects, version 0.4.0 is already heavily used.
+Update (2014-12-20): Version 0.4.0 is about to be released soon. A lot of code changed last week, so be prepared. This API change now hopefully is final. Please check #49 for details.
 
 Add DOM elements to a Django-CMS placeholder
 ---------------------------------------------
