@@ -2,17 +2,17 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import cmsplugin_cascade.link.models
 import jsonfield.fields
-import cmsplugin_cascade.bootstrap3.picture
+import cmsplugin_cascade.mixins
+import cmsplugin_cascade.link.plugin_base
 import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0003_auto_20140926_2347'),
         ('sites', '0001_initial'),
+        ('cms', '0003_auto_20140926_2347'),
     ]
 
     operations = [
@@ -31,7 +31,8 @@ class Migration(migrations.Migration):
             name='PluginExtraFields',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('plugin_type', models.CharField(db_index=True, max_length=50, verbose_name='Plugin Name', choices=[(b'SimpleWrapperPlugin', b'Bootstrap Simple Wrapper')])),
+                ('plugin_type', models.CharField(db_index=True, max_length=50, verbose_name='Plugin Name', choices=[(b'BootstrapButtonPlugin', b'Bootstrap Button'), (b'SimpleWrapperPlugin', b'Bootstrap Simple Wrapper'), (b'BootstrapColumnPlugin', b'Bootstrap Column'), (b'BootstrapPicturePlugin', b'Bootstrap Picture'), (b'BootstrapRowPlugin', b'Bootstrap Row'), (b'BootstrapContainerPlugin', b'Bootstrap Container')])),
+                ('allow_id_tag', models.BooleanField(default=False)),
                 ('css_classes', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
                 ('inline_styles', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
                 ('site', models.ForeignKey(verbose_name='Site', to='sites.Site')),
@@ -77,40 +78,134 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='cmsplugin_cascade.SharedGlossary', null=True),
             preserve_default=True,
         ),
-        migrations.CreateModel(
-            name='PictureElement',
-            fields=[
-            ],
-            options={
-                'proxy': True,
-            },
-            bases=(cmsplugin_cascade.bootstrap3.picture.ImagePropertyMixin, 'cmsplugin_cascade.cascadeelement'),
+        migrations.AlterUniqueTogether(
+            name='pluginextrafields',
+            unique_together=set([('plugin_type', 'site')]),
         ),
         migrations.CreateModel(
-            name='SharableLinkElement',
+            name='BootstrapButtonPluginModel',
             fields=[
             ],
             options={
                 'proxy': True,
             },
-            bases=(cmsplugin_cascade.link.models.LinkElementMixin, 'cmsplugin_cascade.sharablecascadeelement'),
+            bases=(cmsplugin_cascade.link.plugin_base.LinkElementMixin, 'cmsplugin_cascade.cascadeelement'),
         ),
         migrations.CreateModel(
-            name='SharablePictureElement',
+            name='BootstrapColumnPluginModel',
             fields=[
             ],
             options={
                 'proxy': True,
             },
-            bases=(cmsplugin_cascade.bootstrap3.picture.ImagePropertyMixin, cmsplugin_cascade.link.models.LinkElementMixin, 'cmsplugin_cascade.sharablecascadeelement'),
+            bases=('cmsplugin_cascade.cascadeelement',),
         ),
         migrations.CreateModel(
-            name='SimpleLinkElement',
+            name='BootstrapContainerPluginModel',
             fields=[
             ],
             options={
                 'proxy': True,
             },
-            bases=(cmsplugin_cascade.link.models.LinkElementMixin, 'cmsplugin_cascade.cascadeelement'),
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='BootstrapPluginBaseModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='BootstrapRowPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='CarouselPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='CarouselSlidePluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=(cmsplugin_cascade.mixins.ImagePropertyMixin, 'cmsplugin_cascade.cascadeelement'),
+        ),
+        migrations.CreateModel(
+            name='CascadePluginBaseModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='HorizontalRulePluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='LinkPluginBaseModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='PanelGroupPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='PanelPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='SimpleWrapperPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='TextLinkPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=(cmsplugin_cascade.link.plugin_base.LinkElementMixin, 'cmsplugin_cascade.cascadeelement'),
         ),
     ]
