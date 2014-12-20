@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.forms import widgets
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
@@ -11,33 +12,21 @@ from . import settings
 class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
-    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
-    CLASS_CHOICES = ((('', _('Unstyled')),) + tuple((cls, cls.title()) for cls in ('thumbnail', 'jumbotron',)))
+    generic_child_classes = settings.CASCADE_LEAF_PLUGINS
+    TAG_CHOICES = tuple((cls, cls.title()) for cls in ('div', 'span', 'section', 'article',))
     glossary_fields = (
-        PartialFormField('css_class',
-            widgets.Select(choices=CLASS_CHOICES),
-            label=_('Extra Bootstrap Classes'),
-            help_text=_('Main Bootstrap CSS class to be added to this element.')
-        ),
-        PartialFormField('inline_styles',
-            MultipleCascadingSizeWidget(['min-height']),
-            label=_('Inline Styles'),
-            help_text=_('Margins and minimum height for container.')
+        PartialFormField('element_tag',
+            widgets.Select(choices=TAG_CHOICES),
+            label=_("HTML element tag"),
+            help_text=_('Choose a tag type for this HTML element.')
         ),
     )
 
     @classmethod
     def get_identifier(cls, obj):
-        name = obj.glossary.get('css_class').title() or cls.CLASS_CHOICES[0][1]
-        return name.title()
-
-    @classmethod
-    def get_css_classes(cls, obj):
-        css_classes = super(SimpleWrapperPlugin, cls).get_css_classes(obj)
-        css_class = obj.glossary.get('css_class')
-        if css_class:
-            css_classes.append(css_class)
-        return css_classes
+        identifier = super(SimpleWrapperPlugin, cls).get_identifier(obj)
+        tag = obj.glossary.get('element_tag', cls.TAG_CHOICES[0][1])
+        return format_html('{0}{1}', identifier, tag.title())
 
 plugin_pool.register_plugin(SimpleWrapperPlugin)
 

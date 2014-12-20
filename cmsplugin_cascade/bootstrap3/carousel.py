@@ -7,6 +7,8 @@ try:
 except ImportError:
     from HTMLParser import HTMLParser  # py2
 from django.forms import widgets
+from django.utils.encoding import force_text
+from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
@@ -14,10 +16,12 @@ from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.widgets import TextEditorWidget
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
-from .settings import CASCADE_BREAKPOINTS_LIST, CMS_CASCADE_TEMPLATE_DIR
-from .picture import PictureForm, PictureElement, BootstrapPicturePlugin
+from .settings import CASCADE_BREAKPOINTS_LIST, CASCADE_TEMPLATE_DIR
+from .image import ImageForm
+from .picture import BootstrapPicturePlugin
 from . import utils
 
 
@@ -35,7 +39,7 @@ class CarouselPlugin(BootstrapPluginBase):
     default_css_class = 'carousel'
     default_css_attributes = ('options',)
     parent_classes = ['BootstrapColumnPlugin']
-    render_template = os.path.join(CMS_CASCADE_TEMPLATE_DIR, 'carousel.html')
+    render_template = os.path.join(CASCADE_TEMPLATE_DIR, 'carousel.html')
     default_inline_styles = {'overflow': 'hidden'}
     fields = ('num_children', 'glossary',)
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
@@ -73,8 +77,10 @@ class CarouselPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super(CarouselPlugin, cls).get_identifier(obj)
         num_cols = obj.get_children().count()
-        return ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
+        content = ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
+        return format_html('{0}{1}', identifier, content)
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -115,13 +121,13 @@ plugin_pool.register_plugin(CarouselPlugin)
 
 class CarouselSlidePlugin(BootstrapPluginBase):
     name = _("Slide")
-    model = PictureElement
-    form = PictureForm
+    model_mixins = (ImagePropertyMixin,)
+    form = ImageForm
     default_css_class = 'img-responsive'
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
-    render_template = os.path.join(CMS_CASCADE_TEMPLATE_DIR, 'carousel-slide.html')
+    render_template = os.path.join(CASCADE_TEMPLATE_DIR, 'carousel-slide.html')
     glossary_fields = (
         PartialFormField('caption',
             TextEditorWidget(),
@@ -146,7 +152,7 @@ class CarouselSlidePlugin(BootstrapPluginBase):
             'placeholder': placeholder,
             'elements': elements,
         })
-        return context
+        return super(CarouselSlidePlugin, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):
@@ -154,5 +160,14 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         complete_glossary = obj.get_complete_glossary()
         obj.glossary.update({'resize-options': complete_glossary.get('resize-options', [])})
         return sanitized
+
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(CarouselSlidePlugin, cls).get_identifier(obj)
+        try:
+            content = force_text(obj.image)
+        except AttributeError:
+            content = _("No Slide")
+        return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(CarouselSlidePlugin)

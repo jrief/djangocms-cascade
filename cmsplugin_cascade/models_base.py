@@ -13,7 +13,7 @@ from cms.utils.placeholder import get_placeholder_conf
 @python_2_unicode_compatible
 class CascadeModelBase(CMSPlugin):
     """
-    The container to hold additional bootstrap elements.
+    The container to hold additional HTML element tags.
     """
     class Meta:
         abstract = True
@@ -89,7 +89,9 @@ class CascadeModelBase(CMSPlugin):
         each child.
         """
         for model in CascadeModelBase._get_cascade_elements():
-            for child in model.objects.filter(parent_id=self.id):
+            # execute query to not iterate over SELECT ... FROM while updating other models
+            children = list(model.objects.filter(parent_id=self.id))
+            for child in children:
                 child.save(sanitize_only=True)
                 child.sanitize_children()
 
@@ -114,6 +116,7 @@ class CascadeModelBase(CMSPlugin):
         plugins.
         """
         if not hasattr(cls, '_cached_cascade_elements'):
-            cce = set([p.model for p in plugin_pool.get_all_plugins() if issubclass(p.model, cls)])
+            cce = set([p.model._meta.concrete_model for p in plugin_pool.get_all_plugins()
+                       if issubclass(p.model, cls)])
             setattr(cls, '_cached_cascade_elements', cce)
         return cls._cached_cascade_elements

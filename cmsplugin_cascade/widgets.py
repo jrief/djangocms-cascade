@@ -6,6 +6,7 @@ from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils import six
+from django.utils.safestring import mark_safe
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
 from .fields import PartialFormField
@@ -58,7 +59,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             if not isinstance(fieldset, (list, tuple)):
                 fieldset = [fieldset]
             for field in fieldset:
-                field_attrs['id'] = attrs['id'] + '_' + field.name
+                field_attrs['id'] = '{id}_{0}'.format(field.name, **attrs)
                 render_fields.append((
                     field.name,
                     six.text_type(field.label),
@@ -72,7 +73,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         return format_html_join('\n', '<div class="glossary-widget">{0}</div>', render_fieldsets)
 
 
-if DJANGO_VERSION[0] <= 1 and DJANGO_VERSION[1] <= 5:
+if DJANGO_VERSION[:2] < (1, 6):
     input_widget = widgets.TextInput
 else:
     input_widget = widgets.NumberInput
@@ -129,23 +130,57 @@ class CascadingSizeWidget(widgets.TextInput):
             raise ValidationError(self.invalid_message, code='invalid', params=params)
 
 
-class ColorPickerWidget(widgets.TextInput):
+class ColorPickerWidget(widgets.MultiWidget):
     """
     Use this field to enter a color value. Clicking onto this widget will pop up a color picker.
     The value passed to the PartialField is guaranteed to be in #rgb format.
     """
-    input_type = 'color'
-    DEFAULT_ATTRS = {'style': 'width: 5em;', 'value': '#ffffff'}
+    DEFAULT_COLOR = '#ffffff'
+    DEFAULT_ATTRS = {'style': 'width: 5em;', 'type': 'color'}
     validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
     invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
 
-    def __init__(self, attrs=DEFAULT_ATTRS, required=True):
-        self.required = required
-        super(ColorPickerWidget, self).__init__(attrs=attrs)
+    def __init__(self, attrs=DEFAULT_ATTRS):
+        attrs = dict(attrs)
+        widget_list = [widgets.TextInput(attrs=attrs), widgets.CheckboxInput()]
+        super(ColorPickerWidget, self).__init__(widget_list)
 
-    def validate(self, value):
-        if not self.validation_pattern.match(value):
-            raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
+    def decompress(self, values):
+        if not isinstance(values, (list, tuple)) or len(values) != 2:
+            values = ('disabled', self.DEFAULT_COLOR,)
+        return values
+
+    def value_from_datadict(self, data, files, name):
+        values = (
+            escape(data.get('{0}_disabled'.format(name), '')),
+            escape(data.get('{0}_color'.format(name), self.DEFAULT_COLOR)),
+        )
+        return values
+
+    def render(self, name, values, attrs):
+        disabled, color = values
+        elem_id = attrs['id']
+        attrs = dict(attrs)
+        html = '<div class="clearfix">'
+        key, attrs['id'] = '{0}_color'.format(name), '{0}_color'.format(elem_id)
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, color, attrs))
+        key, attrs['id'] = '{0}_disabled'.format(name), '{0}_disabled'.format(elem_id)
+        html += format_html('<div class="sibling-field"><label for="{0}">{1}{2}</label></div>',
+                            key, self.widgets[1].render(key, disabled, attrs), _("Disabled"))
+        html += '</div>'
+        return mark_safe(html)
+
+    def validate(self, values):
+        color = values[1]
+        if not self.validation_pattern.match(color):
+            raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
+
+
+class SelectOverflowWidget(widgets.Select):
+    CHOICES = (('auto', 'auto'), ('scroll', 'scroll'), ('hidden', 'hidden'),)
+
+    def __init__(self, attrs=None):
+        super(SelectOverflowWidget, self).__init__(attrs, choices=self.CHOICES)
 
 
 class MultipleTextInputWidget(widgets.MultiWidget):
@@ -189,8 +224,10 @@ class MultipleTextInputWidget(widgets.MultiWidget):
     def render(self, name, values, attrs):
         widgets = []
         values = values or {}
+        elem_id = attrs['id']
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
+            attrs['id'] = '{0}_{1}'.format(elem_id, key)
             errors = key in self.validation_errors and 'errors' or ''
             widgets.append((self.widgets[index].render(label, values.get(key), attrs), key, label, errors))
         return format_html('<div class="clearfix">{0}</div>',

@@ -1,114 +1,24 @@
 # -*- coding: utf-8 -*-
-from django.forms import widgets, ModelChoiceField
-from django.forms.models import ModelForm
-from django.db.models import get_model
-from django.db.models.fields.related import ManyToOneRel
-from django.contrib.admin.sites import site
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils import six
+from __future__ import unicode_literals
+from django.forms import widgets
+from django.utils.encoding import force_text
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from filer.fields.image import AdminFileWidget, FilerImageField
-from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.models import CascadeElement
-from cmsplugin_cascade.link.forms import LinkForm
-from cmsplugin_cascade.link.models import LinkElementMixin
-from cmsplugin_cascade.link.plugin_base import LinkPluginBase
-from cmsplugin_cascade.sharable.models import SharableCascadeElement
-from cmsplugin_cascade.sharable.forms import SharableGlossaryMixin
+from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
+from .image import LinkedImageForm
 from .settings import CASCADE_BREAKPOINTS_LIST
 from . import utils
 
 
-@python_2_unicode_compatible
-class ImagePropertyMixin(object):
-    def __str__(self):
-        return six.text_type(self.image and self.image or '')
-
-    @property
-    def image(self):
-        if not hasattr(self, '_image_model'):
-            try:
-                Model = get_model(*self.glossary['image']['model'].split('.'))
-                self._image_model = Model.objects.get(pk=self.glossary['image']['pk'])
-            except (KeyError, ObjectDoesNotExist):
-                self._image_model = None
-        return self._image_model
-
-
-class PictureElement(ImagePropertyMixin, CascadeElement):
-    """
-    A proxy model for the ``<img>`` or ``<picture>`` element.
-    """
-    class Meta:
-        proxy = True
-
-
-class SharablePictureElement(ImagePropertyMixin, LinkElementMixin, SharableCascadeElement):
-    """
-    A proxy model for the ``<img>`` or ``<picture>`` element wrapped in an sharable link element.
-    """
-    class Meta:
-        proxy = True
-
-
-class PictureFormMixin(object):
-    def __init__(self, *args, **kwargs):
-        try:
-            self.base_fields['image_file'].initial = kwargs['initial']['image']['pk']
-        except KeyError:
-            self.base_fields['image_file'].initial = None
-        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-        super(PictureFormMixin, self).__init__(*args, **kwargs)
-
-    def clean_glossary(self):
-        if self.cleaned_data['glossary'] is None:
-            return {}
-        return self.cleaned_data['glossary']
-
-    def clean(self):
-        cleaned_data = super(PictureFormMixin, self).clean()
-        if self.is_valid():
-            image_data = {'pk': cleaned_data['image_file'].pk, 'model': 'filer.Image'}
-            cleaned_data['glossary'].update(image=image_data)
-            del self.cleaned_data['image_file']
-        return cleaned_data
-
-
-class PictureForm(PictureFormMixin, ModelForm):
-    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-
-    def __init__(self, *args, **kwargs):
-        try:
-            initial = dict(kwargs['instance'].glossary)
-        except (KeyError, AttributeError):
-            initial = {}
-        initial.update(kwargs.pop('initial', {}))
-        super(PictureForm, self).__init__(initial=initial, *args, **kwargs)
-
-
-class LinkedPictureForm(PictureFormMixin, LinkForm):
-    LINK_TYPE_CHOICES = (('none', _("No Link")), ('cmspage', _("CMS Page")), ('exturl', _("External URL")),)
-    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-
-    def __init__(self, *args, **kwargs):
-        try:
-            initial = dict(kwargs['instance'].glossary)
-        except KeyError:
-            initial = {}
-        initial.setdefault('link', {'type': 'none'})
-        initial.update(kwargs.pop('initial', {}))
-        super(LinkedPictureForm, self).__init__(initial=initial, *args, **kwargs)
-
-
-class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
+class BootstrapPicturePlugin(LinkPluginBase):
     name = _("Picture")
-    model = SharablePictureElement
-    form = LinkedPictureForm
+    model_mixins = (ImagePropertyMixin, LinkElementMixin,)
+    form = LinkedImageForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
@@ -120,8 +30,7 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
     default_css_class = 'img-responsive'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
-    fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),
-              ('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
+    fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
@@ -156,7 +65,6 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
             initial=['subject_location', 'high_resolution']
         ),
     )
-    sharable_fields = ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
@@ -183,5 +91,14 @@ class BootstrapPicturePlugin(SharableGlossaryMixin, LinkPluginBase):
         if css_class:
             css_classes.append(css_class)
         return css_classes
+
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(BootstrapPicturePlugin, cls).get_identifier(obj)
+        try:
+            content = force_text(obj.image)
+        except AttributeError:
+            content = _("No Picture")
+        return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapPicturePlugin)

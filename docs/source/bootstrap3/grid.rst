@@ -15,7 +15,9 @@ specify the breakpoints of a Web site. By default, Bootstrap offers 4 breakpoint
 “medium”, “small” and “tiny”. These determine for which kind of screen widths the grid system may
 switch the layout.
 
-The editor window for a Container element offers three options which affect all its child plugins.
+The editor window for a Container element offers the possibility to deactivate certain breakpoints.
+While this might make sense under certain conditions, it if safe to always keep all breakpoints
+active, since this gived the designer the maximum flexibility.
 
 |edit-container|
 
@@ -23,8 +25,8 @@ The editor window for a Container element offers three options which affect all 
 
 Small devices exclusively
 -------------------------
-If the Web site shall be optimized just for small but not for large devices, then set the
-**Widest Display** to *Medium*, *Small* or *Tiny*. In the project's style sheets, the maximum width
+If the Web site shall be optimized just for small but not for large devices, then disable the
+breakpoints for **Large** and/or **Medium**. In the project's style-sheets, the maximum width
 of the container element, then must be reduced to that chosen breakpoint:
 
 .. code-block:: css
@@ -45,11 +47,8 @@ or, if you prefers the SASS syntax:
 	  }
 	}
 
-Large devices exclusively
--------------------------
-If the Web site shall be optimized just for large but not for small devices, then set the
-**Narrowest Display** to *Small*, *Medium* or *Large*. Here no adoption to the style sheets are
-required.
+Changing the style-sheets is not required for configurations with **Tiny** and **Small** breakpoints
+disabled.
 
 Fluid Container
 ---------------

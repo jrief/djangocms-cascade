@@ -31,7 +31,7 @@ Contents:
   tutorial
   link-plugin
   bootstrap3/grid
-  bootstrap3/picture
+  bootstrap3/image-picture
   bootstrap3/navbar
   customized-plugins
   customize-styles

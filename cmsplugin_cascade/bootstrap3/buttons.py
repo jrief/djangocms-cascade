@@ -8,11 +8,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.forms import TextLinkForm
-from cmsplugin_cascade.link.models import SimpleLinkElement
-from cmsplugin_cascade.link.plugin_base import LinkPluginBase
+from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):
@@ -54,8 +52,8 @@ class ButtonSizeRenderer(RadioFieldRenderer):
 class BootstrapButtonPlugin(LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
-    model = SimpleLinkElement
     form = TextLinkForm
+    model_mixins = (LinkElementMixin,)
     parent_classes = ['BootstrapColumnPlugin']
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
@@ -100,14 +98,16 @@ class BootstrapButtonPlugin(LinkPluginBase):
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
-        js = resolve_dependencies('cascade/js/admin/simplelinkplugin.js')
 
     @classmethod
     def get_identifier(cls, obj):
-        button_type = ButtonTypeRenderer.BUTTON_TYPES.get(obj.glossary.get('button-type'))
-        if button_type:
-            button_type = ' ({0})'.format(force_text(button_type))
-        link_content = obj.glossary.get('link_content', '')
-        return link_content + button_type
+        identifier = super(BootstrapButtonPlugin, cls).get_identifier(obj)
+        content = obj.glossary.get('link_content')
+        if not content:
+            try:
+                content = force_text(ButtonTypeRenderer.BUTTON_TYPES[obj.glossary['button-type']])
+            except KeyError:
+                content = _("Empty")
+        return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)

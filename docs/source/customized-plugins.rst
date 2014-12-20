@@ -30,7 +30,7 @@ This plugin is very simple and just renders static content which has been declar
 	
 	plugin_pool.register_plugin(StylishPlugin)
 
-Ff the editor form pops up for this plugin a dumb message appears: “There are no further settings
+If the editor form pops up for this plugin, a dumb message appears: “There are no further settings
 for this plugin”. This is because no editable fields have been added to that plugin yet.
 
 
@@ -38,10 +38,10 @@ Customize Stored Data
 =====================
 
 In order to make the plugin remember its settings and other optional data, the programmer must add
-a list of special form fields to its plugin. These fields then are used to build the editor for
-this DjangoCMS plugin.
+a list of special form fields to its plugin. These fields then are used to auto-generate the editor
+for this DjangoCMS plugin.
 
-Each of those form fields handle a special field value, or in some cases a list of field values.
+Each of those form fields handle a special field value, or in some cases, a list of field values.
 They all require a widget, which is used when rendering the editors form.
 
 Lets add a simple selector to choose between a red and a green color. Do this by adding a

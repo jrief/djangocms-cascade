@@ -9,18 +9,22 @@ from .models import SharedGlossary, SharableCascadeElement
 
 
 class SharedGlossaryAdmin(admin.ModelAdmin):
+    change_form_template = 'cascade/admin/change_form.html'
     list_display = ('identifier', 'plugin_type', 'used_by',)
     list_filter = ('plugin_type',)
 
     def get_fieldsets(self, request, obj=None):
         """Return the fieldsets from associated plugin"""
-        fieldsets = [(None, {'fields': ['identifier']})]
-        try:
-            sharable_fieldset = self.plugin_instance.sharable_fieldset
-        except AttributeError:
-            sharable_fieldset = {'fields': ('glossary',)}
-        fieldsets.append((_("Shared Fields"), sharable_fieldset))
-        return fieldsets
+        fields = []
+        for key in self.plugin_instance.sharable_fields:
+            try:
+                fields.append(self.plugin_instance.glossary_field_map[key])
+            except KeyError:
+                continue
+            except AttributeError:
+                break
+        fields.append('glossary')
+        return [(None, {'fields': ['identifier']}), (_("Shared Fields"), {'fields': fields})]
 
     def get_form(self, request, obj=None, **kwargs):
         """
@@ -33,7 +37,7 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         glossary_fields = [field for field in self.plugin_instance.glossary_fields if field.name in sharable_fields]
         kwargs.update(widgets={'glossary': JSONMultiWidget(glossary_fields)}, labels={'glossary': ''})
         try:
-            kwargs.update(form=self.plugin_instance.sharable_form)
+            kwargs.update(form=self.plugin_instance.form)  # TODO: this was self.plugin_instance.sharable_form
         except AttributeError:
             pass
         form = super(SharedGlossaryAdmin, self).get_form(request, obj, **kwargs)
@@ -58,7 +62,7 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         media = super(SharedGlossaryAdmin, self).media
         media += forms.Media(css={'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)})
         try:
-            media += self.plugin_instance.sharable_media
+            media += self.plugin_instance().media
         except AttributeError:
             pass
         return media
@@ -69,5 +73,12 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         """
         return SharableCascadeElement.objects.filter(shared_glossary=obj).count()
     used_by.short_description = _("Used by plugins")
+
+    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        bases = self.plugin_instance().get_ring_bases()
+        # since the Sharable Admin reuses the JavaScript plugins, remove the one, regarding shareability itself
+        bases.remove('SharableGlossaryMixin')
+        context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
+        return super(SharedGlossaryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
 admin.site.register(SharedGlossary, SharedGlossaryAdmin)

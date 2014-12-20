@@ -12,10 +12,9 @@ from django.forms.fields import ChoiceField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from .settings import (CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST,
-    CASCADE_BOOTSTRAP3_GUTTER, CMS_CASCADE_LEAF_PLUGINS)
+    CASCADE_BOOTSTRAP3_GUTTER, CASCADE_LEAF_PLUGINS)
 
 
 class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
@@ -68,12 +67,13 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super(BootstrapContainerPlugin, cls).get_identifier(obj)
         breakpoints = obj.glossary.get('breakpoints')
-        fluid = obj.glossary.get('fluid') and '(fluid) ' or ''
+        content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
             devices = ', '.join([force_text(CASCADE_BREAKPOINTS_DICT[bp][2]) for bp in breakpoints])
-            return _("{0}for {1}").format(fluid, devices)
-        return fluid
+            content = _("{0}for {1}").format(content, devices)
+        return format_html('{0}{1}', identifier, content)
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -133,18 +133,13 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     form = BootstrapRowForm
     fields = ('num_children', 'glossary',)
-    glossary_fields = (
-        PartialFormField('inline_styles',
-            MultipleCascadingSizeWidget(['min-height'], required=False),
-            label=_('Inline Styles'),
-            help_text=_('Minimum height for this row.')
-        ),
-    )
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super(BootstrapRowPlugin, cls).get_identifier(obj)
         num_cols = obj.get_children().count()
-        return ungettext_lazy('with {0} column', 'with {0} columns', num_cols).format(num_cols)
+        content = ungettext_lazy('with {0} column', 'with {0} columns', num_cols).format(num_cols)
+        return format_html('{0}{1}', identifier, content)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
@@ -163,7 +158,7 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
-    generic_child_classes = CMS_CASCADE_LEAF_PLUGINS
+    generic_child_classes = CASCADE_LEAF_PLUGINS
     default_css_attributes = list(itertools.chain(
         *(('{0}-column-width'.format(s), '{0}-column-offset'.format(s), '{0}-responsive-utils'.format(s),)
           for s in CASCADE_BREAKPOINTS_LIST)))
@@ -273,6 +268,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super(BootstrapColumnPlugin, cls).get_identifier(obj)
         glossary = obj.get_complete_glossary()
         widths = []
         for bp in glossary.get('breakpoints', []):
@@ -280,10 +276,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             if width:
                 widths.append(width)
         if len(widths) > 1:
-            return _('widths: {0} units').format(' / '.join(widths))
+            content = _('widths: {0} units').format(' / '.join(widths))
         elif len(widths) == 1:
             width = int(widths[0])
-            return ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
-        return _('unknown width')
+            content = ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
+        else:
+            content = _('unknown width')
+        return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)

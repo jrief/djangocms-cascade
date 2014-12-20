@@ -6,13 +6,17 @@ try:
 except ImportError:
     from django.contrib.sites.models import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import get_model
 from django.forms import widgets
 from django.utils import six
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from cms.utils.compat.dj import python_2_unicode_compatible
 from cmsplugin_cascade.fields import PartialFormField
-from .widgets import MultipleCascadingSizeWidget, ColorPickerWidget
+from .widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
 
+@python_2_unicode_compatible
 class ExtraFieldsMixin(object):
     """
     This mixin class shall be added to plugins which shall offer extra fields for customizes
@@ -24,7 +28,11 @@ class ExtraFieldsMixin(object):
         ('Widths', (('min-width', 'width', 'max-width',), MultipleCascadingSizeWidget)),
         ('Heights', (('min-height', 'height', 'max-height',), MultipleCascadingSizeWidget)),
         ('Colors', (('color', 'background-color',), ColorPickerWidget)),
+        ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
     ))
+
+    def __str__(self):
+        return self.plugin_class.get_identifier(self)
 
     def get_form(self, request, obj=None, **kwargs):
         from cmsplugin_cascade.models import PluginExtraFields
@@ -95,6 +103,10 @@ class ExtraFieldsMixin(object):
             if key.startswith('extra_inline_styles:'):
                 if isinstance(eis, dict):
                     inline_styles.update(dict((k, v) for k, v in eis.items() if v))
+                if isinstance(eis, (list, tuple)):
+                    # the first entry of a sequence is used to disable an inline style
+                    if eis[0] != 'on':
+                        inline_styles.update({key.split(':')[1]: eis[1]})
                 elif isinstance(eis, six.string_types):
                     inline_styles.update({key.split(':')[1]: eis})
         return inline_styles
@@ -106,3 +118,30 @@ class ExtraFieldsMixin(object):
         if extra_element_id:
             attributes.update(id=extra_element_id)
         return attributes
+
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(ExtraFieldsMixin, cls).get_identifier(obj)
+        extra_element_id = obj.glossary.get('extra_element_id')
+        if extra_element_id:
+            return format_html('{0}<em>{1}:</em> ', identifier, extra_element_id)
+        return identifier
+
+
+@python_2_unicode_compatible
+class ImagePropertyMixin(object):
+    """
+    A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
+    """
+    def __str__(self):
+        return self.plugin_class.get_identifier(self)
+
+    @property
+    def image(self):
+        if not hasattr(self, '_image_model'):
+            try:
+                Model = get_model(*self.glossary['image']['model'].split('.'))
+                self._image_model = Model.objects.get(pk=self.glossary['image']['pk'])
+            except (KeyError, ObjectDoesNotExist):
+                self._image_model = None
+        return self._image_model

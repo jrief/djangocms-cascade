@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.db.models import get_model
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import get_model
 from django.core.exceptions import ObjectDoesNotExist
+from cms.utils.compat.dj import python_2_unicode_compatible
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from .forms import TextLinkForm
+from cmsplugin_cascade.utils import resolve_dependencies
 
 
 class LinkPluginBase(CascadePluginBase):
@@ -20,6 +21,11 @@ class LinkPluginBase(CascadePluginBase):
         ),
     )
     html_tag_attributes = {'target': 'target'}
+    # map field from glossary to these form fields
+    glossary_field_map = {'link': ('link_type', 'cms_page', 'ext_url', 'mail_to',)}
+
+    class Media:
+        js = resolve_dependencies('cascade/js/admin/linkplugin.js')
 
     @classmethod
     def get_link(cls, obj):
@@ -40,20 +46,25 @@ class LinkPluginBase(CascadePluginBase):
             if obj._link_model:
                 return obj._link_model.get_absolute_url()
 
+    def get_ring_bases(self):
+        bases = super(LinkPluginBase, self).get_ring_bases()
+        bases.append('LinkPluginBase')
+        return bases
 
-class TextLinkPluginBase(LinkPluginBase):
-    name = _("Link")
-    form = TextLinkForm
-    render_template = 'cascade/plugins/link.html'
-    text_enabled = True
-    allow_children = False
-    parent_classes = None
-    require_parent = False
-    glossary_fields = (
-        PartialFormField('title',
-            widgets.TextInput(),
-            label=_("Title"),
-            help_text=_("Link's Title")
-        ),
-    ) + LinkPluginBase.glossary_fields
-    html_tag_attributes = dict(title='title', **LinkPluginBase.html_tag_attributes)
+
+@python_2_unicode_compatible
+class LinkElementMixin(object):
+    """
+    A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
+    """
+    def __str__(self):
+        """Required representation of this model as a Link inside the Text Editor Plugin"""
+        return self.content
+
+    @property
+    def link(self):
+        return self.plugin_class.get_link(self)
+
+    @property
+    def content(self):
+        return self.glossary.get('link_content', '')

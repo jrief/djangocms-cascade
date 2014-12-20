@@ -43,3 +43,15 @@ class PartialFormField(object):
                 errors = self.error_class([m for m in e.messages])
         if errors:
             raise ValidationError(errors)
+
+    def get_element_ids(self, prefix_id):
+        """
+        Returns a single or a list of element ids, one for each input widget of this field
+        """
+        if isinstance(self.widget, widgets.MultiWidget):
+            ids = ['{0}_{1}_{2}'.format(prefix_id, self.name, field_name) for field_name in self.widget]
+        elif isinstance(self.widget, (widgets.SelectMultiple, widgets.RadioSelect)):
+            ids = ['{0}_{1}_{2}'.format(prefix_id, self.name, k) for k in range(len(self.widget.choices))]
+        else:
+            ids = ['{0}_{1}'.format(prefix_id, self.name)]
+        return ids
