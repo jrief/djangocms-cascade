@@ -147,7 +147,7 @@ To replace Bootstrap's jQuery code against the very popular `Angular UI Bootstra
 
 .. code-block:: python
 
-	CMS_CASCADE_BOOTSTRAP3_TEMPLATE_DIR = 'cascade/angular-ui'
+	CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR = 'cascade/angular-ui'
 
 to your ``settings.py``. This will load the rendering templates created for AngularJS from a
 different directory.
