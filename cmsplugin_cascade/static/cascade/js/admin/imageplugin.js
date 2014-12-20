@@ -13,11 +13,8 @@ django.jQuery(function($) {
 			var self = this;
 			this.$super();
 
-			// be more intuitive, reorganize layout by moving radio boxes for 'Link Target'
+			// be more intuitive, reorganize layout by moving 'Link Target'
 			$('.glossary-widget .glossary_target').before($('.form-row.field-link_type'));
-
-			// move the select box for Shared Glossary just before 'Image Shapes'
-			// TODO: $('.glossary-widget .glossary_image-shapes').before($('.form-row.field-shared_glossary'));
 
 			// install event handlers
 			$image_responsive.change(function(evt) {
