@@ -9,7 +9,7 @@ from filer.models.foldermodels import Folder
 from filer.models.imagemodels import Image
 from cms.api import add_plugin
 from cms.utils.plugins import build_plugin_tree
-from cmsplugin_cascade.sharable.models import SharableCascadeElement
+from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
         BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.image import BootstrapImagePlugin
@@ -50,7 +50,7 @@ class ImagePluginTest(CascadeTestCase):
 
         # add an image
         image_model = add_plugin(self.placeholder, BootstrapImagePlugin, 'en', target=column_model)
-        self.assertIsInstance(image_model, SharableCascadeElement)
+        self.assertIsInstance(image_model, CascadeElement)
         image_plugin = image_model.get_plugin_class_instance(self.admin_site)
         self.assertIsInstance(image_plugin, BootstrapImagePlugin)
         image_plugin.cms_plugin_instance = image_model.cmsplugin_ptr
