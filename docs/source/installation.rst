@@ -45,6 +45,38 @@ Dependencies
 * Django_ >=1.6
 * DjangoCMS_ >=3.0.8
 
+Known working environment
+-------------------------
+
+As for 2014-12-20, this is a known working environment. In the future (hopefully) all required
+Python packages will be available through PyPI.
+
+```
+Django==1.6.8
+Django-Select2==4.2.2
+MarkupSafe==0.23
+Pillow==2.6.1
+South==1.0.1
+Sphinx==1.2.2
+Unidecode==0.04.16
+argparse==1.2.1
+django-classy-tags==0.5.1
+-e git+https://github.com/divio/django-cms.git@c9a27abc420893b2d8e4a3496536841d4cdccee8#egg=django_cms
+django-filer==0.9.8
+django-mptt==0.6.1
+django-polymorphic==0.6
+django-sekizai==0.7
+djangocms-admin-style==0.2.2
+djangocms-text-ckeditor==2.3.0
+docutils==0.12
+-e git+https://github.com/jrief/easy-thumbnails.git@de5213f92d7e5ea7bfefc24b02ba14809e4af567#egg=easy_thumbnails
+html5lib==0.999
+jsonfield==1.0.0
+mysqlclient==1.3.4
+six==1.8.0
+wsgiref==0.1.2
+```
+
 Update the database schema
 --------------------------
 
