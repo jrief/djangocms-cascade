@@ -12,7 +12,7 @@ from . import settings
 class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
     parent_classes = ['BootstrapColumnPlugin']
-    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
+    generic_child_classes = settings.CASCADE_LEAF_PLUGINS
     TAG_CHOICES = tuple((cls, cls.title()) for cls in ('div', 'span', 'section', 'article',))
     glossary_fields = (
         PartialFormField('element_tag',

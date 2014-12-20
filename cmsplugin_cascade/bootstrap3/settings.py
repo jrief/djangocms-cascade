@@ -3,19 +3,19 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 CMS_CASCADE_PLUGINS = ('buttons', 'carousel', 'collapse', 'container', 'wrappers', 'image', 'picture',)
-CMS_CASCADE_LEAF_PLUGINS = list(getattr(settings, 'CMS_CASCADE_LEAF_PLUGINS', ()))
 CASCADE_TEMPLATE_DIR = getattr(settings, 'CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR', 'cascade/bootstrap3')
+CASCADE_LEAF_PLUGINS = list(getattr(settings, 'CMSPLUGIN_CASCADE_LEAF_PLUGINS', ()))
 
-if 'TextPlugin' not in CMS_CASCADE_LEAF_PLUGINS:
+if 'TextPlugin' not in CASCADE_LEAF_PLUGINS:
     try:
         import djangocms_text_ckeditor as unused
-        CMS_CASCADE_LEAF_PLUGINS.append('TextPlugin')
+        CASCADE_LEAF_PLUGINS.append('TextPlugin')
     except ImportError:
         pass
-# if not 'FilerImagePlugin' in CMS_CASCADE_LEAF_PLUGINS:
+# if not 'FilerImagePlugin' in CASCADE_LEAF_PLUGINS:
 #     try:
 #         import filer
-#         CMS_CASCADE_LEAF_PLUGINS.append('FilerImagePlugin')
+#         CASCADE_LEAF_PLUGINS.append('FilerImagePlugin')
 #     except ImportError:
 #         pass
 
