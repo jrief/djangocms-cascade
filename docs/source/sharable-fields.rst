@@ -32,3 +32,30 @@ sizes and rendering options among each other.
 
 Control some named settings
 ===========================
+
+Whenever a plugin is configured to allow to share fields, at the bottom of the plugin editor a new
+field appears:
+
+|remember-settings|
+
+.. |remember-settings| image:: /_static/remember-settings.png
+
+By activating the checkbox, adding an arbitrary name next to it and saving the plugin, an entity
+of sharable fields is saved in the database. Now, whenever someone starts to edit a plugin of this
+type, a select box appears on the top of the editor:
+
+|use-shared-settings|
+
+.. |use-shared-settings| image:: /_static/use-shared-settings.png
+
+By choosing a previously named shared settings, the configured fields are disabled for input and
+replaced by their shared field's counterparts.
+
+In order to edit these shared fields, in the administration backend one must access 
+**Home › Cmsplugin_cascade › Shared between Plugins**. By choosing a named shared setting, one can
+enter into the shared field's editor. This editor auto adopts to the fields declared as shared,
+hence will change from entity to entity. For the above example, it may look like this:
+
+|edit-shared-fields|
+
+.. |edit-shared-fields| image:: /_static/edit-shared-fields.png
