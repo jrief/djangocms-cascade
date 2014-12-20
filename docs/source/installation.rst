@@ -43,7 +43,7 @@ your StaticFileFinder. In doubt, add that directory to your ``STATICFILES_DIRS``
 Dependencies
 ------------
 * Django_ >=1.6
-* DjangoCMS_ >=3.0.5
+* DjangoCMS_ >=3.0.8
 
 Update the database schema
 --------------------------
@@ -51,6 +51,17 @@ Update the database schema
 .. code-block:: bash
 
 	./manage.py migrate cmsplugin_cascade
+
+Install Bootstrap
+-----------------
+
+Since the Bootstrap files are part of their own repository, I dislike the idea of copying them into
+this repository. Instead you should install them using bower.
+
+.. code-block:: bash
+
+	cd djangocms-cascade
+	bower install bootstrap
 
 
 Configuration
