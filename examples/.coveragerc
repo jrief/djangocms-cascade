@@ -4,4 +4,6 @@ source =
     cmsplugin_cascade
 [report]
 precision = 2
-omit = ../*migrations*
+omit =
+    ../*migrations*
+    gs960   
