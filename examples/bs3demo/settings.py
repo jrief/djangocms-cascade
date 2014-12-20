@@ -156,18 +156,18 @@ CMS_PLACEHOLDER_CONF = {
     },
 }
 
-CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
+CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
-CMS_CASCADE_PLUGINS_WITH_EXTRAFIELDS = [
+CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = [
     'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
     'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin',
     'SimpleWrapperPlugin',
 ]
 
-CMS_CASCADE_PLUGINS_WITH_SHARABLES = {
+CMSPLUGIN_CASCADE_WITH_SHARABLES = {
     'BootstrapButtonPlugin': ('title', 'link', 'target',),
-    'BootstrapImagePlugin': ('link', 'image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options', 'target'),
-    'BootstrapPicturePlugin': ('link', 'image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
+    #'BootstrapImagePlugin': ('link', 'image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options', 'target'),
+    #'BootstrapPicturePlugin': ('link', 'image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
 }
 
 CMSPLUGIN_CASCADE_LEAF_PLUGINS = ('TextLinkPlugin',)
