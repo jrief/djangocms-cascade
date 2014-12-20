@@ -43,7 +43,7 @@ this kind of behavior is `art direction`_.
 
 |art-direction|
 
-.. |art-direction| image:: /_static/edit-picture.png
+.. |art-direction| image:: /_static/art_direction.jpg
 .. _art direction: http://usecases.responsiveimages.org/#art-direction
 
 But in the majority of use cases, the **Bootstrap Image Plugin** will work for you. Use the
@@ -74,13 +74,12 @@ these HTML elements in a way to fall back on a sensible default image.
 Image Plugin Reference
 ========================
 
+In edit mode, double clicking on an image, opens the **Image Plugin** editor. This editor offers the
+following fields in order to adapt an image to the current layout.
 
 |edit-image|
 
 .. |edit-image| image:: /_static/edit-image.png
-
-Picture Plugin Reference
-========================
 
 Image
 -----
@@ -91,7 +90,7 @@ appropriate image.
 
 Image Title
 -----------
-This optional field shall be used to set the ``title`` tag inside the ``<picture>`` or ``<img>``
+This optional field shall be used to set the ``<img title="some text" .../>`` tag inside this HTML
 element.
 
 Alternative Description
@@ -107,37 +106,37 @@ check the appropriate section for details.
 
 Image Shapes
 ------------
-These checkboxes control the four CSS classes (``img-responsive``, ``img-rounded``, ``img-circle``
-and ``img-thumbnail``) to be added to the ``<img ... />`` element used to render an image.
+These checkboxes control the four CSS classes from the Bootstrap3 framework:  ``img-responsive``,
+``img-rounded``, ``img-circle`` and ``img-thumbnail``. While rendering HTML, they will be added to
+the ``<img ... />`` element.
 
-Here the option “Responsive_” has a special meaning. The problem with responsive images is, that
+Here the option *Responsive* has a special meaning. The problem with responsive images is, that
 their size depends on the media width of the device displaying the image. Therefore we can not use
-the well known ``<img ... />`` element any more. Instead, when rendering responsive images,
-**djangocms-cascade** uses a ``<picture>...</picture>`` element, which is supported since Google's
-Chrome 38 and can be emulated on legacy browsers using the shim picturefill.js_.
+the well known ``<img ... />`` element with a fixed ``width=".."`` and ``height=".."``. Instead,
+when rendering responsive images, the additional attributes ``srcset`` and ``sizes`` are added to
+the element. The attribute ``srcset`` contains the URLs, of up to four differently scaled images.
+The width of these images is determined by the maximum width of the wrapping container ``<div>``,
+normally a Bootstrap column.
 
-.. _Responsive: http://getbootstrap.com/css/#images-responsive
+Responsive Image Width
+----------------------
+This field is only available for *responsive* images. If set to 100% (the default), the image will
+spawn the whole column width. By setting this to a smaller value, one may group more than one image
+side by side into one column.
 
-More details about this new HTML element can be found here:
-https://html.spec.whatwg.org/multipage/embedded-content.html#the-picture-element
+Fixed Image Width
+-----------------
+This field is only available for *non-responsive* images. Here an image size must be specified in
+pixels. The image then will be rendered with a fixed width, independently of the current screen
+width. Images rendered with a fixed width do not neither contain the attributes ``srcset`` nor
+``sizes``.
 
-.. note:: When building web-sites with Bootstrap, I strongly recommend to always tag them as
-          responsive. Otherwise they might extend over the current column width and that usually
-          looks awful.
-
-Override Picture Heights
-------------------------
-These settings only are available for images marked as *responsive*. They allow to crop the image
-to a lower height, depending on the current media width. These heights must be specified in percent
-relative to the current image height, rather than in pixels.
-
-Absolute Image Sizes
---------------------
-These settings only are available for images not marked as *responsive*. They shall be used to
-resize the image to an absolute size. If either *width* or *height* is left empty, its value is
-computed using the set value together with the aspect ratio of the image. If both values are set
-but do not correlate with the aspect ratio of the image, then the image is cropped to fit that
-size. If both *width* or *height* are left empty, the original image is used.
+Adapt Image Height
+------------------
+Leaving this empty (the default), keeps the natural aspect ratio of an image. By setting this to a
+percentage value, the image's height is resized to its current used width, hence setting this to
+``100%`` reshapes the image into a square. Note that this normally requires to *crop* the image,
+see *Resize Options* below. Setting this value in pixels, set the image to a fixed height.
 
 Resize Options
 --------------
@@ -153,16 +152,32 @@ Resize Options
 * **Optimized for Retina**: Currently only available for images marked as *responsive*, this option
   adds an images variant suitable for Retina displays.
 
-Remember shared settings
-------------------------
-Sometime you'd want to remember sizes and options for rendering an image across the project. In
-order to not have to do this jobs for each managed image, you can remember these settings using a
-name of your choice and editable in a special section of the administration backend.
+Picture Plugin Reference
+========================
 
-Whenever you add a new picture using this plugin, a select box with these remembered settings
-appears. You then can chose from one of the remembered settings, which frees you from reentering
-all the values.
+A picture is another wording for image. It offers some rarely required options when working with
+images using `art direction`_. By double-clicking onto a picture, its editor pops up.
 
-Moreover, by changing one of these remembered settings in the administration backend at
-**Home › Cmsplugin_cascade › Shared between Plugins**, one can change the size and behavior of all
-images with these settings applied to them.
+|edit-picture|
+
+.. |edit-picture| image:: /_static/edit-picture.png
+
+The field **Image**, **Image Title**, **Alternative Description**, **Link type** and **Resize
+Options** behave exactly the same as for the **Image Plugin**.
+
+Beware that *Pictures* always are considered as responsive, and they always spawn to the whole width
+of the wrapping element, using the CSS style ``width: 100%``. They make the most sense for large
+images extending over a large area. Therefore it is not possible to specify a width for a picture.
+
+Adapt Picture Heights
+---------------------
+Depending on the current screen's width, one may set different heights for an image. This is useful
+in order to adopt the aspect ratio of an image, when switching from desktops to mobile devices.
+Normally, one should use a fixed height in pixels here, but when specifying the heights in percent,
+these heights are considered relative to the current image height.
+
+Adapt Picture Zoom
+------------------
+Depending on the current screen's width, one may set different zoom levels for an image. This is
+useful for keeping the level of detail constant, at the cost of cropping more of the image's
+margins.
