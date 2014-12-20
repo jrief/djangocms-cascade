@@ -16,10 +16,12 @@ from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.widgets import TextEditorWidget
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from .settings import CASCADE_BREAKPOINTS_LIST, CMS_CASCADE_TEMPLATE_DIR
-from .picture import PictureForm, ImagePropertyMixin, BootstrapPicturePlugin
+from .image import ImageForm
+from .picture import BootstrapPicturePlugin
 from . import utils
 
 
@@ -120,7 +122,7 @@ plugin_pool.register_plugin(CarouselPlugin)
 class CarouselSlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
-    form = PictureForm
+    form = ImageForm
     default_css_class = 'img-responsive'
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)

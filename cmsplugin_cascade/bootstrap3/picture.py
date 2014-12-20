@@ -1,81 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.forms import widgets, ModelChoiceField
-from django.forms.models import ModelForm
-from django.db.models.fields.related import ManyToOneRel
-from django.contrib.admin.sites import site
+from django.forms import widgets
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from filer.fields.image import AdminFileWidget, FilerImageField
-from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.link.forms import LinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
+from .image import LinkedImageForm
 from .settings import CASCADE_BREAKPOINTS_LIST
 from . import utils
-
-
-class PictureFormMixin(object):
-    def __init__(self, *args, **kwargs):
-        try:
-            self.base_fields['image_file'].initial = kwargs['initial']['image']['pk']
-        except KeyError:
-            self.base_fields['image_file'].initial = None
-        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-        super(PictureFormMixin, self).__init__(*args, **kwargs)
-
-    def clean_glossary(self):
-        if self.cleaned_data['glossary'] is None:
-            return {}
-        return self.cleaned_data['glossary']
-
-    def clean(self):
-        cleaned_data = super(PictureFormMixin, self).clean()
-        if self.is_valid() and cleaned_data['image_file']:
-            image_data = {'pk': cleaned_data['image_file'].pk, 'model': 'filer.Image'}
-            cleaned_data['glossary'].update(image=image_data)
-        try:
-            del self.cleaned_data['image_file']
-        except KeyError:
-            pass
-        return cleaned_data
-
-
-class PictureForm(PictureFormMixin, ModelForm):
-    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-
-    def __init__(self, *args, **kwargs):
-        try:
-            initial = dict(kwargs['instance'].glossary)
-        except (KeyError, AttributeError):
-            initial = {}
-        initial.update(kwargs.pop('initial', {}))
-        super(PictureForm, self).__init__(initial=initial, *args, **kwargs)
-
-
-class LinkedPictureForm(PictureFormMixin, LinkForm):
-    LINK_TYPE_CHOICES = (('none', _("No Link")), ('cmspage', _("CMS Page")), ('exturl', _("External URL")),)
-    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-
-    def __init__(self, *args, **kwargs):
-        try:
-            initial = dict(kwargs['instance'].glossary)
-        except KeyError:
-            initial = {}
-        initial.setdefault('link', {'type': 'none'})
-        initial.update(kwargs.pop('initial', {}))
-        super(LinkedPictureForm, self).__init__(initial=initial, *args, **kwargs)
 
 
 class BootstrapPicturePlugin(LinkPluginBase):
     name = _("Picture")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
-    form = LinkedPictureForm
+    form = LinkedImageForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
