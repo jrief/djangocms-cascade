@@ -4,7 +4,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from jsonfield.fields import JSONField
-from cmsplugin_cascade.models_base import CascadeModelBase
 
 
 @python_2_unicode_compatible
@@ -23,23 +22,3 @@ class SharedGlossary(models.Model):
 
     def __str__(self):
         return self.identifier
-
-
-class SharableCascadeElement(CascadeModelBase):
-    """
-    A model class to refer to a Django-Filer image together with the cascade glossary and an optional Link.
-    """
-    class Meta:
-        app_label = 'cmsplugin_cascade'
-        db_table = 'cmsplugin_cascade_sharableelement'
-
-    shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL)
-
-    def __getattribute__(self, name):
-        """
-        Update glossary with content from SharedGlossary model if that exists.
-        """
-        attribute = object.__getattribute__(self, name)
-        if name == 'glossary' and self.shared_glossary:
-            attribute.update(self.shared_glossary.glossary)
-        return attribute

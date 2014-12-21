@@ -5,6 +5,7 @@ from django.contrib.sites.models import Site
 from django.utils.encoding import force_text
 from jsonfield.fields import JSONField
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.sharable.models import SharedGlossary
 from .models_base import CascadeModelBase
 from .mixins import ExtraFieldsMixin
 
@@ -13,6 +14,26 @@ class CascadeElement(CascadeModelBase):
     class Meta:
         app_label = 'cmsplugin_cascade'
         db_table = 'cmsplugin_cascade_element'
+
+
+class SharableCascadeElement(CascadeModelBase):
+    """
+    A model class with an additional foreign key to a shared glossary.
+    """
+    class Meta:
+        app_label = 'cmsplugin_cascade'
+        db_table = 'cmsplugin_cascade_sharableelement'
+
+    shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL)
+
+    def __getattribute__(self, name):
+        """
+        Update glossary with content from SharedGlossary model if that exists.
+        """
+        attribute = object.__getattribute__(self, name)
+        if name == 'glossary' and self.shared_glossary:
+            attribute.update(self.shared_glossary.glossary)
+        return attribute
 
 
 def _plugins_for_site():

@@ -5,7 +5,8 @@ from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.widgets import JSONMultiWidget
-from .models import SharedGlossary, SharableCascadeElement
+from cmsplugin_cascade.models import SharableCascadeElement
+from .models import SharedGlossary
 
 
 class SharedGlossaryAdmin(admin.ModelAdmin):

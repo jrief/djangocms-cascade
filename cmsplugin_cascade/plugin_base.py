@@ -7,10 +7,9 @@ from django.utils.safestring import SafeText
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from .models_base import CascadeModelBase
+from .models import CascadeElement, SharableCascadeElement
 from .sharable.forms import SharableGlossaryMixin
-from .sharable.models import SharableCascadeElement
 from .mixins import ExtraFieldsMixin
-from .models import CascadeElement
 from .widgets import JSONMultiWidget
 from . import settings
 
