@@ -64,7 +64,7 @@ class LinkedImageForm(ImageFormMixin, LinkForm):
     def __init__(self, *args, **kwargs):
         try:
             initial = dict(kwargs['instance'].glossary)
-        except KeyError:
+        except (KeyError, AttributeError):
             initial = {}
         initial.setdefault('link', {'type': 'none'})
         initial.update(kwargs.pop('initial', {}))
