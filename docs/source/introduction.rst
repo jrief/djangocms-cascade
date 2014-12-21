@@ -25,10 +25,10 @@ out of 12 or alternatively 16 columns.
 Extensibility
 =============
 This module requires one database table with one column to store all data in a JSON object. All
-**DjangoCMS-Cascade** plugins share this same model, hence they can be easily extended, because new
-data structures are added to that JSON object without requiring a database migration.
+**DjangoCMS-Cascade** plugins share this same model, therefore they can be easily extended, because
+new data structures are added to that JSON object without requiring a database migration.
 
-Another three database tables are optionally required for additional features.
+Another three database tables are required for additional optional features.
 
 .. _Django-CMS: https://github.com/divio/django-cms/
 .. _Twitter Bootstrap: http://getbootstrap.com/

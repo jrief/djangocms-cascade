@@ -1,0 +1,14 @@
+{
+  "name": "djangocms-cascade",
+  "version": "0.4.0",
+  "homepage": "https://github.com/jrief/djangocms-cascade",
+  "authors": [
+    "Jacob Rief <jacob.rief@gmail.com>"
+  ],
+  "description": "Collection of plugins for DjangoCMS",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "~3.3.1"
+  }
+}

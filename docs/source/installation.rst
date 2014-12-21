@@ -93,7 +93,7 @@ this repository. Instead you should install them using bower.
 .. code-block:: bash
 
 	cd djangocms-cascade
-	bower install bootstrap
+	bower install --require
 
 
 Configuration
