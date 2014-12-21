@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.widgets import JSONMultiWidget
-from cmsplugin_cascade.models import SharableCascadeElement
-from .models import SharedGlossary
+from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
 
 
 class SharedGlossaryAdmin(admin.ModelAdmin):

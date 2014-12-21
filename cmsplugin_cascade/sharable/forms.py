@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from cmsplugin_cascade.utils import resolve_dependencies
-from .models import SharedGlossary
+from cmsplugin_cascade.models import SharedGlossary
 
 
 class SelectSharedGlossary(forms.Select):

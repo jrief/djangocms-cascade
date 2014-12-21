@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     'djangocms_text_ckeditor',
     'django_select2',
     'cmsplugin_cascade',
-    'cmsplugin_cascade.sharable',
     'cms',
     'menus',
     CMS_VERSION >= (3, 1) and 'treebeard' or 'mptt',
