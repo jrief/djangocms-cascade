@@ -51,30 +51,31 @@ Known working environment
 As for 2014-12-20, this is a known working environment. In the future (hopefully) all required
 Python packages will be available through PyPI.
 
-```
-Django==1.6.8
-Django-Select2==4.2.2
-MarkupSafe==0.23
-Pillow==2.6.1
-South==1.0.1
-Sphinx==1.2.2
-Unidecode==0.04.16
-argparse==1.2.1
-django-classy-tags==0.5.1
--e git+https://github.com/divio/django-cms.git@c9a27abc420893b2d8e4a3496536841d4cdccee8#egg=django_cms
-django-filer==0.9.8
-django-mptt==0.6.1
-django-polymorphic==0.6
-django-sekizai==0.7
-djangocms-admin-style==0.2.2
-djangocms-text-ckeditor==2.3.0
-docutils==0.12
--e git+https://github.com/jrief/easy-thumbnails.git@de5213f92d7e5ea7bfefc24b02ba14809e4af567#egg=easy_thumbnails
-html5lib==0.999
-jsonfield==1.0.0
-six==1.8.0
-wsgiref==0.1.2
-```
+.. code-block:: guess
+
+	Django==1.6.8
+	Django-Select2==4.2.2
+	MarkupSafe==0.23
+	Pillow==2.6.1
+	South==1.0.1
+	Sphinx==1.2.2
+	Unidecode==0.04.16
+	argparse==1.2.1
+	django-classy-tags==0.5.1
+	-e git+https://github.com/divio/django-cms.git@c9a27abc420893b2d8e4a3496536841d4cdccee8#egg=django_cms
+	django-filer==0.9.8
+	django-mptt==0.6.1
+	django-polymorphic==0.6
+	django-sekizai==0.7
+	djangocms-admin-style==0.2.2
+	djangocms-text-ckeditor==2.3.0
+	docutils==0.12
+	-e git+https://github.com/jrief/easy-thumbnails.git@de5213f92d7e5ea7bfefc24b02ba14809e4af567#egg=easy_thumbnails
+	html5lib==0.999
+	jsonfield==1.0.0
+	six==1.8.0
+	wsgiref==0.1.2
+
 
 Update the database schema
 --------------------------
@@ -98,9 +99,8 @@ this repository. Instead you should install them using bower.
 Configuration
 =============
 
-Add ``'cmsplugin_cascade'`` and optionally ``'cmsplugin_cascade.sharable'`` to the list of
-``INSTALLED_APPS`` in the project’s ``settings.py`` file. Make sure that this entry is located
-before the entry ``cms``.
+Add ``'cmsplugin_cascade'`` to the list of ``INSTALLED_APPS`` in the project’s ``settings.py``
+file. Make sure that this entry is located before the entry ``cms``.
 
 
 Activate the CMS plugin
@@ -111,7 +111,6 @@ Activate the CMS plugin
 	INSTALLED_APPS = (
 	    ...
 	    'cmsplugin_cascade',
-	    'cmsplugin_cascade.sharable',  # optionally, if a plugin uses sharable content
 	    'cms',
 	    ...
 	)
@@ -121,35 +120,28 @@ Activate the plugins
 --------------------
 
 By default, no **djangocms-cascade** plugins is activated. Activate them in the project’s
-``settings.py`` with the directive ``CMS_CASCADE_PLUGINS``.
+``settings.py`` with the directive ``CMSPLUGIN_CASCADE_PLUGINS``.
 
 To activate all available Bootstrap plugins, use:
 
 .. code-block:: python
 
-	CMS_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
+	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
+
+If for some reason, only a subset of the available Bootstrap plugins shall be activated, name each
+of them. If for example only the grid system shall be used, but no other Bootstrap plugins, then
+configure:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE_PLUGINS = (''cmsplugin_cascade.bootstrap3.container',)
 
 A useful generic plugin is the Link-plugin. It replaces the djangocms-link_-plugin, normally used
 together with the CMS.
 
 .. code-block:: python
 
-	CMS_CASCADE_PLUGINS += ('cmsplugin_cascade.link.simple',)
-
-an alternative to the simple link is the sharable link:
-
-	CMS_CASCADE_PLUGINS += ('cmsplugin_cascade.link.sharable',)
-
-A sharable link is one, which remembers its settings to be shared among other sharable Link plugins.
-More about sharable content in the specially named section.
-
-If for some reason, only a subset of these plugins shall be activated, name each of them. If for
-example only the Bootstrap grid system shall be used, but no other Bootstrap plugins, then
-configure:
-
-.. code-block:: python
-
-	CMS_CASCADE_PLUGINS = (''cmsplugin_cascade.bootstrap3.container',)
+	CMSPLUGIN_CASCADE_PLUGINS += ('cmsplugin_cascade.link',)
 
 
 Restrict plugins to a particular placeholder
@@ -179,7 +171,7 @@ the configuration directive
 
 .. code-block:: python
 
-	CMS_CASCADE_LEAF_PLUGINS = ('TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin',)
+	CMSPLUGIN_CASCADE_LEAF_PLUGINS = ('TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin',)
 
 
 Bootstrap 3 with AngularJS
@@ -203,10 +195,10 @@ Currently the 960.gs framework has no meaningful user settings.
 Template Customization
 ======================
 
-Make sure that the style sheets are referenced correctly by the used templates. Django-CMS uses 
+Make sure that the style sheets are referenced correctly by the used templates. DjangoCMS requires
 Django-Sekizai_ to organize these includes, so a strong recommendation is to use that tool.
 
-The templates used for a Django-CMS project shall include a header, footer and the menu bar, but
+The templates used for a DjangoCMS project shall include a header, footer and the menu bar, but
 should leave out an empty working area. When using HTML5, wrap this area into an ``<article>`` or
 ``<section>`` element. This placeholder shall be named using a meaningless identifier, for instance
 "Page Content" or similar:
@@ -218,7 +210,6 @@ should leave out an empty working area. When using HTML5, wrap this area into an
 From now on, the page layout can be adopted inside this placeholder, without having to fiddle with
 template coding anymore.
 
-.. _github: https://github.com/jrief/djangocms-cascade
 .. _Django: http://djangoproject.com/
 .. _DjangoCMS: https://www.django-cms.org/
 .. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/
