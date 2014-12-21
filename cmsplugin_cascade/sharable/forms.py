@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import json
 from django import forms
 from django.forms import fields
-from django.forms.widgets import Media as DjangoMedia
 from django.db.models import get_model
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.utils.html import format_html, format_html_join
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
@@ -72,7 +72,7 @@ class SharableGlossaryMixin(object):
             widget=SelectSharedGlossary(),
             empty_label=_("Use individual settings"),
             help_text=_("Use settings shared with other plugins of this type"))
-        ExtSharableForm = type('ExtSharableForm', (form, SharableCascadeForm), {'shared_glossary': shared_glossary})
+        ExtSharableForm = type(b'ExtSharableForm', (form, SharableCascadeForm), {'shared_glossary': shared_glossary})
         kwargs.update(form=ExtSharableForm)
         return super(SharableGlossaryMixin, self).get_form(request, obj, **kwargs)
 

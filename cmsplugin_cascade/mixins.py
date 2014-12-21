@@ -122,7 +122,7 @@ class ExtraFieldsMixin(object):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(ExtraFieldsMixin, cls).get_identifier(obj)
-        extra_element_id = obj.glossary.get('extra_element_id')
+        extra_element_id = obj.glossary and obj.glossary.get('extra_element_id')
         if extra_element_id:
             return format_html('{0}<em>{1}:</em> ', identifier, extra_element_id)
         return identifier

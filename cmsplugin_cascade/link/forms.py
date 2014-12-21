@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.contrib.sites.models import Site
 from django.db.models import get_model
 from django.forms import fields

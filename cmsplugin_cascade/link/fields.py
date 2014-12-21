@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.conf import settings
 if 'django_select2' in settings.INSTALLED_APPS:
     from django_select2.fields import AutoModelSelect2Field

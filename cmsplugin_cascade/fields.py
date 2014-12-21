@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.forms import widgets
 from django.forms.util import ErrorList
 from django.core.exceptions import ValidationError

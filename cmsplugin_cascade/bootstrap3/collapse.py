@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import os
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
