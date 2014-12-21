@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import mark_safe, format_html_join
+from cms.utils.compat.dj import python_2_unicode_compatible
 from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
