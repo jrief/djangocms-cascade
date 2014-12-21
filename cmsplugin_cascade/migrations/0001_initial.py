@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             name='PluginExtraFields',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('plugin_type', models.CharField(db_index=True, max_length=50, verbose_name='Plugin Name', choices=[(b'BootstrapColumnPlugin', b'Bootstrap Column'), (b'BootstrapContainerPlugin', b'Bootstrap Container'), (b'BootstrapRowPlugin', b'Bootstrap Row'), (b'BootstrapButtonPlugin', b'Bootstrap Button'), (b'BootstrapPicturePlugin', b'Bootstrap Picture'), (b'SimpleWrapperPlugin', b'Bootstrap Simple Wrapper')])),
+                ('plugin_type', models.CharField(db_index=True, max_length=50, verbose_name='Plugin Name', choices=[(b'BootstrapButtonPlugin', b'Bootstrap Button'), (b'SimpleWrapperPlugin', b'Bootstrap Simple Wrapper'), (b'BootstrapRowPlugin', b'Bootstrap Row'), (b'BootstrapPicturePlugin', b'Bootstrap Picture'), (b'BootstrapContainerPlugin', b'Bootstrap Container'), (b'BootstrapColumnPlugin', b'Bootstrap Column')])),
                 ('allow_id_tag', models.BooleanField(default=False)),
                 ('css_classes', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
                 ('inline_styles', jsonfield.fields.JSONField(default={}, null=True, blank=True)),

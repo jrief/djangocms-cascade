@@ -164,10 +164,10 @@ CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = [
     'SimpleWrapperPlugin',
 ]
 
-# CMSPLUGIN_CASCADE_WITH_SHARABLES = {
-#     'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
-#     'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
-# }
+CMSPLUGIN_CASCADE_WITH_SHARABLES = {
+    'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
+    'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
+}
 
 CMSPLUGIN_CASCADE_LEAF_PLUGINS = ('TextLinkPlugin',)
 
