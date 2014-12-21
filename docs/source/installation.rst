@@ -77,18 +77,27 @@ Python packages will be available through PyPI.
 	wsgiref==0.1.2
 
 
-Update the database schema
---------------------------
+Create a database schema
+------------------------
+
+if you use Django-1.7 or higher
 
 .. code-block:: bash
 
-	./manage.py migrate cmsplugin_cascade
+	./manage.py migrate
+
+if you use Django-1.6
+
+.. code-block:: bash
+
+	./manage.py syncdb --migrate
+
 
 Install Bootstrap
 -----------------
 
-Since the Bootstrap files are part of their own repository, I dislike the idea of copying them into
-this repository. Instead you should install them using bower.
+Since the Bootstrap files are part of their own repository, I dislike the idea of keeping a
+copy inside this repository. Instead you should install them using bower.
 
 .. code-block:: bash
 
