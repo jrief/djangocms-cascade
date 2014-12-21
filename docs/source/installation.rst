@@ -72,7 +72,6 @@ docutils==0.12
 -e git+https://github.com/jrief/easy-thumbnails.git@de5213f92d7e5ea7bfefc24b02ba14809e4af567#egg=easy_thumbnails
 html5lib==0.999
 jsonfield==1.0.0
-mysqlclient==1.3.4
 six==1.8.0
 wsgiref==0.1.2
 ```
