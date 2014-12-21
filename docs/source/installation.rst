@@ -134,7 +134,7 @@ configure:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_PLUGINS = (''cmsplugin_cascade.bootstrap3.container',)
+	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3.container',)
 
 A useful generic plugin is the Link-plugin. It replaces the djangocms-link_-plugin, normally used
 together with the CMS.
