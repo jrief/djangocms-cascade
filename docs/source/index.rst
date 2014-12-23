@@ -26,6 +26,7 @@ Contents:
 ---------
 .. toctree::
 
+  impatient
   introduction
   installation
   tutorial
