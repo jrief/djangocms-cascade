@@ -17,31 +17,32 @@ or the current development release from github
 	$ pip install -e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
 
 Dependencies
-------------
+============
 * Django_ >=1.6
 * DjangoCMS_ >=3.0.8
 
 
-Update the database schema
---------------------------
+Create a database schema
+========================
+
+if you use Django-1.7 or higher
 
 .. code-block:: bash
 
 	./manage.py migrate cmsplugin_cascade
 
+if you use Django-1.6
+
+.. code-block:: bash
+
+	./manage.py syncdb --migrate cmsplugin_cascade
+
 
 Install Bootstrap
------------------
+=================
 
-Remember to download the CSS and Javascript files for the preferred CSS framework and place them
-into the folders ``static/css`` and ``static/js`` of the project's tree. Alternatively refer them,
-using a Content Delivery Network.
-
-.. note:: For simplicity, this configuration assumes, that the Bootstrap framework is used. In case
-          another CSS shall be used, adopt the proposed settings accordingly.
-
-Since the Bootstrap CSS and JavaScript files are part of their own repository, they are not included
-by this package. Furthermore, as they are not part of the PyPI network, they have to be installed
+Since the Bootstrap CSS and JavaScript files are part of their own repository, they are not shipped
+within this package. Furthermore, as they are not part of the PyPI network, they have to be installed
 through another package manager, namely bower_.
 
 .. code-block:: bash
@@ -61,8 +62,8 @@ Add ``'cmsplugin_cascade'`` to the list of ``INSTALLED_APPS`` in the project’s
 file. Make sure that this entry is located before the entry ``cms``.
 
 
-Activate the CMS plugin
------------------------
+Configure the CMS plugin
+------------------------
 
 .. code-block:: python
 
@@ -157,7 +158,7 @@ Template Customization
 ======================
 
 Make sure that the style sheets are referenced correctly by the used templates. DjangoCMS requires
-Django-Sekizai_ to organize these includes, so a strong recommendation is to use that tool.
+Django-Sekizai_ to organize these includes, so a strong recommendation is to use that Django app.
 
 The templates used for a DjangoCMS project shall include a header, footer and the menu bar, but
 should leave out an empty working area. When using HTML5, wrap this area into an ``<article>`` or

@@ -35,6 +35,7 @@ Contents:
   bootstrap3/image-picture
   bootstrap3/navbar
   customized-plugins
+  sharable-fields
   customize-styles
   history
 

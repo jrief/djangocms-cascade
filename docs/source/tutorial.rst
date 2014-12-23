@@ -5,79 +5,11 @@ Tutorial using the Bootstrap 3 framework
 ========================================
 
 This tutorial gives a practical introduction to **djangocms-cascade**, using `Bootstrap 3`_ as CSS
-framework.
+framework. It is assumed that you added ``cmsplugin_cascade`` to the project's ``INSTALLED_APPS``
+or that you run the :ref:`reference implementation <impatient>` shipped with this package.
 
 .. _Bootstrap 3: http://getbootstrap.com/
 
-Preable
-=======
-Django CMS 3.0 introduced a new frontend editing system as well as a customizable Django admin skin.
-
-Here, placeholders and their plugins are no longer managed in the admin site, but only inside the
-frontend. A great new feature in **djangoCMS** version 3 is, that plugins can be nested into each
-other, allowing the user to design a page from scratch, without having to write HTML.
-
-
-Run the demo
-============
-
-**djangocms-cascade** is shipped with a working demo for immediate testing. Using these
-instructions, you should be able to set up a running instance in less than 5 minutes. First
-checkout the sources from github:
-
-.. code-block:: bash
-
-	$ git clone https://github.com/jrief/djangocms-cascade.git
-
-and change into that directory:
-
-.. code-block:: bash
-
-	$ cd djangocms-cascade
-
-
-Prepare the environment
------------------------
-
-It is assumed that you run Python in a `virtual environment`_. To run this tutorial, it is strongly
-recommended to create a new virtual environment:
-
-.. code-block:: bash
-
-	$ mkvirtualenv cascadedemo
-
-Change into the directory ``examples`` and install the required dependencies:
-
-.. code-block:: bash
-
-	(cascadedemo)$ pip install -r bs3demo/requirements.txt
-
-this take some time, as pip has to download quite a lot of third party packages.
-
-Install dependencies not handled by pip:
-
-.. code-block:: bash
-
-	$ bower install bootstrap
-
-.. _virtual environment: http://www.virtualenv.org/en/latest/
-
-Populate the database
----------------------
-
-.. code-block:: bash
-
-	(cascadedemo)$ ./manage.py syncdb --migrate --settings=bs3demo.settings
-
-here you'll be asked to create a superuser for the Django admin backend.
-
-Start the demo server
----------------------
-
-	(cascadedemo)$ ./manage.py runserver
-
-and point a browser onto http://localhost:8000/ . You should see a blue page from django CMS. Log
-in, and add your first page.
 
 Boostrap Container
 ==================

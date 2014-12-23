@@ -69,5 +69,6 @@ create a superuser:
 
 Now, point a browser onto http://localhost:8000/ and log in as the super user. You now should be
 able add your first page and change into **Structure** mode. To the placeholder named
-``MAIN CONTENT CONTAINER`` add a plugin **Bootstrap Container**, then a **Bootstrap Row** and
-finally one or more **Bootstrap Column**'s.
+``MAIN CONTENT CONTAINER`` add a plugin Bootstrap Container**, then a **Bootstrap Row** and
+finally one or more **Bootstrap Column**'s. For detailled usage, proceed with the
+:ref:`tutorial <tutorial-bs3>`.
