@@ -8,7 +8,7 @@ from jsonfield.fields import JSONField
 from cms.plugin_pool import plugin_pool
 from cms.utils.compat.dj import python_2_unicode_compatible
 from .models_base import CascadeModelBase
-from .mixins import ExtraFieldsMixin
+from .extra_fields.mixins import ExtraFieldsMixin
 
 
 @python_2_unicode_compatible

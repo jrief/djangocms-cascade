@@ -9,7 +9,7 @@ from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .sharable.forms import SharableGlossaryMixin
-from .mixins import ExtraFieldsMixin
+from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
 from . import settings
 

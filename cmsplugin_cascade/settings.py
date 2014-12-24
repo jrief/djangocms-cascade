@@ -11,5 +11,7 @@ CASCADE_PLUGIN_DEPENDENCIES = {
     'cascade/js/admin/pictureplugin.js': ('cascade/js/admin/linkpluginbase.js',),
 }
 CASCADE_PLUGIN_DEPENDENCIES.update(getattr(settings, 'CMSPLUGIN_CASCADE_DEPENDENCIES', {}))
-CASCADE_PLUGINS_WITH_EXTRAFIELDS = getattr(settings, 'CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS', [])
-CASCADE_PLUGINS_WITH_SHARABLES = getattr(settings, 'CMSPLUGIN_CASCADE_WITH_SHARABLES', {})
+CASCADE_PLUGINS_WITH_EXTRAFIELDS = getattr(settings, 'CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS', []) \
+    if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS else []
+CASCADE_PLUGINS_WITH_SHARABLES = getattr(settings, 'CMSPLUGIN_CASCADE_WITH_SHARABLES', {}) \
+    if 'cmsplugin_cascade.sharable' in settings.INSTALLED_APPS else {}

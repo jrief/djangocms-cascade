@@ -5,11 +5,11 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.forms import widgets
 from django.core.exceptions import ValidationError
-from .fields import PartialFormField
-from .models import PluginExtraFields
-from .widgets import JSONMultiWidget, MultipleCascadingSizeWidget
+from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.models import PluginExtraFields
+from cmsplugin_cascade.widgets import JSONMultiWidget, MultipleCascadingSizeWidget
+from cmsplugin_cascade.utils import rectify_partial_form_field
 from .mixins import ExtraFieldsMixin
-from .utils import rectify_partial_form_field
 
 
 class ClassNamesWidget(widgets.TextInput):
