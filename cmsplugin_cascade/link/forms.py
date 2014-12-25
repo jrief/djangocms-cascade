@@ -50,6 +50,16 @@ class LinkForm(ModelForm):
         kwargs.update(initial=initial)
         super(LinkForm, self).__init__(raw_data, *args, **kwargs)
 
+    def clean_glossary(self):
+        """
+        This method rectifies the behavior of JSONFormFieldBase.clean which
+        converts the value of empty fields to None, while it shall be an empty dict.
+        """
+        glossary = self.cleaned_data['glossary']
+        if glossary is None:
+            glossary = {}
+        return glossary
+
     def clean(self):
         cleaned_data = super(LinkForm, self).clean()
         if self.is_valid():
