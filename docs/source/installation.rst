@@ -59,7 +59,8 @@ Configuration
 =============
 
 Add ``'cmsplugin_cascade'`` to the list of ``INSTALLED_APPS`` in the project’s ``settings.py``
-file. Make sure that this entry is located before the entry ``cms``.
+file. Optionally add 'cmsplugin_cascade.extra_fields' and/or 'cmsplugin_cascade.sharable' to
+the list of ``INSTALLED_APPS``. Make sure that these entries are located before the entry ``cms``.
 
 
 Configure the CMS plugin
@@ -70,6 +71,8 @@ Configure the CMS plugin
 	INSTALLED_APPS = (
 	    ...
 	    'cmsplugin_cascade',
+	    'cmsplugin_cascade.extra_fields',  # optional
+	    'cmsplugin_cascade.sharable',  # optional
 	    'cms',
 	    ...
 	)

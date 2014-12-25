@@ -5,17 +5,14 @@ Link Plugin
 ===========
 
 **djangocms-cascade** ships with its own Link plugin. This is because other plugins from
-**djangocms-cascade**, such as ButtonPlugin or PicturePlugin require the functionality to set links
-to internal- and external URLs. The de-facto plugin for links, djangocms-link_ can't be used as a
-base class for these plugins, therefore an alternative implementation had to be created. And as all
-other Cascade plugins, this LinkPlugin also keeps its data in a JSON field.
+**djangocms-cascade**, such as ButtonPlugin, ImagePlugin or PicturePlugin require the functionality
+to set links to internal- and external URLs. The de-facto plugin for links, djangocms-link_ can't
+be used as a base class for these plugins, therefore an alternative implementation has been
+created. And as all other Cascade plugins, the LinkPlugin also keeps its data in a JSON field.
 
 
-Simple Link Plugin
-==================
-
-Before using this plugin, assure that ``'cmsplugin_cascade.link.simple'`` is member of the list or
-tuple ``CMS_CASCADE_PLUGINS`` in the project's ``settings.py``.
+Before using this plugin, assure that ``'cmsplugin_cascade.link'`` is member of the list or
+tuple ``CMSPLUGIN_CASCADE_PLUGINS`` in the project's ``settings.py``.
 
 |simple-link-element|
 
@@ -38,20 +35,33 @@ With **Link Target**, the user can specify, whether the linked content shall ope
 window or if the browser shall open a new window.
 
 
-Sharable Link Plugin
-====================
+Link Plugin with sharable fields
+================================
 
-Before using this plugin, assure that ``'cmsplugin_cascade.link.sharable'`` is a member of the list
-or tuple ``CMS_CASCADE_PLUGINS`` in the project's ``settings.py``.
+If your web-site contains many links pointing onto external URLs, you might want to refer to them
+by a symbolic name, rather than having to reenter the URL repeatedly. In **djangocms-cascade**
+this can be achieved easily by declaring some of the plugin's fields as “sharable”.
+
+Assure that ``INSTALLED_APPS`` contain ``'cmsplugin_cascade.sharable'``, then redefine your Link
+Plugin to have sharable fields in ``setings.py``:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE_WITH_SHARABLES = {
+	    ...
+	    'TextLinkPlugin':  ('link',),  # and optionally other fields
+	    ...
+	}
+
+This will change the Link Plugin's editor slightly. Note the extra field add the bottom of the form.
 
 |sharable-link-element|
 
 .. |sharable-link-element| image:: _static/sharable-link-element.png
 
-Some of the fields of a Sharable Link element can be reused by other Sharable Link elements. This
-feature is useful, if you want to manage the link's data from one central entity. For instance, if
-the of an external web page changes, the administrator of this site can change that link in the
-administration area once, rather than having to going through all the pages and check if that link
+Now the URL for this Link is stored in a central entity. This feature is useful, if for instance
+the URL of an external web page changes. Then the administrator can change that link in the
+administration area once, rather than having to go through all the pages and check if that link
 was used.
 
 To retain the Link settings, click onto the checkbox *Remember these settings as: ...* and give it
@@ -63,8 +73,8 @@ Changing shared settings
 ------------------------
 
 The settings of a shared plugin can be changed globally, for all plugins using them. To edit such a
-shared setting, in the Django Admin, go into the list view for **Home › Cmsplugin_cascade › Shared between Plugins**
-and chose the named shared settings.
+shared setting, in the Django Admin, go into the list view for
+**Home › Cmsplugin_cascade › Shared between Plugins** and chose the named shared settings.
 
 Please note, that each plugin type can specify which fields shall be sharable between its plugins.
 For the **Sharable Link Plugin** these are the Link itself, the Title and Link Target. Only these
@@ -87,7 +97,7 @@ page to a shop's product.
 	:linenos:
 	:language: python
 
-When using this implementation, remember to change ``CMS_CASCADE_PLUGINS`` in your project's
+When using this implementation, remember to change ``CMSPLUGIN_CASCADE_PLUGINS`` in your project's
 ``settings.py`` to that alternative Link plugin.
 
 Now the select box for **Link type** will offer one additional option: “Product”. When this is
