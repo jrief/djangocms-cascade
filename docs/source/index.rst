@@ -9,6 +9,11 @@ Check for the latest release of this project on Github_.
 
 Please report bugs or ask questions using the `Issue Tracker`_.
 
+In **DjangoCMS-Cascade** version 0.4.0, the code base has been hugely refactored. If you where using
+version 0.3.2 upgrade carefully, since the API changed. Please contact me directly in case you
+need help to migrate your projects.
+
+
 Project's goals
 ---------------
 #. Create a modular system, which allows programmers to add simple widget code, without having to
