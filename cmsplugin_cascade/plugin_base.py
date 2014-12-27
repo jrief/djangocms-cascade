@@ -191,10 +191,10 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         bases = self.get_ring_bases()
         context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
         try:
-            fields = list(context['adminform'].fieldsets[0][1]['fields'])
+            fields = list(context['adminform'].form.fields)
             fields.remove('glossary')
-            context['empty_form'] = not bool(fields)
-        except (AttributeError, IndexError):
+            context['empty_form'] = len(fields) + len(context['adminform'].form.glossary_fields) == 0
+        except IndexError:
             pass
         return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
 
