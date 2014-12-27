@@ -76,7 +76,10 @@ MIDDLEWARE_CLASSES = (
 )
 
 # Absolute path to the directory that holds media.
-MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
+if django.VERSION[:2] > (1, 6):
+    MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
+else:
+    MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media16')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a trailing slash.
 MEDIA_URL = '/media/'
@@ -167,7 +170,9 @@ CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = [
 
 CMSPLUGIN_CASCADE_WITH_SHARABLES = {
     'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
-    'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',)
+    'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',),
+    'BootstrapButtonPlugin': ('link',),
+    'TextLinkPlugin': ('link', 'target',),
 }
 
 CMSPLUGIN_CASCADE_LEAF_PLUGINS = ('TextLinkPlugin',)
