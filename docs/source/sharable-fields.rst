@@ -3,7 +3,7 @@ Working with sharable fields
 ============================
 
 Sometime you'd want to remember sizes, links or any other options for rendering a plugin instance
-across the project. In order to not have to do this jobs for each managed entity, you can remember
+across the project. In order to not have to do this job for each managed entity, you can remember
 these settings using a name of your choice, controllable in a special section of the administration
 backend.
 

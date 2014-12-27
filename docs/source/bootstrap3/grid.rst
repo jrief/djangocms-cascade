@@ -3,7 +3,7 @@
 =======================
 Bootstrap 3 Grid system
 =======================
-In order to make full take full advantage of **djangocms-cascade**, you should be familiar with the
+In order to take full advantage of **djangocms-cascade**, you should be familiar with the
 concepts of the `Bootstrap Grid System`_, since all other Bootstrap components depend upon.
 
 .. _Bootstrap Grid System: http://getbootstrap.com/css/#grid
@@ -12,12 +12,12 @@ Bootstrap Container
 ===================
 
 A **Container** is the outermost component the Bootstrap framework knows of. Here the designer can
-specify the breakpoints of a Web site. By default, Bootstrap offers 4 breakpoints: “large”,
+specify the breakpoints of a web page. By default, Bootstrap offers 4 breakpoints: “large”,
 “medium”, “small” and “tiny”. These determine for which kind of screen widths, the grid system may
 switch the layout.
 
 The editor window for a Container element offers the possibility to deactivate certain breakpoints.
-While this might make sense under certain conditions, it is safe to always keep all breakpoints
+While this might make sense under certain conditions, it is safe to always keep all four breakpoints
 active, since this gives the designer of the web page the maximum flexibility.
 
 |edit-container|
@@ -30,7 +30,7 @@ Small devices exclusively
 
 If the web page shall be optimized just for small but not for large devices, then disable the
 breakpoints for **Large** and/or **Medium**. In the project's style-sheets, the maximum width
-of the container element, then must be reduced to that chosen breakpoint:
+of the container element then must be reduced to that chosen breakpoint:
 
 .. code-block:: css
 

@@ -10,8 +10,8 @@ easier to extend the Cascade eco-system, since no database migration is required
 or extending plugins from this project.
 
 The database model ``CascadeModelBase`` stores all the plugin settings in a single JSON field named
-``glossary``. This is practice behaves like a Django context, but in order to avoid confusion with
-the latter, it has been named glossary.
+``glossary``. This in practice behaves like a Django context, but in order to avoid confusion with
+the latter, it has been named “glossary”.
 
 
 Simple Example
