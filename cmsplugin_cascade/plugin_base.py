@@ -190,6 +190,12 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         bases = self.get_ring_bases()
         context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
+        try:
+            fields = list(context['adminform'].fieldsets[0][1]['fields'])
+            fields.remove('glossary')
+            context['empty_form'] = not bool(fields)
+        except (AttributeError, IndexError):
+            pass
         return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
 
     def get_ring_bases(self):
