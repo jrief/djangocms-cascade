@@ -5,7 +5,6 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from . import settings
 
@@ -38,13 +37,6 @@ class HorizontalRulePlugin(BootstrapPluginBase):
     allow_children = False
     tag_type = 'hr'
     render_template = 'cms/plugins/single.html'
-    glossary_fields = (
-        PartialFormField('inline_styles',
-            MultipleCascadingSizeWidget(['margin-top', 'margin-bottom'],
-                allowed_units=['px', 'em'], required=False),
-            label=_('Inline Styles'),
-            help_text=_('Margins for this horizontal rule.')
-        ),
-    )
+    glossary_fields = ()
 
 plugin_pool.register_plugin(HorizontalRulePlugin)
