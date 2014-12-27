@@ -70,6 +70,7 @@ a name of your choice. The next time your create a Shared Link element, you may 
 named settings from the select field *Shared Settings*. Since these settings can be shared among
 other plugins, these input fields are disabled and can't be changed anymore.
 
+
 Changing shared settings
 ------------------------
 
@@ -78,9 +79,11 @@ shared setting, in the Django Admin, go into the list view for
 **Home › Cmsplugin_cascade › Shared between Plugins** and chose the named shared settings.
 
 Please note, that each plugin type can specify which fields shall be sharable between its plugins.
-For the **Sharable Link Plugin** these are the Link itself, the Title and Link Target. Only these
-fields are editable in the plugins detail view. The interface for other shared plugin may vary
-substantially, depending of their type definition.
+In this example, only the Link itself is shared, but one could configure **djangocms-cascade** to
+also share the ``title`` and/or the link's ``target`` tags.
+
+Then only these fields are editable in the detail view **Shared between Plugins**. The interface
+for other shared plugin may vary substantially, depending of their type definition.
 
 
 Extending the Link Plugin
