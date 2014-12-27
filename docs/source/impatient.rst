@@ -26,7 +26,7 @@ To keep environments separate, first create a *virtualenv*.
 Clone the latest stable releases
 ================================
 
-Create a temporary file containing these requirements:
+Create a temporary file, for instance named requirements.txt, containing these entries:
 
 .. code-block:: guess
 
@@ -43,7 +43,7 @@ Create a temporary file containing these requirements:
 	django-polymorphic==0.6
 	django-sekizai==0.7
 	djangocms-admin-style==0.2.2
-	-e git+https://github.com/jrief/djangocms-cascade.git@0.4.0#egg=djangocms-cascade
+	-e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
 	djangocms-text-ckeditor==2.4.2
 	-e git+https://github.com/jrief/easy-thumbnails.git@fix-issue-353#egg=easy-thumbnails
 	html5lib==0.999
@@ -62,15 +62,16 @@ create a superuser:
 
 .. code-block:: bash
 
-	cd $VIRTUAL_ENV/src/djangocms-cascade/examples
+	cd $VIRTUAL_ENV/src/djangocms-cascade
 	bower install --require
+	cd examples
 	./manage.py syncdb --migrate --settings=bs3demo.settings
 	./manage runserver --settings=bs3demo.settings
 
-Now, point a browser onto http://localhost:8000/ and log in as the super user. You now should be
-able add your first page. To do so, change into please change into **Structure** mode on the top of
-the page. Now a large dark bar named ``MAIN CONTENT CONTAINER`` appears. This bar symbolizes a
-**djangoCMS** Placeholder.
+Point a browser onto http://localhost:8000/ and log in as the super user. Here you should be
+able add your first page. To do so, change into into **Structure** mode on the top of the page.
+Now a large dark bar named ``MAIN CONTENT CONTAINER`` appears. This bar symbolizes a **djangoCMS**
+Placeholder.
 
 Locate the menu handle |pull-down| on the right of the bar. From its context menu select
 **Container** located in the section **Bootstrap**:
