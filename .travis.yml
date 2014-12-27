@@ -6,11 +6,11 @@ python:
 
 env:
   - DJANGO=1.6.8 MIGRATE='true'
-  - DJANGO=1.7 MIGRATE='./manage.py migrate --settings=bs3demo.settings'
+  - DJANGO=1.7.1 MIGRATE='./manage.py migrate --settings=bs3demo.settings'
 
 branches:
   only:
-    - 0.4.0
+    - master
 
 install:
   - pip install -q Django==$DJANGO
