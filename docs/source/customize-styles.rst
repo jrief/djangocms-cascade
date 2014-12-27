@@ -19,12 +19,15 @@ Configure a Cascade Plugins to accept extra fields
 ==================================================
 
 Configuring a plugin to allow an HTML id tag, an extra CSS classes or some inline styles is very
-easy. In the projects ``settings.py``, add a list of Cascade plugins, which shall be extendible.
-It is a good idea to enable at least these two plugins for extendibility:
+easy. In the projects ``settings.py``, assure that ``'cmsplugin_cascade.extra_fields'`` is part of
+your ``INSTALLED_APPS``.
+
+Then add a list of Cascade plugins, which shall be extendible. It is a good idea to enable at least
+these plugins for extendibility:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = ['BootstrapRowPlugin', 'SimpleWrapperPlugin']
+	CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = ['BootstrapRowPlugin', 'SimpleWrapperPlugin', 'HorizontalRulePlugin']
 
 
 Enable extra fields
@@ -41,20 +44,25 @@ field named “Site”, select the current site.
 
 .. |customize-styles| image:: /_static/customize-styles.png
 
+
 Allow ID
 --------
+
 With “Allow id tag” enabled, an extra field will appear on the named plugin editor. There a user
 can add any arbitrary name which will be rendered as ``id="any_name"`` for the corresponding plugin
 instance.
 
 CSS classes
 -----------
+
 In the field named “CSS class names”, the administrator may specify arbitrary CSS classes separated
 by commas. One of these CSS classes then can be added to the corresponding Cascade plugin. If
 more than one CSS class shall be addable concurrently, activate the checkbox named “Allow multiple”.
 
+
 CSS inline styles
 -----------------
+
 The administrator may activate all kinds of CSS inline styles by clicking on the named checkbox. For
 settings describing distances, additionally specify the allowed units to be used.
 
@@ -62,8 +70,10 @@ Now, if a user opens the corresponding plugin inside the **Structure View**, he 
 select field to chose the CSS class and some input fields to enter say, extra margins, heights or
 whatever has been activated.
 
+
 Use it rarely, use it wise
 ..........................
+
 Adding too many styling fields to a plugin can mess up any web project. Therefore be advised to use
 this feature rarely and wise. If many people have write access to plugins, set extra permissions on
 this table, in order to not mess things up. For instance, it rarely makes sense to activate

@@ -2,26 +2,26 @@
 Working with sharable fields
 ============================
 
-Sometime you'd want to remember sizes and other options for rendering an image across the project.
-In order to not have to do this jobs for each managed image, you can remember these settings using a
-name of your choice and controllable in a special section of the administration backend.
+Sometime you'd want to remember sizes, links or any other options for rendering a plugin instance
+across the project. In order to not have to do this jobs for each managed entity, you can remember
+these settings using a name of your choice, controllable in a special section of the administration
+backend.
 
 Now, whenever someone adds a new instance using this plugin, a select box with these remembered
 settings appears. He then can chose from one of the remembered settings, which frees him to
 reenter all the values.
-
-Moreover, by changing one of these remembered settings in the administration backend at
-**Home › Cmsplugin_cascade › Shared between Plugins**, one can change the size and other options for
-all images with these settings applied to them.
 
 
 Configure a Cascade Plugins to optionally share some fields
 ===========================================================
 
 Configuring a plugin to share specific fields with other plugins of the same type is very easy.
-In the projects ``settings.py``, add a dictionary of Cascade plugins, with a list of fields which
-shall be sharable. For example, with this settings, the image plugin can configured to share its
-sizes and rendering options among each other.
+In the projects ``settings.py``, assure that ``'cmsplugin_cascade.sharable'`` is part of your
+``INSTALLED_APPS``.
+
+Then add a dictionary of Cascade plugins, with a list of fields which shall be sharable. For
+example, with this settings, the image plugin can be configured to share its sizes and rendering
+options among each other.
 
 .. code-block:: python
 
@@ -33,8 +33,8 @@ sizes and rendering options among each other.
 Control some named settings
 ===========================
 
-Whenever a plugin is configured to allow to share fields, at the bottom of the plugin editor a new
-field appears:
+Whenever a plugin is configured to allow to share fields, at the bottom of the plugin editor a
+special field appears:
 
 |remember-settings|
 
@@ -51,7 +51,7 @@ type, a select box appears on the top of the editor:
 By choosing a previously named shared settings, the configured fields are disabled for input and
 replaced by their shared field's counterparts.
 
-In order to edit these shared fields, in the administration backend one must access 
+In order to edit these shared fields in the administration backend, one must access 
 **Home › Cmsplugin_cascade › Shared between Plugins**. By choosing a named shared setting, one can
 enter into the shared field's editor. This editor auto adopts to the fields declared as shared,
 hence will change from entity to entity. For the above example, it may look like this:
@@ -59,3 +59,6 @@ hence will change from entity to entity. For the above example, it may look like
 |edit-shared-fields|
 
 .. |edit-shared-fields| image:: /_static/edit-shared-fields.png
+
+In this editor one can change these shared settings globally, for all plugin instances where this
+named shared settings have been applied to.

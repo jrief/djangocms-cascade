@@ -29,14 +29,13 @@ Contents:
   impatient
   introduction
   installation
-  tutorial
   link-plugin
   bootstrap3/grid
   bootstrap3/image-picture
   bootstrap3/navbar
-  customized-plugins
   sharable-fields
   customize-styles
+  customized-plugins
   history
 
 Indices and tables

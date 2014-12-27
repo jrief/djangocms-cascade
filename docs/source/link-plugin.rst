@@ -39,11 +39,11 @@ Link Plugin with sharable fields
 ================================
 
 If your web-site contains many links pointing onto external URLs, you might want to refer to them
-by a symbolic name, rather than having to reenter the URL repeatedly. In **djangocms-cascade**
+by a symbolic name, rather than having to reenter the URL repeatedly. With **djangocms-cascade**
 this can be achieved easily by declaring some of the plugin's fields as “sharable”.
 
-Assure that ``INSTALLED_APPS`` contain ``'cmsplugin_cascade.sharable'``, then redefine your Link
-Plugin to have sharable fields in ``setings.py``:
+Assure that ``INSTALLED_APPS`` contain ``'cmsplugin_cascade.sharable'``, then redefine the
+**TextLinkPlugin** to have sharable fields in ``settings.py``:
 
 .. code-block:: python
 
@@ -53,21 +53,22 @@ Plugin to have sharable fields in ``setings.py``:
 	    ...
 	}
 
-This will change the Link Plugin's editor slightly. Note the extra field add the bottom of the form.
+This will change the Link Plugin's editor slightly. Note the extra field added to the bottom of the
+form.
 
 |sharable-link-element|
 
 .. |sharable-link-element| image:: _static/sharable-link-element.png
 
-Now the URL for this Link is stored in a central entity. This feature is useful, if for instance
-the URL of an external web page changes. Then the administrator can change that link in the
-administration area once, rather than having to go through all the pages and check if that link
-was used.
+Now the URL for this ink entity is stored in a central entity. This feature is useful, if for
+instance the URL of an external web page may change in the future. Then the administrator can change
+that link in the administration area once, rather than having to go through all the pages and check
+if that link was used.
 
 To retain the Link settings, click onto the checkbox *Remember these settings as: ...* and give it
 a name of your choice. The next time your create a Shared Link element, you may select a previously
 named settings from the select field *Shared Settings*. Since these settings can be shared among
-other plugins, their input fields are disabled and can't be changed anymore.
+other plugins, these input fields are disabled and can't be changed anymore.
 
 Changing shared settings
 ------------------------

@@ -68,7 +68,21 @@ create a superuser:
 	./manage runserver --settings=bs3demo.settings
 
 Now, point a browser onto http://localhost:8000/ and log in as the super user. You now should be
-able add your first page and change into **Structure** mode. To the placeholder named
-``MAIN CONTENT CONTAINER`` add a plugin Bootstrap Container**, then a **Bootstrap Row** and
-finally one or more **Bootstrap Column**'s. For detailled usage, proceed with the
-:ref:`tutorial <tutorial-bs3>`.
+able add your first page. To do so, change into please change into **Structure** mode on the top of
+the page. Now a large dark bar named ``MAIN CONTENT CONTAINER`` appears. This bar symbolizes a
+**djangoCMS** Placeholder.
+
+Locate the menu handle |pull-down| on the right of the bar. From its context menu select
+**Container** located in the section **Bootstrap**:
+
+|add-container|
+
+.. |pull-down| image:: _static/pull-down.png
+.. |add-container| image:: _static/add-container.png
+
+This brings you into the editor mode for a Bootstrap container. To this container you may add one or
+more Bootstrap **Rows**. Inside these rows you may organize the layout using some Bootstrap
+**Columns**.
+
+Please proceed with the detailled explanation on how to use the
+:ref:`Bootstrap's grid <bootstrap3/grid>` system within **djangocms-cascade**.
