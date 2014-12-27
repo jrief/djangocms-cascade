@@ -80,7 +80,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
         super(CascadePluginBase, self).__init__(model, admin_site)
         if isinstance(glossary_fields, (list, tuple)):
-            self.glossary_fields = glossary_fields
+            self.glossary_fields = list(glossary_fields)
         elif not hasattr(self, 'glossary_fields'):
             self.glossary_fields = []
 
