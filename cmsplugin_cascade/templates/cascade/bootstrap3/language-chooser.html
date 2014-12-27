@@ -1,0 +1,13 @@
+{% load i18n menu_tags %}
+{% spaceless %}
+<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Change Language" %} <b class="caret"></b></a>
+	<ul class="dropdown-menu" role="menu">
+	{% for language in languages %}
+		<li{% ifequal current_language language.0 %} class="active"{% endifequal %}>
+			<a href="{% page_language_url language.0 %}" title="{{ language.1 }}">{{ language.0 }}</a>
+		</li>
+	{% endfor %}
+	</ul>
+</li>
+{% endspaceless %}

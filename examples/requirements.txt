@@ -1,4 +1,0 @@
-django-cms
-django-mptt
-jsonfield
-

@@ -7,9 +7,11 @@
 .coverage
 .DS_Store
 .sass-cache
-*.sqlite
+*.db
 build
 env*
 dist
 htmlcov
 djangocms_style.egg-info
+bower_components/
+filer_public*

@@ -1,14 +1,12 @@
 djangocms-cascade
 =================
-**Update (2014-12-20):** Version 0.4.0 is about to be released soon. A lot of code changed last week, so be prepared if you update. This API change now hopefully is final. Please check [#49](https://github.com/jrief/djangocms-cascade/issues/49) for details.
-
-**DjangoCMS-Cascade** Version 0.3.2 is the latest stable release. The upcoming new release is available under the 0.4.0 branch. It adds a huge amount of new features and has a much cleaner code base. If you start with **djangocms-cascade**, please start with the new branch.
+**DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
 Add DOM elements to a Django-CMS placeholder
 ---------------------------------------------
-**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >3.0 to add various HTML elements
+**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >3.0.6 to add various HTML elements
 from CSS frameworks, such as [Twitter Bootstrap](http://getbootstrap.com/) or the
-[960 Grid System](http://960.gs/) to any CMS
+[960 Grid System](http://960.gs/) (discontinued) to any CMS
 [placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
 Currently **Bootstrap-3.x** and **960.gs** are supported, but this module makes it very easy to
 add your preferred CSS frameworks. It is also very easy to extend an existing collection with
@@ -18,6 +16,9 @@ additional elements.
 templates. In most cases, one template with one single placeholder is enough. The editor then
 can subdivide that placeholder into rows and columns, and add additional elements such as buttons,
 rulers, or even the Bootstrap Carousel.
+
+**DjangoCMS-Cascade** is the successor of **DjangoCMS-Bootstrap** which is still available under
+this [repository branch](https://github.com/jrief/djangocms-cascade/tree/bootstrap-2.3.2).
 
 Features
 --------

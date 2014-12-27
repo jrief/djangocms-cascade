@@ -1,0 +1,19 @@
+form .glossary-widget { border-bottom: 1px solid #f3f3f3; padding: 8px 0; }
+form .glossary-widget:after { content: "."; clear: both; display: block; visibility: hidden; height: 0px; }
+form .glossary-widget:last-child { border-bottom: none; }
+form .glossary-widget h1 { clear: both; margin: 0 0 4px; font-size: 120%; }
+form .glossary-widget label { width: inherit; padding-left: 10px; }
+form .glossary-widget small { margin-left: 0; }
+form .glossary-widget .field-box.disabled { color: #aaa; }
+form .glossary-widget ul { margin-left: 0; padding-left: 0; }
+form .glossary-widget ul li { list-style: none; float: left; min-width: 95px; }
+form .glossary-widget ul.errorlist li { float: none; }
+form .glossary-widget div.sibling-field { float: left;  margin-left: 20px; width: 9em; }
+form .glossary-widget div.sibling-field:first-child { margin-left: 0; }
+form .glossary-widget div.sibling-field label { padding-left: 5px; }
+form .glossary-widget div.sibling-field input[type="text"] { display: block; width: 8em; margin: 0; }
+form .glossary-widget h4 { margin-top: 10px !important; margin-bottom: 10px !important; }
+form .glossary-widget input[type="radio"], form .glossary-widget input[type="checkbox"] { margin: 0 4px 0 0; display: inline-block; width: 2em; }
+form .glossary-field { float: left; margin-right: 10px; }
+form .glossary-box { zoom:1; }
+form .glossary-box:after { content: ""; display: table; clear: both; }

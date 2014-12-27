@@ -1,0 +1,14 @@
+{% load thumbnail %}{% spaceless %}
+
+<picture {{ instance.html_tag_attributes }}>
+{% for elem in elements %}
+	{% thumbnail instance.image elem.size zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
+	{% if elem.tag == "source" %}
+	<source srcset="{{ thumb.url }}" media="{{ elem.media }}" />
+	{% elif elem.tag == "img" %}
+	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}" width="{{ thumb.width }}" height="{{ thumb.height }}" />
+	{% endif %}
+{% endfor %}
+</picture>
+
+{% endspaceless %}

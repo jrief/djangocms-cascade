@@ -1,0 +1,21 @@
+{% load static cms_tags sekizai_tags %}
+
+{% addtoblock "js" %}<script src="{% static 'jquery/dist/jquery.js' %}" type="text/javascript"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script src="{% static 'bootstrap/dist/js/bootstrap.js' %}" type="text/javascript"></script>{% endaddtoblock %}
+
+{% with bootstrap_element="collapse" inline_styles=instance.inline_styles %}
+<div id="cmsplugin_{{ instance.id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+	{% for panel in instance.child_plugin_instances %}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#cmsplugin_{{ instance.id }}" href="#cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}">{{ panel.glossary.panel_title }}</a>
+			</h4>
+		</div>
+		<div id="cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}" class="panel-collapse collapse{% if forloop.first %} in{% endif %}">
+			{% render_plugin panel %}
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endwith %}

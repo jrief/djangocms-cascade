@@ -1,0 +1,5 @@
+{% extends "cascade/plugins/link.html" %}
+
+{% block link_link %}{% with instance_link=instance.link|default:"#" %}
+{{ block.super }}
+{% endwith %}{% endblock link_link %}

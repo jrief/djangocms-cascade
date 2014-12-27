@@ -1,0 +1,20 @@
+{% load i18n %}
+{% spaceless %}{% if show_paginator %}
+<ul class="pagination">
+	{% if show_aquos %}
+	<li{% if not laquo.paginate %} class="disabled"{% endif %}>
+		<a{% if laquo.paginate %} href="{{ request.path }}?page={{ laquo.num }}"{% endif %}>&laquo;</a>
+	</li>
+	{% endif %}
+	{% for page in pages %}
+	<li{% if page.active %} class="active"{% endif %}>
+		<a href="{{ request.path }}?page={{ page.num }}">{{ page.num }}{% if page.active %} <span class="sr-only">({% trans "current" %})</span>{% endif %}</a>
+	</li>
+	{% endfor %}
+	{% if show_aquos %}
+	<li{% if not raquo.paginate %} class="disabled"{% endif %}>
+		<a{% if raquo.paginate %} href="{{ request.path }}?page={{ raquo.num }}"{% endif %}>&raquo;</a>
+	</li>
+	{% endif %}
+</ul>
+{% endif %}{% endspaceless %}

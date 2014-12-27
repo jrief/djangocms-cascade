@@ -1,8 +1,0 @@
-#cascadeelement_form ul { margin-left: 0; }
-#cascadeelement_form ul li { list-style: none; float: left; min-width: 95px; }
-#cascadeelement_form ul.errorlist li { float: none; }
-#cascadeelement_form div.sibling-field { float: left;  margin-left: 20px; }
-#cascadeelement_form div.sibling-field:first-child { margin-left: 0; }
-#cascadeelement_form div.sibling-field input { width: 95px; margin: 0; }
-#cascadeelement_form h4 { margin-top: 10px !important; margin-bottom: 10px !important; }
-#cascadeelement_form input[type="radio"], #cascadeelement_form input[type="checkbox"] { margin: 0 4px 0 0; }

@@ -7,7 +7,7 @@ PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SITE_ID = 1
 
-ROOT_URLCONF = 'bootstrap3.urls'
+#ROOT_URLCONF = '.urls'
 
 SECRET_KEY = 'secret'
 

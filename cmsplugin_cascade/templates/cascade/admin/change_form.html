@@ -1,0 +1,22 @@
+{% extends "admin/cms/usersettings/change_form.html" %}
+{% load admin_static i18n %}
+
+{% block field_sets %}
+	{% if empty_form %}
+<div class="module">
+	<h1>{% trans "There are no further settings for this plugin" %}</h1>
+	<p>{% trans "Please hit OK to save." %}</p>
+</div>
+	{% else %}
+	{{ block.super }}
+	{% endif %}
+{% endblock %}
+
+{% block after_field_sets %}
+	{{ block.super }}
+	<script type="text/javascript">
+	django.cascade = django.cascade || {};
+	django.cascade.sharable_fields = {{ sharable_fields|default:"[]" }};
+	django.cascade.base_plugins = "[{{ base_plugins|join:", " }}]";
+	</script>
+{% endblock %}

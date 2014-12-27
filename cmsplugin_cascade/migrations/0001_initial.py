@@ -1,53 +1,229 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import jsonfield.fields
+import cmsplugin_cascade.mixins
+import cmsplugin_cascade.link.plugin_base
+import django.db.models.deletion
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'CascadeElement'
-        db.create_table(u'cmsplugin_cascade_cascadeelement', (
-            ('cmsplugin_ptr', self.gf('django.db.models.fields.related.OneToOneField')(related_name='+', unique=True, primary_key=True, to=orm['cms.CMSPlugin'])),
-            ('context', self.gf('jsonfield.fields.JSONField')(default={}, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'cmsplugin_cascade', ['CascadeElement'])
+    dependencies = [
+        ('sites', '0001_initial'),
+        ('cms', '0003_auto_20140926_2347'),
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'CascadeElement'
-        db.delete_table(u'cmsplugin_cascade_cascadeelement')
-
-
-    models = {
-        'cms.cmsplugin': {
-            'Meta': {'object_name': 'CMSPlugin'},
-            'changed_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'creation_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'language': ('django.db.models.fields.CharField', [], {'max_length': '15', 'db_index': 'True'}),
-            'level': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
-            'lft': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['cms.CMSPlugin']", 'null': 'True', 'blank': 'True'}),
-            'placeholder': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['cms.Placeholder']", 'null': 'True'}),
-            'plugin_type': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'}),
-            'position': ('django.db.models.fields.PositiveSmallIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
-            'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'})
-        },
-        'cms.placeholder': {
-            'Meta': {'object_name': 'Placeholder'},
-            'default_width': ('django.db.models.fields.PositiveSmallIntegerField', [], {'null': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'slot': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'})
-        },
-        u'cmsplugin_cascade.cascadeelement': {
-            'Meta': {'object_name': 'CascadeElement', '_ormbases': ['cms.CMSPlugin']},
-            'cmsplugin_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'+'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['cms.CMSPlugin']"}),
-            'context': ('jsonfield.fields.JSONField', [], {'default': '{}', 'null': 'True', 'blank': 'True'})
-        }
-    }
-
-    complete_apps = ['cmsplugin_cascade']
+    operations = [
+        migrations.CreateModel(
+            name='CascadeElement',
+            fields=[
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('glossary', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+            ],
+            options={
+                'db_table': 'cmsplugin_cascade_element',
+            },
+            bases=('cms.cmsplugin',),
+        ),
+        migrations.CreateModel(
+            name='PluginExtraFields',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('plugin_type', models.CharField(db_index=True, max_length=50, verbose_name='Plugin Name', choices=[(b'BootstrapButtonPlugin', b'Bootstrap Button'), (b'SimpleWrapperPlugin', b'Bootstrap Simple Wrapper'), (b'BootstrapRowPlugin', b'Bootstrap Row'), (b'BootstrapPicturePlugin', b'Bootstrap Picture'), (b'BootstrapContainerPlugin', b'Bootstrap Container'), (b'BootstrapColumnPlugin', b'Bootstrap Column')])),
+                ('allow_id_tag', models.BooleanField(default=False)),
+                ('css_classes', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('inline_styles', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('site', models.ForeignKey(verbose_name='Site', to='sites.Site')),
+            ],
+            options={
+                'verbose_name': 'Custom CSS classes and styles',
+                'verbose_name_plural': 'Custom CSS classes and styles',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='SharableCascadeElement',
+            fields=[
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('glossary', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+            ],
+            options={
+                'db_table': 'cmsplugin_cascade_sharableelement',
+            },
+            bases=('cms.cmsplugin',),
+        ),
+        migrations.CreateModel(
+            name='SharedGlossary',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('plugin_type', models.CharField(verbose_name='Plugin Name', max_length=50, editable=False, db_index=True)),
+                ('identifier', models.CharField(unique=True, max_length=50, verbose_name='Identifier')),
+                ('glossary', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+            ],
+            options={
+                'verbose_name': 'Shared between Plugins',
+                'verbose_name_plural': 'Shared between Plugins',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AlterUniqueTogether(
+            name='sharedglossary',
+            unique_together=set([('plugin_type', 'identifier')]),
+        ),
+        migrations.AddField(
+            model_name='sharablecascadeelement',
+            name='shared_glossary',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='cmsplugin_cascade.SharedGlossary', null=True),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='pluginextrafields',
+            unique_together=set([('plugin_type', 'site')]),
+        ),
+        migrations.CreateModel(
+            name='BootstrapButtonPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=(cmsplugin_cascade.link.plugin_base.LinkElementMixin, 'cmsplugin_cascade.cascadeelement'),
+        ),
+        migrations.CreateModel(
+            name='BootstrapColumnPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='BootstrapContainerPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='BootstrapImagePluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=(cmsplugin_cascade.mixins.ImagePropertyMixin, cmsplugin_cascade.link.plugin_base.LinkElementMixin, 'cmsplugin_cascade.sharablecascadeelement'),
+        ),
+        migrations.CreateModel(
+            name='BootstrapPicturePluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=(cmsplugin_cascade.mixins.ImagePropertyMixin, cmsplugin_cascade.link.plugin_base.LinkElementMixin, 'cmsplugin_cascade.sharablecascadeelement'),
+        ),
+        migrations.CreateModel(
+            name='BootstrapPluginBaseModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='BootstrapRowPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='CarouselPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='CarouselSlidePluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=(cmsplugin_cascade.mixins.ImagePropertyMixin, 'cmsplugin_cascade.cascadeelement'),
+        ),
+        migrations.CreateModel(
+            name='CascadePluginBaseModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='HorizontalRulePluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='LinkPluginBaseModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='PanelGroupPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='PanelPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='SimpleWrapperPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('cmsplugin_cascade.cascadeelement',),
+        ),
+        migrations.CreateModel(
+            name='TextLinkPluginModel',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=(cmsplugin_cascade.link.plugin_base.LinkElementMixin, 'cmsplugin_cascade.cascadeelement'),
+        ),
+    ]

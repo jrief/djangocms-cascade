@@ -1,0 +1,16 @@
+form input, form textarea { padding: 3px 5px; }
+form input:disabled, form textarea:disabled, form select:disabled { color: #888; border-style: dashed; }
+form .form-row.field-link_type { min-height: 30px; border-bottom: none; }
+form .form-row.field-link_type .field-box label.inline,
+	form .form-row .field-box.field-save_as_identifier label.inline { width: 0; }
+form .form-row.field-link_type .field-box input { margin-top: 0; }
+form .form-row.field-link_type .field-box .help { margin-left: 2em; padding-left: 0; }
+form .field-box label.inline { text-align: right; }
+form .field-glossary { padding: 0 10px; }
+form .container-thumbnail { text-align: center; }
+form .container-thumbnail i[class^="icon"] { font-size: 70px; }
+form label[for=id_glossary_0] { float: none; }
+form .glossary_button-type .field-box { margin-right: 10px; }
+form .glossary_button-size .button-samples { min-height: 100px; max-width: 100px; }
+form .glossary_button-type .btn, .glossary_button-size .btn { margin-bottom: 5px; }
+#id_ext_url, #id_mail_to {width:18em;}
