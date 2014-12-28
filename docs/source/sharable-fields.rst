@@ -8,7 +8,7 @@ these settings using a name of your choice, controllable in a special section of
 backend.
 
 Now, whenever someone adds a new instance using this plugin, a select box with these remembered
-settings appears. He then can chose from one of the remembered settings, which frees him to
+settings appears. He then can choose from one of the remembered settings, which frees him to
 reenter all the values.
 
 

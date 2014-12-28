@@ -25,7 +25,7 @@ django.jQuery(function($) {
 				// if shared glossary is set, hide fields marked as sharable
 				this.toggleSharedGlossary($sel_shared_glossary.children('option:selected'));
 			} else {
-				// remove the select box to chose from shared glossaries, since it doesn't contain any options
+				// remove the select box to choose from shared glossaries, since it doesn't contain any options
 				$('.field-shared_glossary').remove();
 			}
 

@@ -67,7 +67,7 @@ The administrator may activate all kinds of CSS inline styles by clicking on the
 settings describing distances, additionally specify the allowed units to be used.
 
 Now, if a user opens the corresponding plugin inside the **Structure View**, he will see an extra 
-select field to chose the CSS class and some input fields to enter say, extra margins, heights or
+select field to choose the CSS class and some input fields to enter say, extra margins, heights or
 whatever has been activated.
 
 

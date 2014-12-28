@@ -22,7 +22,7 @@ The behavior of this Plugin is what you expect from a Link editor. The field **L
 text displayed between the opening and closing ``<a>`` tag. If used in combination with
 djangocms-text-ckeditor_ the field automatically is filled out.
 
-By changing the **Link type**, the user can chose between three types of Links:
+By changing the **Link type**, the user can choose between three types of Links:
 
  * Internal Links pointing to another page inside the CMS.
  * External Links pointing to a valid Internet URL.
@@ -76,7 +76,7 @@ Changing shared settings
 
 The settings of a shared plugin can be changed globally, for all plugins using them. To edit such a
 shared setting, in the Django Admin, go into the list view for
-**Home › Cmsplugin_cascade › Shared between Plugins** and chose the named shared settings.
+**Home › Cmsplugin_cascade › Shared between Plugins** and choose the named shared settings.
 
 Please note, that each plugin type can specify which fields shall be sharable between its plugins.
 In this example, only the Link itself is shared, but one could configure **djangocms-cascade** to
@@ -105,7 +105,7 @@ When using this implementation, remember to change ``CMSPLUGIN_CASCADE_PLUGINS``
 ``settings.py`` to that alternative Link plugin.
 
 Now the select box for **Link type** will offer one additional option: “Product”. When this is
-selected, the site administrator can chose between all of the shops products.
+selected, the site administrator can choose between all of the shops products.
 
 .. _djangocms-link: https://github.com/divio/djangocms-link
 .. _djangocms-text-ckeditor: https://github.com/divio/djangocms-text-ckeditor

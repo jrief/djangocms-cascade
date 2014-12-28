@@ -85,7 +85,7 @@ following fields in order to adapt an image to the current layout.
 
 Image
 -----
-Clicking on the magnifying glass opens a pop-up window from django-filer_ where you can chose the
+Clicking on the magnifying glass opens a pop-up window from django-filer_ where you can choose the
 appropriate image.
 
 .. _django-filer: https://github.com/stefanfoulis/django-filer
@@ -103,7 +103,7 @@ some basic information about that picture.
 
 Link type
 ---------
-Using this select box, one can chose to add an internal, or external link to the image. Please
+Using this select box, one can choose to add an internal, or external link to the image. Please
 check the appropriate section for details.
 
 Image Shapes
