@@ -16,10 +16,10 @@ Adaptive resizing the images
 ============================
 
 An obvious idea would be to let the server decide, which image resolution fits best to the browsing
-device. This however is bad practice. Images are static content and thus predestined to be cached
-by proxies on the way to the client. Images typically are served upon a GET-request and a URL,
-serving different images, depending on a cookie's value is not idempotent and thus is a very bad
-idea.
+device. This however is bad practice. Images typically are served upon a GET-request pointing onto
+a specific URL. GET-requests shall be idempotent and thus are predestined to be cached by proxies
+on the way to the client. Therefore it is a very bad idea to let the client transmit its screen
+width via a cookie, and deliver different images depending on this value.
 
 Since the sever side approach doesn't work, it is the browsers responsibility to select the
 appropriate image size. An ideal adaptive image strategy should do the following:
