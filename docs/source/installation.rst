@@ -42,8 +42,8 @@ Install Bootstrap
 =================
 
 Since the Bootstrap CSS and JavaScript files are part of their own repository, they are not shipped
-within this package. Furthermore, as they are not part of the PyPI network, they have to be installed
-through another package manager, namely bower_.
+within this package. Furthermore, as they are not part of the PyPI network, they have to be
+installed through another package manager, namely bower_.
 
 .. code-block:: bash
 
@@ -52,7 +52,13 @@ through another package manager, namely bower_.
 
 Alternatively copy the installed ``bower_components`` into a directory of your project or to any
 other meaningful location, but ensure that the directory ``bower_components`` can be found by
-your StaticFileFinder. In doubt, add that directory to your ``STATICFILES_DIRS``.
+your StaticFileFinder. In doubt, add that directory to your ``STATICFILES_DIRS``:
+
+.. code-block:: python
+
+	STATICFILES_DIRS = (
+	    os.path.abspath(os.path.join(MY_PROJECT_DIR, 'bower_components')),
+	)
 
 
 Configuration
