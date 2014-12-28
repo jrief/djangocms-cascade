@@ -194,7 +194,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
             fields = list(context['adminform'].form.fields)
             fields.remove('glossary')
             context['empty_form'] = len(fields) + len(context['adminform'].form.glossary_fields) == 0
-        except IndexError:
+        except KeyError:
             pass
         return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
 
