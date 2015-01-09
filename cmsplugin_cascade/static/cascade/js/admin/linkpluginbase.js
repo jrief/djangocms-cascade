@@ -51,20 +51,26 @@ django.jQuery(function($) {
 		},
 		toggleSharedGlossary: function($option) {
 			var glossary = $option.data('glossary');
-			if (glossary) {
+			try {
 				$('#id_link_type').val(glossary['link']['type']);
 				try {
 					$("#id_cms_page").select2("data", {id: glossary['link']['pk'], text: glossary['link']['identifier']});
 					$("#id_cms_page").select2('enable', false);
 				} catch(err) {
+					if (!(err instanceof TypeError))
+						throw err;
 					$("#id_cms_page").val(glossary['link']['pk']);
 				}
 				$('#id_ext_url').val(glossary['link']['url']);
 				$('#id_mail_to').val(glossary['link']['email']);
-			} else {
+			} catch (err) {
 				try {
+					if (!(err instanceof TypeError))
+						throw err;
 					$("#id_cms_page").select2('enable', true);
-				} catch(err) {
+				} catch (err) {
+					if (!(err instanceof TypeError))
+						console.error(err);
 				}
 			}
 			if (this.$super) {
