@@ -64,13 +64,12 @@ def get_image_tags(context, instance, is_responsive):
     if is_responsive:
         max_width = 0
         for bp in complete_glossary['breakpoints']:
-            try:
+            if bp in complete_glossary['container_max_widths']:
                 width = int(round(image_width[1] * complete_glossary['container_max_widths'][bp]))
-            except KeyError:
-                continue
             max_width = max(max_width, width)
             size = _get_image_size(width, image_height, aspect_ratio)
-            tags['sizes'].append('{0} {1}px'.format(' and '.join(complete_glossary['media_queries'][bp]), width))
+            if bp in complete_glossary['media_queries']:
+                tags['sizes'].append('{0} {1}px'.format(' and '.join(complete_glossary['media_queries'][bp]), width))
             for high_res in resolutions:
                 if high_res:
                     size = (size[0] * 2, size[1] * 2)
