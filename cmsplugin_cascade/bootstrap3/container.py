@@ -94,7 +94,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         parent_glossary = obj.get_parent_glossary()
         # compute the max width and the required media queries for each chosen breakpoint
         obj.glossary['container_max_widths'] = max_widths = {}
-        obj.glossary['media_queries'] = media = {}
+        obj.glossary['media_queries'] = media_queries = {}
         breakpoints = obj.glossary.get('breakpoints', [])
         last_index = len(breakpoints) - 1
         for index, bp in enumerate(breakpoints):
@@ -105,13 +105,13 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             if last_index > 0:
                 if index == 0:
                     next_bp = breakpoints[1]
-                    media[bp] = ['(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
+                    media_queries[bp] = ['(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
                 elif index == last_index:
-                    media[bp] = ['(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[bp][0])]
+                    media_queries[bp] = ['(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[bp][0])]
                 else:
                     next_bp = breakpoints[index + 1]
-                    media[bp] = ['(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[bp][0]),
-                                 '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
+                    media_queries[bp] = ['(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[bp][0]),
+                                         '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
         return sanitized
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
