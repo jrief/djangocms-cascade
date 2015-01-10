@@ -108,6 +108,15 @@ class LinkForm(ModelForm):
         except KeyError:
             pass
 
+    @classmethod
+    def unset_required_for(cls, sharable_fields):
+        """
+        Fields borrowed by `SharedGlossaryAdmin` to build its temporary change form, only are
+        required if they are declared in `sharable_fields`. Otherwise just deactivate them.
+        """
+        if 'link' not in sharable_fields:
+            cls.base_fields['link_type'].required = False
+
 
 class TextLinkForm(LinkForm):
     """

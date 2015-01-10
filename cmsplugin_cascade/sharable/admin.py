@@ -29,9 +29,10 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         """
-        Creates the form an identifier for the model field. Additionally it adds dynamic fields to
-        edit the content inside the model field `glossary`. The layout and validation for these
-        dynamic fields is borrowed from the corresponding plugin.
+        Creates a temporary form with an identifier and the fields declared as sharables for the
+        corresponding plugin model. Additionally it adds dynamic fields to edit the content inside
+        the model field `glossary`. The layout, validation and media files for these dynamic fields
+        are borrowed from the corresponding plugin.
         """
         self.plugin_instance = plugin_pool.get_plugin(obj.plugin_type)
         sharable_fields = getattr(self.plugin_instance, 'sharable_fields', [])
@@ -41,12 +42,14 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
             kwargs.update(form=self.plugin_instance.form)
         except AttributeError:
             pass
-        form = super(SharedGlossaryAdmin, self).get_form(request, obj, **kwargs)
+        ModelForm = super(SharedGlossaryAdmin, self).get_form(request, obj, **kwargs)
+        if callable(getattr(ModelForm, 'unset_required_for', None)):
+            ModelForm.unset_required_for(sharable_fields)
         # help_text can not be cleared using an empty string in modelform_factory
-        form.base_fields['glossary'].help_text = ''
+        ModelForm.base_fields['glossary'].help_text = ''
         for field in glossary_fields:
-            form.base_fields['glossary'].validators.append(field.run_validators)
-        return form
+            ModelForm.base_fields['glossary'].validators.append(field.run_validators)
+        return ModelForm
 
     def has_add_permission(self, request):
         # always False, since a SharedGlossary can only be added by a plugin
