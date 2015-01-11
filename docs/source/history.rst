@@ -4,6 +4,12 @@
 Release History
 ===============
 
+0.4.1
+-----
+* Fixed: Exception when saving a ContainerPlugin with only one breakpoint.
+* The ``required`` flag on a field for an inherited LinkPlugin is set to False for shared settings.
+* Fixed: Client side code for disabling shared settings did not work.
+
 0.4.0
 -----
 * Renamed ``context`` from model ``CascadeElement`` to ``glossary`. The identifier ``context`` lead
