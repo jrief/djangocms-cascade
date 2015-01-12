@@ -4,7 +4,7 @@ djangocms-cascade
 
 Add DOM elements to a Django-CMS placeholder
 ---------------------------------------------
-**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >3.0.6 to add various HTML elements
+**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.0.8 to add various HTML elements
 from CSS frameworks, such as [Twitter Bootstrap](http://getbootstrap.com/) or the
 [960 Grid System](http://960.gs/) (discontinued) to any CMS
 [placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
