@@ -47,7 +47,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         class Meta:
             proxy = True
 
-        name += b'Model'
+        name += str('Model')
         bases = model_mixins + (base_model,)
         attrs = {'Meta': Meta, '__module__': getattr(base_model, '__module__')}
         model = type(name, bases, attrs)

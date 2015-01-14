@@ -72,7 +72,8 @@ class SharableGlossaryMixin(object):
             widget=SelectSharedGlossary(),
             empty_label=_("Use individual settings"),
             help_text=_("Use settings shared with other plugins of this type"))
-        ExtSharableForm = type(b'ExtSharableForm', (form, SharableCascadeForm), {'shared_glossary': shared_glossary})
+        attrs = {'shared_glossary': shared_glossary}
+        ExtSharableForm = type(str('ExtSharableForm'), (form, SharableCascadeForm), attrs)
         kwargs.update(form=ExtSharableForm)
         return super(SharableGlossaryMixin, self).get_form(request, obj, **kwargs)
 
