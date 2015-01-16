@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
 
 
-for module in getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS'):
+for module in getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', []):
     try:
         # if a module was specified, load all plugins in module settings
         module_settings = import_module('{0}.settings'.format(module))
