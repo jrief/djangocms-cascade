@@ -68,8 +68,8 @@ create a superuser:
 	./manage.py syncdb --migrate --settings=bs3demo.settings
 	./manage runserver --settings=bs3demo.settings
 
-Point a browser onto http://localhost:8000/ and log in as the super user. Here you should be
-able add your first page. To do so, change into into **Structure** mode on the top of the page.
+Point a browser onto http://localhost:8000/ and log in as the super user. Here you should be able
+to add your first page. Do this by changing into into **Structure** mode on the top of the page.
 Now a large dark bar named ``MAIN CONTENT CONTAINER`` appears. This bar symbolizes a **djangoCMS**
 Placeholder.
 

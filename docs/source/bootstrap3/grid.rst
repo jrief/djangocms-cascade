@@ -103,10 +103,10 @@ In the column editor, one can specify the width, the offset and the visibility o
 These values can be set for each of the four breakpoints (*tiny*, *small*, *medium* and *large*),
 as specified by the Container plugin.
 
-At the beginning this may feel rather complicate, but remember that **Bootstrap 3 is mobile first**,
-therefore all column settings, *first* are applied to the narrow breakpoints but can be overridden
-for larger breakpoints at a later stage. This is the reason why the editor starts with the column
-widths and offsets for tiny rather than large displays.
+At the beginning this may feel rather complicate, but consider that **Bootstrap 3 is mobile first**,
+therefore all column settings, *first* are applied to the narrow breakpoints, which *later* can be
+overridden for larger breakpoints at a later stage. This is the reason why this editor starts with
+the *column widths* and *column offsets* for tiny rather than for large displays.
 
 |edit-column|
 
@@ -156,7 +156,7 @@ or
 Here the Django templatetag ``{% placeholder "Row Content" %}`` requires a Row- rather than a
 Container-plugin; and the templatetag ``{% placeholder "Column Content" %}`` requires a
 Column-plugin. Hence we must tell **djangocms-cascade** which breakpoints shall be allowed and what
-the containers extensions shall be. This must be hard-coded using the following setting:
+the containers extensions shall be. This must be hard-coded inside your ``setting.py``:
 
 .. code-block:: python
 
@@ -184,11 +184,12 @@ the containers extensions shall be. This must be hard-coded using the following 
 	}
 
 Please refer to the `DjangoCMS documentation`_ for details about these settings with the exception
-of ``glossary``. This latter setting is special to **djangocms-cascade**: It is a dictionary which
-gives the placeholder the ability to behave like a plugin for the Cascade app. Remember, each
+of the dictionary ``glossary``. This latter setting is special to **djangocms-cascade**: It gives
+the placeholder the ability to behave like a plugin for the Cascade app. Remember, each
 **djangocms-cascade** plugin stores all of its settings inside a Python dictionary which is
-serialized into a single database field. By having a placeholder behaving like a plugin, this
-dictionary must be emulated using the settings variable ``CMS_PLACEHOLDER_CONF``.
+serialized into a single database field. By having a placeholder behaving like a plugin, here this
+so named *glossary* is emulated using an additional entry inside the setting
+``CMS_PLACEHOLDER_CONF``.
 
 .. _DjangoCMS documentation: https://django-cms.readthedocs.org/en/latest/basic_reference/configuration.html#std:setting-CMS_PLACEHOLDER_CONF
 
