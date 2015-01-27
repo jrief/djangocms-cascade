@@ -258,12 +258,16 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     sanitized = True
             else:
                 # remove obsolete entries from own glossary
-                if width_key in obj.glossary:
-                    del obj.glossary[width_key]
-                    sanitized = True
-                if offset_key in obj.glossary:
-                    del obj.glossary[offset_key]
-                    sanitized = True
+                # If no breakpoints are set, the plugin is not inside a BootstrapContainerPlugin,
+                # probably in the clipboard placeholder. Don't delete widths and offsets from the
+                # glossary in this case, as we would otherwise lose this information.
+                if breakpoints:
+                    if width_key in obj.glossary:
+                        del obj.glossary[width_key]
+                        sanitized = True
+                    if offset_key in obj.glossary:
+                        del obj.glossary[offset_key]
+                        sanitized = True
         return sanitized
 
     @classmethod
