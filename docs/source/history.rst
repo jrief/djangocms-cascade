@@ -4,6 +4,11 @@
 Release History
 ===============
 
+0.4.2
+-----
+* Fixed: Allow empty setting for CMSPLUGIN_CASCADE_PLUGINS
+* Fixed: Use str(..) instead of b'' in combination with from __future__ import unicode_literals
+
 0.4.1
 -----
 * Fixed: Exception when saving a ContainerPlugin with only one breakpoint.
