@@ -17,6 +17,12 @@ templates. In most cases, one template with one single placeholder is enough. Th
 can subdivide that placeholder into rows and columns, and add additional elements such as buttons,
 rulers, or even the Bootstrap Carousel.
 
+News
+----
+Starting with version 0.4.3, the templatetag ``bootstrap3_tags`` and the templates to build 
+Boostrap3 styled menus, breadcrumbs and paginator, have been moved into their own repository
+named [djangocms-bootstrap3](https://github.com/jrief/djangocms-bootstrap3).
+
 Features
 --------
 * Use the scaffolding technique from the preferred CSS framework to subdivide a placeholder into a
