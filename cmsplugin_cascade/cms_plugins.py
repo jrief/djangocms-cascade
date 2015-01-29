@@ -13,8 +13,9 @@ for module in getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', []):
         for p in module_plugins:
             try:
                 import_module('{0}.{1}'.format(module, p))
-            except ImportError:
-                raise ImproperlyConfigured("Plugin {0} as specified in {1}.settings.CMSPLUGIN_CASCADE_PLUGINS could not be loaded".format(p, module))
+            except ImportError as err:
+                raise ImproperlyConfigured("Plugin {0} as specified in {1}.settings.CMSPLUGIN_CASCADE_PLUGINS "
+                                           "could not be loaded: {2}".format(p, module, err.message))
     except ImportError:
         try:
             # otherwise try with cms_plugins in the named module
