@@ -35,7 +35,7 @@ if you use Django-1.6
 
 .. code-block:: bash
 
-	./manage.py syncdb --migrate cmsplugin_cascade
+	./manage.py syncdb --migrate
 
 
 Install Bootstrap
