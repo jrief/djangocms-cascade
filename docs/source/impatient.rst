@@ -66,7 +66,7 @@ create a superuser:
 	bower install --require
 	cd examples
 	./manage.py syncdb --migrate --settings=bs3demo.settings
-	./manage runserver --settings=bs3demo.settings
+	./manage.py runserver --settings=bs3demo.settings
 
 Point a browser onto http://localhost:8000/ and log in as the super user. Here you should be able
 to add your first page. Do this by changing into into **Structure** mode on the top of the page.
