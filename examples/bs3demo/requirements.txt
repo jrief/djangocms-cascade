@@ -12,6 +12,7 @@ django-polymorphic
 django-sekizai
 djangocms-admin-style
 djangocms-text-ckeditor
+djangocms-bootstrap3
 easy-thumbnails
 html5lib
 jsonfield
