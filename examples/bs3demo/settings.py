@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'cmsplugin_cascade.extra_fields',
     'cmsplugin_cascade.sharable',
     'cms',
+    'cms_bootstrap3',
     'menus',
     CMS_VERSION >= (3, 1) and 'treebeard' or 'mptt',
     'filer',
