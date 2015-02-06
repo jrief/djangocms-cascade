@@ -37,7 +37,7 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	Unidecode==0.04.16
 	argparse==1.2.1
 	django-classy-tags==0.5.1
-	django-cms==3.0.8
+	django-cms==3.0.9
 	django-filer==0.9.8
 	django-mptt==0.6.1
 	django-polymorphic==0.6
