@@ -37,13 +37,14 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	Unidecode==0.04.16
 	argparse==1.2.1
 	django-classy-tags==0.5.1
-	-e git+https://github.com/divio/django-cms.git@support/3.0.x#egg=django-cms
+	django-cms==3.0.8
 	django-filer==0.9.8
 	django-mptt==0.6.1
 	django-polymorphic==0.6
 	django-sekizai==0.7
 	djangocms-admin-style==0.2.2
 	-e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
+	-e git+https://github.com/jrief/djangocms-bootstrap3.git#egg=djangocms-bootstrap3
 	djangocms-text-ckeditor==2.4.2
 	-e git+https://github.com/jrief/easy-thumbnails.git@fix-issue-353#egg=easy-thumbnails
 	html5lib==0.999
@@ -56,7 +57,7 @@ and install them into your environment:
 
 	pip install -r requirements.txt
 
-this will take a few minutes. After the installation finished, change into the directory containing
+this will take a few minutes. After the installation finished, change into the folder containing
 the demo application, install missing Stylesheets and Javascript files, initialize the database and
 create a superuser:
 
