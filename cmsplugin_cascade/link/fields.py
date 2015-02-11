@@ -7,9 +7,15 @@ else:
     raise ImportError('django_select2 not configured')
 
 
-class PageSearchField(AutoModelSelect2Field):
+class LinkSearchField(AutoModelSelect2Field):
     empty_value = []
-    search_fields = ['title_set__title__icontains', 'title_set__menu_title__icontains', 'title_set__slug__icontains']
+
+    def __init__(self, *args, **kwargs):
+        try:
+            self.search_fields = kwargs.pop('search_fields')
+        except KeyError:
+            pass
+        super(LinkSearchField, self).__init__(*args, **kwargs)
 
     def security_check(self, request, *args, **kwargs):
         user = request.user
@@ -20,4 +26,4 @@ class PageSearchField(AutoModelSelect2Field):
     def prepare_value(self, value):
         if not value:
             return None
-        return super(PageSearchField, self).prepare_value(value)
+        return super(LinkSearchField, self).prepare_value(value)

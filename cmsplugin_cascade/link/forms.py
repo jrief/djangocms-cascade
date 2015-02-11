@@ -9,9 +9,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from cms.models import Page
 try:
-    from .fields import PageSearchField as PageSelectFormField
+    from .fields import LinkSearchField as LinkSelectFormField
+
+    class PageSelectFormField(LinkSelectFormField):
+        search_fields = ['title_set__title__icontains', 'title_set__menu_title__icontains', 'title_set__slug__icontains']
 except ImportError:
-    from cms.forms.fields import PageSelectFormField
+    from cms.forms.fields import LinkSelectFormField
 
 
 class LinkForm(ModelForm):
