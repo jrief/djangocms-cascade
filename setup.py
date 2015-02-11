@@ -36,5 +36,5 @@ setup(
     classifiers=CLASSIFIERS,
     long_description=read('README.md'),
     include_package_data=True,
-    zip_safe=False
+    zip_safe=False,
 )
