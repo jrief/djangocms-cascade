@@ -11,12 +11,16 @@ from cmsplugin_cascade.utils import resolve_dependencies
 
 
 class LinkPluginBase(CascadePluginBase):
+    text_enabled = True
+    allow_children = False
+    parent_classes = None
+    require_parent = False
     glossary_fields = (
         PartialFormField('target',
             widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
                          ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
             initial='',
-            label=_('Link Target'),
+            label=_("Link Target"),
             help_text=_("Open Link in other target.")
         ),
     )
@@ -25,7 +29,7 @@ class LinkPluginBase(CascadePluginBase):
     glossary_field_map = {'link': ('link_type', 'cms_page', 'ext_url', 'mail_to',)}
 
     class Media:
-        js = resolve_dependencies('cascade/js/admin/linkplugin.js')
+        js = resolve_dependencies('cascade/js/admin/linkpluginbase.js')
 
     @classmethod
     def get_link(cls, obj):
