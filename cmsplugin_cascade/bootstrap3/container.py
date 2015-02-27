@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import string
 import itertools
 from django.forms import widgets
 from django.core.exceptions import ValidationError
@@ -272,7 +271,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         glossary = obj.get_complete_glossary()
         widths = []
         for bp in glossary.get('breakpoints', []):
-            width = string.replace(obj.glossary.get('{0}-column-width'.format(bp), ''), 'col-{0}-'.format(bp), '')
+            width = str.replace(obj.glossary.get('{0}-column-width'.format(bp), ''), 'col-{0}-'.format(bp), '')
             if width:
                 widths.append(width)
         if len(widths) > 1:
