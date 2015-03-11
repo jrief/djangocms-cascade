@@ -61,6 +61,10 @@ def _plugins_for_site():
 
 
 class PluginExtraFields(models.Model):
+    """
+    Store a set of allowed extra CSS classes and inline styles to be used for Cascade plugins
+    inheriting from `ExtraFieldsMixin`. Also store if individual ``id=""`` tags are allowed.
+    """
     class Meta:
         app_label = 'cmsplugin_cascade'
         verbose_name = verbose_name_plural = _("Custom CSS classes and styles")
