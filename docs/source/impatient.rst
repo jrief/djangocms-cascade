@@ -30,26 +30,27 @@ Create a temporary file, for instance named requirements.txt, containing these e
 
 .. code-block:: guess
 
-	Django==1.6.8
+	Django==1.6.10
 	Django-Select2==4.2.2
-	Pillow==2.6.1
-	South==1.0.1
-	Unidecode==0.04.16
-	argparse==1.2.1
-	django-classy-tags==0.5.1
-	django-cms==3.0.9
-	django-filer==0.9.8
+	Pillow==2.7.0
+	South==1.0.2
+	Unidecode==0.04.17
+	argparse==1.3.0
+	django-classy-tags==0.6.1
+	django-cms==3.0.10
+	django-filer==0.9.9
 	django-mptt==0.6.1
-	django-polymorphic==0.6
-	django-sekizai==0.7
-	djangocms-admin-style==0.2.2
-	-e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
-	-e git+https://github.com/jrief/djangocms-bootstrap3.git#egg=djangocms-bootstrap3
-	djangocms-text-ckeditor==2.4.2
-	-e git+https://github.com/jrief/easy-thumbnails.git@fix-issue-353#egg=easy-thumbnails
+	django-polymorphic==0.6.1
+	django-sekizai==0.8.1
+	djangocms-admin-style==0.2.5
+	-e git+https://github.com/jrief/djangocms-bootstrap3.git@a23f8c726b4a4fdb3ef600fe85426cb03ab6a27b#egg=djangocms_bootstrap3-master
+	-e git+https://github.com/jrief/djangocms-cascade.git@78422d1410e441e7f724343598eafc6c59cfc607#egg=djangocms_cascade-master
+	djangocms-text-ckeditor==2.4.3
+	-e git+https://github.com/SmileyChris/easy-thumbnails@714aa5f36894797ca6c980c9bc8cfa52a46156c1#egg=easy_thumbnails-master
 	html5lib==0.999
-	jsonfield==1.0.0
-	six==1.8.0
+	jsonfield==1.0.2
+	six==1.9.0
+	wsgiref==0.1.2
 
 and install them into your environment:
 
@@ -58,7 +59,7 @@ and install them into your environment:
 	pip install -r requirements.txt
 
 this will take a few minutes. After the installation finished, change into the folder containing
-the demo application, install missing Stylesheets and Javascript files, initialize the database and
+the demo application, install missing CSS and JavaScript files, initialize the database and
 create a superuser:
 
 .. code-block:: bash
