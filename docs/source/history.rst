@@ -4,6 +4,15 @@
 Release History
 ===============
 
+0.4.3
+-----
+* The templatetag ``bootstrap3_tags`` and the templates to build Boostrap3 styled menus,
+  breadcrumbs and paginator, have been moved into their own repository
+  at https://github.com/jrief/djangocms-bootstrap3.
+* _`Column ordering` using ``col-xx-push-n`` and ``col-xx-pull-n`` has been added.
+
+.. _Column ordering: http://getbootstrap.com/css/#grid-column-ordering
+
 0.4.2
 -----
 * Fixed: Allow empty setting for CMSPLUGIN_CASCADE_PLUGINS
