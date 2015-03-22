@@ -87,14 +87,7 @@ class BootstrapButtonPlugin(LinkPluginBase):
             initial='',
             help_text=_("Float the button to the left or right.")
         ),
-    ) + LinkPluginBase.glossary_fields + (
-        PartialFormField('inline_styles',
-            MultipleCascadingSizeWidget(['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
-                allowed_units=['px', 'em'], required=False),
-            label=_('Margins'),
-            help_text=_('Margins for this button wrapper.')
-        ),
-    )
+    ) + LinkPluginBase.glossary_fields
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
@@ -108,6 +101,6 @@ class BootstrapButtonPlugin(LinkPluginBase):
                 content = force_text(ButtonTypeRenderer.BUTTON_TYPES[obj.glossary['button-type']])
             except KeyError:
                 content = _("Empty")
-        return format_html('{0}{1}', identifier, content)
+        return format_html('{}{}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
