@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
@@ -26,5 +27,9 @@ class TextLinkPlugin(LinkPluginBase):
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/linkplugin.js')
+
+    @classmethod
+    def get_identifier(cls, obj):
+        return mark_safe(obj.glossary.get('link_content', ''))
 
 plugin_pool.register_plugin(TextLinkPlugin)

@@ -71,4 +71,4 @@ class LinkElementMixin(object):
 
     @property
     def content(self):
-        return self.glossary.get('link_content', '')
+        return self.plugin_class.get_identifier(self)
