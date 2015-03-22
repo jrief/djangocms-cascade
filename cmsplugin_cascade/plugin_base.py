@@ -135,9 +135,11 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         This method is called, before the model is written to the database. It can be overloaded
         to sanitize the current models, in case a parent model changed in a way, which might
         affect this plugin.
-        This method shall return ``True``, in case a model change was necessary, otherwise it shall
-        return ``False`` to prevent a useless database update.
+        This method shall return `True`, in case a model change was necessary, otherwise it shall
+        return `False` to prevent a useless database update.
         """
+        if obj.glossary is None:
+            obj.glossary = {}
         return False
 
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
