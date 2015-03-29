@@ -10,6 +10,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.link.forms import TextLinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.utils import resolve_dependencies
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):
@@ -90,6 +91,7 @@ class BootstrapButtonPlugin(LinkPluginBase):
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
+        js = resolve_dependencies('cascade/js/admin/linkplugin.js')
 
     @classmethod
     def get_identifier(cls, obj):
