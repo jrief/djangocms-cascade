@@ -19,12 +19,11 @@ rulers, or even the Bootstrap Carousel.
 
 News
 ----
+Removed hard coded input fields for styling margins from **BootstrapButtonPlugin**, since
+it is possible to add them through the **Extra Fields** dialog box.
+
 [Column ordering](http://getbootstrap.com/css/#grid-column-ordering) using ``col-xx-push-n``
 and ``col-xx-pull-n`` has been added.
-
-Starting with version 0.4.3, the templatetag ``bootstrap3_tags`` and the templates to build 
-Boostrap3 styled menus, breadcrumbs and paginator, have been moved into their own repository
-named [djangocms-bootstrap3](https://github.com/jrief/djangocms-bootstrap3).
 
 Features
 --------

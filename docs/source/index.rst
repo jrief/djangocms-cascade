@@ -41,7 +41,7 @@ Contents:
   sharable-fields
   customize-styles
   customized-plugins
-  history
+  changelog
 
 Indices and tables
 ==================

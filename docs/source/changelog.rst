@@ -1,15 +1,26 @@
-.. _release_history:
+.. _changelog:
 
 ===============
 Release History
 ===============
+
+0.4.4
+-----
+* Removed hard coded input fields for styling margins from **BootstrapButtonPlugin**, since
+  it is possible to add them through the **Extra Fields** dialog box.
+* [Column ordering](http://getbootstrap.com/css/#grid-column-ordering) using ``col-xx-push-n``
+  and ``col-xx-pull-n`` has been added.
+* Fixed: Media file ``linkplugin.js`` was missing for **BootstrapButtonPlugin**.
+* Hard coded configuration option ``EXTRA_INLINE_STYLES`` can now be overridden by the projects
+  settings
+
 
 0.4.3
 -----
 * The templatetag ``bootstrap3_tags`` and the templates to build Boostrap3 styled menus,
   breadcrumbs and paginator, have been moved into their own repository
   at https://github.com/jrief/djangocms-bootstrap3.
-* _`Column ordering` using ``col-xx-push-n`` and ``col-xx-pull-n`` has been added.
+* `Column ordering`_ using ``col-xx-push-n`` and ``col-xx-pull-n`` has been added.
 
 .. _Column ordering: http://getbootstrap.com/css/#grid-column-ordering
 
