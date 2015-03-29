@@ -76,4 +76,4 @@ License
 -------
 Released under the terms of MIT License.
 
-Copyright &copy; 2014, Jacob Rief <jacob.rief@gmail.com>
+Copyright &copy; 2015, Jacob Rief <jacob.rief@gmail.com>
