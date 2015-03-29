@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.forms import TextLinkForm
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
 

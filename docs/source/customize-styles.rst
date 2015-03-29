@@ -15,7 +15,7 @@ plugins, enabled for this feature. Moreover, this feature can be adopted individ
 base.
 
 
-Configure a Cascade Plugins to accept extra fields
+Configure a Cascade plugins to accept extra fields
 ==================================================
 
 Configuring a plugin to allow an HTML id tag, an extra CSS classes or some inline styles is very
@@ -27,15 +27,43 @@ these plugins for extendibility:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = ['BootstrapRowPlugin', 'SimpleWrapperPlugin', 'HorizontalRulePlugin']
+	CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = (
+	    'BootstrapButtonPlugin',
+	    'BootstrapRowPlugin',
+	    'SimpleWrapperPlugin',
+	    'HorizontalRulePlugin',
+	)
+
+If at least one plugin has been added to this settings variable, the Django administration backend
+offers an additional view:
+
+*Home › Cmsplugin_cascade › Custom CSS classes and styles › Add Custom CSS classes styles*
+
+Here the site administrator can specify, which extra CSS classes, ID tags and extra inline styles
+may be used by a concrete plugin.
+
+
+Configure the kind of extra inline styles a Cascade plugin may accept
+=====================================================================
+
+By default, **djangocms-cascade** specifies a sensible set of CSS styles, which can be added to
+the Cascade plugins, if enabled. This set however might not be enough for your installation and
+therefore can be extended by the settings variable ``CMSPLUGIN_CASCADE_EXTRA_INLINE_STYLES``
+containing an ``OrderedDict``. The key element is an arbitrary name. The value element is a 2-tuple
+whose first element is a list of CSS inline styles. The second element of this tuple specifies
+the widget to be used to render the input fields.
+
+Please check the default in ``cmsplugin_cascade/settings.py`` on how to set this list of extra
+inline styles.
 
 
 Enable extra fields
 ===================
 
 To enable this feature, in the administration backend navigate to
-**Home › Cmsplugin_cascade › Custom CSS classes and styles**  and click onto the
-**Add Custom CSS classes styles** button.
+
+*Home › Cmsplugin_cascade › Custom CSS classes and styles*  and click onto the button named
+**Add Custom CSS classes styles**.
 
 From the field named “Plugin Name”, for instance select **Bootstrap Simple Wrapper**. Then, from the
 field named “Site”, select the current site.

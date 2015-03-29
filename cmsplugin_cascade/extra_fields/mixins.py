@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
-try:
     from django.contrib.sites.shortcuts import get_current_site
 except ImportError:
     from django.contrib.sites.models import get_current_site
@@ -14,8 +10,9 @@ from django.utils import six
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.utils.compat.dj import python_2_unicode_compatible
+from cmsplugin_cascade.settings import CASCADE_EXTRA_INLINE_STYLES
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
+from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 
 
 @python_2_unicode_compatible
@@ -24,14 +21,6 @@ class ExtraFieldsMixin(object):
     This mixin class shall be added to plugins which shall offer extra fields for customizes
     CSS classes and styles.
     """
-    EXTRA_INLINE_STYLES = OrderedDict((
-        ('Margins', (('margin-top', 'margin-right', 'margin-bottom', 'margin-left',), MultipleCascadingSizeWidget)),
-        ('Paddings', (('padding-top', 'padding-right', 'padding-bottom', 'padding-left',), MultipleCascadingSizeWidget)),
-        ('Widths', (('min-width', 'width', 'max-width',), MultipleCascadingSizeWidget)),
-        ('Heights', (('min-height', 'height', 'max-height',), MultipleCascadingSizeWidget)),
-        ('Colors', (('color', 'background-color',), ColorPickerWidget)),
-        ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
-    ))
 
     def __str__(self):
         return self.plugin_class.get_identifier(self)
@@ -68,7 +57,7 @@ class ExtraFieldsMixin(object):
                 ))
 
             # add input fields to let the user enter styling information
-            for style, choices_tuples in self.EXTRA_INLINE_STYLES.items():
+            for style, choices_tuples in CASCADE_EXTRA_INLINE_STYLES.items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
                 if not inline_styles:
                     continue
