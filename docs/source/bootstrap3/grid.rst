@@ -169,6 +169,13 @@ the containers extensions shall be. This must be hard-coded inside your ``settin
 	        'glossary': {
 	            'breakpoints': ['xs', 'sm', 'md', 'lg'],
 	            'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
+	            'fluid': False,
+	            'media_queries': {
+	                'xs': ['(max-width: 768px)'],
+	                'sm': ['(min-width: 768px)', '(max-width: 992px)'],
+	                'md': ['(min-width: 992px)', '(max-width: 1200px)'],
+	                'lg': ['(min-width: 1200px)'],
+	            },
 	        }
 	    },
 	    # or, for a column-like placeholder configuration ...
@@ -179,6 +186,13 @@ the containers extensions shall be. This must be hard-coded inside your ``settin
 	        'glossary': {
 	            'breakpoints': ['xs', 'sm', 'md', 'lg'],
 	            'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
+	            'fluid': False,
+	            'media_queries': {
+	                'xs': ['(max-width: 768px)'],
+	                'sm': ['(min-width: 768px)', '(max-width: 992px)'],
+	                'md': ['(min-width: 992px)', '(max-width: 1200px)'],
+	                'lg': ['(min-width: 1200px)'],
+	            },
 	        }
 	    },
 	}
@@ -189,7 +203,10 @@ the placeholder the ability to behave like a plugin for the Cascade app. Remembe
 **djangocms-cascade** plugin stores all of its settings inside a Python dictionary which is
 serialized into a single database field. By having a placeholder behaving like a plugin, here this
 so named *glossary* is emulated using an additional entry inside the setting
-``CMS_PLACEHOLDER_CONF``.
+``CMS_PLACEHOLDER_CONF``, and it should:
+
+- include all the settings a child plugin would expect from a real container plugin
+- reflect how hard coded container was defined (e.g. whether it is fluid or not)
 
 .. _DjangoCMS documentation: https://django-cms.readthedocs.org/en/latest/basic_reference/configuration.html#std:setting-CMS_PLACEHOLDER_CONF
 
