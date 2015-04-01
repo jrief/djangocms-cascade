@@ -46,9 +46,9 @@ Features
 In addition to easily implement any kind of plugin, **DjangoCMS-Cascade** makes it possible to add
 reusable helpers. Such a helper enriches a plugin with an additional, configurable functionality:
 
-* By making some of the plugin fields sharable, one can reuse these values for other plugins. This for
-  instance is handy for the image and picture plugin, so that images always are resized to predefined
-  values.
+* By making some of the plugin fields sharable, one can reuse these values for other plugins of the
+  same kind. This for instance is handy for the image and picture plugin, so that images always are
+  resized to predefined values.
 * By allowing extra fields, one can add an optional ``id`` tag, CSS classes and inline styles. This
   is configurable on a plugin and site base.
 
@@ -68,12 +68,14 @@ DjangoCMS TextPlugin, so that text elements could be shifted horizontally using 
 DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins. This feature made
 it possible to implement this kind of plugin.
 
-In **DjangoCMS-Cascade** version 0.4.0, the code base has been hugely refactored. If you where using
-version 0.3.2 upgrade carefully, since the API changed. Please contact me directly in case you
+In **DjangoCMS-Cascade** since version 0.4, the code base has been hugely refactored. If you where
+using version 0.3.2 upgrade carefully, since the API changed. Please contact me directly in case you
 need help to migrate your projects.
+
 
 License
 -------
+
 Released under the terms of MIT License.
 
-Copyright &copy; 2014, Jacob Rief <jacob.rief@gmail.com>
+Copyright &copy; 2015, Jacob Rief <jacob.rief@gmail.com>
