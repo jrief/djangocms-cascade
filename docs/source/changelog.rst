@@ -4,6 +4,14 @@
 Release History
 ===============
 
+0.4.5
+-----
+* Fixed: If no breakpoints are set, don't delete widths and offsets from the glossary, as otherwise
+  this information is lost.
+* Fixed broken import for ``PageSelectFormField`` when not using **django_select2**.
+* Admin form for ``PluginExtraFields`` now is created on the fly. This fixes a rare circular
+  dependency issue, when accessing ``plugin_pool.get_all_plugins()``.
+
 0.4.4
 -----
 * Removed hard coded input fields for styling margins from **BootstrapButtonPlugin**, since
