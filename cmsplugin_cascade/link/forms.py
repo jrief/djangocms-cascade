@@ -14,7 +14,7 @@ try:
     class PageSelectFormField(LinkSelectFormField):
         search_fields = ['title_set__title__icontains', 'title_set__menu_title__icontains', 'title_set__slug__icontains']
 except ImportError:
-    from cms.forms.fields import LinkSelectFormField
+    from cms.forms.fields import PageSelectFormField
 
 
 class LinkForm(ModelForm):
