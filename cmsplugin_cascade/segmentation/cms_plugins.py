@@ -39,13 +39,7 @@ class SegmentPlugin(CascadePluginBase):
         ),
     )
     html_parser = HTMLParser()
-    template_template = """
-{{% load cms_tags %}}
-{{% {open_tag} {condition} %}}
-    {{% for plugin in instance.child_plugin_instances %}}
-        {{% render_plugin plugin %}}
-    {{% endfor %}}
-{{% {close_tag} %}}"""
+    eval_template = "{{% if {} %}}True{{% endif %}}"
     default_template = "{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}"
 
     class Media:
@@ -59,46 +53,37 @@ class SegmentPlugin(CascadePluginBase):
             return ''
 
     def get_render_template(self, context, instance, placeholder):
-        try:
-            fmt_args = {
-                'open_tag': instance.glossary['open_tag'],
-                'condition': self.html_parser.unescape(instance.glossary['condition']),
-                'close_tag': 'endif'
-            }
-            template = Template(self.template_template.format(**fmt_args))
-        except (KeyError, TemplateSyntaxError):
-            template = Template(self.default_template)
-        return template
+        def conditionally_eval():
+            condition = self.html_parser.unescape(instance.glossary['condition'])
+            if Template(self.eval_template.format(condition)).render(context) == 'True':
+                context['request']._evaluated_instances[instance.id] = True
+                return Template(self.default_template)
+            else:
+                context['request']._evaluated_instances[instance.id] = False
+                return Template('')
 
-    def get_combined_condition_instances(self, instance):
-        """
-        From a given SegmentPluginModel instance with `open_tag == "if"`, search all other
-        instances belonging together, ie. those with instance with `open_tag == "elif"` and
-        `open_tag == "else"`
-        """
-        condition_instances = []
-        if instance.parent:
-            parent_obj, _ = instance.parent.get_plugin_instance()
-            for child in parent_obj.get_children_instances():
-                open_tag = child.glossary.get('open_tag')
-                if child.id == instance.id and open_tag == 'if':
-                    # first search myself, it must be an `if` condition
-                    condition_instances.append(child)
-                elif condition_instances:
-                    # only append to condition_instances, if instance belongs to the same block
-                    if open_tag == 'elif':
-                        condition_instances.append(child)
-                    elif open_tag == 'else':
-                        condition_instances.append(child)
-                        break
-                    else:
-                        break
-        return condition_instances
+        open_tag = instance.glossary.get('open_tag')
+        if open_tag == 'if':
+            return conditionally_eval()
+        elif open_tag in ('elif', 'else'):
+            prev_inst, _ = self.get_previous_instance(instance)
+            if context['request']._evaluated_instances.get(prev_inst.id):
+                context['request']._evaluated_instances[instance.id] = True
+                return Template('')
+            if open_tag == 'elif':
+                return conditionally_eval()
+        return Template(self.default_template)
+
+    def render(self, context, instance, placeholder):
+        if not hasattr(context['request'], '_evaluated_instances'):
+            context['request']._evaluated_instances = {}
+        return super(SegmentPlugin, self).render(context, instance, placeholder)
 
     def get_form(self, request, obj=None, **kwargs):
         # adopt select open_tag to `if`, `elif` and `else` or `if` only
-        previous_sibling = obj.get_previous_sibling()
-        if previous_sibling and previous_sibling.glossary.get('open_tag') in ('if', 'elif'):
+        prev_inst, prev_model = self.get_previous_instance(obj)
+        if issubclass(prev_model.__class__, self.__class__) and \
+                (prev_inst is None or prev_inst.glossary.get('open_tag') != 'else'):
             choices = (('if', _("if")), ('elif', _("elif")), ('else', _("else")),)
         else:
             choices = (('if', _("if")),)
@@ -108,5 +93,10 @@ class SegmentPlugin(CascadePluginBase):
             condition = self.html_parser.unescape(obj.glossary.get('condition', ''))
             obj.glossary.update(condition=condition)
         return super(SegmentPlugin, self).get_form(request, obj, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        if obj.glossary.get('open_tag') == 'else':
+            obj.glossary.update(condition='')
+        super(SegmentPlugin, self).save_model(request, obj, form, change)
 
 plugin_pool.register_plugin(SegmentPlugin)
