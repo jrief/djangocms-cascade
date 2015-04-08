@@ -11,6 +11,7 @@ from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWi
 CASCADE_PLUGIN_DEPENDENCIES = {
     'cascade/js/ring.js': 'cascade/js/underscore.js',
     'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
+    'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
     'cascade/js/admin/linkpluginbase.js': ('cascade/js/admin/sharableglossary.js',),
     'cascade/js/admin/linkplugin.js': ('cascade/js/admin/linkpluginbase.js',),
     'cascade/js/admin/imageplugin.js': ('cascade/js/admin/linkpluginbase.js',),

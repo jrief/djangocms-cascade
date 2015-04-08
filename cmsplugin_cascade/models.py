@@ -67,3 +67,10 @@ class PluginExtraFields(models.Model):
         app_label = 'cmsplugin_cascade'
         verbose_name = verbose_name_plural = _("Custom CSS classes and styles")
         unique_together = ('plugin_type', 'site')
+
+
+class Segmentation(models.Model):
+    class Meta:
+        app_label = 'cmsplugin_cascade'
+        verbose_name = verbose_name_plural = _("Segmentation")
+        managed = False  # its a dummy model
