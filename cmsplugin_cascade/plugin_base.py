@@ -189,6 +189,38 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
             except ObjectDoesNotExist:
                 pass
 
+    def get_previous_instance(self, obj):
+        """
+        Return the previous instance pair for the current node.
+        This differs from get_previous_sibling() which returns an instance of the same kind.
+        """
+        try:
+            if obj:
+                previnst = obj.parent.get_children().get(position=obj.position - 1)
+                return previnst.get_plugin_instance()
+            #else:
+            #    previnst = self.parent.get_children().order_by('position').last()
+            #    return previnst and previnst.get_plugin_instance()
+        except ObjectDoesNotExist:
+            pass
+        return None, None
+
+    def get_next_instance(self, obj):
+        """
+        Return the next instance pair for the current node.
+        This differs from get_previous_sibling() which returns an instance of the same kind.
+        """
+        try:
+            if obj:
+                nextinst = obj.parent.get_children().get(position=obj.position + 1)
+                return nextinst.get_plugin_instance()
+            #else:
+            #    nextinst = self.parent.get_children().order_by('position').first()
+            #    return nextinst and nextinst.get_plugin_instance()
+        except ObjectDoesNotExist:
+            pass
+        return None, None
+
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         bases = self.get_ring_bases()
         context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
