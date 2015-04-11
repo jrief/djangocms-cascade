@@ -206,12 +206,9 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         This differs from get_previous_sibling() which returns an instance of the same kind.
         """
         try:
-            if obj:
+            if obj and obj.parent:
                 previnst = obj.parent.get_children().get(position=obj.position - 1)
                 return previnst.get_plugin_instance()
-            #else:
-            #    previnst = self.parent.get_children().order_by('position').last()
-            #    return previnst and previnst.get_plugin_instance()
         except ObjectDoesNotExist:
             pass
         return None, None
@@ -222,12 +219,9 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         This differs from get_previous_sibling() which returns an instance of the same kind.
         """
         try:
-            if obj:
+            if obj and obj.parent:
                 nextinst = obj.parent.get_children().get(position=obj.position + 1)
                 return nextinst.get_plugin_instance()
-            #else:
-            #    nextinst = self.parent.get_children().order_by('position').first()
-            #    return nextinst and nextinst.get_plugin_instance()
         except ObjectDoesNotExist:
             pass
         return None, None
