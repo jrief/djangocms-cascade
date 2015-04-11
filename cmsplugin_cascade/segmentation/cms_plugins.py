@@ -4,6 +4,7 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
+from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -90,6 +91,16 @@ class SegmentPlugin(CascadePluginBase):
         return super(SegmentPlugin, self).render(context, instance, placeholder)
 
     def get_form(self, request, obj=None, **kwargs):
+        def clean_condition(value):
+            """
+            Compile condition using the Django template system to find potential syntax errors
+            """
+            try:
+                condition = self.html_parser.unescape(value)
+                Template(self.eval_template.format(condition))
+            except TemplateSyntaxError as err:
+                raise ValidationError(_("Unable to evaluate condition: {err}").format(err=err.message))
+
         # adopt select open_tag to `if`, `elif` and `else` or `if` only
         prev_inst, prev_model = self.get_previous_instance(obj)
         if issubclass(prev_model.__class__, self.__class__) and \
@@ -98,6 +109,7 @@ class SegmentPlugin(CascadePluginBase):
         else:
             choices = (('if', _("if")),)
         self.glossary_fields[0].widget.choices = choices
+        self.glossary_fields[1].widget.validate = clean_condition
         # remove escape quotes, added by JSON serializer
         if obj:
             condition = self.html_parser.unescape(obj.glossary.get('condition', ''))
