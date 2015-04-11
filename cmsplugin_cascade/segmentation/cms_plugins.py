@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import copy
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
@@ -8,10 +7,9 @@ except ImportError:
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from django.utils.html import format_html
 from django.template import Template, TemplateSyntaxError
-from django.template.loader import select_template
 from cms.plugin_pool import plugin_pool
+from cms.utils.placeholder import get_placeholder_conf
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import resolve_dependencies
@@ -22,10 +20,10 @@ class SegmentPlugin(CascadePluginBase):
     This button is used as a final step to convert the Cart object into an Order object.
     """
     name = _("Segment")
-    require_parent = True
-    parent_classes = ('BootstrapColumnPlugin',)
+    require_parent = False
+    parent_classes = None
     allow_children = True
-    generic_child_classes = ('TextPlugin',)
+    child_classes = None
     glossary_fields = (
         PartialFormField('open_tag',
             widgets.Select(choices=()),
@@ -51,6 +49,18 @@ class SegmentPlugin(CascadePluginBase):
             return mark_safe("<strong><em>{open_tag}</em></strong> {condition}".format(**obj.glossary))
         except KeyError:
             return ''
+
+    def get_child_classes(self, slot, page):
+        if self.cms_plugin_instance:
+            if self.cms_plugin_instance.parent:
+                plugin_class = self.cms_plugin_instance.parent.get_plugin_class()
+                child_classes = plugin_class().get_child_classes(slot, page)
+            else:  # SegmentPlugin is at the root level
+                template = page and page.get_template() or None
+                child_classes = get_placeholder_conf('plugins', slot, template, default=[])
+        else:
+            child_classes = super(SegmentPlugin, self).get_child_classes(slot, page)
+        return child_classes
 
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
@@ -95,6 +105,7 @@ class SegmentPlugin(CascadePluginBase):
         return super(SegmentPlugin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
+        # compile condition for testing purpose
         if obj.glossary.get('open_tag') == 'else':
             obj.glossary.update(condition='')
         super(SegmentPlugin, self).save_model(request, obj, form, change)

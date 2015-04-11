@@ -7,6 +7,8 @@ except ImportError:
 from django.conf import settings
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
+CASCADE_DEFAULT_PARENT_CLASSES = () + \
+    ('SegmentPlugin',) if 'cmsplugin_cascade.segmentation' in settings.INSTALLED_APPS else ()
 
 CASCADE_PLUGIN_DEPENDENCIES = {
     'cascade/js/ring.js': 'cascade/js/underscore.js',

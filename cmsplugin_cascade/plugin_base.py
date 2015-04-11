@@ -6,6 +6,7 @@ from django.utils import six
 from django.utils.safestring import SafeText
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
+from cms.utils.placeholder import get_placeholder_conf
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .sharable.forms import SharableGlossaryMixin
@@ -64,25 +65,35 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
     class Media:
         css = {'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)}
 
-    def _child_classes(self):
-        """All registered plugins shall be allowed as children for this plugin"""
-        if getattr(self, '_cached_child_classes', None) is not None:
-            return self._cached_child_classes
-        self._cached_child_classes = list(getattr(self, 'generic_child_classes', [])) or []
-        for p in plugin_pool.get_all_plugins():
-            if (isinstance(p.parent_classes, (list, tuple))
-              and self.__class__.__name__ in p.parent_classes
-              and p.__name__ not in self._cached_child_classes):
-                self._cached_child_classes.append(p.__name__)
-        return self._cached_child_classes
-    child_classes = property(_child_classes)
-
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
         super(CascadePluginBase, self).__init__(model, admin_site)
         if isinstance(glossary_fields, (list, tuple)):
             self.glossary_fields = list(glossary_fields)
         elif not hasattr(self, 'glossary_fields'):
             self.glossary_fields = []
+
+    def get_parent_classes(self, slot, page):
+        template = page and page.get_template() or None
+        ph_conf = get_placeholder_conf('parent_classes', slot, template, default={})
+        parent_classes = ph_conf.get(self.__class__.__name__, self.parent_classes)
+        if parent_classes and isinstance(parent_classes, (list, tuple)):
+            parent_classes = tuple(parent_classes) + tuple(settings.CASCADE_DEFAULT_PARENT_CLASSES)
+        return parent_classes
+
+    def get_child_classes(self, slot, page):
+        template = page and page.get_template() or None
+        ph_conf = get_placeholder_conf('child_classes', slot, template, default={})
+        child_classes = ph_conf.get(self.__class__.__name__, self.child_classes)
+        if not child_classes:
+            # the use `parent_classes` from other plugins to determine the allowed child classes
+            child_classes = set()
+            for p in plugin_pool.get_all_plugins():
+                if isinstance(p.parent_classes, (list, tuple)) \
+                        and self.__class__.__name__ in p.parent_classes \
+                        or p.parent_classes is None and issubclass(p, CascadePluginBase):
+                    child_classes.add(p.__name__)
+            self.child_classes = tuple(child_classes)
+        return self.child_classes
 
     @classmethod
     def get_identifier(cls, model):
