@@ -34,7 +34,7 @@ class SegmentPlugin(CascadePluginBase):
         PartialFormField('condition',
             widgets.Input(),
             label=_('Condition evaluation'),
-            help_text=_("Evaluation as used in Django's condition tags")
+            help_text=_("Evaluation as used in Django's template tags for conditions")
         ),
     )
     html_parser = HTMLParser()

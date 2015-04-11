@@ -2,7 +2,7 @@
 django.jQuery(function($) {
 	'use strict';
 	var $id_open_tag = $("#id_glossary_open_tag");
-	var $id_glossary_condition = $("#id_glossary_condition").parents('.glossary-widget');
+	var $glossary_condition = $("#id_glossary_condition").parents('.glossary-widget');
 	var SegmentPlugin, base_plugins = eval(django.cascade.base_plugins);
 
 	// create class handling the client-side part of SegmentPlugin
@@ -16,13 +16,17 @@ django.jQuery(function($) {
 				self.selectOpenTag(evt.target.value);
 			});
 			this.selectOpenTag($id_open_tag.val());
+
+			// make the condition field as large as possible
+			$("#id_glossary_condition").parents('.glossary-field').css({'width': '100%'});
+			$("#id_glossary_condition").css({'width': '100%', 'padding-right': '0'});
 		},
 		selectOpenTag: function(val) {
 			if (val == 'if' || val == 'elif') {
-				$id_glossary_condition.show();
+				$glossary_condition.show();
 			} else {
 				// `else` does not require a condition 
-				$id_glossary_condition.hide();
+				$glossary_condition.hide();
 			}
 		}
 	});
