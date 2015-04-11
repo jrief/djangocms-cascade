@@ -130,7 +130,7 @@ class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
 class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
-    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
+    parent_classes = ('BootstrapContainerPlugin', 'BootstrapColumnPlugin',)
     form = BootstrapRowForm
     fields = ('num_children', 'glossary',)
 
@@ -157,7 +157,7 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
-    parent_classes = ['BootstrapRowPlugin']
+    parent_classes = ('BootstrapRowPlugin',)
     generic_child_classes = CASCADE_LEAF_PLUGINS
     default_css_attributes = list(itertools.chain(*(('{}-column-width'.format(s),
         '{}-column-offset'.format(s), '{}-column-ordering'.format(s), '{}-responsive-utils'.format(s),)

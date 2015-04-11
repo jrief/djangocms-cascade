@@ -13,7 +13,7 @@ from cmsplugin_cascade.utils import resolve_dependencies
 class LinkPluginBase(CascadePluginBase):
     text_enabled = True
     allow_children = False
-    parent_classes = None
+    parent_classes = []
     require_parent = False
     glossary_fields = (
         PartialFormField('target',

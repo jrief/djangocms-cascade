@@ -54,7 +54,7 @@ class BootstrapButtonPlugin(LinkPluginBase):
     name = _("Button")
     form = TextLinkForm
     model_mixins = (LinkElementMixin,)
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ('BootstrapColumnPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
     text_enabled = True
