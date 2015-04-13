@@ -3,11 +3,10 @@ from __future__ import unicode_literals
 from types import MethodType
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.core.urlresolvers import reverse
 from django.conf.urls import url
-from django.forms.models import BaseModelFormSet, modelformset_factory
-from django.template import RequestContext
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
-from django.shortcuts import render_to_response
 from django.utils.translation import ugettext_lazy as _, ungettext
 from django.utils.encoding import force_text
 from django.utils.html import format_html
@@ -15,6 +14,9 @@ from cmsplugin_cascade.models import Segmentation
 
 
 class SegmentationAdmin(admin.ModelAdmin):
+    class Media:
+        js = ('cascade/js/admin/segmentation.js',)
+
     def has_add_permission(self, request):
         # always False, since we don't have a model
         return False
@@ -26,6 +28,8 @@ class SegmentationAdmin(admin.ModelAdmin):
     def get_urls(self):
         return [
             url(r'^emulate_users/$', self.admin_site.admin_view(self.emulate_users), name='emulate-users'),
+            url(r'^emulate_user/(?P<user_id>\d+)/$', self.admin_site.admin_view(self.emulate_user), name='emulate-user'),
+            url(r'^clear_emulations/$', self.admin_site.admin_view(self.clear_emulations), name='clear-emulations'),
         ] + super(SegmentationAdmin, self).get_urls()
 
     def get_queryset(self, request):
@@ -40,9 +44,27 @@ class SegmentationAdmin(admin.ModelAdmin):
             qs = qs.order_by(*ordering)
         return qs
 
+    def emulate_user(self, request, user_id):
+        try:
+            request.session['emulate_user_id'] = int(user_id)
+            return HttpResponse('OK')
+        except TypeError as err:
+            return HttpResponseBadRequest(err.message)
+
     def emulate_users(self, request):
+        """
+        The list view
+        """
         def display_as_link(self, obj):
-            return format_html('<a href="#">{0}</a>', obj.identifier())
+            identifier = admin.util.lookup_field(list_display_link, obj, model_admin=self)[2]
+            emulate_user_id = request.session.get('emulate_user_id')
+            if emulate_user_id == obj.id:
+                return format_html('<strong>{}</strong>', identifier)
+            fmtargs = {
+                'href': reverse('admin:emulate-user', kwargs={'user_id': obj.id}),
+                'identifier': identifier,
+            }
+            return format_html('<a href="{href}" class="emulate-user">{identifier}</a>', **fmtargs)
 
         lookup_model = get_user_model()
         opts = lookup_model._meta
@@ -61,7 +83,7 @@ class SegmentationAdmin(admin.ModelAdmin):
 
         ChangeList = self.get_changelist(request)
         cl = ChangeList(request, lookup_model, list_display,
-            ('display_as_link',),  # disable list_display_links in ChangeList, instead override that field
+            (None,),  # disable list_display_links in ChangeList, instead override that field
             user_model_admin.list_filter,
             user_model_admin.date_hierarchy, user_model_admin.search_fields,
             user_model_admin.list_select_related, user_model_admin.list_per_page,
@@ -93,5 +115,9 @@ class SegmentationAdmin(admin.ModelAdmin):
             'admin/%s/change_list.html' % app_label,
             'admin/change_list.html'
         ], context, current_app=self.admin_site.name)
+
+    def clear_emulations(self, request):
+        request.session.pop('emulate_user_id', None)
+        return HttpResponse('OK')
 
 admin.site.register(Segmentation, SegmentationAdmin)

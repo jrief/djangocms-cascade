@@ -4,11 +4,12 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from django.template import Template, TemplateSyntaxError
+from django.template import Template, TemplateSyntaxError, RequestContext
 from cms.plugin_pool import plugin_pool
 from cms.utils.placeholder import get_placeholder_conf
 from cmsplugin_cascade.fields import PartialFormField
@@ -38,8 +39,10 @@ class SegmentPlugin(CascadePluginBase):
         ),
     )
     html_parser = HTMLParser()
-    eval_template = "{{% if {} %}}True{{% endif %}}"
-    default_template = "{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}"
+    eval_template_string = "{{% if {} %}}True{{% endif %}}"
+    default_template = Template("{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}")
+    hiding_template = Template("{% load cms_tags %}<div style=\"display: none;\">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>")
+    empty_template = Template('')
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/segmentplugin.js')
@@ -63,27 +66,55 @@ class SegmentPlugin(CascadePluginBase):
             child_classes = super(SegmentPlugin, self).get_child_classes(slot, page)
         return child_classes
 
+    def get_context_override(self, request):
+        """
+        Return a dictionary to override the context during evaluation. Normally this is an empty
+        dict. However, when a staff user overrides the segmentation, then update the context with
+        the returned dict.
+        """
+        try:
+            if request.user.is_staff:
+                UserModel = get_user_model()
+                return {'user': UserModel.objects.get(pk=request.session['emulate_user_id'])}
+        except (UserModel.DoesNotExist, KeyError):
+            pass
+        return {}
+
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
+            context = RequestContext(request, {})
+            context.update(context_override)  # TODO: make this pluggable
             condition = self.html_parser.unescape(instance.glossary['condition'])
-            if Template(self.eval_template.format(condition)).render(context) == 'True':
-                context['request']._evaluated_instances[instance.id] = True
-                return Template(self.default_template)
+            eval_template = Template(self.eval_template_string.format(condition))
+            if eval_template.render(context) == 'True':
+                request._evaluated_instances[instance.id] = True
+                template = self.default_template
             else:
-                context['request']._evaluated_instances[instance.id] = False
-                return Template('')
+                request._evaluated_instances[instance.id] = False
+                # in edit mode hidden plugins have to be rendered nevertheless
+                template = edit_mode and self.hiding_template or self.empty_template
+            return template
 
+        request = context['request']
+        toolbar = getattr(request, 'toolbar', None)
+        edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request)
+                     and getattr(placeholder, 'is_editable', True))
+        context_override = self.get_context_override(request)
         open_tag = instance.glossary.get('open_tag')
         if open_tag == 'if':
-            return conditionally_eval()
-        elif open_tag in ('elif', 'else'):
+            template = conditionally_eval()
+        else:
+            assert open_tag in ('elif', 'else')
             prev_inst, _ = self.get_previous_instance(instance)
-            if context['request']._evaluated_instances.get(prev_inst.id):
-                context['request']._evaluated_instances[instance.id] = True
-                return Template('')
-            if open_tag == 'elif':
-                return conditionally_eval()
-        return Template(self.default_template)
+            if request._evaluated_instances.get(prev_inst.id):
+                request._evaluated_instances[instance.id] = True
+                # in edit mode hidden plugins have to be rendered nevertheless
+                template = edit_mode and self.hiding_template or self.empty_template
+            elif open_tag == 'elif':
+                template = conditionally_eval()
+            else:
+                template = self.default_template
+        return template
 
     def render(self, context, instance, placeholder):
         if not hasattr(context['request'], '_evaluated_instances'):
@@ -97,7 +128,7 @@ class SegmentPlugin(CascadePluginBase):
             """
             try:
                 condition = self.html_parser.unescape(value)
-                Template(self.eval_template.format(condition))
+                Template(self.eval_template_string.format(condition))
             except TemplateSyntaxError as err:
                 raise ValidationError(_("Unable to evaluate condition: {err}").format(err=err.message))
 
