@@ -51,7 +51,7 @@ class PanelPlugin(BootstrapPluginBase):
     default_css_class = 'panel-body'
     parent_classes = ['PanelGroupPlugin']
     require_parent = True
-    generic_child_classes = ('TextPlugin',)
+    alien_child_classes = True
     glossary_fields = (
         PartialFormField('panel_title',
             widgets.TextInput(attrs={'size': 150}),

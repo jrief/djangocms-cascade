@@ -13,8 +13,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from .plugin_base import BootstrapPluginBase
-from .settings import (CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST,
-    CASCADE_BOOTSTRAP3_GUTTER, CASCADE_LEAF_PLUGINS)
+from .settings import CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST, CASCADE_BOOTSTRAP3_GUTTER
 
 
 class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
@@ -158,7 +157,7 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ('BootstrapRowPlugin',)
-    generic_child_classes = CASCADE_LEAF_PLUGINS
+    alien_child_classes = True
     default_css_attributes = list(itertools.chain(*(('{}-column-width'.format(s),
         '{}-column-offset'.format(s), '{}-column-ordering'.format(s), '{}-responsive-utils'.format(s),)
         for s in CASCADE_BREAKPOINTS_LIST)))

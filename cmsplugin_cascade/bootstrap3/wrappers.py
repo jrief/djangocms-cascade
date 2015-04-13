@@ -6,13 +6,12 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from .plugin_base import BootstrapPluginBase
-from . import settings
 
 
 class SimpleWrapperPlugin(BootstrapPluginBase):
     name = _("Simple Wrapper")
-    parent_classes = ['BootstrapColumnPlugin']
-    generic_child_classes = settings.CASCADE_LEAF_PLUGINS
+    parent_classes = ('BootstrapColumnPlugin',)
+    alien_child_classes = True
     TAG_CHOICES = tuple((cls, cls.title()) for cls in ('div', 'span', 'section', 'article',))
     glossary_fields = (
         PartialFormField('element_tag',

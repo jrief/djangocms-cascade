@@ -61,6 +61,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
     render_template = 'cms/plugins/generic.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
+    alien_child_classes = False
 
     class Media:
         css = {'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)}
@@ -81,19 +82,17 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         return parent_classes
 
     def get_child_classes(self, slot, page):
-        template = page and page.get_template() or None
-        ph_conf = get_placeholder_conf('child_classes', slot, template, default={})
-        child_classes = ph_conf.get(self.__class__.__name__, self.child_classes)
-        if not child_classes:
-            # the use `parent_classes` from other plugins to determine the allowed child classes
-            child_classes = set()
-            for p in plugin_pool.get_all_plugins():
-                if isinstance(p.parent_classes, (list, tuple)) \
-                        and self.__class__.__name__ in p.parent_classes \
-                        or p.parent_classes is None and issubclass(p, CascadePluginBase):
-                    child_classes.add(p.__name__)
-            self.child_classes = tuple(child_classes)
-        return self.child_classes
+        if isinstance(self.child_classes, (list, tuple)):
+            return self.child_classes
+        # otherwise determine child_classes by evaluating parent_classes from other plugins
+        child_classes = set()
+        for p in plugin_pool.get_all_plugins():
+            if (isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes
+              or p.parent_classes is None and issubclass(p, CascadePluginBase)
+              or isinstance(self.alien_child_classes, (list, tuple)) and p.__name__ in self.alien_child_classes
+              or self.alien_child_classes is True and p.__name__ in settings.CASCADE_ALIEN_PLUGINS):
+                child_classes.add(p.__name__)
+        return tuple(child_classes)
 
     @classmethod
     def get_identifier(cls, model):

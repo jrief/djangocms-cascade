@@ -69,7 +69,7 @@ class Grid960BasePlugin(CascadePluginBase):
     name = _("Grid")
     require_parent = True
     allow_children = True
-    generic_child_classes = settings.CMS_CASCADE_LEAF_PLUGINS
+    alien_child_classes = True
     default_css_attributes = ('grid', 'prefix', 'suffix', 'options',)
     OPTION_CHOICES = (('alpha', _('Left aligned')), ('omega', _('Right aligned')),
                       ('clearfix', _('Clearfix')),)

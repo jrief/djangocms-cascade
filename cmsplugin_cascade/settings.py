@@ -10,6 +10,8 @@ from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWi
 CASCADE_DEFAULT_PARENT_CLASSES = () + \
     ('SegmentPlugin',) if 'cmsplugin_cascade.segmentation' in settings.INSTALLED_APPS else ()
 
+CASCADE_ALIEN_PLUGINS = list(getattr(settings, 'CMSPLUGIN_CASCADE_ALIEN_PLUGINS', ('TextPlugin',)))
+
 CASCADE_PLUGIN_DEPENDENCIES = {
     'cascade/js/ring.js': 'cascade/js/underscore.js',
     'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
