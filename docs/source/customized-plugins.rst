@@ -54,7 +54,7 @@ Lets add a simple selector to choose between a red and a green color. Do this by
 	
 	class StylishPlugin(CascadePluginBase):
 	    ...
-	    glossary_fields = [
+	    glossary_fields = (
 	        PartialFormField('color',
 	            widgets.Select(choices=(('red', 'Red'), ('green', 'Green'),)),
 	            label="Element's Color",
@@ -62,7 +62,7 @@ Lets add a simple selector to choose between a red and a green color. Do this by
 	            help_text="Specify the color of the DOM element."
 	        ),
 	        # more PartialFormField objects
-	    ]
+	    )
 
 In the plugin's editor, the form now pops up with a single select box, where the user can choose
 between a *red* and a *green* element.

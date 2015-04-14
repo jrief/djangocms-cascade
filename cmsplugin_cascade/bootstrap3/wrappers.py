@@ -32,7 +32,7 @@ plugin_pool.register_plugin(SimpleWrapperPlugin)
 
 class HorizontalRulePlugin(BootstrapPluginBase):
     name = _("Horizontal Rule")
-    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
+    parent_classes = ('BootstrapContainerPlugin', 'BootstrapColumnPlugin')
     allow_children = False
     tag_type = 'hr'
     render_template = 'cms/plugins/single.html'

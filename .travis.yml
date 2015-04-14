@@ -5,8 +5,8 @@ python:
 #  - 3.3
 
 env:
-  - DJANGO=1.6.8 MIGRATE='true'
-  - DJANGO=1.7.1 MIGRATE='./manage.py migrate --settings=bs3demo.settings'
+  - DJANGO=1.6.11 MIGRATE='true'
+  - DJANGO=1.7.7 MIGRATE='./manage.py migrate --settings=bs3demo.settings'
 
 branches:
   only:

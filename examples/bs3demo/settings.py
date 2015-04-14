@@ -176,8 +176,6 @@ CMSPLUGIN_CASCADE_WITH_SHARABLES = {
     'TextLinkPlugin': ('link', 'target',),
 }
 
-CMSPLUGIN_CASCADE_LEAF_PLUGINS = ('TextLinkPlugin',)
-
 COLUMN_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg'],
     'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
