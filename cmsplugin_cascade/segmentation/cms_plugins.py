@@ -85,14 +85,19 @@ class SegmentPlugin(CascadePluginBase):
             context = RequestContext(request, {})
             context.update(context_override)  # TODO: make this pluggable
             condition = self.html_parser.unescape(instance.glossary['condition'])
-            eval_template = Template(self.eval_template_string.format(condition))
-            if eval_template.render(context) == 'True':
-                request._evaluated_instances[instance.id] = True
-                template = self.default_template
-            else:
-                request._evaluated_instances[instance.id] = False
-                # in edit mode hidden plugins have to be rendered nevertheless
-                template = edit_mode and self.hiding_template or self.empty_template
+            try:
+                eval_template = Template(self.eval_template_string.format(condition))
+                evaluated_to = eval_template.render(context) == 'True'
+            except TemplateSyntaxError:
+                evaluated_to = False
+            finally:
+                if evaluated_to:
+                    request._evaluated_instances[instance.id] = True
+                    template = self.default_template
+                else:
+                    request._evaluated_instances[instance.id] = False
+                    # in edit mode hidden plugins have to be rendered nevertheless
+                    template = edit_mode and self.hiding_template or self.empty_template
             return template
 
         request = context['request']
@@ -127,8 +132,9 @@ class SegmentPlugin(CascadePluginBase):
             Compile condition using the Django template system to find potential syntax errors
             """
             try:
-                condition = self.html_parser.unescape(value)
-                Template(self.eval_template_string.format(condition))
+                if value:
+                    condition = self.html_parser.unescape(value)
+                    Template(self.eval_template_string.format(condition))
             except TemplateSyntaxError as err:
                 raise ValidationError(_("Unable to evaluate condition: {err}").format(err=err.message))
 
