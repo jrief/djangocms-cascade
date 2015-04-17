@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django.db.models import get_model
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ObjectDoesNotExist
 from cms.utils.compat.dj import python_2_unicode_compatible
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
@@ -39,13 +38,14 @@ class LinkPluginBase(CascadePluginBase):
             return '{url}'.format(**link)
         if linktype == 'email':
             return 'mailto:{email}'.format(**link)
+
         # otherwise try to resolve by model
         if 'model' in link and 'pk' in link:
             if not hasattr(obj, '_link_model'):
                 Model = get_model(*link['model'].split('.'))
                 try:
                     obj._link_model = Model.objects.get(pk=link['pk'])
-                except ObjectDoesNotExist:
+                except Model.DoesNotExist:
                     obj._link_model = None
             if obj._link_model:
                 return obj._link_model.get_absolute_url()

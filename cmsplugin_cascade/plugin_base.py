@@ -227,7 +227,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         bases = self.get_ring_bases()
-        context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
+        context['base_plugins'] = ['django.cascade.{}'.format(b) for b in bases]
         try:
             fields = list(context['adminform'].form.fields)
             fields.remove('glossary')
