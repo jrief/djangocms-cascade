@@ -39,7 +39,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             base_model = CascadeElement
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
-            bases = tuple(import_by_path(mc) for mc in settings.CASCADE_SEGMENTATION_PLUGINS) + bases
+            bases = tuple(import_by_path(mc) for mc in settings.CASCADE_SEGMENTATION_MIXINS) + bases
         model_mixins = attrs.pop('model_mixins', ())
         attrs['model'] = CascadePluginBaseMetaclass.create_model(name, model_mixins, base_model)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)

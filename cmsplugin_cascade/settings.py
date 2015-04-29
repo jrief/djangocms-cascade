@@ -42,6 +42,6 @@ CASCADE_EXTRA_INLINE_STYLES = getattr(settings, 'CMSPLUGIN_CASCADE_EXTRA_INLINE_
     ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
 )))
 
-CASCADE_SEGMENTATION_PLUGINS = getattr(settings, 'CMSPLUGIN_CASCADE_SEGMENTATION_PLUGINS', (
-    'cmsplugin_cascade.segmentation.mixins.EmulateUser',
+CASCADE_SEGMENTATION_MIXINS = getattr(settings, 'CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS', (
+    'cmsplugin_cascade.segmentation.mixins.EmulateUserMixin',
 ))
