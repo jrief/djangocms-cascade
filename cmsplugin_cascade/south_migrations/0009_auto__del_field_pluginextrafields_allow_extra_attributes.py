@@ -8,16 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'MyModel'
-        db.create_table(u'cmsplugin_cascade_mymodel', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        ))
-        db.send_create_signal(u'cmsplugin_cascade', ['MyModel'])
+        # Deleting field 'PluginExtraFields.allow_extra_attributes'
+        db.delete_column(u'cmsplugin_cascade_pluginextrafields', 'allow_extra_attributes')
 
 
     def backwards(self, orm):
-        # Deleting model 'MyModel'
-        db.delete_table(u'cmsplugin_cascade_mymodel')
+        # Adding field 'PluginExtraFields.allow_extra_attributes'
+        db.add_column(u'cmsplugin_cascade_pluginextrafields', 'allow_extra_attributes',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 
 
     models = {
@@ -47,10 +46,6 @@ class Migration(SchemaMigration):
             'cmsplugin_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'+'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['cms.CMSPlugin']"}),
             'glossary': ('jsonfield.fields.JSONField', [], {'default': '{}', 'null': 'True', 'blank': 'True'})
         },
-        u'cmsplugin_cascade.mymodel': {
-            'Meta': {'object_name': 'MyModel'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
         u'cmsplugin_cascade.pluginextrafields': {
             'Meta': {'unique_together': "((u'plugin_type', u'site'),)", 'object_name': 'PluginExtraFields'},
             'allow_id_tag': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -59,6 +54,10 @@ class Migration(SchemaMigration):
             'inline_styles': ('jsonfield.fields.JSONField', [], {'default': '{}', 'null': 'True', 'blank': 'True'}),
             'plugin_type': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'}),
             'site': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['sites.Site']"})
+        },
+        u'cmsplugin_cascade.segmentation': {
+            'Meta': {'object_name': 'Segmentation', 'managed': 'False'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         u'cmsplugin_cascade.sharablecascadeelement': {
             'Meta': {'object_name': 'SharableCascadeElement', 'db_table': "u'cmsplugin_cascade_sharableelement'"},
