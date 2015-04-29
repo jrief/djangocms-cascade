@@ -51,7 +51,7 @@ INSTALLED_APPS = (
     'sekizai',
     'bs3demo',
 )
-if django.VERSION[:2] > (1, 6):
+if django.VERSION[:2] >= (1, 7):
     MIGRATION_MODULES = {
         'cms': 'cms.migrations_django',
         'menus': 'menus.migrations_django',
