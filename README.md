@@ -17,13 +17,14 @@ templates. In most cases, one template with one single placeholder is enough. Th
 can subdivide that placeholder into rows and columns, and add additional elements such as buttons,
 rulers, or even the Bootstrap Carousel.
 
-News
-----
-Removed hard coded input fields for styling margins from **BootstrapButtonPlugin**, since
-it is possible to add them through the **Extra Fields** dialog box.
-
-[Column ordering](http://getbootstrap.com/css/#grid-column-ordering) using ``col-xx-push-n``
-and ``col-xx-pull-n`` has been added.
+News for next major release 0.5.0
+---------------------------------
+* Tested with **django-cms 3.0.13**.
+* Added SegmentationPlugin. This allows to conditionally render parts of the DOM, depending on
+  the status of various ``request`` object members, such as ``user``.
+* Setting ``CASCADE_LEAF_PLUGINS`` has been replaced by ``CASCADE_ALIEN_PLUGINS``. This simplifies
+  the programming of third party plugins, since the author of a plugin now only must set the member
+  ``alien_child_classes = True``.
 
 Features
 --------
