@@ -4,6 +4,10 @@
 Release History
 ===============
 
+0.5.0
+-----
+* Added SegmentationPlugin. This allows to conditionally render parts of the DOM, depending on
+  the status of various ``request`` object members, such as ``user``.
 0.4.5
 -----
 * Fixed: If no breakpoints are set, don't delete widths and offsets from the glossary, as otherwise

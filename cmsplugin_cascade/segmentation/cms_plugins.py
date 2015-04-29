@@ -4,7 +4,6 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
@@ -17,15 +16,26 @@ from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import resolve_dependencies
 
 
-class SegmentPlugin(CascadePluginBase):
-    """
-    This button is used as a final step to convert the Cart object into an Order object.
-    """
-    name = _("Segment")
+class SegmentPluginBase(CascadePluginBase):
     require_parent = False
     parent_classes = None
     allow_children = True
     child_classes = None
+
+    def get_context_override(self, request):
+        """
+        Return a dictionary to override the context during evaluation. Normally this is an empty
+        dict. However, when a staff user overrides the segmentation, then update the context with
+        the returned dict.
+        """
+        return {}
+
+
+class SegmentPlugin(SegmentPluginBase):
+    """
+    This button is used as a final step to convert the Cart object into an Order object.
+    """
+    name = _("Segment")
     glossary_fields = (
         PartialFormField('open_tag',
             widgets.Select(choices=()),
@@ -66,20 +76,6 @@ class SegmentPlugin(CascadePluginBase):
             child_classes = super(SegmentPlugin, self).get_child_classes(slot, page)
         return child_classes
 
-    def get_context_override(self, request):
-        """
-        Return a dictionary to override the context during evaluation. Normally this is an empty
-        dict. However, when a staff user overrides the segmentation, then update the context with
-        the returned dict.
-        """
-        try:
-            if request.user.is_staff:
-                UserModel = get_user_model()
-                return {'user': UserModel.objects.get(pk=request.session['emulate_user_id'])}
-        except (UserModel.DoesNotExist, KeyError):
-            pass
-        return {}
-
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
             context = RequestContext(request, {})
@@ -102,8 +98,8 @@ class SegmentPlugin(CascadePluginBase):
 
         request = context['request']
         toolbar = getattr(request, 'toolbar', None)
-        edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request)
-                     and getattr(placeholder, 'is_editable', True))
+        edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request) and
+                     getattr(placeholder, 'is_editable', True))
         context_override = self.get_context_override(request)
         open_tag = instance.glossary.get('open_tag')
         if open_tag == 'if':

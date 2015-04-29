@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
+from django.utils.module_loading import import_by_path
 from django.utils.safestring import SafeText
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
@@ -36,6 +37,9 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             base_model = SharableCascadeElement
         else:
             base_model = CascadeElement
+        if name == 'SegmentPlugin':
+            # SegmentPlugin shall additionally inherit from configured mixin classes
+            bases = tuple(import_by_path(mc) for mc in settings.CASCADE_SEGMENTATION_PLUGINS) + bases
         model_mixins = attrs.pop('model_mixins', ())
         attrs['model'] = CascadePluginBaseMetaclass.create_model(name, model_mixins, base_model)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
@@ -87,10 +91,10 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         # otherwise determine child_classes by evaluating parent_classes from other plugins
         child_classes = set()
         for p in plugin_pool.get_all_plugins():
-            if (isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes
-              or p.parent_classes is None and issubclass(p, CascadePluginBase)
-              or isinstance(self.alien_child_classes, (list, tuple)) and p.__name__ in self.alien_child_classes
-              or self.alien_child_classes is True and p.__name__ in settings.CASCADE_ALIEN_PLUGINS):
+            if (isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes or
+              p.parent_classes is None and issubclass(p, CascadePluginBase) or
+              isinstance(self.alien_child_classes, (list, tuple)) and p.__name__ in self.alien_child_classes or
+              self.alien_child_classes is True and p.__name__ in settings.CASCADE_ALIEN_PLUGINS):
                 child_classes.add(p.__name__)
         return tuple(child_classes)
 
