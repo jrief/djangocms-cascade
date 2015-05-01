@@ -110,12 +110,17 @@ class ButtonIconRenderer(RadioFieldRenderer):
         return widgets.RadioSelect(choices=choices, renderer=cls)
 
     def render(self):
-        return format_html('<div class="form-row">{}</div>',
+        return format_html(
+            '<div class="form-row">'
+            '<div class="field-box"><div class="label" title="No icon">{0}'
+            '<span class="glyphicon glyphicon-minus" style="color: transparent;"></span>'
+            '</div></div>{1}</div>',
+            self[0].tag(),
             format_html_join('\n',
                 '<div class="field-box">'
                     '<div class="label" title="{1}">{0}<span class="glyphicon glyphicon-{1}"></span></div>'
                 '</div>',
-                ((w.tag(), w.choice_value,) for w in self)
+                [(w.tag(), w.choice_value,) for w in self][1:]
             ))
 
 
@@ -186,12 +191,13 @@ class BootstrapButtonPlugin(LinkPluginBase):
 
     def render(self, context, instance, placeholder):
         context = super(BootstrapButtonPlugin, self).render(context, instance, placeholder)
+        mini_template = '<span class="glyphicon glyphicon-{}" aria-hidden="true"></span>&nbsp;'
         icon_left = instance.glossary.get('icon-left')
         if icon_left:
-            context['icon_left'] = format_html('<span class="glyphicon glyphicon-{}"></span>&nbsp;', icon_left)
+            context['icon_left'] = format_html(mini_template, icon_left)
         icon_right = instance.glossary.get('icon-right')
         if icon_right:
-            context['icon_right'] = format_html('&nbsp;<span class="glyphicon glyphicon-{}"></span>', icon_right)
+            context['icon_right'] = format_html(mini_template, icon_right)
         return context
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
