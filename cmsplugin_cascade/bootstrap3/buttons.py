@@ -124,11 +124,8 @@ class ButtonIconRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapButtonPlugin(LinkPluginBase):
-    module = 'Bootstrap'
-    name = _("Button")
-    form = TextLinkForm
-    model_mixins = (LinkElementMixin,)
+class BootstrapButtonMixin(object):
+    require_parent = True
     parent_classes = ('BootstrapColumnPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
@@ -136,7 +133,7 @@ class BootstrapButtonPlugin(LinkPluginBase):
     tag_type = None
     default_css_class = 'btn'
     default_css_attributes = ('button-type', 'button-size', 'button-options', 'quick-float',)
-    fields = ('link_content', ('link_type', 'cms_page', 'ext_url', 'mail_to'), 'glossary',)
+
     glossary_fields = (
         PartialFormField('button-type',
             ButtonTypeRenderer.get_widget(),
@@ -172,7 +169,27 @@ class BootstrapButtonPlugin(LinkPluginBase):
             initial='',
             help_text=_("Append a Glyphicon after the content.")
         ),
-    ) + LinkPluginBase.glossary_fields
+    )
+
+    def render(self, context, instance, placeholder):
+        context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
+        mini_template = '<span class="glyphicon glyphicon-{}" aria-hidden="true"></span>&nbsp;'
+        icon_left = instance.glossary.get('icon-left')
+        if icon_left:
+            context['icon_left'] = format_html(mini_template, icon_left)
+        icon_right = instance.glossary.get('icon-right')
+        if icon_right:
+            context['icon_right'] = format_html(mini_template, icon_right)
+        return context
+
+
+class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
+    module = 'Bootstrap'
+    name = _("Button")
+    form = TextLinkForm
+    model_mixins = (LinkElementMixin,)
+    fields = ('link_content', ('link_type', 'cms_page', 'ext_url', 'mail_to'), 'glossary',)
+    glossary_fields = BootstrapButtonMixin.glossary_fields + LinkPluginBase.glossary_fields
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
@@ -188,16 +205,5 @@ class BootstrapButtonPlugin(LinkPluginBase):
             except KeyError:
                 content = _("Empty")
         return format_html('{}{}', identifier, content)
-
-    def render(self, context, instance, placeholder):
-        context = super(BootstrapButtonPlugin, self).render(context, instance, placeholder)
-        mini_template = '<span class="glyphicon glyphicon-{}" aria-hidden="true"></span>&nbsp;'
-        icon_left = instance.glossary.get('icon-left')
-        if icon_left:
-            context['icon_left'] = format_html(mini_template, icon_left)
-        icon_right = instance.glossary.get('icon-right')
-        if icon_right:
-            context['icon_right'] = format_html(mini_template, icon_right)
-        return context
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
