@@ -139,7 +139,7 @@ the configuration directive
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_LEAF_PLUGINS = ('TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin',)
+	CMSPLUGIN_CASCADE_ALIEN_PLUGINS = ('TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin',)
 
 
 Bootstrap 3 with AngularJS

@@ -8,7 +8,7 @@ Release History
 -----
 * Added SegmentationPlugin. This allows to conditionally render parts of the DOM, depending on
   the status of various ``request`` object members, such as ``user``.
-* Setting ``CASCADE_LEAF_PLUGINS`` has been replaced by ``CASCADE_ALIEN_PLUGINS``. This simplifies
+* Setting ``CASCADE_LEAF_PLUGINS`` has been replaced by ``CMSPLUGIN_CASCADE_ALIEN_PLUGINS``. This simplifies
   the programming of third party plugins, since the author of a plugin now only must set the member
   ``alien_child_classes = True``.
 
