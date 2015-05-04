@@ -2,8 +2,10 @@ djangocms-cascade
 =================
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
+
 Add DOM elements to a Django-CMS placeholder
 ---------------------------------------------
+
 **DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.0.8 to add various HTML elements
 from CSS frameworks, such as [Twitter Bootstrap](http://getbootstrap.com/) or the
 [960 Grid System](http://960.gs/) (discontinued) to any CMS
@@ -17,16 +19,34 @@ templates. In most cases, one template with one single placeholder is enough. Th
 can subdivide that placeholder into rows and columns, and add additional elements such as buttons,
 rulers, or even the Bootstrap Carousel.
 
-News
-----
-Removed hard coded input fields for styling margins from **BootstrapButtonPlugin**, since
-it is possible to add them through the **Extra Fields** dialog box.
 
-[Column ordering](http://getbootstrap.com/css/#grid-column-ordering) using ``col-xx-push-n``
-and ``col-xx-pull-n`` has been added.
+News for next major release 0.5.0
+---------------------------------
+
+* Tested with **django-cms 3.0.13** and Django-1.6.
+* Added SegmentationPlugin. This allows to conditionally render parts of the DOM, depending on
+  the status of various ``request`` object members, such as ``user``.
+* Setting ``CASCADE_LEAF_PLUGINS`` has been replaced by ``CASCADE_ALIEN_PLUGINS``. This simplifies
+  the programming of third party plugins, since the author of a plugin now only must set the member
+  ``alien_child_classes = True``.
+
+
+Help needed
+-----------
+
+If you like this project, please invest some time and test it with Django-1.7/1.8, django-cms-3.1
+and if possible Python-3.4.
+
+With migrations added to Django-1.7, testing and developing plugins for django-cms get really messy.
+I currently have no resources to do all this cross-development.
+
+Travis-CI worked for djangocms-cascade, Django-1.7 and django-cms-3.0.12, but since the last upgrade
+this is not the case anymore. If someone can find out why, it would be really great.
+
 
 Features
 --------
+
 * Use the scaffolding technique from the preferred CSS framework to subdivide a placeholder into a
   [grid system](http://getbootstrap.com/css/#grid).
 * Make full usage of responsive techniques, by allowing
@@ -37,11 +57,12 @@ Features
 * Add ``<img>`` and ``<picture>`` elements in a responsive way, so that more than one image URL
   point onto the resized sources, one for each viewport using the ``srcset`` tags or the ``<source>``
   elements.
+* Use segmentation the render parts of the DOM conditionally.
 * It is very easy to integrate additional elements from the preferred CSS framework. For instance,
   implementing the Bootstrap Carousel, required 50 lines of Python code and two simple Django templates.
 * Since all the data is stored in JSON, no database migration is required if a field is added, modified
   or removed from the plugin.
-* Currenty **Bootstrap-3.x** is supported, but other CSS frameworks can be easily added in a pluggable manner.
+* Currently **Bootstrap-3.x** is supported, but other CSS frameworks can be easily added in a pluggable manner.
 
 In addition to easily implement any kind of plugin, **DjangoCMS-Cascade** makes it possible to add
 reusable helpers. Such a helper enriches a plugin with an additional, configurable functionality:

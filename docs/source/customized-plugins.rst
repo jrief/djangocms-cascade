@@ -54,7 +54,7 @@ Lets add a simple selector to choose between a red and a green color. Do this by
 	
 	class StylishPlugin(CascadePluginBase):
 	    ...
-	    glossary_fields = [
+	    glossary_fields = (
 	        PartialFormField('color',
 	            widgets.Select(choices=(('red', 'Red'), ('green', 'Green'),)),
 	            label="Element's Color",
@@ -62,7 +62,7 @@ Lets add a simple selector to choose between a red and a green color. Do this by
 	            help_text="Specify the color of the DOM element."
 	        ),
 	        # more PartialFormField objects
-	    ]
+	    )
 
 In the plugin's editor, the form now pops up with a single select box, where the user can choose
 between a *red* and a *green* element.
@@ -111,6 +111,56 @@ contains a compact summary.
 To override the plugins form, add a member ``form`` to your plugin. This member variable shall refer
 to a customized form derived from ``forms.models.ModelForm``. For further details about how to use
 this feature, refer to the supplied implementations.
+
+
+Overriding the Model
+====================
+
+Since all **djangocms-cascade** plugins store their data in a JSON-serializable field, there rarely
+is a need to add another database field to the common models ``CascadeElement`` and/or
+``SharableCascadeElement`` and thus no need for database migrations.
+
+However, quite often there is a need to add or override the methods for these models. Therefore each
+Cascade plugin creates its own `proxy model`_ on the fly. These models are derived from
+``CascadeElement`` and/or ``SharableCascadeElement`` and named like the plugin class, with the
+suffix ``Model``. By default, their behavior is the same as for their parent model classes.
+
+To extend this behavior, the author of a plugin may declare a tuple of mixin classes, which are
+injected during the creation of the proxy model. Example:
+
+.. code-block:: python
+
+	class MySpecialPropertyMixin(object):
+	    def processed_value(self):
+	        value = self.glossary.get('field_name')
+	        # process value
+	        return value
+	
+	class MySpecialPlugin(LinkPluginBase):
+	    module = 'My Module'
+	    name = 'My special Plugin'
+	    model_mixins = (MySpecialPropertyMixin,)
+	    render_template = 'my_module/my_special_plugin.html'
+	    glossary_fields = (
+	        PartialFormField('field_name',
+	            widgets.TextInput(),
+	        ),
+	        # other partial form fields
+	    )
+	    ...
+
+The proxy model created for this plugin class, now contains the extra method ``content()``, which
+for instance may be accessed during template rendering.
+
+``templates/my_module/my_special_plugin.html``:
+
+.. code-block:: html
+
+	<div>{{ instance.processed_value }}</div>
+
+
+Needless to say, that you can't add any extra database fields to the class named
+``MySpecialPropertyMixin``, since the corresponding model class is marked as proxy.
 
 
 Plugin Attribute Reference
@@ -196,5 +246,11 @@ Additionally ``BootstrapPluginBase`` allows the following attributes:
 	Override the form used by the plugin editor. This must be a class derived from
 	``forms.models.ModelForm``.
 
+:model_mixins:
+	Tuple of mixin classes, with additional methods to be added the auto-generated proxy model
+	for the given plugin class.
+
+	Check section “Overriding the Model” for a detailed explanation.
 
 .. _CMSPluginBase attributes: https://django-cms.readthedocs.org/en/develop/extending_cms/custom_plugins.html#plugin-attribute-reference
+.. _proxy model: https://docs.djangoproject.com/en/dev/topics/db/models/#proxy-models

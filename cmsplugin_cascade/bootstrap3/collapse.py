@@ -18,15 +18,15 @@ from .settings import CASCADE_TEMPLATE_DIR
 class PanelGroupForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em;'}),
-        label=_('Panels'),
-        help_text=_('Number of panels for this panel group.'))
+        label=_("Panels"),
+        help_text=_("Number of panels for this panel group."))
 
 
 class PanelGroupPlugin(BootstrapPluginBase):
     name = _("Panel Group")
     form = PanelGroupForm
     default_css_class = 'panel-group'
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ('BootstrapColumnPlugin',)
     require_parent = True
     render_template = os.path.join(CASCADE_TEMPLATE_DIR, 'collapse.html')
     fields = ('num_children', 'glossary',)
@@ -49,19 +49,19 @@ plugin_pool.register_plugin(PanelGroupPlugin)
 class PanelPlugin(BootstrapPluginBase):
     name = _("Panel")
     default_css_class = 'panel-body'
-    parent_classes = ['PanelGroupPlugin']
+    parent_classes = ('PanelGroupPlugin',)
     require_parent = True
-    generic_child_classes = ('TextPlugin',)
+    alien_child_classes = True
     glossary_fields = (
         PartialFormField('panel_title',
             widgets.TextInput(attrs={'size': 150}),
-            label=_('Panel Title')
+            label=_("Panel Title")
         ),
     )
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(PanelGroupPlugin, cls).get_identifier(obj)
+        identifier = super(PanelPlugin, cls).get_identifier(obj)
         content = obj.glossary.get('panel_title', '')
         if content:
             content = unicode(Truncator(content).words(3, truncate=' ...'))

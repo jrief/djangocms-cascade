@@ -69,6 +69,8 @@ class LinkForm(ModelForm):
             if 'link_data' in cleaned_data:
                 cleaned_data['glossary'].update(link=cleaned_data['link_data'])
                 del self.cleaned_data['link_data']
+            elif 'link_type' in cleaned_data:
+                cleaned_data['glossary'].update(link={'type': cleaned_data['link_type']})
             else:
                 cleaned_data['glossary'].update(link={'type': 'none'})
         return cleaned_data

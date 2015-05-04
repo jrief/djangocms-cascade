@@ -3,9 +3,11 @@ from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
+from django.utils.module_loading import import_by_path
 from django.utils.safestring import SafeText
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
+from cms.utils.placeholder import get_placeholder_conf
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .sharable.forms import SharableGlossaryMixin
@@ -35,6 +37,9 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             base_model = SharableCascadeElement
         else:
             base_model = CascadeElement
+        if name == 'SegmentPlugin':
+            # SegmentPlugin shall additionally inherit from configured mixin classes
+            bases = tuple(import_by_path(mc) for mc in settings.CASCADE_SEGMENTATION_MIXINS) + bases
         model_mixins = attrs.pop('model_mixins', ())
         attrs['model'] = CascadePluginBaseMetaclass.create_model(name, model_mixins, base_model)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
@@ -60,22 +65,10 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
     render_template = 'cms/plugins/generic.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
+    alien_child_classes = False
 
     class Media:
         css = {'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)}
-
-    def _child_classes(self):
-        """All registered plugins shall be allowed as children for this plugin"""
-        if getattr(self, '_cached_child_classes', None) is not None:
-            return self._cached_child_classes
-        self._cached_child_classes = list(getattr(self, 'generic_child_classes', [])) or []
-        for p in plugin_pool.get_all_plugins():
-            if (isinstance(p.parent_classes, (list, tuple))
-              and self.__class__.__name__ in p.parent_classes
-              and p.__name__ not in self._cached_child_classes):
-                self._cached_child_classes.append(p.__name__)
-        return self._cached_child_classes
-    child_classes = property(_child_classes)
 
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
         super(CascadePluginBase, self).__init__(model, admin_site)
@@ -83,6 +76,27 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
             self.glossary_fields = list(glossary_fields)
         elif not hasattr(self, 'glossary_fields'):
             self.glossary_fields = []
+
+    def get_parent_classes(self, slot, page):
+        template = page and page.get_template() or None
+        ph_conf = get_placeholder_conf('parent_classes', slot, template, default={})
+        parent_classes = ph_conf.get(self.__class__.__name__, self.parent_classes)
+        if parent_classes and isinstance(parent_classes, (list, tuple)):
+            parent_classes = tuple(parent_classes) + tuple(settings.CASCADE_DEFAULT_PARENT_CLASSES)
+        return parent_classes
+
+    def get_child_classes(self, slot, page):
+        if isinstance(self.child_classes, (list, tuple)):
+            return self.child_classes
+        # otherwise determine child_classes by evaluating parent_classes from other plugins
+        child_classes = set()
+        for p in plugin_pool.get_all_plugins():
+            if (isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes or
+              p.parent_classes is None and issubclass(p, CascadePluginBase) or
+              isinstance(self.alien_child_classes, (list, tuple)) and p.__name__ in self.alien_child_classes or
+              self.alien_child_classes is True and p.__name__ in settings.CASCADE_ALIEN_PLUGINS):
+                child_classes.add(p.__name__)
+        return tuple(child_classes)
 
     @classmethod
     def get_identifier(cls, model):
@@ -189,9 +203,35 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
             except ObjectDoesNotExist:
                 pass
 
+    def get_previous_instance(self, obj):
+        """
+        Return the previous instance pair for the current node.
+        This differs from get_previous_sibling() which returns an instance of the same kind.
+        """
+        try:
+            if obj and obj.parent:
+                previnst = obj.parent.get_children().get(position=obj.position - 1)
+                return previnst.get_plugin_instance()
+        except ObjectDoesNotExist:
+            pass
+        return None, None
+
+    def get_next_instance(self, obj):
+        """
+        Return the next instance pair for the current node.
+        This differs from get_previous_sibling() which returns an instance of the same kind.
+        """
+        try:
+            if obj and obj.parent:
+                nextinst = obj.parent.get_children().get(position=obj.position + 1)
+                return nextinst.get_plugin_instance()
+        except ObjectDoesNotExist:
+            pass
+        return None, None
+
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         bases = self.get_ring_bases()
-        context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
+        context['base_plugins'] = ['django.cascade.{}'.format(b) for b in bases]
         try:
             fields = list(context['adminform'].form.fields)
             fields.remove('glossary')

@@ -7,10 +7,15 @@ except ImportError:
 from django.conf import settings
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
+CASCADE_DEFAULT_PARENT_CLASSES = () + \
+    ('SegmentPlugin',) if 'cmsplugin_cascade.segmentation' in settings.INSTALLED_APPS else ()
+
+CASCADE_ALIEN_PLUGINS = list(getattr(settings, 'CMSPLUGIN_CASCADE_ALIEN_PLUGINS', ('TextPlugin',)))
 
 CASCADE_PLUGIN_DEPENDENCIES = {
     'cascade/js/ring.js': 'cascade/js/underscore.js',
     'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
+    'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
     'cascade/js/admin/linkpluginbase.js': ('cascade/js/admin/sharableglossary.js',),
     'cascade/js/admin/linkplugin.js': ('cascade/js/admin/linkpluginbase.js',),
     'cascade/js/admin/imageplugin.js': ('cascade/js/admin/linkpluginbase.js',),
@@ -36,3 +41,7 @@ CASCADE_EXTRA_INLINE_STYLES = getattr(settings, 'CMSPLUGIN_CASCADE_EXTRA_INLINE_
     ('Colors', (('color', 'background-color',), ColorPickerWidget)),
     ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
 )))
+
+CASCADE_SEGMENTATION_MIXINS = getattr(settings, 'CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS', (
+    'cmsplugin_cascade.segmentation.mixins.EmulateUserMixin',
+))

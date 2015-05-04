@@ -5,20 +5,6 @@ from django.utils.translation import ugettext_lazy as _
 
 CASCADE_PLUGINS = ('buttons', 'carousel', 'collapse', 'container', 'wrappers', 'image', 'picture',)
 CASCADE_TEMPLATE_DIR = getattr(settings, 'CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR', 'cascade/bootstrap3')
-CASCADE_LEAF_PLUGINS = list(getattr(settings, 'CMSPLUGIN_CASCADE_LEAF_PLUGINS', ()))
-
-if 'TextPlugin' not in CASCADE_LEAF_PLUGINS:
-    try:
-        import djangocms_text_ckeditor as unused
-        CASCADE_LEAF_PLUGINS.append('TextPlugin')
-    except ImportError:
-        pass
-# if not 'FilerImagePlugin' in CASCADE_LEAF_PLUGINS:
-#     try:
-#         import filer
-#         CASCADE_LEAF_PLUGINS.append('FilerImagePlugin')
-#     except ImportError:
-#         pass
 
 CASCADE_BOOTSTRAP3_BREAKPOINTS = (
     ('xs', (768, 'mobile-phone', _("mobile phones"), 750)),
