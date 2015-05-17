@@ -53,6 +53,7 @@ class SegmentPlugin(SegmentPluginBase):
     default_template = Template("{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}")
     hiding_template = Template("{% load cms_tags %}<div style=\"display: none;\">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>")
     empty_template = Template('')
+    cache = False
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/segmentplugin.js')
@@ -79,7 +80,7 @@ class SegmentPlugin(SegmentPluginBase):
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
             context = RequestContext(request, {})
-            context.update(context_override)  # TODO: make this pluggable
+            context.update(context_override)
             condition = self.html_parser.unescape(instance.glossary['condition'])
             try:
                 eval_template = Template(self.eval_template_string.format(condition))
@@ -107,7 +108,10 @@ class SegmentPlugin(SegmentPluginBase):
         else:
             assert open_tag in ('elif', 'else')
             prev_inst, _ = self.get_previous_instance(instance)
-            if request._evaluated_instances.get(prev_inst.id):
+            if prev_inst is None:
+                # this can happen, if one moves an else- or elif-segment in front of an if-segment
+                template = edit_mode and self.hiding_template or self.empty_template
+            elif request._evaluated_instances.get(prev_inst.id):
                 request._evaluated_instances[instance.id] = True
                 # in edit mode hidden plugins have to be rendered nevertheless
                 template = edit_mode and self.hiding_template or self.empty_template
