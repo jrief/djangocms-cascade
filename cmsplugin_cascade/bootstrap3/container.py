@@ -211,18 +211,18 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     glossary_fields.append(PartialFormField('{}-column-width'.format(bp),
                         widgets.Select(choices=choices),
                         initial='', label=label, help_text=help_text))
+
                 # handle offset
-                if bp != 'xs':
-                    choices = (('', _("No offset")),) + \
-                        tuple(('col-{}-offset-{}'.format(bp, i), units[i]) for i in range(1, 12))
-                    label = _("Offset for {}").format(devices)
-                    help_text = chose_help_text(
-                        _("Number of offset units for devices narrower than {} pixels."),
-                        _("Number of offset units for devices wider than {} pixels."),
-                        _("Number of offset units for all devices.")
-                    )
-                    glossary_fields.append(PartialFormField('{}-column-offset'.format(bp),
-                        widgets.Select(choices=choices), label=label, help_text=help_text))
+                choices = (('', _("No offset")),) + \
+                    tuple(('col-{}-offset-{}'.format(bp, i), units[i]) for i in range(1, 12))
+                label = _("Offset for {}").format(devices)
+                help_text = chose_help_text(
+                    _("Number of offset units for devices narrower than {} pixels."),
+                    _("Number of offset units for devices wider than {} pixels."),
+                    _("Number of offset units for all devices.")
+                )
+                glossary_fields.append(PartialFormField('{}-column-offset'.format(bp),
+                    widgets.Select(choices=choices), label=label, help_text=help_text))
 
                 # handle column ordering using push/pull settings
                 choices = (('', _("No reordering")),) + \
