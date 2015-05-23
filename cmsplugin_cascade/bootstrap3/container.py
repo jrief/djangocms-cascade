@@ -226,8 +226,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
                 # handle column ordering using push/pull settings
                 choices = (('', _("No reordering")),) + \
-                    tuple(('col-{}-push-{}'.format(bp, i), _("Push {}").format(units[i])) for i in range(1, 12)) + \
-                    tuple(('col-{}-pull-{}'.format(bp, i), _("Pull {}").format(units[i])) for i in range(1, 12))
+                    tuple(('col-{}-push-{}'.format(bp, i), _("Push {}").format(units[i])) for i in range(0, 12)) + \
+                    tuple(('col-{}-pull-{}'.format(bp, i), _("Pull {}").format(units[i])) for i in range(0, 12))
                 label = _("Column ordering for {0}").format(devices)
                 help_text = chose_help_text(
                     _("Column ordering for devices narrower than {} pixels."),
