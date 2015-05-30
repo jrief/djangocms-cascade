@@ -19,7 +19,7 @@ class CascadeModelBase(CMSPlugin):
         abstract = True
 
     cmsplugin_ptr = models.OneToOneField(CMSPlugin, related_name='+', parent_link=True)
-    glossary = JSONField(null=True, blank=True, default={})
+    glossary = JSONField(blank=True, default={})
 
     def __str__(self):
         return self.plugin_class.get_identifier(self)
