@@ -3,8 +3,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-CASCADE_PLUGINS = ('buttons', 'carousel', 'collapse', 'container', 'wrappers', 'image', 'picture',
-                   'gallery',)
+CASCADE_PLUGINS = ('buttons', 'carousel', 'collapse', 'container', 'wrappers', 'image', 'picture',)
 CASCADE_TEMPLATE_DIR = getattr(settings, 'CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR', 'cascade/bootstrap3')
 
 CASCADE_BOOTSTRAP3_BREAKPOINTS = (
