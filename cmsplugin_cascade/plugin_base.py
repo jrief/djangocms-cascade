@@ -180,7 +180,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         form.base_fields['glossary'].help_text = ''
         for field in glossary_fields:
             form.base_fields['glossary'].validators.append(field.run_validators)
-        setattr(form, 'glossary_fields', glossary_fields)
+        form.glossary_fields = glossary_fields
         return form
 
     def save_model(self, request, new_obj, form, change):
@@ -230,8 +230,11 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         return None, None
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        # determined dependencies for ring.js
         bases = self.get_ring_bases()
         context['base_plugins'] = ['django.cascade.{}'.format(b) for b in bases]
+
+        # remove glossary field from rendered form
         try:
             fields = list(context['adminform'].form.fields)
             fields.remove('glossary')
