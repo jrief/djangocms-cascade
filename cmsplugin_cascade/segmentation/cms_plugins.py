@@ -138,13 +138,8 @@ class SegmentPlugin(SegmentPluginBase):
             except TemplateSyntaxError as err:
                 raise ValidationError(_("Unable to evaluate condition: {err}").format(err=err.message))
 
-        # adopt select open_tag to `if`, `elif` and `else` or `if` only
-        prev_inst, prev_model = self.get_previous_instance(obj)
-        if issubclass(prev_model.__class__, self.__class__) and \
-                (prev_inst is None or prev_inst.glossary.get('open_tag') != 'else'):
-            choices = (('if', _("if")), ('elif', _("elif")), ('else', _("else")),)
-        else:
-            choices = (('if', _("if")),)
+        choices = self.get_allowed_open_tags(obj)
+        print choices
         self.glossary_fields[0].widget.choices = choices
         self.glossary_fields[1].widget.validate = clean_condition
         # remove escape quotes, added by JSON serializer
@@ -155,8 +150,25 @@ class SegmentPlugin(SegmentPluginBase):
 
     def save_model(self, request, obj, form, change):
         # compile condition for testing purpose
-        if obj.glossary.get('open_tag') == 'else':
+        open_tag = obj.glossary.get('open_tag')
+        if open_tag not in dict(self.get_allowed_open_tags(obj, change)):
+            obj.glossary['open_tag'] = 'if'
+        if open_tag == 'else':
             obj.glossary.update(condition='')
         super(SegmentPlugin, self).save_model(request, obj, form, change)
+
+    def get_allowed_open_tags(self, obj, change=False):
+        """
+        Returns the tuple of allowed open tags: `if`, `elif` and `else` or `if` only
+        """
+        prev_inst, prev_model = self.get_previous_instance(obj)
+        if prev_inst and issubclass(prev_model.__class__, self.__class__):
+            prev_open_tag = prev_inst.glossary.get('open_tag')
+        else:
+            prev_open_tag = None
+        if (change is True and prev_open_tag in ('if', 'elif') or
+          change is False and prev_open_tag in ('if', 'elif', None)):
+            return (('if', _("if")), ('elif', _("elif")), ('else', _("else")),)
+        return (('if', _("if")),)
 
 plugin_pool.register_plugin(SegmentPlugin)
