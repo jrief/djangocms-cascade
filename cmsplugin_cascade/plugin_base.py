@@ -16,6 +16,20 @@ from .widgets import JSONMultiWidget
 from . import settings
 
 
+def create_proxy_model(name, model_mixins, base_model, attrs={}):
+    """
+    Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
+    """
+    class Meta:
+        proxy = True
+
+    name = str(name + 'Model')
+    bases = model_mixins + (base_model,)
+    attrs.update({'Meta': Meta, '__module__': getattr(base_model, '__module__')})
+    model = type(name, bases, attrs)
+    return model
+
+
 class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     """
     All plugins from djangocms-cascade can be instantiated in different ways. In order to allow this
@@ -41,22 +55,8 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             # SegmentPlugin shall additionally inherit from configured mixin classes
             bases = tuple(import_by_path(mc) for mc in settings.CASCADE_SEGMENTATION_MIXINS) + bases
         model_mixins = attrs.pop('model_mixins', ())
-        attrs['model'] = CascadePluginBaseMetaclass.create_model(name, model_mixins, base_model)
+        attrs['model'] = create_proxy_model(name, model_mixins, base_model)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
-
-    @staticmethod
-    def create_model(name, model_mixins, base_model):
-        """
-        Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
-        """
-        class Meta:
-            proxy = True
-
-        name += str('Model')
-        bases = model_mixins + (base_model,)
-        attrs = {'Meta': Meta, '__module__': getattr(base_model, '__module__')}
-        model = type(name, bases, attrs)
-        return model
 
 
 class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPluginBase)):
