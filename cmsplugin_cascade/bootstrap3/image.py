@@ -140,7 +140,8 @@ class BootstrapImagePlugin(LinkPluginBase):
 
     def render(self, context, instance, placeholder):
         is_responsive = 'img-responsive' in instance.glossary.get('image-shapes', [])
-        tags = utils.get_image_tags(context, instance, is_responsive)
+        options = dict(instance.get_complete_glossary(), is_responsive=is_responsive)
+        tags = utils.get_image_tags(context, instance, options)
         if tags:
             extra_styles = tags.pop('extra_styles')
             inline_styles = instance.glossary.get('inline_styles', {})

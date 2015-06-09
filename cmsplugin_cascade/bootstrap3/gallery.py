@@ -6,15 +6,15 @@ from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin import StackedInline
 from django.contrib.admin.sites import site
 from django.utils.html import format_html
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.mixins import ImagePropertyMixin
-from cmsplugin_cascade.plugin_base import CascadePluginBase
+from cmsplugin_cascade.utils import resolve_dependencies
+from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from . import utils
 
@@ -70,7 +70,6 @@ class GalleryPluginInline(StackedInline):
 
 class BootstrapGalleryPlugin(CascadePluginBase):
     name = _("Gallery")
-    model_mixins = (ImagePropertyMixin,)
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
@@ -82,15 +81,14 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
     inlines = (GalleryPluginInline,)
-    SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
-                     ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
+    SHAPE_CHOICES = (('img-responsive', _("Responsive")),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
     glossary_fields = (
         PartialFormField('image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
-            label=_("Image Shapes"),
+            label=_("Image Responsiveness"),
             initial=['img-responsive']
         ),
         PartialFormField('image-width-responsive',
@@ -109,13 +107,26 @@ class BootstrapGalleryPlugin(CascadePluginBase):
             label=_("Adapt Image Height"),
             help_text=_("Set a fixed height in pixels, or percent relative to the image width."),
         ),
+        PartialFormField('thumbnail-width',
+            CascadingSizeWidget(allowed_units=['px']),
+            label=_("Thumbnail Width"),
+            help_text=_("Set a fixed thumbnail width in pixels."),
+        ),
+        PartialFormField('thumbnail-height',
+            CascadingSizeWidget(allowed_units=['px', '%']),
+            label=_("Thumbnail Height"),
+            help_text=_("Set a fixed height in pixels, or percent relative to the thumbnail width."),
+        ),
         PartialFormField('resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
             label=_("Resize Options"),
             help_text=_("Options to use when resizing the image."),
-            initial=['subject_location', 'high_resolution']
+            initial=['crop', 'subject_location', 'high_resolution']
         ),
     )
+
+    class Media:
+        js = resolve_dependencies('cascade/js/admin/imageplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
         utils.reduce_breakpoints(self, 'responsive-heights')
@@ -123,14 +134,29 @@ class BootstrapGalleryPlugin(CascadePluginBase):
         return form
 
     def render(self, context, instance, placeholder):
-        is_responsive = 'img-responsive' in instance.glossary.get('image-shapes', [])
-        tags = utils.get_image_tags(context, instance, is_responsive)
-        if tags:
-            extra_styles = tags.pop('extra_styles')
-            inline_styles = instance.glossary.get('inline_styles', {})
-            inline_styles.update(extra_styles)
-            instance.glossary['inline_styles'] = inline_styles
-            context.update(dict(instance=instance, placeholder=placeholder, **tags))
+        gallery_instances = []
+        options = dict(instance.get_complete_glossary())
+        for inline_element in instance.inline_elements.all():
+            # since inline_element requires the property `image`, add ImagePropertyMixin
+            # to its class during runtime
+            try:
+                ProxyModel = create_proxy_model('GalleryImage', (ImagePropertyMixin,), InlineCascadeElement)
+                inline_element.__class__ = ProxyModel
+                options.update(inline_element.glossary, **{
+                    'image-width-fixed': options['thumbnail-width'],
+                    'image-height': options['thumbnail-height'],
+                    'is_responsive': False,
+                })
+                thumbnail_tags = utils.get_image_tags(context, inline_element, options)
+                for key, val in thumbnail_tags.items():
+                    setattr(inline_element, key, val)
+                gallery_instances.append(inline_element)
+            except (KeyError, AttributeError):
+                pass
+        inline_styles = instance.glossary.get('inline_styles', {})
+        inline_styles.update(width=options['thumbnail-width'])
+        instance.glossary['inline_styles'] = inline_styles
+        context.update(dict(instance=instance, placeholder=placeholder, gallery_instances=gallery_instances))
         return context
 
     @classmethod
@@ -144,10 +170,8 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapGalleryPlugin, cls).get_identifier(obj)
-        try:
-            content = force_text(obj.image)
-        except AttributeError:
-            content = _("No Image")
+        num_elems = obj.inline_elements.count()
+        content = ungettext_lazy("with {0} image", "with {0} images", num_elems).format(num_elems)
         return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapGalleryPlugin)

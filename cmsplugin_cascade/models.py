@@ -27,9 +27,18 @@ class SharedGlossary(models.Model):
 
 
 class CascadeElement(CascadeModelBase):
+    """
+    The concrete model class to store arbitrary data for plugins derived from CascadePluginBase.
+    """
     class Meta:
         app_label = 'cmsplugin_cascade'
         db_table = 'cmsplugin_cascade_element'
+
+    def copy_relations(self, oldinstance):
+        for inline_element in oldinstance.inline_elements.all():
+            inline_element.pk = None
+            inline_element.cascade_element = self
+            inline_element.save()
 
 
 class SharableCascadeElement(CascadeModelBase):
@@ -50,6 +59,18 @@ class SharableCascadeElement(CascadeModelBase):
         if name == 'glossary' and self.shared_glossary:
             attribute.update(self.shared_glossary.glossary)
         return attribute
+
+
+class InlineCascadeElement(models.Model):
+    """
+    A model class to store an inline model for a CascadeElement.
+    """
+    cascade_element = models.ForeignKey(CascadeElement, related_name='inline_elements')
+    glossary = JSONField(blank=True, default={})
+
+    class Meta:
+        app_label = 'cmsplugin_cascade'
+        db_table = 'cmsplugin_cascade_inline'
 
 
 class PluginExtraFields(models.Model):

@@ -33,43 +33,43 @@ def compute_aspect_ratio(image):
         return float(image.height) / float(image.width)
 
 
-def get_image_tags(context, instance, is_responsive):
+def get_image_tags(context, instance, options):
     """
     Create a context returning the tags to render an <img ...> element:
     ``sizes``, ``srcset``, a fallback ``src`` and if required inline styles.
     """
     if not instance.image:
         return
-    complete_glossary = instance.get_complete_glossary()
     aspect_ratio = compute_aspect_ratio(instance.image)
-    resize_options = instance.glossary.get('resize-options', {})
+    is_responsive = options.get('is_responsive', False)
+    resize_options = options.get('resize-options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
     subject_location = 'subject_location' in resize_options
     resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
     if is_responsive:
-        image_width = _parse_responsive_length(instance.glossary.get('image-width-responsive') or '100%')
+        image_width = _parse_responsive_length(options.get('image-width-responsive') or '100%')
         assert(image_width[1]), "The given image has no valid width"
         if image_width[1] != 1.0:
             tags['extra_styles'].update({'max-width': '{:.0f}%'.format(100 * image_width[1])})
     else:
-        image_width = _parse_responsive_length(instance.glossary.get('image-width-fixed'))
+        image_width = _parse_responsive_length(options['image-width-fixed'])
         if not image_width[0]:
             image_width[0] = instance.image.width
     try:
-        image_height = _parse_responsive_length(instance.glossary['image-height'])
+        image_height = _parse_responsive_length(options['image-height'])
     except KeyError:
         image_height = (None, None)
     if is_responsive:
         max_width = 0
-        for bp in complete_glossary['breakpoints']:
-            if bp in complete_glossary['container_max_widths']:
-                width = int(round(image_width[1] * complete_glossary['container_max_widths'][bp]))
+        for bp in options['breakpoints']:
+            if bp in options['container_max_widths']:
+                width = int(round(image_width[1] * options['container_max_widths'][bp]))
             max_width = max(max_width, width)
             size = _get_image_size(width, image_height, aspect_ratio)
-            if bp in complete_glossary['media_queries']:
-                tags['sizes'].append('{0} {1}px'.format(' and '.join(complete_glossary['media_queries'][bp]), width))
+            if bp in options['media_queries']:
+                tags['sizes'].append('{0} {1}px'.format(' and '.join(options['media_queries'][bp]), width))
             for high_res in resolutions:
                 if high_res:
                     size = (size[0] * 2, size[1] * 2)
