@@ -137,7 +137,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     def get_identifier(cls, obj):
         identifier = super(BootstrapRowPlugin, cls).get_identifier(obj)
         num_cols = obj.get_children().count()
-        content = ungettext_lazy('with {0} column', 'with {0} columns', num_cols).format(num_cols)
+        content = ungettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
     def save_model(self, request, obj, form, change):

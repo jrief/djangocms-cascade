@@ -15,7 +15,10 @@ class ImagePropertyMixin(object):
     A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
     """
     def __str__(self):
-        return self.plugin_class.get_identifier(self)
+        try:
+            return self.plugin_class.get_identifier(self)
+        except AttributeError:
+            return str(self.image)
 
     @property
     def image(self):
