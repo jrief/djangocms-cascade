@@ -3,9 +3,8 @@ django.jQuery(function($) {
 	'use strict';
 
 	var ImagePlugin,
-		breakpoints = ['xs', 'sm', 'md', 'lg'],
-		$image_responsive = $('#id_glossary_image-shapes_0'),
-		base_plugins = eval(django.cascade.base_plugins);
+	    $image_responsive = $('#id_glossary_image-shapes_0'),
+	    base_plugins = eval(django.cascade.base_plugins);
 
 	// create class handling the client-side part of ImagePlugin
 	ImagePlugin = ring.create(base_plugins, {
