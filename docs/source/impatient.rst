@@ -30,7 +30,7 @@ Create a temporary file, for instance named requirements.txt, containing these e
 
 .. code-block:: guess
 
-	Django==1.6.10
+	Django==1.6.11
 	Django-Select2==4.2.2
 	Pillow==2.7.0
 	South==1.0.2
@@ -43,10 +43,10 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	django-polymorphic==0.6.1
 	django-sekizai==0.8.1
 	djangocms-admin-style==0.2.5
-	-e git+https://github.com/jrief/djangocms-bootstrap3.git@a23f8c726b4a4fdb3ef600fe85426cb03ab6a27b#egg=djangocms_bootstrap3-master
-	-e git+https://github.com/jrief/djangocms-cascade.git@78422d1410e441e7f724343598eafc6c59cfc607#egg=djangocms_cascade-master
+	-e git+https://github.com/jrief/djangocms-bootstrap3.git#egg=djangocms-bootstrap3
+	-e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
 	djangocms-text-ckeditor==2.4.3
-	-e git+https://github.com/SmileyChris/easy-thumbnails@714aa5f36894797ca6c980c9bc8cfa52a46156c1#egg=easy_thumbnails-master
+	-e git+https://github.com/SmileyChris/easy-thumbnails#egg=easy-thumbnails
 	html5lib==0.999
 	jsonfield==1.0.2
 	six==1.9.0
