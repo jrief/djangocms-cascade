@@ -76,6 +76,10 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.language.LanguageCookieMiddleware',
 )
 
+# silence false-positive warning 1_6.W001
+# https://docs.djangoproject.com/en/1.8/ref/checks/#backwards-compatibility
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 # Absolute path to the directory that holds media.
 if django.VERSION[:2] > (1, 6):
     MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
