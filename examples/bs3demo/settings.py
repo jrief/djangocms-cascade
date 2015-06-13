@@ -1,6 +1,7 @@
 # Django settings for unit test project.
 import os
 import sys
+from .utils import find_django_migrations_module
 
 DEBUG = True
 
@@ -26,21 +27,6 @@ else:
 
 from cms import __version__ as CMS_VERSION
 CMS_VERSION = tuple(int(n) for n in CMS_VERSION.split('.')[:2])
-
-def get_django_migrations(module_name):
-    """ Tries to locate <module_name>.migrations_django.
-    Returns either "migrations_django" or "migrations".
-    For details why:
-      https://docs.djangoproject.com/en/1.7/topics/migrations/#libraries-third-party-apps
-    """
-    import imp
-    try:
-        module_info = imp.find_module(module_name)
-        module = imp.load_module(module_name, *module_info)
-        imp.find_module('migrations_django', module.__path__)
-        return 'migrations_django'
-    except ImportError:
-        return 'migrations'  # conforms to Django 1.7 defaults
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -68,10 +54,10 @@ INSTALLED_APPS = (
 )
 if django.VERSION[:2] >= (1, 7):
     MIGRATION_MODULES = {
-        'cms': 'cms.' + get_django_migrations('cms'),
-        'menus': 'menus.' + get_django_migrations('menus'),
-        'djangocms_text_ckeditor': 'djangocms_text_ckeditor.' + get_django_migrations('djangocms_text_ckeditor'),
-        'cmsplugin_cascade': 'cmsplugin_cascade.' + get_django_migrations('cmsplugin_cascade'),
+        'cms': find_django_migrations_module('cms'),
+        'menus': find_django_migrations_module('menus'),
+        'djangocms_text_ckeditor': find_django_migrations_module('djangocms_text_ckeditor'),
+        'cmsplugin_cascade': find_django_migrations_module('cmsplugin_cascade'),
     }
 else:
     INSTALLED_APPS += ('south',)
