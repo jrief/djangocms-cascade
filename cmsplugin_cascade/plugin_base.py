@@ -8,6 +8,7 @@ from django.utils.safestring import SafeText
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.placeholder import get_placeholder_conf
+from cms.utils.compat.dj import is_installed
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .sharable.forms import SharableGlossaryMixin
@@ -56,6 +57,9 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             bases = tuple(import_by_path(mc) for mc in settings.CASCADE_SEGMENTATION_MIXINS) + bases
         model_mixins = attrs.pop('model_mixins', ())
         attrs['model'] = create_proxy_model(name, model_mixins, base_model)
+        if is_installed('reversion'):
+            import reversion
+            reversion.register(attrs['model'])
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
