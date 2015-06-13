@@ -1,6 +1,7 @@
 # Django settings for unit test project.
 import os
 import sys
+from .utils import find_django_migrations_module
 
 DEBUG = True
 
@@ -53,10 +54,10 @@ INSTALLED_APPS = (
 )
 if django.VERSION[:2] >= (1, 7):
     MIGRATION_MODULES = {
-        'cms': 'cms.migrations_django',
-        'menus': 'menus.migrations_django',
-        'djangocms_text_ckeditor': 'djangocms_text_ckeditor.migrations_django',
-        'cmsplugin_cascade': 'cmsplugin_cascade.migrations',
+        'cms': find_django_migrations_module('cms'),
+        'menus': find_django_migrations_module('menus'),
+        'djangocms_text_ckeditor': find_django_migrations_module('djangocms_text_ckeditor'),
+        'cmsplugin_cascade': find_django_migrations_module('cmsplugin_cascade'),
     }
 else:
     INSTALLED_APPS += ('south',)
@@ -75,6 +76,10 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
 )
+
+# silence false-positive warning 1_6.W001
+# https://docs.djangoproject.com/en/1.8/ref/checks/#backwards-compatibility
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Absolute path to the directory that holds media.
 if django.VERSION[:2] > (1, 6):
