@@ -265,12 +265,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             width_key = '{0}-column-width'.format(bp)
             offset_key = '{0}-column-offset'.format(bp)
             if bp in breakpoints:
-                # if miss-set, reduce column width for larger displays
                 width_val = obj.glossary.get(width_key, '').lstrip('col-{0}-'.format(bp))
                 if width_val.isdigit():
-                    if int(width_val) > column_units:
-                        obj.glossary[width_key] = 'col-{0}-{1}'.format(bp, column_units)
-                        sanitized = True
                     column_units = int(width_val)
                 new_width = parent_glossary['container_max_widths'][bp] * column_units / 12 - CASCADE_BOOTSTRAP3_GUTTER
                 if new_width != obj.glossary['container_max_widths'].get(bp):
