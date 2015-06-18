@@ -14,7 +14,7 @@ class TextLinkPlugin(LinkPluginBase):
     name = _("Link")
     form = TextLinkForm
     model_mixins = (LinkElementMixin,)
-    render_template = 'cascade/plugins/link.html'
+    render_template = 'cascade/link/text-link.html'
     glossary_fields = (
         PartialFormField('title',
             widgets.TextInput(),
