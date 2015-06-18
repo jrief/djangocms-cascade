@@ -6,6 +6,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
+from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.link.forms import TextLinkForm
@@ -173,13 +174,14 @@ class BootstrapButtonMixin(object):
 
     def render(self, context, instance, placeholder):
         context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
-        mini_template = '<span class="glyphicon glyphicon-{}" aria-hidden="true"></span>&nbsp;'
+        mini_template = '{0}<span class="glyphicon glyphicon-{1}" aria-hidden="true"></span>{2}'
+        nbsp = mark_safe('&nbsp;')
         icon_left = instance.glossary.get('icon-left')
         if icon_left:
-            context['icon_left'] = format_html(mini_template, icon_left)
+            context['icon_left'] = format_html(mini_template, '', icon_left, nbsp)
         icon_right = instance.glossary.get('icon-right')
         if icon_right:
-            context['icon_right'] = format_html(mini_template, icon_right)
+            context['icon_right'] = format_html(mini_template, nbsp, icon_right, '')
         return context
 
 
