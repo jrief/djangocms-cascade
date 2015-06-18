@@ -12,6 +12,8 @@ Release History
 * Enhanced: Access the link content through the glossary's ``link_content``.
 * New: Plugins now can be rendered using an alternative template, choosable through the plugin
   editor.
+* **Possible backwards incompatibility**: For consistency with naming conventions on other plugins,
+  renamed ``cascade/plugins/link.html`` -> ``cascade/link/link-base.html``. **Check your templates**!
 
 0.5.0
 -----
