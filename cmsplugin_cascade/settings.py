@@ -5,6 +5,7 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
 CASCADE_DEFAULT_PARENT_CLASSES = () + \
@@ -45,3 +46,10 @@ CASCADE_EXTRA_INLINE_STYLES = getattr(settings, 'CMSPLUGIN_CASCADE_EXTRA_INLINE_
 CASCADE_SEGMENTATION_MIXINS = getattr(settings, 'CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS', (
     'cmsplugin_cascade.segmentation.mixins.EmulateUserMixin',
 ))
+
+CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES', {
+    'TextLinkPlugin': (
+        ('cascade/plugins/link.html', _("default")),
+        ('cascade/plugins/link-breakline.html', _("with linebreak")),
+    )
+})

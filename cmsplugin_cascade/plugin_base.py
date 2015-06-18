@@ -13,6 +13,7 @@ from .models import CascadeElement, SharableCascadeElement
 from .sharable.forms import SharableGlossaryMixin
 from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
+from .render_template import RenderTemplateMixin
 from . import settings
 
 
@@ -38,6 +39,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     """
     plugins_with_extrafields = list(settings.CASCADE_PLUGINS_WITH_EXTRAFIELDS)
     plugins_with_sharables = dict(settings.CASCADE_PLUGINS_WITH_SHARABLES)
+    plugins_with_wrappers = getattr(settings, 'CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES').keys()
 
     def __new__(cls, name, bases, attrs):
         if name in cls.plugins_with_extrafields:
@@ -51,6 +53,9 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             base_model = SharableCascadeElement
         else:
             base_model = CascadeElement
+        if name in cls.plugins_with_wrappers:
+            RenderTemplateMixin.media = media_property(RenderTemplateMixin)
+            bases = (RenderTemplateMixin,) + bases
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
             bases = tuple(import_by_path(mc) for mc in settings.CASCADE_SEGMENTATION_MIXINS) + bases

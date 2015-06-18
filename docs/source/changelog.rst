@@ -4,6 +4,15 @@
 Release History
 ===============
 
+0.5.1
+-----
+* Fixed #79: The column width is not reduced in width, if a smaller column precedes a column for a
+  smaller displays.
+* Fixed: Added extra space before left prefix in buttons.
+* Enhanced: Access the link content through the glossary's ``link_content``.
+* New: Plugins now can be rendered using an alternative template, choosable through the plugin
+  editor.
+
 0.5.0
 -----
 * Added SegmentationPlugin. This allows to conditionally render parts of the DOM, depending on
