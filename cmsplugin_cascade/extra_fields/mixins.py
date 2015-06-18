@@ -18,8 +18,9 @@ from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 @python_2_unicode_compatible
 class ExtraFieldsMixin(object):
     """
-    This mixin class shall be added to plugins which shall offer extra fields for customizes
-    CSS classes and styles.
+    If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS``, then this
+    ``ExtraFieldsMixin`` class is added automatically to its plugin class in order to offer extra
+    fields for customizing CSS classes and styles.
     """
 
     def __str__(self):
