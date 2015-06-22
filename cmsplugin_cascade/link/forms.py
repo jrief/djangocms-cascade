@@ -34,7 +34,8 @@ class LinkForm(ModelForm):
 
     def __init__(self, raw_data=None, *args, **kwargs):
         instance = kwargs.get('instance')
-        initial = instance and dict(instance.glossary) or {'link': {'type': 'cmspage'}}
+        default_link_type = {'type': self.LINK_TYPE_CHOICES[0][0]}
+        initial = instance and dict(instance.glossary) or {'link': default_link_type}
         initial.update(kwargs.pop('initial', {}))
         link_type = initial['link']['type']
         self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
