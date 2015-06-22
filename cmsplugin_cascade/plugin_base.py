@@ -178,8 +178,12 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         """
         Build the form used for changing the model.
         """
+        widgets = kwargs.pop('widgets', {})
+        labels = kwargs.pop('labels', {})
         glossary_fields = kwargs.pop('glossary_fields', self.glossary_fields)
-        kwargs.update(widgets={'glossary': JSONMultiWidget(glossary_fields)}, labels={'glossary': ''})
+        widgets.update(glossary=JSONMultiWidget(glossary_fields))
+        labels.update(glossary='')
+        kwargs.update(widgets=widgets, labels=labels)
         form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
         # help_text can not be cleared using an empty string in modelform_factory
         form.base_fields['glossary'].help_text = ''
