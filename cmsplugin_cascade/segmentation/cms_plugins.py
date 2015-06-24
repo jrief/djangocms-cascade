@@ -16,37 +16,7 @@ from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import resolve_dependencies
 
 
-class SegmentPluginBase(CascadePluginBase):
-    require_parent = False
-    parent_classes = None
-    allow_children = True
-    child_classes = None
-
-    @classmethod
-    def get_context_override(cls, request):
-        """
-        Return a dictionary to override the context during evaluation. Normally this is an empty
-        dict. However, when a staff user overrides the segmentation, then update the context with
-        the returned dict.
-        """
-        return {}
-
-
-class SegmentElementMixin(object):
-    """
-    Add extra functionality to the proxy model `SegmentPluginModel`
-    """
-    def render_plugin(self, context=None, placeholder=None, admin=False, processors=None):
-        context.update(self.plugin_class.get_context_override(context['request']))
-        print 'render_plugin as {}'.format(context['user'])
-        content = super(SegmentElementMixin, self).render_plugin(context, placeholder, admin, processors)
-        print 'content: {}'.format(content[:50])
-        context.pop()
-        print 'fixed context to: {}'.format(context['user'])
-        return content
-
-
-class SegmentPlugin(SegmentPluginBase):
+class SegmentPlugin(CascadePluginBase):
     """
     This button is used as a final step to convert the Cart object into an Order object.
     """
@@ -68,7 +38,10 @@ class SegmentPlugin(SegmentPluginBase):
     default_template = Template("{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}")
     hiding_template = Template("{% load cms_tags %}<div style=\"display: none;\">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>")
     empty_template = Template('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
-    model_mixins = (SegmentElementMixin,)
+    require_parent = False
+    parent_classes = None
+    allow_children = True
+    child_classes = None
     cache = False
 
     class Media:
@@ -95,8 +68,6 @@ class SegmentPlugin(SegmentPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
-            #context = RequestContext(request, {})
-            #context.update(context_override)
             condition = self.html_parser.unescape(instance.glossary['condition'])
             try:
                 eval_template = Template(self.eval_template_string.format(condition))
@@ -112,14 +83,12 @@ class SegmentPlugin(SegmentPluginBase):
                     request._evaluated_instances[instance.id] = False
                     # in edit mode hidden plugins have to be rendered nevertheless
                     template = edit_mode and self.hiding_template or self.empty_template
-            print 'user: {}. eval ({}) {} -> {}'.format(context['user'].username, instance.id, condition, evaluated_to)
             return template
 
         request = context['request']
         toolbar = getattr(request, 'toolbar', None)
         edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request) and
                      getattr(placeholder, 'is_editable', True))
-        #context_override = self.get_context_override(request)
         open_tag = instance.glossary.get('open_tag')
         if open_tag == 'if':
             template = conditionally_eval()
@@ -157,7 +126,6 @@ class SegmentPlugin(SegmentPluginBase):
                 raise ValidationError(_("Unable to evaluate condition: {err}").format(err=err.message))
 
         choices = self.get_allowed_open_tags(obj)
-        print choices
         self.glossary_fields[0].widget.choices = choices
         self.glossary_fields[1].widget.validate = clean_condition
         # remove escape quotes, added by JSON serializer

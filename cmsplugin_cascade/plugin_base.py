@@ -56,10 +56,10 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         if name in cls.plugins_with_wrappers:
             RenderTemplateMixin.media = media_property(RenderTemplateMixin)
             bases = (RenderTemplateMixin,) + bases
+        model_mixins = attrs.pop('model_mixins', ())
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
-            bases = tuple(import_by_path(mc) for mc in settings.CASCADE_SEGMENTATION_MIXINS) + bases
-        model_mixins = attrs.pop('model_mixins', ())
+            model_mixins += tuple(import_by_path(mc[0]) for mc in settings.CASCADE_SEGMENTATION_MIXINS)
         attrs['model'] = create_proxy_model(name, model_mixins, base_model)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 

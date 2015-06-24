@@ -12,7 +12,7 @@ class SegmentationToolbar(CMSToolbar):
     def populate(self):
         menu = self.toolbar.get_or_create_menu('segmentation', _("Segmentation"))
         for sgm in settings.CASCADE_SEGMENTATION_MIXINS:
-            SegmentationMixin = import_by_path(sgm)
+            SegmentationMixin = import_by_path(sgm[1])
             populate_handler = getattr(SegmentationMixin, 'populate_toolbar', None)
             if callable(populate_handler):
                 populate_handler(menu, self.request)

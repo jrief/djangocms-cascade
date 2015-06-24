@@ -13,22 +13,28 @@ from django.utils.html import format_html
 from cms.constants import REFRESH_PAGE
 
 
-class EmulateUserMixin(object):
-    @staticmethod
-    def populate_toolbar(segmentation_menu, request):
-        active = 'emulate_user_id' in request.session
-        segmentation_menu.add_sideframe_item(_("Emulate User"), url=reverse('admin:emulate-users'),
-                                             active=active)
-        segmentation_menu.add_ajax_item(_("Clear emulations"),
-                                        action=reverse('admin:clear-emulations'),
-                                        on_success=REFRESH_PAGE)
+class SegmentPluginModelMixin(object):
+    def get_context_override(self, request):
+        """
+        Return a dictionary to override the request context object during evaluation with
+        alternative values. Normally this is an empty dict. However, when a staff user overrides
+        the segmentation, then update the context with this returned dict.
+        """
+        return {}
 
-    @classmethod
-    def get_context_override(cls, request):
+    def render_plugin(self, context=None, placeholder=None, admin=False, processors=None):
+        context.update(self.get_context_override(context['request']))
+        content = super(SegmentPluginModelMixin, self).render_plugin(context, placeholder, admin, processors)
+        context.pop()
+        return content
+
+
+class EmulateUserModelMixin(SegmentPluginModelMixin):
+    def get_context_override(self, request):
         """
         Override the request object with an emulated user.
         """
-        context_override = super(EmulateUserMixin, cls).get_context_override(request)
+        context_override = super(EmulateUserModelMixin, self).get_context_override(request)
         try:
             if request.user.is_staff:
                 UserModel = get_user_model()
@@ -38,12 +44,23 @@ class EmulateUserMixin(object):
             pass
         return context_override
 
+
+class EmulateUserAdminMixin(object):
+    @staticmethod
+    def populate_toolbar(segmentation_menu, request):
+        active = 'emulate_user_id' in request.session
+        segmentation_menu.add_sideframe_item(_("Emulate User"), url=reverse('admin:emulate-users'),
+                                             active=active)
+        segmentation_menu.add_ajax_item(_("Clear emulations"),
+                                        action=reverse('admin:clear-emulations'),
+                                        on_success=REFRESH_PAGE)
+
     def get_urls(self):
         return [
             url(r'^emulate_users/$', self.admin_site.admin_view(self.emulate_users), name='emulate-users'),
             url(r'^emulate_user/(?P<user_id>\d+)/$', self.admin_site.admin_view(self.emulate_user), name='emulate-user'),
             url(r'^clear_emulations/$', self.admin_site.admin_view(self.clear_emulations), name='clear-emulations'),
-        ] + super(EmulateUserMixin, self).get_urls()
+        ] + super(EmulateUserAdminMixin, self).get_urls()
 
     def emulate_user(self, request, user_id):
         try:
@@ -80,7 +97,7 @@ class EmulateUserMixin(object):
         list_display.insert(0, 'display_as_link')
         display_as_link.allow_tags = True
         display_as_link.short_description = admin.util.label_for_field(list_display_link, lookup_model)
-        self.display_as_link = MethodType(display_as_link, self, EmulateUserMixin)
+        self.display_as_link = MethodType(display_as_link, self, EmulateUserAdminMixin)
 
         ChangeList = self.get_changelist(request)
         cl = ChangeList(request, lookup_model, list_display,

@@ -44,7 +44,7 @@ CASCADE_EXTRA_INLINE_STYLES = getattr(settings, 'CMSPLUGIN_CASCADE_EXTRA_INLINE_
 )))
 
 CASCADE_SEGMENTATION_MIXINS = getattr(settings, 'CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS', (
-    'cmsplugin_cascade.segmentation.mixins.EmulateUserMixin',
+    ('cmsplugin_cascade.segmentation.mixins.EmulateUserModelMixin', 'cmsplugin_cascade.segmentation.mixins.EmulateUserAdminMixin'),
 ))
 
 CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES', {
