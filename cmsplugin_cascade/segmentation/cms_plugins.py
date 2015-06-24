@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from django.template import Template, TemplateSyntaxError, RequestContext
+from django.template import Template, TemplateSyntaxError
 from cms.plugin_pool import plugin_pool
 from cms.utils.placeholder import get_placeholder_conf
 from cmsplugin_cascade.fields import PartialFormField
@@ -22,13 +22,28 @@ class SegmentPluginBase(CascadePluginBase):
     allow_children = True
     child_classes = None
 
-    def get_context_override(self, request):
+    @classmethod
+    def get_context_override(cls, request):
         """
         Return a dictionary to override the context during evaluation. Normally this is an empty
         dict. However, when a staff user overrides the segmentation, then update the context with
         the returned dict.
         """
         return {}
+
+
+class SegmentElementMixin(object):
+    """
+    Add extra functionality to the proxy model `SegmentPluginModel`
+    """
+    def render_plugin(self, context=None, placeholder=None, admin=False, processors=None):
+        context.update(self.plugin_class.get_context_override(context['request']))
+        print 'render_plugin as {}'.format(context['user'])
+        content = super(SegmentElementMixin, self).render_plugin(context, placeholder, admin, processors)
+        print 'content: {}'.format(content[:50])
+        context.pop()
+        print 'fixed context to: {}'.format(context['user'])
+        return content
 
 
 class SegmentPlugin(SegmentPluginBase):
@@ -52,7 +67,8 @@ class SegmentPlugin(SegmentPluginBase):
     eval_template_string = "{{% if {} %}}True{{% endif %}}"
     default_template = Template("{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}")
     hiding_template = Template("{% load cms_tags %}<div style=\"display: none;\">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>")
-    empty_template = Template('')
+    empty_template = Template('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
+    model_mixins = (SegmentElementMixin,)
     cache = False
 
     class Media:
@@ -79,13 +95,14 @@ class SegmentPlugin(SegmentPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
-            context = RequestContext(request, {})
-            context.update(context_override)
+            #context = RequestContext(request, {})
+            #context.update(context_override)
             condition = self.html_parser.unescape(instance.glossary['condition'])
             try:
                 eval_template = Template(self.eval_template_string.format(condition))
                 evaluated_to = eval_template.render(context) == 'True'
             except TemplateSyntaxError:
+                # TODO: render error message into template
                 evaluated_to = False
             finally:
                 if evaluated_to:
@@ -95,13 +112,14 @@ class SegmentPlugin(SegmentPluginBase):
                     request._evaluated_instances[instance.id] = False
                     # in edit mode hidden plugins have to be rendered nevertheless
                     template = edit_mode and self.hiding_template or self.empty_template
+            print 'user: {}. eval ({}) {} -> {}'.format(context['user'].username, instance.id, condition, evaluated_to)
             return template
 
         request = context['request']
         toolbar = getattr(request, 'toolbar', None)
         edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request) and
                      getattr(placeholder, 'is_editable', True))
-        context_override = self.get_context_override(request)
+        #context_override = self.get_context_override(request)
         open_tag = instance.glossary.get('open_tag')
         if open_tag == 'if':
             template = conditionally_eval()

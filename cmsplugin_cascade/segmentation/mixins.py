@@ -23,11 +23,12 @@ class EmulateUserMixin(object):
                                         action=reverse('admin:clear-emulations'),
                                         on_success=REFRESH_PAGE)
 
-    def get_context_override(self, request):
+    @classmethod
+    def get_context_override(cls, request):
         """
         Override the request object with an emulated user.
         """
-        context_override = super(EmulateUserMixin, self).get_context_override(request)
+        context_override = super(EmulateUserMixin, cls).get_context_override(request)
         try:
             if request.user.is_staff:
                 UserModel = get_user_model()
