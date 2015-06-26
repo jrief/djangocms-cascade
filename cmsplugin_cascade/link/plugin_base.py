@@ -4,7 +4,6 @@ from django.db.models import get_model
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from cms.utils.compat.dj import python_2_unicode_compatible
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import resolve_dependencies
@@ -57,15 +56,10 @@ class LinkPluginBase(CascadePluginBase):
         return bases
 
 
-@python_2_unicode_compatible
 class LinkElementMixin(object):
     """
     A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
     """
-    def __str__(self):
-        """Required representation of this model as a Link inside the Text Editor Plugin"""
-        return self.content
-
     @property
     def link(self):
         return self.plugin_class.get_link(self)

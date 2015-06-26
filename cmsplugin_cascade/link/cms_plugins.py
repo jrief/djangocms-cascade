@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.forms import widgets
+from cms.utils.compat.dj import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
@@ -10,10 +11,21 @@ from .plugin_base import LinkPluginBase, LinkElementMixin
 from .forms import TextLinkForm
 
 
+@python_2_unicode_compatible
+class TextLinkElementMixin(LinkElementMixin):
+    def __str__(self):
+        """
+        A Link inside the Text Editor Plugin are rendered as `str(instance)` rather
+        than `instance.content`. Therefore the string representation for this model
+        must be overridden.
+        """
+        return self.content
+
+
 class TextLinkPlugin(LinkPluginBase):
     name = _("Link")
     form = TextLinkForm
-    model_mixins = (LinkElementMixin,)
+    model_mixins = (TextLinkElementMixin,)
     render_template = 'cascade/link/text-link.html'
     glossary_fields = (
         PartialFormField('title',
