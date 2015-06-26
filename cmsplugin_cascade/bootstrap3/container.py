@@ -292,7 +292,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         glossary = obj.get_complete_glossary()
         widths = []
         for bp in glossary.get('breakpoints', []):
-            width = string.replace(obj.glossary.get('{0}-column-width'.format(bp), ''), 'col-{0}-'.format(bp), '')
+            width = obj.glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
+
             if width:
                 widths.append(width)
         if len(widths) > 1:
