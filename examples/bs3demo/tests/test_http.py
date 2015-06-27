@@ -54,7 +54,7 @@ class ContainerPluginTest(CMSTestCase):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest',
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         plugin_url = response_data['url']
 
         # configure that plugin
@@ -76,4 +76,3 @@ class ContainerPluginTest(CMSTestCase):
     def test_with_reversion(self):
         self.assertTrue(is_installed('reversion'))
         self._create_and_configure_a_container_plugin()
-
