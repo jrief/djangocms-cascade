@@ -1,24 +1,11 @@
 language: python
 
-# python:
-#   - 2.7
-# #  - 3.3
-
 env:
   - TOX_ENV=py27-django16
   - TOX_ENV=py27-django17
-  # - DJANGO=1.6.11 MIGRATE='true'
-  # - DJANGO=1.7.8 MIGRATE='./manage.py migrate --settings=bs3demo.settings'
-
-# branches:
-#   only:
-#     - master
 
 install:
   - pip install tox
-  # - pip install -q Django==$DJANGO
-  # - pip install -r examples/bs3demo/requirements.txt
-  # - python setup.py -q install
 
 before_script:
   - export DISPLAY=:99.0
@@ -26,4 +13,3 @@ before_script:
 
 script:
   - tox -e $TOX_ENV
- # - cd examples && $MIGRATE && ./manage.py test bs3demo --settings=bs3demo.settings
