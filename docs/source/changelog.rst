@@ -15,12 +15,13 @@ Release History
 * Fixed in SegmentationPlugin: When overriding the context, this updated context was only used for
   the immediate child of segment. Now the overridden context is applied to all children and
   grandchildren.
+* Added support for **django-reversion**.
 
 **Possible backwards incompatibility**:
 * For consistency with naming conventions on other plugins,
   renamed ``cascade/plugins/link.html`` -> ``cascade/link/link-base.html``. **Check your templates**!
 * The setting ``CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS`` now is a list of two-tuples, where the first
-  declares the plugin's model mixin, while the seconds declares the model admin mixin.
+  declares the plugin's model mixin, while the second declares the model admin mixin.
 
 0.5.0
 -----
