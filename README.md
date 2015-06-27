@@ -1,27 +1,54 @@
-djangocms-cascade
-=================
+# djangocms-cascade
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
 
-Add DOM elements to a Django-CMS placeholder
----------------------------------------------
+## Add DOM elements to a Django-CMS placeholder
 
-**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.0.8 to add various HTML elements
-from CSS frameworks, such as [Twitter Bootstrap](http://getbootstrap.com/) or the
-[960 Grid System](http://960.gs/) (discontinued) to any CMS
-[placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
-Currently **Bootstrap-3.x** and **960.gs** (discontinued) are supported, but this module makes
-it very easy to add your preferred CSS frameworks. It is also very easy to extend an existing
-collection with additional elements.
+**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.0.8 to add various HTML elements to any CMS
+[placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates) in a hierarchical tree.
 
-**DjangoCMS-Cascade** allows web editors to layout their pages, without having to edit Django
-templates. In most cases, one template with one single placeholder is enough. The editor then
-can subdivide that placeholder into rows and columns, and add additional elements such as buttons,
-rulers, or even the Bootstrap Carousel.
+It allows web editors to layout their pages, without having to edit Django templates. In most cases,
+one template with one single placeholder is enough. The editor then can subdivide that placeholder
+into rows and columns, and add additional elements such as buttons, rulers, and much more.
+
+Currently about a dozen compontents from **Bootstrap-3.x** are avialble, but **Cascade** makes it very easy
+to add additional compontents, often with less than 20 lines of Python code and without any database migrations.
+
+Since all plugins share the same database table, it is very easy to build inheritance trees. For instance,
+Cascade's own ``LinkPlugin`` inherits from a ``LinkPluginBase``, which also is the parent of the ``ImagePlugin``
+and the ``ButtonPlugin``. This helps to share the common functionality required for linking.
 
 
-News for next major release 0.5.0
----------------------------------
+### Its pluggable
+
+**DjangoCMS-Cascade** is very modular, keeping its CMS modules in functional groups. These groups have to be
+activated independently in your ``settings.py``. It also is possible to activate only certain Plugins out
+of a group. One such group is ``cmsplugin_cascade.bootstrap3``, but it could be replaced by a future
+**Bootstrap-4**, the **Foundation**, **YUI** or whatever other CSS framework you prefer.
+
+
+### Configurable individually
+
+Each Cascade Plugin can be styled individually. The site-administrator can specify which CSS styles and CSS
+classes can be added to each plugin. Then the page-editor can pick one of the allowed styles to adopt his
+elements accordingly.
+
+
+### Reuse your data
+
+Each Cascade Plugin can be configured by the site-administrator to share some or all of its data fields.
+This for instance is handy, to keep references onto external URLs in a central place. Or is can be used
+to resize all images sharing a cetrain property in one go.
+
+
+### Segment the DOM
+
+It is even possible to group plugins into seperate evaluation contexts. This for instance is used to render
+different Plugins, depending on whether a user is authenticated or anonymous.
+
+
+
+## News for next major release 0.5.0
 
 * Tested with **django-cms 3.0.13** and Django-1.6.
 * Added SegmentationPlugin. This allows to conditionally render parts of the DOM, depending on
