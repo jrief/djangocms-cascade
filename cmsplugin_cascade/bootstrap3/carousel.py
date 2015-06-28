@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import os
 import re
 try:
     from html.parser import HTMLParser  # py3
@@ -19,7 +18,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
-from .settings import CASCADE_BREAKPOINTS_LIST, CASCADE_TEMPLATE_DIR
+from .settings import CASCADE_BREAKPOINTS_LIST
 from .image import ImageForm
 from .picture import BootstrapPicturePlugin
 from . import utils
@@ -39,7 +38,7 @@ class CarouselPlugin(BootstrapPluginBase):
     default_css_class = 'carousel'
     default_css_attributes = ('options',)
     parent_classes = ['BootstrapColumnPlugin']
-    render_template = os.path.join(CASCADE_TEMPLATE_DIR, 'carousel.html')
+    render_template = 'cascade/bootstrap3/carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
     fields = ('num_children', 'glossary',)
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
@@ -127,7 +126,7 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
-    render_template = os.path.join(CASCADE_TEMPLATE_DIR, 'carousel-slide.html')
+    render_template = 'cascade/bootstrap3/carousel-slide.html'
     glossary_fields = (
         PartialFormField('caption',
             TextEditorWidget(),

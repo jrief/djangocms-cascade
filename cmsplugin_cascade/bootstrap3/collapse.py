@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import os
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.text import Truncator
@@ -12,7 +11,6 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
-from .settings import CASCADE_TEMPLATE_DIR
 
 
 class PanelGroupForm(ManageChildrenFormMixin, ModelForm):
@@ -28,7 +26,7 @@ class PanelGroupPlugin(BootstrapPluginBase):
     default_css_class = 'panel-group'
     parent_classes = ('BootstrapColumnPlugin',)
     require_parent = True
-    render_template = os.path.join(CASCADE_TEMPLATE_DIR, 'collapse.html')
+    render_template = 'cascade/bootstrap3/collapse.html'
     fields = ('num_children', 'glossary',)
 
     @classmethod
