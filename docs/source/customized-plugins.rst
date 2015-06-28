@@ -26,7 +26,7 @@ This plugin is very simple and just renders static content which has been declar
 	
 	class StylishPlugin(CascadePluginBase):
 	    name = 'Stylish Element'
-	    render_template = 'cms/bootstrap3/stylish-element.html'
+	    render_template = 'myapp/cascade/stylish-element.html'
 	
 	plugin_pool.register_plugin(StylishPlugin)
 
@@ -176,11 +176,9 @@ Additionally ``BootstrapPluginBase`` allows the following attributes:
 	This name is shown in the pull down menu in structure view. There is not default value.
 
 :tag_type:
-	Default: ``div``.
-
-	A HTML element into which this plugin is wrapped. If ``tag_type`` is ``None``, then the plugin
-	is 	considered as “naked” and rendered without a wrapping DOM element. This for instance is
-	useful to render the ``<a>`` element as button, using styling classes.
+	A HTML element into which this plugin is wrapped. Generic templates can render their
+	content into any ``tag_type. Specialized rendering templates usually have a hard coded tag
+	type, then this attribute can be omitted.
 
 :require_parent:
 	Default: ``True``. This differs from ``CMSPluginBase``.

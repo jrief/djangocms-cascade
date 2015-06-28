@@ -145,22 +145,9 @@ the configuration directive
 Bootstrap 3 with AngularJS
 --------------------------
 
-*This currently is unsupported.*
-
-To replace Bootstrap's jQuery code against the very popular `Angular UI Bootstrap`_, add 
-
-.. code-block:: python
-
-	CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR = 'cascade/angular-ui'
-
-to your ``settings.py``. This will load the rendering templates created for AngularJS from a
-different directory.
-
-
-Configure the 960.gs Framework
-==============================
-
-*This currently is unsupported, until someone needs it.*
+Some Bootstrap3 plugins can be rendered using templates which are suitable for the very popular
+`Angular UI Bootstrap`_ framework. This can be done during runtime; when editing the plugin a 
+select box appears which allows to chose an alternative template for rendering.
 
 
 Template Customization
