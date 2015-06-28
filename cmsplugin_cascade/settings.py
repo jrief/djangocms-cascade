@@ -8,6 +8,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
+CASCADE_PLUGINS = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', ('cmsplugin_cascade.generic', 'cmsplugin_cascade.link',))
+
 CASCADE_DEFAULT_PARENT_CLASSES = () + \
     ('SegmentPlugin',) if 'cmsplugin_cascade.segmentation' in settings.INSTALLED_APPS else ()
 

@@ -22,6 +22,11 @@ Release History
   renamed ``cascade/plugins/link.html`` -> ``cascade/link/link-base.html``. **Check your templates**!
 * The setting ``CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS`` now is a list of two-tuples, where the first
   declares the plugin's model mixin, while the second declares the model admin mixin.
+* Removed from setting: ``CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR``. The rendering template now 
+  can be specified during runtime.
+* Refactored and moved ``SimpleWrapperPlugin`` and ``HorizontalRulePlugin`` from
+  ``cmsplugin_cascade/bootstrap3/`` into ``cmsplugin_cascade/generic/``. The glossary field
+  ``element_tag`` has been renamed to ``tag_type``.
 
 0.5.0
 -----
