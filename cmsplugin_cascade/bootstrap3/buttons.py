@@ -67,7 +67,6 @@ class BootstrapButtonMixin(object):
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
     text_enabled = True
-    tag_type = None
     default_css_class = 'btn'
     default_css_attributes = ('button-type', 'button-size', 'button-options', 'quick-float',)
 
