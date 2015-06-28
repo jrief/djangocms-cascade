@@ -9,6 +9,7 @@
 .sass-cache
 *.db
 *.egg-info
+.tox
 build
 env*
 dist

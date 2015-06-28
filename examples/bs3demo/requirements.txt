@@ -18,5 +18,4 @@ html5lib
 jsonfield
 pyflakes
 six
-wsgiref
 django-reversion

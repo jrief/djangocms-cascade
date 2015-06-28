@@ -135,10 +135,10 @@ def get_picture_elements(context, instance):
                 elif container_height[1]:
                     size = (int(width), int(round(width * aspect_ratio * container_height[1])))
             try:
-                zoom = instance.glossary['responsive-zoom'][bp].strip()
-                if zoom.endswith('%'):
-                    zoom = int(zoom.rstrip('%'))
-            except (AttributeError, KeyError):
+                zoom = int(
+                    instance.glossary['responsive-zoom'][bp].strip().rstrip('%')
+                )
+            except (AttributeError, KeyError, ValueError):
                 zoom = 0
             max_zoom = max(max_zoom, zoom)
             if size is None:
