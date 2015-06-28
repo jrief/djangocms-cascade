@@ -113,6 +113,12 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
                                          '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
         return sanitized
 
+    def get_parent_classes(self, slot, page):
+        if self.cms_plugin_instance and self.cms_plugin_instance.parent:
+            # enforce that a ContainerPlugin can't have a parent
+            return []
+        return super(BootstrapContainerPlugin, self).get_parent_classes(slot, page)
+
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 

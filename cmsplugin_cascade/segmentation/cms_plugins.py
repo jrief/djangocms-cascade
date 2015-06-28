@@ -10,13 +10,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template import Template, TemplateSyntaxError
 from cms.plugin_pool import plugin_pool
-from cms.utils.placeholder import get_placeholder_conf
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
+from cmsplugin_cascade.mixins import TransparentMixin
 from cmsplugin_cascade.utils import resolve_dependencies
 
 
-class SegmentPlugin(CascadePluginBase):
+class SegmentPlugin(TransparentMixin, CascadePluginBase):
     """
     This button is used as a final step to convert the Cart object into an Order object.
     """
@@ -53,18 +53,6 @@ class SegmentPlugin(CascadePluginBase):
             return mark_safe("<strong><em>{open_tag}</em></strong> {condition}".format(**obj.glossary))
         except KeyError:
             return ''
-
-    def get_child_classes(self, slot, page):
-        if self.cms_plugin_instance:
-            if self.cms_plugin_instance.parent:
-                plugin_class = self.cms_plugin_instance.parent.get_plugin_class()
-                child_classes = plugin_class().get_child_classes(slot, page)
-            else:  # SegmentPlugin is at the root level
-                template = page and page.get_template() or None
-                child_classes = get_placeholder_conf('plugins', slot, template, default=[])
-        else:
-            child_classes = super(SegmentPlugin, self).get_child_classes(slot, page)
-        return child_classes
 
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
