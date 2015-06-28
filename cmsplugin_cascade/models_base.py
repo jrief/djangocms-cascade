@@ -32,7 +32,7 @@ class CascadeModelBase(CMSPlugin):
 
     @property
     def tag_type(self):
-        return self.plugin_class.tag_type
+        return self.plugin_class.get_tag_type(self)
 
     @property
     def css_classes(self):

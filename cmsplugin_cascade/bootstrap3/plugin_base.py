@@ -7,3 +7,4 @@ class BootstrapPluginBase(CascadePluginBase):
     module = 'Bootstrap'
     require_parent = True
     allow_children = True
+    render_template = 'cascade/generic/wrapper.html'
