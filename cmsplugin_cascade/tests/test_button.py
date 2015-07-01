@@ -34,4 +34,4 @@ class ButtonWrapperPluginTest(TestCase):
             'link': {'pk': page.id, 'model': 'cms.Page', 'type': 'cmspage'}, 'target': ''}
         model_instance = add_plugin(self.placeholder, BootstrapButtonPlugin, 'en', glossary=glossary)
         html = model_instance.render_plugin({})
-        self.assertHTMLEqual(html, '<a href="/"  class="btn btn-success">HOME</a>')
+        self.assertHTMLEqual(html, '<a href="/en/"  class="btn btn-success">HOME</a>')
