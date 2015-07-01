@@ -19,13 +19,17 @@ env:
 matrix:
   allow_failures:
     - python: 2.7
-      - env: DJANGO='django18' CMS='cms30'
-      - env: DJANGO='django18' CMS='cms31'
-      - env: DJANGO='django18' CMS='cms32'
+      env: DJANGO='django18' CMS='cms30'
+    - python: 2.7
+      env: DJANGO='django18' CMS='cms31'
+    - python: 2.7
+      env: DJANGO='django18' CMS='cms32'
     - python: 3.4
-      - env: DJANGO='django18' CMS='cms30'
-      - env: DJANGO='django18' CMS='cms31'
-      - env: DJANGO='django18' CMS='cms32'
+      env: DJANGO='django18' CMS='cms30'
+    - python: 3.4
+      env: DJANGO='django18' CMS='cms31'
+    - python: 3.4
+      env: DJANGO='django18' CMS='cms32'
 
 install:
   - pip install tox
@@ -33,6 +37,10 @@ install:
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then export PYVER=py26; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PYVER=py27; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.3' ]]; then export PYVER=py33; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.4' ]]; then export PYVER=py34; fi"
 
 script:
-  - tox -e"$TRAVIS_PYTHON_VERSION-$DJANGO-$CMS"
+  - tox -e"$PYVER-$DJANGO-$CMS"
