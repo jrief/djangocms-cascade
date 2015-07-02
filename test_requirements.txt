@@ -1,0 +1,6 @@
+django-filer
+easy-thumbnails
+jsonfield
+django-reversion
+djangocms-text-ckeditor
+beautifulsoup4
