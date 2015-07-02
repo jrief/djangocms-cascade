@@ -12,20 +12,15 @@ env:
   - DJANGO='django17' CMS='cms30'
   - DJANGO='django17' CMS='cms31'
   - DJANGO='django17' CMS='cms32'
-  - DJANGO='django18' CMS='cms30'
   - DJANGO='django18' CMS='cms31'
   - DJANGO='django18' CMS='cms32'
 
 matrix:
   allow_failures:
     - python: 2.7
-      env: DJANGO='django18' CMS='cms30'
-    - python: 2.7
       env: DJANGO='django18' CMS='cms31'
     - python: 2.7
       env: DJANGO='django18' CMS='cms32'
-    - python: 3.4
-      env: DJANGO='django18' CMS='cms30'
     - python: 3.4
       env: DJANGO='django18' CMS='cms31'
     - python: 3.4
