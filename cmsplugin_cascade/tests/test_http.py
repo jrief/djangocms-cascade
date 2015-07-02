@@ -24,7 +24,7 @@ class ContainerPluginTest(CMSTestCase):
 
         # create page
         response = self.client.post(
-            URL_CMS_PAGE_ADD[3:],
+            '/' + self.language + URL_CMS_PAGE_ADD[3:],
             data={
                 'language': self.language,
                 'site': self.site_id,
@@ -44,7 +44,7 @@ class ContainerPluginTest(CMSTestCase):
     def _create_and_configure_a_container_plugin(self):
         # create a plugin
         response = self.client.post(
-            URL_CMS_PLUGIN_ADD[3:],
+            '/' + self.language + URL_CMS_PLUGIN_ADD[3:],
             data={
                 'plugin_parent': '',
                 'plugin_type': 'BootstrapContainerPlugin',
