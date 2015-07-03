@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
-from django.template.loader import find_template, TemplateDoesNotExist
+from django.template.loader import get_template, TemplateDoesNotExist
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade import settings as cascade_settings
 
@@ -30,7 +30,7 @@ class RenderTemplateMixin(object):
     def get_render_template(self, context, instance, placeholder):
         try:
             template = instance.glossary.get('render_template', self.get_template_choices()[0][0])
-            find_template(template)
+            get_template(template)
         except (IndexError, TemplateDoesNotExist):
             template = self.render_template
         return template
