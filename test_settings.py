@@ -13,20 +13,10 @@ HELPER_SETTINGS = dict(
         'cmsplugin_cascade.extra_fields',
         'cmsplugin_cascade.sharable',
     ],
-    USE_I18N = True,
-    USE_L10N = True,
-    USE_TZ = True,
-    LANGUAGE_CODE='en-us',
+    LANGUAGE_CODE='en',
     LANGUAGES=(
-        ('en-us', 'English'),
+        ('en', 'English'),
     ),
-    TEMPLATE_CONTEXT_PROCESSORS={
-        'sekizai.context_processors.sekizai'
-    },
-    CMS_PERMISSION=True,
-    FILE_UPLOAD_TEMP_DIR=mkdtemp(),
-    SITE_ID=1,
-    TEST_RUNNER='discover_runner.DiscoverRunner',
     CMS_TEMPLATES=(
         ('testing.html', 'Default Page'),
     ),
@@ -82,18 +72,12 @@ HELPER_SETTINGS = dict(
             },
         },
     },
-    CKEDITOR_SETTINGS={
-        'language': '{{ language }}',
-        'skin': 'moono',
-        'toolbar': 'CMS',
-    },
     THUMBNAIL_PROCESSORS=(
         'easy_thumbnails.processors.colorspace',
         'easy_thumbnails.processors.autocrop',
         'filer.thumbnail_processors.scale_and_crop_with_subject_location',
         'easy_thumbnails.processors.filters',
     ),
-    THUMBNAIL_HIGH_RESOLUTION=False,
     THUMBNAIL_PRESERVE_EXTENSIONS=True,
     THUMBNAIL_OPTIMIZE_COMMAND={
         'png': '/opt/local/bin/optipng {filename}',

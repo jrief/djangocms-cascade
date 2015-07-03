@@ -19,7 +19,7 @@ class ContainerPluginTest(CMSTestCase):
         self.user.set_password(self.password)
         self.user.save()
         self.client.login(username=self.user.username, password=self.password)
-        self.language = 'en-us'
+        self.language = 'en'
         self.site_id = settings.SITE_ID
 
         # create page
