@@ -18,10 +18,6 @@ env:
 matrix:
   allow_failures:
     - python: 2.7
-      env: DJANGO='django16' CMS='cms30'
-    - python: 2.7
-      env: DJANGO='django17' CMS='cms30'
-    - python: 2.7
       env: DJANGO='django18' CMS='cms31'
     - python: 2.7
       env: DJANGO='django18' CMS='cms32'
