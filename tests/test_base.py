@@ -13,12 +13,12 @@ class CascadeTestCase(CMSTestCase):
 
     def setUp(self):
         self._createAdminUser()
-        page = create_page('HOME', 'testing.html', 'en-us', published=True, in_navigation=True,
+        page = create_page('HOME', 'testing.html', 'en', published=True, in_navigation=True,
             created_by=self.user)
         self.placeholder = Placeholder.objects.create(slot='Main Content')
         self.placeholder.page_set.add(page)
         self.placeholder.save()
-        self.request = self.get_request(language='en-us', page=page)
+        self.request = self.get_request(language='en', page=page)
         self.admin_site = admin.sites.AdminSite()
         self.page_admin = PageAdmin(page, self.admin_site)
 

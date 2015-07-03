@@ -1,10 +1,34 @@
 language: python
 
+python:
+  - 2.7
+  - 3.4
+
 env:
-  - TOX_ENV=py27-django16
-  - TOX_ENV=py27-django17
-  - TOX_ENV=py34-django16
-  - TOX_ENV=py34-django17
+  matrix:
+  - DJANGO='django16' CMS='cms30'
+  - DJANGO='django16' CMS='cms31'
+  - DJANGO='django16' CMS='cms32'
+  - DJANGO='django17' CMS='cms30'
+  - DJANGO='django17' CMS='cms31'
+  - DJANGO='django17' CMS='cms32'
+  - DJANGO='django18' CMS='cms31'
+  - DJANGO='django18' CMS='cms32'
+
+matrix:
+  allow_failures:
+    - python: 2.7
+      env: DJANGO='django16' CMS='cms30'
+    - python: 2.7
+      env: DJANGO='django17' CMS='cms30'
+    - python: 2.7
+      env: DJANGO='django18' CMS='cms31'
+    - python: 2.7
+      env: DJANGO='django18' CMS='cms32'
+    - python: 3.4
+      env: DJANGO='django18' CMS='cms31'
+    - python: 3.4
+      env: DJANGO='django18' CMS='cms32'
 
 install:
   - pip install tox
@@ -12,6 +36,10 @@ install:
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then export PYVER=py26; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PYVER=py27; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.3' ]]; then export PYVER=py33; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.4' ]]; then export PYVER=py34; fi"
 
 script:
-  - tox -e $TOX_ENV
+  - tox -e"$PYVER-$DJANGO-$CMS"
