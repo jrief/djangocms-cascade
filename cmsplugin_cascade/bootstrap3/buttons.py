@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.forms import widgets
+from django.forms.fields import CharField
 from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.datastructures import SortedDict
@@ -9,8 +10,8 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.link.forms import TextLinkForm
-from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from cmsplugin_cascade.link.forms import TextLinkFormMixin
 from cmsplugin_cascade.utils import resolve_dependencies
 from .glyphicons import GlyphiconRenderer
 
@@ -123,10 +124,8 @@ class BootstrapButtonMixin(object):
 class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
-    form = TextLinkForm
     model_mixins = (LinkElementMixin,)
-    fields = ('link_content', ('link_type', 'cms_page', 'ext_url', 'mail_to'), 'glossary',)
-    glossary_fields = BootstrapButtonMixin.glossary_fields + LinkPluginBase.glossary_fields
+    fields = ('link_content', LinkPluginBase.glossary_field_map['link'], 'glossary',)
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
@@ -142,5 +141,12 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
             except KeyError:
                 content = _("Empty")
         return format_html('{}{}', identifier, content)
+
+    def get_form(self, request, obj=None, **kwargs):
+        link_content = CharField(required=False, label=_("Button Content"),
+            widget=widgets.TextInput(attrs={'id': 'id_name'}))
+        Form = type(str('ButtonForm'), (TextLinkFormMixin, LinkForm.get_form_class(),), {'link_content': link_content})
+        kwargs.update(form=Form)
+        return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
