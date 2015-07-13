@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django.contrib.sites.models import Site
 from django.db.models import get_model
 from django.forms import fields
-from django.forms.widgets import TextInput
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
@@ -115,6 +114,13 @@ class LinkForm(ModelForm):
             pass
 
     @classmethod
+    def get_form_class(cls):
+        """
+        Hook to return a form class for editing a CMSPlugin inheriting from ``LinkPluginBase``.
+        """
+        return cls
+
+    @classmethod
     def unset_required_for(cls, sharable_fields):
         """
         Fields borrowed by `SharedGlossaryAdmin` to build its temporary change form, only are
@@ -124,21 +130,12 @@ class LinkForm(ModelForm):
             cls.base_fields['link_type'].required = False
 
 
-class TextLinkForm(LinkForm):
+class TextLinkFormMixin(object):
     """
-    Form class with the additional fake field ``link_content`` used to store the content of pure
-    text links.
+    To be used in combination with `LinkForm` for easily accessing the field `link_content`.
     """
-    link_content = fields.CharField(required=False, label=_("Link Content"),
-        # replace auto-generated id so that CKEditor automatically transfers the text into this input field
-        widget=TextInput(attrs={'id': 'id_name'}), help_text=_("Content of Link"))
-
     def clean(self):
-        """
-        link_content intentionally was rendered outside the glossary field, now move this content
-        back to the ``glossary``.
-        """
-        cleaned_data = super(TextLinkForm, self).clean()
+        cleaned_data = super(TextLinkFormMixin, self).clean()
         if self.is_valid():
             cleaned_data['glossary'].update(link_content=cleaned_data['link_content'])
         return cleaned_data

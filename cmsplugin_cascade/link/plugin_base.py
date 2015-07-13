@@ -4,9 +4,11 @@ from django.db.models import get_model
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from cms.utils.compat.dj import python_2_unicode_compatible
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import resolve_dependencies
+from .forms import LinkForm
 
 
 class LinkPluginBase(CascadePluginBase):
@@ -22,8 +24,13 @@ class LinkPluginBase(CascadePluginBase):
             label=_("Link Target"),
             help_text=_("Open Link in other target.")
         ),
+        PartialFormField('title',
+            widgets.TextInput(),
+            label=_("Title"),
+            help_text=_("Link's Title")
+        ),
     )
-    html_tag_attributes = {'target': 'target'}
+    html_tag_attributes = {'title': 'title', 'target': 'target'}
     # map field from glossary to these form fields
     glossary_field_map = {'link': ('link_type', 'cms_page', 'ext_url', 'mail_to',)}
 
@@ -55,11 +62,21 @@ class LinkPluginBase(CascadePluginBase):
         bases.append('LinkPluginBase')
         return bases
 
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', LinkForm.get_form_class())
+        return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
 
+
+@python_2_unicode_compatible
 class LinkElementMixin(object):
     """
     A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
+    Please note that a Link inside the Text Editor Plugin is rendered as `str(instance)` rather
+    than `instance.content`.
     """
+    def __str__(self):
+        return self.content
+
     @property
     def link(self):
         return self.plugin_class.get_link(self)
