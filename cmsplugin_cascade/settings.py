@@ -52,6 +52,6 @@ CASCADE_SEGMENTATION_MIXINS = getattr(settings, 'CMSPLUGIN_CASCADE_SEGMENTATION_
 CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES', {
     'TextLinkPlugin': (
         ('cascade/link/text-link.html', _("default")),
-        ('cascade/link/text-link-linebreak.html', _("with linebreak")),
+        ('cascade/link/text-link-linebreak.html', _("with line break")),
     )
 })
