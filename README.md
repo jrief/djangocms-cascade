@@ -122,14 +122,13 @@ Build status
 History
 -------
 This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-text-wrapper) for the
-DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960. 
+DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960.
+Later on, support for 960.gs was dropped in favor of Twitter Bootstrap. Now the aim of the project
+is to fully support all Bootstrap components and more, so that djangoCMS can be used to build a
+website with as many widgets as possible, without having to edit templates.
 
 DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins. This feature made
 it possible to implement this kind of plugin.
-
-In **DjangoCMS-Cascade** since version 0.4, the code base has been hugely refactored. If you where
-using version 0.3.2 upgrade carefully, since the API changed. Please contact me directly in case you
-need help to migrate your projects.
 
 
 License
