@@ -15,7 +15,12 @@ Release History
 * Fixed in SegmentationPlugin: When overriding the context, this updated context was only used for
   the immediate child of segment. Now the overridden context is applied to all children and
   grandchildren.
+* Changed in SegmentationPlugin: When searching for siblings, use a list index instead of
+  ``get_children().get(position=...)``.
+* Added unit tests for SegmentationPlugin.
 * Added support for **django-reversion**.
+* By using the setting ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES``, one can replace the class ``LinkPluginBase``
+  by an alternative implementation.
 
 **Possible backwards incompatibility**:
 * For consistency with naming conventions on other plugins,
