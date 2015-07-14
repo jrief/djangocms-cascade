@@ -9,6 +9,7 @@ HELPER_SETTINGS = dict(
         'reversion',
         'filer',
         'easy_thumbnails',
+        'djangocms_text_ckeditor',
         'cmsplugin_cascade',
         'cmsplugin_cascade.extra_fields',
         'cmsplugin_cascade.sharable',

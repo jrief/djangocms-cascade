@@ -1,5 +1,6 @@
 django-filer
 easy-thumbnails
+html5lib
 jsonfield
 django-reversion
 djangocms-text-ckeditor
