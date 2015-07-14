@@ -125,7 +125,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
     model_mixins = (LinkElementMixin,)
-    fields = ('link_content', LinkPluginBase.glossary_field_map['link'], 'glossary',)
+    fields = ('link_content', getattr(LinkPluginBase, 'glossary_field_map')['link'], 'glossary',)
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
@@ -145,7 +145,8 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     def get_form(self, request, obj=None, **kwargs):
         link_content = CharField(required=False, label=_("Button Content"),
             widget=widgets.TextInput(attrs={'id': 'id_name'}))
-        Form = type(str('ButtonForm'), (TextLinkFormMixin, LinkForm.get_form_class(),), {'link_content': link_content})
+        Form = type(str('ButtonForm'), (TextLinkFormMixin, getattr(LinkForm, 'get_form_class')(),),
+                    {'link_content': link_content})
         kwargs.update(form=Form)
         return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
 
