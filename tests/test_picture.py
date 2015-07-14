@@ -61,9 +61,12 @@ class PicturePluginTest(CascadeTestCase):
         image = self.upload_demo_image()
         post_data = QueryDict('', mutable=True)
         post_data.update({'image_file': image.pk, 'link_type': 'none',
-            'responsive-heights-xs': '50%', 'responsive-heights-sm': '66%', 'responsive-heights-md': '75%', 'responsive-heights-lg': '100%',
-            'responsive-zoom-lg': '40%', 'responsive-zoom-lg': '25%', 'responsive-zoom-lg': '15%', 'responsive-zoom-lg': '0%'})
+            'responsive-heights-xs': '50%', 'responsive-heights-sm': '66%',
+            'responsive-heights-md': '75%', 'responsive-heights-lg': '100%',
+            'responsive-zoom-lg': '40%', 'responsive-zoom-lg': '25%',
+            'responsive-zoom-lg': '15%', 'responsive-zoom-lg': '0%'})
         post_data.setlist('resize-options', ['crop'])
+        picture_model._image_model = image
         form = ModelForm(post_data, None, instance=picture_model)
         self.assertTrue(form.is_valid())
         picture_plugin.save_model(self.request, picture_model, form, False)

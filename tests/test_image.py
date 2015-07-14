@@ -60,6 +60,7 @@ class ImagePluginTest(CascadeTestCase):
         image = self.upload_demo_image()
         post_data = QueryDict('', mutable=True)
         post_data.update({'image_file': image.pk, 'link_type': 'none', 'image-width-fixed': '300px'})
+        image_model._image_model = image
         form = ModelForm(post_data, None, instance=image_model)
         self.assertTrue(form.is_valid())
         image_plugin.save_model(self.request, image_model, form, False)
