@@ -4,7 +4,7 @@
 Release History
 ===============
 
-0.5.1
+0.6.0
 -----
 * Fixed #79: The column width is not reduced in width, if a smaller column precedes a column for a
   smaller displays.
@@ -27,6 +27,10 @@ Release History
 * Refactored and moved ``SimpleWrapperPlugin`` and ``HorizontalRulePlugin`` from
   ``cmsplugin_cascade/bootstrap3/`` into ``cmsplugin_cascade/generic/``. The glossary field
   ``element_tag`` has been renamed to ``tag_type``.
+* Refactored ``LinkPluginBase`` so that external implementations can create their own version,
+  which then is used as base for TextLinkPlugin, ImagePlugin and PicturePlugin.
+* Renamed: ``PanelGroupPlugin`` -> ``Accordion``, ``PanelPlugin`` -> ``AccordionPanelPlugin``,
+  because the Bootstrap project renamed them back to their well known names.
 
 0.5.0
 -----
