@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.forms import widgets
+from django.forms import widgets, ModelChoiceField
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
-from .image import LinkedImageForm
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from .image import ImageFormMixin
 from .settings import CASCADE_BREAKPOINTS_LIST
 from . import utils
 
@@ -18,19 +19,20 @@ from . import utils
 class BootstrapPicturePlugin(LinkPluginBase):
     name = _("Picture")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
-    form = LinkedImageForm
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)
-    text_enabled = True
+    text_enabled = False
     admin_preview = False
     render_template = 'cascade/bootstrap3/linked-picture.html'
     default_css_class = 'img-responsive'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
-    fields = ('image_file', 'glossary', ('link_type', 'cms_page', 'ext_url',),)
+    fields = ('image_file', getattr(LinkPluginBase, 'glossary_field_map')['link'], 'glossary',)
+    LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
+        tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
@@ -45,7 +47,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
             label=_('Alternative Description'),
             help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
         ),
-    ) + LinkPluginBase.glossary_fields + (
+    ) + getattr(LinkPluginBase, 'glossary_fields', ()) + (
         PartialFormField('responsive-heights',
             MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['px', '%'], required=False),
             label=_("Adapt Picture Heights"),
@@ -71,6 +73,10 @@ class BootstrapPicturePlugin(LinkPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         utils.reduce_breakpoints(self, 'responsive-heights')
+        image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
+        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
+            {'LINK_TYPE_CHOICES': self.LINK_TYPE_CHOICES, 'image_file': image_file})
+        kwargs.update(form=Form)
         return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
