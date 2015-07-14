@@ -11,43 +11,60 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.mixins import TransparentMixin
 
 
-class PanelGroupForm(ManageChildrenFormMixin, ModelForm):
+class AccordionForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em;'}),
         label=_("Panels"),
         help_text=_("Number of panels for this panel group."))
 
 
-class PanelGroupPlugin(BootstrapPluginBase):
-    name = _("Panel Group")
-    form = PanelGroupForm
+class AccordionPlugin(TransparentMixin, BootstrapPluginBase):
+    name = _("Accordion")
+    form = AccordionForm
     default_css_class = 'panel-group'
-    parent_classes = ('BootstrapColumnPlugin',)
-    require_parent = True
-    render_template = 'cascade/bootstrap3/collapse.html'
+    require_parent = False
+    parent_classes = None
+    allow_children = True
+    child_classes = None
+    render_template = 'cascade/bootstrap3/accordion.html'
     fields = ('num_children', 'glossary',)
+    glossary_fields = (
+        PartialFormField('close_others',
+            widgets.CheckboxInput(),
+            label=_("Close others"),
+            initial=True,
+            help_text=_("Open only one panel at a time.")
+        ),
+        PartialFormField('first_is_open',
+            widgets.CheckboxInput(),
+            label=_("First panel open"),
+            initial=True,
+            help_text=_("Start with the first panel open.")
+        ),
+    )
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(PanelGroupPlugin, cls).get_identifier(obj)
+        identifier = super(AccordionPlugin, cls).get_identifier(obj)
         num_cols = obj.get_children().count()
         content = ungettext_lazy('with {0} panel', 'with {0} panels', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
-        super(PanelGroupPlugin, self).save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, PanelPlugin)
+        super(AccordionPlugin, self).save_model(request, obj, form, change)
+        self.extend_children(obj, wanted_children, AccordionPanelPlugin)
 
-plugin_pool.register_plugin(PanelGroupPlugin)
+plugin_pool.register_plugin(AccordionPlugin)
 
 
-class PanelPlugin(BootstrapPluginBase):
-    name = _("Panel")
+class AccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
+    name = _("Accordion Panel")
     default_css_class = 'panel-body'
-    parent_classes = ('PanelGroupPlugin',)
+    parent_classes = ('AccordionPlugin',)
     require_parent = True
     alien_child_classes = True
     glossary_fields = (
@@ -59,10 +76,10 @@ class PanelPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(PanelPlugin, cls).get_identifier(obj)
+        identifier = super(AccordionPanelPlugin, cls).get_identifier(obj)
         content = obj.glossary.get('panel_title', '')
         if content:
             content = unicode(Truncator(content).words(3, truncate=' ...'))
         return format_html('{0}{1}', identifier, content)
 
-plugin_pool.register_plugin(PanelPlugin)
+plugin_pool.register_plugin(AccordionPanelPlugin)

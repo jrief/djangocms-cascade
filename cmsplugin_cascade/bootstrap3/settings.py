@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.settings import CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES
 
-CASCADE_PLUGINS = ('buttons', 'carousel', 'collapse', 'container', 'image', 'picture',)
+CASCADE_PLUGINS = ('buttons', 'carousel', 'accordion', 'container', 'image', 'picture',)
 
 CASCADE_BOOTSTRAP3_BREAKPOINTS = (
     ('xs', (768, 'mobile-phone', _("mobile phones"), 750)),
@@ -27,7 +27,7 @@ CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('CarouselPlugin', (
     ('cascade/bootstrap3/carousel.html', _("default")),
     ('cascade/bootstrap3/angular-ui/carousel.html', "angular-ui"),
 ))
-CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('PanelGroupPlugin', (
-    ('cascade/bootstrap3/collapse.html', _("default")),
-    ('cascade/bootstrap3/angular-ui/collapse.html', "angular-ui"),
+CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('AccordionPlugin', (
+    ('cascade/bootstrap3/accordion.html', _("default")),
+    ('cascade/bootstrap3/angular-ui/accordion.html', "angular-ui"),
 ))
