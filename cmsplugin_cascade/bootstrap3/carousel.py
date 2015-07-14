@@ -6,7 +6,6 @@ try:
 except ImportError:
     from HTMLParser import HTMLParser  # py2
 from django.forms import widgets
-from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
@@ -164,9 +163,9 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     def get_identifier(cls, obj):
         identifier = super(CarouselSlidePlugin, cls).get_identifier(obj)
         try:
-            content = force_text(obj.image)
+            content = obj.image.name or obj.image.original_filename
         except AttributeError:
-            content = _("No Slide")
+            content = _("Empty Slide")
         return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(CarouselSlidePlugin)
