@@ -40,7 +40,6 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     """
     plugins_with_extrafields = list(settings.CASCADE_PLUGINS_WITH_EXTRAFIELDS)
     plugins_with_sharables = dict(settings.CASCADE_PLUGINS_WITH_SHARABLES)
-    plugins_with_extratemplates = getattr(settings, 'CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES').keys()
 
     def __new__(cls, name, bases, attrs):
         if name in cls.plugins_with_extrafields:
@@ -54,7 +53,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             base_model = SharableCascadeElement
         else:
             base_model = CascadeElement
-        if name in cls.plugins_with_extratemplates:
+        if name in getattr(settings, 'CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES').keys():
             RenderTemplateMixin.media = media_property(RenderTemplateMixin)
             bases = (RenderTemplateMixin,) + bases
         model_mixins = attrs.pop('model_mixins', ())
