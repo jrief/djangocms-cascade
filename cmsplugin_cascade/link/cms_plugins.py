@@ -14,7 +14,7 @@ class TextLinkPlugin(LinkPluginBase):
     name = _("Link")
     model_mixins = (LinkElementMixin,)
     render_template = 'cascade/link/text-link.html'
-    fields = ('link_content', LinkPluginBase.glossary_field_map['link'], 'glossary',)
+    fields = ('link_content', LinkPluginBase.glossary_field_map['link'], 'glossary',)  # @UndefinedVariable
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/linkplugin.js')
@@ -27,7 +27,7 @@ class TextLinkPlugin(LinkPluginBase):
         link_content = CharField(required=False, label=_("Link Content"),
             # replace auto-generated id so that CKEditor automatically transfers the text into this input field
             widget=TextInput(attrs={'id': 'id_name'}), help_text=_("Content of Link"))
-        Form = type(str('TextLinkForm'), (TextLinkFormMixin, LinkForm.get_form_class(),),
+        Form = type(str('TextLinkForm'), (TextLinkFormMixin, LinkForm.get_form_class(),),  # @UndefinedVariable
             {'link_content': link_content})
         kwargs.update(form=Form)
         return super(LinkPluginBase, self).get_form(request, obj, **kwargs)

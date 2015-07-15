@@ -23,11 +23,11 @@ CASCADE_BREAKPOINT_APPEARANCES = {
     'lg': {'media': '(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT['lg'][0])},
 }
 
-CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('CarouselPlugin', (
+CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('CarouselPlugin', (  # @UndefinedVariable
     ('cascade/bootstrap3/carousel.html', _("default")),
     ('cascade/bootstrap3/angular-ui/carousel.html', "angular-ui"),
 ))
-CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('AccordionPlugin', (
+CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('AccordionPlugin', (  # @UndefinedVariable
     ('cascade/bootstrap3/accordion.html', _("default")),
     ('cascade/bootstrap3/angular-ui/accordion.html', "angular-ui"),
 ))
