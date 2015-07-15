@@ -48,11 +48,12 @@ class TransparentMixin(object):
                 if self.cms_plugin_instance.parent:
                     parent_plugin_instance, parent_plugin = self.cms_plugin_instance.parent.get_plugin_instance()
                     parent_plugin.cms_plugin_instance = parent_plugin_instance
-                    self._cached_child_classes = tuple(parent_plugin.get_child_classes(slot, page))
+                    child_classes = set(parent_plugin.get_child_classes(slot, page))
                 else:  # SegmentPlugin is at the root level
                     template = page and page.get_template() or None
-                    self._cached_child_classes = get_placeholder_conf('plugins', slot, template, default=[])
+                    child_classes = set(get_placeholder_conf('plugins', slot, template, default=[]))
             else:
-                self._cached_child_classes = ()
-            self._cached_child_classes += tuple(super(TransparentMixin, self).get_child_classes(slot, page))
+                child_classes = set()
+            child_classes.update(super(TransparentMixin, self).get_child_classes(slot, page))
+            self._cached_child_classes = tuple(child_classes)
         return self._cached_child_classes
