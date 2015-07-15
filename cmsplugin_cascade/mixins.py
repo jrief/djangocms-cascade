@@ -13,7 +13,7 @@ from cms.utils.placeholder import get_placeholder_conf
 @python_2_unicode_compatible
 class ImagePropertyMixin(object):
     """
-    A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
+    A mixin class to convert a CascadeElement into a proxy model for rendering an image element.
     """
     def __str__(self):
         try:
@@ -34,11 +34,13 @@ class ImagePropertyMixin(object):
 
 class TransparentMixin(object):
     """
-    Add this mixin class to other Cascade Plugins, wishing to be added transparently between two
-    Plugins with restriction.
+    Add this mixin class to other Cascade plugins, wishing to be added transparently between two
+    plugins restricting parent-children relationships.
     For instance: A ColumnPlugin can only be added as a child to a RowPlugin. This means that no
-    other wrapper can be added between those two plugins. With this mixin class we can convert
-    our plugin to behave transparently.
+    other wrapper can be added between those two plugins. By adding this mixin class we can allow
+    any plugin to behave transparently, just as if it would not have be inserted into the DOM tree.
+    When moving plugins in- and out of transparent wrapper plugins, always reload the page, so that
+    the parent-children relationships can be updated.
     """
     def get_child_classes(self, slot, page):
         if not hasattr(self, '_cached_child_classes'):
@@ -46,10 +48,11 @@ class TransparentMixin(object):
                 if self.cms_plugin_instance.parent:
                     parent_plugin_instance, parent_plugin = self.cms_plugin_instance.parent.get_plugin_instance()
                     parent_plugin.cms_plugin_instance = parent_plugin_instance
-                    self._cached_child_classes = parent_plugin.get_child_classes(slot, page)
+                    self._cached_child_classes = tuple(parent_plugin.get_child_classes(slot, page))
                 else:  # SegmentPlugin is at the root level
                     template = page and page.get_template() or None
                     self._cached_child_classes = get_placeholder_conf('plugins', slot, template, default=[])
             else:
-                self._cached_child_classes = super(TransparentMixin, self).get_child_classes(slot, page)
+                self._cached_child_classes = ()
+            self._cached_child_classes += tuple(super(TransparentMixin, self).get_child_classes(slot, page))
         return self._cached_child_classes
