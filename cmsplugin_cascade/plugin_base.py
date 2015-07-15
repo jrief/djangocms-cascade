@@ -227,7 +227,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         """
         try:
             if obj and obj.parent and obj.position > 0:
-                previnst = obj.parent.get_children()[obj.position - 1]
+                previnst = obj.parent.get_children().order_by('position')[obj.position - 1]
                 return previnst.get_plugin_instance()
         except ObjectDoesNotExist:
             pass
@@ -240,7 +240,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         """
         try:
             if obj and obj.parent:
-                nextinst = obj.parent.get_children()[obj.position + 1]
+                nextinst = obj.parent.get_children().order_by('position')[obj.position + 1]
                 return nextinst.get_plugin_instance()
         except (IndexError, ObjectDoesNotExist):
             pass
