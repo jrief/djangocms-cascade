@@ -80,7 +80,7 @@ else:
 
 
 class NumberInputWidget(input_widget):
-    validation_pattern = re.compile('^\d+$')
+    validation_pattern = re.compile('^-?\d+$')
     required = True
     required_message = _("In '%(label)s': This field is required.")
     invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number.")
@@ -101,7 +101,7 @@ def _compile_validation_pattern(widget, units):
             raise ValidationError('{0} is not a valid unit for CascadingSizeField'.format(u))
     endings = (' %s ' % ugettext("or")).join("'%s'" % u.replace('%', '%%') for u in units)
     params = {'label': '%(label)s', 'value': '%(value)s', 'field': '%(field)s', 'endings': endings}
-    return re.compile(r'^(\d+)\s*({0})$'.format('|'.join(units))), widget.invalid_message % params
+    return re.compile(r'^(-?\d+)\s*({0})$'.format('|'.join(units))), widget.invalid_message % params
 
 
 class CascadingSizeWidget(widgets.TextInput):
