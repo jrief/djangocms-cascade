@@ -21,6 +21,7 @@ Release History
 * Added support for **django-reversion**.
 * By using the setting ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES``, one can replace the class ``LinkPluginBase``
   by an alternative implementation.
+* When using *Extra Styles* distances now can have negative values.
 
 **Possible backwards incompatibility**:
 * For consistency with naming conventions on other plugins,
