@@ -253,8 +253,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 glossary_fields.append(PartialFormField('{}-responsive-utils'.format(bp),
                     widgets.RadioSelect(choices=choices), label=label, help_text=help_text, initial=''))
         glossary_fields = [
-            glossary_fields[ i + len(glossary_fields) / len(breakpoints) * j]
-            for i in range(0, len(glossary_fields) / len(breakpoints))
+            glossary_fields[ i + len(glossary_fields) // len(breakpoints) * j]
+            for i in range(0, len(glossary_fields) // len(breakpoints))
             for j in range(0, len(breakpoints))
         ]
         kwargs.update(glossary_fields=glossary_fields)
