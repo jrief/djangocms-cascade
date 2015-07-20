@@ -1,0 +1,16 @@
+{% extends "cascade/admin/change_form.html" %}
+{% load admin_static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static "cms/js/modules/cms.base.js" %}"></script>
+<script>
+(function($) {
+// CMS.$ will be passed for $
+$(document).ready(function () {
+	console.log("djangocms_text_ckeditor");
+	CMS.API.Helpers.csrf('{{ csrf_token }}');
+});
+})(CMS.$);
+</script>
+{% endblock %}

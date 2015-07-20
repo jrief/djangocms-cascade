@@ -19,9 +19,10 @@ Release History
   ``get_children().get(position=...)``.
 * Added unit tests for SegmentationPlugin.
 * Added support for **django-reversion**.
-* By using the setting ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES``, one can replace the class ``LinkPluginBase``
-  by an alternative implementation.
+* By using the setting ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES``, one can replace the class
+  ``LinkPluginBase`` by an alternative implementation.
 * When using *Extra Styles* distances now can have negative values.
+* In caption field of ``CarouselSlidePlugin`` it now is possible to set links onto arbitrary pages.
 
 **Possible backwards incompatibility**:
 * For consistency with naming conventions on other plugins,

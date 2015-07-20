@@ -12,10 +12,12 @@ from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.widgets import TextEditorWidget
+from djangocms_text_ckeditor.utils import plugin_tags_to_user_html
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
+from cmsplugin_cascade.link.cms_plugins import TextLinkPlugin
 from .plugin_base import BootstrapPluginBase
 from .settings import CASCADE_BREAKPOINTS_LIST
 from .image import ImageForm
@@ -126,27 +128,31 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
     render_template = 'cascade/bootstrap3/carousel-slide.html'
-    glossary_fields = (
-        PartialFormField('caption',
-            TextEditorWidget(),
-            label=_("Slide Caption"),
-            help_text=_("Caption text to be laid over the backgroud image."),
-        ),
-    )
+    change_form_template = 'cascade/admin/text_plugin_change_form.html'
+    html_parser = HTMLParser()
 
     def get_form(self, request, obj=None, **kwargs):
-        caption = HTMLParser().unescape(obj.glossary.get('caption', ''))
-        obj.glossary.update(caption=caption)
+        if obj:
+            caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
+            obj.glossary.update(caption=caption)
+            # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
+            text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=obj.pk,
+                                           placeholder=obj.placeholder, plugin_language=obj.language)
+            kwargs['glossary_fields'] = (
+                PartialFormField('caption', text_editor_widget, label=_("Slide Caption"),
+                    help_text=_("Caption text to be laid over the backgroud image."),
+                ),
+            )
         return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
         elements = utils.get_picture_elements(context, instance)
-        caption = HTMLParser().unescape(instance.glossary.get('caption', ''))
+        caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
         context.update({
             'is_responsive': True,
             'instance': instance,
-            'caption': caption,
+            'caption': plugin_tags_to_user_html(caption, context, placeholder),
             'placeholder': placeholder,
             'elements': elements,
         })
