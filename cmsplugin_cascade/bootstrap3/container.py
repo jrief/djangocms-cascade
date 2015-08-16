@@ -195,7 +195,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 if breakpoints.index(bp) == 0:
                     # first breakpoint
                     choices = tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
-                    label = _("Default column width")
+                    label = _("Column width for {}").format(devices)
                     help_text = chose_help_text(
                         _("Number of column units for devices narrower than {} pixels."),
                         _("Number of column units for devices wider than {} pixels."),
@@ -252,6 +252,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 )
                 glossary_fields.append(PartialFormField('{}-responsive-utils'.format(bp),
                     widgets.RadioSelect(choices=choices), label=label, help_text=help_text, initial=''))
+        glossary_fields = [
+            glossary_fields[ i + len(glossary_fields) // len(breakpoints) * j]
+            for i in range(0, len(glossary_fields) // len(breakpoints))
+            for j in range(0, len(breakpoints))
+        ]
         kwargs.update(glossary_fields=glossary_fields)
         return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
 
