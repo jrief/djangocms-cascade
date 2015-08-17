@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.settings import CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES
 
-CASCADE_PLUGINS = ('buttons', 'carousel', 'accordion', 'container', 'image', 'picture',)
+CASCADE_PLUGINS = ('buttons', 'carousel', 'accordion', 'container', 'image', 'picture', 'panel')
 
 CASCADE_BOOTSTRAP3_BREAKPOINTS = (
     ('xs', (768, 'mobile-phone', _("mobile phones"), 750)),
