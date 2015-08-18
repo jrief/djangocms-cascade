@@ -4,9 +4,11 @@
 {% with inline_styles=instance.inline_styles %}
 <accordion close-others="{% if instance.glossary.close_others %}true{% else %}false{% endif %}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 	{% for panel in instance.child_plugin_instances %}
-	<accordion-group heading="{{ panel.glossary.panel_title }}"{% if forloop.first and instance.glossary.first_is_open %}is-open="true"{% endif %}>
+		{% with panel_title=panel.glossary.panel_title|safe %}
+	<accordion-group heading="{{ panel_title }}"{% if forloop.first and instance.glossary.first_is_open %}is-open="true"{% endif %}>
 		{% render_plugin panel %}
 	</accordion-group>
+		{% endwith %}
 	{% endfor %}
 </accordion>
 {% endwith %}{% endspaceless %}

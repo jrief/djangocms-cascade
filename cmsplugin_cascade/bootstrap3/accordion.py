@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+try:
+    from html.parser import HTMLParser  # py3
+except ImportError:
+    from HTMLParser import HTMLParser  # py2
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.text import Truncator
@@ -9,9 +13,10 @@ from django.forms.fields import IntegerField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.mixins import TransparentMixin
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.mixins import TransparentMixin
+from .panel import panel_heading_sizes, PanelTypeRenderer
 
 
 class AccordionForm(ManageChildrenFormMixin, ModelForm):
@@ -68,18 +73,30 @@ class AccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
     require_parent = True
     alien_child_classes = True
     glossary_fields = (
+        PartialFormField('panel_type',
+            PanelTypeRenderer.get_widget(),
+            label=_("Panel type"),
+            help_text=_("Display Panel using this style.")
+        ),
+        PartialFormField('heading_size',
+            widgets.Select(choices=panel_heading_sizes),
+            initial='',
+            label=_("Heading Size")
+        ),
         PartialFormField('panel_title',
             widgets.TextInput(attrs={'size': 150}),
             label=_("Panel Title")
         ),
     )
 
+    class Media:
+        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
+
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(AccordionPanelPlugin, cls).get_identifier(obj)
-        content = obj.glossary.get('panel_title', '')
-        if content:
-            content = unicode(Truncator(content).words(3, truncate=' ...'))
-        return format_html('{0}{1}', identifier, content)
+        panel_title = HTMLParser().unescape(obj.glossary.get('panel_title', ''))
+        panel_title = Truncator(panel_title).words(3, truncate=' ...')
+        return format_html('{0}{1}', identifier, panel_title)
 
 plugin_pool.register_plugin(AccordionPanelPlugin)
