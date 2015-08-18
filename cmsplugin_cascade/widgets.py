@@ -2,6 +2,10 @@
 from __future__ import unicode_literals
 import re
 import json
+try:
+    from html.parser import HTMLParser  # py3
+except ImportError:
+    from HTMLParser import HTMLParser  # py2
 from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
 from django.forms import widgets
@@ -14,6 +18,8 @@ from .fields import PartialFormField
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
+    html_parser = HTMLParser()
+
     def __init__(self, partial_fields):
         self.partial_fields = partial_fields[:]
         self.normalized_fields = []
@@ -60,10 +66,13 @@ class JSONMultiWidget(widgets.MultiWidget):
                 fieldset = [fieldset]
             for field in fieldset:
                 field_attrs['id'] = '{id}_{0}'.format(field.name, **attrs)
+                field_value = values.get(field.name)
+                if isinstance(field_value, six.string_types):
+                    field_value = self.html_parser.unescape(field_value)
                 render_fields.append((
                     field.name,
                     six.text_type(field.label),
-                    field.widget.render(field.name, values.get(field.name), field_attrs),
+                    field.widget.render(field.name, field_value, field_attrs),
                     six.text_type(field.help_text),
                 ))
             html = format_html_join('',
