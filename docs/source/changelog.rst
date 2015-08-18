@@ -4,6 +4,11 @@
 Release History
 ===============
 
+0.6.1
+-----
+* Added a panel plugin to support the Bootstrap Panel.
+* Added experimental support for secondary menus.
+
 0.6.0
 -----
 * Fixed #79: The column width is not reduced in width, if a smaller column precedes a column for a
