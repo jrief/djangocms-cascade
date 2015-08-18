@@ -15,6 +15,8 @@ from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.mixins import TransparentMixin
 from .plugin_base import BootstrapPluginBase
 
+panel_heading_sizes = (('', _("normal")),) + tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
+
 
 class PanelTypeRenderer(RadioFieldRenderer):
     """
@@ -49,20 +51,20 @@ class BootstrapPanelPlugin(TransparentMixin, BootstrapPluginBase):
     allow_children = True
     child_classes = None
     render_template = 'cascade/bootstrap3/panel.html'
-    heading_size = (('', _("normal")),) + tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
     glossary_fields = (
         PartialFormField('panel_type',
             PanelTypeRenderer.get_widget(),
             label=_("Panel type"),
             help_text=_("Display Panel using this style.")
         ),
+        PartialFormField('heading_size',
+            widgets.Select(choices=panel_heading_sizes),
+            initial='',
+            label=_("Heading Size")
+        ),
         PartialFormField('heading',
             widgets.TextInput(attrs={'size': 150}),
             label=_("Panel Heading")
-        ),
-        PartialFormField('heading_size',
-            widgets.Select(choices=heading_size),
-            label=_("Heading Size")
         ),
         PartialFormField('footer',
             widgets.TextInput(attrs={'size': 150}),
