@@ -26,12 +26,12 @@ class AccordionForm(ManageChildrenFormMixin, ModelForm):
         help_text=_("Number of panels for this panel group."))
 
 
-class AccordionPlugin(TransparentMixin, BootstrapPluginBase):
+class BootstrapAccordionPlugin(TransparentMixin, BootstrapPluginBase):
     name = _("Accordion")
     form = AccordionForm
     default_css_class = 'panel-group'
-    require_parent = False
-    parent_classes = None
+    require_parent = True
+    parent_classes = ('BootstrapColumnPlugin',)
     allow_children = True
     child_classes = None
     render_template = 'cascade/bootstrap3/accordion.html'
@@ -53,23 +53,23 @@ class AccordionPlugin(TransparentMixin, BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(AccordionPlugin, cls).get_identifier(obj)
+        identifier = super(BootstrapAccordionPlugin, cls).get_identifier(obj)
         num_cols = obj.get_children().count()
         content = ungettext_lazy('with {0} panel', 'with {0} panels', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
-        super(AccordionPlugin, self).save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, AccordionPanelPlugin)
+        super(BootstrapAccordionPlugin, self).save_model(request, obj, form, change)
+        self.extend_children(obj, wanted_children, BootstrapAccordionPanelPlugin)
 
-plugin_pool.register_plugin(AccordionPlugin)
+plugin_pool.register_plugin(BootstrapAccordionPlugin)
 
 
-class AccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
+class BootstrapAccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
     name = _("Accordion Panel")
     default_css_class = 'panel-body'
-    parent_classes = ('AccordionPlugin',)
+    parent_classes = ('BootstrapAccordionPlugin',)
     require_parent = True
     alien_child_classes = True
     glossary_fields = (
@@ -94,9 +94,9 @@ class AccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(AccordionPanelPlugin, cls).get_identifier(obj)
+        identifier = super(BootstrapAccordionPanelPlugin, cls).get_identifier(obj)
         panel_title = HTMLParser().unescape(obj.glossary.get('panel_title', ''))
         panel_title = Truncator(panel_title).words(3, truncate=' ...')
         return format_html('{0}{1}', identifier, panel_title)
 
-plugin_pool.register_plugin(AccordionPanelPlugin)
+plugin_pool.register_plugin(BootstrapAccordionPanelPlugin)

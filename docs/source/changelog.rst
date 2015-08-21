@@ -8,6 +8,8 @@ Release History
 -----
 * Added a panel plugin to support the Bootstrap Panel.
 * Added experimental support for secondary menus.
+* Renamed ``AccordionPlugin`` to ``BootstrapAccordionPlugin`` for consistency and to avoid future
+  naming conflicts.
 
 0.6.0
 -----

@@ -29,7 +29,7 @@ CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('CarouselPlugin', (  # @U
     ('cascade/bootstrap3/carousel.html', _("default")),
     ('cascade/bootstrap3/angular-ui/carousel.html', "angular-ui"),
 ))
-CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('AccordionPlugin', (  # @UndefinedVariable
+CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES.setdefault('BootstrapAccordionPlugin', (  # @UndefinedVariable
     ('cascade/bootstrap3/accordion.html', _("default")),
     ('cascade/bootstrap3/angular-ui/accordion.html', "angular-ui"),
 ))

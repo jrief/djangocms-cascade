@@ -11,13 +11,13 @@ class Migration(DataMigration):
         # Note: Don't use "from appname.models import ModelName". 
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
-        db.execute("UPDATE cms_cmsplugin SET plugin_type='AccordionPlugin' WHERE plugin_type='PanelGroupPlugin'")
-        db.execute("UPDATE cms_cmsplugin SET plugin_type='AccordionPanelPlugin' WHERE plugin_type='PanelPlugin'")
+        db.execute("UPDATE cms_cmsplugin SET plugin_type='BootstrapAccordionPlugin' WHERE plugin_type in ('AccordionPlugin', 'PanelGroupPlugin')")
+        db.execute("UPDATE cms_cmsplugin SET plugin_type='BootstrapAccordionPanelPlugin' WHERE plugin_type in ('AccordionPanelPlugin', 'PanelPlugin')")
 
     def backwards(self, orm):
         "Write your backwards methods here."
-        db.execute("UPDATE cms_cmsplugin SET plugin_type='PanelGroupPlugin' WHERE plugin_type='AccordionPlugin'")
-        db.execute("UPDATE cms_cmsplugin SET plugin_type='PanelPlugin' WHERE plugin_type='AccordionPanelPlugin'")
+        db.execute("UPDATE cms_cmsplugin SET plugin_type='PanelGroupPlugin' WHERE plugin_type in ('BootstrapAccordionPlugin', 'AccordionPlugin')")
+        db.execute("UPDATE cms_cmsplugin SET plugin_type='PanelPlugin' WHERE plugin_type in ('BootstrapAccordionPanelPlugin', 'AccordionPanelPlugin')")
 
     models = {
         'cms.cmsplugin': {
