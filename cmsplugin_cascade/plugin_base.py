@@ -217,7 +217,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         for model in CascadeModelBase._get_cascade_elements():
             try:
                 return model.objects.get(id=self.parent.id)
-            except ObjectDoesNotExist:
+            except (AttributeError, ObjectDoesNotExist):
                 pass
 
     def get_previous_instance(self, obj):

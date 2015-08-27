@@ -15,7 +15,7 @@ for module in CASCADE_PLUGINS:
                 import_module('{}.{}'.format(module, p))
             except ImportError as err:
                 msg = "Plugin {} as specified in {}.settings.CMSPLUGIN_CASCADE_PLUGINS could not be loaded: {}"
-                raise ImproperlyConfigured(msg.format(p, module, err.message))
+                raise ImproperlyConfigured(msg.format(p, module, err))
     except ImportError:
         try:
             # otherwise try with cms_plugins in the named module
