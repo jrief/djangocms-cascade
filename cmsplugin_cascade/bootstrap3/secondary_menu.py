@@ -37,7 +37,7 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     def get_form(self, request, obj=None, **kwargs):
         lang = get_language_from_request(request)
         choices = {}
-        for page in Page.objects.filter(reverse_id__isnull=False, soft_root=True).order_by('publisher_is_draft'):
+        for page in Page.objects.filter(reverse_id__isnull=False).order_by('publisher_is_draft'):
             if page.reverse_id not in choices:
                 choices[page.reverse_id] = page.get_title(lang)
         self.glossary_fields[0].widget.choices = choices.items()
