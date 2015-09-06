@@ -1,0 +1,1012 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-06 15:36+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: models.py:16 models.py:81
+msgid "Plugin Name"
+msgstr ""
+
+#: models.py:17
+msgid "Identifier"
+msgstr ""
+
+#: models.py:23
+msgid "Shared between Plugins"
+msgstr ""
+
+#: models.py:82
+msgid "Site"
+msgstr ""
+
+#: models.py:89
+msgid "Custom CSS classes and styles"
+msgstr ""
+
+#: models.py:96 segmentation/cms_toolbar.py:13
+msgid "Segmentation"
+msgstr ""
+
+#: render_template.py:24
+msgid "Render template"
+msgstr ""
+
+#: render_template.py:25
+msgid "Use alternative template for rendering this plugin."
+msgstr ""
+
+#: settings.py:54 bootstrap3/settings.py:29 bootstrap3/settings.py:33
+#: bootstrap3/settings.py:37
+msgid "default"
+msgstr ""
+
+#: settings.py:55
+msgid "with line break"
+msgstr ""
+
+#: widgets.py:94 widgets.py:123
+#, python-format
+msgid "In '%(label)s': This field is required."
+msgstr ""
+
+#: widgets.py:95
+#, python-format
+msgid "In '%(label)s': Value '%(value)s' shall contain a valid number."
+msgstr ""
+
+#: widgets.py:111
+msgid "or"
+msgstr ""
+
+#: widgets.py:124
+#, python-format
+msgid "In '%(label)s': Value '%(value)s' shall contain a valid number, ending in %(endings)s."
+msgstr ""
+
+#: widgets.py:150 extra_fields/admin.py:24
+#, python-format
+msgid "In '%(label)s': Value '%(value)s' is not a valid color."
+msgstr ""
+
+#: widgets.py:178 bootstrap3/buttons.py:88
+msgid "Disabled"
+msgstr ""
+
+#: widgets.py:261
+#, python-format
+msgid "In '%(label)s': Field '%(field)s' is required."
+msgstr ""
+
+#: widgets.py:262
+#, python-format
+msgid "In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending in %(endings)s."
+msgstr ""
+
+#: bootstrap3/accordion.py:25
+msgid "Panels"
+msgstr ""
+
+#: bootstrap3/accordion.py:26
+msgid "Number of panels for this panel group."
+msgstr ""
+
+#: bootstrap3/accordion.py:30
+msgid "Accordion"
+msgstr ""
+
+#: bootstrap3/accordion.py:42
+msgid "Close others"
+msgstr ""
+
+#: bootstrap3/accordion.py:44
+msgid "Open only one panel at a time."
+msgstr ""
+
+#: bootstrap3/accordion.py:48
+msgid "First panel open"
+msgstr ""
+
+#: bootstrap3/accordion.py:50
+msgid "Start with the first panel open."
+msgstr ""
+
+#: bootstrap3/accordion.py:58
+#, python-brace-format
+msgid "with {0} panel"
+msgid_plural "with {0} panels"
+msgstr[0] ""
+msgstr[1] ""
+
+#: bootstrap3/accordion.py:70
+msgid "Accordion Panel"
+msgstr ""
+
+#: bootstrap3/accordion.py:78 bootstrap3/panel.py:57
+msgid "Panel type"
+msgstr ""
+
+#: bootstrap3/accordion.py:79 bootstrap3/panel.py:58
+msgid "Display Panel using this style."
+msgstr ""
+
+#: bootstrap3/accordion.py:84 bootstrap3/panel.py:63
+msgid "Heading Size"
+msgstr ""
+
+#: bootstrap3/accordion.py:88
+msgid "Panel Title"
+msgstr ""
+
+#: bootstrap3/buttons.py:23 bootstrap3/buttons.py:45
+#: bootstrap3/container.py:246 bootstrap3/panel.py:25
+msgid "Default"
+msgstr ""
+
+#: bootstrap3/buttons.py:23 bootstrap3/panel.py:25
+msgid "Primary"
+msgstr ""
+
+#: bootstrap3/buttons.py:24 bootstrap3/panel.py:26
+msgid "Success"
+msgstr ""
+
+#: bootstrap3/buttons.py:24 bootstrap3/panel.py:26
+msgid "Info"
+msgstr ""
+
+#: bootstrap3/buttons.py:24 bootstrap3/panel.py:26
+msgid "Warning"
+msgstr ""
+
+#: bootstrap3/buttons.py:25 bootstrap3/panel.py:27
+msgid "Danger"
+msgstr ""
+
+#: bootstrap3/buttons.py:25 link/cms_plugins.py:14
+msgid "Link"
+msgstr ""
+
+#: bootstrap3/buttons.py:45
+msgid "Large"
+msgstr ""
+
+#: bootstrap3/buttons.py:45
+msgid "Small"
+msgstr ""
+
+#: bootstrap3/buttons.py:46
+msgid "Extra small"
+msgstr ""
+
+#: bootstrap3/buttons.py:77
+msgid "Button Type"
+msgstr ""
+
+#: bootstrap3/buttons.py:79
+msgid "Display Link using this Button Style"
+msgstr ""
+
+#: bootstrap3/buttons.py:83
+msgid "Button Size"
+msgstr ""
+
+#: bootstrap3/buttons.py:85
+msgid "Display Link using this Button Size"
+msgstr ""
+
+#: bootstrap3/buttons.py:88
+msgid "Block level"
+msgstr ""
+
+#: bootstrap3/buttons.py:89
+msgid "Button Options"
+msgstr ""
+
+#: bootstrap3/buttons.py:92
+msgid "Do not float"
+msgstr ""
+
+#: bootstrap3/buttons.py:92
+msgid "Pull left"
+msgstr ""
+
+#: bootstrap3/buttons.py:92
+msgid "Pull right"
+msgstr ""
+
+#: bootstrap3/buttons.py:93
+msgid "Quick Float"
+msgstr ""
+
+#: bootstrap3/buttons.py:95
+msgid "Float the button to the left or right."
+msgstr ""
+
+#: bootstrap3/buttons.py:99
+msgid "Prepend icon"
+msgstr ""
+
+#: bootstrap3/buttons.py:101
+msgid "Prepend a Glyphicon before the content."
+msgstr ""
+
+#: bootstrap3/buttons.py:105
+msgid "Append icon"
+msgstr ""
+
+#: bootstrap3/buttons.py:107
+msgid "Append a Glyphicon after the content."
+msgstr ""
+
+#: bootstrap3/buttons.py:126
+msgid "Button"
+msgstr ""
+
+#: bootstrap3/buttons.py:142
+msgid "Empty"
+msgstr ""
+
+#: bootstrap3/buttons.py:146
+msgid "Button Content"
+msgstr ""
+
+#: bootstrap3/carousel.py:31
+msgid "Slides"
+msgstr ""
+
+#: bootstrap3/carousel.py:32
+msgid "Number of slides for this carousel."
+msgstr ""
+
+#: bootstrap3/carousel.py:37
+msgid "Carousel"
+msgstr ""
+
+#: bootstrap3/carousel.py:46
+msgid "Animate"
+msgstr ""
+
+#: bootstrap3/carousel.py:46
+msgid "Pause"
+msgstr ""
+
+#: bootstrap3/carousel.py:46
+msgid "Wrap"
+msgstr ""
+
+#: bootstrap3/carousel.py:50
+msgid "Interval"
+msgstr ""
+
+#: bootstrap3/carousel.py:52
+msgid "Change slide after this number of seconds."
+msgstr ""
+
+#: bootstrap3/carousel.py:56
+msgid "Options"
+msgstr ""
+
+#: bootstrap3/carousel.py:58
+msgid "Adjust interval for the carousel."
+msgstr ""
+
+#: bootstrap3/carousel.py:62
+msgid "Carousel heights"
+msgstr ""
+
+#: bootstrap3/carousel.py:64
+msgid "Heights of Carousel in pixels for distinct Bootstrap's breakpoints."
+msgstr ""
+
+#: bootstrap3/carousel.py:68 bootstrap3/gallery.py:122 bootstrap3/image.py:103
+#: bootstrap3/picture.py:65
+msgid "Resize Options"
+msgstr ""
+
+#: bootstrap3/carousel.py:69 bootstrap3/gallery.py:123 bootstrap3/image.py:104
+#: bootstrap3/picture.py:66
+msgid "Options to use when resizing the image."
+msgstr ""
+
+#: bootstrap3/carousel.py:82
+#, python-brace-format
+msgid "with {0} slide"
+msgid_plural "with {0} slides"
+msgstr[0] ""
+msgstr[1] ""
+
+#: bootstrap3/carousel.py:123
+msgid "Slide"
+msgstr ""
+
+#: bootstrap3/carousel.py:142
+msgid "Slide Caption"
+msgstr ""
+
+#: bootstrap3/carousel.py:143
+msgid "Caption text to be laid over the backgroud image."
+msgstr ""
+
+#: bootstrap3/carousel.py:174
+msgid "Empty Slide"
+msgstr ""
+
+#: bootstrap3/container.py:33
+msgid "At least one breakpoint must be selected."
+msgstr ""
+
+#: bootstrap3/container.py:38
+msgid "Container"
+msgstr ""
+
+#: bootstrap3/container.py:42
+#, python-brace-format
+msgid "Tiny (<{sm[0]}px)"
+msgstr ""
+
+#: bootstrap3/container.py:43
+#, python-brace-format
+msgid "Small (≥{sm[0]}px and <{md[0]}px)"
+msgstr ""
+
+#: bootstrap3/container.py:44
+#, python-brace-format
+msgid "Medium (≥{md[0]}px and <{lg[0]}px)"
+msgstr ""
+
+#: bootstrap3/container.py:45
+#, python-brace-format
+msgid "Large (≥{lg[0]}px)"
+msgstr ""
+
+#: bootstrap3/container.py:50
+msgid "Available Breakpoints"
+msgstr ""
+
+#: bootstrap3/container.py:52
+msgid "Supported display widths for Bootstrap's grid system."
+msgstr ""
+
+#: bootstrap3/container.py:56
+msgid "Fluid Container"
+msgstr ""
+
+#: bootstrap3/container.py:57
+msgid "Changing your outermost '.container' to '.container-fluid'."
+msgstr ""
+
+#: bootstrap3/container.py:73
+#, python-brace-format
+msgid "{0}for {1}"
+msgstr ""
+
+#: bootstrap3/container.py:129
+#, python-brace-format
+msgid "{0} column"
+msgid_plural "{0} columns"
+msgstr[0] ""
+msgstr[1] ""
+
+#: bootstrap3/container.py:130
+msgid "Columns"
+msgstr ""
+
+#: bootstrap3/container.py:131
+msgid "Number of columns to be created with this row."
+msgstr ""
+
+#: bootstrap3/container.py:135
+msgid "Row"
+msgstr ""
+
+#: bootstrap3/container.py:145
+#, python-brace-format
+msgid "with {0} column"
+msgid_plural "with {0} columns"
+msgstr[0] ""
+msgstr[1] ""
+
+#: bootstrap3/container.py:163
+msgid "Column"
+msgstr ""
+
+#: bootstrap3/container.py:182
+msgid "{} unit"
+msgid_plural "{} units"
+msgstr[0] ""
+msgstr[1] ""
+
+#: bootstrap3/container.py:198 bootstrap3/container.py:210
+msgid "Column width for {}"
+msgstr ""
+
+#: bootstrap3/container.py:200
+msgid "Number of column units for devices narrower than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:201
+msgid "Number of column units for devices wider than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:202
+msgid "Number of column units for all devices."
+msgstr ""
+
+#: bootstrap3/container.py:208
+msgid "Inherit from above"
+msgstr ""
+
+#: bootstrap3/container.py:212
+msgid "Override column units for devices narrower than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:213
+msgid "Override column units for devices wider than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:214
+msgid "Override column units for all devices."
+msgstr ""
+
+#: bootstrap3/container.py:221
+msgid "No offset"
+msgstr ""
+
+#: bootstrap3/container.py:223
+msgid "Offset for {}"
+msgstr ""
+
+#: bootstrap3/container.py:225
+msgid "Number of offset units for devices narrower than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:226
+msgid "Number of offset units for devices wider than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:227
+msgid "Number of offset units for all devices."
+msgstr ""
+
+#: bootstrap3/container.py:233
+msgid "No reordering"
+msgstr ""
+
+#: bootstrap3/container.py:234
+msgid "Push {}"
+msgstr ""
+
+#: bootstrap3/container.py:235
+msgid "Pull {}"
+msgstr ""
+
+#: bootstrap3/container.py:236
+#, python-brace-format
+msgid "Column ordering for {0}"
+msgstr ""
+
+#: bootstrap3/container.py:238
+msgid "Column ordering for devices narrower than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:239
+msgid "Column ordering for devices wider than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:240
+msgid "Column ordering for all devices."
+msgstr ""
+
+#: bootstrap3/container.py:246
+msgid "Visible"
+msgstr ""
+
+#: bootstrap3/container.py:246
+msgid "Hidden"
+msgstr ""
+
+#: bootstrap3/container.py:247
+msgid "Responsive utilities for {}"
+msgstr ""
+
+#: bootstrap3/container.py:249
+msgid "Utility classes for showing and hiding content by devices narrower than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:250
+msgid "Utility classes for showing and hiding content by devices wider than {} pixels."
+msgstr ""
+
+#: bootstrap3/container.py:251
+msgid "Utility classes for showing and hiding content for all devices."
+msgstr ""
+
+#: bootstrap3/container.py:310
+#, python-brace-format
+msgid "widths: {0} units"
+msgstr ""
+
+#: bootstrap3/container.py:313
+#, python-brace-format
+msgid "default width: {0} unit"
+msgid_plural "default width: {0} units"
+msgstr[0] ""
+msgstr[1] ""
+
+#: bootstrap3/container.py:315
+msgid "unknown width"
+msgstr ""
+
+#: bootstrap3/gallery.py:23 bootstrap3/image.py:44 bootstrap3/image.py:48
+#: bootstrap3/image.py:114 bootstrap3/picture.py:76
+msgid "Image"
+msgstr ""
+
+#: bootstrap3/gallery.py:24 bootstrap3/image.py:71 bootstrap3/picture.py:42
+msgid "Image Title"
+msgstr ""
+
+#: bootstrap3/gallery.py:26 bootstrap3/image.py:72 bootstrap3/picture.py:43
+msgid "Caption text added to the 'title' attribute of the <img> element."
+msgstr ""
+
+#: bootstrap3/gallery.py:27 bootstrap3/image.py:76 bootstrap3/picture.py:47
+msgid "Alternative Description"
+msgstr ""
+
+#: bootstrap3/gallery.py:29 bootstrap3/image.py:77 bootstrap3/picture.py:48
+msgid "Textual description of the image added to the 'alt' tag of the <img> element."
+msgstr ""
+
+#: bootstrap3/gallery.py:72
+msgid "Gallery"
+msgstr ""
+
+#: bootstrap3/gallery.py:84 bootstrap3/image.py:63
+msgid "Responsive"
+msgstr ""
+
+#: bootstrap3/gallery.py:85 bootstrap3/image.py:65 bootstrap3/picture.py:36
+msgid "Upscale image"
+msgstr ""
+
+#: bootstrap3/gallery.py:85 bootstrap3/image.py:65 bootstrap3/picture.py:36
+msgid "Crop image"
+msgstr ""
+
+#: bootstrap3/gallery.py:86 bootstrap3/image.py:66 bootstrap3/picture.py:37
+msgid "With subject location"
+msgstr ""
+
+#: bootstrap3/gallery.py:87 bootstrap3/image.py:67 bootstrap3/picture.py:38
+msgid "Optimized for Retina"
+msgstr ""
+
+#: bootstrap3/gallery.py:91
+msgid "Image Responsiveness"
+msgstr ""
+
+#: bootstrap3/gallery.py:96 bootstrap3/image.py:87
+msgid "Responsive Image Width"
+msgstr ""
+
+#: bootstrap3/gallery.py:98 bootstrap3/image.py:89
+msgid "Set the image width in percent relative to containing element."
+msgstr ""
+
+#: bootstrap3/gallery.py:102 bootstrap3/image.py:93
+msgid "Fixed Image Width"
+msgstr ""
+
+#: bootstrap3/gallery.py:103 bootstrap3/image.py:94
+msgid "Set a fixed image width in pixels."
+msgstr ""
+
+#: bootstrap3/gallery.py:107 bootstrap3/image.py:98
+msgid "Adapt Image Height"
+msgstr ""
+
+#: bootstrap3/gallery.py:108 bootstrap3/image.py:99
+msgid "Set a fixed height in pixels, or percent relative to the image width."
+msgstr ""
+
+#: bootstrap3/gallery.py:112
+msgid "Thumbnail Width"
+msgstr ""
+
+#: bootstrap3/gallery.py:113
+msgid "Set a fixed thumbnail width in pixels."
+msgstr ""
+
+#: bootstrap3/gallery.py:117
+msgid "Thumbnail Height"
+msgstr ""
+
+#: bootstrap3/gallery.py:118
+msgid "Set a fixed height in pixels, or percent relative to the thumbnail width."
+msgstr ""
+
+#: bootstrap3/gallery.py:174
+#, python-brace-format
+msgid "with {0} image"
+msgid_plural "with {0} images"
+msgstr[0] ""
+msgstr[1] ""
+
+#: bootstrap3/image.py:61 bootstrap3/picture.py:34
+msgid "No Link"
+msgstr ""
+
+#: bootstrap3/image.py:63
+msgid "Rounded"
+msgstr ""
+
+#: bootstrap3/image.py:64
+msgid "Circle"
+msgstr ""
+
+#: bootstrap3/image.py:64
+msgid "Thumbnail"
+msgstr ""
+
+#: bootstrap3/image.py:82
+msgid "Image Shapes"
+msgstr ""
+
+#: bootstrap3/image.py:146
+msgid "No Image"
+msgstr ""
+
+#: bootstrap3/panel.py:18
+msgid "normal"
+msgstr ""
+
+#: bootstrap3/panel.py:18
+msgid "Heading {}"
+msgstr ""
+
+#: bootstrap3/panel.py:39
+msgid "Content"
+msgstr ""
+
+#: bootstrap3/panel.py:47
+msgid "Panel"
+msgstr ""
+
+#: bootstrap3/panel.py:67
+msgid "Panel Heading"
+msgstr ""
+
+#: bootstrap3/panel.py:71
+msgid "Panel Footer"
+msgstr ""
+
+#: bootstrap3/picture.py:20
+msgid "Picture"
+msgstr ""
+
+#: bootstrap3/picture.py:53
+msgid "Adapt Picture Heights"
+msgstr ""
+
+#: bootstrap3/picture.py:55
+msgid "Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."
+msgstr ""
+
+#: bootstrap3/picture.py:59
+msgid "Adapt Picture Zoom"
+msgstr ""
+
+#: bootstrap3/picture.py:61
+msgid "Magnification of picture in percent for distinct Bootstrap's breakpoints."
+msgstr ""
+
+#: bootstrap3/picture.py:107
+msgid "No Picture"
+msgstr ""
+
+#: bootstrap3/secondary_menu.py:17
+msgid "Secondary Menu"
+msgstr ""
+
+#: bootstrap3/secondary_menu.py:26
+msgid "CMS Page Id"
+msgstr ""
+
+#: bootstrap3/secondary_menu.py:27
+msgid "Select a CMS page with a given unique Id (in advanced settings)."
+msgstr ""
+
+#: bootstrap3/settings.py:12
+msgid "mobile phones"
+msgstr ""
+
+#: bootstrap3/settings.py:13
+msgid "tablets"
+msgstr ""
+
+#: bootstrap3/settings.py:14
+msgid "laptops"
+msgstr ""
+
+#: bootstrap3/settings.py:15
+msgid "large desktops"
+msgstr ""
+
+#: bootstrap3/settings.py:38
+msgid "unstyled"
+msgstr ""
+
+#: extra_fields/admin.py:33
+#, python-format
+msgid "'%s' is not a valid CSS class name."
+msgstr ""
+
+#: extra_fields/admin.py:38
+msgid "px, em and %"
+msgstr ""
+
+#: extra_fields/admin.py:38
+msgid "px and em"
+msgstr ""
+
+#: extra_fields/admin.py:38
+msgid "px"
+msgstr ""
+
+#: extra_fields/admin.py:38
+msgid "%"
+msgstr ""
+
+#: extra_fields/admin.py:42
+msgid "CSS class names"
+msgstr ""
+
+#: extra_fields/admin.py:43
+msgid "Freely selectable CSS classnames for this Plugin, separated by commas."
+msgstr ""
+
+#: extra_fields/admin.py:47
+msgid "Allow multiple"
+msgstr ""
+
+#: extra_fields/admin.py:60
+#, python-brace-format
+msgid "Customized {0} Fields:"
+msgstr ""
+
+#: extra_fields/admin.py:68
+#, python-brace-format
+msgid "Units for {0} Fields:"
+msgstr ""
+
+#: extra_fields/mixins.py:43
+msgid "Named Element ID"
+msgstr ""
+
+#: extra_fields/mixins.py:53
+msgid "Select CSS"
+msgstr ""
+
+#: extra_fields/mixins.py:56
+msgid "Customized CSS Classes"
+msgstr ""
+
+#: extra_fields/mixins.py:57
+msgid "Customized CSS classes to be added to this element."
+msgstr ""
+
+#: generic/cms_plugins.py:13
+msgid "Simple Wrapper"
+msgstr ""
+
+#: generic/cms_plugins.py:17
+msgid "<{}> – Element"
+msgstr ""
+
+#: generic/cms_plugins.py:18
+msgid "Naked Wrapper"
+msgstr ""
+
+#: generic/cms_plugins.py:22
+msgid "HTML element tag"
+msgstr ""
+
+#: generic/cms_plugins.py:23
+msgid "Choose a tag type for this HTML element."
+msgstr ""
+
+#: generic/cms_plugins.py:44
+msgid "Horizontal Rule"
+msgstr ""
+
+#: link/cms_plugins.py:27
+msgid "Link Content"
+msgstr ""
+
+#: link/cms_plugins.py:29
+msgid "Content of Link"
+msgstr ""
+
+#: link/forms.py:24
+msgid "CMS Page"
+msgstr ""
+
+#: link/forms.py:24
+msgid "External URL"
+msgstr ""
+
+#: link/forms.py:24
+msgid "Mail To"
+msgstr ""
+
+#: link/forms.py:27
+msgid "An internal link onto CMS pages of this site"
+msgstr ""
+
+#: link/forms.py:28
+msgid "Link onto external page"
+msgstr ""
+
+#: link/forms.py:29
+msgid "Open Email program with this address"
+msgstr ""
+
+#: link/plugin_base.py:21
+msgid "Same Window"
+msgstr ""
+
+#: link/plugin_base.py:21
+msgid "New Window"
+msgstr ""
+
+#: link/plugin_base.py:22
+msgid "Parent Window"
+msgstr ""
+
+#: link/plugin_base.py:22
+msgid "Topmost Frame"
+msgstr ""
+
+#: link/plugin_base.py:24
+msgid "Link Target"
+msgstr ""
+
+#: link/plugin_base.py:25
+msgid "Open Link in other target."
+msgstr ""
+
+#: link/plugin_base.py:29
+msgid "Title"
+msgstr ""
+
+#: link/plugin_base.py:30
+msgid "Link's Title"
+msgstr ""
+
+#: segmentation/cms_plugins.py:23
+msgid "Segment"
+msgstr ""
+
+#: segmentation/cms_plugins.py:27
+msgid "Condition tag"
+msgstr ""
+
+#: segmentation/cms_plugins.py:28
+msgid "Django's condition tag"
+msgstr ""
+
+#: segmentation/cms_plugins.py:32
+msgid "Condition evaluation"
+msgstr ""
+
+#: segmentation/cms_plugins.py:33
+msgid "Evaluation as used in Django's template tags for conditions"
+msgstr ""
+
+#: segmentation/cms_plugins.py:114
+#, python-brace-format
+msgid "Unable to evaluate condition: {err}"
+msgstr ""
+
+#: segmentation/cms_plugins.py:145 segmentation/cms_plugins.py:146
+msgid "if"
+msgstr ""
+
+#: segmentation/cms_plugins.py:145
+msgid "elif"
+msgstr ""
+
+#: segmentation/cms_plugins.py:145
+msgid "else"
+msgstr ""
+
+#: segmentation/mixins.py:52
+msgid "Emulate User"
+msgstr ""
+
+#: segmentation/mixins.py:54
+msgid "Clear emulations"
+msgstr ""
+
+#: segmentation/mixins.py:112
+#, python-format
+msgid "%(total_count)s selected"
+msgid_plural "All %(total_count)s selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: segmentation/mixins.py:117
+#, python-format
+msgid "0 of %(cnt)s selected"
+msgstr ""
+
+#: segmentation/mixins.py:119
+#, python-format
+msgid "Select %(user_model)s to emulate"
+msgstr ""
+
+#: sharable/admin.py:28
+msgid "Shared Fields"
+msgstr ""
+
+#: sharable/admin.py:60
+#, python-format
+msgid "Change %s"
+msgstr ""
+
+#: sharable/admin.py:79
+msgid "Used by plugins"
+msgstr ""
+
+#: sharable/forms.py:48
+msgid "Remember these settings as:"
+msgstr ""
+
+#: sharable/forms.py:54
+#, python-brace-format
+msgid "The identifier '{0}' has already been used, please choose another name."
+msgstr ""
+
+#: sharable/forms.py:70
+msgid "Shared Settings"
+msgstr ""
+
+#: sharable/forms.py:73
+msgid "Use individual settings"
+msgstr ""
+
+#: sharable/forms.py:74
+msgid "Use settings shared with other plugins of this type"
+msgstr ""
+
+#: templates/cascade/admin/change_form.html:7
+msgid "There are no further settings for this plugin"
+msgstr ""
+
+#: templates/cascade/admin/change_form.html:8
+msgid "Please hit OK to save."
+msgstr ""
+
+#: templates/cascade/admin/segmentation_list.html:39
+msgid "Home"
+msgstr ""
+
+#: templates/cascade/admin/segmentation_list.html:42
+msgid "Add"
+msgstr ""
