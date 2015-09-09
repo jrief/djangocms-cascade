@@ -63,7 +63,8 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         attrs['model'] = create_proxy_model(name, model_mixins, base_model)
         if is_installed('reversion'):
             import reversion
-            reversion.register(attrs['model'])
+            if not reversion.is_registered(base_model):
+                reversion.register(base_model)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
