@@ -18,7 +18,9 @@ from cmsplugin_cascade.utils import resolve_dependencies
 
 class SegmentPlugin(TransparentMixin, CascadePluginBase):
     """
-    This button is used as a final step to convert the Cart object into an Order object.
+    A Segment is a part of the DOM which is rendered or not, depending on a condition.
+    As condition you may use any expression which is valid inside a Django's template tag,
+    such as ``{% if ... %}``.
     """
     name = _("Segment")
     glossary_fields = (
