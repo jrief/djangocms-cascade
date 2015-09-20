@@ -36,9 +36,11 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
         ),
     )
     html_parser = HTMLParser()
-    eval_template_string = "{{% if {} %}}True{{% endif %}}"
-    default_template = Template("{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}")
-    hiding_template = Template("{% load cms_tags %}<div style=\"display: none;\">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>")
+    eval_template_string = '{{% if {} %}}True{{% endif %}}'
+    default_template = Template('{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}')
+    hiding_template_string = '{% load cms_tags %}<div style="display: none;">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>'
+    hiding_template = Template(hiding_template_string)
+    debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
     empty_template = Template('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
     require_parent = False
     parent_classes = None
@@ -62,17 +64,29 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
             try:
                 eval_template = Template(self.eval_template_string.format(condition))
                 evaluated_to = eval_template.render(context) == 'True'
-            except TemplateSyntaxError:
+                template_error_message = None
+            except TemplateSyntaxError as err:
                 # TODO: render error message into template
                 evaluated_to = False
+                template_error_message = err.message
             finally:
                 if evaluated_to:
                     request._evaluated_instances[instance.id] = True
                     template = self.default_template
                 else:
                     request._evaluated_instances[instance.id] = False
-                    # in edit mode hidden plugins have to be rendered nevertheless
-                    template = edit_mode and self.hiding_template or self.empty_template
+                    if edit_mode:
+                        # in edit mode hidden plugins have to be rendered nevertheless using CSS
+                        # style="display: none", otherwise they are invisible in the plugin structure
+                        if template_error_message:
+                            template = self.debug_error_template.format(condition=condition,
+                                instance_id=instance.id, message=template_error_message,
+                                template_string=self.hiding_template_string)
+                            template = Template(template)
+                        else:
+                            template = self.hiding_template
+                    else:
+                        template = self.empty_template
             return template
 
         request = context['request']
