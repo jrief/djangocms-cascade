@@ -4,6 +4,15 @@
 Release History
 ===============
 
+0.6.2
+-----
+* In Segment: A condition raising a TemplateSyntaxError now renders that error inside a HTML
+  comment. This is useful for debugging non working conditions.
+* In Segment: An alternative AdminModel to UserAdmin, using a callable instead of a model field,
+  now works.
+* In Segment: It is possible to use ``segmentation_list_display = (list-of-fields)`` in an
+  alternative AdminModel, to override the list view, when emulating a user.
+
 0.6.1
 -----
 * Added a panel plugin to support the Bootstrap Panel.
