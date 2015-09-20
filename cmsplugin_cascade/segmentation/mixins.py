@@ -30,6 +30,8 @@ class SegmentPluginModelMixin(object):
 
 
 class EmulateUserModelMixin(SegmentPluginModelMixin):
+    UserModel = get_user_model()
+
     def get_context_override(self, request):
         """
         Override the request object with an emulated user.
@@ -37,15 +39,16 @@ class EmulateUserModelMixin(SegmentPluginModelMixin):
         context_override = super(EmulateUserModelMixin, self).get_context_override(request)
         try:
             if request.user.is_staff:
-                UserModel = get_user_model()
-                user = UserModel.objects.get(pk=request.session['emulate_user_id'])
+                user = self.UserModel.objects.get(pk=request.session['emulate_user_id'])
                 context_override.update(user=user)
-        except (UserModel.DoesNotExist, KeyError):
+        except (self.UserModel.DoesNotExist, KeyError):
             pass
         return context_override
 
 
 class EmulateUserAdminMixin(object):
+    UserModel = get_user_model()
+
     @staticmethod
     def populate_toolbar(segmentation_menu, request):
         active = 'emulate_user_id' in request.session
@@ -74,7 +77,10 @@ class EmulateUserAdminMixin(object):
         The list view
         """
         def display_as_link(self, obj):
-            identifier = admin.util.lookup_field(list_display_link, obj, model_admin=self)[2]
+            try:
+                identifier = getattr(user_model_admin, list_display_link)(obj)
+            except AttributeError:
+                identifier = admin.util.lookup_field(list_display_link, obj, model_admin=self)[2]
             emulate_user_id = request.session.get('emulate_user_id')
             if emulate_user_id == obj.id:
                 return format_html('<strong>{}</strong>', identifier)
@@ -84,23 +90,28 @@ class EmulateUserAdminMixin(object):
             }
             return format_html('<a href="{href}" class="emulate-user">{identifier}</a>', **fmtargs)
 
-        lookup_model = get_user_model()
-        opts = lookup_model._meta
+        opts = self.UserModel._meta
         app_label = opts.app_label
-        user_model_admin = self.admin_site._registry[lookup_model]
-        request._lookup_model = lookup_model
+        user_model_admin = self.admin_site._registry[self.UserModel]
+        request._lookup_model = self.UserModel
         list_display_links = user_model_admin.get_list_display_links(request, user_model_admin.list_display)
         # replace first entry in list_display_links by customized method display_as_link
         list_display_link = list_display_links[0]
-        list_display = list(user_model_admin.list_display)
+        try:
+            list_display = list(user_model_admin.segmentation_list_display)
+        except AttributeError:
+            list_display = list(user_model_admin.list_display)
         list_display.remove(list_display_link)
         list_display.insert(0, 'display_as_link')
         display_as_link.allow_tags = True
-        display_as_link.short_description = admin.util.label_for_field(list_display_link, lookup_model)
+        try:
+            display_as_link.short_description = user_model_admin.identifier.short_description
+        except AttributeError:
+            display_as_link.short_description = admin.util.label_for_field(list_display_link, self.UserModel)
         self.display_as_link = MethodType(display_as_link, self, EmulateUserAdminMixin)
 
         ChangeList = self.get_changelist(request)
-        cl = ChangeList(request, lookup_model, list_display,
+        cl = ChangeList(request, self.UserModel, list_display,
             (None,),  # disable list_display_links in ChangeList, instead override that field
             user_model_admin.list_filter,
             user_model_admin.date_hierarchy, user_model_admin.search_fields,
