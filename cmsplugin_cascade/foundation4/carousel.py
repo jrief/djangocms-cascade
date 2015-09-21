@@ -18,10 +18,10 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.cms_plugins import TextLinkPlugin
-from .plugin_base import BootstrapPluginBase
+from .plugin_base import FoundationPluginBase
 from .settings import CASCADE_BREAKPOINTS_LIST
 from .image import ImageForm
-from .picture import BootstrapPicturePlugin
+from .picture import FoundationPicturePlugin
 from . import utils
 
 
@@ -33,12 +33,12 @@ class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
     )
 
 
-class CarouselPlugin(BootstrapPluginBase):
+class CarouselPlugin(FoundationPluginBase):
     name = _("Carousel")
     form = CarouselSlidesForm
     default_css_class = 'carousel'
     default_css_attributes = ('options',)
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ['FoundationColumnPlugin']
     render_template = 'cascade/bootstrap3/carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
     fields = ('num_children', 'glossary',)
@@ -61,10 +61,10 @@ class CarouselPlugin(BootstrapPluginBase):
             MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['px']),
             label=_("Carousel heights"),
             initial={'xs': '100px', 'sm': '150px', 'md': '200px', 'lg': '300px'},
-            help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
+            help_text=_("Heights of Carousel in pixels for distinct Foundation's breakpoints."),
         ),
         PartialFormField('resize-options',
-            widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
+            widgets.CheckboxSelectMultiple(choices=FoundationPicturePlugin.RESIZE_OPTIONS),
             label=_("Resize Options"),
             help_text=_("Options to use when resizing the image."),
             initial=['upscale', 'crop', 'subject_location', 'high_resolution']
@@ -119,7 +119,7 @@ class CarouselPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(CarouselPlugin)
 
 
-class CarouselSlidePlugin(BootstrapPluginBase):
+class CarouselSlidePlugin(FoundationPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
     form = ImageForm

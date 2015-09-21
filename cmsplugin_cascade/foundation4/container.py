@@ -12,7 +12,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from .plugin_base import FoundationPluginBase
-from .settings import CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST, CASCADE_BOOTSTRAP3_GUTTER
+from .settings import CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST, CASCADE_FOUNDATION4_GUTTER
 
 
 class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):

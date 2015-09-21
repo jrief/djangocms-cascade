@@ -44,11 +44,11 @@ class ImageForm(ImageFormMixin, ModelForm):
     image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
 
 
-class BootstrapImagePlugin(LinkPluginBase):
+class FoundationImagePlugin(LinkPluginBase):
     name = _("Image")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
-    module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin']
+    module = 'Foundation'
+    parent_classes = ['FoundationColumnPlugin']
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)
@@ -115,7 +115,7 @@ class BootstrapImagePlugin(LinkPluginBase):
         Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
             {'LINK_TYPE_CHOICES': self.LINK_TYPE_CHOICES, 'image_file': image_file})
         kwargs.update(form=Form)
-        return super(BootstrapImagePlugin, self).get_form(request, obj, **kwargs)
+        return super(FoundationImagePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         is_responsive = 'img-responsive' in instance.glossary.get('image-shapes', [])
@@ -131,7 +131,7 @@ class BootstrapImagePlugin(LinkPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapImagePlugin, cls).get_css_classes(obj)
+        css_classes = super(FoundationImagePlugin, cls).get_css_classes(obj)
         css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)
@@ -139,11 +139,11 @@ class BootstrapImagePlugin(LinkPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapImagePlugin, cls).get_identifier(obj)
+        identifier = super(FoundationImagePlugin, cls).get_identifier(obj)
         try:
             content = force_text(obj.image)
         except AttributeError:
             content = _("No Image")
         return format_html('{0}{1}', identifier, content)
 
-plugin_pool.register_plugin(BootstrapImagePlugin)
+plugin_pool.register_plugin(FoundationImagePlugin)

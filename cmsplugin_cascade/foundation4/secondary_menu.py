@@ -6,10 +6,10 @@ from django.utils.translation import ugettext_lazy as _, get_language_from_reque
 from cms.plugin_pool import plugin_pool
 from cms.models.pagemodel import Page
 from cmsplugin_cascade.fields import PartialFormField
-from .plugin_base import BootstrapPluginBase
+from .plugin_base import FoundationPluginBase
 
 
-class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
+class FoundationSecondaryMenuPlugin(FoundationPluginBase):
     """
     Use this plugin to display a secondary menu in arbitrary locations.
     This renders links onto  all CMS pages, which are children of the selected Page Id.
@@ -17,7 +17,7 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     name = _("Secondary Menu")
     default_css_class = 'list-group'
     require_parent = True
-    parent_classes = ('BootstrapColumnPlugin',)
+    parent_classes = ('FoundationColumnPlugin',)
     allow_children = False
     render_template = 'cascade/bootstrap3/secmenu-list-group.html'
     glossary_fields = (
@@ -30,7 +30,7 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapSecondaryMenuPlugin, cls).get_identifier(obj)
+        identifier = super(FoundationSecondaryMenuPlugin, cls).get_identifier(obj)
         content = obj.glossary.get('page_id', '')
         return format_html('{0}{1}', identifier, content)
 
@@ -41,6 +41,6 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
             if page.reverse_id not in choices:
                 choices[page.reverse_id] = page.get_title(lang)
         self.glossary_fields[0].widget.choices = choices.items()
-        return super(BootstrapSecondaryMenuPlugin, self).get_form(request, obj, **kwargs)
+        return super(FoundationSecondaryMenuPlugin, self).get_form(request, obj, **kwargs)
 
-plugin_pool.register_plugin(BootstrapSecondaryMenuPlugin)
+plugin_pool.register_plugin(FoundationSecondaryMenuPlugin)

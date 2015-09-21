@@ -16,11 +16,11 @@ from .settings import CASCADE_BREAKPOINTS_LIST
 from . import utils
 
 
-class BootstrapPicturePlugin(LinkPluginBase):
+class FoundationPicturePlugin(LinkPluginBase):
     name = _("Picture")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
-    module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin']
+    module = 'Foundation'
+    parent_classes = ['FoundationColumnPlugin']
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)
@@ -52,13 +52,13 @@ class BootstrapPicturePlugin(LinkPluginBase):
             MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['px', '%'], required=False),
             label=_("Adapt Picture Heights"),
             initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
-            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
+            help_text=_("Heights of picture in percent or pixels for distinct Foundation's breakpoints."),
         ),
         PartialFormField('responsive-zoom',
             MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['%'], required=False),
             label=_("Adapt Picture Zoom"),
             initial={'xs': '0%', 'sm': '0%', 'md': '0%', 'lg': '0%'},
-            help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),
+            help_text=_("Magnification of picture in percent for distinct Foundation's breakpoints."),
         ),
         PartialFormField('resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
@@ -77,7 +77,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
         Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
             {'LINK_TYPE_CHOICES': self.LINK_TYPE_CHOICES, 'image_file': image_file})
         kwargs.update(form=Form)
-        return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
+        return super(FoundationPicturePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element
@@ -92,7 +92,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapPicturePlugin, cls).get_css_classes(obj)
+        css_classes = super(FoundationPicturePlugin, cls).get_css_classes(obj)
         css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)
@@ -100,11 +100,11 @@ class BootstrapPicturePlugin(LinkPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapPicturePlugin, cls).get_identifier(obj)
+        identifier = super(FoundationPicturePlugin, cls).get_identifier(obj)
         try:
             content = force_text(obj.image)
         except AttributeError:
             content = _("No Picture")
         return format_html('{0}{1}', identifier, content)
 
-plugin_pool.register_plugin(BootstrapPicturePlugin)
+plugin_pool.register_plugin(FoundationPicturePlugin)

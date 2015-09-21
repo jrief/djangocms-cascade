@@ -62,9 +62,9 @@ class ButtonSizeRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapButtonMixin(object):
+class FoundationButtonMixin(object):
     require_parent = True
-    parent_classes = ('BootstrapColumnPlugin',)
+    parent_classes = ('FoundationColumnPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
     text_enabled = True
@@ -109,7 +109,7 @@ class BootstrapButtonMixin(object):
     )
 
     def render(self, context, instance, placeholder):
-        context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
+        context = super(FoundationButtonMixin, self).render(context, instance, placeholder)
         mini_template = '{0}<span class="glyphicon glyphicon-{1}" aria-hidden="true"></span>{2}'
         nbsp = mark_safe('&nbsp;')
         icon_left = instance.glossary.get('icon-left')
@@ -121,8 +121,8 @@ class BootstrapButtonMixin(object):
         return context
 
 
-class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
-    module = 'Bootstrap'
+class FoundationButtonPlugin(FoundationButtonMixin, LinkPluginBase):
+    module = 'Foundation'
     name = _("Button")
     model_mixins = (LinkElementMixin,)
     fields = ('link_content', getattr(LinkPluginBase, 'glossary_field_map')['link'], 'glossary',)
@@ -133,7 +133,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapButtonPlugin, cls).get_identifier(obj)
+        identifier = super(FoundationButtonPlugin, cls).get_identifier(obj)
         content = obj.glossary.get('link_content')
         if not content:
             try:
@@ -150,4 +150,4 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         kwargs.update(form=Form)
         return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
 
-plugin_pool.register_plugin(BootstrapButtonPlugin)
+plugin_pool.register_plugin(FoundationButtonPlugin)

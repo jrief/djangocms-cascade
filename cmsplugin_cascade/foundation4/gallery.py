@@ -68,10 +68,10 @@ class GalleryPluginInline(StackedInline):
     extra = 0
 
 
-class BootstrapGalleryPlugin(CascadePluginBase):
+class FoundationGalleryPlugin(CascadePluginBase):
     name = _("Gallery")
-    module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin']
+    module = 'Foundation'
+    parent_classes = ['FoundationColumnPlugin']
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)
@@ -130,7 +130,7 @@ class BootstrapGalleryPlugin(CascadePluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         utils.reduce_breakpoints(self, 'responsive-heights')
-        form = super(BootstrapGalleryPlugin, self).get_form(request, obj, **kwargs)
+        form = super(FoundationGalleryPlugin, self).get_form(request, obj, **kwargs)
         return form
 
     def render(self, context, instance, placeholder):
@@ -161,7 +161,7 @@ class BootstrapGalleryPlugin(CascadePluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapGalleryPlugin, cls).get_css_classes(obj)
+        css_classes = super(FoundationGalleryPlugin, cls).get_css_classes(obj)
         css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)
@@ -169,9 +169,9 @@ class BootstrapGalleryPlugin(CascadePluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapGalleryPlugin, cls).get_identifier(obj)
+        identifier = super(FoundationGalleryPlugin, cls).get_identifier(obj)
         num_elems = obj.inline_elements.count()
         content = ungettext_lazy("with {0} image", "with {0} images", num_elems).format(num_elems)
         return format_html('{0}{1}', identifier, content)
 
-plugin_pool.register_plugin(BootstrapGalleryPlugin)
+plugin_pool.register_plugin(FoundationGalleryPlugin)

@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.mixins import TransparentMixin
-from .plugin_base import BootstrapPluginBase
+from .plugin_base import FoundationPluginBase
 
 panel_heading_sizes = (('', _("normal")),) + tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
 
@@ -40,14 +40,14 @@ class PanelTypeRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapPanelPlugin(TransparentMixin, BootstrapPluginBase):
+class FoundationPanelPlugin(TransparentMixin, FoundationPluginBase):
     """
     Use this plugin to display a panel with optional panel-header and panel-footer.
     """
     name = _("Panel")
     default_css_class = 'panel'
     require_parent = False
-    parent_classes = ('BootstrapColumnPlugin',)
+    parent_classes = ('FoundationColumnPlugin',)
     allow_children = True
     child_classes = None
     render_template = 'cascade/bootstrap3/panel.html'
@@ -87,6 +87,6 @@ class BootstrapPanelPlugin(TransparentMixin, BootstrapPluginBase):
             'panel_footer': footer,
             'placeholder': placeholder,
         })
-        return super(BootstrapPanelPlugin, self).render(context, instance, placeholder)
+        return super(FoundationPanelPlugin, self).render(context, instance, placeholder)
 
-plugin_pool.register_plugin(BootstrapPanelPlugin)
+plugin_pool.register_plugin(FoundationPanelPlugin)
