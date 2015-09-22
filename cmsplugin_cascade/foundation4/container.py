@@ -39,10 +39,10 @@ class FoundationContainerPlugin(FoundationPluginBase):
     require_parent = False
     form = FoundationContainerForm
     WIDGET_CHOICES = (
-        ('xs', _("Tiny (<{sm[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
-        ('sm', _("Small (≥{sm[0]}px and <{md[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
-        ('md', _("Medium (≥{md[0]}px and <{lg[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
-        ('lg', _("Large (≥{lg[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('small', _("Tiny (<{small[0]}em)".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('medium', _("Small (≥{small[0]}em and <{medium[0]}em)".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('large', _("Medium (≥{medium[0]}em and <{large[0]}em)".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('xlarge', _("Large (≥{large[0]}em)".format(**CASCADE_BREAKPOINTS_DICT))),
     )
     glossary_fields = (
         PartialFormField('breakpoints',
