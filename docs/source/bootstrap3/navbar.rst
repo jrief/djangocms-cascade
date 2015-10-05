@@ -4,6 +4,13 @@
 Template tag for the Bootstrap3 Navbar
 ======================================
 
+
+.. warning:: This template tag is now deprecated. It's functionality has been
+             split off into a new project that can be found here: 
+             `Django CMS Bootstrap 3`_.
+
+.. _Django CMS Bootstrap 3: https://github.com/jrief/djangocms-bootstrap3
+
 Although it's not derived from the ``CascadeElement`` class, this Django app is shipped with a
 template tag to render the main menu inside a `Bootstrap Navbar`_. This tag is named ``main_menu``
 and shall be used instead of ``show_menu``, as shipped with the DjangoCMS menu app.
