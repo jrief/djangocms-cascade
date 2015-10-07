@@ -9,11 +9,11 @@
 .sass-cache
 *.db
 *.egg-info
+.eggs
 .tox
 build
 env*
 dist
 htmlcov
-djangocms_style.egg-info
 bower_components/
 filer_public*
