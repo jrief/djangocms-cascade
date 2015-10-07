@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.contrib import admin
-from django.template import RequestContext
+from django.template import Context
 from django.http import QueryDict
+from django.core.urlresolvers import resolve
 from cms.api import add_plugin, create_page
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import CascadeElement
@@ -61,7 +62,8 @@ class ContainerPluginTest(CMSTestCase):
 
         # Render the Container Plugin with all of its children
         build_plugin_tree(plugin_list)
-        context = RequestContext(self.request, {})
+        current_app = resolve(self.request.path_info).namespace
+        context = Context({'request': self.request, 'current_app': current_app})
         html = container_model.render_plugin(context)
         self.assertHTMLEqual(html, '<div class="container"><div class="row">' +
             '<div class="col-sm-4"></div><div class="col-sm-4"></div><div class="col-sm-4"></div>' +

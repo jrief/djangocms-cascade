@@ -4,10 +4,10 @@ from django.forms import widgets
 from django.forms.fields import CharField
 from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
-from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
+from collections import OrderedDict
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
@@ -20,7 +20,7 @@ class ButtonTypeRenderer(RadioFieldRenderer):
     """
     Render sample buttons in different colors in the button's backend editor.
     """
-    BUTTON_TYPES = SortedDict((('btn-default', _('Default')), ('btn-primary', _('Primary')),
+    BUTTON_TYPES = OrderedDict((('btn-default', _('Default')), ('btn-primary', _('Primary')),
         ('btn-success', _('Success')), ('btn-info', _('Info')), ('btn-warning', _('Warning')),
         ('btn-danger', _('Danger')), ('btn-link', _('Link')),))
 
@@ -42,7 +42,7 @@ class ButtonSizeRenderer(RadioFieldRenderer):
     """
     Render sample buttons in different sizes in the button's backend editor.
     """
-    BUTTON_SIZES = SortedDict((('btn-lg', _('Large')), ('', _('Default')), ('btn-sm', _('Small')),
+    BUTTON_SIZES = OrderedDict((('btn-lg', _('Large')), ('', _('Default')), ('btn-sm', _('Small')),
         ('btn-xs', _('Extra small')),))
 
     @classmethod

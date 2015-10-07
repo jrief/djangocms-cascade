@@ -4,7 +4,8 @@ import os
 from bs4 import BeautifulSoup
 from django.core.files import File as DjangoFile
 from django.http import QueryDict
-from django.template import RequestContext
+from django.template import Context
+from django.core.urlresolvers import resolve
 from filer.models.foldermodels import Folder
 from filer.models.imagemodels import Image
 from cms.api import add_plugin
@@ -68,7 +69,8 @@ class ImagePluginTest(CascadeTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, image_model]
         build_plugin_tree(plugin_list)
-        context = RequestContext(self.request, {})
+        current_app = resolve(self.request.path_info).namespace
+        context = Context({'request': self.request, 'current_app': current_app})
         html = container_model.render_plugin(context)
         soup = BeautifulSoup(html)
         self.assertEqual(soup.img['height'], '100')
