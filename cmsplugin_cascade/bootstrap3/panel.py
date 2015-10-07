@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from collections import OrderedDict
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
@@ -7,7 +8,6 @@ except ImportError:
 from django.forms import widgets
 from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
-from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
@@ -22,9 +22,9 @@ class PanelTypeRenderer(RadioFieldRenderer):
     """
     Render sample buttons in different colors in the button's backend editor.
     """
-    PANEL_TYPES = SortedDict((('panel-default', _('Default')), ('panel-primary', _('Primary')),
-        ('panel-success', _('Success')), ('panel-info', _('Info')), ('panel-warning', _('Warning')),
-        ('panel-danger', _('Danger')),))
+    PANEL_TYPES = OrderedDict((('panel-default', _("Default")), ('panel-primary', _("Primary")),
+        ('panel-success', _("Success")), ('panel-info', _("Info")), ('panel-warning', _("Warning")),
+        ('panel-danger', _("Danger")),))
 
     @classmethod
     def get_widget(cls):
