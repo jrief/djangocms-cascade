@@ -96,9 +96,8 @@ class LinkForm(ModelForm):
 
     def set_initial_cmspage(self, initial):
         try:
-            Model = get_model(*initial['link']['model'].split('.'))
-            initial['cms_page'] = Model.objects.get(pk=initial['link']['pk'])
-        except (KeyError, ObjectDoesNotExist):
+            initial['cms_page'] = initial['link']['pk']
+        except KeyError:
             pass
 
     def set_initial_exturl(self, initial):
