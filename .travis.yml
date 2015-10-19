@@ -33,6 +33,13 @@ matrix:
       env: DJANGO='django18' CMS='cms31'
     - python: 3.4
       env: DJANGO='django18' CMS='cms32'
+  exclude:
+    - python: 3.4
+      env: DJANGO='django16' CMS='cms30'
+    - python: 3.4
+      env: DJANGO='django16' CMS='cms31'
+    - python: 3.4
+      env: DJANGO='django16' CMS='cms32'
 
 install:
   - pip install tox
