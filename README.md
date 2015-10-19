@@ -1,5 +1,11 @@
 # djangocms-cascade
+
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
+
+
+### Detailed documentation
+
+Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.org/en/latest/).
 
 
 ## Add DOM elements to a Django-CMS placeholder
@@ -69,8 +75,7 @@ widths for each image, depending on the current column layout considering all me
   ``alien_child_classes = True``.
 
 
-Help needed
------------
+## Help needed
 
 If you like this project, please invest some time and test it with Django-1.7/1.8, django-cms-3.1
 and if possible Python-3.4.
@@ -82,8 +87,7 @@ Travis-CI worked for djangocms-cascade, Django-1.7 and django-cms-3.0.12, but si
 this is not the case anymore. If someone can find out why, it would be really great.
 
 
-Features
---------
+## Features
 
 * Use the scaffolding technique from the preferred CSS framework to subdivide a placeholder into a
   [grid system](http://getbootstrap.com/css/#grid).
@@ -111,16 +115,14 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
 * By allowing extra fields, one can add an optional ``id`` tag, CSS classes and inline styles. This
   is configurable on a plugin and site base.
 
-Detailed documentation
-----------------------
-Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.org/en/latest/).
 
-Build status
-------------
+### Build status
+
 [![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
 
-History
--------
+
+### History
+
 This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-text-wrapper) for the
 DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960.
 Later on, support for 960.gs was dropped in favor of Twitter Bootstrap. Now the aim of the project
@@ -131,8 +133,7 @@ DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins
 it possible to implement this kind of plugin.
 
 
-License
--------
+## License
 
 Released under the terms of MIT License.
 
