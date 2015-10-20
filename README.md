@@ -67,14 +67,8 @@ widths for each image, depending on the current column layout considering all me
 
 ## Help needed
 
-If you like this project, please invest some time and test it with Django-1.7/1.8, django-cms-3.1
+If you like this project, please invest some time and test it with Django-1.7/1.8, django-cms-3.1/3.2
 and if possible Python-3.4.
-
-With migrations added to Django-1.7, testing and developing plugins for django-cms get really messy.
-I currently have no resources to do all this cross-development.
-
-Travis-CI worked for djangocms-cascade, Django-1.7 and django-cms-3.0.12, but since the last upgrade
-this is not the case anymore. If someone can find out why, it would be really great.
 
 
 ## Features
