@@ -65,16 +65,6 @@ additional ``srcset``'s, one for each media query. **DjangoCMS-Cascade** calcula
 widths for each image, depending on the current column layout considering all media breakpoints.
 
 
-## News for next major release 0.5.0
-
-* Tested with **django-cms 3.0.13** and Django-1.6.
-* Added SegmentationPlugin. This allows to conditionally render parts of the DOM, depending on
-  the status of various ``request`` object members, such as ``user``.
-* Setting ``CASCADE_LEAF_PLUGINS`` has been replaced by ``CMSPLUGIN_CASCADE_ALIEN_PLUGINS``. This simplifies
-  the programming of third party plugins, since the author of a plugin now only must set the member
-  ``alien_child_classes = True``.
-
-
 ## Help needed
 
 If you like this project, please invest some time and test it with Django-1.7/1.8, django-cms-3.1
