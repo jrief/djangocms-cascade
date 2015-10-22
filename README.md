@@ -1,6 +1,10 @@
 # djangocms-cascade
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
+## NEWS
+**As of 2015-Oct-07, the code-base has been refactored to support Django-1.9. If somebody uses
+DjangoCMS-Cascade with Django-1.6 or lower, please send me an email. Otherwise I will drop support
+for those deprecated Django versions.**
 
 ## Add DOM elements to a Django-CMS placeholder
 
@@ -57,16 +61,6 @@ In modern web development, images must adopt to the column width in which they a
 Therefore the ``<img ...>`` tag, in addition to the well known ``src`` attribute, also accepts 
 additional ``srcset``'s, one for each media query. **DjangoCMS-Cascade** calculates the required
 widths for each image, depending on the current column layout considering all media breakpoints.
-
-
-## News for next major release 0.5.0
-
-* Tested with **django-cms 3.0.13** and Django-1.6.
-* Added SegmentationPlugin. This allows to conditionally render parts of the DOM, depending on
-  the status of various ``request`` object members, such as ``user``.
-* Setting ``CASCADE_LEAF_PLUGINS`` has been replaced by ``CMSPLUGIN_CASCADE_ALIEN_PLUGINS``. This simplifies
-  the programming of third party plugins, since the author of a plugin now only must set the member
-  ``alien_child_classes = True``.
 
 
 Help needed
