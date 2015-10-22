@@ -1,10 +1,16 @@
 # djangocms-cascade
+
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
 ## NEWS
 **As of 2015-Oct-07, the code-base has been refactored to support Django-1.9. If somebody uses
 DjangoCMS-Cascade with Django-1.6 or lower, please send me an email. Otherwise I will drop support
 for those deprecated Django versions.**
+
+### Detailed documentation
+
+Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.org/en/latest/).
+
 
 ## Add DOM elements to a Django-CMS placeholder
 
@@ -63,21 +69,13 @@ additional ``srcset``'s, one for each media query. **DjangoCMS-Cascade** calcula
 widths for each image, depending on the current column layout considering all media breakpoints.
 
 
-Help needed
------------
+## Help needed
 
-If you like this project, please invest some time and test it with Django-1.7/1.8, django-cms-3.1
+If you like this project, please invest some time and test it with Django-1.7/1.8, django-cms-3.1/3.2
 and if possible Python-3.4.
 
-With migrations added to Django-1.7, testing and developing plugins for django-cms get really messy.
-I currently have no resources to do all this cross-development.
 
-Travis-CI worked for djangocms-cascade, Django-1.7 and django-cms-3.0.12, but since the last upgrade
-this is not the case anymore. If someone can find out why, it would be really great.
-
-
-Features
---------
+## Features
 
 * Use the scaffolding technique from the preferred CSS framework to subdivide a placeholder into a
   [grid system](http://getbootstrap.com/css/#grid).
@@ -105,16 +103,14 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
 * By allowing extra fields, one can add an optional ``id`` tag, CSS classes and inline styles. This
   is configurable on a plugin and site base.
 
-Detailed documentation
-----------------------
-Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.org/en/latest/).
 
-Build status
-------------
+### Build status
+
 [![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
 
-History
--------
+
+### History
+
 This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-text-wrapper) for the
 DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960.
 Later on, support for 960.gs was dropped in favor of Twitter Bootstrap. Now the aim of the project
@@ -125,8 +121,7 @@ DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins
 it possible to implement this kind of plugin.
 
 
-License
--------
+## License
 
 Released under the terms of MIT License.
 

@@ -64,11 +64,12 @@ them with ``and``, ``or`` and ``not`` as described in `boolean operators`_ in th
 Immediately below a segmentation block using the condition tag ``if``, it is possible to use the
 tags ``elif`` or ``else``. This kind of conditional blocks is well known to Python programmers.
 
-Note, that the context in which the condition is evaluated is the Django `request object`_.
-Therefore a condition such as ``user.username == "john"``, in Django evaluates to
-``request.user.username == "john"``, where ``request`` is the ``HttpRequest`` object. This means
-that beside the request object, the evaluation engine does not access the remaining context.
+Note, that when rendering pages in djangoCMS, a RequestContext_- rather than a Context-object is used.
+This RequestContext is populated by the ``user`` object if ``'django.contrib.auth.context_processors.auth'``
+is added to your settings.py ``TEMPLATE_CONTEXT_PROCESSORS``. This therefore is a prerequisite
+when the Segmentation plugin evaluates conditions such as ``user.username == "john"``.
 
+.. _RequestContext: https://docs.djangoproject.com/en/1.8/ref/templates/api/#django.template.RequestContext
 .. _boolean operators: https://docs.djangoproject.com/en/dev/ref/templates/builtins/#boolean-operators
 .. _request object: https://docs.djangoproject.com/en/dev/ref/request-response/#httprequest-objects
 
