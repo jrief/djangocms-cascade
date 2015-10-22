@@ -3,6 +3,12 @@
 import os
 from setuptools import setup, find_packages
 from cmsplugin_cascade import __version__
+try:
+    from pypandoc import convert
+except ImportError:
+    def convert(filename, fmt):
+        with open(filename) as fd:
+            return fd.read()
 
 
 CLASSIFIERS = [
@@ -18,10 +24,6 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.3',
 ]
 
-def read(fname):
-    readme_file = os.path.join(os.path.dirname(__file__), fname)
-    return os.popen('[ -x "$(which pandoc 2>/dev/null)" ] && pandoc -t rst {0} || cat {0}'.format(readme_file)).read()
-
 setup(
     name='djangocms-cascade',
     version=__version__,
@@ -34,7 +36,7 @@ setup(
     license='LICENSE-MIT',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
-    long_description=read('README.md'),
+    long_description=convert('README.md', 'rst'),
     include_package_data=True,
     zip_safe=False,
 )
