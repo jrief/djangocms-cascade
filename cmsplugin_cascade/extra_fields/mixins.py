@@ -7,9 +7,9 @@ except ImportError:
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
 from django.utils import six
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from cms.utils.compat.dj import python_2_unicode_compatible
 from cmsplugin_cascade.settings import CASCADE_EXTRA_INLINE_STYLES
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
