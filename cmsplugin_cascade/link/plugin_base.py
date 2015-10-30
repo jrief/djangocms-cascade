@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 from django.db.models import get_model
 from django.forms import widgets
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from cms.utils.compat.dj import python_2_unicode_compatible
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import resolve_dependencies

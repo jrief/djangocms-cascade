@@ -6,7 +6,7 @@ except ImportError:
     from django.contrib.sites.models import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import get_model
-from cms.utils.compat.dj import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible
 from cms.utils.placeholder import get_placeholder_conf
 
 
