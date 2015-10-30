@@ -71,8 +71,8 @@ class LinkPluginBase(CascadePluginBase):
 class LinkElementMixin(object):
     """
     A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
-    Please note that a Link inside the Text Editor Plugin is rendered as `str(instance)` rather
-    than `instance.content`.
+    Note that a Link inside the Text Editor Plugin is rendered using ``str(instance)`` rather
+    than ``instance.content``.
     """
     def __str__(self):
         return self.content
