@@ -13,6 +13,7 @@ from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .sharable.forms import SharableGlossaryMixin
 from .extra_fields.mixins import ExtraFieldsMixin
+from .mixins import TransparentMixin
 from .widgets import JSONMultiWidget
 from .render_template import RenderTemplateMixin
 from . import settings
@@ -88,9 +89,10 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         template = page and page.get_template() or None
         ph_conf = get_placeholder_conf('parent_classes', slot, template, default={})
         parent_classes = ph_conf.get(self.__class__.__name__, self.parent_classes)
-        if parent_classes and isinstance(parent_classes, (list, tuple)):
-            parent_classes = tuple(parent_classes) + tuple(settings.CASCADE_DEFAULT_PARENT_CLASSES)
-        return parent_classes
+        parent_classes = set(parent_classes) if isinstance(parent_classes, (list, tuple)) else set()
+        parent_classes.update(str(p.__name__) for p in plugin_pool.get_all_plugins()
+                              if issubclass(p, TransparentMixin))
+        return tuple(parent_classes)
 
     def get_child_classes(self, slot, page):
         if isinstance(self.child_classes, (list, tuple)):
