@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
-from django.utils.module_loading import import_by_path
+from django.utils.module_loading import import_string
 from django.utils.safestring import SafeText
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
@@ -59,7 +59,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         model_mixins = attrs.pop('model_mixins', ())
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
-            model_mixins += tuple(import_by_path(mc[0]) for mc in settings.CASCADE_SEGMENTATION_MIXINS)
+            model_mixins += tuple(import_string(mc[0]) for mc in settings.CASCADE_SEGMENTATION_MIXINS)
         attrs['model'] = create_proxy_model(name, model_mixins, base_model)
         if is_installed('reversion'):
             import reversion

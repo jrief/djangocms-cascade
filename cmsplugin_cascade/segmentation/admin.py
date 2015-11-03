@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.contrib import admin
-from django.utils.module_loading import import_by_path
+from django.utils.module_loading import import_string
 from django.utils.six import with_metaclass
 from cmsplugin_cascade.models import Segmentation
 from cmsplugin_cascade import settings
@@ -9,7 +9,7 @@ from cmsplugin_cascade import settings
 
 class SegmentationAdminMetaclass(admin.options.RenameBaseModelAdminMethods):
     def __new__(cls, name, bases, attrs):
-        bases = tuple(import_by_path(sgm[1]) for sgm in settings.CASCADE_SEGMENTATION_MIXINS) + bases
+        bases = tuple(import_string(sgm[1]) for sgm in settings.CASCADE_SEGMENTATION_MIXINS) + bases
         new_class = super(SegmentationAdminMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
 
