@@ -1,29 +1,42 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db.models import get_model
 from django.forms import fields
 from django.forms.models import ModelForm
+from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from cms.models import Page
-try:
-    from .fields import LinkSearchField as LinkSelectFormField
+from django_select2.forms import Select2Mixin
 
-    class PageSelectFormField(LinkSelectFormField):
-        search_fields = ['title_set__title__icontains', 'title_set__menu_title__icontains', 'title_set__slug__icontains']
-except ImportError:
-    from cms.forms.fields import PageSelectFormField
+if 'django_select2' in settings.INSTALLED_APPS:
+    SelectWidget = import_string('django_select2.forms.Select2Widget')
+else:
+    SelectWidget = import_string('django.forms.widgets.Select')
 
 
-class LinkForm(ModelForm):
+class LinkSearchField(fields.ChoiceField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('widget', SelectWidget)
+        super(LinkSearchField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        try:
+            return int(value)
+        except ValueError:
+            pass
+
+
+class LinkForm(Select2Mixin, ModelForm):
     """
     Form class to add fake fields for rendering the ModelAdmin's form, which later are used to
     populate the glossary of the model.
     """
     LINK_TYPE_CHOICES = (('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To")),)
     link_type = fields.ChoiceField()
-    cms_page = PageSelectFormField(required=False, label='',
+    cms_page = LinkSearchField(required=False, label='',
         help_text=_("An internal link onto CMS pages of this site"))
     ext_url = fields.URLField(required=False, label='', help_text=_("Link onto external page"))
     mail_to = fields.EmailField(required=False, label='', help_text=_("Open Email program with this address"))
@@ -42,12 +55,17 @@ class LinkForm(ModelForm):
         if raw_data and raw_data.get('shared_glossary'):
             # convert this into an optional field since it is disabled with ``shared_glossary`` set
             self.base_fields['link_type'].required = False
+        set_initial_linktype = getattr(self, 'set_initial_{0}'.format(link_type), None)
+
+        # populate choice field for selecting a CMS page
         try:
             site = instance.page.site
         except AttributeError:
             site = Site.objects.get_current()
-        self.base_fields['cms_page'].queryset = Page.objects.drafts().on_site(site)
-        set_initial_linktype = getattr(self, 'set_initial_{0}'.format(link_type), None)
+        choices = ((p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
+                   for p in Page.objects.drafts().on_site(site))
+        self.base_fields['cms_page'].choices = choices
+
         if callable(set_initial_linktype):
             set_initial_linktype(initial)
         kwargs.update(initial=initial)
@@ -80,7 +98,7 @@ class LinkForm(ModelForm):
             self.cleaned_data['link_data'] = {
                 'type': 'cmspage',
                 'model': 'cms.Page',
-                'pk': self.cleaned_data['cms_page'] and self.cleaned_data['cms_page'].pk or None
+                'pk': self.cleaned_data['cms_page'],
             }
 
     def clean_ext_url(self):
@@ -96,8 +114,9 @@ class LinkForm(ModelForm):
 
     def set_initial_cmspage(self, initial):
         try:
+            # check if that page still exists, otherwise return nothing
             Model = get_model(*initial['link']['model'].split('.'))
-            initial['cms_page'] = Model.objects.get(pk=initial['link']['pk'])
+            initial['cms_page'] = Model.objects.get(pk=initial['link']['pk']).pk
         except (KeyError, ObjectDoesNotExist):
             pass
 
