@@ -10,6 +10,9 @@ else:
 class LinkSearchField(AutoModelSelect2Field):
     empty_value = []
 
+    class Media:
+        js = (settings.STATIC_ROOT + 'bower_components/jquery/dist/jquery.min.js',)
+
     def __init__(self, *args, **kwargs):
         try:
             self.search_fields = kwargs.pop('search_fields')
