@@ -9,7 +9,6 @@ from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from cms.models import Page
-from django_select2.forms import Select2Mixin
 
 if 'django_select2' in settings.INSTALLED_APPS:
     SelectWidget = import_string('django_select2.forms.Select2Widget')
@@ -29,7 +28,7 @@ class LinkSearchField(fields.ChoiceField):
             pass
 
 
-class LinkForm(Select2Mixin, ModelForm):
+class LinkForm(ModelForm):
     """
     Form class to add fake fields for rendering the ModelAdmin's form, which later are used to
     populate the glossary of the model.
