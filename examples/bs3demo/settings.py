@@ -161,12 +161,6 @@ CMS_CACHE_DURATIONS = {
     'permissions': 86400,
 }
 
-CMS_PLACEHOLDER_CONF = {
-    'Main Content Container': {
-        'plugins': ['BootstrapContainerPlugin'],
-    },
-}
-
 CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
 CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = [
