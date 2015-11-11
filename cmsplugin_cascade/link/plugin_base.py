@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.utils import resolve_dependencies
 from .forms import LinkForm
 
 
@@ -33,9 +32,6 @@ class LinkPluginBase(CascadePluginBase):
     html_tag_attributes = {'title': 'title', 'target': 'target'}
     # map field from glossary to these form fields
     glossary_field_map = {'link': ('link_type', 'cms_page', 'ext_url', 'mail_to',)}
-
-    class Media:
-        js = resolve_dependencies('cascade/js/admin/linkpluginbase.js')
 
     @classmethod
     def get_link(cls, obj):
