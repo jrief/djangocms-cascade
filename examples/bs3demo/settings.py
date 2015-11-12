@@ -1,11 +1,18 @@
 # Django settings for unit test project.
+from __future__ import unicode_literals
 import os
 import sys
-from .utils import find_django_migrations_module
+from cms import __version__ as CMS_VERSION
 
 DEBUG = True
 
-PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(__file__)
+
+# Root directory for this Django project
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, os.path.pardir, os.path.pardir))
+
+# Directory where working files, such as media and databases are kept
+WORK_DIR = os.path.join(PROJECT_ROOT, 'workdir')
 
 SITE_ID = 1
 
@@ -16,10 +23,10 @@ SECRET_KEY = 'secret'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(WORK_DIR, 'db.sqlite3'),
     },
 }
 
-from cms import __version__ as CMS_VERSION
 CMS_VERSION = tuple(int(n) for n in CMS_VERSION.split('.')[:2])
 
 INSTALLED_APPS = (
@@ -41,9 +48,10 @@ INSTALLED_APPS = (
     'cms',
     'cms_bootstrap3',
     'menus',
-    CMS_VERSION >= (3, 1) and 'treebeard' or 'mptt',
+    'treebeard' if CMS_VERSION >= (3, 1) else 'mptt',
     'filer',
     'easy_thumbnails',
+    'sass_processor',
     'sekizai',
     'bs3demo',
 )
@@ -71,17 +79,29 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.join(WORK_DIR, 'media')
 
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a trailing slash.
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash.
+# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
 # Absolute path to the directory that holds static files.
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+# Example: "/home/media/media.lawrence.com/static/"
+STATIC_ROOT = os.path.join(WORK_DIR, 'static')
 
-# URL that handles the static files served from STATIC_ROOT. Make sure to use a trailing slash.
+# URL that handles the static files served from STATIC_ROOT.
+# Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+)
+
 STATICFILES_DIRS = (
-    os.path.abspath(os.path.join(PROJECT_DIR, os.pardir, os.pardir, 'bower_components')),
+    os.path.join(BASE_DIR, 'static'),
+    ('bower_components', os.path.join(PROJECT_ROOT, 'bower_components')),
+    ('node_modules', os.path.join(PROJECT_ROOT, 'node_modules')),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -105,7 +125,7 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_DIR, 'templates'),
+    os.path.join(BASE_DIR, 'templates'),
 )
 
 # If you set this to False, Django will make some optimizations so as not
@@ -209,3 +229,10 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
 }
 
 #THUMBNAIL_DEBUG = True
+
+SASS_PROCESSOR_INCLUDE_DIRS = (
+    os.path.join(PROJECT_ROOT, 'node_modules'),
+)
+
+# to access files such as fonts via staticfiles finders
+NODE_MODULES_URL = STATIC_URL + 'node_modules/'

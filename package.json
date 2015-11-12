@@ -1,0 +1,26 @@
+{
+  "name": "djangocms-cascade",
+  "version": "0.7.0",
+  "description": "DjangoCMS-Cascade is the Swiss army knife for working with Django CMS plugins",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jrief/djangocms-cascade.git"
+  },
+  "author": "Jacob Rief",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jrief/djangocms-cascade/issues"
+  },
+  "homepage": "https://github.com/jrief/djangocms-cascade#readme",
+  "dependencies": {
+    "bootstrap-sass": "^3.3.5"
+  }
+}

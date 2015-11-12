@@ -1,7 +1,11 @@
 {% extends "base.html" %}
-{% load cms_tags bootstrap_tags %}
+{% load cms_tags bootstrap_tags sekizai_tags sass_tags %}
 
-{% block sections %}
+{% block head %}
+{% addtoblock "css" %}<link rel="stylesheet" href="{% sass_src 'css/main.scss' %}" type="text/css" />{% endaddtoblock %}
+{% endblock head %}
+
+{% block header %}
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
 	<div class="container">
 		<!-- menu button for mobile devices -->
@@ -20,6 +24,9 @@
 		</div>
 	</div>
 </div>
+{% endblock header %}
+
+{% block sections %}
 <section>
 	{% placeholder "Main Content Container" or %}
 	<div class="container">
