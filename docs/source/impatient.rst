@@ -30,25 +30,24 @@ Create a temporary file, for instance named requirements.txt, containing these e
 
 .. code-block:: guess
 
-	Django==1.6.11
-	Django-Select2==4.2.2
-	Pillow==2.7.0
-	South==1.0.2
-	Unidecode==0.04.17
-	argparse==1.3.0
-	django-classy-tags==0.6.1
-	django-cms==3.0.10
-	django-filer==0.9.9
-	django-mptt==0.6.1
-	django-polymorphic==0.6.1
-	django-sekizai==0.8.1
-	djangocms-admin-style==0.2.5
+	Django==1.7.10
+	Django-Select2==5.2.1
+	Pillow==2.9.0
+	Unidecode==0.4.18
+	django-classy-tags==0.6.2
+	django-cms==3.1.3
+	django-filer==0.9.12
+	django-treebeard==3.0
+	django-polymorphic==0.7.1
+	django-sass-processor==0.3.0
+	django-sekizai==0.8.2
+	djangocms-admin-style==0.2.8
 	-e git+https://github.com/jrief/djangocms-bootstrap3.git#egg=djangocms-bootstrap3
 	-e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
-	djangocms-text-ckeditor==2.4.3
-	-e git+https://github.com/SmileyChris/easy-thumbnails#egg=easy-thumbnails
-	html5lib==0.999
-	jsonfield==1.0.2
+	djangocms-text-ckeditor==2.6.0
+	easy-thumbnails==2.2.1
+	html5lib==0.9999999
+	jsonfield==1.0.3
 	six==1.9.0
 	wsgiref==0.1.2
 
@@ -67,7 +66,7 @@ create a superuser:
 	cd $VIRTUAL_ENV/src/djangocms-cascade
 	bower install --require
 	cd examples
-	./manage.py syncdb --migrate --settings=bs3demo.settings
+	./manage.py migrate --settings=bs3demo.settings
 	./manage.py runserver --settings=bs3demo.settings
 
 Point a browser onto http://localhost:8000/ and log in as the super user. Here you should be able

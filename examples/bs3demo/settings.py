@@ -13,17 +13,11 @@ ROOT_URLCONF = 'bs3demo.urls'
 
 SECRET_KEY = 'secret'
 
-import django
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
     },
 }
-if django.VERSION[:2] > (1, 6):
-    DATABASES['default'].update({'NAME': 'sqlite17.db'})
-else:
-    DATABASES['default'].update({'NAME': 'sqlite16.db'})
 
 from cms import __version__ as CMS_VERSION
 CMS_VERSION = tuple(int(n) for n in CMS_VERSION.split('.')[:2])
@@ -53,15 +47,6 @@ INSTALLED_APPS = (
     'sekizai',
     'bs3demo',
 )
-if django.VERSION[:2] >= (1, 7):
-    MIGRATION_MODULES = {
-        'cms': find_django_migrations_module('cms'),
-        'menus': find_django_migrations_module('menus'),
-        'djangocms_text_ckeditor': find_django_migrations_module('djangocms_text_ckeditor'),
-        'cmsplugin_cascade': find_django_migrations_module('cmsplugin_cascade'),
-    }
-else:
-    INSTALLED_APPS += ('south',)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -83,10 +68,8 @@ MIDDLEWARE_CLASSES = (
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Absolute path to the directory that holds media.
-if django.VERSION[:2] > (1, 6):
-    MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
-else:
-    MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media16')
+# Example: "/home/media/media.lawrence.com/"
+MEDIA_ROOT = os.path.join(WORK_DIR, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a trailing slash.
 MEDIA_URL = '/media/'
