@@ -24,7 +24,7 @@ class LinkSearchField(fields.ChoiceField):
     def clean(self, value):
         try:
             return int(value)
-        except ValueError:
+        except (TypeError, ValueError):
             pass
 
 
