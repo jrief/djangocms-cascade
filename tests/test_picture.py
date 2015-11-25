@@ -16,6 +16,7 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
 from cmsplugin_cascade.bootstrap3.picture import BootstrapPicturePlugin
 from cmsplugin_cascade.bootstrap3.settings import CASCADE_BREAKPOINTS_LIST
 from .test_base import CascadeTestCase
+from .utils import get_request_context
 
 
 class PicturePluginTest(CascadeTestCase):
@@ -74,7 +75,7 @@ class PicturePluginTest(CascadeTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, picture_model]
         build_plugin_tree(plugin_list)
-        context = RequestContext(self.request, {})
+        context = get_request_context(self.request)
         html = container_model.render_plugin(context)
         soup = BeautifulSoup(html)
         self.assertEqual(soup.img['height'], '240')

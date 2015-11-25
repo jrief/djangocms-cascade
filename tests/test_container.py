@@ -10,6 +10,7 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
          BootstrapRowForm, BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.settings import CASCADE_BREAKPOINTS_LIST
 from cms.test_utils.testcases import CMSTestCase
+from .utils import get_request_context
 
 
 class ContainerPluginTest(CMSTestCase):
@@ -61,14 +62,7 @@ class ContainerPluginTest(CMSTestCase):
 
         # Render the Container Plugin with all of its children
         build_plugin_tree(plugin_list)
-        context = RequestContext(self.request, {})
-
-        # XXX: Workaround for an issue with django-cms that we do not fully
-        # understand yet. It seems that the template context processors are not
-        # run early enough, so context['request'] is not available when
-        # django-cms tries to access it. We should do further analysis on this.
-        context['request'] = self.request
-
+        context = get_request_context(self.request)
         html = container_model.render_plugin(context)
         self.assertHTMLEqual(html, '<div class="container"><div class="row">' +
             '<div class="col-sm-4"></div><div class="col-sm-4"></div><div class="col-sm-4"></div>' +

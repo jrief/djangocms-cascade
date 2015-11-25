@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.auth',
     'django.contrib.sites',
+    'django.contrib.sessions',
+    'django.contrib.admin',
     'jsonfield',
     'reversion',
     'filer',

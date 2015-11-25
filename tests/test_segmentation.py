@@ -9,6 +9,7 @@ from djangocms_text_ckeditor.cms_plugins import TextPlugin
 from cmsplugin_cascade.generic.cms_plugins import SimpleWrapperPlugin
 from cmsplugin_cascade.segmentation.cms_plugins import SegmentPlugin
 from .test_base import CascadeTestCase
+from .utils import get_request_context
 
 
 class SegmentationPluginTest(CascadeTestCase):
@@ -49,7 +50,8 @@ class SegmentationPluginTest(CascadeTestCase):
         build_plugin_tree(plugin_list)
 
         # render the plugins as admin user
-        context = RequestContext(self.request, {})
+        context = get_request_context(self.request)
+
         html = wrapper_model.render_plugin(context)
         soup = BeautifulSoup(html)
         self.assertHTMLEqual(soup.p.text, 'User is admin')
