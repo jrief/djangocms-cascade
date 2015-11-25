@@ -51,21 +51,20 @@ class SegmentationPluginTest(CascadeTestCase):
 
         # render the plugins as admin user
         context = get_request_context(self.request)
-
         html = wrapper_model.render_plugin(context)
         soup = BeautifulSoup(html)
         self.assertHTMLEqual(soup.p.text, 'User is admin')
 
         # render the plugins as staff user
         self.request.user = self.get_staff_user_with_no_permissions()
-        context = RequestContext(self.request, {})
+        context = get_request_context(self.request)
         html = wrapper_model.render_plugin(context)
         soup = BeautifulSoup(html)
         self.assertHTMLEqual(soup.p.text, 'User is staff')
 
         # render the plugins as anonymous user
         self.request.user = AnonymousUser
-        context = RequestContext(self.request, {})
+        context = get_request_context(self.request)
         html = wrapper_model.render_plugin(context)
         soup = BeautifulSoup(html)
         self.assertHTMLEqual(soup.p.text, 'User is anonymous')

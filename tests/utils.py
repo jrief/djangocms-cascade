@@ -10,4 +10,6 @@ def get_request_context(request, extra_context=None):
     # run early enough, so context['request'] is not available when
     # django-cms tries to access it. We should do further analysis on this.
     context['request'] = request
+    # The same problem seems to exist with request.user.
+    context['user'] = request.user
     return context
