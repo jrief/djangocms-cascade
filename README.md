@@ -3,7 +3,8 @@
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
 ## NEWS for version 0.7
-* Since nobody complained, support for Django-1.6 and lower has been dropped.
+* Support for **Django** version 1.6 and lower has been dropped.
+* Support for **django-cms** version 3.0 and lower has been dropped.
 * Cascade now works with **django-select2** version 5.2. Support for version 4 has been dropped.
 * The demo project now uses SASS instead of plain CSS, but SASS is not a requirement.
 
@@ -71,8 +72,10 @@ widths for each image, depending on the current column layout considering all me
 
 ## Help needed
 
-If you like this project, please invest some time and test it with Django-1.7/1.8, django-cms-3.1/3.2
-and if possible Python-3.4.
+If you like this project, please invest some time and test it with Django-1.8/1.9 and Python-3.4.
+
+If you are a native English speaker, please check the documentation for spelling errors and grammar
+since that's not my native language.
 
 
 ## Features
@@ -87,7 +90,7 @@ and if possible Python-3.4.
 * Add ``<img>`` and ``<picture>`` elements in a responsive way, so that more than one image URL
   point onto the resized sources, one for each viewport using the ``srcset`` tags or the ``<source>``
   elements.
-* Use segmentation the render parts of the DOM conditionally.
+* Use segmentation to conditionally render parts of the DOM.
 * It is very easy to integrate additional elements from the preferred CSS framework. For instance,
   implementing the Bootstrap Carousel, required only 50 lines of Python code and two simple Django
   templates.
@@ -95,6 +98,7 @@ and if possible Python-3.4.
   modified or removed from the plugin.
 * Currently **Bootstrap-3.x** is supported, but other CSS frameworks can be easily added in a
   pluggable manner.
+* It follows the "batteries included" philosophy, but still remains very modular.
 
 In addition to easily implement any kind of plugin, **DjangoCMS-Cascade** makes it possible to add
 reusable helpers. Such a helper enriches a plugin with an additional, configurable functionality:
@@ -104,6 +108,7 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
   resized to predefined values.
 * By allowing extra fields, one can add an optional ``id`` tag, CSS classes and inline styles. This
   is configurable on a plugin and site base.
+* It is easily possible to customize the templates shipped with the plugins.
 
 
 ### Build status
