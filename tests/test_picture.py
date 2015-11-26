@@ -16,6 +16,7 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
 from cmsplugin_cascade.bootstrap3.picture import BootstrapPicturePlugin
 from cmsplugin_cascade.bootstrap3.settings import CASCADE_BREAKPOINTS_LIST
 from .test_base import CascadeTestCase
+from .utils import get_request_context
 
 
 class PicturePluginTest(CascadeTestCase):
@@ -74,18 +75,18 @@ class PicturePluginTest(CascadeTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, picture_model]
         build_plugin_tree(plugin_list)
-        context = RequestContext(self.request, {})
+        context = get_request_context(self.request)
         html = container_model.render_plugin(context)
         soup = BeautifulSoup(html)
         self.assertEqual(soup.img['height'], '240')
         self.assertEqual(soup.img['width'], '720')
-        self.assertTrue(soup.img['src'].endswith('demo_image.png__720x240_q85_crop_subsampling-2.png'))
+        self.assertTrue('demo_image.png__720x240_q85_crop_subsampling-2.jpg' in str(soup.img))
         sources = dict((s['media'], s['srcset']) for s in soup.picture.find_all('source'))
-        self.assertTrue(sources['(max-width: 768px)'].endswith('demo_image.png__720x120_q85_crop_subsampling-2.png'))
-        self.assertTrue(sources['(min-width: 768px) and (max-width: 992px)'].endswith('demo_image.png__345x76_q85_crop_subsampling-2.png'))
-        self.assertTrue(sources['(min-width: 992px) and (max-width: 1200px)'].endswith('demo_image.png__293x73_q85_crop_subsampling-2.png'))
+        self.assertTrue('demo_image.png__720x120_q85_crop_subsampling-2.jpg' in sources['(max-width: 768px)'])
+        self.assertTrue('demo_image.png__345x76_q85_crop_subsampling-2.jpg' in sources['(min-width: 768px) and (max-width: 992px)'])
+        self.assertTrue('demo_image.png__293x73_q85_crop_subsampling-2.jpg' in sources['(min-width: 992px) and (max-width: 1200px)'])
         # Due to an different round implimentation in python3 height can vary by 1 to 2 pixels
-        self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.png$', sources['(min-width: 1200px)'])))
+        self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.jpg$', sources['(min-width: 1200px)'])))
 
         # with Retina images
         post_data.setlist('resize-options', ['crop', 'high_resolution'])
@@ -96,14 +97,14 @@ class PicturePluginTest(CascadeTestCase):
         soup = BeautifulSoup(html)
         self.assertEqual(soup.img['height'], '240')
         self.assertEqual(soup.img['width'], '720')
-        self.assertTrue(soup.img['src'].endswith('demo_image.png__720x240_q85_crop_subsampling-2.png'))
+        self.assertTrue('demo_image.png__720x240_q85_crop_subsampling-2.jpg' in soup.img['src'])
         sources = dict((s['media'], s['srcset']) for s in soup.picture.find_all('source'))
-        self.assertTrue(sources['(max-width: 768px) and (max-resolution: 1.5dppx)'].endswith('demo_image.png__720x120_q85_crop_subsampling-2.png'))
-        self.assertTrue(sources['(max-width: 768px) and (min-resolution: 1.5dppx)'].endswith('demo_image.png__1440x240_q85_crop_subsampling-2.png'))
-        self.assertTrue(sources['(min-width: 768px) and (max-width: 992px) and (max-resolution: 1.5dppx)'].endswith('demo_image.png__345x76_q85_crop_subsampling-2.png'))
-        self.assertTrue(sources['(min-width: 768px) and (max-width: 992px) and (min-resolution: 1.5dppx)'].endswith('demo_image.png__690x152_q85_crop_subsampling-2.png'))
-        self.assertTrue(sources['(min-width: 992px) and (max-width: 1200px) and (max-resolution: 1.5dppx)'].endswith('demo_image.png__293x73_q85_crop_subsampling-2.png'))
-        self.assertTrue(sources['(min-width: 992px) and (max-width: 1200px) and (min-resolution: 1.5dppx)'].endswith('demo_image.png__586x146_q85_crop_subsampling-2.png'))
+        self.assertTrue('demo_image.png__720x120_q85_crop_subsampling-2.jpg' in sources['(max-width: 768px) and (max-resolution: 1.5dppx)'])
+        self.assertTrue('demo_image.png__1440x240_q85_crop_subsampling-2.jpg' in sources['(max-width: 768px) and (min-resolution: 1.5dppx)'])
+        self.assertTrue('demo_image.png__345x76_q85_crop_subsampling-2.jpg' in sources['(min-width: 768px) and (max-width: 992px) and (max-resolution: 1.5dppx)'])
+        self.assertTrue('demo_image.png__690x152_q85_crop_subsampling-2.jpg' in sources['(min-width: 768px) and (max-width: 992px) and (min-resolution: 1.5dppx)'])
+        self.assertTrue('demo_image.png__293x73_q85_crop_subsampling-2.jpg' in sources['(min-width: 992px) and (max-width: 1200px) and (max-resolution: 1.5dppx)'])
+        self.assertTrue('demo_image.png__586x146_q85_crop_subsampling-2.jpg' in sources['(min-width: 992px) and (max-width: 1200px) and (min-resolution: 1.5dppx)'])
         # Due to an different round implimentation in python3 height can vary by 1 to 2 pixels
-        self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.png$', sources['(min-width: 1200px) and (max-resolution: 1.5dppx)'])))
-        self.assertTrue(bool(re.search(r'demo_image.png__524x17\d_q85_crop_subsampling-2.png$', sources['(min-width: 1200px) and (min-resolution: 1.5dppx)'])))
+        self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.jpg$', sources['(min-width: 1200px) and (max-resolution: 1.5dppx)'])))
+        self.assertTrue(bool(re.search(r'demo_image.png__524x17\d_q85_crop_subsampling-2.jpg$', sources['(min-width: 1200px) and (min-resolution: 1.5dppx)'])))
