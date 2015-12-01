@@ -56,7 +56,7 @@ def get_image_tags(context, instance, options):
     else:
         image_width = _parse_responsive_length(options['image-width-fixed'])
         if not image_width[0]:
-            image_width[0] = instance.image.width
+            image_width = (instance.image.width, image_width[1])
     try:
         image_height = _parse_responsive_length(options['image-height'])
     except KeyError:
