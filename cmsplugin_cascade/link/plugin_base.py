@@ -4,7 +4,6 @@ from django.db.models import get_model
 from django.forms import widgets
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from .forms import LinkForm
@@ -79,4 +78,4 @@ class LinkElementMixin(object):
 
     @property
     def content(self):
-        return mark_safe(self.glossary.get('link_content', ''))
+        return self.glossary.get('link_content', '')
