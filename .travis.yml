@@ -6,10 +6,9 @@ python:
 
 env:
   matrix:
-  - DJANGO='django17' CMS='cms31'
-  - DJANGO='django17' CMS='cms32'
   - DJANGO='django18' CMS='cms31'
   - DJANGO='django18' CMS='cms32'
+  - DJANGO='django19' CMS='cms32'
 
 install:
   - pip install tox
