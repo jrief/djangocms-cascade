@@ -4,6 +4,15 @@
 Release History
 ===============
 
+0.7.0
+-----
+Maintenance release with incompatibilities to previous versions:
+* Tested with **Django-1.8**. Support for version 1.7 and lower has been dropped.
+* Tested with **djangoCMS** version 3.2. Support for version 3.0 and lower has been dropped.
+* Tested with **django-select2** version 5.2. Support for version 4 has been dropped.
+* The demo project now uses SASS instead of plain CSS, but SASS is not a requirement during normal
+  development.
+
 0.6.2
 -----
 * In Segment: A condition raising a TemplateSyntaxError now renders that error inside a HTML
