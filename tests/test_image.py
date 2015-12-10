@@ -15,6 +15,7 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
 from cmsplugin_cascade.bootstrap3.image import BootstrapImagePlugin
 from cmsplugin_cascade.bootstrap3.settings import CASCADE_BREAKPOINTS_LIST
 from .test_base import CascadeTestCase
+from .utils import get_request_context
 
 
 class ImagePluginTest(CascadeTestCase):
@@ -68,12 +69,12 @@ class ImagePluginTest(CascadeTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, image_model]
         build_plugin_tree(plugin_list)
-        context = RequestContext(self.request, {})
+        context = get_request_context(self.request)
         html = container_model.render_plugin(context)
         soup = BeautifulSoup(html)
         self.assertEqual(soup.img['height'], '100')
         self.assertEqual(soup.img['width'], '300')
-        self.assertTrue(soup.img['src'].endswith('demo_image.png__300x100_q85_subsampling-2.png'))
+        self.assertTrue('demo_image.png__300x100_q85_subsampling-2' in str(soup.img))
 
         # use a responsive image
         post_data.setlist('image-shapes', ['img-responsive'])
@@ -89,8 +90,8 @@ class ImagePluginTest(CascadeTestCase):
         self.assertTrue('(min-width: 992px) and (max-width: 1200px) 293px' in sizes)
         self.assertTrue('(min-width: 1200px) 262px' in sizes)
         srcsets = [s.strip() for s in soup.img['srcset'].split(',')]
-        self.assertEqual(len([s for s in srcsets if s.endswith('demo_image.png__293x98_q85_subsampling-2.png 293w')]), 1)
-        self.assertEqual(len([s for s in srcsets if s.endswith('demo_image.png__720x240_q85_subsampling-2.png 720w')]), 1)
-        self.assertEqual(len([s for s in srcsets if s.endswith('demo_image.png__345x115_q85_subsampling-2.png 345w')]), 1)
-        self.assertEqual(len([s for s in srcsets if s.endswith('demo_image.png__262x87_q85_subsampling-2.png 262w')]), 1)
-        self.assertTrue(soup.img['src'].endswith('demo_image.png__720x240_q85_subsampling-2.png'))
+        self.assertEqual(len([s for s in srcsets if s.endswith('demo_image.png__293x98_q85_subsampling-2.jpg 293w')]), 1)
+        self.assertEqual(len([s for s in srcsets if s.endswith('demo_image.png__720x240_q85_subsampling-2.jpg 720w')]), 1)
+        self.assertEqual(len([s for s in srcsets if s.endswith('demo_image.png__345x115_q85_subsampling-2.jpg 345w')]), 1)
+        self.assertEqual(len([s for s in srcsets if s.endswith('demo_image.png__262x87_q85_subsampling-2.jpg 262w')]), 1)
+        self.assertTrue(soup.img['src'].endswith('demo_image.png__720x240_q85_subsampling-2.jpg'))

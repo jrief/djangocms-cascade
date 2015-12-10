@@ -7,6 +7,7 @@
 .coverage
 .DS_Store
 .sass-cache
+.cache
 *.db
 *.egg-info
 .eggs
@@ -16,4 +17,5 @@ env*
 dist
 htmlcov
 bower_components/
-filer_public*
+node_modules/
+workdir/

@@ -18,7 +18,6 @@ class SharedGlossary(models.Model):
     glossary = JSONField(null=True, blank=True, default={})
 
     class Meta:
-        app_label = 'cmsplugin_cascade'
         unique_together = ('plugin_type', 'identifier')
         verbose_name_plural = verbose_name = _("Shared between Plugins")
 
@@ -31,7 +30,6 @@ class CascadeElement(CascadeModelBase):
     The concrete model class to store arbitrary data for plugins derived from CascadePluginBase.
     """
     class Meta:
-        app_label = 'cmsplugin_cascade'
         db_table = 'cmsplugin_cascade_element'
 
     def copy_relations(self, oldinstance):
@@ -48,7 +46,6 @@ class SharableCascadeElement(CascadeModelBase):
     shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL)
 
     class Meta:
-        app_label = 'cmsplugin_cascade'
         db_table = 'cmsplugin_cascade_sharableelement'
 
     def __getattribute__(self, name):
@@ -69,7 +66,6 @@ class InlineCascadeElement(models.Model):
     glossary = JSONField(blank=True, default={})
 
     class Meta:
-        app_label = 'cmsplugin_cascade'
         db_table = 'cmsplugin_cascade_inline'
 
 
@@ -85,13 +81,12 @@ class PluginExtraFields(models.Model):
     inline_styles = JSONField(null=True, blank=True, default={})
 
     class Meta:
-        app_label = 'cmsplugin_cascade'
         verbose_name = verbose_name_plural = _("Custom CSS classes and styles")
         unique_together = ('plugin_type', 'site')
 
 
 class Segmentation(models.Model):
     class Meta:
-        app_label = 'cmsplugin_cascade'
         verbose_name = verbose_name_plural = _("Segmentation")
         managed = False  # its a dummy model
+        db_table = None

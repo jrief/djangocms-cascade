@@ -12,6 +12,7 @@ from cmsplugin_cascade.mixins import TransparentMixin
 class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
     name = _("Simple Wrapper")
     parent_classes = None
+    require_parent = False
     allow_children = True
     alien_child_classes = True
     TAG_CHOICES = tuple((cls, _("<{}> – Element").format(cls))
