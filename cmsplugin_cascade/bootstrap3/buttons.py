@@ -148,6 +148,6 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         Form = type(str('ButtonForm'), (TextLinkFormMixin, getattr(LinkForm, 'get_form_class')(),),
                     {'link_content': link_content})
         kwargs.update(form=Form)
-        return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
+        return super(BootstrapButtonPlugin, self).get_form(request, obj, **kwargs)
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
