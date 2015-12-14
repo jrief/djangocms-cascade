@@ -166,17 +166,18 @@ CMS_CACHE_DURATIONS = {
 
 CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
-CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = [
-    'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
-    'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin',
-    'SimpleWrapperPlugin',
-]
-
-CMSPLUGIN_CASCADE_WITH_SHARABLES = {
-    'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
-    'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',),
-    'BootstrapButtonPlugin': ('link',),
-    'TextLinkPlugin': ('link', 'target',),
+CMSPLUGIN_CASCADE = {
+    'plugins_with_extra_fields': [
+        'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
+        'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin',
+        'SimpleWrapperPlugin',
+    ],
+    'plugins_with_sharables': {
+        'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
+        'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',),
+        'BootstrapButtonPlugin': ('link',),
+        'TextLinkPlugin': ('link', 'target',),
+    },
 }
 
 COLUMN_GLOSSARY = {

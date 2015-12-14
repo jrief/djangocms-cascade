@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from cmsplugin_cascade import settings
+from cmsplugin_cascade.settings import cascade_config
 
 
 def remove_duplicates(lst):
@@ -14,8 +14,8 @@ def remove_duplicates(lst):
 def resolve_dependencies(filenames):
     """
     Given a filename literal or a list of filenames and a mapping of dependencies (use
-    ``settings.CASCADE_PLUGIN_DEPENDENCIES`` to check for details), return a list of other files
-    resolving the dependency. The returned list is ordered, so that files having no further
+    ``settings.CMSPLUGIN_CASCADE['dependencies']`` to check for details), return a list of other
+    files resolving the dependency. The returned list is ordered, so that files having no further
     dependency come as first element and the passed in filenames come as the last element.
     Use this function to automatically resolve dependencies of CSS and JavaScript files in the
     ``Media`` subclasses.
@@ -26,7 +26,7 @@ def resolve_dependencies(filenames):
             dependencies.extend(resolve_dependencies(filename))
     else:
         filename = filenames
-        dependency_list = getattr(settings, 'CASCADE_PLUGIN_DEPENDENCIES', {}).get(filename)
+        dependency_list = cascade_config['dependencies'].get(filename)
         if dependency_list:
             dependencies.extend(resolve_dependencies(dependency_list))
         dependencies.append(filename)

@@ -4,7 +4,6 @@ import os
 from bs4 import BeautifulSoup
 from django.core.files import File as DjangoFile
 from django.http import QueryDict
-from django.template import RequestContext
 from filer.models.foldermodels import Folder
 from filer.models.imagemodels import Image
 from cms.api import add_plugin
@@ -13,9 +12,11 @@ from cmsplugin_cascade.models import SharableCascadeElement
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
         BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.image import BootstrapImagePlugin
-from cmsplugin_cascade.bootstrap3.settings import CASCADE_BREAKPOINTS_LIST
+from cmsplugin_cascade.bootstrap3.settings import cascade_config
 from .test_base import CascadeTestCase
 from .utils import get_request_context
+
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in cascade_config['bootstrap3']['breakpoints'])
 
 
 class ImagePluginTest(CascadeTestCase):
@@ -32,7 +33,7 @@ class ImagePluginTest(CascadeTestCase):
     def test_plugin_context(self):
         # create container
         container_model = add_plugin(self.placeholder, BootstrapContainerPlugin, 'en',
-            glossary={'breakpoints': CASCADE_BREAKPOINTS_LIST})
+            glossary={'breakpoints': BS3_BREAKPOINT_KEYS})
         container_plugin = container_model.get_plugin_class_instance(self.admin_site)
         self.assertIsInstance(container_plugin, BootstrapContainerPlugin)
 

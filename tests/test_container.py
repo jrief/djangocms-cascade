@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.contrib import admin
-from django.template import RequestContext
 from django.http import QueryDict
 from cms.api import add_plugin, create_page
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
          BootstrapRowForm, BootstrapColumnPlugin)
-from cmsplugin_cascade.bootstrap3.settings import CASCADE_BREAKPOINTS_LIST
+from cmsplugin_cascade.bootstrap3.settings import cascade_config
 from cms.test_utils.testcases import CMSTestCase
 from .utils import get_request_context
+
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in cascade_config['bootstrap3']['breakpoints'])
 
 
 class ContainerPluginTest(CMSTestCase):
@@ -23,7 +24,7 @@ class ContainerPluginTest(CMSTestCase):
     def test_container_context(self):
         # add a Bootstrap Container Plugin
         container_model = add_plugin(self.placeholder, BootstrapContainerPlugin, 'en',
-            glossary={'breakpoints': CASCADE_BREAKPOINTS_LIST})
+            glossary={'breakpoints': BS3_BREAKPOINT_KEYS})
         self.assertIsInstance(container_model, CascadeElement)
         container_plugin = container_model.get_plugin_class_instance(self.admin_site)
         self.assertIsInstance(container_plugin, BootstrapContainerPlugin)

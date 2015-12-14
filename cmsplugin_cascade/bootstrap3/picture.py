@@ -12,8 +12,10 @@ from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from .image import ImageFormMixin
-from .settings import CASCADE_BREAKPOINTS_LIST
+from .settings import cascade_config
 from . import utils
+
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in cascade_config['bootstrap3']['breakpoints'])
 
 
 class BootstrapPicturePlugin(LinkPluginBase):
@@ -49,13 +51,13 @@ class BootstrapPicturePlugin(LinkPluginBase):
         ),
     ) + getattr(LinkPluginBase, 'glossary_fields', ()) + (
         PartialFormField('responsive-heights',
-            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['px', '%'], required=False),
+            MultipleCascadingSizeWidget(BS3_BREAKPOINT_KEYS, allowed_units=['px', '%'], required=False),
             label=_("Adapt Picture Heights"),
             initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
             help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
         ),
         PartialFormField('responsive-zoom',
-            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['%'], required=False),
+            MultipleCascadingSizeWidget(BS3_BREAKPOINT_KEYS, allowed_units=['%'], required=False),
             label=_("Adapt Picture Zoom"),
             initial={'xs': '0%', 'sm': '0%', 'md': '0%', 'lg': '0%'},
             help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),

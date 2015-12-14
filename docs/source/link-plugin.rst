@@ -47,9 +47,13 @@ Assure that ``INSTALLED_APPS`` contain ``'cmsplugin_cascade.sharable'``, then re
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_WITH_SHARABLES = {
+	CMSPLUGIN_CASCADE = {
 	    ...
-	    'TextLinkPlugin':  ('link',),  # and optionally other fields
+	    'plugins_with_sharables':
+	        ...
+	        'TextLinkPlugin':  ('link',),  # and optionally other fields
+	        ...
+	    },
 	    ...
 	}
 
