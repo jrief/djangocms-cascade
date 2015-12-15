@@ -14,4 +14,4 @@ form label[for=id_glossary_0] { float: none; }
 form .glossary_button-type .field-box { margin-right: 10px; }
 form .glossary_button-size .button-samples { min-height: 100px; max-width: 100px; }
 form .glossary_button-type .btn, .glossary_button-size .btn { margin-bottom: 5px; }
-#id_ext_url, #id_mail_to {width:18em;}
+#id_ext_url, #id_mail_to {width:18em !important;}
