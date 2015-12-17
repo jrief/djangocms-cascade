@@ -6,7 +6,12 @@ Release History
 
 0.7.0
 -----
-Maintenance release with incompatibilities to previous versions:
+
+Cleanup release, removing a lot of legacy code. This adds some incompatibilities to previous
+versions:
+
+* Instead of half o dozen of configuration directives, now one Python dict is used. Therefore
+  check your ``settings.py`` for configurations starting with ``CMSPLUGIN_CASCADE_...``.
 * Tested with **Django-1.8**. Support for version 1.7 and lower has been dropped.
 * Tested with **djangoCMS** version 3.2. Support for version 3.0 and lower has been dropped.
 * Tested with **django-select2** version 5.2. Support for version 4 has been dropped.
@@ -50,8 +55,9 @@ Maintenance release with incompatibilities to previous versions:
 * In caption field of ``CarouselSlidePlugin`` it now is possible to set links onto arbitrary pages.
 
 **Possible backwards incompatibility**:
-* For consistency with naming conventions on other plugins,
-  renamed ``cascade/plugins/link.html`` -> ``cascade/link/link-base.html``. **Check your templates**!
+
+* For consistency with naming conventions on other plugins, renamed ``cascade/plugins/link.html``
+  -> ``cascade/link/link-base.html``. **Check your templates**!
 * The setting ``CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS`` now is a list of two-tuples, where the first
   declares the plugin's model mixin, while the second declares the model admin mixin.
 * Removed from setting: ``CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR``. The rendering template now 
