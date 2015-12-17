@@ -5,7 +5,7 @@ South
 argparse
 beautifulsoup4
 django-classy-tags
-django-cms==3.0.13
+django-cms
 django-filer
 django-mptt
 django-polymorphic
