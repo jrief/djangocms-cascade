@@ -3,6 +3,7 @@ form .glossary-widget:after { content: "."; clear: both; display: block; visibil
 form .glossary-widget:last-child { border-bottom: none; }
 form .glossary-widget h1 { clear: both; margin: 0 0 4px; font-size: 120%; }
 form .glossary-widget label { width: inherit; padding-left: 10px; }
+form .glossary-widget label.inline { height: 20px; }
 form .glossary-widget small { margin-left: 0; }
 form .glossary-widget .field-box.disabled { color: #aaa; }
 form .glossary-widget ul { margin-left: 0; padding-left: 0; }
@@ -17,3 +18,4 @@ form .glossary-widget input[type="radio"], form .glossary-widget input[type="che
 form .glossary-field { float: left; margin-right: 10px; }
 form .glossary-box { zoom:1; }
 form .glossary-box:after { content: ""; display: table; clear: both; }
+form .glossary-field.glossary_content { width: 100%; }

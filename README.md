@@ -3,10 +3,18 @@
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
 ## NEWS for version 0.7
-* Support for **Django** version 1.6 and lower has been dropped.
-* Support for **django-cms** version 3.0 and lower has been dropped.
-* Cascade now works with **django-select2** version 5.2. Support for version 4 has been dropped.
-* The demo project now uses SASS instead of plain CSS, but SASS is not a requirement.
+
+Cleanup release, removing a lot of legacy code. This adds some incompatibilities to previous
+versions:
+
+* Instead of half o dozen of configuration directives, now one Python dict is used. Therefore
+  check your ``settings.py`` for configurations starting with ``CMSPLUGIN_CASCADE_...``.
+* Tested with **Django-1.8**. Support for version 1.7 and lower has been dropped.
+* Tested with **djangoCMS** version 3.2. Support for version 3.0 and lower has been dropped.
+* Tested with **django-select2** version 5.2. Support for version 4 has been dropped.
+* The demo project now uses SASS instead of plain CSS, but SASS is not a requirement during normal
+  development.
+
 
 ### Detailed documentation
 

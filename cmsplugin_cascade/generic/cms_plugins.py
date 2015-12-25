@@ -50,3 +50,33 @@ class HorizontalRulePlugin(CascadePluginBase):
     glossary_fields = ()
 
 plugin_pool.register_plugin(HorizontalRulePlugin)
+
+
+class HeadingPlugin(CascadePluginBase):
+    name = _("Heading")
+    parent_classes = None
+    allow_children = False
+    TAG_CHOICES = tuple((k, _("Heading {}").format(k)) for k in range(1, 7))
+    glossary_fields = (
+        PartialFormField('head_size', widgets.Select(choices=TAG_CHOICES)),
+        PartialFormField('content', widgets.TextInput(attrs={}), _("Heading content")),
+    )
+    render_template = 'cascade/generic/heading.html'
+
+    class Media:
+        css = {'all': ('cascade/css/admin/partialfields.css',)}
+
+    @classmethod
+    def get_identifier(cls, instance):
+        head_size = instance.glossary.get('head_size')
+        content = instance.glossary.get('content')
+        if head_size:
+            return format_html('<strong>{0}</strong>: {1}', head_size, content)
+        return content
+
+    def render(self, context, instance, placeholder):
+        context = super(HeadingPlugin, self).render(context, instance, placeholder)
+        context['glossary'] = instance.glossary
+        return context
+
+plugin_pool.register_plugin(HeadingPlugin)

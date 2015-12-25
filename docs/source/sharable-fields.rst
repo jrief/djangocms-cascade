@@ -25,8 +25,12 @@ options among each other.
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_WITH_SHARABLES = {
-	    'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'plugins_with_sharables': {
+	        'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
+	    },
+	    ...
 	}
 
 

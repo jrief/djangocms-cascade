@@ -19,7 +19,7 @@ from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.cms_plugins import TextLinkPlugin
 from .plugin_base import BootstrapPluginBase
-from .settings import CASCADE_BREAKPOINTS_LIST
+from .settings import cascade_config
 from .image import ImageForm
 from .picture import BootstrapPicturePlugin
 from . import utils
@@ -58,7 +58,8 @@ class CarouselPlugin(BootstrapPluginBase):
             help_text=_("Adjust interval for the carousel."),
         ),
         PartialFormField('container_max_heights',
-            MultipleCascadingSizeWidget(CASCADE_BREAKPOINTS_LIST, allowed_units=['px']),
+            MultipleCascadingSizeWidget(list(tp[0] for tp in cascade_config['bootstrap3']['breakpoints']),
+            allowed_units=['px']),
             label=_("Carousel heights"),
             initial={'xs': '100px', 'sm': '150px', 'md': '200px', 'lg': '300px'},
             help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),

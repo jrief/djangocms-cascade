@@ -104,29 +104,26 @@ STATICFILES_DIRS = (
     ('node_modules', os.path.join(PROJECT_ROOT, 'node_modules')),
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'django.core.context_processors.tz',
-    'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages',
-    'cms.context_processors.cms_settings',
-    'sekizai.context_processors.sekizai',
-)
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_DIRS = (
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(BASE_DIR, 'templates'),
-)
+TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
+    'APP_DIRS': True,
+    'OPTIONS': {
+        'context_processors': (
+            'django.contrib.auth.context_processors.auth',
+            'django.core.context_processors.debug',
+            'django.core.context_processors.i18n',
+            'django.core.context_processors.media',
+            'django.core.context_processors.static',
+            'django.core.context_processors.tz',
+            'django.core.context_processors.request',
+            'django.contrib.messages.context_processors.messages',
+            'cms.context_processors.cms_settings',
+            'sekizai.context_processors.sekizai',
+            'django.template.context_processors.request',
+        ),
+    },
+}]
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -166,17 +163,18 @@ CMS_CACHE_DURATIONS = {
 
 CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
-CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = [
-    'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
-    'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin',
-    'SimpleWrapperPlugin',
-]
-
-CMSPLUGIN_CASCADE_WITH_SHARABLES = {
-    'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
-    'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',),
-    'BootstrapButtonPlugin': ('link',),
-    'TextLinkPlugin': ('link', 'target',),
+CMSPLUGIN_CASCADE = {
+    'plugins_with_extra_fields': [
+        'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
+        'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin',
+        'SimpleWrapperPlugin',
+    ],
+    'plugins_with_sharables': {
+        'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
+        'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',),
+        'BootstrapButtonPlugin': ('link',),
+        'TextLinkPlugin': ('link', 'target',),
+    },
 }
 
 COLUMN_GLOSSARY = {

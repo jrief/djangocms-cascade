@@ -12,7 +12,10 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from .plugin_base import BootstrapPluginBase
-from .settings import CASCADE_BREAKPOINTS_DICT, CASCADE_BREAKPOINTS_LIST, CASCADE_BOOTSTRAP3_GUTTER
+from .settings import cascade_config
+
+BS3_BREAKPOINTS = dict(cascade_config['bootstrap3']['breakpoints'])
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in cascade_config['bootstrap3']['breakpoints'])
 
 
 class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
@@ -20,7 +23,7 @@ class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
         return format_html('<div class="form-row">{0}</div>',
             format_html_join('', '<div class="field-box">'
                 '<div class="container-thumbnail"><i class="icon-{1}"></i><div class="label">{0}</div></div>'
-                '</div>', ((force_text(w), CASCADE_BREAKPOINTS_DICT[w.choice_value][1]) for w in self)
+                '</div>', ((force_text(w), BS3_BREAKPOINTS[w.choice_value][1]) for w in self)
             ))
 
 
@@ -39,10 +42,10 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     require_parent = False
     form = BootstrapContainerForm
     WIDGET_CHOICES = (
-        ('xs', _("Tiny (<{sm[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
-        ('sm', _("Small (≥{sm[0]}px and <{md[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
-        ('md', _("Medium (≥{md[0]}px and <{lg[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
-        ('lg', _("Large (≥{lg[0]}px)".format(**CASCADE_BREAKPOINTS_DICT))),
+        ('xs', _("Tiny (<{sm[0]}px)".format(**BS3_BREAKPOINTS))),
+        ('sm', _("Small (≥{sm[0]}px and <{md[0]}px)".format(**BS3_BREAKPOINTS))),
+        ('md', _("Medium (≥{md[0]}px and <{lg[0]}px)".format(**BS3_BREAKPOINTS))),
+        ('lg', _("Large (≥{lg[0]}px)".format(**BS3_BREAKPOINTS))),
     )
     glossary_fields = (
         PartialFormField('breakpoints',
@@ -69,7 +72,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         breakpoints = obj.glossary.get('breakpoints')
         content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
-            devices = ', '.join([force_text(CASCADE_BREAKPOINTS_DICT[bp][2]) for bp in breakpoints])
+            devices = ', '.join([force_text(BS3_BREAKPOINTS[bp][2]) for bp in breakpoints])
             content = _("{0}for {1}").format(content, devices)
         return format_html('{0}{1}', identifier, content)
 
@@ -99,17 +102,17 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             try:
                 max_widths[bp] = parent_glossary['container_max_widths'][bp]
             except KeyError:
-                max_widths[bp] = CASCADE_BREAKPOINTS_DICT[bp][3]
+                max_widths[bp] = BS3_BREAKPOINTS[bp][3]
             if last_index > 0:
                 if index == 0:
                     next_bp = breakpoints[1]
-                    media_queries[bp] = ['(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
+                    media_queries[bp] = ['(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
                 elif index == last_index:
-                    media_queries[bp] = ['(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[bp][0])]
+                    media_queries[bp] = ['(min-width: {0}px)'.format(BS3_BREAKPOINTS[bp][0])]
                 else:
                     next_bp = breakpoints[index + 1]
-                    media_queries[bp] = ['(min-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[bp][0]),
-                                         '(max-width: {0}px)'.format(CASCADE_BREAKPOINTS_DICT[next_bp][0])]
+                    media_queries[bp] = ['(min-width: {0}px)'.format(BS3_BREAKPOINTS[bp][0]),
+                                         '(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
         return sanitized
 
     def get_parent_classes(self, slot, page):
@@ -165,15 +168,15 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     alien_child_classes = True
     default_css_attributes = list(itertools.chain(*(('{}-column-width'.format(s),
         '{}-column-offset'.format(s), '{}-column-ordering'.format(s), '{}-responsive-utils'.format(s),)
-        for s in CASCADE_BREAKPOINTS_LIST)))
+        for s in BS3_BREAKPOINT_KEYS)))
     glossary_variables = ['container_max_widths']
 
     def get_form(self, request, obj=None, **kwargs):
         def chose_help_text(*phrases):
             if next_bp:
-                return phrases[0].format(*CASCADE_BREAKPOINTS_DICT[next_bp])
+                return phrases[0].format(*BS3_BREAKPOINTS[next_bp])
             elif len(breakpoints) > 1:
-                return phrases[1].format(*CASCADE_BREAKPOINTS_DICT[bp])
+                return phrases[1].format(*BS3_BREAKPOINTS[bp])
             else:
                 return phrases[2]
 
@@ -185,13 +188,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             for bp in breakpoints:
                 try:
                     next_bp = breakpoints[breakpoints.index(bp) + 1]
-                    last = CASCADE_BREAKPOINTS_LIST.index(next_bp)
+                    last = BS3_BREAKPOINT_KEYS.index(next_bp)
                 except IndexError:
                     next_bp = None
                     last = None
                 finally:
-                    first = CASCADE_BREAKPOINTS_LIST.index(bp)
-                    devices = ', '.join([force_text(CASCADE_BREAKPOINTS_DICT[b][2]) for b in CASCADE_BREAKPOINTS_LIST[first:last]])
+                    first = BS3_BREAKPOINT_KEYS.index(bp)
+                    devices = ', '.join([force_text(BS3_BREAKPOINTS[b][2]) for b in BS3_BREAKPOINT_KEYS[first:last]])
                 if breakpoints.index(bp) == 0:
                     # first breakpoint
                     choices = tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
@@ -271,14 +274,14 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         column_units = 12
         obj.glossary['container_max_widths'] = {}
         breakpoints = parent_glossary.get('breakpoints', [])
-        for bp in CASCADE_BREAKPOINTS_LIST:
+        for bp in BS3_BREAKPOINT_KEYS:
             width_key = '{0}-column-width'.format(bp)
             offset_key = '{0}-column-offset'.format(bp)
             if bp in breakpoints:
                 width_val = obj.glossary.get(width_key, '').lstrip('col-{0}-'.format(bp))
                 if width_val.isdigit():
                     column_units = int(width_val)
-                new_width = parent_glossary['container_max_widths'][bp] * column_units / 12 - CASCADE_BOOTSTRAP3_GUTTER
+                new_width = parent_glossary['container_max_widths'][bp] * column_units / 12 - cascade_config['bootstrap3']['gutter']
                 if new_width != obj.glossary['container_max_widths'].get(bp):
                     obj.glossary['container_max_widths'][bp] = new_width
                     sanitized = True

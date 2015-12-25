@@ -4,18 +4,18 @@ from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import get_template, TemplateDoesNotExist
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade import settings as cascade_settings
+from cmsplugin_cascade.settings import cascade_config
 
 
 class RenderTemplateMixin(object):
     """
-    If a Cascade plugin is listed in ``settings.CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES``,
+    If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_templates']``,
     then this ``RenderTemplateMixin`` class is added automatically to its plugin class in order
     to add an additional select box used for choosing an alternative render template.
     """
     @classmethod
     def get_template_choices(cls):
-        return cascade_settings.CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES[cls.__name__]
+        return cascade_config['plugins_with_extra_render_templates'][cls.__name__]
 
     def get_form(self, request, obj=None, **kwargs):
         glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))

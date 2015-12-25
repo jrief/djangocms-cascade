@@ -19,7 +19,7 @@ The **SegmentationPlugin** must be activated separately on top of other **django
 plugins. In ``settings.py``, add to
 
 All plugins which offer more than one rendering template, shall be added to the dictionary
-``CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES`` in your project's ``settings.py``.
+``CMSPLUGIN_CASCADE['plugins_with_extra_render_templates']`` in your project's ``settings.py``.
 Each value of this dictionary shall contain a list with two-tuples. The first element of this
 two-tuple must be the templates filename, while the second element shall contain an arbitrary
 name to identify that template.
@@ -28,12 +28,17 @@ Example:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES = {
-	    'TextLinkPlugin': (
-	        ('cascade/link/text-link.html', _("default")),
-	        ('cascade/link/text-link-linebreak.html', _("with linebreak")),
-	    )
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'plugins_with_extra_render_templates': {
+	        'TextLinkPlugin': (
+	            ('cascade/link/text-link.html', _("default")),
+	            ('cascade/link/text-link-linebreak.html', _("with linebreak")),
+	        )
+	    },
+	    ...
 	}
+
 
 Usage
 =====

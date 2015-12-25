@@ -30,6 +30,6 @@ class TextLinkPlugin(LinkPluginBase):
         Form = type(str('TextLinkForm'), (TextLinkFormMixin, LinkForm.get_form_class(),),  # @UndefinedVariable
             {'link_content': link_content})
         kwargs.update(form=Form)
-        return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
+        return super(TextLinkPlugin, self).get_form(request, obj, **kwargs)
 
 plugin_pool.register_plugin(TextLinkPlugin)

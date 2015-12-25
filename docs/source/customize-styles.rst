@@ -14,6 +14,7 @@ purpose, one can add a set of potential CSS classes and potential CSS inline sty
 plugins, enabled for this feature. Moreover, this feature can be adopted individually on a per-site
 base.
 
+.. extra-fields:
 
 Configure a Cascade plugins to accept extra fields
 ==================================================
@@ -27,12 +28,13 @@ these plugins for extendibility:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS = (
-	    'BootstrapButtonPlugin',
-	    'BootstrapRowPlugin',
-	    'SimpleWrapperPlugin',
-	    'HorizontalRulePlugin',
-	)
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'plugins_with_extra_fields': ('BootstrapButtonPlugin', 'BootstrapRowPlugin',
+	        'SimpleWrapperPlugin', 'HorizontalRulePlugin',
+	    ),
+	    ...
+	}
 
 If at least one plugin has been added to this settings variable, the Django administration backend
 offers an additional view:
@@ -48,7 +50,7 @@ Configure the kind of extra inline styles a Cascade plugin may accept
 
 By default, **djangocms-cascade** specifies a sensible set of CSS styles, which can be added to
 the Cascade plugins, if enabled. This set however might not be enough for your installation and
-therefore can be extended by the settings variable ``CMSPLUGIN_CASCADE_EXTRA_INLINE_STYLES``
+therefore can be extended by the settings variable ``CMSPLUGIN_CASCADE['extra_inline_styles']``
 containing an ``OrderedDict``. The key element is an arbitrary name. The value element is a 2-tuple
 whose first element is a list of CSS inline styles. The second element of this tuple specifies
 the widget to be used to render the input fields.

@@ -1,0 +1,3 @@
+{% with css_classes=instance.css_classes inline_styles=instance.inline_styles element_id=glossary.extra_element_id %}
+<h{{ glossary.head_size }}{% if element_id %} id="{{ element_id }}"{% endif %}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>{{ glossary.content }}</{{ glossary.head_size }}>
+{% endwith %}
