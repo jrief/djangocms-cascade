@@ -14,6 +14,7 @@ purpose, one can add a set of potential CSS classes and potential CSS inline sty
 plugins, enabled for this feature. Moreover, this feature can be adopted individually on a per-site
 base.
 
+.. extra-fields:
 
 Configure a Cascade plugins to accept extra fields
 ==================================================

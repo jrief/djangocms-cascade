@@ -59,7 +59,7 @@ cascade_config['dependencies'].update(orig_config.get('dependencies', {}))
 
 if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
     cascade_config['plugins_with_extra_fields'] = [
-        'BootstrapButtonPlugin', 'BootstrapRowPlugin', 'SimpleWrapperPlugin',
+        'BootstrapButtonPlugin', 'BootstrapRowPlugin', 'SimpleWrapperPlugin', 'HeadingPlugin',
         'HorizontalRulePlugin',
     ]
     cascade_config['plugins_with_extra_fields'].extend(orig_config.get('plugins_with_extra_fields', []))

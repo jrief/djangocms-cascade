@@ -49,6 +49,7 @@ Contents:
   sharable-fields
   customize-styles
   customized-plugins
+  generic-plugins
   changelog
 
 

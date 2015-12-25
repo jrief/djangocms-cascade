@@ -18,3 +18,4 @@ form .glossary-widget input[type="radio"], form .glossary-widget input[type="che
 form .glossary-field { float: left; margin-right: 10px; }
 form .glossary-box { zoom:1; }
 form .glossary-box:after { content: ""; display: table; clear: both; }
+form .glossary-field.glossary_content { width: 100%; }
