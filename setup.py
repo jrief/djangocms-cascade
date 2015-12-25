@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
+from __future__ import unicode_literals
+
 from setuptools import setup, find_packages
 from cmsplugin_cascade import __version__
 try:
     from pypandoc import convert
 except ImportError:
-    def convert(filename, fmt):
-        with open(filename) as fd:
-            return fd.read()
+    import io
 
+    def convert(filename, fmt):
+        with io.open(filename, encoding='utf-8') as fd:
+            return fd.read()
 
 CLASSIFIERS = [
     'Development Status :: 4 - Beta',
