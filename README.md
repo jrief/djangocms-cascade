@@ -14,7 +14,7 @@ versions:
 * Tested with **django-select2** version 5.2. Support for version 4 has been dropped.
 * The demo project now uses SASS instead of plain CSS, but SASS is not a requirement during normal
   development.
-
+* Added a **HeadingPlugin** to add single text headings independently of the HTML TextEditorPlugin.
 
 ### Detailed documentation
 

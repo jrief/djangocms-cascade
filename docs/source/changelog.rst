@@ -4,9 +4,12 @@
 Release History
 ===============
 
+0.7.1
+-----
+* Added a **HeadingPlugin** to add single text headings independently of the HTML TextEditorPlugin.
+
 0.7.0
 -----
-
 Cleanup release, removing a lot of legacy code. This adds some incompatibilities to previous
 versions:
 
