@@ -11,32 +11,30 @@ DATABASES = {
 
 STATIC_URL = '/static/'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'OPTIONS': {
-            'context_processors': [
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.i18n',
-                'django.core.context_processors.debug',
-                'django.core.context_processors.request',
-                'django.core.context_processors.media',
-                'django.core.context_processors.csrf',
-                'django.core.context_processors.tz',
-                'sekizai.context_processors.sekizai',
-                'django.core.context_processors.static',
-                'cms.context_processors.cms_settings'
-            ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                'django.template.loaders.eggs.Loader'
-            ],
-        },
+TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [],
+    'OPTIONS': {
+        'context_processors': [
+            'django.contrib.auth.context_processors.auth',
+            'django.contrib.messages.context_processors.messages',
+            'django.core.context_processors.i18n',
+            'django.core.context_processors.debug',
+            'django.core.context_processors.request',
+            'django.core.context_processors.media',
+            'django.core.context_processors.csrf',
+            'django.core.context_processors.tz',
+            'sekizai.context_processors.sekizai',
+            'django.core.context_processors.static',
+            'cms.context_processors.cms_settings'
+        ],
+        'loaders': [
+            'django.template.loaders.filesystem.Loader',
+            'django.template.loaders.app_directories.Loader',
+            'django.template.loaders.eggs.Loader'
+        ],
     },
-]
+}]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -104,8 +102,9 @@ CMSPLUGIN_CASCADE = {
         ),
         'BootstrapButtonPlugin': ('link',),
         'TextLinkPlugin': ('link', 'target',),
-    }
+    },
 }
+
 CMS_PLACEHOLDER_CONF = {
     'Main Content Container': {
         'plugins': ['BootstrapContainerPlugin'],
