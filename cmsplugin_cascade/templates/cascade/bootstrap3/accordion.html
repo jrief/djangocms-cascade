@@ -1,6 +1,6 @@
 {% load static cms_tags sekizai_tags %}
-{% addtoblock "js" %}<script src="{% static 'jquery/dist/jquery.js' %}" type="text/javascript"></script>{% endaddtoblock %}
-{% addtoblock "js" %}<script src="{% static 'bootstrap/dist/js/bootstrap.js' %}" type="text/javascript"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}" type="text/javascript"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}" type="text/javascript"></script>{% endaddtoblock %}
 {% spaceless %}
 {% with inline_styles=instance.inline_styles %}
 <div id="cmsplugin_{{ instance.id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
