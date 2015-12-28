@@ -1,7 +1,6 @@
-{% load cms_tags %}
-
-{% spaceless %}
+{% load cms_tags %}{% spaceless %}
 {% with inline_styles=instance.inline_styles %}
+
 <accordion close-others="{% if instance.glossary.close_others %}true{% else %}false{% endif %}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 	{% for panel in instance.child_plugin_instances %}
 		{% with panel_type=panel.glossary.panel_type panel_title=panel.glossary.panel_title|safe %}
@@ -11,4 +10,5 @@
 		{% endwith %}
 	{% endfor %}
 </accordion>
+
 {% endwith %}{% endspaceless %}
