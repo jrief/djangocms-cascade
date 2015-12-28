@@ -20,14 +20,6 @@ CMSPLUGIN_CASCADE['bootstrap3'] = {
 }
 CMSPLUGIN_CASCADE['bootstrap3'].update(orig_config.get('bootstrap3', {}))
 
-CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].setdefault('CarouselPlugin', (
-    ('cascade/bootstrap3/carousel.html', _("default")),
-    ('cascade/bootstrap3/angular-ui/carousel.html', "angular-ui"),
-))
-CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].setdefault('BootstrapAccordionPlugin', (
-    ('cascade/bootstrap3/accordion.html', _("default")),
-    ('cascade/bootstrap3/angular-ui/accordion.html', "angular-ui"),
-))
 CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', (
     ('cascade/bootstrap3/secmenu-list-group.html', _("default")),
     ('cascade/bootstrap3/secmenu-unstyled-list.html', _("unstyled")),

@@ -34,7 +34,7 @@ class BootstrapAccordionPlugin(TransparentMixin, BootstrapPluginBase):
     parent_classes = ('BootstrapColumnPlugin',)
     allow_children = True
     child_classes = None
-    render_template = 'cascade/bootstrap3/accordion.html'
+    render_template = 'cascade/bootstrap3/{}/accordion.html'
     fields = ('num_children', 'glossary',)
     glossary_fields = (
         PartialFormField('close_others',
