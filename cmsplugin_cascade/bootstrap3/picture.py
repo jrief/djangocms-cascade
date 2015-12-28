@@ -11,11 +11,10 @@ from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from . import settings, utils
 from .image import ImageFormMixin
-from .settings import cascade_config
-from . import utils
 
-BS3_BREAKPOINT_KEYS = list(tp[0] for tp in cascade_config['bootstrap3']['breakpoints'])
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
 
 class BootstrapPicturePlugin(LinkPluginBase):

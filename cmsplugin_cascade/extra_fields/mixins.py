@@ -10,7 +10,7 @@ from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from cmsplugin_cascade.settings import cascade_config
+from cmsplugin_cascade import settings
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 
@@ -58,7 +58,7 @@ class ExtraFieldsMixin(object):
                 ))
 
             # add input fields to let the user enter styling information
-            for style, choices_tuples in cascade_config['extra_inline_styles'].items():
+            for style, choices_tuples in settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
                 if not inline_styles:
                     continue

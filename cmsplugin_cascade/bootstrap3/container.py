@@ -11,11 +11,11 @@ from django.forms.fields import ChoiceField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
+from . import settings
 from .plugin_base import BootstrapPluginBase
-from .settings import cascade_config
 
-BS3_BREAKPOINTS = dict(cascade_config['bootstrap3']['breakpoints'])
-BS3_BREAKPOINT_KEYS = list(tp[0] for tp in cascade_config['bootstrap3']['breakpoints'])
+BS3_BREAKPOINTS = dict(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
 
 class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
@@ -281,7 +281,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 width_val = obj.glossary.get(width_key, '').lstrip('col-{0}-'.format(bp))
                 if width_val.isdigit():
                     column_units = int(width_val)
-                new_width = parent_glossary['container_max_widths'][bp] * column_units / 12 - cascade_config['bootstrap3']['gutter']
+                new_width = parent_glossary['container_max_widths'][bp] * column_units / 12 - settings.CMSPLUGIN_CASCADE['bootstrap3']['gutter']
                 if new_width != obj.glossary['container_max_widths'].get(bp):
                     obj.glossary['container_max_widths'][bp] = new_width
                     sanitized = True

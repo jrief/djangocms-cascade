@@ -41,12 +41,12 @@ if hasattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES'):
     warnings.warn("CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES is deprecated. "
                   "Use CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'] instead.")
 
-orig_config = getattr(settings, 'CMSPLUGIN_CASCADE', {})
-cascade_config = dict(orig_config)
+CMSPLUGIN_CASCADE = getattr(settings, 'CMSPLUGIN_CASCADE', {})
+orig_config = dict(CMSPLUGIN_CASCADE)
 
-cascade_config.setdefault('alien_plugins', ['TextPlugin'])
+CMSPLUGIN_CASCADE.setdefault('alien_plugins', ['TextPlugin'])
 
-cascade_config['dependencies'] = {
+CMSPLUGIN_CASCADE['dependencies'] = {
     'cascade/js/ring.js': 'cascade/js/underscore.js',
     'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
     'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
@@ -55,23 +55,23 @@ cascade_config['dependencies'] = {
     'cascade/js/admin/imageplugin.js': ('cascade/js/admin/linkpluginbase.js',),
     'cascade/js/admin/pictureplugin.js': ('cascade/js/admin/linkpluginbase.js',),
 }
-cascade_config['dependencies'].update(orig_config.get('dependencies', {}))
+CMSPLUGIN_CASCADE['dependencies'].update(orig_config.get('dependencies', {}))
 
 if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
-    cascade_config['plugins_with_extra_fields'] = [
+    CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = [
         'BootstrapButtonPlugin', 'BootstrapRowPlugin', 'SimpleWrapperPlugin', 'HeadingPlugin',
         'HorizontalRulePlugin',
     ]
-    cascade_config['plugins_with_extra_fields'].extend(orig_config.get('plugins_with_extra_fields', []))
+    CMSPLUGIN_CASCADE['plugins_with_extra_fields'].extend(orig_config.get('plugins_with_extra_fields', []))
 else:
-    cascade_config['plugins_with_extra_fields'] = []
+    CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = []
 
 if 'cmsplugin_cascade.sharable' in settings.INSTALLED_APPS:
-    cascade_config.setdefault('plugins_with_sharables', {})
+    CMSPLUGIN_CASCADE.setdefault('plugins_with_sharables', {})
 else:
-    cascade_config['plugins_with_sharables'] = {}
+    CMSPLUGIN_CASCADE['plugins_with_sharables'] = {}
 
-cascade_config['extra_inline_styles'] = OrderedDict((
+CMSPLUGIN_CASCADE['extra_inline_styles'] = OrderedDict((
     ('Margins', (('margin-top', 'margin-right', 'margin-bottom', 'margin-left',), MultipleCascadingSizeWidget)),
     ('Paddings', (('padding-top', 'padding-right', 'padding-bottom', 'padding-left',), MultipleCascadingSizeWidget)),
     ('Widths', (('min-width', 'width', 'max-width',), MultipleCascadingSizeWidget)),
@@ -79,13 +79,13 @@ cascade_config['extra_inline_styles'] = OrderedDict((
     ('Colors', (('color', 'background-color',), ColorPickerWidget)),
     ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
 ))
-cascade_config['extra_inline_styles'].update(orig_config.get('extra_inline_styles', {}))
+CMSPLUGIN_CASCADE['extra_inline_styles'].update(orig_config.get('extra_inline_styles', {}))
 
-cascade_config.setdefault('segmentation_mixins', [
+CMSPLUGIN_CASCADE.setdefault('segmentation_mixins', [
     ('cmsplugin_cascade.segmentation.mixins.EmulateUserModelMixin', 'cmsplugin_cascade.segmentation.mixins.EmulateUserAdminMixin')
 ])
 
-cascade_config.setdefault('plugins_with_extra_render_templates', {
+CMSPLUGIN_CASCADE.setdefault('plugins_with_extra_render_templates', {
     'TextLinkPlugin': (
         ('cascade/link/text-link.html', _("default")),
         ('cascade/link/text-link-linebreak.html', _("with line break")),

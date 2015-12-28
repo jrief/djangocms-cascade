@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import get_template, TemplateDoesNotExist
+from cmsplugin_cascade import settings
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.settings import cascade_config
 
 
 class RenderTemplateMixin(object):
@@ -15,7 +15,7 @@ class RenderTemplateMixin(object):
     """
     @classmethod
     def get_template_choices(cls):
-        return cascade_config['plugins_with_extra_render_templates'][cls.__name__]
+        return settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'][cls.__name__]
 
     def get_form(self, request, obj=None, **kwargs):
         glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))

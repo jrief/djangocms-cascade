@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from cmsplugin_cascade.settings import cascade_config
+from cmsplugin_cascade import settings
 
 
 def remove_duplicates(lst):
@@ -26,7 +26,7 @@ def resolve_dependencies(filenames):
             dependencies.extend(resolve_dependencies(filename))
     else:
         filename = filenames
-        dependency_list = cascade_config['dependencies'].get(filename)
+        dependency_list = settings.CMSPLUGIN_CASCADE['dependencies'].get(filename)
         if dependency_list:
             dependencies.extend(resolve_dependencies(dependency_list))
         dependencies.append(filename)
