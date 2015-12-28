@@ -21,7 +21,7 @@ from .panel import panel_heading_sizes, PanelTypeRenderer
 
 class AccordionForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
-        widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em;'}),
+        widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
         label=_("Panels"),
         help_text=_("Number of panels for this panel group."))
 
