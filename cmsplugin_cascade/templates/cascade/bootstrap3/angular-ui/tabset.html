@@ -1,0 +1,10 @@
+{% load static cms_tags %}
+{% spaceless %}{% with justified=instance.glossary.justified %}
+
+<tabset{% if justified %} justified="true"{% endif %}>
+{% for pane in instance.child_plugin_instances %}
+	<tab heading="{{ pane.glossary.tab_title|safe }}">{% render_plugin pane %}</tab>
+{% endfor %}
+</tabset>
+
+{% endwith %}{% endspaceless %}
