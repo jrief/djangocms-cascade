@@ -62,8 +62,8 @@ Example:
 
 
 Usage
-=====
+-----
 
 When editing a **djangoCMS** plugins with alternative rendering templates, the plugin editor
 adds a select box containing alternative rendering templates. Chose one other than the default,
-and the plugin will be rendered using another template.
+and the plugin will be rendered using this other template.
