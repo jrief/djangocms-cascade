@@ -12,11 +12,32 @@ A simpler solution to solve this problem is to allow a plugin to be rendered wit
 a set of alternatives.
 
 
+Change the path for template lookups
+====================================
+
+Some Bootstrap plugins are shipped with templates, which is optimized to be rendered by Angular-UI_
+instead of the default. These alternative templates are located in the folder
+``cascade/bootstrap3/angular-ui``. If your project uses AngularJS instead of jQuery, then configure
+the lookup path in ``settings.py`` with
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'bootstrap3': {
+	        ...
+	        'template_basedir': 'angular-ui',
+	    },
+	}
+
+This lookup path is applied only to the Plugin's field ``render_template`` prepared for it. Such a
+template contains the placeholder ``{}``, which is expanded to the configured ``template_basedir``.
+
+
+.. _Angular-UI: http://angular-ui.github.io/bootstrap/versioned-docs/0.13.4/
+
 Configure a Cascade plugins to be rendered using alternative templates
 ======================================================================
-
-The **SegmentationPlugin** must be activated separately on top of other **djangocms-cascade**
-plugins. In ``settings.py``, add to
 
 All plugins which offer more than one rendering template, shall be added to the dictionary
 ``CMSPLUGIN_CASCADE['plugins_with_extra_render_templates']`` in your project's ``settings.py``.
