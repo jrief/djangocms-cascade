@@ -12,6 +12,20 @@ As body, the panel element accepts other plugins, normally this is a Text plugin
 .. _Panels: http://getbootstrap.com/components/#panels
 
 
+========
+Tab Sets
+========
+
+Bootstrap is shipped with CSS helpers to facilitate the creation of Tabs_. In **djangocms-cascade**,
+such a Tab plugin can be added anywhere inside columns or rows.
+
+In the context menu of a placeholder, select **Tab Set**. Depending on the chosen number of
+children, it will add as many **Tab Pane**s. Each **Tab Pane** has a Title field, its content is
+displayed in the tab. Below a **Tab Pane** you are free to add whatever you want.
+
+
+.. _Tabs: http://getbootstrap.com/javascript/#tabs
+
 ==============
 Secondary menu
 ==============
