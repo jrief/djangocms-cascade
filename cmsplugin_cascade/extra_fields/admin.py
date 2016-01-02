@@ -54,7 +54,7 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     def __init__(self, model, admin_site):
         super(PluginExtraFieldsAdmin, self).__init__(model, admin_site)
         self.style_fields = []
-        for style, choices_tuples in settings.settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
+        for style, choices_tuples in settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
             extra_field = PartialFormField('extra_fields:{0}'.format(style),
                 widgets.CheckboxSelectMultiple(choices=((c, c) for c in choices_tuples[0])),
                 label=_("Customized {0} Fields:").format(style),
