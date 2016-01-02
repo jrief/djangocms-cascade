@@ -48,6 +48,7 @@ Contents:
   segmentation
   sharable-fields
   customize-styles
+  render-template
   customized-plugins
   generic-plugins
   changelog
