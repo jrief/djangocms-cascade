@@ -15,8 +15,8 @@ a set of alternatives.
 Change the path for template lookups
 ====================================
 
-Some Bootstrap plugins are shipped with templates, which is optimized to be rendered by Angular-UI_
-instead of the default. These alternative templates are located in the folder
+Some Bootstrap Plugins are shipped with templates, which are optimized to be rendered by Angular-UI_
+rather than the default jQuery. These alternative templates are located in the folder
 ``cascade/bootstrap3/angular-ui``. If your project uses AngularJS instead of jQuery, then configure
 the lookup path in ``settings.py`` with
 
@@ -33,17 +33,26 @@ the lookup path in ``settings.py`` with
 This lookup path is applied only to the Plugin's field ``render_template`` prepared for it. Such a
 template contains the placeholder ``{}``, which is expanded to the configured ``template_basedir``.
 
+For instance, the **CarouselPlugin** defines its ``render_template`` such as:
+
+.. code-block:: python
+
+	class CarouselPlugin(BootstrapPluginBase):
+	    ...
+	    render_template = 'cascade/bootstrap3/{}/carousel.html'
+	    ...
 
 .. _Angular-UI: http://angular-ui.github.io/bootstrap/versioned-docs/0.13.4/
 
-Configure a Cascade plugins to be rendered using alternative templates
-======================================================================
 
-All plugins which offer more than one rendering template, shall be added to the dictionary
-``CMSPLUGIN_CASCADE['plugins_with_extra_render_templates']`` in your project's ``settings.py``.
-Each value of this dictionary shall contain a list with two-tuples. The first element of this
-two-tuple must be the templates filename, while the second element shall contain an arbitrary
-name to identify that template.
+Configure Cascade Plugins to be rendered using alternative templates
+====================================================================
+
+All plugins which offer more than one rendering template, shall be added in the projects
+``settings.py`` to the dictionary ``CMSPLUGIN_CASCADE['plugins_with_extra_render_templates']``.
+Each item in this dictionary consists of a key naming the plugin and a value containing a list of
+two-tuples. The first element of this two-tuple must be the templates filename, while the second
+element shall contain an arbitrary name to identify that template.
 
 Example:
 
