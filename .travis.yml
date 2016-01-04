@@ -6,10 +6,8 @@ python:
 
 env:
   matrix:
-  - PYVER='PY27' DJANGO='django18' CMS='cms32'
-  - PYVER='PY34' DJANGO='django18' CMS='cms32'
-  - PYVER='PY27' DJANGO='django19' CMS='cms32'
-  - PYVER='PY34' DJANGO='django19' CMS='cms32'
+  - DJANGO='django18' CMS='cms32'
+  - DJANGO='django19' CMS='cms32'
 
 install:
   - pip install tox
