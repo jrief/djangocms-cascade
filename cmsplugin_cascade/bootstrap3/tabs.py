@@ -69,7 +69,7 @@ class BootstrapTabPanePlugin(TransparentMixin, BootstrapPluginBase):
         identifier = super(BootstrapTabPanePlugin, cls).get_identifier(obj)
         content = obj.glossary.get('tab_title', '')
         if content:
-            content = unicode(Truncator(content).words(3, truncate=' ...'))
+            content = Truncator(content).words(3, truncate=' ...')
         return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapTabPanePlugin)
