@@ -6,7 +6,6 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
-from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils import six
@@ -82,13 +81,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         return format_html_join('\n', '<div class="glossary-widget">{0}</div>', render_fieldsets)
 
 
-if DJANGO_VERSION[:2] < (1, 6):
-    input_widget = widgets.TextInput
-else:
-    input_widget = widgets.NumberInput
-
-
-class NumberInputWidget(input_widget):
+class NumberInputWidget(widgets.NumberInput):
     validation_pattern = re.compile('^-?\d+$')
     required = True
     required_message = _("In '%(label)s': This field is required.")
