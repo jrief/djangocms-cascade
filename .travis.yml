@@ -8,6 +8,8 @@ env:
   matrix:
   - DJANGO='django18' CMS='cms32'
   - DJANGO='django19' CMS='cms32'
+
+matrix:
     allow_failures:
       - env: DJANGO='django19' CMS='cms32'
 
