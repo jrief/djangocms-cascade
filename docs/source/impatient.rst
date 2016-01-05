@@ -30,16 +30,17 @@ Create a temporary file, for instance named requirements.txt, containing these e
 
 .. code-block:: guess
 
-	Django==1.7.10
-	Django-Select2==5.2.1
+	Django==1.8.8
+	Django-Select2==5.5.0
 	Pillow==2.9.0
 	Unidecode==0.4.18
 	django-classy-tags==0.6.2
-	django-cms==3.1.3
-	django-filer==0.9.12
+	django-cms==3.2.0
+	django-filer==1.0.6
 	django-treebeard==3.0
-	django-polymorphic==0.7.1
-	django-sass-processor==0.3.0
+	django-polymorphic==0.8.1
+	django-reversion==1.9.3
+	django-sass-processor==0.3.2
 	django-sekizai==0.8.2
 	djangocms-admin-style==0.2.8
 	-e git+https://github.com/jrief/djangocms-bootstrap3.git#egg=djangocms-bootstrap3
@@ -67,19 +68,19 @@ create a superuser:
 	bower install --require
 	cd examples
 	./manage.py migrate --settings=bs3demo.settings
+	./manage.py createsuperuser --settings=bs3demo.settings
 	./manage.py runserver --settings=bs3demo.settings
 
 Point a browser onto http://localhost:8000/ and log in as the super user. Here you should be able
 to add your first page. Do this by changing into into **Structure** mode on the top of the page.
-Now a large dark bar named ``MAIN CONTENT CONTAINER`` appears. This bar symbolizes a **djangoCMS**
+Now a heading named ``MAIN CONTENT CONTAINER`` appears. This heading symbolizes a **djangoCMS**
 Placeholder.
 
-Locate the menu handle |pull-down| on the right of the bar. From its context menu select
+Locate the plus sign right to the heading and click on it. From its context menu select
 **Container** located in the section **Bootstrap**:
 
 |add-container|
 
-.. |pull-down| image:: _static/pull-down.png
 .. |add-container| image:: _static/add-container.png
 
 This brings you into the editor mode for a Bootstrap container. To this container you may add one or
