@@ -49,7 +49,7 @@ Persisting the clipboards content must be configured in the projects ``settings.
 	INSTALLED_APPS = (
 	    ...
 	    'cmsplugin_cascade',
-        'cmsplugin_cascade.clipboard',
+	    'cmsplugin_cascade.clipboard',
 	    ...
 	)
 
