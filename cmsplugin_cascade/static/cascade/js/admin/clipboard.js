@@ -28,11 +28,11 @@ django.jQuery(function($) {
 			return;
 		}
 		$(this).text(json_data);
-		$pasted_success.fadeIn(100).delay(2000).fadeOut(200);
+		$pasted_success.fadeIn(100).delay(2500).fadeOut(400);
 	});
 
 	$('.clip-btn').on('click', function(e) {
-		$copied_success.fadeIn(100).delay(2000).fadeOut(200);
+		$copied_success.fadeIn(100).delay(2500).fadeOut(400);
 	});
 
 });

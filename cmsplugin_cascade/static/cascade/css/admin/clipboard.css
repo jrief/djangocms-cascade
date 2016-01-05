@@ -1,0 +1,13 @@
+.pull-left {
+	float: left !important;
+}
+.clip-btn img {
+	 height: 20px;
+}
+.status-line {
+	height: 30px;
+}
+.status-line strong {
+	background-color: #dff0d8;
+	padding: 5px 10px;
+}

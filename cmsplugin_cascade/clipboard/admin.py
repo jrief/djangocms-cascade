@@ -30,9 +30,9 @@ class JSONAdminWidget(widgets.Textarea):
         clippy_url = static('cascade/admin/clippy.svg')
         return format_html('<textarea{0}>\r\n{1}</textarea> '
             '<button data-clipboard-target="#{2}" type="button" title="{4}" class="clip-btn">'
-                '<img src="{3}" alt="{4}" height="20px">'
+                '<img src="{3}" alt="{4}">'
             '</button>\n'
-            '<div><label style="height: 30px;">&nbsp;</label><strong id="pasted_success">{5}</strong>'
+            '<div class="status-line"><label></label><strong id="pasted_success">{5}</strong>'
             '<strong id="copied_success">{6}</strong></div>',
             flatatt(final_attrs), force_text(value), id_data, clippy_url,
             _("Copy to Clipboard"),
@@ -49,17 +49,18 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
     }
 
     class Media:
+        css = {'all': ('cascade/css/admin/clipboard.css',)}
         js = ('cascade/js/admin/clipboard.js',)
 
     def save_clipboard(self, obj):
-        return format_html('<input type="submit" value="{}" class="default" style="float: left;" name="save_clipboard" />',
+        return format_html('<input type="submit" value="{}" class="default pull-left" name="save_clipboard" />',
                            _("Save"))
-    save_clipboard.short_description = _("From Clipboard")
+    save_clipboard.short_description = _("From CMS Clipboard")
 
     def restore_clipboard(self, obj):
-        return format_html('<input type="submit" value="{}" class="default" style="float: left;" name="restore_clipboard" />',
+        return format_html('<input type="submit" value="{}" class="default pull-left" name="restore_clipboard" />',
                            _("Restore"))
-    restore_clipboard.short_description = _("To Clipboard")
+    restore_clipboard.short_description = _("To CMS Clipboard")
 
     def save_model(self, request, obj, form, change):
         language = get_language_from_request(request)
