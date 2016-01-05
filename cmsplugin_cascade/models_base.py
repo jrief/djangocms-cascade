@@ -108,6 +108,12 @@ class CascadeModelBase(CMSPlugin):
         else:
             super(CascadeModelBase, self).save(*args, **kwargs)
 
+    def get_data_representation(self):
+        """
+        Hook to return a serializable representation of this element.
+        """
+        return {'glossary': self.glossary}
+
     @classmethod
     def _get_cascade_elements(cls):
         """

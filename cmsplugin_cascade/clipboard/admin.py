@@ -1,0 +1,114 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from django.contrib import admin
+from django.contrib.admin.templatetags.admin_static import static
+from django.forms import widgets
+from django.forms.utils import flatatt
+from django.utils.encoding import force_text
+from django.utils.html import format_html
+from django.utils.translation import ugettext_lazy as _
+from cms.api import add_plugin
+from cms.models.placeholdermodel import Placeholder
+from cms.models.pluginmodel import CMSPlugin
+from cms.plugin_pool import plugin_pool
+from cms.utils import get_language_from_request
+from jsonfield.fields import JSONField
+from djangocms_text_ckeditor.models import Text
+from cmsplugin_cascade.models import CascadeClipboard
+
+
+class JSONAdminWidget(widgets.Textarea):
+    def __init__(self):
+        attrs = {'cols': '40', 'rows': '3'}
+        super(JSONAdminWidget, self).__init__(attrs)
+
+    def render(self, name, value, attrs=None):
+        if value is None:
+            value = ''
+        final_attrs = self.build_attrs(attrs, name=name)
+        id_data = attrs.get('id', 'id_data')
+        clippy_url = static('cascade/admin/clippy.svg')
+        return format_html('<textarea{0}>\r\n{1}</textarea> '
+            '<button data-clipboard-target="#{2}" type="button" title="{4}" class="clip-btn">'
+                '<img src="{3}" alt="{4}" height="20px">'
+            '</button>\n'
+            '<div><label style="height: 30px;">&nbsp;</label><strong id="pasted_success">{5}</strong>'
+            '<strong id="copied_success">{6}</strong></div>',
+            flatatt(final_attrs), force_text(value), id_data, clippy_url,
+            _("Copy to Clipboard"),
+            _("Successfully pasted JSON data"),
+            _("Successfully copied JSON data"))
+
+
+@admin.register(CascadeClipboard)
+class CascadeClipboardAdmin(admin.ModelAdmin):
+    fields = ('identifier', 'save_clipboard', 'restore_clipboard', 'data',)
+    readonly_fields = ('save_clipboard', 'restore_clipboard',)
+    formfield_overrides = {
+        JSONField: {'widget': JSONAdminWidget},
+    }
+
+    class Media:
+        js = ('cascade/js/admin/clipboard.js',)
+
+    def save_clipboard(self, obj):
+        return format_html('<input type="submit" value="{}" class="default" style="float: left;" name="save_clipboard" />',
+                           _("Save"))
+    save_clipboard.short_description = _("From Clipboard")
+
+    def restore_clipboard(self, obj):
+        return format_html('<input type="submit" value="{}" class="default" style="float: left;" name="restore_clipboard" />',
+                           _("Restore"))
+    restore_clipboard.short_description = _("To Clipboard")
+
+    def save_model(self, request, obj, form, change):
+        language = get_language_from_request(request)
+        if request.POST.get('save_clipboard'):
+            obj.data = self._serialize_clipboard(language)
+            request.POST['_continue'] = True
+        if request.POST.get('restore_clipboard'):
+            request.POST['_continue'] = True
+        super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
+        if request.POST.get('restore_clipboard'):
+            self._deserialize_clipboard(language, obj.data)
+
+    def _serialize_clipboard(self, language):
+        """
+        Create a serialized representation of all the plugins belonging to the clipboard.
+        """
+        def populate_data(parent, data):
+            for child in plugin_qs.filter(parent=parent):
+                instance, dummy = child.get_plugin_instance(self.admin_site)
+                try:
+                    entry = (child.plugin_type, instance.get_data_representation(), [])
+                except AttributeError:
+                    if isinstance(instance, Text):
+                        entry = (child.plugin_type, {'body': instance.body}, [])
+                    else:
+                        continue
+                data.append(entry)
+                populate_data(child, entry[2])
+
+        data = {'plugins': []}
+        clipboard = Placeholder.objects.get(slot='clipboard')
+        plugin_qs = CMSPlugin.objects.filter(placeholder=clipboard)
+        populate_data(None, data['plugins'])
+        print data
+        return data
+
+    def _deserialize_clipboard(self, language, data):
+        """
+        Restore clipboard by creating plugins from given data.
+        """
+        def plugins_from_data(parent, data):
+            for entry in data:
+                plugin = plugin_pool.get_plugin(entry[0])
+                kwargs = dict(entry[1], numchild=len(entry[2]))
+                if parent:
+                    kwargs.update(target=parent)
+                instance = add_plugin(clipboard, plugin, language, **kwargs)
+                plugins_from_data(instance, entry[2])
+
+        clipboard = Placeholder.objects.get(slot='clipboard')
+        CMSPlugin.objects.filter(placeholder=clipboard).delete()
+        plugins_from_data(None, data['plugins'])

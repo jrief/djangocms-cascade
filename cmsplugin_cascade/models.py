@@ -57,6 +57,10 @@ class SharableCascadeElement(CascadeModelBase):
             attribute.update(self.shared_glossary.glossary)
         return attribute
 
+    def get_data_representation(self):
+        # TODO: merge with shared_glossary
+        return {'glossary': self.glossary}
+
 
 class InlineCascadeElement(models.Model):
     """
@@ -90,3 +94,18 @@ class Segmentation(models.Model):
         verbose_name = verbose_name_plural = _("Segmentation")
         managed = False  # its a dummy model
         db_table = None
+
+
+@python_2_unicode_compatible
+class CascadeClipboard(models.Model):
+    """
+    A model class to persist, export and re-import the clipboard's content.
+    """
+    identifier = models.CharField(_("Identifier"), max_length=50, unique=True)
+    data = JSONField(null=True, blank=True, default={})
+
+    class Meta:
+        verbose_name_plural = verbose_name = _("Persited Clipboard Content")
+
+    def __str__(self):
+        return self.identifier
