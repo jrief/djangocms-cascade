@@ -49,6 +49,7 @@ Contents:
   sharable-fields
   customize-styles
   render-template
+  clipboard
   customized-plugins
   generic-plugins
   changelog
