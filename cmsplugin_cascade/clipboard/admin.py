@@ -94,7 +94,6 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         clipboard = Placeholder.objects.get(slot='clipboard')
         plugin_qs = CMSPlugin.objects.filter(placeholder=clipboard)
         populate_data(None, data['plugins'])
-        print data
         return data
 
     def _deserialize_clipboard(self, language, data):
@@ -104,10 +103,14 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         def plugins_from_data(parent, data):
             for entry in data:
                 plugin = plugin_pool.get_plugin(entry[0])
-                kwargs = dict(entry[1], numchild=len(entry[2]))
+                kwargs = dict(entry[1])
                 if parent:
                     kwargs.update(target=parent)
                 instance = add_plugin(clipboard, plugin, language, **kwargs)
+                # for some unknown reasons add_plugin sets instance.numchild 0,
+                # therefore it has to be fixed here
+                instance.numchild = len(entry[2])
+                instance.save()
                 plugins_from_data(instance, entry[2])
 
         clipboard = Placeholder.objects.get(slot='clipboard')
