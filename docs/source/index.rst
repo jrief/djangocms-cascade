@@ -42,9 +42,6 @@ Contents:
   installation
   link-plugin
   bootstrap3/grid
-  bootstrap3/image-picture
-  bootstrap3/navbar
-  bootstrap3/other-components
   segmentation
   sharable-fields
   customize-styles

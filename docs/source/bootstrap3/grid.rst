@@ -134,8 +134,8 @@ the Bootstrap's grid system.
 Adding Plugins into a hard coded grid
 =====================================
 
-Sometimes the given Django template already defines a Bootstrap container, or even a row inside a
-container component. Example:
+Sometimes the given Django template already defines a Bootstrap Container, or Row inside a Container
+element. Example:
 
 .. code-block:: html
 
@@ -265,3 +265,13 @@ breakpoints.
 .. warning:: As the name implies, a container marked as *fluid*, does not specify a fixed width.
              Hence it is impossible to calculate the width of an image marked as responsive inside
              such a container. Therefore, the use of fluid containers is discouraged.
+
+
+Other Bootstrap3 specific Plugins
+=================================
+
+.. toctree::
+
+  image-picture
+  navbar
+  other-components
