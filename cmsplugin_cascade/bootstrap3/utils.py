@@ -61,6 +61,7 @@ def get_image_tags(context, instance, options):
         image_height = _parse_responsive_length(options['image-height'])
     except KeyError:
         image_height = (None, None)
+    set_defaults(options)
     if is_responsive:
         max_width = 0
         for bp in options['breakpoints']:
@@ -91,6 +92,18 @@ def get_image_tags(context, instance, options):
                         'upscale': upscale, 'subject_location': subject_location}
     tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
     return tags
+
+
+def set_defaults(options):
+    options.setdefault('breakpoints', ['xs', 'sm', 'md', 'lg'])
+    options.setdefault('container_max_widths', {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170})
+    options.setdefault('fluid', False)
+    options.setdefault('media_queries', {
+        'xs': ['(max-width: 768px)'],
+        'sm': ['(min-width: 768px)', '(max-width: 992px)'],
+        'md': ['(min-width: 992px)', '(max-width: 1200px)'],
+        'lg': ['(min-width: 1200px)'],
+    })
 
 
 def get_picture_elements(context, instance):
