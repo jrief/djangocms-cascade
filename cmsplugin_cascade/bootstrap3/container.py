@@ -40,6 +40,7 @@ class BootstrapContainerForm(ModelForm):
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     require_parent = False
+    parent_classes = []
     form = BootstrapContainerForm
     WIDGET_CHOICES = (
         ('xs', _("Tiny (<{sm[0]}px)".format(**BS3_BREAKPOINTS))),
