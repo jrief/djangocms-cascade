@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from types import MethodType
 from django.conf.urls import url
 from django.contrib import admin
@@ -80,7 +81,7 @@ class EmulateUserAdminMixin(object):
             try:
                 identifier = getattr(user_model_admin, list_display_link)(obj)
             except AttributeError:
-                identifier = admin.util.lookup_field(list_display_link, obj, model_admin=self)[2]
+                identifier = admin.utils.lookup_field(list_display_link, obj, model_admin=self)[2]
             emulate_user_id = request.session.get('emulate_user_id')
             if emulate_user_id == obj.id:
                 return format_html('<strong>{}</strong>', identifier)
@@ -107,7 +108,7 @@ class EmulateUserAdminMixin(object):
         try:
             display_as_link.short_description = user_model_admin.identifier.short_description
         except AttributeError:
-            display_as_link.short_description = admin.util.label_for_field(list_display_link, self.UserModel)
+            display_as_link.short_description = admin.utils.label_for_field(list_display_link, self.UserModel)
         self.display_as_link = MethodType(display_as_link, self, EmulateUserAdminMixin)
 
         ChangeList = self.get_changelist(request)
