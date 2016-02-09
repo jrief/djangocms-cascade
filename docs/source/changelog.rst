@@ -4,6 +4,16 @@
 Release History
 ===============
 
+0.7.2
+-----
+* Prefix all Cascade plugins with a symbol of your choice, currently Ϟ (koppa), to avoid confusion
+  with similar names.
+* All Bootstrap plugins can override their templates globally though a configuration settings
+  variable. Usefule to switch between jQuery and AngularJS versions of a widget.
+* Added TabSet and TabPanel plugins.
+* It is possible to persist the content of the clipboard in the database, retrieve and export
+  it as JSON to be reimported on an unrelated site.
+
 0.7.1
 -----
 * Added a **HeadingPlugin** to add single text headings independently of the HTML TextEditorPlugin.
