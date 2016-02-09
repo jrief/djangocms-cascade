@@ -29,6 +29,16 @@ new data structures are added to that JSON object without requiring a database m
 
 Another three database tables are required for additional optional features.
 
+
+Naming Conflicts
+----------------
+
+Some **djangoCMS** plugins may use the same name as plugins from **djangocms-cascade**. To prevent
+confusion, since version 0.7.2, all Cascade plugins as prefixed with a Ϟ (koppa) symbol. This can
+be deactivated or changed by setting ``CMSPLUGIN_CASCADE['plugin_prefix']`` to ``False`` or any
+other symbol.
+
+
 .. _Django-CMS: https://github.com/divio/django-cms/
 .. _Twitter Bootstrap: http://getbootstrap.com/
 .. _Django templates: https://docs.djangoproject.com/en/dev/topics/templates/

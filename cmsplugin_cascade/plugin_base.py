@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
+from django.utils.functional import lazy
 from django.utils.module_loading import import_string
-from django.utils.safestring import SafeText
+from django.utils.translation import string_concat
+from django.utils.safestring import SafeText, mark_safe
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.placeholder import get_placeholder_conf
@@ -30,6 +33,8 @@ def create_proxy_model(name, model_mixins, base_model, attrs={}):
     attrs.update({'Meta': Meta, '__module__': getattr(base_model, '__module__')})
     model = type(name, bases, attrs)
     return model
+
+mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 
 class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
@@ -65,6 +70,10 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             import reversion
             if not reversion.is_registered(base_model):
                 reversion.register(base_model)
+        # handle ambiguous plugin names by appending a symbol
+        if 'name' in attrs and settings.CMSPLUGIN_CASCADE['plugin_prefix']:
+            attrs['name'] = mark_safe_lazy(string_concat(
+                settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
