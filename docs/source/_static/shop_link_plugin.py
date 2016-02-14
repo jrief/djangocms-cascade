@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import get_model
+from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 from django_select2.fields import AutoModelSelect2Field
 from cms.plugin_pool import plugin_pool
@@ -43,7 +43,7 @@ class LinkForm(TextLinkForm):
 
     def set_initial_product(self, initial):
         try:
-            Model = get_model(*initial['link']['model'].split('.'))
+            Model = apps.get_model(*initial['link']['model'].split('.'))
             initial['product'] = Model.objects.get(pk=initial['link']['pk'])
         except (KeyError, ObjectDoesNotExist):
             pass
