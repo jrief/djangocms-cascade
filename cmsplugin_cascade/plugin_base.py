@@ -67,9 +67,9 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             model_mixins += tuple(import_string(mc[0]) for mc in settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
         attrs['model'] = create_proxy_model(name, model_mixins, base_model)
         if is_installed('reversion'):
-            import reversion
-            if not reversion.is_registered(base_model):
-                reversion.register(base_model)
+            from reversion import revisions
+            if not revisions.is_registered(base_model):
+                revisions.register(base_model)
         # handle ambiguous plugin names by appending a symbol
         if 'name' in attrs and settings.CMSPLUGIN_CASCADE['plugin_prefix']:
             attrs['name'] = mark_safe_lazy(string_concat(
