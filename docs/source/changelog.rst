@@ -6,8 +6,8 @@ Release History
 
 0.7.2
 -----
-* Prefix all Cascade plugins with a symbol of your choice, currently Ϟ (koppa), to avoid confusion
-  with similar names.
+* Add a possibility to prefix Cascade plugins with a symbol of your choice, to avoid confusion
+  if the same name has been used by another plugin.
 * All Bootstrap plugins can override their templates globally though a configuration settings
   variable. Usefule to switch between jQuery and AngularJS versions of a widget.
 * Added TabSet and TabPanel plugins.

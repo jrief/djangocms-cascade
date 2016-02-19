@@ -46,8 +46,8 @@ orig_config = dict(CMSPLUGIN_CASCADE)
 
 CMSPLUGIN_CASCADE.setdefault('alien_plugins', ['TextPlugin'])
 
-# Use Ϟ (koppa) as prefix to symbolize a Cascade plugin
-CMSPLUGIN_CASCADE.setdefault('plugin_prefix', '&#x03de;')
+# Use a prefix to symbolize a Cascade plugin in case there are ambiguous names.
+CMSPLUGIN_CASCADE.setdefault('plugin_prefix', None)
 
 CMSPLUGIN_CASCADE['dependencies'] = {
     'cascade/js/ring.js': 'cascade/js/underscore.js',

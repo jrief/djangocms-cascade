@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/jrief/djangocms-cascade#readme",
   "dependencies": {
-    "bootstrap-sass": "^3.3.5"
+    "bootstrap-sass": "^3.3.6"
   }
 }
