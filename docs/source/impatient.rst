@@ -45,7 +45,7 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	djangocms-admin-style==0.2.8
 	-e git+https://github.com/jrief/djangocms-bootstrap3.git#egg=djangocms-bootstrap3
 	-e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
-	djangocms-text-ckeditor==2.6.0
+	djangocms-text-ckeditor==2.8.1
 	easy-thumbnails==2.2.1
 	html5lib==0.9999999
 	jsonfield==1.0.3
