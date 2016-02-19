@@ -19,3 +19,5 @@ htmlcov
 bower_components/
 node_modules/
 workdir/
+filer_public/
+filer_public_thumbnails/
