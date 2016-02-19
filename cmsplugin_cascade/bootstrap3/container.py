@@ -13,8 +13,12 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from . import settings
 from .plugin_base import BootstrapPluginBase
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 
-BS3_BREAKPOINTS = dict(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+BS3_BREAKPOINTS = OrderedDict(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
 
@@ -42,17 +46,25 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     require_parent = False
     parent_classes = []
     form = BootstrapContainerForm
-    WIDGET_CHOICES = (
-        ('xs', _("Tiny (<{sm[0]}px)".format(**BS3_BREAKPOINTS))),
-        ('sm', _("Small (≥{sm[0]}px and <{md[0]}px)".format(**BS3_BREAKPOINTS))),
-        ('md', _("Medium (≥{md[0]}px and <{lg[0]}px)".format(**BS3_BREAKPOINTS))),
-        ('lg', _("Large (≥{lg[0]}px)".format(**BS3_BREAKPOINTS))),
-    )
+    breakpoints = list(BS3_BREAKPOINTS)
+    i = 0
+    widget_choises = []
+    for br, br_options in BS3_BREAKPOINTS.items():
+        if i == 0:
+            widget_choises.append((br, '{} (<{}px)'.format(br_options[2], br_options[0])))
+        elif i == len(breakpoints[:-1]):
+            widget_choises.append((br, '{} (≥{}px)'.format(br_options[2], br_options[0])))
+        else:
+            widget_choises.append((br, '{} (≥{}px and <{}px)'.format(br_options[2], br_options[0], BS3_BREAKPOINTS[breakpoints[(i + 1)]][0])))
+        i += 1
+
+    WIDGET_CHOICES = tuple(widget_choises)
+
     glossary_fields = (
         PartialFormField('breakpoints',
             widgets.CheckboxSelectMultiple(choices=WIDGET_CHOICES, renderer=ContainerBreakpointsRenderer),
             label=_('Available Breakpoints'),
-            initial=['lg', 'md', 'sm', 'xs'],
+            initial=breakpoints[::-1],
             help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
         PartialFormField('fluid',
