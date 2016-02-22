@@ -99,99 +99,99 @@ msgstr "In '%(label)s': Wert '%(value)s' für Feld '%(field)s' muss numerisch se
 
 #: bootstrap3/accordion.py:25
 msgid "Panels"
-msgstr "Panele"
+msgstr "Panelen"
 
 #: bootstrap3/accordion.py:26
 msgid "Number of panels for this panel group."
-msgstr "Anzahl der Panele für diese Panel-Gruppe."
+msgstr "Anzahl der Panelen für diese Panelen-Gruppe."
 
 #: bootstrap3/accordion.py:30
 msgid "Accordion"
-msgstr "Accordion"
+msgstr "Akkordeon"
 
 #: bootstrap3/accordion.py:42
 msgid "Close others"
-msgstr "Schließe die anderen"
+msgstr "Schließe die Anderen"
 
 #: bootstrap3/accordion.py:44
 msgid "Open only one panel at a time."
-msgstr ""
+msgstr "Öffne nur eine Panele zur Zeit."
 
 #: bootstrap3/accordion.py:48
 msgid "First panel open"
-msgstr ""
+msgstr "Erste Panele offen"
 
 #: bootstrap3/accordion.py:50
 msgid "Start with the first panel open."
-msgstr ""
+msgstr "Starte mit geöffneter erster Panele."
 
 #: bootstrap3/accordion.py:58
 #, python-brace-format
 msgid "with {0} panel"
 msgid_plural "with {0} panels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "mit {0} Panele"
+msgstr[1] "mit {0} Panelen"
 
 #: bootstrap3/accordion.py:70
 msgid "Accordion Panel"
-msgstr ""
+msgstr "Akkordeon Panele"
 
 #: bootstrap3/accordion.py:78 bootstrap3/panel.py:57
 msgid "Panel type"
-msgstr ""
+msgstr "Panelentyp"
 
 #: bootstrap3/accordion.py:79 bootstrap3/panel.py:58
 msgid "Display Panel using this style."
-msgstr ""
+msgstr "Zeige die Panele unter Verwendung dieses Styles."
 
 #: bootstrap3/accordion.py:84 bootstrap3/panel.py:63
 msgid "Heading Size"
-msgstr ""
+msgstr "Überschriftgröße"
 
 #: bootstrap3/accordion.py:88
 msgid "Panel Title"
-msgstr ""
+msgstr "Panel-Titel"
 
 #: bootstrap3/buttons.py:23 bootstrap3/buttons.py:45
 #: bootstrap3/container.py:246 bootstrap3/panel.py:25
 msgid "Default"
-msgstr ""
+msgstr "Standard"
 
 #: bootstrap3/buttons.py:23 bootstrap3/panel.py:25
 msgid "Primary"
-msgstr ""
+msgstr "Primär"
 
 #: bootstrap3/buttons.py:24 bootstrap3/panel.py:26
 msgid "Success"
-msgstr ""
+msgstr "Erfolg"
 
 #: bootstrap3/buttons.py:24 bootstrap3/panel.py:26
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: bootstrap3/buttons.py:24 bootstrap3/panel.py:26
 msgid "Warning"
-msgstr ""
+msgstr "Warnung"
 
 #: bootstrap3/buttons.py:25 bootstrap3/panel.py:27
 msgid "Danger"
-msgstr ""
+msgstr "Achtung"
 
 #: bootstrap3/buttons.py:25 link/cms_plugins.py:14
 msgid "Link"
-msgstr ""
+msgstr "Ling"
 
 #: bootstrap3/buttons.py:45
 msgid "Large"
-msgstr ""
+msgstr "Groß"
 
 #: bootstrap3/buttons.py:45
 msgid "Small"
-msgstr ""
+msgstr "Klein"
 
 #: bootstrap3/buttons.py:46
 msgid "Extra small"
-msgstr ""
+msgstr "Extra Klein"
 
 #: bootstrap3/buttons.py:77
 msgid "Button Type"
@@ -199,443 +199,443 @@ msgstr ""
 
 #: bootstrap3/buttons.py:79
 msgid "Display Link using this Button Style"
-msgstr ""
+msgstr "Anzeige des Links mit diesem Button Style"
 
 #: bootstrap3/buttons.py:83
 msgid "Button Size"
-msgstr ""
+msgstr "Button Größe"
 
 #: bootstrap3/buttons.py:85
 msgid "Display Link using this Button Size"
-msgstr ""
+msgstr "Anzeige des Links mit dieser Button Größe"
 
 #: bootstrap3/buttons.py:88
 msgid "Block level"
-msgstr ""
+msgstr "Blockebene"
 
 #: bootstrap3/buttons.py:89
 msgid "Button Options"
-msgstr ""
+msgstr "Button Optionen"
 
 #: bootstrap3/buttons.py:92
 msgid "Do not float"
-msgstr ""
+msgstr "Nich floaten"
 
 #: bootstrap3/buttons.py:92
 msgid "Pull left"
-msgstr ""
+msgstr "Nach links ausrichten"
 
 #: bootstrap3/buttons.py:92
 msgid "Pull right"
-msgstr ""
+msgstr "Nach rechts ausrichten"
 
 #: bootstrap3/buttons.py:93
 msgid "Quick Float"
-msgstr ""
+msgstr "Quick Float"
 
 #: bootstrap3/buttons.py:95
 msgid "Float the button to the left or right."
-msgstr ""
+msgstr "Richte den Button nach rechts oder links aus."
 
 #: bootstrap3/buttons.py:99
 msgid "Prepend icon"
-msgstr ""
+msgstr "Symbol anfügen"
 
 #: bootstrap3/buttons.py:101
 msgid "Prepend a Glyphicon before the content."
-msgstr ""
+msgstr "Dem Inhalt ein Glyphicon voranstellen."
 
 #: bootstrap3/buttons.py:105
 msgid "Append icon"
-msgstr ""
+msgstr "Symbol hinzufügen"
 
 #: bootstrap3/buttons.py:107
 msgid "Append a Glyphicon after the content."
-msgstr ""
+msgstr "Ein Glyphicon nach dem Inhalt anfügen."
 
 #: bootstrap3/buttons.py:126
 msgid "Button"
-msgstr ""
+msgstr "Button"
 
 #: bootstrap3/buttons.py:142
 msgid "Empty"
-msgstr ""
+msgstr "Leer"
 
 #: bootstrap3/buttons.py:146
 msgid "Button Content"
-msgstr ""
+msgstr "Button Inhalt"
 
 #: bootstrap3/carousel.py:31
 msgid "Slides"
-msgstr ""
+msgstr "Slides"
 
 #: bootstrap3/carousel.py:32
 msgid "Number of slides for this carousel."
-msgstr ""
+msgstr "Anzahl von Slides für dieses Karussell."
 
 #: bootstrap3/carousel.py:37
 msgid "Carousel"
-msgstr ""
+msgstr "Karussell"
 
 #: bootstrap3/carousel.py:46
 msgid "Animate"
-msgstr ""
+msgstr "Animieren"
 
 #: bootstrap3/carousel.py:46
 msgid "Pause"
-msgstr ""
+msgstr "Pause"
 
 #: bootstrap3/carousel.py:46
 msgid "Wrap"
-msgstr ""
+msgstr "Wrap"
 
 #: bootstrap3/carousel.py:50
 msgid "Interval"
-msgstr ""
+msgstr "Intervall"
 
 #: bootstrap3/carousel.py:52
 msgid "Change slide after this number of seconds."
-msgstr ""
+msgstr "Ändere den Slide nach Ablauf dieser Anzahl von Sekunden."
 
 #: bootstrap3/carousel.py:56
 msgid "Options"
-msgstr ""
+msgstr "Optionen"
 
 #: bootstrap3/carousel.py:58
 msgid "Adjust interval for the carousel."
-msgstr ""
+msgstr "Intervall für das Karussel einstellen."
 
 #: bootstrap3/carousel.py:62
 msgid "Carousel heights"
-msgstr ""
+msgstr "Karussel Höhe"
 
 #: bootstrap3/carousel.py:64
 msgid "Heights of Carousel in pixels for distinct Bootstrap's breakpoints."
-msgstr ""
+msgstr "Höhe des Karussels in Pixeln für unterschiedliche Bootstrap Breakpoints"
 
 #: bootstrap3/carousel.py:68 bootstrap3/gallery.py:122 bootstrap3/image.py:103
 #: bootstrap3/picture.py:65
 msgid "Resize Options"
-msgstr ""
+msgstr "Größenanpassung"
 
 #: bootstrap3/carousel.py:69 bootstrap3/gallery.py:123 bootstrap3/image.py:104
 #: bootstrap3/picture.py:66
 msgid "Options to use when resizing the image."
-msgstr ""
+msgstr "Optionen für die Skalierung von Bildern."
 
 #: bootstrap3/carousel.py:82
 #, python-brace-format
 msgid "with {0} slide"
 msgid_plural "with {0} slides"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "mit {0} Slide"
+msgstr[1] "mit {0} Slides"
 
 #: bootstrap3/carousel.py:123
 msgid "Slide"
-msgstr ""
+msgstr "Slide"
 
 #: bootstrap3/carousel.py:142
 msgid "Slide Caption"
-msgstr ""
+msgstr "Slide Untertitel"
 
 #: bootstrap3/carousel.py:143
 msgid "Caption text to be laid over the backgroud image."
-msgstr ""
+msgstr "Untertitel Text, der über das Hintergrundbild gelegt wird."
 
 #: bootstrap3/carousel.py:174
 msgid "Empty Slide"
-msgstr ""
+msgstr "Leerer Slide"
 
 #: bootstrap3/container.py:33
 msgid "At least one breakpoint must be selected."
-msgstr ""
+msgstr "Mindestens ein Breakpoint muss ausgewählt werden."
 
 #: bootstrap3/container.py:38
 msgid "Container"
-msgstr ""
+msgstr "Container"
 
 #: bootstrap3/container.py:42
 #, python-brace-format
 msgid "Tiny (<{sm[0]}px)"
-msgstr ""
+msgstr "Sehr klein(<{sm[0]}px)"
 
 #: bootstrap3/container.py:43
 #, python-brace-format
 msgid "Small (≥{sm[0]}px and <{md[0]}px)"
-msgstr ""
+msgstr "Klein (≥{sm[0]}px and <{md[0]}px)"
 
 #: bootstrap3/container.py:44
 #, python-brace-format
 msgid "Medium (≥{md[0]}px and <{lg[0]}px)"
-msgstr ""
+msgstr "Mittel (≥{md[0]}px and <{lg[0]}px)"
 
 #: bootstrap3/container.py:45
 #, python-brace-format
 msgid "Large (≥{lg[0]}px)"
-msgstr ""
+msgstr "Groß (≥{lg[0]}px)"
 
 #: bootstrap3/container.py:50
 msgid "Available Breakpoints"
-msgstr ""
+msgstr "Verfügbare Breakpoints"
 
 #: bootstrap3/container.py:52
 msgid "Supported display widths for Bootstrap's grid system."
-msgstr ""
+msgstr "Unterstützte Bildschirm Breiten für das Bootstrap Grid System."
 
 #: bootstrap3/container.py:56
 msgid "Fluid Container"
-msgstr ""
+msgstr "Fluid Container"
 
 #: bootstrap3/container.py:57
 msgid "Changing your outermost '.container' to '.container-fluid'."
-msgstr ""
+msgstr "Ändert den äusersten '.container' auf '.container-fluid'."
 
 #: bootstrap3/container.py:73
 #, python-brace-format
 msgid "{0}for {1}"
-msgstr ""
+msgstr "{0}für {1}"
 
 #: bootstrap3/container.py:129
 #, python-brace-format
 msgid "{0} column"
 msgid_plural "{0} columns"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0} Spalte"
+msgstr[1] "{0} Spalten"
 
 #: bootstrap3/container.py:130
 msgid "Columns"
-msgstr ""
+msgstr "Spalten"
 
 #: bootstrap3/container.py:131
 msgid "Number of columns to be created with this row."
-msgstr ""
+msgstr "Anzahl von Spalten die für diese Zeile erzeugt werden."
 
 #: bootstrap3/container.py:135
 msgid "Row"
-msgstr ""
+msgstr "Zeile"
 
 #: bootstrap3/container.py:145
 #, python-brace-format
 msgid "with {0} column"
 msgid_plural "with {0} columns"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "mit {0} Spalte"
+msgstr[1] "mit {0} Spalten"
 
 #: bootstrap3/container.py:163
 msgid "Column"
-msgstr ""
+msgstr "Spalte"
 
 #: bootstrap3/container.py:182
 msgid "{} unit"
 msgid_plural "{} units"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{} Einheit"
+msgstr[1] "{} Einheiten"
 
 #: bootstrap3/container.py:198 bootstrap3/container.py:210
 msgid "Column width for {}"
-msgstr ""
+msgstr "Spaltenbreite für {}"
 
 #: bootstrap3/container.py:200
 msgid "Number of column units for devices narrower than {} pixels."
-msgstr ""
+msgstr "Anzahl von Spalten Einheiten für Geräte die schmaler als {} Pixel sind."
 
 #: bootstrap3/container.py:201
 msgid "Number of column units for devices wider than {} pixels."
-msgstr ""
+msgstr "Anzahl von Spalten Einheiten für Geräder die breiter als {} Pixel sind."
 
 #: bootstrap3/container.py:202
 msgid "Number of column units for all devices."
-msgstr ""
+msgstr "Anzahl von Spalten für alle Geräte."
 
 #: bootstrap3/container.py:208
 msgid "Inherit from above"
-msgstr ""
+msgstr "Von oben erben"
 
 #: bootstrap3/container.py:212
 msgid "Override column units for devices narrower than {} pixels."
-msgstr ""
+msgstr "Überschreibe die Spaten Einheiten für Geräte kleiner als {} Pixel."
 
 #: bootstrap3/container.py:213
 msgid "Override column units for devices wider than {} pixels."
-msgstr ""
+msgstr "Überschreibte Spalten Einheiten für Geräte größer {} Pixel."
 
 #: bootstrap3/container.py:214
 msgid "Override column units for all devices."
-msgstr ""
+msgstr "Überschreibe Spalten Einheiten für alle Geräte."
 
 #: bootstrap3/container.py:221
 msgid "No offset"
-msgstr ""
+msgstr "Kein Offste"
 
 #: bootstrap3/container.py:223
 msgid "Offset for {}"
-msgstr ""
+msgstr "Offset für {}"
 
 #: bootstrap3/container.py:225
 msgid "Number of offset units for devices narrower than {} pixels."
-msgstr ""
+msgstr "Anzahl von Offset Einheiten für Geräte kleiner als {} Pixel."
 
 #: bootstrap3/container.py:226
 msgid "Number of offset units for devices wider than {} pixels."
-msgstr ""
+msgstr "Anzahl von Offset Einheiten für Geräte kleiner als {} Pixel."
 
 #: bootstrap3/container.py:227
 msgid "Number of offset units for all devices."
-msgstr ""
+msgstr "Anzahl von Offset Einheiten für alle Geräte."
 
 #: bootstrap3/container.py:233
 msgid "No reordering"
-msgstr ""
+msgstr "Keine Neuordnung"
 
 #: bootstrap3/container.py:234
 msgid "Push {}"
-msgstr ""
+msgstr "Push {}"
 
 #: bootstrap3/container.py:235
 msgid "Pull {}"
-msgstr ""
+msgstr "Pull {}"
 
 #: bootstrap3/container.py:236
 #, python-brace-format
 msgid "Column ordering for {0}"
-msgstr ""
+msgstr "Spaltenreihenfolge für {0}"
 
 #: bootstrap3/container.py:238
 msgid "Column ordering for devices narrower than {} pixels."
-msgstr ""
+msgstr "Spaltenreihenfolge für Geräte kleiner als {} Pixel."
 
 #: bootstrap3/container.py:239
 msgid "Column ordering for devices wider than {} pixels."
-msgstr ""
+msgstr "Spaltenreihenfolge für Geräte größer als {} Pixel."
 
 #: bootstrap3/container.py:240
 msgid "Column ordering for all devices."
-msgstr ""
+msgstr "Spaltenreihenfolge für alle Geräte"
 
 #: bootstrap3/container.py:246
 msgid "Visible"
-msgstr ""
+msgstr "Sichtbar"
 
 #: bootstrap3/container.py:246
 msgid "Hidden"
-msgstr ""
+msgstr "Versteckt"
 
 #: bootstrap3/container.py:247
 msgid "Responsive utilities for {}"
-msgstr ""
+msgstr "Responsive Utilities für {}"
 
 #: bootstrap3/container.py:249
 msgid "Utility classes for showing and hiding content by devices narrower than {} pixels."
-msgstr ""
+msgstr "Utility Klassen zum Anzeigen und Verstecken von Inhalten für Geräte kleiner als {} Pixel."
 
 #: bootstrap3/container.py:250
 msgid "Utility classes for showing and hiding content by devices wider than {} pixels."
-msgstr ""
+msgstr "Utility Klassen zum Anzeigen und Verstecken von Inhalten für Geräte größer als {} Pixel."
 
 #: bootstrap3/container.py:251
 msgid "Utility classes for showing and hiding content for all devices."
-msgstr ""
+msgstr "Utility Klassen zum Anzeigen und Verstecken von Ihnalten für alle Geräte."
 
 #: bootstrap3/container.py:310
 #, python-brace-format
 msgid "widths: {0} units"
-msgstr ""
+msgstr "Breite: {0} Einheiten"
 
 #: bootstrap3/container.py:313
 #, python-brace-format
 msgid "default width: {0} unit"
 msgid_plural "default width: {0} units"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Default Breite: {0} Einheit"
+msgstr[1] "Default Breite: {0} Einheiten"
 
 #: bootstrap3/container.py:315
 msgid "unknown width"
-msgstr ""
+msgstr "Unbekannte Breite"
 
 #: bootstrap3/gallery.py:23 bootstrap3/image.py:44 bootstrap3/image.py:48
 #: bootstrap3/image.py:114 bootstrap3/picture.py:76
 msgid "Image"
-msgstr ""
+msgstr "Bild"
 
 #: bootstrap3/gallery.py:24 bootstrap3/image.py:71 bootstrap3/picture.py:42
 msgid "Image Title"
-msgstr ""
+msgstr "Bild Titel"
 
 #: bootstrap3/gallery.py:26 bootstrap3/image.py:72 bootstrap3/picture.py:43
 msgid "Caption text added to the 'title' attribute of the <img> element."
-msgstr ""
+msgstr "Untertitel Text der zum 'title' Attribut des <img> Elementes hinzugefügt wird."
 
 #: bootstrap3/gallery.py:27 bootstrap3/image.py:76 bootstrap3/picture.py:47
 msgid "Alternative Description"
-msgstr ""
+msgstr "Alternative Beschreibung"
 
 #: bootstrap3/gallery.py:29 bootstrap3/image.py:77 bootstrap3/picture.py:48
 msgid "Textual description of the image added to the 'alt' tag of the <img> element."
-msgstr ""
+msgstr "Beschreibungstext des Bildes, das zum 'alt' Tag des <img> Elements hinzugefügt wird."
 
 #: bootstrap3/gallery.py:72
 msgid "Gallery"
-msgstr ""
+msgstr "Galerie"
 
 #: bootstrap3/gallery.py:84 bootstrap3/image.py:63
 msgid "Responsive"
-msgstr ""
+msgstr "Responsive"
 
 #: bootstrap3/gallery.py:85 bootstrap3/image.py:65 bootstrap3/picture.py:36
 msgid "Upscale image"
-msgstr ""
+msgstr "Upscale Bild"
 
 #: bootstrap3/gallery.py:85 bootstrap3/image.py:65 bootstrap3/picture.py:36
 msgid "Crop image"
-msgstr ""
+msgstr "Bild zuschneiden"
 
 #: bootstrap3/gallery.py:86 bootstrap3/image.py:66 bootstrap3/picture.py:37
 msgid "With subject location"
-msgstr ""
+msgstr "Mit Standortangabe"
 
 #: bootstrap3/gallery.py:87 bootstrap3/image.py:67 bootstrap3/picture.py:38
 msgid "Optimized for Retina"
-msgstr ""
+msgstr "Für Retina optimiert"
 
 #: bootstrap3/gallery.py:91
 msgid "Image Responsiveness"
-msgstr ""
+msgstr "Bild Responsivität"
 
 #: bootstrap3/gallery.py:96 bootstrap3/image.py:87
 msgid "Responsive Image Width"
-msgstr ""
+msgstr "Responsiv Bildbreite"
 
 #: bootstrap3/gallery.py:98 bootstrap3/image.py:89
 msgid "Set the image width in percent relative to containing element."
-msgstr ""
+msgstr "Setze die Bildbreite in Prozent relativ zum enthaltenen Element."
 
 #: bootstrap3/gallery.py:102 bootstrap3/image.py:93
 msgid "Fixed Image Width"
-msgstr ""
+msgstr "Fest Bildbreite"
 
 #: bootstrap3/gallery.py:103 bootstrap3/image.py:94
 msgid "Set a fixed image width in pixels."
-msgstr ""
+msgstr "Setze eine feste Bildbreite in Pixeln."
 
 #: bootstrap3/gallery.py:107 bootstrap3/image.py:98
 msgid "Adapt Image Height"
-msgstr ""
+msgstr "Anpassung der Bildhöhe"
 
 #: bootstrap3/gallery.py:108 bootstrap3/image.py:99
 msgid "Set a fixed height in pixels, or percent relative to the image width."
-msgstr ""
+msgstr "Setze eine feste Höhe in Pixeln oder Prozent relativ zur Bildbreite."
 
 #: bootstrap3/gallery.py:112
 msgid "Thumbnail Width"
-msgstr ""
+msgstr "Thumbnail Breite"
 
 #: bootstrap3/gallery.py:113
 msgid "Set a fixed thumbnail width in pixels."
-msgstr ""
+msgstr "Setze eine feste Thumbnail-Breite in Pixeln."
 
 #: bootstrap3/gallery.py:117
 msgid "Thumbnail Height"
-msgstr ""
+msgstr "Thumbnail Höhe"
 
 #: bootstrap3/gallery.py:118
 msgid "Set a fixed height in pixels, or percent relative to the thumbnail width."
