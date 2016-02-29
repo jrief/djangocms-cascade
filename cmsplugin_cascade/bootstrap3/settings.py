@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE, orig_config
 
 CASCADE_PLUGINS = ('buttons', 'carousel', 'accordion', 'container', 'image', 'picture', 'panel',
-    'tabs',)
+                   'tabs', 'gallery',)
 if 'cms_bootstrap3' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS += ('secondary_menu',)
 
