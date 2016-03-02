@@ -65,12 +65,26 @@ Fluid Container
 
 A variant of the normal Bootstrap Container is the Fluid Container. It can be enabled by a checkbox
 in the editors window. Fluid Containers have no hards breakpoints, they adopt their width to
-whatever the browser pretends.
+whatever the browser pretends and are slightly larger than their non-fluid counterpart.
 
-A fluid container makes it impossible to determine the maximum width of responsive images in
-advance. Hence, if responsive images shall be used, its use is discouraged. Please also see the note
-below.
+A fluid container makes it impossible to determine the maximum width of responsive images for the
+large media breakpoint, because it is applied whenever the browser width extends 1200 pixels,
+but there is no upper limit. Since for responsive images we somehow must specify a maximum
+width, the default is set to 1980 pixels. This in ``settings.py`` can be changed, to say 2500
+pixels, using the following configuration:
 
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'bootstrap3': {
+	        'fluid-lg-width': 2500,
+	    },
+	}
+
+.. note:: Fluid container are specially useful for hero images and full-width carousels. When
+	required, add a free standing fluid container to the placeholder and as its only child, use
+	the picture or carousel plugin. Its content then is stretched to the brower's full width.
 
 Bootstrap Row
 =============
@@ -263,8 +277,9 @@ These calculations are always performed recursively for all nested column and fo
 breakpoints.
 
 .. warning:: As the name implies, a container marked as *fluid*, does not specify a fixed width.
-             Hence it is impossible to calculate the width of an image marked as responsive inside
-             such a container. Therefore, the use of fluid containers is discouraged.
+	Hence instead of the inner width, the container's outer width is used as its maximum. For the
+	large media query (with a browser width of 1200 pixels or more), the maximum width is limited
+	to 1980 pixels.
 
 
 Other Bootstrap3 specific Plugins

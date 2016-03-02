@@ -17,6 +17,7 @@ CMSPLUGIN_CASCADE['bootstrap3'] = {
         ('lg', (1200, 'desktop', _("large desktops"), 1170)),
     ),
     'gutter': 30,
+    'fluid-lg-width': 1980,
 }
 CMSPLUGIN_CASCADE['bootstrap3'].update(orig_config.get('bootstrap3', {}))
 

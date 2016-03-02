@@ -103,7 +103,13 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
             try:
                 max_widths[bp] = parent_glossary['container_max_widths'][bp]
             except KeyError:
-                max_widths[bp] = BS3_BREAKPOINTS[bp][3]
+                if obj.glossary.get('fluid'):
+                    if bp == 'lg':
+                        max_widths[bp] = settings.CMSPLUGIN_CASCADE['bootstrap3']['fluid-lg-width']
+                    else:
+                        max_widths[bp] = BS3_BREAKPOINTS[bp][0]
+                else:
+                    max_widths[bp] = BS3_BREAKPOINTS[bp][3]
             if last_index > 0:
                 if index == 0:
                     next_bp = breakpoints[1]
