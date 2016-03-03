@@ -48,17 +48,17 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     form = BootstrapContainerForm
     breakpoints = list(BS3_BREAKPOINTS)
     i = 0
-    widget_choises = []
+    widget_choices = []
     for br, br_options in BS3_BREAKPOINTS.items():
         if i == 0:
-            widget_choises.append((br, '{} (<{}px)'.format(br_options[2], br_options[0])))
+            widget_choices.append((br, '{} (<{}px)'.format(br_options[2], br_options[0])))
         elif i == len(breakpoints[:-1]):
-            widget_choises.append((br, '{} (≥{}px)'.format(br_options[2], br_options[0])))
+            widget_choices.append((br, '{} (≥{}px)'.format(br_options[2], br_options[0])))
         else:
-            widget_choises.append((br, '{} (≥{}px and <{}px)'.format(br_options[2], br_options[0], BS3_BREAKPOINTS[breakpoints[(i + 1)]][0])))
+            widget_choices.append((br, '{} (≥{}px and <{}px)'.format(br_options[2], br_options[0], BS3_BREAKPOINTS[breakpoints[(i + 1)]][0])))
         i += 1
 
-    WIDGET_CHOICES = tuple(widget_choises)
+    WIDGET_CHOICES = tuple(widget_choices)
 
     glossary_fields = (
         PartialFormField('breakpoints',
