@@ -43,6 +43,11 @@ class CarouselPlugin(BootstrapPluginBase):
     fields = ('num_children', 'glossary',)
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
     OPTION_CHOICES = (('slide', _("Animate")), ('pause', _("Pause")), ('wrap', _("Wrap")),)
+    initial_heights = dict()
+    i = 0
+    for bp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']:
+        initial_heights[bp[0]] = '{}px'.format(100 + (50 * i))
+        i += 1
     glossary_fields = (
         PartialFormField('interval',
             NumberInputWidget(attrs={'size': '2', 'style': 'width: 4em;', 'min': '1'}),
@@ -60,7 +65,7 @@ class CarouselPlugin(BootstrapPluginBase):
             MultipleCascadingSizeWidget(list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']),
             allowed_units=['px']),
             label=_("Carousel heights"),
-            initial={'xs': '100px', 'sm': '150px', 'md': '200px', 'lg': '300px'},
+            initial=initial_heights,
             help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
         ),
         PartialFormField('resize-options',
