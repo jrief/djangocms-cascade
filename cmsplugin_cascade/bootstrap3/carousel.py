@@ -37,7 +37,7 @@ class CarouselPlugin(BootstrapPluginBase):
     form = CarouselSlidesForm
     default_css_class = 'carousel'
     default_css_attributes = ('options',)
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
     render_template = 'cascade/bootstrap3/{}/carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
     fields = ('num_children', 'glossary',)
