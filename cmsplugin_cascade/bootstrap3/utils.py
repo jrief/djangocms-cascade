@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import logging
 from django.forms import widgets
 from cmsplugin_cascade.plugin_base import CascadePluginBase
+
+logger = logging.getLogger('cascade')
 
 
 def reduce_breakpoints(plugin, field_name):
@@ -78,7 +82,8 @@ def get_image_tags(context, instance, options):
                 key = '{0}w'.format(size[0])
                 tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
         # use an existing image as fallback for the <img ...> element
-        assert max_width > 0
+        if not max_width > 0:
+            logger.warning('image tags: image max width is zero')
         size = (int(round(max_width)), int(round(max_width * aspect_ratio)))
     else:
         size = _get_image_size(image_width[0], image_height, aspect_ratio)
