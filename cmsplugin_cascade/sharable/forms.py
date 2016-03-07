@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import json
 from django import forms
 from django.forms import fields
-from django.db.models import get_model
+from django.apps import apps
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -37,7 +37,7 @@ class SelectSharedGlossary(forms.Select):
         Enrich the dict glossary['link'] with an identifier onto the model
         """
         try:
-            Model = get_model(*glossary['link']['model'].split('.'))
+            Model = apps.get_model(*glossary['link']['model'].split('.'))
             obj = Model.objects.get(pk=glossary['link']['pk'])
             glossary['link'].update(identifier=str(obj))
         except (KeyError, ObjectDoesNotExist):
