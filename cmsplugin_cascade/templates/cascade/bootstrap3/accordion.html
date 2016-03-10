@@ -9,7 +9,13 @@
 	<div class="panel {{ panel_type }}">
 		<div class="panel-heading">
 			{% if heading_size %}<{{ heading_size }} class="panel-title">{% endif %}
-				<a data-toggle="collapse" data-parent="#cmsplugin_{{ instance.id }}" href="#cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}">{{ panel_title }}</a>
+				<a data-toggle="collapse" 
+					{% if instance.glossary.close_others = "on" %}
+						data-parent="#cmsplugin_{{ instance.id }}"
+					{% else %}
+						data-target="#cmsplugin_{{ instance.id }}_{{ forloop.counter0}}"
+					{% endif %}
+					href="#cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}">{{ panel_title }}</a>
 			{% if heading_size %}</{{ heading_size }}>{% endif %}
 		</div>
 		<div id="cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}" class="panel-collapse collapse{% if forloop.first  and instance.glossary.first_is_open = "on" %} in{% endif %}">
