@@ -4,6 +4,15 @@
 Release History
 ===============
 
+0.7.3.dev0
+----------
+* Use the outer width for fluid containers. This allows us to add images and carousels which extend
+  the the browser's edges.
+* Fixed #132: Carousel Slide plugin different form.
+* Fixed #134: More plugins can be children of the ``SimpleWrapperPlugin``. This allows us to be more
+  flexible when building the DOM tree.
+* ``BootstrapContainerPlugin`` now by default accepts extra inline styles and CSS classes.
+
 0.7.2
 -----
 * Add a possibility to prefix Cascade plugins with a symbol of your choice, to avoid confusion
