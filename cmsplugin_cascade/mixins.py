@@ -5,7 +5,7 @@ try:
 except ImportError:
     from django.contrib.sites.models import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import get_model
+from django.apps import apps
 from django.utils.encoding import python_2_unicode_compatible
 from cms.utils.placeholder import get_placeholder_conf
 
@@ -25,7 +25,7 @@ class ImagePropertyMixin(object):
     def image(self):
         if not hasattr(self, '_image_model'):
             try:
-                Model = get_model(*self.glossary['image']['model'].split('.'))
+                Model = apps.get_model(*self.glossary['image']['model'].split('.'))
                 self._image_model = Model.objects.get(pk=self.glossary['image']['pk'])
             except (KeyError, ObjectDoesNotExist):
                 self._image_model = None

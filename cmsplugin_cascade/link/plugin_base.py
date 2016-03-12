@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.db.models import get_model
+from django.apps import apps
 from django.forms import widgets
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -45,7 +45,7 @@ class LinkPluginBase(CascadePluginBase):
         # otherwise try to resolve by model
         if 'model' in link and 'pk' in link:
             if not hasattr(obj, '_link_model'):
-                Model = get_model(*link['model'].split('.'))
+                Model = apps.get_model(*link['model'].split('.'))
                 try:
                     obj._link_model = Model.objects.get(pk=link['pk'])
                 except Model.DoesNotExist:
