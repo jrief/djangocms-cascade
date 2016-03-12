@@ -136,14 +136,14 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         if obj:
             caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
             obj.glossary.update(caption=caption)
-            # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
-            text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=obj.pk,
-                                           placeholder=obj.placeholder, plugin_language=obj.language)
-            kwargs['glossary_fields'] = (
-                PartialFormField('caption', text_editor_widget, label=_("Slide Caption"),
-                    help_text=_("Caption text to be laid over the backgroud image."),
-                ),
-            )
+        # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
+        text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=self.parent.pk,
+            placeholder=self.parent.placeholder, plugin_language=self.parent.language)
+        kwargs['glossary_fields'] = (
+            PartialFormField('caption', text_editor_widget, label=_("Slide Caption"),
+                help_text=_("Caption text to be laid over the backgroud image."),
+            ),
+        )
         return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
