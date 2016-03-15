@@ -4,11 +4,12 @@
 Release History
 ===============
 
-0.7.3.dev0
-----------
+0.7.3
+-----
 * Use the outer width for fluid containers. This allows us to add images and carousels which extend
   the the browser's edges.
 * Fixed #132: Carousel Slide plugin different form.
+* Fixed #133: BootstrapPanelPlugin does not support custom CSS classes.
 * Fixed #134: More plugins can be children of the ``SimpleWrapperPlugin``. This allows us to be more
   flexible when building the DOM tree.
 * ``BootstrapContainerPlugin`` now by default accepts extra inline styles and CSS classes.
