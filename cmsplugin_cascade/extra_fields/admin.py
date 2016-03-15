@@ -89,9 +89,9 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         })
         form = super(PluginExtraFieldsAdmin, self).get_form(request, obj, **kwargs)
         rectify_partial_form_field(form.base_fields['css_classes'], self.classname_fields)
-        setattr(form, 'classname_fields', self.classname_fields)
+        form.classname_fields = self.classname_fields
         rectify_partial_form_field(form.base_fields['inline_styles'], self.style_fields)
-        setattr(form, 'style_fields', self.style_fields)
+        form.style_fields = self.style_fields
         return form
 
     def has_add_permission(self, request):
