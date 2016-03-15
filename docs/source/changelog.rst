@@ -4,6 +4,10 @@
 Release History
 ===============
 
+0.7.4.dev0
+----------
+
+
 0.7.3
 -----
 * Use the outer width for fluid containers. This allows us to add images and carousels which extend
