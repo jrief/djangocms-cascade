@@ -140,7 +140,8 @@ class BootstrapGalleryPlugin(CascadePluginBase):
             # since inline_element requires the property `image`, add ImagePropertyMixin
             # to its class during runtime
             try:
-                ProxyModel = create_proxy_model('GalleryImage', (ImagePropertyMixin,), InlineCascadeElement)
+                ProxyModel = create_proxy_model('GalleryImage', 'cmsplugin_cascade',
+                                                (ImagePropertyMixin,), InlineCascadeElement)
                 inline_element.__class__ = ProxyModel
                 options.update(inline_element.glossary, **{
                     'image-width-fixed': options['thumbnail-width'],
