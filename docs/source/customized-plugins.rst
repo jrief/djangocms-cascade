@@ -18,7 +18,7 @@ the latter, it has been named “glossary”.
     Cascade are created in the correct app.
 
     If this attribute is not set, Cascade will default to the left-most
-    part the plugin's module path. So if your plugin lives in
+    part of the plugin's module path. So if your plugin lives in
     ``myapp.cascadeplugins``, Cascade will use ``myapp`` as the app label.
     We recommend that you always set ``app_label`` explicitly.
 
