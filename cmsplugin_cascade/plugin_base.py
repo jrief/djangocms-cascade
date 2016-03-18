@@ -21,16 +21,17 @@ from .widgets import JSONMultiWidget
 from .render_template import RenderTemplateMixin
 
 
-def create_proxy_model(name, model_mixins, base_model, attrs={}):
+def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
     class Meta:
         proxy = True
+        app_label = module.split('.')[0] if module else 'cmsplugin_cascade'
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
-    attrs.update({'Meta': Meta, '__module__': getattr(base_model, '__module__')})
+    attrs.update({'Meta': Meta, '__module__': module})
     model = type(name, bases, attrs)
     return model
 
@@ -65,7 +66,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
             model_mixins += tuple(import_string(mc[0]) for mc in settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
-        attrs['model'] = create_proxy_model(name, model_mixins, base_model)
+        attrs['model'] = create_proxy_model(name, model_mixins, base_model, module=attrs.get('__module__'))
         if is_installed('reversion'):
             import reversion
             if not reversion.is_registered(base_model):
