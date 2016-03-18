@@ -185,7 +185,7 @@ Additionally ``BootstrapPluginBase`` allows the following attributes:
 
 :app_label:
     The app_label to use on generated proxy models. This should usually be the
-    same as the app_label of the app that defines the plugins.
+    same as the app_label of the app that defines the plugin.
 
 :tag_type:
 	A HTML element into which this plugin is wrapped. Generic templates can render their
