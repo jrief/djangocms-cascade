@@ -69,7 +69,6 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             model_mixins += tuple(import_string(mc[0]) for mc in settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
         module = attrs.get('__module__')
         app_label = attrs.get('app_label', module.split('.')[0])
-        print app_label
         attrs['model'] = create_proxy_model(name, app_label, model_mixins, base_model, module=module)
         if is_installed('reversion'):
             import reversion
