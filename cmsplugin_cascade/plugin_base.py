@@ -25,10 +25,10 @@ def create_proxy_model(name, app_label, model_mixins, base_model, attrs={}, modu
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
-    supplied_app_label = app_label
+    _app_label = app_label
     class Meta:
         proxy = True
-        app_label = supplied_app_label
+        app_label = _app_label
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
