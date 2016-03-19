@@ -39,7 +39,7 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	django-filer==1.0.6
 	django-treebeard==3.0
 	django-polymorphic==0.8.1
-	django-reversion==1.9.3
+	django-reversion==1.10.1
 	django-sass-processor==0.3.2
 	django-sekizai==0.8.2
 	djangocms-admin-style==0.2.8
