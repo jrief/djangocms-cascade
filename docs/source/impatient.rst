@@ -50,7 +50,6 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	html5lib==0.9999999
 	jsonfield==1.0.3
 	six==1.9.0
-	wsgiref==0.1.2
 
 and install them into your environment:
 
