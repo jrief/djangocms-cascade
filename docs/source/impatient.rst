@@ -41,7 +41,7 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	django-polymorphic==0.9.1
 	django-reversion==1.10.1
 	django-sass-processor==0.3.2
-	django-sekizai==0.8.2
+	django-sekizai==0.9.0
 	djangocms-admin-style==0.2.8
 	-e git+https://github.com/jrief/djangocms-bootstrap3.git#egg=djangocms-bootstrap3
 	-e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade

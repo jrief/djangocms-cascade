@@ -10,6 +10,7 @@ Release History
 * Require django-polymorphic 0.9.1 or newer.
 * Require django-filer 1.1.1 or newer.
 * Require django-treebeard 4.0 or newer.
+* Require django-sekizai 0.9.0 or newer.
 
 0.7.3
 -----
