@@ -7,6 +7,8 @@ Release History
 0.7.4.dev0
 ----------
 * Require reversion 1.10.1 or newer.
+* Require polymorphic 0.9.1 or newer.
+* Require django-filer 1.1.1 or newer.
 
 0.7.3
 -----

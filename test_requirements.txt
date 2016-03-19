@@ -5,12 +5,12 @@ beautifulsoup4==4.4.1
 django-classy-tags==0.7.2
 django-filer==1.0.2
 django-mptt==0.7.4
-django-polymorphic==0.7.2
+django-polymorphic==0.9.1
 django-sekizai==0.8.2
 django-treebeard==3.0
 djangocms-admin-style==1.0.5
 djangocms-text-ckeditor==2.8.1
-easy-thumbnails==2.2.1
+easy-thumbnails==2.3
 html5lib==0.9999999
 jsonfield==1.0.3
 pluggy==0.3.1
