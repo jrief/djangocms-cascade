@@ -4,7 +4,7 @@
 Release History
 ===============
 
-0.7.4.dev0
+0.8.0.dev0
 ----------
 * Require django-reversion 1.10.1 or newer.
 * Require django-polymorphic 0.9.1 or newer.
