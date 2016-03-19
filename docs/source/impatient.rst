@@ -37,7 +37,7 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	django-classy-tags==0.6.2
 	django-cms==3.2.0
 	django-filer==1.1.1
-	django-treebeard==3.0
+	django-treebeard==4.0
 	django-polymorphic==0.9.1
 	django-reversion==1.10.1
 	django-sass-processor==0.3.2
