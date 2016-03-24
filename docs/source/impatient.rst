@@ -36,17 +36,17 @@ Create a temporary file, for instance named requirements.txt, containing these e
 	Unidecode==0.4.18
 	django-classy-tags==0.6.2
 	django-cms==3.2.0
-	django-filer==1.0.6
-	django-treebeard==3.0
-	django-polymorphic==0.8.1
-	django-reversion==1.9.3
+	django-filer==1.1.1
+	django-treebeard==4.0
+	django-polymorphic==0.9.1
+	django-reversion==1.10.1
 	django-sass-processor==0.3.2
-	django-sekizai==0.8.2
+	django-sekizai==0.9.0
 	djangocms-admin-style==0.2.8
 	-e git+https://github.com/jrief/djangocms-bootstrap3.git#egg=djangocms-bootstrap3
 	-e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
 	djangocms-text-ckeditor==2.8.1
-	easy-thumbnails==2.2.1
+	easy-thumbnails==2.3
 	html5lib==0.9999999
 	jsonfield==1.0.3
 	six==1.9.0
