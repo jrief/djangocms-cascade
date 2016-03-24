@@ -71,7 +71,11 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         app_label = attrs.get('app_label', module.split('.')[0])
         attrs['model'] = create_proxy_model(name, app_label, model_mixins, base_model, module=module)
         if is_installed('reversion'):
-            import reversion
+            from reversion import VERSION as reversion_VERSION
+            if reversion_VERSION < (1, 10):
+                import reversion
+            else:
+                from reversion import revisions as reversion
             if not reversion.is_registered(base_model):
                 reversion.register(base_model)
         # handle ambiguous plugin names by appending a symbol
