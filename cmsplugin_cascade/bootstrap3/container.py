@@ -242,10 +242,10 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 # handle offset
                 if breakpoints.index(bp) == 0:
                     empty_offset_choice = _("No offset")
-                    offset_range = range(1, 12)
+                    offset_range = range(1, 13)
                 else:
                     empty_offset_choice = _("Inherit from above")
-                    offset_range = range(0, 12)
+                    offset_range = range(0, 13)
                 choices = (('', empty_offset_choice),) + \
                     tuple(('col-{}-offset-{}'.format(bp, i), units[i])
                           for i in offset_range)
