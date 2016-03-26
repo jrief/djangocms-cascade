@@ -1,5 +1,5 @@
 {% load cms_tags %}
-<div class="panel {{ panel_type }}">
+<div class="panel {{ panel_type }} {{ instance.css_classes }}">
 {% if panel_heading %}<div class="panel-heading">{% if heading_size %}<{{ heading_size }} class="panel-title">{% endif %}{{ panel_heading|safe }}{% if heading_size %}</{{ heading_size }}>{% endif %}</div>{% endif %}
 <div class="panel-body">
 {% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}

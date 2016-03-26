@@ -21,14 +21,15 @@ from .widgets import JSONMultiWidget
 from .render_template import RenderTemplateMixin
 
 
-def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
+def create_proxy_model(name, app_label, model_mixins, base_model, attrs={}, module=None):
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
+    _app_label = app_label
+
     class Meta:
         proxy = True
-        app_label = getattr(base_model, 'app_label', module.split('.')[0]
-                            if module else 'cmsplugin_cascade')
+        app_label = _app_label
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
@@ -67,11 +68,13 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
             model_mixins += tuple(import_string(mc[0]) for mc in settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
-        attrs['model'] = create_proxy_model(name, model_mixins, base_model, module=attrs.get('__module__'))
+        module = attrs.get('__module__')
+        app_label = attrs.get('app_label', module.split('.')[0])
+        attrs['model'] = create_proxy_model(name, app_label, model_mixins, base_model, module=module)
         if is_installed('reversion'):
-            import reversion
-            if not reversion.is_registered(base_model):
-                reversion.register(base_model)
+            import reversion.revisions
+            if not reversion.revisions.is_registered(base_model):
+                reversion.revisions.register(base_model)
         # handle ambiguous plugin names by appending a symbol
         if 'name' in attrs and settings.CMSPLUGIN_CASCADE['plugin_prefix']:
             attrs['name'] = mark_safe_lazy(string_concat(

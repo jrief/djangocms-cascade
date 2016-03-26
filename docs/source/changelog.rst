@@ -4,11 +4,20 @@
 Release History
 ===============
 
-0.7.3.dev0
+0.8.0.dev0
 ----------
+* Require django-reversion 1.10.1 or newer.
+* Require django-polymorphic 0.9.1 or newer.
+* Require django-filer 1.1.1 or newer.
+* Require django-treebeard 4.0 or newer.
+* Require django-sekizai 0.9.0 or newer.
+
+0.7.3
+-----
 * Use the outer width for fluid containers. This allows us to add images and carousels which extend
   the the browser's edges.
 * Fixed #132: Carousel Slide plugin different form.
+* Fixed #133: BootstrapPanelPlugin does not support custom CSS classes.
 * Fixed #134: More plugins can be children of the ``SimpleWrapperPlugin``. This allows us to be more
   flexible when building the DOM tree.
 * ``BootstrapContainerPlugin`` now by default accepts extra inline styles and CSS classes.
