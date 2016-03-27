@@ -4,9 +4,9 @@
 Release History
 ===============
 
-0.8.1.dev
----------
-
+0.8.1
+-----
+* Hotfix: removed invalid dependency in migration 0007.
 
 0.8.0
 -----
