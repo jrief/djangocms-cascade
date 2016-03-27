@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             options={
                 'proxy': True,
             },
-            bases=('cmsplugin_cascade.cascadeelement'),
+            bases=('cmsplugin_cascade.cascadeelement',),
         ),
         migrations.CreateModel(
             name='SimpleWrapperPluginModel',
