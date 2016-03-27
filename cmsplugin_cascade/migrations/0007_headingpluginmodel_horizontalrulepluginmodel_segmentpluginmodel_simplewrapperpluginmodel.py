@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import shop.cascade.segmentation
 
 
 class Migration(migrations.Migration):
@@ -37,7 +36,7 @@ class Migration(migrations.Migration):
             options={
                 'proxy': True,
             },
-            bases=(shop.cascade.segmentation.EmulateCustomerModelMixin, 'cmsplugin_cascade.cascadeelement'),
+            bases=('cmsplugin_cascade.cascadeelement'),
         ),
         migrations.CreateModel(
             name='SimpleWrapperPluginModel',
