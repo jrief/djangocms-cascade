@@ -6,11 +6,19 @@ Release History
 
 0.8.0.dev0
 ----------
+* Compatible with Django-1.9
+* Fixed #133: BootstrapPanelPlugin now supports custom CSS classes.
+* Fixed #132: Carousel Slide plugin with different form.
+* Fixed migration problems for proxy models outside Cascade.
+* Replaced SelectMultiple against CheckboxSelectMultiple in admin for extra fields.
+* Removed SegmentationAdmin from admin backend.
+* Disallow whitespace in CSS attributes.
 * Require django-reversion 1.10.1 or newer.
 * Require django-polymorphic 0.9.1 or newer.
 * Require django-filer 1.1.1 or newer.
 * Require django-treebeard 4.0 or newer.
 * Require django-sekizai 0.9.0 or newer.
+
 
 0.7.3
 -----
