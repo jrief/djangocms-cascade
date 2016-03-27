@@ -15,10 +15,10 @@ Release logic:
  9. python setup.py sdist upload
 10. bump the version, append ".dev0" to __version__
 11. Add a new heading to docs/source/changelog.rst, named "<next-version>.dev0"
-12. git add shop/__init__.py docs/source/changelog.rst
+12. git add cmsplugin_cascade/__init__.py docs/source/changelog.rst
 12. git commit -m 'Start with <version>'
 13. git push
 """
-__version__ = "0.8.0"
+__version__ = "0.8.1.dev"
 
 default_app_config = 'cmsplugin_cascade.apps.CascadeConfig'

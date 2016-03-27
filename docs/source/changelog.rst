@@ -4,8 +4,12 @@
 Release History
 ===============
 
-0.8.0.dev0
-----------
+0.8.1.dev
+---------
+
+
+0.8.0
+-----
 * Compatible with Django-1.9
 * Fixed #133: BootstrapPanelPlugin now supports custom CSS classes.
 * Fixed #132: Carousel Slide plugin with different form.
