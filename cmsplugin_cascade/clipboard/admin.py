@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.contrib import admin
 from django.contrib.admin.templatetags.admin_static import static
 from django.forms import widgets
@@ -91,9 +92,10 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 populate_data(child, entry[2])
 
         data = {'plugins': []}
-        clipboard = Placeholder.objects.get(slot='clipboard')
-        plugin_qs = CMSPlugin.objects.filter(placeholder=clipboard)
-        populate_data(None, data['plugins'])
+        clipboard = Placeholder.objects.filter(slot='clipboard').last()
+        if clipboard:
+            plugin_qs = CMSPlugin.objects.filter(placeholder=clipboard)
+            populate_data(None, data['plugins'])
         return data
 
     def _deserialize_clipboard(self, language, data):
