@@ -8,11 +8,12 @@ from django.contrib.admin import StackedInline
 from django.contrib.admin.sites import site
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from adminsortable2.admin import SortableInlineAdminMixin
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.models import InlineCascadeElement
+from cmsplugin_cascade.models import SortableInlineCascadeElement
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
@@ -62,11 +63,12 @@ class GalleryImageForm(ModelForm):
         return cleaned_data
 
 
-class GalleryPluginInline(StackedInline):
-    model = InlineCascadeElement
+class GalleryPluginInline(SortableInlineAdminMixin, StackedInline):
+    model = SortableInlineCascadeElement
     raw_id_fields = ('image_file',)
     form = GalleryImageForm
     extra = 1
+    ordering = ('order',)
 
 
 class BootstrapGalleryPlugin(CascadePluginBase):
@@ -141,8 +143,8 @@ class BootstrapGalleryPlugin(CascadePluginBase):
             # since inline_element requires the property `image`, add ImagePropertyMixin
             # to its class during runtime
             try:
-                ProxyModel = create_proxy_model('GalleryImage', 'cmsplugin_cascade',
-                                                (ImagePropertyMixin,), InlineCascadeElement)
+                ProxyModel = create_proxy_model('GalleryImage', (ImagePropertyMixin,),
+                                                SortableInlineCascadeElement)
                 inline_element.__class__ = ProxyModel
                 options.update(inline_element.glossary, **{
                     'image-width-fixed': options['thumbnail-width'],
@@ -172,7 +174,7 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapGalleryPlugin, cls).get_identifier(obj)
-        num_elems = obj.inline_elements.count()
+        num_elems = obj.sortinline_elements.count()
         content = ungettext_lazy("with {0} image", "with {0} images", num_elems).format(num_elems)
         return format_html('{0}{1}', identifier, content)
 
