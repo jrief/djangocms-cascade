@@ -7,12 +7,6 @@ from cmsplugin_cascade.plugin_base import CascadePluginBase
 class CustomPlugin(CascadePluginBase):
     name = 'Custom Element'
     render_template = 'cascade/generic/naked.html'
-    app_label = 'foo'
-
-
-class CustomPluginWithoutAppLabel(CascadePluginBase):
-    name = 'Custom Element'
-    render_template = 'cascade/generic/naked.html'
 
 
 class CustomPluginTest(TestCase):
@@ -21,7 +15,4 @@ class CustomPluginTest(TestCase):
         plugin_pool.register_plugin(CustomPlugin)
 
     def test_proxy_model_has_correct_app_label(self):
-        self.assertEqual(CustomPlugin.model._meta.app_label,
-                         'foo')
-        self.assertEqual(CustomPluginWithoutAppLabel.model._meta.app_label,
-                         'tests')
+        self.assertEqual(CustomPlugin.model._meta.app_label, 'cascade_dummy')
