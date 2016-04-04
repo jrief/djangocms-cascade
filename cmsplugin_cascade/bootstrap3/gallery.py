@@ -139,12 +139,12 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     def render(self, context, instance, placeholder):
         gallery_instances = []
         options = dict(instance.get_complete_glossary())
-        for inline_element in instance.inline_elements.all():
+        for inline_element in instance.sortinline_elements.all():
             # since inline_element requires the property `image`, add ImagePropertyMixin
             # to its class during runtime
             try:
                 ProxyModel = create_proxy_model('GalleryImage', (ImagePropertyMixin,),
-                                                SortableInlineCascadeElement)
+                                                SortableInlineCascadeElement, module=__name__)
                 inline_element.__class__ = ProxyModel
                 options.update(inline_element.glossary, **{
                     'image-width-fixed': options['thumbnail-width'],
