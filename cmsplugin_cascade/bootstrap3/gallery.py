@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.forms import widgets, ModelChoiceField, CharField
 from django.forms.models import ModelForm
 from django.db.models.fields.related import ManyToOneRel
@@ -65,7 +66,7 @@ class GalleryPluginInline(StackedInline):
     model = InlineCascadeElement
     raw_id_fields = ('image_file',)
     form = GalleryImageForm
-    extra = 0
+    extra = 1
 
 
 class BootstrapGalleryPlugin(CascadePluginBase):
