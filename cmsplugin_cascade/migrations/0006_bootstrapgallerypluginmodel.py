@@ -11,13 +11,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='BootstrapGalleryPluginModel',
-            fields=[
-            ],
-            options={
-                'proxy': True,
-            },
-            bases=('cmsplugin_cascade.cascadeelement',),
-        ),
     ]

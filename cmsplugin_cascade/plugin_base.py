@@ -21,15 +21,14 @@ from .widgets import JSONMultiWidget
 from .render_template import RenderTemplateMixin
 
 
-def create_proxy_model(name, app_label, model_mixins, base_model, attrs={}, module=None):
+def _create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
-    _app_label = app_label
-
     class Meta:
         proxy = True
-        app_label = _app_label
+        # using a dummy name prevents `makemigrations` to create a model migration
+        app_label = 'cascade_dummy'
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
@@ -69,8 +68,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             # SegmentPlugin shall additionally inherit from configured mixin classes
             model_mixins += tuple(import_string(mc[0]) for mc in settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
         module = attrs.get('__module__')
-        app_label = attrs.get('app_label', module.split('.')[0])
-        attrs['model'] = create_proxy_model(name, app_label, model_mixins, base_model, module=module)
+        attrs['model'] = _create_proxy_model(name, model_mixins, base_model, module=module)
         if is_installed('reversion'):
             import reversion.revisions
             if not reversion.revisions.is_registered(base_model):

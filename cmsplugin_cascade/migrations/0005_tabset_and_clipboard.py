@@ -24,22 +24,4 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Persited Clipboard Content',
             },
         ),
-        migrations.CreateModel(
-            name='BootstrapTabPanePluginModel',
-            fields=[
-            ],
-            options={
-                'proxy': True,
-            },
-            bases=('cmsplugin_cascade.cascadeelement',),
-        ),
-        migrations.CreateModel(
-            name='BootstrapTabSetPluginModel',
-            fields=[
-            ],
-            options={
-                'proxy': True,
-            },
-            bases=('cmsplugin_cascade.cascadeelement',),
-        ),
     ]
