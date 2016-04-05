@@ -34,10 +34,15 @@ class CascadeElement(CascadeModelBase):
         db_table = 'cmsplugin_cascade_element'
 
     def copy_relations(self, oldinstance):
-        for inline_element in oldinstance.inline_elements.all():
+        def init_element(inline_element):
             inline_element.pk = None
             inline_element.cascade_element = self
             inline_element.save()
+
+        for inline_element in oldinstance.inline_elements.all():
+            init_element(inline_element)
+        for sortinline_element in oldinstance.sortinline_elements.all():
+            init_element(sortinline_element)
 
 
 class SharableCascadeElement(CascadeModelBase):
