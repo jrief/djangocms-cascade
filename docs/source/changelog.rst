@@ -4,6 +4,16 @@
 Release History
 ===============
 
+0.8.2
+-----
+* Cascade does not create migrations for proxy models anymore. This created major problems if
+  Cascade components have been switched on and off. All existing migrations of proxy models have
+  been removed from the migration files.
+* Fixed: Response of more than one entry on non unique clipboards.
+* Added :class:`cmsplugin_cascade.models.SortableInlineCascadeElement` which can be used for
+  keeping sorted inline elements.
+* :class:`cmsplugin_cascade.bootstrap3.gallery.BootstrapGalleryPlugin` can sort its images.
+
 0.8.1
 -----
 * Hotfix: removed invalid dependency in migration 0007.
