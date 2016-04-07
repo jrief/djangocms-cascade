@@ -18,24 +18,16 @@ or the current development release from github
 
 Dependencies
 ============
-* Django_ >=1.6
-* DjangoCMS_ >=3.0.8
+* Django_ >=1.8
+* DjangoCMS_ >=3.2
 
 
 Create a database schema
 ========================
 
-if you use Django-1.7 or higher
-
 .. code-block:: bash
 
 	./manage.py migrate cmsplugin_cascade
-
-if you use Django-1.6
-
-.. code-block:: bash
-
-	./manage.py syncdb --migrate
 
 
 Install Bootstrap
