@@ -4,6 +4,10 @@
 Release History
 ===============
 
+0.8.3.dev
+---------
+
+
 0.8.2
 -----
 * Cascade does not create migrations for proxy models anymore. This created major problems if
