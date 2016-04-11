@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.forms import widgets
+
+from django.core.exceptions import ValidationError
+from django.forms import widgets, models
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
@@ -80,3 +82,62 @@ class HeadingPlugin(CascadePluginBase):
         return context
 
 plugin_pool.register_plugin(HeadingPlugin)
+
+
+class SectionForm(models.ModelForm):
+    def clean_glossary(self):
+        glossary = self.cleaned_data['glossary']
+        if self.check_unique_element_id(self.instance, glossary['element_id']) is False:
+            msg = _("The element ID `{element_id}` is not unique for this page.")
+            raise ValidationError(msg.format(**glossary))
+        return glossary
+
+    @classmethod
+    def check_unique_element_id(cls, instance, element_id):
+        """
+        Check for uniqueness of the given element_id for the current page.
+        Return None if instance is not yet associated with a page.
+        """
+        if instance.page:
+            element_ids = instance.page.cascadepage.glossary.get('element_ids', {})
+            element_ids[str(instance.pk)] = element_id
+            return len(element_ids) == len(set(element_ids.values()))
+
+
+class SectionPlugin(TransparentMixin, CascadePluginBase):
+    name = _("Section")
+    parent_classes = None
+    require_parent = False
+    allow_children = True
+    alien_child_classes = True
+    render_template = 'cascade/generic/section.html'
+    form = SectionForm
+    glossary_fields = (
+        PartialFormField('element_id',
+            widgets.TextInput(),
+            label=_("Element ID"),
+            help_text=_("A unique identifier for this element.")
+        ),
+    )
+
+    @classmethod
+    def get_identifier(cls, instance):
+        identifier = super(SectionPlugin, cls).get_identifier(instance)
+        element_id = instance.glossary.get('element_id')
+        if element_id:
+            return format_html('{0} ID: <em>{1}</em>', identifier, element_id)
+        return identifier
+
+    def save_model(self, request, obj, form, change):
+        super(SectionPlugin, self).save_model(request, obj, form, change)
+        if not change:
+            # if we add a new element and element_id is not unique, modify the existing one
+            element_id, postfix = obj.glossary['element_id'], 0
+            while self.form.check_unique_element_id(obj, element_id) is False:
+                postfix += 1
+                element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
+            obj.page.cascadepage.save()
+            obj.glossary['element_id'] = element_id
+            obj.save()
+
+plugin_pool.register_plugin(SectionPlugin)

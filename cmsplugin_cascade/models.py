@@ -2,10 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models.signals import pre_delete
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from jsonfield.fields import JSONField
+from cms.extensions import PageExtension
+from cms.extensions.extension_pool import extension_pool
 from .models_base import CascadeModelBase
 
 
@@ -125,3 +128,28 @@ class CascadeClipboard(models.Model):
 
     def __str__(self):
         return self.identifier
+
+
+class CascadePage(PageExtension):
+    """
+    Keep arbitrary data tightly coupled to the CMS page.
+    """
+    settings = JSONField(blank=True, default={}, help_text=_("User editable settings for this page."))
+    glossary = JSONField(blank=True, default={}, help_text=_("Store for arbitrary page data."))
+
+    class Meta:
+        db_table = 'cmsplugin_cascade_page'
+        verbose_name = verbose_name_plural = _("Cascade Page Settings")
+
+extension_pool.register(CascadePage)
+
+
+def delete_cascade_element(sender, instance=None, **kwargs):
+    if isinstance(instance, CascadeModelBase):
+        try:
+            instance.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
+            instance.page.cascadepage.save()
+        except (AttributeError, KeyError):
+            pass
+
+pre_delete.connect(delete_cascade_element)
