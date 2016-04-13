@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.apps import apps
 from django.forms import widgets
 from django.utils.encoding import python_2_unicode_compatible
@@ -7,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
+from cmsplugin_cascade.utils import resolve_dependencies
 from .forms import LinkForm
 
 
@@ -61,6 +63,14 @@ class LinkPluginBase(CascadePluginBase):
     def get_form(self, request, obj=None, **kwargs):
         kwargs.setdefault('form', LinkForm.get_form_class())
         return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
+
+
+class DefaultLinkPluginBase(LinkPluginBase):
+    """
+    The default `LinkPluginBase` class. It is injected by the class creator in link.config
+    """
+    class Media:
+        js = resolve_dependencies('cascade/js/admin/defaultlinkplugin.js')
 
 
 @python_2_unicode_compatible

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from collections import OrderedDict
 from django.forms import widgets
 from django.forms.fields import CharField
@@ -12,7 +13,6 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.link.forms import TextLinkFormMixin
-from cmsplugin_cascade.utils import resolve_dependencies
 from .glyphicons import GlyphiconRenderer
 
 
@@ -129,7 +129,6 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
-        js = resolve_dependencies('cascade/js/admin/linkplugin.js')
 
     @classmethod
     def get_identifier(cls, obj):
