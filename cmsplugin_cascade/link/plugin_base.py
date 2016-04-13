@@ -69,6 +69,8 @@ class DefaultLinkPluginBase(LinkPluginBase):
     """
     The default `LinkPluginBase` class. It is injected by the class creator in link.config
     """
+    fields = ('link_type', ('cms_page', 'section', 'ext_url', 'mail_to',), 'glossary',)
+
     class Media:
         js = resolve_dependencies('cascade/js/admin/defaultlinkplugin.js')
 

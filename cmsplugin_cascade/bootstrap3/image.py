@@ -57,7 +57,7 @@ class BootstrapImagePlugin(LinkPluginBase):
     render_template = 'cascade/bootstrap3/linked-image.html'
     default_css_attributes = ('image-shapes',)
     html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
-    fields = ('image_file', getattr(LinkPluginBase, 'glossary_field_map')['link'], 'glossary',)
+    fields = ('image_file',) + LinkPluginBase.fields  # @UndefinedVariable
     LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
         tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),

@@ -125,7 +125,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
     model_mixins = (LinkElementMixin,)
-    fields = ('link_content', getattr(LinkPluginBase, 'glossary_field_map')['link'], 'glossary',)
+    fields = ('link_content',) + LinkPluginBase.fields  # @UndefinedVariable
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}

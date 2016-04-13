@@ -14,7 +14,7 @@ class TextLinkPlugin(LinkPluginBase):
     name = _("Link")
     model_mixins = (LinkElementMixin,)
     render_template = 'cascade/link/text-link.html'
-    fields = ('link_content', LinkPluginBase.glossary_field_map['link'], 'glossary',)  # @UndefinedVariable
+    fields = ('link_content',) + LinkPluginBase.fields  # @UndefinedVariable
 
     @classmethod
     def get_identifier(cls, obj):
