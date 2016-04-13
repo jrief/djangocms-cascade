@@ -130,14 +130,16 @@ class SectionPlugin(TransparentMixin, CascadePluginBase):
 
     def save_model(self, request, obj, form, change):
         super(SectionPlugin, self).save_model(request, obj, form, change)
+        element_id = obj.glossary['element_id']
         if not change:
-            # if we add a new element and element_id is not unique, modify the existing one
-            element_id, postfix = obj.glossary['element_id'], 0
+            # when adding a new element, `element_id` can not be validated for uniqueness
+            postfix = 0
             while self.form.check_unique_element_id(obj, element_id) is False:
                 postfix += 1
                 element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
-            obj.page.cascadepage.save()
-            obj.glossary['element_id'] = element_id
-            obj.save()
+
+        obj.page.cascadepage.glossary.setdefault('element_ids', {})
+        obj.page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id
+        obj.page.cascadepage.save()
 
 plugin_pool.register_plugin(SectionPlugin)
