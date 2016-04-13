@@ -1,5 +1,5 @@
 {% extends "admin/cms/usersettings/change_form.html" %}
-{% load admin_static i18n %}
+{% load admin_static admin_urls i18n %}
 
 {% block field_sets %}
 	{% if empty_form %}
@@ -18,5 +18,6 @@
 	django.cascade = django.cascade || {};
 	django.cascade.sharable_fields = {{ sharable_fields|default:"[]" }};
 	django.cascade.base_plugins = "[{{ base_plugins|join:", " }}]";
+	django.cascade.page_sections_url = "{% url 'admin:get_page_sections' %}";
 	</script>
 {% endblock %}

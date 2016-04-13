@@ -37,6 +37,8 @@ class LinkForm(ModelForm):
     link_type = fields.ChoiceField()
     cms_page = LinkSearchField(required=False, label='',
         help_text=_("An internal link onto CMS pages of this site"))
+    section = fields.ChoiceField(required=False, label='',
+        help_text=_("Link deep into a page"))
     ext_url = fields.URLField(required=False, label='', help_text=_("Link onto external page"))
     mail_to = fields.EmailField(required=False, label='', help_text=_("Open Email program with this address"))
 
@@ -64,6 +66,9 @@ class LinkForm(ModelForm):
         choices = ((p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
                    for p in Page.objects.drafts().on_site(site))
         self.base_fields['cms_page'].choices = choices
+
+        # populate Select field for section choice
+        self.base_fields['section'].choices = (('a', "AA"), ('b', "BB"),)
 
         if callable(set_initial_linktype):
             set_initial_linktype(initial)
@@ -99,6 +104,10 @@ class LinkForm(ModelForm):
                 'model': 'cms.Page',
                 'pk': self.cleaned_data['cms_page'],
             }
+
+    def clean_section(self):
+        if self.cleaned_data.get('link_type') == 'cmspage':
+            self.cleaned_data['link_data']['section'] = self.cleaned_data['section']
 
     def clean_ext_url(self):
         if self.cleaned_data.get('link_type') == 'exturl':

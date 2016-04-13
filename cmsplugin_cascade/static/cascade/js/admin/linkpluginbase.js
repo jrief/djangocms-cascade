@@ -3,16 +3,19 @@ window['jQuery'] = jQuery || django.jQuery;  // re-add to global namespace since
 
 django.jQuery(function($) {
 	'use strict';
-	var $link_type = $("#id_link_type");
+	var $link_type = $("#id_link_type"), $cmspage_select = $("#id_cms_page");
 
 	django.cascade.LinkPluginBase = ring.create({
 		constructor: function() {
 			var self = this;
 			this.$super();
 
-			// register event handler on changing link type select box
+			// register event handlers on changing link_type and cms_page select boxes
 			$link_type.change(function(evt) {
 				self.toggleLinkTypes(evt.target.value);
+			});
+			$cmspage_select.change(function(evt) {
+				self.toggleCMSPage(evt.target.value);
 			});
 			this.refreshChangeForm();
 		},
@@ -78,6 +81,13 @@ django.jQuery(function($) {
 			} else {
 				this.refreshChangeForm();
 			}
+		},
+		toggleCMSPage: function(page_id) {
+			var url = django.cascade.page_sections_url + page_id;
+			console.log(url);
+			$.get(url, function(response) {
+				console.log(response);
+			});
 		},
 		refreshChangeForm: function() {
 			this.toggleLinkTypes($link_type.val());

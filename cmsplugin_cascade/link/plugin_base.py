@@ -33,7 +33,7 @@ class LinkPluginBase(CascadePluginBase):
     )
     html_tag_attributes = {'title': 'title', 'target': 'target'}
     # map field from glossary to these form fields
-    glossary_field_map = {'link': ('link_type', 'cms_page', 'ext_url', 'mail_to',)}
+    glossary_field_map = {'link': ('link_type', 'cms_page', 'section', 'ext_url', 'mail_to',)}
 
     @classmethod
     def get_link(cls, obj):
