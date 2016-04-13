@@ -34,7 +34,7 @@ class LinkForm(ModelForm):
     populate the glossary of the model.
     """
     LINK_TYPE_CHOICES = (('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To")),)
-    link_type = fields.ChoiceField()
+    link_type = fields.ChoiceField(label=_("Link"), help_text=_("Type of link"))
     cms_page = LinkSearchField(required=False, label='',
         help_text=_("An internal link onto CMS pages of this site"))
     section = fields.ChoiceField(required=False, label='',
