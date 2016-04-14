@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
 from django.forms import fields
 from django.forms.models import ModelForm
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ObjectDoesNotExist
 from cms.models import Page
 
 if 'django_select2' in settings.INSTALLED_APPS:
@@ -56,9 +57,9 @@ class LinkForm(ModelForm):
         if raw_data and raw_data.get('shared_glossary'):
             # convert this into an optional field since it is disabled with ``shared_glossary`` set
             self.base_fields['link_type'].required = False
-        set_initial_linktype = getattr(self, 'set_initial_{0}'.format(link_type), None)
+        set_initial_linktype = getattr(self, 'set_initial_{}'.format(link_type), None)
 
-        # populate choice field for selecting a CMS page
+        # populate Select field for choosing a CMS page
         try:
             site = instance.page.site
         except AttributeError:
@@ -67,13 +68,10 @@ class LinkForm(ModelForm):
                    for p in Page.objects.drafts().on_site(site))
         self.base_fields['cms_page'].choices = choices
 
-        # populate Select field for section choice
-        self.base_fields['section'].choices = (('a', "AA"), ('b', "BB"),)
-
         if callable(set_initial_linktype):
-            set_initial_linktype(initial)
-        kwargs.update(initial=initial)
-        super(LinkForm, self).__init__(raw_data, *args, **kwargs)
+            data = raw_data.dict() if raw_data else {}
+            set_initial_linktype(data, initial)
+        super(LinkForm, self).__init__(raw_data, initial=initial, *args, **kwargs)
 
     def clean_glossary(self):
         """
@@ -117,24 +115,39 @@ class LinkForm(ModelForm):
         if self.cleaned_data.get('link_type') == 'email':
             self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
 
-    def set_initial_none(self, initial):
+    def set_initial_none(self, data, initial):
         pass
 
-    def set_initial_cmspage(self, initial):
+    def set_initial_cmspage(self, data, initial):
+        def set_section_choices():
+            choices = [(None, _("Page root"))]
+            for key, val in cms_page.cascadepage.glossary['element_ids'].items():
+                choices.append((key, val))
+            self.base_fields['section'].choices = choices
+
         try:
             # check if that page still exists, otherwise return nothing
             Model = apps.get_model(*initial['link']['model'].split('.'))
-            initial['cms_page'] = Model.objects.get(pk=initial['link']['pk']).pk
+            cms_page = Model.objects.get(pk=initial['link']['pk'])
+            initial['cms_page'] = cms_page.pk
+            initial['section'] = initial['link'].get('section')
+
+            # populate Select field for choosing the page section
+            if 'cms_page' in data:
+                cms_page = Model.objects.get(pk=data['cms_page'])
+                set_section_choices()
+            else:
+                set_section_choices()
         except (KeyError, ObjectDoesNotExist):
             pass
 
-    def set_initial_exturl(self, initial):
+    def set_initial_exturl(self, data, initial):
         try:
             initial['ext_url'] = initial['link']['url']
         except KeyError:
             pass
 
-    def set_initial_email(self, initial):
+    def set_initial_email(self, data, initial):
         try:
             initial['mail_to'] = initial['link']['email']
         except KeyError:

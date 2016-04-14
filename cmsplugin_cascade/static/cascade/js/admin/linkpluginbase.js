@@ -21,9 +21,9 @@ django.jQuery(function($) {
 		},
 		toggleLinkTypes: function(linkType) {
 			var $field_cmspage = $(".form-row .field-box.field-cms_page, .form-row .field-box.field-section"),
-				$field_exturl = $(".form-row .field-box.field-ext_url"),
-				$field_mailto = $(".form-row .field-box.field-mail_to"),
-				$link_target = $(".glossary-widget .glossary_target");
+			    $field_exturl = $(".form-row .field-box.field-ext_url"),
+			    $field_mailto = $(".form-row .field-box.field-mail_to"),
+			    $link_target = $(".glossary-widget .glossary_target");
 
 			switch(linkType) {
 			case 'cmspage':
@@ -83,10 +83,17 @@ django.jQuery(function($) {
 			}
 		},
 		toggleCMSPage: function(page_id) {
-			var url = django.cascade.page_sections_url + page_id;
-			console.log(url);
+			var url = django.cascade.page_sections_url + page_id, $selSection = $('#id_section');
+
 			$.get(url, function(response) {
-				console.log(response);
+				var k, val;
+
+				$selSection.children('option:gt(0)').remove();
+				for (k = 0; k < response.element_ids.length; k++) {
+					val = response.element_ids[k];
+					$selSection.append($("<option></option>").attr("value", val[0]).text(val[1]));
+				}
+				$selSection.val(null);
 			});
 		},
 		refreshChangeForm: function() {

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -53,7 +54,14 @@ class LinkPluginBase(CascadePluginBase):
                 except Model.DoesNotExist:
                     obj._link_model = None
             if obj._link_model:
-                return obj._link_model.get_absolute_url()
+                href = obj._link_model.get_absolute_url()
+            if link.get('section'):
+                try:
+                    element_ids = obj._link_model.cascadepage.glossary['element_ids']
+                    href = '{}#{}'.format(href, element_ids[link['section']])
+                except (KeyError, ObjectDoesNotExist):
+                    pass
+            return href
 
     def get_ring_bases(self):
         bases = super(LinkPluginBase, self).get_ring_bases()

@@ -137,6 +137,9 @@ class SectionPlugin(TransparentMixin, CascadePluginBase):
             while self.form.check_unique_element_id(obj, element_id) is False:
                 postfix += 1
                 element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
+            if postfix:
+                obj.glossary['element_id'] = element_id
+                obj.save()
 
         obj.page.cascadepage.glossary.setdefault('element_ids', {})
         obj.page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id

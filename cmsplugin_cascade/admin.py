@@ -23,5 +23,10 @@ class CascadePageAdmin(admin.ModelAdmin):
         ) + super(CascadePageAdmin, self).get_urls()
 
     def get_page_sections(self, request, page_pk=None):
-        response = JsonResponse({'foo': 'bar'})
-        return response
+        choices = []
+        try:
+            for key, val in self.model.objects.get(extended_object_id=page_pk).glossary['element_ids'].items():
+                choices.append((key, val))
+        except (self.model.DoesNotExist, KeyError):
+            pass
+        return JsonResponse({'element_ids': choices})
