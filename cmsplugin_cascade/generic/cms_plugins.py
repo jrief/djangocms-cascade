@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.forms import widgets, models
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -9,6 +9,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.mixins import TransparentMixin
+from cmsplugin_cascade.models import CascadePage
 
 
 class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
@@ -130,6 +131,10 @@ class SectionPlugin(TransparentMixin, CascadePluginBase):
 
     def save_model(self, request, obj, form, change):
         super(SectionPlugin, self).save_model(request, obj, form, change)
+        try:
+            obj.page.cascadepage
+        except ObjectDoesNotExist:
+            CascadePage.objects.create(extended_object=obj.page)
         element_id = obj.glossary['element_id']
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness
