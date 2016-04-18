@@ -74,6 +74,9 @@ if 'cmsplugin_cascade.sharable' in settings.INSTALLED_APPS:
 else:
     CMSPLUGIN_CASCADE['plugins_with_sharables'] = {}
 
+CMSPLUGIN_CASCADE.setdefault('plugins_with_section', [
+    'SimpleWrapperPlugin', 'HeadingPlugin'])
+
 CMSPLUGIN_CASCADE['extra_inline_styles'] = OrderedDict((
     ('Margins', (('margin-top', 'margin-right', 'margin-bottom', 'margin-left',), MultipleCascadingSizeWidget)),
     ('Paddings', (('padding-top', 'padding-right', 'padding-bottom', 'padding-left',), MultipleCascadingSizeWidget)),

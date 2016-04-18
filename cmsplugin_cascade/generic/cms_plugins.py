@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.forms import widgets, models
+from django.forms import widgets
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.mixins import TransparentMixin
-from cmsplugin_cascade.models import CascadePage
 
 
 class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
@@ -33,7 +31,7 @@ class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
         identifier = super(SimpleWrapperPlugin, cls).get_identifier(instance)
         tag_name = dict(cls.TAG_CHOICES).get(instance.glossary.get('tag_type'))
         if tag_name:
-            return format_html('{0}{1}', identifier, tag_name)
+            return format_html('{0} {1}', tag_name, identifier)
         return identifier
 
     def get_render_template(self, context, instance, placeholder):
@@ -71,10 +69,11 @@ class HeadingPlugin(CascadePluginBase):
 
     @classmethod
     def get_identifier(cls, instance):
+        identifier = super(HeadingPlugin, cls).get_identifier(instance)
         head_size = instance.glossary.get('head_size')
         content = instance.glossary.get('content')
         if head_size:
-            return format_html('<strong>{0}</strong>: {1}', head_size, content)
+            return format_html('<strong>{0}</strong>: {1} {2}', head_size, content, identifier)
         return content
 
     def render(self, context, instance, placeholder):
@@ -83,71 +82,3 @@ class HeadingPlugin(CascadePluginBase):
         return context
 
 plugin_pool.register_plugin(HeadingPlugin)
-
-
-class SectionForm(models.ModelForm):
-    def clean_glossary(self):
-        glossary = self.cleaned_data['glossary']
-        if self.check_unique_element_id(self.instance, glossary['element_id']) is False:
-            msg = _("The element ID `{element_id}` is not unique for this page.")
-            raise ValidationError(msg.format(**glossary))
-        return glossary
-
-    @classmethod
-    def check_unique_element_id(cls, instance, element_id):
-        """
-        Check for uniqueness of the given element_id for the current page.
-        Return None if instance is not yet associated with a page.
-        """
-        if instance.page:
-            element_ids = instance.page.cascadepage.glossary.get('element_ids', {})
-            element_ids[str(instance.pk)] = element_id
-            return len(element_ids) == len(set(element_ids.values()))
-
-
-class SectionPlugin(TransparentMixin, CascadePluginBase):
-    name = _("Section")
-    parent_classes = None
-    require_parent = False
-    allow_children = True
-    alien_child_classes = True
-    render_template = 'cascade/generic/section.html'
-    form = SectionForm
-    glossary_fields = (
-        PartialFormField('element_id',
-            widgets.TextInput(),
-            label=_("Element ID"),
-            help_text=_("A unique identifier for this element.")
-        ),
-    )
-
-    @classmethod
-    def get_identifier(cls, instance):
-        identifier = super(SectionPlugin, cls).get_identifier(instance)
-        element_id = instance.glossary.get('element_id')
-        if element_id:
-            return format_html('{0} ID: <em>{1}</em>', identifier, element_id)
-        return identifier
-
-    def save_model(self, request, obj, form, change):
-        super(SectionPlugin, self).save_model(request, obj, form, change)
-        try:
-            obj.page.cascadepage
-        except ObjectDoesNotExist:
-            CascadePage.objects.create(extended_object=obj.page)
-        element_id = obj.glossary['element_id']
-        if not change:
-            # when adding a new element, `element_id` can not be validated for uniqueness
-            postfix = 0
-            while self.form.check_unique_element_id(obj, element_id) is False:
-                postfix += 1
-                element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
-            if postfix:
-                obj.glossary['element_id'] = element_id
-                obj.save()
-
-        obj.page.cascadepage.glossary.setdefault('element_ids', {})
-        obj.page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id
-        obj.page.cascadepage.save()
-
-plugin_pool.register_plugin(SectionPlugin)

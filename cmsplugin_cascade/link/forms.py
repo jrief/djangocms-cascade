@@ -49,7 +49,7 @@ class LinkForm(ModelForm):
     def __init__(self, raw_data=None, *args, **kwargs):
         instance = kwargs.get('instance')
         default_link_type = {'type': self.LINK_TYPE_CHOICES[0][0]}
-        initial = instance and dict(instance.glossary) or {'link': default_link_type}
+        initial = dict(instance.glossary) if instance else {'link': default_link_type}
         initial.update(kwargs.pop('initial', {}))
         link_type = initial['link']['type']
         self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
@@ -72,6 +72,7 @@ class LinkForm(ModelForm):
             data = raw_data.dict() if raw_data else {}
             set_initial_linktype(data, initial)
         super(LinkForm, self).__init__(raw_data, initial=initial, *args, **kwargs)
+        pass
 
     def clean_glossary(self):
         """
@@ -114,6 +115,9 @@ class LinkForm(ModelForm):
     def clean_mail_to(self):
         if self.cleaned_data.get('link_type') == 'email':
             self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
+
+    def prepare_form(self, request, plugin, context):
+        print plugin.cms_plugin_instance
 
     def set_initial_none(self, data, initial):
         pass

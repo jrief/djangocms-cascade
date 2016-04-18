@@ -15,6 +15,7 @@ from cms.utils.compat.dj import is_installed
 from . import settings
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
+from .generic.mixins import SectionMixin
 from .sharable.forms import SharableGlossaryMixin
 from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
@@ -46,12 +47,15 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     classes.
     """
     plugins_with_extra_fields = list(settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
+    plugins_with_section = list(settings.CMSPLUGIN_CASCADE['plugins_with_section'])
     plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
 
     def __new__(cls, name, bases, attrs):
         if name in cls.plugins_with_extra_fields:
             ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)
             bases = (ExtraFieldsMixin,) + bases
+        if name in cls.plugins_with_section:
+            bases = (SectionMixin,) + bases
         if name in cls.plugins_with_sharables:
             SharableGlossaryMixin.media = media_property(SharableGlossaryMixin)
             bases = (SharableGlossaryMixin,) + bases
@@ -265,12 +269,15 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         context['base_plugins'] = ['django.cascade.{}'.format(b) for b in bases]
 
         # remove glossary field from rendered form
+        form = context['adminform'].form
         try:
-            fields = list(context['adminform'].form.fields)
+            fields = list(form.fields)
             fields.remove('glossary')
-            context['empty_form'] = len(fields) + len(context['adminform'].form.glossary_fields) == 0
+            context['empty_form'] = len(fields) + len(form.glossary_fields) == 0
         except KeyError:
             pass
+        if hasattr(form, 'prepare_form'):
+            form.prepare_form(request, self, context)
         return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
 
     def get_ring_bases(self):
