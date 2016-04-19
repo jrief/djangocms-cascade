@@ -276,8 +276,6 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
             context['empty_form'] = len(fields) + len(form.glossary_fields) == 0
         except KeyError:
             pass
-        if hasattr(form, 'prepare_form'):
-            form.prepare_form(request, self, context)
         return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
 
     def get_ring_bases(self):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.forms import widgets, models
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -50,10 +50,7 @@ class SectionMixin(object):
 
     def save_model(self, request, obj, form, change):
         super(SectionMixin, self).save_model(request, obj, form, change)
-        try:
-            obj.page.cascadepage
-        except ObjectDoesNotExist:
-            CascadePage.objects.create(extended_object=obj.page)
+        CascadePage.assure_relation(obj.page)
         element_id = obj.glossary['element_id']
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness

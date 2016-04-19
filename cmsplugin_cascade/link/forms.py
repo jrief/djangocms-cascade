@@ -10,6 +10,7 @@ from django.forms.models import ModelForm
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 from cms.models import Page
+from cmsplugin_cascade.models import CascadePage
 
 if 'django_select2' in settings.INSTALLED_APPS:
     SelectWidget = import_string('django_select2.forms.Select2Widget')
@@ -46,7 +47,7 @@ class LinkForm(ModelForm):
     class Meta:
         fields = ('glossary',)
 
-    def __init__(self, raw_data=None, *args, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         instance = kwargs.get('instance')
         default_link_type = {'type': self.LINK_TYPE_CHOICES[0][0]}
         initial = dict(instance.glossary) if instance else {'link': default_link_type}
@@ -54,7 +55,7 @@ class LinkForm(ModelForm):
         link_type = initial['link']['type']
         self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
         self.base_fields['link_type'].initial = link_type
-        if raw_data and raw_data.get('shared_glossary'):
+        if data and data.get('shared_glossary'):
             # convert this into an optional field since it is disabled with ``shared_glossary`` set
             self.base_fields['link_type'].required = False
         set_initial_linktype = getattr(self, 'set_initial_{}'.format(link_type), None)
@@ -69,10 +70,26 @@ class LinkForm(ModelForm):
         self.base_fields['cms_page'].choices = choices
 
         if callable(set_initial_linktype):
-            data = raw_data.dict() if raw_data else {}
-            set_initial_linktype(data, initial)
-        super(LinkForm, self).__init__(raw_data, initial=initial, *args, **kwargs)
-        pass
+            set_initial_linktype(initial)
+        self._preset_section(data, initial)
+        super(LinkForm, self).__init__(data, initial=initial, *args, **kwargs)
+
+    def _preset_section(self, data, initial):
+        choices = [(None, _("Page root"))]
+        try:
+            if data:
+                cms_page = Page.objects.get(pk=data['cms_page'])
+            else:
+                cms_page = Page.objects.get(pk=initial['link']['pk'])
+        except (KeyError, ObjectDoesNotExist):
+            pass
+        else:
+            CascadePage.assure_relation(cms_page)
+            for key, val in cms_page.cascadepage.glossary.get('element_ids', {}).items():
+                choices.append((key, val))
+
+        self.base_fields['section'].initial = initial['link'].get('section')
+        self.base_fields['section'].choices = choices
 
     def clean_glossary(self):
         """
@@ -116,42 +133,24 @@ class LinkForm(ModelForm):
         if self.cleaned_data.get('link_type') == 'email':
             self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
 
-    def prepare_form(self, request, plugin, context):
-        print plugin.cms_plugin_instance
-
-    def set_initial_none(self, data, initial):
+    def set_initial_none(self, initial):
         pass
 
-    def set_initial_cmspage(self, data, initial):
-        def set_section_choices():
-            choices = [(None, _("Page root"))]
-            for key, val in cms_page.cascadepage.glossary['element_ids'].items():
-                choices.append((key, val))
-            self.base_fields['section'].choices = choices
-
+    def set_initial_cmspage(self, initial):
         try:
             # check if that page still exists, otherwise return nothing
             Model = apps.get_model(*initial['link']['model'].split('.'))
-            cms_page = Model.objects.get(pk=initial['link']['pk'])
-            initial['cms_page'] = cms_page.pk
-            initial['section'] = initial['link'].get('section')
-
-            # populate Select field for choosing the page section
-            if 'cms_page' in data:
-                cms_page = Model.objects.get(pk=data['cms_page'])
-                set_section_choices()
-            else:
-                set_section_choices()
+            initial['cms_page'] = Model.objects.get(pk=initial['link']['pk']).pk
         except (KeyError, ObjectDoesNotExist):
             pass
 
-    def set_initial_exturl(self, data, initial):
+    def set_initial_exturl(self, initial):
         try:
             initial['ext_url'] = initial['link']['url']
         except KeyError:
             pass
 
-    def set_initial_email(self, data, initial):
+    def set_initial_email(self, initial):
         try:
             initial['mail_to'] = initial['link']['email']
         except KeyError:
