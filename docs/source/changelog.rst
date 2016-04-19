@@ -6,7 +6,7 @@ Release History
 
 0.8.3.dev
 ---------
-
+* Added ``CustomSnippetPlugin``. It allows to add arbitrary custom templates to the project.
 
 0.8.2
 -----
