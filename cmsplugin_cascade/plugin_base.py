@@ -13,6 +13,7 @@ from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.placeholder import get_placeholder_conf
 from cms.utils.compat.dj import is_installed
 from . import settings
+from .mixins import TransparentMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .sharable.forms import SharableGlossaryMixin
@@ -107,6 +108,11 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         parent_classes = ph_conf.get(self.__class__.__name__, self.parent_classes)
         if parent_classes is None:
             return
+        # allow all parent classes which inherit from TransparentMixin
+        parent_classes = set(parent_classes)
+        for p in plugin_pool.get_all_plugins():
+            if issubclass(p, TransparentMixin):
+                parent_classes.add(p.__name__)
         return tuple(parent_classes)
 
     def get_child_classes(self, slot, page):
