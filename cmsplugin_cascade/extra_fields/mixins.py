@@ -48,7 +48,7 @@ class ExtraFieldsMixin(object):
             if class_names:
                 choices = [(clsname, clsname) for clsname in class_names.split(',')]
                 if extra_fields.css_classes.get('multiple'):
-                    widget = widgets.SelectMultiple(choices=choices)
+                    widget = widgets.CheckboxSelectMultiple(choices=choices)
                 else:
                     widget = widgets.Select(choices=((None, _("Select CSS")),) + tuple(choices))
                 glossary_fields.append(PartialFormField('extra_css_classes',

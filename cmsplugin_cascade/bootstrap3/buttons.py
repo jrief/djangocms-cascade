@@ -64,7 +64,7 @@ class ButtonSizeRenderer(RadioFieldRenderer):
 
 class BootstrapButtonMixin(object):
     require_parent = True
-    parent_classes = ('BootstrapColumnPlugin',)
+    parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
     text_enabled = True

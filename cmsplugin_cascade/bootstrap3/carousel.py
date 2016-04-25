@@ -37,17 +37,12 @@ class CarouselPlugin(BootstrapPluginBase):
     form = CarouselSlidesForm
     default_css_class = 'carousel'
     default_css_attributes = ('options',)
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
     render_template = 'cascade/bootstrap3/{}/carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
     fields = ('num_children', 'glossary',)
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
     OPTION_CHOICES = (('slide', _("Animate")), ('pause', _("Pause")), ('wrap', _("Wrap")),)
-    initial_heights = dict()
-    i = 0
-    for bp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']:
-        initial_heights[bp[0]] = '{}px'.format(100 + (50 * i))
-        i += 1
     glossary_fields = (
         PartialFormField('interval',
             NumberInputWidget(attrs={'size': '2', 'style': 'width: 4em;', 'min': '1'}),
@@ -65,7 +60,8 @@ class CarouselPlugin(BootstrapPluginBase):
             MultipleCascadingSizeWidget(list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']),
             allowed_units=['px']),
             label=_("Carousel heights"),
-            initial=initial_heights,
+            initial=dict((bp[0], '{}px'.format(100 + 50 * i))
+                for i, bp in enumerate(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])),
             help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
         ),
         PartialFormField('resize-options',
@@ -140,14 +136,14 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         if obj:
             caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
             obj.glossary.update(caption=caption)
-            # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
-            text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=obj.pk,
-                                           placeholder=obj.placeholder, plugin_language=obj.language)
-            kwargs['glossary_fields'] = (
-                PartialFormField('caption', text_editor_widget, label=_("Slide Caption"),
-                    help_text=_("Caption text to be laid over the backgroud image."),
-                ),
-            )
+        # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
+        text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=self.parent.pk,
+            placeholder=self.parent.placeholder, plugin_language=self.parent.language)
+        kwargs['glossary_fields'] = (
+            PartialFormField('caption', text_editor_widget, label=_("Slide Caption"),
+                help_text=_("Caption text to be laid over the backgroud image."),
+            ),
+        )
         return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):

@@ -1,6 +1,6 @@
 {% load static thumbnail %}{% spaceless %}
 {% with css_classes=instance.css_classes inline_styles=instance.inline_styles %}
-<div style="{{ inline_styles }}">
+<div{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 	{% for instance in gallery_instances %}
 	<img {% if instance.sizes %}sizes="{{ instance.sizes|join:', ' }}"{% endif %}
 		srcset="{% for key, srcset in instance.srcsets.items %}

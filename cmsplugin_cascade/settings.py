@@ -62,8 +62,8 @@ CMSPLUGIN_CASCADE['dependencies'].update(orig_config.get('dependencies', {}))
 
 if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = [
-        'BootstrapButtonPlugin', 'BootstrapRowPlugin', 'SimpleWrapperPlugin', 'HeadingPlugin',
-        'HorizontalRulePlugin',
+        'BootstrapButtonPlugin', 'BootstrapContainerPlugin', 'BootstrapRowPlugin',
+        'SimpleWrapperPlugin', 'HeadingPlugin', 'HorizontalRulePlugin',
     ]
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'].extend(orig_config.get('plugins_with_extra_fields', []))
 else:
