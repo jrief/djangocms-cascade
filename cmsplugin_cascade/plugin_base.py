@@ -32,9 +32,14 @@ def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
-    attrs.update({'Meta': Meta, '__module__': module})
-    model = type(name, bases, attrs)
-    return model
+    try:
+        attrs.update(Meta=Meta, __module__=module)
+        Model = type(name, bases, attrs)
+    except RuntimeError:
+        Meta.app_label = 'cascade_dummy_dummy'
+        attrs.update(Meta=Meta, __module__=module)
+        Model = type(name, bases, attrs)
+    return Model
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
