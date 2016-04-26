@@ -4,12 +4,20 @@
 Link Plugin
 ===========
 
-**djangocms-cascade** ships with its own Link plugin. This is because other plugins from
-**djangocms-cascade**, such as ButtonPlugin, ImagePlugin or PicturePlugin require the functionality
-to set links to internal- and external URLs. The de-facto plugin for links, djangocms-link_ can't
-be used as a base class for these plugins, therefore an alternative implementation has been
-created. And as all other Cascade plugins, the LinkPlugin also keeps its data in a JSON field.
+**djangocms-cascade** ships with its own link plugin. This is because other plugins from the
+Cascade eco-system, such as the **BootstrapButtonPlugin**, the **BootstrapImagePlugin** or the
+**BootstrapPicturePlugin** also require the functionality to set links to internal- and external
+URLs. Since we do not want to duplicate the linking functionality for each of these plugins, it has
+been moved into its own base class. Therefore we will use the terminology **TextLinkPlugin** when
+referring to text-based links.
 
+The de-facto plugin for links, djangocms-link_ can't be used as a base class for these plugins,
+hence an alternative implementation has been created within the Cascade framework. The link related
+data is stored in a sub-dictionary named ``link`` in our main JSON field.
+
+
+Prerequisites
+=============
 
 Before using this plugin, assure that ``'cmsplugin_cascade.link'`` is member of the list or
 tuple ``CMSPLUGIN_CASCADE_PLUGINS`` in the project's ``settings.py``.
