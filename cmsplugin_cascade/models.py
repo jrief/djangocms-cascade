@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -33,10 +34,15 @@ class CascadeElement(CascadeModelBase):
         db_table = 'cmsplugin_cascade_element'
 
     def copy_relations(self, oldinstance):
-        for inline_element in oldinstance.inline_elements.all():
+        def init_element(inline_element):
             inline_element.pk = None
             inline_element.cascade_element = self
             inline_element.save()
+
+        for inline_element in oldinstance.inline_elements.all():
+            init_element(inline_element)
+        for sortinline_element in oldinstance.sortinline_elements.all():
+            init_element(sortinline_element)
 
 
 class SharableCascadeElement(CascadeModelBase):
@@ -63,14 +69,24 @@ class SharableCascadeElement(CascadeModelBase):
 
 
 class InlineCascadeElement(models.Model):
-    """
-    A model class to store an inline model for a CascadeElement.
-    """
     cascade_element = models.ForeignKey(CascadeElement, related_name='inline_elements')
     glossary = JSONField(blank=True, default={})
 
     class Meta:
         db_table = 'cmsplugin_cascade_inline'
+
+
+class SortableInlineCascadeElement(models.Model):
+    cascade_element = models.ForeignKey(CascadeElement, related_name='sortinline_elements')
+    glossary = JSONField(blank=True, default={})
+    order = models.PositiveIntegerField(verbose_name=_("Sort by"), db_index=True)
+
+    class Meta:
+        db_table = 'cmsplugin_cascade_sortinline'
+        ordering = ('order',)
+
+    def __str__(self):
+        return ""
 
 
 class PluginExtraFields(models.Model):

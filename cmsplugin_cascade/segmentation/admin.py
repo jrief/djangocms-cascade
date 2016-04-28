@@ -19,13 +19,11 @@ class SegmentationAdmin(with_metaclass(SegmentationAdminMetaclass, admin.ModelAd
     class Media:
         js = ('cascade/js/admin/segmentation.js',)
 
-    def has_add_permission(self, request):
-        # always False, since we don't have a model
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        # always False, since we don't have a model
-        return False
+    def get_model_perms(self, request):
+        """
+        Return empty perms dict to hide the model from admin index.
+        """
+        return {}
 
     def get_queryset(self, request):
         """

@@ -4,6 +4,50 @@
 Release History
 ===============
 
+0.8.3.dev
+---------
+* Added ``CustomSnippetPlugin``. It allows to add arbitrary custom templates to the project.
+
+0.8.2
+-----
+* Cascade does not create migrations for proxy models anymore. This created major problems if
+  Cascade components have been switched on and off. All existing migrations of proxy models have
+  been removed from the migration files.
+* Fixed: Response of more than one entry on non unique clipboards.
+* Added :class:`cmsplugin_cascade.models.SortableInlineCascadeElement` which can be used for
+  keeping sorted inline elements.
+* :class:`cmsplugin_cascade.bootstrap3.gallery.BootstrapGalleryPlugin` can sort its images.
+
+0.8.1
+-----
+* Hotfix: removed invalid dependency in migration 0007.
+
+0.8.0
+-----
+* Compatible with Django-1.9
+* Fixed #133: BootstrapPanelPlugin now supports custom CSS classes.
+* Fixed #132: Carousel Slide plugin with different form.
+* Fixed migration problems for proxy models outside Cascade.
+* Replaced SelectMultiple against CheckboxSelectMultiple in admin for extra fields.
+* Removed SegmentationAdmin from admin backend.
+* Disallow whitespace in CSS attributes.
+* Require django-reversion 1.10.1 or newer.
+* Require django-polymorphic 0.9.1 or newer.
+* Require django-filer 1.1.1 or newer.
+* Require django-treebeard 4.0 or newer.
+* Require django-sekizai 0.9.0 or newer.
+
+
+0.7.3
+-----
+* Use the outer width for fluid containers. This allows us to add images and carousels which extend
+  the the browser's edges.
+* Fixed #132: Carousel Slide plugin different form.
+* Fixed #133: BootstrapPanelPlugin does not support custom CSS classes.
+* Fixed #134: More plugins can be children of the ``SimpleWrapperPlugin``. This allows us to be more
+  flexible when building the DOM tree.
+* ``BootstrapContainerPlugin`` now by default accepts extra inline styles and CSS classes.
+
 0.7.2
 -----
 * Add a possibility to prefix Cascade plugins with a symbol of your choice, to avoid confusion

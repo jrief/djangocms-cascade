@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'menus',
     'sekizai',
     'cms',
+    'adminsortable2',
     'djangocms_text_ckeditor',
     'cmsplugin_cascade',
     'cmsplugin_cascade.extra_fields',

@@ -48,7 +48,7 @@ class BootstrapImagePlugin(LinkPluginBase):
     name = _("Image")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)

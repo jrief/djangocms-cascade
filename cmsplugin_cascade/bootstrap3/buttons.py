@@ -64,7 +64,7 @@ class ButtonSizeRenderer(RadioFieldRenderer):
 
 class BootstrapButtonMixin(object):
     require_parent = True
-    parent_classes = ('BootstrapColumnPlugin',)
+    parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
     text_enabled = True
@@ -110,14 +110,13 @@ class BootstrapButtonMixin(object):
 
     def render(self, context, instance, placeholder):
         context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
-        mini_template = '{0}<span class="glyphicon glyphicon-{1}" aria-hidden="true"></span>{2}'
-        nbsp = mark_safe('&nbsp;')
+        mini_template = '{0}<span class="glyphicon glyphicon-{1} {2}" aria-hidden="true"></span>{3}'
         icon_left = instance.glossary.get('icon-left')
         if icon_left:
-            context['icon_left'] = format_html(mini_template, '', icon_left, nbsp)
+            context['icon_left'] = format_html(mini_template, '', icon_left, 'cascade-icon-left', ' ')
         icon_right = instance.glossary.get('icon-right')
         if icon_right:
-            context['icon_right'] = format_html(mini_template, nbsp, icon_right, '')
+            context['icon_right'] = format_html(mini_template, ' ', icon_right, 'cascade-icon-right', '')
         return context
 
 

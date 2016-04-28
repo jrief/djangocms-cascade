@@ -2,19 +2,11 @@
 
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
-## NEWS for version 0.7
+## NEWS for version 0.8
 
-Cleanup release, removing a lot of legacy code. This adds some incompatibilities to previous
-versions:
-
-* Instead of half o dozen of configuration directives, now one Python dict is used. Therefore
-  check your ``settings.py`` for configurations starting with ``CMSPLUGIN_CASCADE_...``.
-* Tested with **Django-1.8**. Support for version 1.7 and lower has been dropped.
-* Tested with **djangoCMS** version 3.2. Support for version 3.0 and lower has been dropped.
-* Tested with **django-select2** version 5.2. Support for version 4 has been dropped.
-* The demo project now uses SASS instead of plain CSS, but SASS is not a requirement during normal
-  development.
-* Added a **HeadingPlugin** to add single text headings independently of the HTML TextEditorPlugin.
+* Compatible with Django-1.9 (requires django-cms 3.2.3)
+* Fixes many minor issues, check the changelog for details.
+* Unfortunately in version 0.8.0 a bogus migration file slipped in. Therefore please upgrade directly to 0.8.1. If you installed 0.8.0 already, rewind your migrations to ``0006_bootstrapgallerypluginmodel``, upgrade to 0.8.1 and migrate again. Sorry for the inconvenience.
 
 ### Detailed documentation
 
@@ -140,4 +132,4 @@ it possible to implement this kind of plugin.
 
 Released under the terms of MIT License.
 
-Copyright &copy; 2015, Jacob Rief <jacob.rief@gmail.com>
+Copyright &copy; 2016, Jacob Rief <jacob.rief@gmail.com>

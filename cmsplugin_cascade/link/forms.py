@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.db.models import get_model
+from django.apps import apps
 from django.forms import fields
 from django.forms.models import ModelForm
 from django.utils.module_loading import import_string
@@ -114,7 +114,7 @@ class LinkForm(ModelForm):
     def set_initial_cmspage(self, initial):
         try:
             # check if that page still exists, otherwise return nothing
-            Model = get_model(*initial['link']['model'].split('.'))
+            Model = apps.get_model(*initial['link']['model'].split('.'))
             initial['cms_page'] = Model.objects.get(pk=initial['link']['pk']).pk
         except (KeyError, ObjectDoesNotExist):
             pass

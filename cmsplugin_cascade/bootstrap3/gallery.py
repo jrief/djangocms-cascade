@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.forms import widgets, ModelChoiceField, CharField
 from django.forms.models import ModelForm
 from django.db.models.fields.related import ManyToOneRel
@@ -10,13 +11,19 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
+from cms.utils.compat.dj import is_installed
 from cmsplugin_cascade.fields import PartialFormField
-from cmsplugin_cascade.models import InlineCascadeElement
+from cmsplugin_cascade.models import SortableInlineCascadeElement
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from . import utils
+
+if is_installed('adminsortable2'):
+    from adminsortable2.admin import SortableInlineAdminMixin
+else:
+    SortableInlineAdminMixin = type(str('SortableInlineAdminMixin'), (object,), {})
 
 
 class GalleryImageForm(ModelForm):
@@ -45,6 +52,9 @@ class GalleryImageForm(ModelForm):
         except KeyError:
             self.base_fields['image_file'].initial = None
         self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
+        if not is_installed('adminsortable2'):
+            self.base_fields['order'].widget = widgets.HiddenInput()
+            self.base_fields['order'].initial = 0
         super(GalleryImageForm, self).__init__(*args, **kwargs)
 
     def clean(self):
@@ -61,11 +71,12 @@ class GalleryImageForm(ModelForm):
         return cleaned_data
 
 
-class GalleryPluginInline(StackedInline):
-    model = InlineCascadeElement
+class GalleryPluginInline(SortableInlineAdminMixin, StackedInline):
+    model = SortableInlineCascadeElement
     raw_id_fields = ('image_file',)
     form = GalleryImageForm
-    extra = 0
+    extra = 1
+    ordering = ('order',)
 
 
 class BootstrapGalleryPlugin(CascadePluginBase):
@@ -136,11 +147,12 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     def render(self, context, instance, placeholder):
         gallery_instances = []
         options = dict(instance.get_complete_glossary())
-        for inline_element in instance.inline_elements.all():
+        for inline_element in instance.sortinline_elements.all():
             # since inline_element requires the property `image`, add ImagePropertyMixin
             # to its class during runtime
             try:
-                ProxyModel = create_proxy_model('GalleryImage', (ImagePropertyMixin,), InlineCascadeElement)
+                ProxyModel = create_proxy_model('GalleryImage', (ImagePropertyMixin,),
+                                                SortableInlineCascadeElement, module=__name__)
                 inline_element.__class__ = ProxyModel
                 options.update(inline_element.glossary, **{
                     'image-width-fixed': options['thumbnail-width'],
@@ -170,7 +182,7 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapGalleryPlugin, cls).get_identifier(obj)
-        num_elems = obj.inline_elements.count()
+        num_elems = obj.sortinline_elements.count()
         content = ungettext_lazy("with {0} image", "with {0} images", num_elems).format(num_elems)
         return format_html('{0}{1}', identifier, content)
 
