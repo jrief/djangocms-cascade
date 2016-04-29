@@ -112,7 +112,8 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         parent_classes = set(parent_classes)
         for p in plugin_pool.get_all_plugins():
             if issubclass(p, TransparentMixin):
-                parent_classes.add(p.__name__)
+                print("Adding {} to {}".format(p.__name__, self.name))
+                #parent_classes.add(p.__name__)
         return tuple(parent_classes)
 
     def get_child_classes(self, slot, page):
