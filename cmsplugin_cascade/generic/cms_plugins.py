@@ -96,6 +96,7 @@ class CustomSnippetPlugin(TransparentMixin, CascadePluginBase):
     allow_children = True
     alien_child_classes = True
     render_template_choices = dict(settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].get('CustomSnippetPlugin', ()))
+    render_template = 'cascade/generic/does_not_exist.html'  # default in case the template could not be found
 
     @classmethod
     def get_identifier(cls, instance):

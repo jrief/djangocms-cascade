@@ -1,8 +1,10 @@
-{% load cms_tags %}
-<div class="panel {{ panel_type }} {{ instance.css_classes }}">
+{% load cms_tags %}{% spaceless %}
+{% with inline_styles=instance.inline_styles %}
+<div class="panel {{ panel_type }} {{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 {% if panel_heading %}<div class="panel-heading">{% if heading_size %}<{{ heading_size }} class="panel-title">{% endif %}{{ panel_heading|safe }}{% if heading_size %}</{{ heading_size }}>{% endif %}</div>{% endif %}
 <div class="panel-body">
 {% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}
 </div>
 {% if panel_footer %}<div class="panel-footer">{{ panel_footer|safe }}</div>{% endif %}
 </div>
+{% endwith %}{% endspaceless %}

@@ -4,8 +4,12 @@
 Release History
 ===============
 
-0.8.3.dev
----------
+0.8.3
+-----
+* Added ``CustomSnippetPlugin``. It allows to add arbitrary custom templates to the project.
+* Fixed #160: Error copying Carousel plugin
+* Plugins marked as "transparent" can be parents of everybody.
+* BootstrapPanelPlugin now accepts inline CSS styles.
 
 
 0.8.2

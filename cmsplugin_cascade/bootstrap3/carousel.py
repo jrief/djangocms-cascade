@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import re
 try:
     from html.parser import HTMLParser  # py3
@@ -112,7 +113,7 @@ class CarouselPlugin(BootstrapPluginBase):
         # fill all invalid heights for this container to a meaningful value
         max_height = max(obj.glossary['container_max_heights'].values())
         pattern = re.compile(r'^(\d+)px$')
-        for bp in complete_glossary['breakpoints']:
+        for bp in complete_glossary.get('breakpoints', ()):
             if not pattern.match(obj.glossary['container_max_heights'].get(bp, '')):
                 obj.glossary['container_max_heights'][bp] = max_height
         return sanitized

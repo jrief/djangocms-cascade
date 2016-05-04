@@ -44,9 +44,10 @@ CustomSnippetPlugin
 ===================
 
 Not every collection of DOM elements can be composed using the Cascade plugin system. Sometimes one
-might want to add a simple HTML snippet. While it is be possible to create a plugin, rendering any
-customized template yourself, an easier approach is to add that template to your ``settings.py``
-via:
+might want to add a simple HTML snippet. Altough it is quite simple to create a customized plugin
+yourself, an easier approach to just render an arbitrary HTML snippet, is to use the
+**CustomSnippetPlugin**. This can be achieved by adding the customized template to the project's
+``settings.py``:
 
 .. code-block:: python
 
@@ -60,8 +61,8 @@ via:
 	    },
 	}
 
-Now, when editing the page, a plugin named **Custom Snippet** appears in the *Generic* section of
-the plugin dropdown menu. This plugin then offers a select element, where the site editor then can
+Now, when editing the page, a plugin named **Custom Snippet** appears in the *Generic* section in
+the plugin's dropdown menu. This plugin then offers a select element, where the site editor then can
 chose between the configured templates.
 
 

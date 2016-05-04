@@ -13,6 +13,7 @@ from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.placeholder import get_placeholder_conf
 from cms.utils.compat.dj import is_installed
 from . import settings
+from .mixins import TransparentMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .generic.mixins import SectionMixin
@@ -33,9 +34,14 @@ def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
-    attrs.update({'Meta': Meta, '__module__': module})
-    model = type(name, bases, attrs)
-    return model
+    try:
+        attrs.update(Meta=Meta, __module__=module)
+        Model = type(name, bases, attrs)
+    except RuntimeError:
+        Meta.app_label = 'cascade_dummy_dummy'
+        attrs.update(Meta=Meta, __module__=module)
+        Model = type(name, bases, attrs)
+    return Model
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
@@ -106,6 +112,11 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         parent_classes = ph_conf.get(self.__class__.__name__, self.parent_classes)
         if parent_classes is None:
             return
+        # allow all parent classes which inherit from TransparentMixin
+        parent_classes = set(parent_classes)
+        for p in plugin_pool.get_all_plugins():
+            if issubclass(p, TransparentMixin):
+                parent_classes.add(p.__name__)
         return tuple(parent_classes)
 
     def get_child_classes(self, slot, page):
