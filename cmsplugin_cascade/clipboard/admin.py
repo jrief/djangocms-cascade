@@ -106,13 +106,9 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             for entry in data:
                 plugin_type = plugin_pool.get_plugin(entry[0])
                 kwargs = dict(entry[1])
-                if parent:
-                    kwargs.update(target=parent)
-                instance = add_plugin(clipboard, plugin_type, language, **kwargs)
+                instance = add_plugin(clipboard, plugin_type, language, target=parent, **kwargs)
                 # for some unknown reasons add_plugin sets instance.numchild 0,
-                # therefore it has to be fixed here
-                instance.numchild = len(entry[2])
-                instance.save()
+                # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
                 plugins_from_data(instance, entry[2])
 
         clipboard = Placeholder.objects.filter(slot='clipboard').last()
