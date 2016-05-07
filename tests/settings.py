@@ -1,4 +1,5 @@
-ROOT_URLCONF = 'testurls'
+ROOT_URLCONF = 'tests.urls'
+
 SECRET_KEY = 'test'
 
 SITE_ID = 1
