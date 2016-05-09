@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import json
+from django import VERSION as DJANGO_VERSION
 from django.http import QueryDict
 from cms.api import add_plugin
 from cms.toolbar.toolbar import CMSToolbar
@@ -14,6 +15,7 @@ from .utils import get_request_context
 
 
 class ClipboardPluginTest(CascadeTestCase):
+    maxDiff = None
     identifier = "Test saved clipboard"
     placeholder_data = {'plugins': [['BootstrapContainerPlugin', {
         'glossary': {'media_queries': {'md': ['(min-width: 992px)'], 'sm': ['(max-width: 992px)']},
@@ -156,9 +158,8 @@ class ClipboardPluginTest(CascadeTestCase):
         self.assertEqual(response.status_code, 302)
         change_clipboard_url = response['location']
         response = self.client.get(change_clipboard_url, data)
-        self.assertEqual(response.status_code, 200)
         needle = '<li class="success">The Persited Clipboard Content &quot;Test saved clipboard&quot; was added successfully. You may edit it again below.</li>'
-        self.assertInHTML(needle, response.content)
+        self.assertContains(response, needle)
         self.assertEqual(CascadeClipboard.objects.all().count(), 1)
 
         # now examine the serialized data in the clipboard
@@ -177,7 +178,11 @@ class ClipboardPluginTest(CascadeTestCase):
         self.assertEqual(request.toolbar.clipboard.cmsplugin_set.count(), 0)
 
         # copy plugins from clipboard to placeholder
-        change_clipboard_url = '/en/admin/cmsplugin_cascade/cascadeclipboard/{}/change/'.format(cascade_clipboard.pk)
+        change_clipboard_url = '/en/admin/cmsplugin_cascade/cascadeclipboard/{}/'
+        if DJANGO_VERSION < (1, 9):
+            change_clipboard_url = change_clipboard_url.format(cascade_clipboard.pk)
+        else:
+            change_clipboard_url = (change_clipboard_url + 'change/').format(cascade_clipboard.pk)
         print(change_clipboard_url)
         data = {'identifier': self.identifier, 'restore_clipboard': 'Restore', 'data': json.dumps(self.placeholder_data)}
         response = self.client.post(change_clipboard_url, data)
@@ -186,7 +191,7 @@ class ClipboardPluginTest(CascadeTestCase):
         response = self.client.get(change_clipboard_url, data)
         self.assertEqual(response.status_code, 200)
         needle = '<li class="success">The Persited Clipboard Content &quot;Test saved clipboard&quot; was changed successfully. You may edit it again below.</li>'
-        self.assertInHTML(needle, response.content)
+        self.assertContains(response, needle)
 
         # check if clipboard has been populated with plugins from serialized data
         self.assertEqual(request.toolbar.clipboard.cmsplugin_set.count(), 5)
