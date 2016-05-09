@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 from django import VERSION as DJANGO_VERSION
 from django.http import QueryDict
+from django.utils import six
 from cms.api import add_plugin
 from cms.toolbar.toolbar import CMSToolbar
 from cms.utils.plugins import build_plugin_tree
@@ -30,8 +31,8 @@ class ClipboardPluginTest(CascadeTestCase):
                                                         'md-column-ordering': '',
                                                         'sm-column-ordering': '',
                                                         'sm-column-offset': 'col-sm-offset-1',
-                                                        'container_max_widths': {'md': 212,
-                                                                                 'sm': 157},
+                                                        'container_max_widths': {'md': 212 if six.PY2 else 212.5,
+                                                                                 'sm': 157 if six.PY2 else 157.5},
                                                         'md-column-width': ''}}, []],
                                          ['BootstrapColumnPlugin', {
                                              'glossary': {'sm-responsive-utils': 'hidden-sm',
@@ -41,12 +42,17 @@ class ClipboardPluginTest(CascadeTestCase):
                                                           'md-column-ordering': '',
                                                           'sm-column-ordering': '',
                                                           'sm-column-offset': '',
-                                                          'container_max_widths': {'md': 293,
-                                                                                   'sm': 220},
+                                                          'container_max_widths': {'md': 293 if six.PY2 else 293.3333333333333,
+                                                                                   'sm': 220 if six.PY2 else 220.0},
                                                           'md-column-width': ''}}, []],
-                                         ['BootstrapColumnPlugin', {'glossary': {
-                                             'container_max_widths': {'md': 293, 'sm': 220},
-                                             'sm-column-width': 'col-sm-4'}}, []]]]]]]}
+                                         ['BootstrapColumnPlugin', {
+                                            'glossary': {
+                                                'container_max_widths': {
+                                                    'md': 293 if six.PY2 else 293.3333333333333,
+                                                    'sm': 220 if six.PY2 else 220.0},
+                                                    'sm-column-width': 'col-sm-4'
+                                                   }},
+                                                   []]]]]]]}
 
     def setUp(self):
         super(ClipboardPluginTest, self).setUp()
@@ -183,7 +189,6 @@ class ClipboardPluginTest(CascadeTestCase):
             change_clipboard_url = change_clipboard_url.format(cascade_clipboard.pk)
         else:
             change_clipboard_url = (change_clipboard_url + 'change/').format(cascade_clipboard.pk)
-        print(change_clipboard_url)
         data = {'identifier': self.identifier, 'restore_clipboard': 'Restore', 'data': json.dumps(self.placeholder_data)}
         response = self.client.post(change_clipboard_url, data)
         self.assertEqual(response.status_code, 302)
