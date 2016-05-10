@@ -193,7 +193,8 @@ CMS_CACHE_DURATIONS = {
     'permissions': 86400,
 }
 
-CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
+CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.segmentation', 'cmsplugin_cascade.generic',
+    'cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
 CMSPLUGIN_CASCADE = {
     'plugins_with_extra_fields': [
