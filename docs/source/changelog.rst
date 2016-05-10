@@ -8,7 +8,9 @@ Release History
 ----------
 
 * Fixed a regression in "Restore from clipboard".
-
+* Fixed TextLinkPlugin to work again as child of TextPlugin.
+* ContainerPlugin can only be added below a placeholder.
+* Prepared demo to work with Django-1.10.
 
 0.8.3
 -----

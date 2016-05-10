@@ -14,7 +14,10 @@ class TextLinkPlugin(LinkPluginBase):
     name = _("Link")
     model_mixins = (LinkElementMixin,)
     render_template = 'cascade/link/text-link.html'
-    fields = ('link_content',) + LinkPluginBase.fields  # @UndefinedVariable
+    fields = ('link_content',) + LinkPluginBase.fields
+
+    class Media:
+        js = resolve_dependencies('cascade/js/admin/linkplugin.js')
 
     @classmethod
     def get_identifier(cls, obj):
