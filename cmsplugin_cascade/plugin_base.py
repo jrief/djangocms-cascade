@@ -111,9 +111,8 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         # allow all parent classes which inherit from TransparentMixin
         parent_classes = set(parent_classes)
         for p in plugin_pool.get_all_plugins():
-            if issubclass(p, TransparentMixin):
-                print("Adding {} to {}".format(p.__name__, self.name))
-                #parent_classes.add(p.__name__)
+            if self.allow_children and issubclass(p, TransparentMixin):
+                parent_classes.add(p.__name__)
         return tuple(parent_classes)
 
     def get_child_classes(self, slot, page):
