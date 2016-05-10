@@ -60,8 +60,11 @@ class HeadingPlugin(CascadePluginBase):
     allow_children = False
     TAG_CHOICES = tuple((k, _("Heading {}").format(k)) for k in range(1, 7))
     glossary_fields = (
-        PartialFormField('head_size', widgets.Select(choices=TAG_CHOICES)),
-        PartialFormField('content', widgets.TextInput(attrs={}), _("Heading content")),
+        PartialFormField('head_size',
+            widgets.Select(choices=TAG_CHOICES)),
+        PartialFormField('content',
+            widgets.TextInput(attrs={'style': 'width: 350px;'}),
+             _("Heading content")),
     )
     render_template = 'cascade/generic/heading.html'
 
