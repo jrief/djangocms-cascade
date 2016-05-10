@@ -136,8 +136,10 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
+LANGUAGE_CODE = 'en'
+
 LANGUAGES = (
-    ('en-us', 'English'),
+    ('en', 'English'),
 )
 
 #############################################################
