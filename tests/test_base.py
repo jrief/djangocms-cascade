@@ -28,4 +28,4 @@ class CascadeTestCase(CMSTestCase):
         self.user.is_superuser = True
         self.user.save()
         logged_in = self.client.login(username=self.user.username, password=self.admin_password)
-        self.assertTrue(logged_in, 'User is not logged in')
+        self.assertTrue(logged_in, "User is not logged in")

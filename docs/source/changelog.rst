@@ -4,8 +4,15 @@
 Release History
 ===============
 
+0.8.4.dev0
+----------
+
+* Fixed a regression in "Restore from clipboard".
+
+
 0.8.3
 -----
+
 * Added ``CustomSnippetPlugin``. It allows to add arbitrary custom templates to the project.
 * Fixed #160: Error copying Carousel plugin
 * Plugins marked as "transparent" can be parents of everybody.
@@ -14,6 +21,7 @@ Release History
 
 0.8.2
 -----
+
 * Cascade does not create migrations for proxy models anymore. This created major problems if
   Cascade components have been switched on and off. All existing migrations of proxy models have
   been removed from the migration files.

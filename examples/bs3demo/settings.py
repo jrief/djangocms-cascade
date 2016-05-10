@@ -1,5 +1,6 @@
 # Django settings for unit test project.
 from __future__ import unicode_literals
+
 import os
 import sys
 from cms import __version__ as CMS_VERSION
@@ -34,7 +35,6 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'djangocms_admin_style',
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.staticfiles',
@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'cmsplugin_cascade.clipboard',
     'cmsplugin_cascade.extra_fields',
     'cmsplugin_cascade.sharable',
+    'cmsplugin_cascade.segmentation',
     'cms',
     'cms_bootstrap3',
     'menus',
@@ -73,7 +74,7 @@ MIDDLEWARE_CLASSES = (
 
 # silence false-positive warning 1_6.W001
 # https://docs.djangoproject.com/en/1.8/ref/checks/#backwards-compatibility
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+#TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -177,7 +178,7 @@ CMSPLUGIN_CASCADE = {
     },
 }
 
-COLUMN_GLOSSARY = {
+CACSCADE_WORKAREA_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg'],
     'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
     'fluid': False,
@@ -190,11 +191,20 @@ COLUMN_GLOSSARY = {
 }
 
 CMS_PLACEHOLDER_CONF = {
+    # this placeholder is used in templates/main.html, it shows how to
+    # scaffold a djangoCMS page starting with an empty placeholder
+    'Main Content Container': {
+        'plugins': ['BootstrapContainerPlugin',],
+        'parent_classes': {'BootstrapContainerPlugin': None},
+        'glossary': CACSCADE_WORKAREA_GLOSSARY,
+    },
+    # this placeholder is used in templates/wrapped.html, it shows how to
+    # add content to an existing Bootstrap column
     'Bootstrap Column': {
         'plugins': ['BootstrapRowPlugin', 'TextPlugin'],
-        'parent_classes': {'BootstrapRowPlugin': []},
+        'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
-        'glossary': COLUMN_GLOSSARY,
+        'glossary': CACSCADE_WORKAREA_GLOSSARY,
     },
 }
 

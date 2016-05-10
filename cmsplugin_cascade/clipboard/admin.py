@@ -10,7 +10,7 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.api import add_plugin
 from cms.models.placeholdermodel import Placeholder
-from cms.models.pluginmodel import CMSPlugin
+from cms.models.placeholderpluginmodel import PlaceholderReference
 from cms.plugin_pool import plugin_pool
 from cms.utils import get_language_from_request
 from jsonfield.fields import JSONField
@@ -92,9 +92,10 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 populate_data(child, entry[2])
 
         data = {'plugins': []}
-        clipboard = Placeholder.objects.filter(slot='clipboard').last()
-        if clipboard:
-            plugin_qs = CMSPlugin.objects.filter(placeholder=clipboard)
+        ref = PlaceholderReference.objects.last()
+        if ref:
+            clipboard = ref.placeholder_ref
+            plugin_qs = clipboard.cmsplugin_set.all()
             populate_data(None, data['plugins'])
         return data
 
@@ -106,15 +107,11 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             for entry in data:
                 plugin_type = plugin_pool.get_plugin(entry[0])
                 kwargs = dict(entry[1])
-                if parent:
-                    kwargs.update(target=parent)
-                instance = add_plugin(clipboard, plugin_type, language, **kwargs)
+                instance = add_plugin(clipboard, plugin_type, language, target=parent, **kwargs)
                 # for some unknown reasons add_plugin sets instance.numchild 0,
-                # therefore it has to be fixed here
-                instance.numchild = len(entry[2])
-                instance.save()
+                # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
                 plugins_from_data(instance, entry[2])
 
         clipboard = Placeholder.objects.filter(slot='clipboard').last()
-        CMSPlugin.objects.filter(placeholder=clipboard).delete()
+        clipboard.cmsplugin_set.all().delete()
         plugins_from_data(None, data['plugins'])

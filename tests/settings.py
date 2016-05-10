@@ -1,4 +1,7 @@
-ROOT_URLCONF = 'testurls'
+from __future__ import unicode_literals
+
+ROOT_URLCONF = 'tests.urls'
+
 SECRET_KEY = 'test'
 
 SITE_ID = 1
@@ -67,20 +70,33 @@ INSTALLED_APPS = [
     'adminsortable2',
     'djangocms_text_ckeditor',
     'cmsplugin_cascade',
+    'cmsplugin_cascade.clipboard',
     'cmsplugin_cascade.extra_fields',
     'cmsplugin_cascade.sharable',
+    'cmsplugin_cascade.segmentation',
 ]
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
 LANGUAGES = (
     ('en', 'English'),
 )
+
 LANGUAGE_CODE = 'en'
+
 CMS_TEMPLATES = (
     ('testing.html', 'Default Page'),
 )
+
 CMSPLUGIN_CASCADE_PLUGINS = (
     'cmsplugin_cascade.link',
     'cmsplugin_cascade.bootstrap3',
 )
+
 CMSPLUGIN_CASCADE = {
     'plugins_with_extra_fields': [
         'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
@@ -132,13 +148,16 @@ CMS_PLACEHOLDER_CONF = {
         },
     },
 }
+
 THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.colorspace',
     'easy_thumbnails.processors.autocrop',
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters',
 )
+
 THUMBNAIL_PRESERVE_EXTENSIONS = True,
+
 THUMBNAIL_OPTIMIZE_COMMAND = {
     'png': '/opt/local/bin/optipng {filename}',
     'gif': '/opt/local/bin/optipng {filename}',
