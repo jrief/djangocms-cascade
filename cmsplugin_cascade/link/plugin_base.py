@@ -55,13 +55,13 @@ class LinkPluginBase(CascadePluginBase):
                     obj._link_model = None
             if obj._link_model:
                 href = obj._link_model.get_absolute_url()
-            if link.get('section'):
-                try:
-                    element_ids = obj._link_model.cascadepage.glossary['element_ids']
-                    href = '{}#{}'.format(href, element_ids[link['section']])
-                except (KeyError, ObjectDoesNotExist):
-                    pass
-            return href
+                if 'section' in link:
+                    try:
+                        element_ids = obj._link_model.cascadepage.glossary['element_ids']
+                        href = '{}#{}'.format(href, element_ids[link['section']])
+                    except (KeyError, ObjectDoesNotExist):
+                        pass
+                return href
 
     def get_ring_bases(self):
         bases = super(LinkPluginBase, self).get_ring_bases()
