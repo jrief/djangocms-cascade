@@ -6,7 +6,7 @@ form .form-row.field-link_type .field-box label.inline,
 	form .form-row .field-box.field-save_as_identifier label.inline { width: 0; }
 form .form-row.field-link_type .field-box input { margin-top: 0; }
 form .form-row.field-link_type .field-box .help { margin-left: 2em; padding-left: 0; }
-form .form-row.field-link_type .field-box.field-link_type .help { margin-left: 60px; }
+form .form-row.field-link_type .field-box.field-link_type .help { margin-left: 160px; }
 form .field-box label.inline { text-align: right; }
 form .field-glossary { padding: 0 10px; }
 form .container-thumbnail { text-align: center; }

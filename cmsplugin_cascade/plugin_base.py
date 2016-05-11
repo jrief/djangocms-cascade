@@ -53,7 +53,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     classes.
     """
     plugins_with_extra_fields = list(settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
-    plugins_with_section = list(settings.CMSPLUGIN_CASCADE['plugins_with_section'])
+    plugins_with_bookmark = list(settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
     plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
 
     def __new__(cls, name, bases, attrs):
@@ -61,7 +61,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         if name in cls.plugins_with_extra_fields:
             ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)
             bases = (ExtraFieldsMixin,) + bases
-        if name in cls.plugins_with_section:
+        if name in cls.plugins_with_bookmark:
             bases = (SectionMixin,) + bases
             model_mixins = (SectionModelMixin,) + model_mixins
         if name in cls.plugins_with_sharables:

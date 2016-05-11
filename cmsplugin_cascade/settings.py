@@ -74,10 +74,10 @@ if 'cmsplugin_cascade.sharable' in settings.INSTALLED_APPS:
 else:
     CMSPLUGIN_CASCADE['plugins_with_sharables'] = {}
 
-CMSPLUGIN_CASCADE.setdefault('plugins_with_section', [
+CMSPLUGIN_CASCADE.setdefault('plugins_with_bookmark', [
     'SimpleWrapperPlugin', 'HeadingPlugin'])
 
-CMSPLUGIN_CASCADE.setdefault('section_id_prefix', '')
+CMSPLUGIN_CASCADE.setdefault('bookmark_prefix', '')
 
 CMSPLUGIN_CASCADE['extra_inline_styles'] = OrderedDict((
     ('Margins', (('margin-top', 'margin-right', 'margin-bottom', 'margin-left',), MultipleCascadingSizeWidget)),

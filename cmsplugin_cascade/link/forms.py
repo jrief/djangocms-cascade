@@ -40,7 +40,7 @@ class LinkForm(ModelForm):
     cms_page = LinkSearchField(required=False, label='',
         help_text=_("An internal link onto CMS pages of this site"))
     section = fields.ChoiceField(required=False, label='',
-        help_text=_("Link deep into a page"))
+        help_text=_("Page bookmark"))
     ext_url = fields.URLField(required=False, label='', help_text=_("Link onto external page"))
     mail_to = fields.EmailField(required=False, label='', help_text=_("Open Email program with this address"))
 

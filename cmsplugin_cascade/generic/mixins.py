@@ -37,7 +37,7 @@ class SectionModelMixin(object):
     def element_id(self):
         id_attr = self.glossary.get('element_id')
         if id_attr:
-            return '{section_id_prefix}{0}'.format(id_attr, **CMSPLUGIN_CASCADE)
+            return '{bookmark_prefix}{0}'.format(id_attr, **CMSPLUGIN_CASCADE)
 
 
 class SectionMixin(object):
