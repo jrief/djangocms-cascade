@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import itertools
 from django.forms import widgets
 from django.core.exceptions import ValidationError
@@ -13,10 +14,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from . import settings
 from .plugin_base import BootstrapPluginBase
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
+from collections import OrderedDict
 
 BS3_BREAKPOINTS = OrderedDict(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
