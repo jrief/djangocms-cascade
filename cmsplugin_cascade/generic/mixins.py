@@ -56,7 +56,7 @@ class SectionMixin(object):
         identifier = super(SectionMixin, cls).get_identifier(instance)
         element_id = instance.glossary.get('element_id')
         if element_id:
-            return format_html('{0} ID: <em>{1}</em>', identifier, element_id)
+            return format_html('<code>id="{0}"</code> {1}', element_id, identifier)
         return identifier
 
     def save_model(self, request, obj, form, change):

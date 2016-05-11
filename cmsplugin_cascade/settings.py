@@ -77,6 +77,8 @@ else:
 CMSPLUGIN_CASCADE.setdefault('plugins_with_section', [
     'SimpleWrapperPlugin', 'HeadingPlugin'])
 
+CMSPLUGIN_CASCADE.setdefault('section_id_prefix', '')
+
 CMSPLUGIN_CASCADE['extra_inline_styles'] = OrderedDict((
     ('Margins', (('margin-top', 'margin-right', 'margin-bottom', 'margin-left',), MultipleCascadingSizeWidget)),
     ('Paddings', (('padding-top', 'padding-right', 'padding-bottom', 'padding-left',), MultipleCascadingSizeWidget)),
