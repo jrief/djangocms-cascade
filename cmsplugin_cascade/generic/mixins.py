@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.forms import widgets, models
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.models import CascadePage
 
@@ -30,6 +31,13 @@ class SectionForm(models.ModelForm):
         else:
             element_ids[str(instance.pk)] = element_id
             return len(element_ids) == len(set(element_ids.values()))
+
+
+class SectionModelMixin(object):
+    def element_id(self):
+        id_attr = self.glossary.get('element_id')
+        if id_attr:
+            return '{section_id_prefix}{0}'.format(id_attr, **CMSPLUGIN_CASCADE)
 
 
 class SectionMixin(object):

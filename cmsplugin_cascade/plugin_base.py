@@ -16,7 +16,7 @@ from . import settings
 from .mixins import TransparentMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
-from .generic.mixins import SectionMixin
+from .generic.mixins import SectionMixin, SectionModelMixin
 from .sharable.forms import SharableGlossaryMixin
 from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
@@ -57,11 +57,13 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
 
     def __new__(cls, name, bases, attrs):
+        model_mixins = attrs.pop('model_mixins', ())
         if name in cls.plugins_with_extra_fields:
             ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)
             bases = (ExtraFieldsMixin,) + bases
         if name in cls.plugins_with_section:
             bases = (SectionMixin,) + bases
+            model_mixins = (SectionModelMixin,) + model_mixins
         if name in cls.plugins_with_sharables:
             SharableGlossaryMixin.media = media_property(SharableGlossaryMixin)
             bases = (SharableGlossaryMixin,) + bases
@@ -73,7 +75,6 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
         if name in settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys():
             RenderTemplateMixin.media = media_property(RenderTemplateMixin)
             bases = (RenderTemplateMixin,) + bases
-        model_mixins = attrs.pop('model_mixins', ())
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
             model_mixins += tuple(import_string(mc[0]) for mc in settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
