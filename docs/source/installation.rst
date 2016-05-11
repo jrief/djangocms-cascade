@@ -69,8 +69,10 @@ Configure the CMS plugin
 	INSTALLED_APPS = (
 	    ...
 	    'cmsplugin_cascade',
+	    'cmsplugin_cascade.clipboard',  # optional
 	    'cmsplugin_cascade.extra_fields',  # optional
 	    'cmsplugin_cascade.sharable',  # optional
+	    'cmsplugin_cascade.segmentation',  # optional
 	    'cms',
 	    ...
 	)
@@ -96,30 +98,72 @@ configure:
 
 	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3.container',)
 
-A useful generic plugin is the Link-plugin. It replaces the djangocms-link_-plugin, normally used
+A very useful plugin is the **LinkPlugin**. It superseds the djangocms-link_-plugin, normally used
 together with the CMS.
 
 .. code-block:: python
 
 	CMSPLUGIN_CASCADE_PLUGINS += ('cmsplugin_cascade.link',)
 
+:ref:`generic-plugins` which are not opinionated towards a specific CSS framework, are kept in a
+separate folder. It is strongly suggested to always activate them:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.generic',)
+
+
+Sometimes it is useful to do a :ref:`segmentation`. Activate this by adding its plugin:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.segmentation',)
+
 
 Restrict plugins to a particular placeholder
 --------------------------------------------
 
-This setting is optional, but strongly recommended. It exclusively restricts the plugin
-``BootstrapContainerPlugin`` to the placeholder ``Page Content`` (see below)
+Unfortunately **djangoCMS** does not allow to declare dynamically which plugins are eligible to be
+added as children of other plugins. This is determined while bootstrapping the Django project and
+thus remain static. We therefore must somehow trick the CMS to behave as we want.
+
+Say, our "Main Content Placeholder" shall accept the **BootstrapContainerPlugin** as its only child,
+we then must use this CMS settings directive:
 
 .. code-block:: python
 
 	CMS_PLACEHOLDER_CONF = {
-	    'Page Content': {
-	        'plugins': ['BootstrapContainerPlugin'],
+	    'Main Content Placeholder': {
+	        'plugins': ['BootstrapContainerPlugin', 'TextLinkPlugin'],
+	        'parent_classes': {'BootstrapContainerPlugin': None, 'TextLinkPlugin': ['TextPlugin']},
+	        'child_classes': {'TextPlugin': ['TextLinkPlugin']},
+	        'glossary': {
+	            'breakpoints': ['xs', 'sm', 'md', 'lg'],
+	            'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
+	            'fluid': False,
+	            'media_queries': {
+	                'xs': ['(max-width: 768px)'],
+	                'sm': ['(min-width: 768px)', '(max-width: 992px)'],
+	                'md': ['(min-width: 992px)', '(max-width: 1200px)'],
+	                'lg': ['(min-width: 1200px)'],
+	            },
+	        },
 	    },
 	}
 
-If this setting is omitted, then one can add any plugin to the named placeholder, which normally is
-undesired, because it can break the page's grid.
+Here we add the **BootstrapContainerPlugin** to ``plugins`` and ``parent_classes``. This is because
+the Container plugin normally is the root plugin in a placeholder. If this plugin would not restrict
+its parent plugin classes, we would be allowed to use it as a child of any plugin. This could
+destroy the page's grid.
+
+.. note:: Until version 0.7.1 the Container plugin did not restrict it's ``parent_classes`` and
+		therefore we did not have to add it to the ``CMS_PLACEHOLDER_CONF`` settings.
+
+Furthermore, in the above example we must add the **TextLinkPlugin** to ``plugins``,
+``parent_classes`` and ``child_classes``. This is because the **TextPlugin** is not part of the
+Cascade ecosystem and hence does not know which plugins are allowed as its children.
+
+The section below ``glossary`` sets the initial parameters of the :ref:`bootstrap3/grid`.
 
 
 Define the leaf plugins
@@ -152,14 +196,17 @@ Template Customization
 Make sure that the style sheets are referenced correctly by the used templates. DjangoCMS requires
 Django-Sekizai_ to organize these includes, so a strong recommendation is to use that Django app.
 
-The templates used for a DjangoCMS project shall include a header, footer and the menu bar, but
-should leave out an empty working area. When using HTML5, wrap this area into an ``<article>`` or
-``<section>`` element. This placeholder shall be named using a meaningless identifier, for instance
-"Page Content" or similar:
+The templates used for a DjangoCMS project shall include a header, footer, the menu bar and
+optionally a breadcrumb, but should leave out an empty working area. When using HTML5, wrap this
+area into an ``<article>`` or ``<section>`` element or just use it unwrapped (suggested). This
+placeholder shall be named using a generic identifier, for instance "Main Content Placeholder"
+or similar:
 
 .. code-block:: html
 
-	<section>{% placeholder "Page Content" %}</section>
+	<!-- wrapping element (optional) -->
+	    {% placeholder "Main Content Placeholder" %}
+	<!-- /wrapping element -->
 
 From now on, the page layout can be adopted inside this placeholder, without having to fiddle with
 template coding anymore.
