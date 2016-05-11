@@ -6,6 +6,7 @@ from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.utils import resolve_dependencies
 from .config import LinkPluginBase, LinkElementMixin, LinkForm
 from .forms import TextLinkFormMixin
 
