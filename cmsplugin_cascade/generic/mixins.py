@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.forms import widgets, models
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -23,8 +23,11 @@ class SectionForm(models.ModelForm):
         Check for uniqueness of the given element_id for the current page.
         Return None if instance is not yet associated with a page.
         """
-        if instance.page:
+        try:
             element_ids = instance.page.cascadepage.glossary.get('element_ids', {})
+        except ObjectDoesNotExist:
+            pass
+        else:
             element_ids[str(instance.pk)] = element_id
             return len(element_ids) == len(set(element_ids.values()))
 
