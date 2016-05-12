@@ -13,6 +13,15 @@ def forwards(apps, schema_editor):
             element.save()
 
 
+def backwards(apps, schema_editor):
+    CascadeElement = apps.get_model('cmsplugin_cascade', 'CascadeElement')
+    for element in CascadeElement.objects.filter(plugin_type='HeadingPlugin'):
+        tag_type = element.glossary.pop('tag_type', None)
+        if tag_type and len(tag_type) == 2:
+            element.glossary['head_size'] = tag_type[1]
+            element.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -20,5 +29,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(forwards),
+        migrations.RunPython(forwards, reverse_code=backwards),
     ]
