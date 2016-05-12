@@ -16,7 +16,7 @@ be added to any HTML element using the attribute ``id``. For example:
 
 	<section id="unique-identifier-for-that-page">
 
-For obvious reasons, this identifier must be unambiguously, otherwise the browser does not know
+For obvious reasons, this identifier must be unambiguous, otherwise the browser does not know
 where to jump to. Therefore **djangocms-cascade** enforces the uniqueness of all bookmarks used on
 each CMS page.
 
@@ -59,14 +59,14 @@ which automatically prefixes the used bookmark.
 Usage
 =====
 
-When editing a plugin, which is eligible for adding a bookmark, an extra input field is shown:
+When editing a plugin that is eligible for adding a bookmark, an extra input field is shown:
 
 |section-bookmark|
 
 .. |section-bookmark| image:: /_static/section-bookmark.png
 
-You may add any identifier into this field, as long as it is unique on that page. Otherwise the form
-will be rejected, while saving.
+You may add any identifier to this field, as long as it is unique on that page. Otherwise the form
+will be rejected when saving.
 
 
 Hyperlinking to a bookmark
