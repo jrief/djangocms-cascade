@@ -4,13 +4,18 @@
 Release History
 ===============
 
-0.8.4.dev0
+0.8.5.dev0
 ----------
+
+0.8.4
+-----
 
 * Fixed a regression in "Restore from clipboard".
 * Fixed TextLinkPlugin to work again as child of TextPlugin.
 * ContainerPlugin can only be added below a placeholder.
 * Prepared demo to work with Django-1.10.
+* Plugins marked as "transparent" are only allowed as parents,
+  if they allow children.
 
 0.8.3
 -----

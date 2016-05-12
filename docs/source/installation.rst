@@ -134,9 +134,9 @@ we then must use this CMS settings directive:
 
 	CMS_PLACEHOLDER_CONF = {
 	    'Main Content Placeholder': {
-	        'plugins': ['BootstrapContainerPlugin', 'TextLinkPlugin'],
-	        'parent_classes': {'BootstrapContainerPlugin': None, 'TextLinkPlugin': ['TextPlugin']},
-	        'child_classes': {'TextPlugin': ['TextLinkPlugin']},
+	        'plugins': ['BootstrapContainerPlugin'],
+	        'text_only_plugins': ['TextLinkPlugin'],
+	        'parent_classes': {'BootstrapContainerPlugin': None},
 	        'glossary': {
 	            'breakpoints': ['xs', 'sm', 'md', 'lg'],
 	            'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
@@ -159,11 +159,11 @@ destroy the page's grid.
 .. note:: Until version 0.7.1 the Container plugin did not restrict it's ``parent_classes`` and
 		therefore we did not have to add it to the ``CMS_PLACEHOLDER_CONF`` settings.
 
-Furthermore, in the above example we must add the **TextLinkPlugin** to ``plugins``,
-``parent_classes`` and ``child_classes``. This is because the **TextPlugin** is not part of the
-Cascade ecosystem and hence does not know which plugins are allowed as its children.
+Furthermore, in the above example we must add the **TextLinkPlugin** to ``text_only_plugins``.
+This is because the **TextPlugin** is not part of the Cascade ecosystem and hence does not know
+which plugins are allowed as its children.
 
-The section below ``glossary`` sets the initial parameters of the :ref:`bootstrap3/grid`.
+The dictionary named ``glossary`` sets the initial parameters of the :ref:`bootstrap3/grid`.
 
 
 Define the leaf plugins
