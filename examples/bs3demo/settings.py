@@ -181,8 +181,8 @@ if sys.argv[1] == 'test':
     )
 else:
     CMS_TEMPLATES = (
-         ('main.html', 'Main Content Container'),
-         ('wrapped.html', 'Wrapped Bootstrap Column'),
+         ('main.html', "Main Content Page"),
+         ('wrapped.html', "Wrapped Bootstrap Column"),
     )
 
 CMS_SEO_FIELDS = True
@@ -225,7 +225,7 @@ CACSCADE_WORKAREA_GLOSSARY = {
 CMS_PLACEHOLDER_CONF = {
     # this placeholder is used in templates/main.html, it shows how to
     # scaffold a djangoCMS page starting with an empty placeholder
-    'Main Content Container': {
+    'Main Content': {
         'plugins': ['BootstrapContainerPlugin'],
         'text_only_plugins': ['TextLinkPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None},

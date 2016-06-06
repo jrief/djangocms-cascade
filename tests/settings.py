@@ -123,7 +123,7 @@ CMSPLUGIN_CASCADE = {
 }
 
 CMS_PLACEHOLDER_CONF = {
-    'Main Content Container': {
+    'Main Content': {
         'plugins': ['BootstrapContainerPlugin'],
     },
     'Bootstrap Column': {
