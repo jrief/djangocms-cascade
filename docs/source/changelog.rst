@@ -4,8 +4,11 @@
 Release History
 ===============
 
-0.8.5.dev0
-----------
+0.8.5
+-----
+
+* Dropped support for Python-2.6.
+
 
 0.8.4
 -----

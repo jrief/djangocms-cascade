@@ -6,7 +6,7 @@ See PEP 386 (https://www.python.org/dev/peps/pep-0386/)
 Release logic:
  1. Remove ".devX" from __version__ (below)
  2. Remove ".devX" latest version in docs/source/changelog.rst
- 3. git add cmsplugin_cascade/__init__.py
+ 3. git add cmsplugin_cascade/__init__.py docs/source/changelog.rst
  4. git commit -m 'Bump to <version>'
  5. git tag <version>
  6. git push
@@ -19,6 +19,6 @@ Release logic:
 12. git commit -m 'Start with <version>'
 13. git push
 """
-__version__ = "0.8.5.dev0"
+__version__ = "0.8.5"
 
 default_app_config = 'cmsplugin_cascade.apps.CascadeConfig'
