@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.forms import widgets, ModelChoiceField
 from django.forms.models import ModelForm
 from django.db.models.fields.related import ManyToOneRel

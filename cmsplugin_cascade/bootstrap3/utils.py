@@ -71,7 +71,7 @@ def get_image_tags(context, instance, options):
         for bp in options['breakpoints']:
             if bp not in options['container_max_widths']:
                 continue
-            width = int(round(image_width[1] * options['container_max_widths'][bp]))
+            width = int(image_width[1] * options['container_max_widths'][bp])
             max_width = max(max_width, width)
             size = _get_image_size(width, image_height, aspect_ratio)
             if bp in options['media_queries']:

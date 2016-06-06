@@ -305,7 +305,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 width_val = obj.glossary.get(width_key, '').lstrip('col-{0}-'.format(bp))
                 if width_val.isdigit():
                     column_units = int(width_val)
-                new_width = parent_glossary['container_max_widths'][bp] * column_units / 12 - settings.CMSPLUGIN_CASCADE['bootstrap3']['gutter']
+                new_width = float(parent_glossary['container_max_widths'][bp]) * column_units / 12 - settings.CMSPLUGIN_CASCADE['bootstrap3']['gutter']
+                new_width = round(new_width, 2)
                 if new_width != obj.glossary['container_max_widths'].get(bp):
                     obj.glossary['container_max_widths'][bp] = new_width
                     sanitized = True
