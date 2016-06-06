@@ -81,7 +81,7 @@ class LinkForm(ModelForm):
                 cms_page = Page.objects.get(pk=data['cms_page'])
             else:
                 cms_page = Page.objects.get(pk=initial['link']['pk'])
-        except (KeyError, ObjectDoesNotExist):
+        except (KeyError, ValueError, ObjectDoesNotExist):
             pass
         else:
             CascadePage.assure_relation(cms_page)
