@@ -127,8 +127,8 @@ Unfortunately **djangoCMS** does not allow to declare dynamically which plugins 
 added as children of other plugins. This is determined while bootstrapping the Django project and
 thus remain static. We therefore must somehow trick the CMS to behave as we want.
 
-Say, our "Main Content Placeholder" shall accept the **BootstrapContainerPlugin** as its only child,
-we then must use this CMS settings directive:
+Say, our Placeholder named "Main Content" shall accept the **BootstrapContainerPlugin** as its only
+child, we then must use this CMS settings directive:
 
 .. code-block:: python
 
@@ -199,13 +199,14 @@ Django-Sekizai_ to organize these includes, so a strong recommendation is to use
 The templates used for a DjangoCMS project shall include a header, footer, the menu bar and
 optionally a breadcrumb, but should leave out an empty working area. When using HTML5, wrap this
 area into an ``<article>`` or ``<section>`` element or just use it unwrapped (suggested). This
-placeholder shall be named using a generic identifier, for instance "Main Content Placeholder"
-or similar:
+placeholder shall be named using a generic identifier, for instance "Main Content" or similar:
 
 .. code-block:: html
 
+	{% load cms_tags %}
+
 	<!-- wrapping element (optional) -->
-	    {% placeholder "Main Content Placeholder" %}
+	    {% placeholder "Main Content" %}
 	<!-- /wrapping element -->
 
 From now on, the page layout can be adopted inside this placeholder, without having to fiddle with
