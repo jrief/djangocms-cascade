@@ -15,7 +15,10 @@ def reduce_breakpoints(plugin, field_name):
     """
     if not isinstance(plugin, CascadePluginBase):
         raise ValueError('Plugin is not of type CascadePluginBase')
-    complete_glossary = plugin.get_parent_instance().get_complete_glossary()
+    parent_instance = plugin.get_parent_instance()
+    if not parent_instance:
+        return
+    complete_glossary = parent_instance.get_complete_glossary()
     if 'breakpoints' not in complete_glossary:
         return
     try:
