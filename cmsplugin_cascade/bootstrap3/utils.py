@@ -15,7 +15,10 @@ def reduce_breakpoints(plugin, field_name):
     """
     if not isinstance(plugin, CascadePluginBase):
         raise ValueError('Plugin is not of type CascadePluginBase')
-    complete_glossary = plugin.get_parent_instance().get_complete_glossary()
+    parent_instance = plugin.get_parent_instance()
+    if not parent_instance:
+        return
+    complete_glossary = parent_instance.get_complete_glossary()
     if 'breakpoints' not in complete_glossary:
         return
     try:
@@ -71,7 +74,7 @@ def get_image_tags(context, instance, options):
         for bp in options['breakpoints']:
             if bp not in options['container_max_widths']:
                 continue
-            width = int(round(image_width[1] * options['container_max_widths'][bp]))
+            width = int(image_width[1] * options['container_max_widths'][bp])
             max_width = max(max_width, width)
             size = _get_image_size(width, image_height, aspect_ratio)
             if bp in options['media_queries']:

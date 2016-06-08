@@ -177,11 +177,11 @@ LOGGING = {
 
 if sys.argv[1] == 'test':
     CMS_TEMPLATES = (
-         ('testing.html', 'Default Page'),
+         ('testing.html', "Default Page"),
     )
 else:
     CMS_TEMPLATES = (
-         ('main.html', "Main Content Page"),
+         ('main.html', "Main Content"),
          ('wrapped.html', "Wrapped Bootstrap Column"),
     )
 

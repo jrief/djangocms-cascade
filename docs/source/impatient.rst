@@ -71,8 +71,7 @@ create a superuser:
 
 Point a browser onto http://localhost:8000/ and log in as the super user. Here you should be able
 to add your first page. Do this by changing into into **Structure** mode on the top of the page.
-Now a heading named ``Main Content`` appears. This heading symbolizes a **djangoCMS**
-Placeholder.
+Now a heading named ``MAIN CONTENT`` appears. This heading symbolizes a **djangoCMS** Placeholder.
 
 Locate the plus sign right to the heading and click on it. From its context menu select
 **Container** located in the section **Bootstrap**:

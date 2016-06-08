@@ -4,8 +4,18 @@
 Release History
 ===============
 
-0.8.5.dev0
+
+0.9.0.dev0
 ----------
+
+* Add support for Section Bookmarks.
+
+
+0.8.5
+-----
+
+* Dropped support for Python-2.6.
+
 
 0.8.4
 -----
@@ -16,6 +26,7 @@ Release History
 * Prepared demo to work with Django-1.10.
 * Plugins marked as "transparent" are only allowed as parents,
   if they allow children.
+
 
 0.8.3
 -----

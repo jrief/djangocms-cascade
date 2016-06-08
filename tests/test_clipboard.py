@@ -31,8 +31,8 @@ class ClipboardPluginTest(CascadeTestCase):
                                                         'md-column-ordering': '',
                                                         'sm-column-ordering': '',
                                                         'sm-column-offset': 'col-sm-offset-1',
-                                                        'container_max_widths': {'md': 212 if six.PY2 else 212.5,
-                                                                                 'sm': 157 if six.PY2 else 157.5},
+                                                        'container_max_widths': {'md': 212.5,
+                                                                                 'sm': 157.5},
                                                         'md-column-width': ''}}, []],
                                          ['BootstrapColumnPlugin', {
                                              'glossary': {'sm-responsive-utils': 'hidden-sm',
@@ -42,14 +42,14 @@ class ClipboardPluginTest(CascadeTestCase):
                                                           'md-column-ordering': '',
                                                           'sm-column-ordering': '',
                                                           'sm-column-offset': '',
-                                                          'container_max_widths': {'md': 293 if six.PY2 else 293.3333333333333,
-                                                                                   'sm': 220 if six.PY2 else 220.0},
+                                                          'container_max_widths': {'md': 293.33,
+                                                                                   'sm': 220.0},
                                                           'md-column-width': ''}}, []],
                                          ['BootstrapColumnPlugin', {
                                             'glossary': {
                                                 'container_max_widths': {
-                                                    'md': 293 if six.PY2 else 293.3333333333333,
-                                                    'sm': 220 if six.PY2 else 220.0},
+                                                    'md': 293.33,
+                                                    'sm': 220.0},
                                                     'sm-column-width': 'col-sm-4'
                                                    }},
                                                    []]]]]]]}

@@ -4,9 +4,9 @@
 
 ## NEWS for version 0.8
 
-* Compatible with Django-1.9 (requires django-cms 3.2.3)
+* Compatible with Django-1.9 (requires django-cms 3.2.x)
 * Fixes many minor issues, check the changelog for details.
-* Unfortunately in version 0.8.0 a bogus migration file slipped in. Therefore please upgrade directly to 0.8.1. If you installed 0.8.0 already, rewind your migrations to ``0006_bootstrapgallerypluginmodel``, upgrade to 0.8.1 and migrate again. Sorry for the inconvenience.
+* Unfortunately djangocms-cascade does not work with django-cms 3.3.x.
 
 ### Detailed documentation
 

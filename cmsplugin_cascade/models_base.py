@@ -125,5 +125,5 @@ class CascadeModelBase(CMSPlugin):
         if not hasattr(cls, '_cached_cascade_elements'):
             cce = set([p.model._meta.concrete_model for p in plugin_pool.get_all_plugins()
                        if issubclass(p.model, cls)])
-            setattr(cls, '_cached_cascade_elements', cce)
+            cls._cached_cascade_elements = cce
         return cls._cached_cascade_elements
