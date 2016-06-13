@@ -6,6 +6,7 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
+from django.core.exceptions import ImproperlyConfigured
 from django.forms import widgets
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -137,9 +138,14 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         if obj:
             caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
             obj.glossary.update(caption=caption)
+
+        parent_obj = self.get_parent_instance(request)
+        if not (parent_obj and issubclass(parent_obj.plugin_class, BootstrapPluginBase)):
+            raise ImproperlyConfigured("A CarouselSlidePlugin requires a valid parent")
+
         # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
-        text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=self.parent.pk,
-            placeholder=self.parent.placeholder, plugin_language=self.parent.language)
+        text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=parent_obj.pk,
+            placeholder=parent_obj.placeholder, plugin_language=parent_obj.language)
         kwargs['glossary_fields'] = (
             PartialFormField('caption', text_editor_widget, label=_("Slide Caption"),
                 help_text=_("Caption text to be laid over the backgroud image."),

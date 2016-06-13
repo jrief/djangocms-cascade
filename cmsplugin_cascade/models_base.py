@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import mark_safe, format_html_join
 from jsonfield.fields import JSONField
@@ -51,27 +50,23 @@ class CascadeModelBase(CMSPlugin):
         return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
 
     def get_parent(self):
-        """
-        Get the parent model. Returns None if current element is the root element.
-        """
-        if self.parent_id:
-            for model in CascadeModelBase._get_cascade_elements():
-                try:
-                    return model.objects.get(id=self.parent_id)
-                except ObjectDoesNotExist:
-                    pass
+        raise NotImplementedError("This method is deprecated. Use `get_parent_instance` instead.")
 
     def get_parent_glossary(self):
         """
-        Return the glossary from the parent of this object.
+        Return the glossary from the parent of this object. If there is no parent, retrieve
+        the glossary from the placeholder settings, if configured.
         """
-        parent = self.get_parent()
-        if parent:
-            return parent.get_complete_glossary()
-        else:
-            # use self.placeholder.glossary as the starting dictionary
-            template = self.placeholder.page and self.placeholder.page.template or None
-            return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
+        for model in CascadeModelBase._get_cascade_elements():
+            try:
+                parent = model.objects.get(id=self.parent_id)
+            except model.DoesNotExist:
+                continue
+            else:
+                return parent.get_complete_glossary()
+        # use self.placeholder.glossary as the starting dictionary
+        template = self.placeholder.page.template if self.placeholder.page else None
+        return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
 
     def get_complete_glossary(self):
         """

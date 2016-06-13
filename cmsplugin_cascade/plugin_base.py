@@ -238,16 +238,20 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
                     new_obj.glossary[key] = old_obj.glossary[key]
         super(CascadePluginBase, self).save_model(request, new_obj, form, change)
 
-    def get_parent_instance(self):
+    def get_parent_instance(self, request=None):
         """
-        Get the parent model instance corresponding to this plugin. Returns None if the current
-        plugin instance is the root model.
+        Get the parent model instance corresponding to this plugin. When adding a new plugin, the
+        parent might not be available. Therefore as fallback, pass in the request object.
         """
+        try:
+            parent_id = self.parent.id
+        except AttributeError:
+            parent_id = request.GET.get('plugin_parent') if request else None
         for model in CascadeModelBase._get_cascade_elements():
             try:
-                return model.objects.get(id=self.parent.id)
-            except (AttributeError, ObjectDoesNotExist):
-                pass
+                return model.objects.get(id=parent_id)
+            except model.DoesNotExist:
+                continue
 
     def get_previous_instance(self, obj):
         """

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import itertools
 from django.forms import widgets
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -197,88 +197,90 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             else:
                 return phrases[2]
 
+        parent_obj = self.get_parent_instance(request)
+        if not (parent_obj and issubclass(parent_obj.plugin_class, BootstrapPluginBase)):
+            raise ImproperlyConfigured("A BootstrapColumnPlugin requires a valid parent")
+
         glossary_fields = []
-        parent_obj, parent_plugin = self.parent.get_plugin_instance()
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
-        if isinstance(parent_plugin, BootstrapPluginBase):
-            breakpoints = parent_obj.get_complete_glossary()['breakpoints']
-            for bp in breakpoints:
-                try:
-                    next_bp = breakpoints[breakpoints.index(bp) + 1]
-                    last = BS3_BREAKPOINT_KEYS.index(next_bp)
-                except IndexError:
-                    next_bp = None
-                    last = None
-                finally:
-                    first = BS3_BREAKPOINT_KEYS.index(bp)
-                    devices = ', '.join([force_text(BS3_BREAKPOINTS[b][2]) for b in BS3_BREAKPOINT_KEYS[first:last]])
-                if breakpoints.index(bp) == 0:
-                    # first breakpoint
-                    choices = tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
-                    label = _("Column width for {}").format(devices)
-                    help_text = chose_help_text(
-                        _("Number of column units for devices narrower than {} pixels."),
-                        _("Number of column units for devices wider than {} pixels."),
-                        _("Number of column units for all devices.")
-                    )
-                    glossary_fields.append(PartialFormField('{}-column-width'.format(bp),
-                        widgets.Select(choices=choices),
-                        initial='col-{}-12'.format(bp), label=label, help_text=help_text))
-                else:
-                    choices = (('', _("Inherit from above")),) + \
-                        tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
-                    label = _("Column width for {}").format(devices)
-                    help_text = chose_help_text(
-                        _("Override column units for devices narrower than {} pixels."),
-                        _("Override column units for devices wider than {} pixels."),
-                        _("Override column units for all devices.")
-                    )
-                    glossary_fields.append(PartialFormField('{}-column-width'.format(bp),
-                        widgets.Select(choices=choices),
-                        initial='', label=label, help_text=help_text))
-
-                # handle offset
-                if breakpoints.index(bp) == 0:
-                    empty_offset_choice = _("No offset")
-                    offset_range = range(1, 13)
-                else:
-                    empty_offset_choice = _("Inherit from above")
-                    offset_range = range(0, 13)
-                choices = (('', empty_offset_choice),) + \
-                    tuple(('col-{}-offset-{}'.format(bp, i), units[i])
-                          for i in offset_range)
-                label = _("Offset for {}").format(devices)
+        breakpoints = parent_obj.get_complete_glossary()['breakpoints']
+        for bp in breakpoints:
+            try:
+                next_bp = breakpoints[breakpoints.index(bp) + 1]
+                last = BS3_BREAKPOINT_KEYS.index(next_bp)
+            except IndexError:
+                next_bp = None
+                last = None
+            finally:
+                first = BS3_BREAKPOINT_KEYS.index(bp)
+                devices = ', '.join([force_text(BS3_BREAKPOINTS[b][2]) for b in BS3_BREAKPOINT_KEYS[first:last]])
+            if breakpoints.index(bp) == 0:
+                # first breakpoint
+                choices = tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
+                label = _("Column width for {}").format(devices)
                 help_text = chose_help_text(
-                    _("Number of offset units for devices narrower than {} pixels."),
-                    _("Number of offset units for devices wider than {} pixels."),
-                    _("Number of offset units for all devices.")
+                    _("Number of column units for devices narrower than {} pixels."),
+                    _("Number of column units for devices wider than {} pixels."),
+                    _("Number of column units for all devices.")
                 )
-                glossary_fields.append(PartialFormField('{}-column-offset'.format(bp),
-                    widgets.Select(choices=choices), label=label, help_text=help_text))
-
-                # handle column ordering using push/pull settings
-                choices = (('', _("No reordering")),) + \
-                    tuple(('col-{}-push-{}'.format(bp, i), _("Push {}").format(units[i])) for i in range(0, 12)) + \
-                    tuple(('col-{}-pull-{}'.format(bp, i), _("Pull {}").format(units[i])) for i in range(0, 12))
-                label = _("Column ordering for {0}").format(devices)
+                glossary_fields.append(PartialFormField('{}-column-width'.format(bp),
+                    widgets.Select(choices=choices),
+                    initial='col-{}-12'.format(bp), label=label, help_text=help_text))
+            else:
+                choices = (('', _("Inherit from above")),) + \
+                    tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
+                label = _("Column width for {}").format(devices)
                 help_text = chose_help_text(
-                    _("Column ordering for devices narrower than {} pixels."),
-                    _("Column ordering for devices wider than {} pixels."),
-                    _("Column ordering for all devices.")
+                    _("Override column units for devices narrower than {} pixels."),
+                    _("Override column units for devices wider than {} pixels."),
+                    _("Override column units for all devices.")
                 )
-                glossary_fields.append(PartialFormField('{}-column-ordering'.format(bp),
-                    widgets.Select(choices=choices), label=label, help_text=help_text))
+                glossary_fields.append(PartialFormField('{}-column-width'.format(bp),
+                    widgets.Select(choices=choices),
+                    initial='', label=label, help_text=help_text))
 
-                # handle responsive utilies
-                choices = (('', _("Default")), ('visible-{}'.format(bp), _("Visible")), ('hidden-{}'.format(bp), _("Hidden")),)
-                label = _("Responsive utilities for {}").format(devices)
-                help_text = chose_help_text(
-                    _("Utility classes for showing and hiding content by devices narrower than {} pixels."),
-                    _("Utility classes for showing and hiding content by devices wider than {} pixels."),
-                    _("Utility classes for showing and hiding content for all devices.")
-                )
-                glossary_fields.append(PartialFormField('{}-responsive-utils'.format(bp),
-                    widgets.RadioSelect(choices=choices), label=label, help_text=help_text, initial=''))
+            # handle offset
+            if breakpoints.index(bp) == 0:
+                empty_offset_choice = _("No offset")
+                offset_range = range(1, 13)
+            else:
+                empty_offset_choice = _("Inherit from above")
+                offset_range = range(0, 13)
+            choices = (('', empty_offset_choice),) + \
+                tuple(('col-{}-offset-{}'.format(bp, i), units[i])
+                      for i in offset_range)
+            label = _("Offset for {}").format(devices)
+            help_text = chose_help_text(
+                _("Number of offset units for devices narrower than {} pixels."),
+                _("Number of offset units for devices wider than {} pixels."),
+                _("Number of offset units for all devices.")
+            )
+            glossary_fields.append(PartialFormField('{}-column-offset'.format(bp),
+                widgets.Select(choices=choices), label=label, help_text=help_text))
+
+            # handle column ordering using push/pull settings
+            choices = (('', _("No reordering")),) + \
+                tuple(('col-{}-push-{}'.format(bp, i), _("Push {}").format(units[i])) for i in range(0, 12)) + \
+                tuple(('col-{}-pull-{}'.format(bp, i), _("Pull {}").format(units[i])) for i in range(0, 12))
+            label = _("Column ordering for {0}").format(devices)
+            help_text = chose_help_text(
+                _("Column ordering for devices narrower than {} pixels."),
+                _("Column ordering for devices wider than {} pixels."),
+                _("Column ordering for all devices.")
+            )
+            glossary_fields.append(PartialFormField('{}-column-ordering'.format(bp),
+                widgets.Select(choices=choices), label=label, help_text=help_text))
+
+            # handle responsive utilies
+            choices = (('', _("Default")), ('visible-{}'.format(bp), _("Visible")), ('hidden-{}'.format(bp), _("Hidden")),)
+            label = _("Responsive utilities for {}").format(devices)
+            help_text = chose_help_text(
+                _("Utility classes for showing and hiding content by devices narrower than {} pixels."),
+                _("Utility classes for showing and hiding content by devices wider than {} pixels."),
+                _("Utility classes for showing and hiding content for all devices.")
+            )
+            glossary_fields.append(PartialFormField('{}-responsive-utils'.format(bp),
+                widgets.RadioSelect(choices=choices), label=label, help_text=help_text, initial=''))
         glossary_fields = [
             glossary_fields[i + len(glossary_fields) // len(breakpoints) * j]
             for i in range(0, len(glossary_fields) // len(breakpoints))
