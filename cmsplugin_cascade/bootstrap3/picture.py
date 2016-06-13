@@ -81,9 +81,11 @@ class BootstrapPicturePlugin(LinkPluginBase):
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element
         elements = utils.get_picture_elements(context, instance)
+        fluid = instance.get_complete_glossary().get('fluid') == 'on'
         context.update({
             'is_responsive': True,
             'instance': instance,
+            'is_fluid': fluid,
             'placeholder': placeholder,
             'elements': elements,
         })

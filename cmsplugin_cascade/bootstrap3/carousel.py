@@ -151,10 +151,12 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         # image shall be rendered in a responsive context using the ``<picture>`` element
         elements = utils.get_picture_elements(context, instance)
         caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
+        fluid = instance.get_complete_glossary().get('fluid') == 'on'
         context.update({
             'is_responsive': True,
             'instance': instance,
             'caption': plugin_tags_to_user_html(caption, context, placeholder),
+            'is_fluid': fluid,
             'placeholder': placeholder,
             'elements': elements,
         })

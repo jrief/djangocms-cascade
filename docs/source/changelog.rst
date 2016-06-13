@@ -9,7 +9,7 @@ Release History
 ----------
 
 * Add support for Section Bookmarks.
-
+* Fixed: Do not set width/height on <img>-element inside a <picture>, if wrapping container is fluid.
 
 0.8.5
 -----
