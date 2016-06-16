@@ -75,7 +75,7 @@ class CarouselPlugin(BootstrapPluginBase):
     )
 
     def get_form(self, request, obj=None, **kwargs):
-        utils.reduce_breakpoints(self, 'container_max_heights')
+        utils.reduce_breakpoints(self, 'container_max_heights', request)
         return super(CarouselPlugin, self).get_form(request, obj, **kwargs)
 
     @classmethod
