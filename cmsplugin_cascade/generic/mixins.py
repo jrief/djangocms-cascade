@@ -26,7 +26,7 @@ class SectionForm(models.ModelForm):
         """
         try:
             element_ids = instance.page.cascadepage.glossary.get('element_ids', {})
-        except ObjectDoesNotExist:
+        except (AttributeError, ObjectDoesNotExist):
             pass
         else:
             element_ids[str(instance.pk)] = element_id
