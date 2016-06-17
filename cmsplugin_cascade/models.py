@@ -33,6 +33,8 @@ class CascadeElement(CascadeModelBase):
     """
     The concrete model class to store arbitrary data for plugins derived from CascadePluginBase.
     """
+    shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL, editable=False)
+
     class Meta:
         db_table = 'cmsplugin_cascade_element'
 
@@ -48,14 +50,12 @@ class CascadeElement(CascadeModelBase):
             init_element(sortinline_element)
 
 
-class SharableCascadeElement(CascadeModelBase):
+class SharableCascadeElement(CascadeElement):
     """
-    A model class with an additional foreign key to a shared glossary.
+    A proxy model which takes care of merging the glossary with its shared instance.
     """
-    shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL)
-
     class Meta:
-        db_table = 'cmsplugin_cascade_sharableelement'
+        proxy = True
 
     def __getattribute__(self, name):
         """

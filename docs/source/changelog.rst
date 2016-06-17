@@ -8,6 +8,9 @@ Release History
 0.9.0.dev0
 ----------
 
+* Converted ``SharableCascadeElement`` into a proxy model, sharing the same data as model
+  ``CascadeElement``. This allows adding plugins to ``CMSPLUGIN_CASCADE['plugins_with_sharables']``
+  without requiring a data-migration.
 * Add support for Section Bookmarks.
 * Fixed: Do not set width/height on <img>-element inside a <picture>, if wrapping container is fluid.
 
