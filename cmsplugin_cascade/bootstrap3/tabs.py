@@ -59,7 +59,7 @@ class BootstrapTabPanePlugin(TransparentMixin, BootstrapPluginBase):
     alien_child_classes = True
     glossary_fields = (
         PartialFormField('tab_title',
-            widgets.TextInput(attrs={'size': 150}),
+            widgets.TextInput(attrs={'size': 80}),
             label=_("Tab Title")
         ),
     )
