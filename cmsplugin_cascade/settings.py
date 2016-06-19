@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
+
+from collections import OrderedDict
 import warnings
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
