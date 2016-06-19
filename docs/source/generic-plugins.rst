@@ -54,10 +54,10 @@ yourself, an easier approach to just render an arbitrary HTML snippet, is to use
 	CMSPLUGIN_CASCADE = {
 	    # other settings
 	    'plugins_with_extra_render_templates': {
-	        'CustomSnippetPlugin': (
+	        'CustomSnippetPlugin': [
 	            ('myproject/snippets/custom-template.html', "Custom Template Identifier"),
 	            # other tuples
-	        ),
+	        ],
 	    },
 	}
 
