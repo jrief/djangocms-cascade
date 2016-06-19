@@ -6,7 +6,6 @@ from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.utils import resolve_dependencies
 from .config import LinkPluginBase, LinkElementMixin, LinkForm
 from .forms import TextLinkFormMixin
 
@@ -16,9 +15,6 @@ class TextLinkPlugin(LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     render_template = 'cascade/link/text-link.html'
     fields = ('link_content',) + LinkPluginBase.fields
-
-    class Media:
-        js = resolve_dependencies('cascade/js/admin/linkplugin.js')
 
     @classmethod
     def get_identifier(cls, obj):
