@@ -29,6 +29,10 @@ if hasattr(settings, 'CMSPLUGIN_CASCADE_WITH_SHARABLES'):
     warnings.warn("CMSPLUGIN_CASCADE_WITH_SHARABLES is deprecated. "
                   "Use CMSPLUGIN_CASCADE['plugins_with_sharables'] instead.")
 
+if hasattr(settings, 'CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES'):
+    warnings.warn("CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES is deprecated. "
+                  "Use CMSPLUGIN_CASCADE['link_plugin_classes'] instead.")
+
 if hasattr(settings, 'CMSPLUGIN_CASCADE_EXTRA_INLINE_STYLES'):
     warnings.warn("CMSPLUGIN_CASCADE_EXTRA_INLINE_STYLES is deprecated. "
                   "Use CMSPLUGIN_CASCADE['extra_inline_styles'] instead.")
@@ -73,6 +77,16 @@ if 'cmsplugin_cascade.sharable' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE.setdefault('plugins_with_sharables', {})
 else:
     CMSPLUGIN_CASCADE['plugins_with_sharables'] = {}
+
+CMSPLUGIN_CASCADE.setdefault('link_plugin_classes', (
+    'cmsplugin_cascade.link.plugin_base.DefaultLinkPluginBase',
+    'cmsplugin_cascade.link.plugin_base.LinkElementMixin',
+    'cmsplugin_cascade.link.forms.LinkForm',
+))
+"""
+3-Tuple containing shared base classes for classes wishing to link onto something:
+1. Base class for a CMSPlugin, 2. A Model Mixin, 3. The base class used to build the form.
+"""
 
 CMSPLUGIN_CASCADE.setdefault('plugins_with_bookmark', [
     'SimpleWrapperPlugin', 'HeadingPlugin'])

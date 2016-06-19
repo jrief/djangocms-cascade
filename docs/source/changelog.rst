@@ -13,6 +13,8 @@ Release History
   without requiring a data-migration.
 * Add support for Section Bookmarks.
 * Fixed: Do not set width/height on <img>-element inside a <picture>, if wrapping container is fluid.
+* Replaced configuration settings ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES`` against
+  ``CMSPLUGIN_CASCADE['link_plugin_classes']`` for better consistency.
 
 0.8.5
 -----
