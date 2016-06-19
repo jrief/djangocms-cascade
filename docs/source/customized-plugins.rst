@@ -22,6 +22,7 @@ the latter, it has been named “glossary”.
     ``myapp.cascadeplugins``, Cascade will use ``myapp`` as the app label.
     We recommend that you always set ``app_label`` explicitly.
 
+
 Simple Example
 ==============
 
