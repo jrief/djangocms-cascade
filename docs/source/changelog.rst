@@ -5,9 +5,10 @@ Release History
 ===============
 
 
-0.9.0.dev0
-----------
+0.9.0
+-----
 
+* Compatible with django-cms version 3.3.0
 * Converted ``SharableCascadeElement`` into a proxy model, sharing the same data as model
   ``CascadeElement``. This allows adding plugins to ``CMSPLUGIN_CASCADE['plugins_with_sharables']``
   without requiring a data-migration.
