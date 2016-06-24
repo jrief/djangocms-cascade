@@ -15,7 +15,7 @@ html5lib==0.9999999
 jsonfield==1.0.3
 pluggy==0.3.1
 py==1.4.30
-pytest==2.8.2
+pytest==2.9.2
 pytest-django==2.9.1
 six==1.10.0
 tox==2.2.1
