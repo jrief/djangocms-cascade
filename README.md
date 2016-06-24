@@ -12,6 +12,7 @@
 * Replaced configuration settings ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES`` against
   ``CMSPLUGIN_CASCADE['link_plugin_classes']`` for better consistency.
 
+If you want to proceed with django-CMS 3.2, then please use djangocms-cascade 0.8.5.
 
 ### Detailed documentation
 
