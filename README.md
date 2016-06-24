@@ -2,11 +2,16 @@
 
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
-## NEWS for version 0.8
+## NEWS for version 0.9
 
-* Compatible with Django-1.9 (requires django-cms 3.2.x)
+* Compatible with django-CMS 3.3.0
+* Important notice: Converted ``SharableCascadeElement`` into a proxy model. A migration
+  merges these two models, so please backup your database before upgrading.
+* Add support for Section Bookmarks. This allows to add links on subsections of a CMS page.
 * Fixes many minor issues, check the changelog for details.
-* Unfortunately djangocms-cascade does not work with django-cms 3.3.x.
+* Replaced configuration settings ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES`` against
+  ``CMSPLUGIN_CASCADE['link_plugin_classes']`` for better consistency.
+
 
 ### Detailed documentation
 
