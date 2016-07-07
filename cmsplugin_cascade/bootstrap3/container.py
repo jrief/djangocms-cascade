@@ -14,10 +14,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import PartialFormField
 from . import settings
 from .plugin_base import BootstrapPluginBase
-from collections import OrderedDict
-
-BS3_BREAKPOINTS = OrderedDict(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
-BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+from .utils import compute_media_queries, get_widget_choices, BS3_BREAKPOINTS, BS3_BREAKPOINT_KEYS
 
 
 class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
@@ -42,27 +39,14 @@ class BootstrapContainerForm(ModelForm):
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     require_parent = False
-    parent_classes = []
+    parent_classes = ['BootstrapJumbotronPlugin']
     form = BootstrapContainerForm
-    breakpoints = list(BS3_BREAKPOINTS)
-    i = 0
-    widget_choices = []
-    for br, br_options in BS3_BREAKPOINTS.items():
-        if i == 0:
-            widget_choices.append((br, '{} (<{}px)'.format(br_options[2], br_options[0])))
-        elif i == len(breakpoints[:-1]):
-            widget_choices.append((br, '{} (≥{}px)'.format(br_options[2], br_options[0])))
-        else:
-            widget_choices.append((br, '{} (≥{}px and <{}px)'.format(br_options[2], br_options[0], BS3_BREAKPOINTS[breakpoints[(i + 1)]][0])))
-        i += 1
-
-    WIDGET_CHOICES = tuple(widget_choices)
-
     glossary_fields = (
         PartialFormField('breakpoints',
-            widgets.CheckboxSelectMultiple(choices=WIDGET_CHOICES, renderer=ContainerBreakpointsRenderer),
+            widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
+                                           renderer=ContainerBreakpointsRenderer),
             label=_('Available Breakpoints'),
-            initial=breakpoints[::-1],
+            initial=list(BS3_BREAKPOINTS)[::-1],
             help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
         PartialFormField('fluid',
@@ -75,7 +59,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     class Media:
         css = {'all': ('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css',)}
-        js = ['cascade/js/admin/containerplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):
@@ -103,33 +86,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = super(BootstrapContainerPlugin, cls).sanitize_model(obj)
-        parent_glossary = obj.get_parent_glossary()
-        # compute the max width and the required media queries for each chosen breakpoint
-        obj.glossary['container_max_widths'] = max_widths = {}
-        obj.glossary['media_queries'] = media_queries = {}
-        breakpoints = obj.glossary.get('breakpoints', [])
-        last_index = len(breakpoints) - 1
-        for index, bp in enumerate(breakpoints):
-            try:
-                max_widths[bp] = parent_glossary['container_max_widths'][bp]
-            except KeyError:
-                if obj.glossary.get('fluid'):
-                    if bp == 'lg':
-                        max_widths[bp] = settings.CMSPLUGIN_CASCADE['bootstrap3']['fluid-lg-width']
-                    else:
-                        max_widths[bp] = BS3_BREAKPOINTS[bp][0]
-                else:
-                    max_widths[bp] = BS3_BREAKPOINTS[bp][3]
-            if last_index > 0:
-                if index == 0:
-                    next_bp = breakpoints[1]
-                    media_queries[bp] = ['(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
-                elif index == last_index:
-                    media_queries[bp] = ['(min-width: {0}px)'.format(BS3_BREAKPOINTS[bp][0])]
-                else:
-                    next_bp = breakpoints[index + 1]
-                    media_queries[bp] = ['(min-width: {0}px)'.format(BS3_BREAKPOINTS[bp][0]),
-                                         '(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
+        compute_media_queries(obj)
         return sanitized
 
     def get_parent_classes(self, slot, page):

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.forms import widgets, ModelChoiceField
 from django.utils.encoding import force_text
 from django.utils.html import format_html
@@ -11,10 +12,8 @@ from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from . import settings, utils
 from .image import ImageFormMixin
-
-BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+from .utils import BS3_BREAKPOINT_KEYS, reduce_breakpoints, get_picture_elements
 
 
 class BootstrapPicturePlugin(LinkPluginBase):
@@ -71,7 +70,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
-        utils.reduce_breakpoints(self, 'responsive-heights')
+        reduce_breakpoints(self, 'responsive-heights')
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
         Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
             {'LINK_TYPE_CHOICES': ImageFormMixin.LINK_TYPE_CHOICES, 'image_file': image_file})
@@ -80,7 +79,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element
-        elements = utils.get_picture_elements(context, instance)
+        elements = get_picture_elements(context, instance)
         fluid = instance.get_complete_glossary().get('fluid') == 'on'
         context.update({
             'is_responsive': True,

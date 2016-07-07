@@ -2,10 +2,33 @@
 from __future__ import unicode_literals
 
 import logging
+from collections import OrderedDict
+from django.conf import settings
 from django.forms import widgets
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 
+__all__ = ['reduce_breakpoints', 'compute_media_queries', 'get_image_tags', 'get_picture_elements',
+           'get_widget_choices']
+
 logger = logging.getLogger('cascade')
+
+BS3_BREAKPOINTS = OrderedDict(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+
+
+def get_widget_choices():
+    breakpoints = list(BS3_BREAKPOINTS)
+    i = 0
+    widget_choices = []
+    for br, br_options in BS3_BREAKPOINTS.items():
+        if i == 0:
+            widget_choices.append((br, '{} (<{}px)'.format(br_options[2], br_options[0])))
+        elif i == len(breakpoints[:-1]):
+            widget_choices.append((br, '{} (≥{}px)'.format(br_options[2], br_options[0])))
+        else:
+            widget_choices.append((br, '{} (≥{}px and <{}px)'.format(br_options[2], br_options[0], BS3_BREAKPOINTS[breakpoints[(i + 1)]][0])))
+        i += 1
+    return widget_choices
 
 
 def reduce_breakpoints(plugin, field_name, request=None):
@@ -30,6 +53,42 @@ def reduce_breakpoints(plugin, field_name, request=None):
         raise ValueError('Widget for glossary_field {0} is not a multiple value field')
     temp = [(l, widget.widgets[k]) for k, l in enumerate(widget.labels) if l in complete_glossary['breakpoints']]
     widget.labels, widget.widgets = (list(t) for t in zip(*temp))
+
+
+def compute_media_queries(element):
+    """
+    For e given Cascade element, compute the current media queries for each breakpoint,
+    even for nested containers, rows and columns.
+    """
+    parent_glossary = element.get_parent_glossary()
+    # compute the max width and the required media queries for each chosen breakpoint
+    element.glossary['container_max_widths'] = max_widths = {}
+    element.glossary['media_queries'] = media_queries = {}
+    breakpoints = element.glossary.get('breakpoints', parent_glossary.get('breakpoints', []))
+    last_index = len(breakpoints) - 1
+    fluid = element.glossary.get('fluid')
+    for index, bp in enumerate(breakpoints):
+        try:
+            key = 'container_fluid_max_widths' if fluid else 'container_max_widths'
+            max_widths[bp] = parent_glossary[key][bp]
+        except KeyError:
+            if fluid:
+                if bp == 'lg':
+                    max_widths[bp] = settings.CMSPLUGIN_CASCADE['bootstrap3']['fluid-lg-width']
+                else:
+                    max_widths[bp] = BS3_BREAKPOINTS[bp][0]
+            else:
+                max_widths[bp] = BS3_BREAKPOINTS[bp][3]
+        if last_index > 0:
+            if index == 0:
+                next_bp = breakpoints[1]
+                media_queries[bp] = ['(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
+            elif index == last_index:
+                media_queries[bp] = ['(min-width: {0}px)'.format(BS3_BREAKPOINTS[bp][0])]
+            else:
+                next_bp = breakpoints[index + 1]
+                media_queries[bp] = ['(min-width: {0}px)'.format(BS3_BREAKPOINTS[bp][0]),
+                                     '(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
 
 
 def compute_aspect_ratio(image):
