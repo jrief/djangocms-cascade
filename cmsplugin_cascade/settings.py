@@ -55,6 +55,7 @@ CMSPLUGIN_CASCADE['dependencies'] = {
     'cascade/js/ring.js': 'cascade/js/underscore.js',
     'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
     'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
+    'cascade/js/admin/jumbotronplugin.js': 'cascade/js/ring.js',
     'cascade/js/admin/linkpluginbase.js': ('cascade/js/admin/sharableglossary.js',),
     'cascade/js/admin/defaultlinkplugin.js': ('cascade/js/admin/linkpluginbase.js',),
     'cascade/js/admin/imageplugin.js': ('cascade/js/admin/linkpluginbase.js',),
@@ -65,7 +66,7 @@ CMSPLUGIN_CASCADE['dependencies'].update(orig_config.get('dependencies', {}))
 if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = [
         'BootstrapButtonPlugin', 'BootstrapContainerPlugin', 'BootstrapRowPlugin',
-        'SimpleWrapperPlugin', 'HeadingPlugin', 'HorizontalRulePlugin',
+        'BootstrapJumbotronPlugin', 'SimpleWrapperPlugin', 'HeadingPlugin', 'HorizontalRulePlugin',
     ]
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'].extend(orig_config.get('plugins_with_extra_fields', []))
 else:
