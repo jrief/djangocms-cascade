@@ -15,9 +15,45 @@ from .utils import get_widget_choices, compute_media_queries, get_picture_elemen
 from .container import ContainerBreakpointsRenderer
 
 
+class ImageBackgroundMixin(object):
+    @property
+    def background_attachment(self):
+        try:
+            return 'background-attachment: {background-attachment};'.format(**self.glossary)
+        except KeyError:
+            pass
+
+    @property
+    def background_position(self):
+        try:
+            return 'background-position: {background-vertical-position} {background-horizontal-position};'.format(**self.glossary)
+        except KeyError:
+            pass
+
+    @property
+    def background_repeat(self):
+        try:
+            return 'background-repeat: {background-repeat};'.format(**self.glossary)
+        except KeyError:
+            pass
+
+    @property
+    def background_size(self):
+        try:
+            size = self.glossary['background-size']
+            if size == 'width/height':
+                size = self.glossary['background-width-height']
+                if size['width'] and size['height']:
+                    return 'background-size: {width} {height};'.format(**size)
+            else:
+                return 'background-size: {};'.format(size)
+        except KeyError:
+            pass
+
+
 class BootstrapJumbotronPlugin(BootstrapPluginBase):
     name = _("Jumbotron")
-    model_mixins = (ImagePropertyMixin,)
+    model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
     form = ImageForm
     default_css_class = 'jumbotron'
     parent_classes = None
@@ -28,7 +64,11 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     fields = ('glossary', 'image_file',)
     render_template = 'cascade/bootstrap3/jumbotron.html'
     change_form_template = 'cascade/admin/text_plugin_change_form.html'
-    POSITION_CHOICES = ('a', 'b', 'c')
+    ATTACHMENT_CHOICES = ('scroll', 'fixed', 'local')
+    VERTICAL_POSITION_CHOICES = ('top', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'bottom')
+    HORIZONTAL_POSITION_CHOICES = ('left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right')
+    REPEAT_CHOICES = ('repeat', 'repeat-x', 'repeat-y', 'no-repeat')
+    SIZE_CHOICES = ('auto', 'width/height', 'cover', 'contain')
     glossary_fields = (
         PartialFormField(
             'background-color',
@@ -36,9 +76,41 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             label=_("Background color"),
         ),
         PartialFormField(
-            'background-position',
-            widgets.Select(choices=[(c, c) for c in POSITION_CHOICES]),
-            label=_("Background position"),
+            'background-attachment',
+            widgets.Select(choices=[(c, c) for c in ATTACHMENT_CHOICES]),
+            initial='local',
+            label=_("This property specifies how to move the background relative to the viewport."),
+        ),
+        PartialFormField(
+            'background-vertical-position',
+            widgets.Select(choices=[(c, c) for c in VERTICAL_POSITION_CHOICES]),
+            initial='center',
+            label=_("This property moves a background image vertically within its container."),
+        ),
+        PartialFormField(
+            'background-horizontal-position',
+            widgets.Select(choices=[(c, c) for c in HORIZONTAL_POSITION_CHOICES]),
+            initial='center',
+            label=_("This property moves a background image horizontally within its container."),
+        ),
+        PartialFormField(
+            'background-repeat',
+            widgets.Select(choices=[(c, c) for c in REPEAT_CHOICES]),
+            initial='local',
+            label=_("This property specifies how an image repeates."),
+        ),
+        PartialFormField(
+            'background-size',
+            widgets.RadioSelect(choices=[(c, c) for c in SIZE_CHOICES]),
+            initial='auto',
+            label=_("Background size"),
+            help_text=_("This property specifies how an image is sized."),
+        ),
+        PartialFormField(
+            'background-width-height',
+            MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%'], required=False),
+            label=_("Background width and height"),
+            help_text=_("This property specifies the width and height of a background image."),
         ),
     )
     optional_glossary_fields = (
