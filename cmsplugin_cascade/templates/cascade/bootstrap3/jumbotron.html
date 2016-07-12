@@ -2,9 +2,10 @@
 {% addtoblock "css" %}{% spaceless %}
 <style>
 #cascadeelement_id-{{ instance.pk }} {
-	background-position: center center;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
+	{{ instance.background_attachment }}
+	{{ instance.background_position }}
+	{{ instance.background_repeat }}
+	{{ instance.background_size }}
 }
 {% for elem in elements %}
 {% thumbnail instance.image elem.size crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
