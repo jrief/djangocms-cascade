@@ -12,6 +12,29 @@ As body, the panel element accepts other plugins, normally this is a Text plugin
 .. _Panels: http://getbootstrap.com/components/#panels
 
 
+=========
+Jumbotron
+=========
+
+Bootstrap is shipped with CSS helpers to facilitate the creation of a Jumbotron_, also known as
+"Hero" element. In **djangocms-cascade**, such a Jumbotron plugin can be added anywhere, even
+as the root element of a placeholder, in other words, even outside of a container plugin. The
+latter configuration is specially useful for images, which shall extend over the full width of
+a web page.
+
+If used outside a Bootstrap Container, we first must configure the allowed breakpoints. This is
+the same behaviour as for the Container plugin. Then we optionally can chose an image or a
+background color, it's size, attachment, position and repetitions. For more details read
+`this article`_ on how to configure background images using pure CSS.
+
+To increase the size of a Jumbotron, configure a top- and bottom paddings and set it's values
+accordingly. The default, given by the Bootstrap 3 framework is two times 48 pixels for each
+padding.
+
+.. _Jumbotron: http://getbootstrap.com/components/#jumbotron
+.. _this article: https://css-tricks.com/almanac/properties/b/background-image/
+
+
 ========
 Tab Sets
 ========
