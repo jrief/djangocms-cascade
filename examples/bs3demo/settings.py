@@ -203,7 +203,8 @@ CMSPLUGIN_CASCADE = {
         'SimpleWrapperPlugin',
     ],
     'plugins_with_sharables': {
-        'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
+        'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed',
+                                 'image-height', 'resize-options',),
         'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',),
         'BootstrapButtonPlugin': ('link',),
         'TextLinkPlugin': ('link', 'target',),
