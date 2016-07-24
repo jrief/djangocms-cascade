@@ -17,6 +17,15 @@ from .container import ContainerBreakpointsRenderer
 
 class ImageBackgroundMixin(object):
     @property
+    def background_color(self):
+        try:
+            disabled, color = self.glossary['background-color']
+            if not disabled:
+                return 'background-color: {};'.format(color)
+        except (KeyError, TypeError, ValueError):
+            pass
+
+    @property
     def background_attachment(self):
         try:
             return 'background-attachment: {background-attachment};'.format(**self.glossary)
@@ -69,11 +78,35 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     HORIZONTAL_POSITION_CHOICES = ('left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right')
     REPEAT_CHOICES = ('repeat', 'repeat-x', 'repeat-y', 'no-repeat')
     SIZE_CHOICES = ('auto', 'width/height', 'cover', 'contain')
+    container_glossary_fields = (
+        PartialFormField(
+           'breakpoints',
+            widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
+                                           renderer=ContainerBreakpointsRenderer),
+            label=_("Available Breakpoints"),
+            initial=list(BS3_BREAKPOINT_KEYS)[::-1],
+            help_text=_("Supported display widths for Bootstrap's grid system.")
+        ),
+        PartialFormField(
+            'responsive-heights',
+            MultipleCascadingSizeWidget(BS3_BREAKPOINT_KEYS,
+                                        allowed_units=['px', '%'], required=False),
+            label=_("Adapt Picture Heights"),
+            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
+            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
+        ),
+    )
     glossary_fields = (
         PartialFormField(
             'background-color',
             ColorPickerWidget(),
             label=_("Background color"),
+        ),
+        PartialFormField(
+            'background-repeat',
+            widgets.RadioSelect(choices=[(c, c) for c in REPEAT_CHOICES]),
+            initial='local',
+            label=_("This property specifies how an image repeates."),
         ),
         PartialFormField(
             'background-attachment',
@@ -94,12 +127,6 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             label=_("This property moves a background image horizontally within its container."),
         ),
         PartialFormField(
-            'background-repeat',
-            widgets.Select(choices=[(c, c) for c in REPEAT_CHOICES]),
-            initial='local',
-            label=_("This property specifies how an image repeates."),
-        ),
-        PartialFormField(
             'background-size',
             widgets.RadioSelect(choices=[(c, c) for c in SIZE_CHOICES]),
             initial='auto',
@@ -108,27 +135,10 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         ),
         PartialFormField(
             'background-width-height',
-            MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%'], required=False),
+            MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%'],
+                                        allowed_consts=['auto'], required=False),
             label=_("Background width and height"),
             help_text=_("This property specifies the width and height of a background image."),
-        ),
-    )
-    optional_glossary_fields = (
-        PartialFormField(
-           'breakpoints',
-            widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
-                                           renderer=ContainerBreakpointsRenderer),
-            label=_("Available Breakpoints"),
-            initial=list(BS3_BREAKPOINT_KEYS)[::-1],
-            help_text=_("Supported display widths for Bootstrap's grid system.")
-        ),
-        PartialFormField(
-            'responsive-heights',
-            MultipleCascadingSizeWidget(BS3_BREAKPOINT_KEYS,
-                                        allowed_units=['px', '%'], required=False),
-            label=_("Adapt Picture Heights"),
-            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
-            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
         ),
     )
 
@@ -139,18 +149,18 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request) is None:
             # we only ask for breakpoints, if the jumbotron is the root of the placeholder
-            kwargs.update(glossary_fields=self.optional_glossary_fields)
+            kwargs.update(glossary_fields=list(self.container_glossary_fields))
+            kwargs['glossary_fields'].extend(self.glossary_fields)
         form = super(BootstrapJumbotronPlugin, self).get_form(request, obj, **kwargs)
         return form
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
-        print(instance.glossary)
-        elements = [e for e in get_picture_elements(context, instance) if 'media' in e]
+        elements = get_picture_elements(context, instance)
         context.update({
             'instance': instance,
             'placeholder': placeholder,
-            'elements': elements,
+            'elements': [e for e in elements if 'media' in e] if elements else [],
         })
         return super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
 
