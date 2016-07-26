@@ -5,8 +5,8 @@ Section Bookmarks
 =================
 
 If you have a long page, and you want to allow the visitors of your site to quickly navigate to
-different sections, then you can use bookmarks and create links to the different sections of an HTML
-page.
+different sections, then you can use bookmarks and create links to the different sections of any
+HTML page.
 
 When a user clicks on a bookmark link, then that page will load as usual but will scroll immediately,
 so that the bookmark is at the very top of the page. Bookmarks are also known as anchors. They can
