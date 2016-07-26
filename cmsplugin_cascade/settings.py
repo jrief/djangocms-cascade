@@ -97,6 +97,7 @@ CMSPLUGIN_CASCADE['extra_inline_styles'] = OrderedDict((
     ('Paddings', (('padding-top', 'padding-right', 'padding-bottom', 'padding-left',), MultipleCascadingSizeWidget)),
     ('Widths', (('min-width', 'width', 'max-width',), MultipleCascadingSizeWidget)),
     ('Heights', (('min-height', 'height', 'max-height',), MultipleCascadingSizeWidget)),
+    ('Font Size', (('font-size',), MultipleCascadingSizeWidget)),
     ('Colors', (('color', 'background-color',), ColorPickerWidget)),
     ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
 ))
