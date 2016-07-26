@@ -63,7 +63,7 @@ class HeadingPlugin(CascadePluginBase):
         PartialFormField('tag_type',
             widgets.Select(choices=TAG_TYPES)),
         PartialFormField('content',
-            widgets.TextInput(attrs={'style': 'width: 350px;'}),
+            widgets.TextInput(attrs={'style': 'width: 350px; font-weight: bold; font-size: 125%;'}),
              _("Heading content")),
     )
     render_template = 'cascade/generic/heading.html'
