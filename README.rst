@@ -2,7 +2,32 @@
 djangocms-cascade |latest-version|
 ==================================
 
+|build-status| |health| |python-support| |downloads| |license| |gitter|
+
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
+
+
+.. |latest-version| image:: https://img.shields.io/pypi/v/djangocms-cascade.svg
+   :alt: Latest version on PyPI
+   :target: https://pypi.python.org/pypi/djangocms-cascade
+.. |build-status| image:: https://travis-ci.org/jrief/djangocms-cascade.png?branch=master
+   :alt: Build status
+   :target: https://travis-ci.org/jrief/djangocms-cascade
+.. |health| image:: https://landscape.io/github/jrief/djangocms-cascade/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/jrief/djangocms-cascade/master
+   :alt: Code health
+.. |python-support| image:: https://img.shields.io/pypi/pyversions/djangocms-cascade.svg
+   :target: https://pypi.python.org/pypi/djangocms-cascade
+   :alt: Python versions
+.. |downloads| image:: https://img.shields.io/pypi/dm/djangocms-cascade.svg
+   :alt: Monthly downloads from PyPI
+   :target: https://pypi.python.org/pypi/djangocms-cascade
+.. |license| image:: https://img.shields.io/pypi/l/djangocms-cascade.svg
+   :alt: Software license
+   :target: https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT
+.. |gitter| image:: https://badges.gitter.im/jrief/djangocms-cascade.svg
+   :alt: Gitter chat room
+   :target: https://gitter.im/jrief/djangocms-cascade
 
 NEWS for version 0.9
 ====================
