@@ -1,45 +1,21 @@
-==================================
-djangocms-cascade |latest-version|
-==================================
+djangocms-cascade [![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
+==================================================================================================================================================
 
-|build-status| |health| |python-support| |downloads| |license| |gitter|
+[![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
+[![Code health](https://landscape.io/github/jrief/djangocms-cascade/master/landscape.svg?style=flat)](https://landscape.io/github/jrief/djangocms-cascade/master)
+[![Python versions](https://img.shields.io/pypi/pyversions/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
+[![Monthly downloads from PyPI](https://img.shields.io/pypi/dm/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
+[![Software license](https://img.shields.io/pypi/l/djangocms-cascade.svg)](https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT)
+[![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/jrief/djangocms-cascade)
 
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
-
-.. |latest-version| image:: https://img.shields.io/pypi/v/djangocms-cascade.svg
-   :alt: Latest version on PyPI
-   :target: https://pypi.python.org/pypi/djangocms-cascade
-.. |build-status| image:: https://travis-ci.org/jrief/djangocms-cascade.png?branch=master
-   :alt: Build status
-   :target: https://travis-ci.org/jrief/djangocms-cascade
-.. |health| image:: https://landscape.io/github/jrief/djangocms-cascade/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/jrief/djangocms-cascade/master
-   :alt: Code health
-.. |python-support| image:: https://img.shields.io/pypi/pyversions/djangocms-cascade.svg
-   :target: https://pypi.python.org/pypi/djangocms-cascade
-   :alt: Python versions
-.. |downloads| image:: https://img.shields.io/pypi/dm/djangocms-cascade.svg
-   :alt: Monthly downloads from PyPI
-   :target: https://pypi.python.org/pypi/djangocms-cascade
-.. |license| image:: https://img.shields.io/pypi/l/djangocms-cascade.svg
-   :alt: Software license
-   :target: https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT
-.. |gitter| image:: https://badges.gitter.im/jrief/djangocms-cascade.svg
-   :alt: Gitter chat room
-   :target: https://gitter.im/jrief/djangocms-cascade
-
-
 Documentation
-=============
+-------------
 
-Find detailed documentation on `ReadTheDocs`_.
+Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.io/en/latest/).
 
-
-.. _ReadTheDocs: http://djangocms-cascade.readthedocs.io/en/latest/
-
-NEWS for version 0.9
---------------------
+### NEWS for version 0.9
 
 * Compatible with django-CMS 3.3.0
 * Important notice: Converted ``SharableCascadeElement`` into a proxy model. A migration
@@ -53,14 +29,13 @@ If you want to proceed with django-CMS 3.2, then please use djangocms-cascade 0.
 
 
 Why Use DjangoCMS-Cascade?
-==========================
+--------------------------
 
-.. pull-quote::
-
-   Add DOM elements to a Django-CMS placeholder
+> Add DOM elements to a Django-CMS placeholder
 
 **DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.1 to add various HTML elements
-to any CMS `placeholder`_ in a hierarchical tree.
+to any CMS [placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates)
+in a hierarchical tree.
 
 It allows web editors to layout their pages, without having to edit Django templates. In most cases,
 one template with one single placeholder is enough. The editor then can subdivide that placeholder
@@ -76,10 +51,7 @@ of the ``ImagePlugin`` and the ``ButtonPlugin``. This helps to share the common 
 required for linking.
 
 
-.. _placeholder: http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates
-
-It's pluggable
---------------
+### It's pluggable
 
 **DjangoCMS-Cascade** is very modular, keeping its CMS modules in functional groups. These groups
 have to be activated independently in your ``settings.py``. It also is possible to activate only
@@ -88,31 +60,27 @@ replaced by a future **Bootstrap-4**, the **Foundation**, **YUI** or whatever ot
 you prefer.
 
 
-Configurable individually
--------------------------
+### Configurable individually
 
 Each Cascade Plugin can be styled individually. The site-administrator can specify which CSS styles
 and CSS classes can be added to each plugin. Then the page-editor can pick one of the allowed styles
 to adopt his elements accordingly.
 
 
-Reuse your data
----------------
+### Reuse your data
 
 Each Cascade Plugin can be configured by the site-administrator to share some or all of its data
 fields. This for instance is handy, to keep references onto external URLs in a central place. Or is
 can be used to resize all images sharing a cetrain property in one go.
 
 
-Segment the DOM
----------------
+### Segment the DOM
 
 It is even possible to group plugins into seperate evaluation contexts. This for instance is used to
 render different Plugins, depending on whether a user is authenticated or anonymous.
 
 
-Responsive Images
------------------
+### Responsive Images
 
 In modern web development, images must adopt to the column width in which they are rendered.
 Therefore the ``<img ...>`` tag, in addition to the well known ``src`` attribute, also accepts
@@ -121,7 +89,7 @@ widths for each image, depending on the current column layout considering all me
 
 
 Help needed
-===========
+-----------
 
 If you like this project, please invest some time and test it with Django-1.8/1.9 and Python-3.4.
 
@@ -130,14 +98,15 @@ grammar since English not my mother tongue.
 
 
 Features
-========
+--------
 
 * Use the scaffolding technique from the preferred CSS framework to subdivide a placeholder into a
-  `grid system`_.
-* Make full usage of responsive techniques, by allowing `stacked to horizontal`_ classes per
-  element.
-* Use styled `buttons`_ to add links.
-* Wrap special content into a `Jumbotron`_ or a `Carousel`_
+  [grid system](http://getbootstrap.com/css/#grid).
+* Make full usage of responsive techniques, by allowing
+  [stacked to horizontal](http://getbootstrap.com/css/#grid-example-basic) classes per element.
+* Use styled [buttons](http://getbootstrap.com/css/#buttons) to add links.
+* Wrap special content into a [Jumbotron](http://getbootstrap.com/components/#jumbotron) or a
+  [Carousel](http://getbootstrap.com/javascript/#carousel).
 * Add ``<img>`` and ``<picture>`` elements in a responsive way, so that more than one image URL
   point onto the resized sources, one for each viewport using the ``srcset`` tags or the
   ``<source>`` elements.
@@ -162,23 +131,14 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
 * It is easily possible to customize the templates shipped with the plugins.
 
 
-.. _grid system: http://getbootstrap.com/css/#grid
-.. _stacked to horizontal: http://getbootstrap.com/css/#grid-example-basic
-.. _buttons: http://getbootstrap.com/css/#buttons
-.. _Jumbotron: http://getbootstrap.com/components/#jumbotron
-.. _Carousel: http://getbootstrap.com/javascript/#carousel
-
 History
 -------
 
-This project started as a simple `wrapper`_ for the DjangoCMS TextPlugin, so that text elements
-could be shifted horizontally using the Grid System 960. Later on, support for 960.gs was dropped
-in favor of Twitter Bootstrap. Now the aim of the project is to fully support all Bootstrap
-components and more, so that djangoCMS can be used to build a website with as many widgets as
-possible, without having to edit templates.
+This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-text-wrapper) for the
+DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960.
+Later on, support for 960.gs was dropped in favor of Twitter Bootstrap. Now the aim of the project
+is to fully support all Bootstrap components and more, so that djangoCMS can be used to build a
+website with as many widgets as possible, without having to edit templates.
 
 DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins. This feature made
 it possible to implement this kind of plugin.
-
-
-.. _wrapper: https://github.com/jrief/cmsplugin-text-wrapper
