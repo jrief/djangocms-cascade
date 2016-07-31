@@ -29,8 +29,17 @@ djangocms-cascade |latest-version|
    :alt: Gitter chat room
    :target: https://gitter.im/jrief/djangocms-cascade
 
+
+Documentation
+=============
+
+Find detailed documentation on `ReadTheDocs`_.
+
+
+.. _ReadTheDocs: http://djangocms-cascade.readthedocs.io/en/latest/
+
 NEWS for version 0.9
-====================
+--------------------
 
 * Compatible with django-CMS 3.3.0
 * Important notice: Converted ``SharableCascadeElement`` into a proxy model. A migration
@@ -42,17 +51,13 @@ NEWS for version 0.9
 
 If you want to proceed with django-CMS 3.2, then please use djangocms-cascade 0.8.5.
 
-Detailed documentation
-----------------------
 
-Find detailed documentation on `ReadTheDocs`_.
+Why Use DjangoCMS-Cascade?
+==========================
 
+.. pull-quote::
 
-.. _ReadTheDocs: http://djangocms-cascade.readthedocs.io/en/latest/
-
-
-Add DOM elements to a Django-CMS placeholder
-============================================
+   Add DOM elements to a Django-CMS placeholder
 
 **DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.1 to add various HTML elements
 to any CMS `placeholder`_ in a hierarchical tree.
@@ -61,7 +66,7 @@ It allows web editors to layout their pages, without having to edit Django templ
 one template with one single placeholder is enough. The editor then can subdivide that placeholder
 into rows and columns, and add additional elements such as buttons, rulers, and much more.
 
-Currently about a dozen components from **Bootstrap-3.x** are avialble, but **Cascade** makes it
+Currently about a dozen components from **Bootstrap-3.x** are available, but **Cascade** makes it
 very easy to add additional components, often with less than 20 lines of Python code and without
 any database migrations.
 
@@ -120,8 +125,8 @@ Help needed
 
 If you like this project, please invest some time and test it with Django-1.8/1.9 and Python-3.4.
 
-If you are a native English speaker, please check the documentation for spelling errors and grammar
-since that's not my native language.
+If you are a native English speaker, please check the documentation for spelling mistakes and
+grammar since English not my mother tongue.
 
 
 Features
