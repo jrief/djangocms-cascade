@@ -15,17 +15,8 @@ Documentation
 
 Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.io/en/latest/).
 
-### NEWS for version 0.9
-
-* Compatible with django-CMS 3.3.0
-* Important notice: Converted ``SharableCascadeElement`` into a proxy model. A migration
-  merges these two models, so please backup your database before upgrading.
-* Add support for Section Bookmarks. This allows to add links on subsections of a CMS page.
-* Fixes many minor issues, check the changelog for details.
-* Replaced configuration settings ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES`` against
-  ``CMSPLUGIN_CASCADE['link_plugin_classes']`` for better consistency.
-
-If you want to proceed with django-CMS 3.2, then please use djangocms-cascade 0.8.5.
+Please see the [Release Notes](http://djangocms-cascade.readthedocs.io/en/latest/changelog.html)
+before upgrading from an older version.
 
 
 Why Use DjangoCMS-Cascade?
@@ -88,15 +79,6 @@ additional ``srcset``'s, one for each media query. **DjangoCMS-Cascade** calcula
 widths for each image, depending on the current column layout considering all media breakpoints.
 
 
-Help needed
------------
-
-If you like this project, please invest some time and test it with Django-1.8/1.9 and Python-3.4.
-
-If you are a native English speaker, please check the documentation for spelling mistakes and
-grammar since English not my mother tongue.
-
-
 Features
 --------
 
@@ -129,6 +111,15 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
 * By allowing extra fields, one can add an optional ``id`` tag, CSS classes and inline styles. This
   is configurable on a plugin and site base.
 * It is easily possible to customize the templates shipped with the plugins.
+
+
+Help needed
+-----------
+
+If you like this project, please invest some time and test it with Django-1.8/1.9 and Python-3.4.
+
+If you are a native English speaker, please check the documentation for spelling mistakes and
+grammar since English not my mother tongue.
 
 
 History
