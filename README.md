@@ -2,9 +2,7 @@ djangocms-cascade [![Latest version on PyPI](https://img.shields.io/pypi/v/djang
 ==================================================================================================================================================
 
 [![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
-[![Code health](https://landscape.io/github/jrief/djangocms-cascade/master/landscape.svg?style=flat)](https://landscape.io/github/jrief/djangocms-cascade/master)
 [![Python versions](https://img.shields.io/pypi/pyversions/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
-[![Monthly downloads from PyPI](https://img.shields.io/pypi/dm/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 [![Software license](https://img.shields.io/pypi/l/djangocms-cascade.svg)](https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT)
 [![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/jrief/djangocms-cascade)
 
