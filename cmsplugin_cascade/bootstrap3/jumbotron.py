@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.forms import widgets
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -105,7 +106,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         PartialFormField(
             'background-repeat',
             widgets.RadioSelect(choices=[(c, c) for c in REPEAT_CHOICES]),
-            initial='local',
+            initial='no-repeat',
             label=_("This property specifies how an image repeates."),
         ),
         PartialFormField(
