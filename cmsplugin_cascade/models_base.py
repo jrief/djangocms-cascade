@@ -113,9 +113,10 @@ class CascadeModelBase(CMSPlugin):
     @classmethod
     def _get_cascade_elements(cls):
         """
-        Returns a set of models which are derived from CascadeModelBase. This set shall be used
-        for traversing the plugin tree, since children can be interconnected using different
-        plugins.
+        Returns a set of models which are derived from ``CascadeModelBase``. This set shall be used
+        for traversing the plugin tree of interconnected Cascade models. Currently, Cascade itself
+        offers only one model, namely ``CascadeElement``, but a third party library may extend
+        ``CascadeModelBase`` and add arbitrary model fields.
         """
         if not hasattr(cls, '_cached_cascade_elements'):
             cce = set([p.model._meta.concrete_model for p in plugin_pool.get_all_plugins()

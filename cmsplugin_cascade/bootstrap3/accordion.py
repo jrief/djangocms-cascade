@@ -84,7 +84,7 @@ class BootstrapAccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
             label=_("Heading Size")
         ),
         PartialFormField('panel_title',
-            widgets.TextInput(attrs={'size': 150}),
+            widgets.TextInput(attrs={'size': 80}),
             label=_("Panel Title")
         ),
     )

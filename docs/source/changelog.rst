@@ -5,17 +5,29 @@ Release History
 ===============
 
 
-0.9.0.dev0
+0.9.1.dev0
 ----------
 
+
+0.9.0
+-----
+
+* Compatible with django-cms version 3.3.0
+* Converted ``SharableCascadeElement`` into a proxy model, sharing the same data as model
+  ``CascadeElement``. This allows adding plugins to ``CMSPLUGIN_CASCADE['plugins_with_sharables']``
+  without requiring a data-migration. (**Note:** A migration merges the former two models, so
+  please backup your database before upgrading!)
 * Add support for Section Bookmarks.
 * Fixed: Do not set width/height on <img>-element inside a <picture>, if wrapping container is fluid.
+* Replaced configuration settings ``CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES`` against
+  ``CMSPLUGIN_CASCADE['link_plugin_classes']`` for better consistency.
+
+**Note:** If you want to continue using django-CMS 3.2 please use djangocms-cascade 0.8.5.
 
 0.8.5
 -----
 
 * Dropped support for Python-2.6.
-
 
 0.8.4
 -----
@@ -27,7 +39,6 @@ Release History
 * Plugins marked as "transparent" are only allowed as parents,
   if they allow children.
 
-
 0.8.3
 -----
 
@@ -35,7 +46,6 @@ Release History
 * Fixed #160: Error copying Carousel plugin
 * Plugins marked as "transparent" can be parents of everybody.
 * BootstrapPanelPlugin now accepts inline CSS styles.
-
 
 0.8.2
 -----
@@ -147,7 +157,7 @@ versions:
   -> ``cascade/link/link-base.html``. **Check your templates**!
 * The setting ``CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS`` now is a list of two-tuples, where the first
   declares the plugin's model mixin, while the second declares the model admin mixin.
-* Removed from setting: ``CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR``. The rendering template now 
+* Removed from setting: ``CMSPLUGIN_CASCADE_BOOTSTRAP3_TEMPLATE_DIR``. The rendering template now
   can be specified during runtime.
 * Refactored and moved ``SimpleWrapperPlugin`` and ``HorizontalRulePlugin`` from
   ``cmsplugin_cascade/bootstrap3/`` into ``cmsplugin_cascade/generic/``. The glossary field

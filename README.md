@@ -1,19 +1,27 @@
-# djangocms-cascade
+djangocms-cascade
+==================================================================================================================================================
+
+[![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
+[![Python versions](https://img.shields.io/pypi/pyversions/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
+[![Software license](https://img.shields.io/pypi/l/djangocms-cascade.svg)](https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT)
+[![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/jrief/djangocms-cascade)
+ [![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
 
-## NEWS for version 0.8
+Documentation
+-------------
 
-* Compatible with Django-1.9 (requires django-cms 3.2.x)
-* Fixes many minor issues, check the changelog for details.
-* Unfortunately djangocms-cascade does not work with django-cms 3.3.x.
+Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.io/en/latest/).
 
-### Detailed documentation
-
-Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.org/en/latest/).
+Please see the [Release Notes](http://djangocms-cascade.readthedocs.io/en/latest/changelog.html)
+before upgrading from an older version.
 
 
-## Add DOM elements to a Django-CMS placeholder
+Why Use DjangoCMS-Cascade?
+--------------------------
+
+> Add DOM elements to a Django-CMS placeholder
 
 **DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.1 to add various HTML elements
 to any CMS [placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates)
@@ -23,7 +31,7 @@ It allows web editors to layout their pages, without having to edit Django templ
 one template with one single placeholder is enough. The editor then can subdivide that placeholder
 into rows and columns, and add additional elements such as buttons, rulers, and much more.
 
-Currently about a dozen components from **Bootstrap-3.x** are avialble, but **Cascade** makes it
+Currently about a dozen components from **Bootstrap-3.x** are available, but **Cascade** makes it
 very easy to add additional components, often with less than 20 lines of Python code and without
 any database migrations.
 
@@ -33,7 +41,7 @@ of the ``ImagePlugin`` and the ``ButtonPlugin``. This helps to share the common 
 required for linking.
 
 
-### Its pluggable
+### It's pluggable
 
 **DjangoCMS-Cascade** is very modular, keeping its CMS modules in functional groups. These groups
 have to be activated independently in your ``settings.py``. It also is possible to activate only
@@ -65,20 +73,13 @@ render different Plugins, depending on whether a user is authenticated or anonym
 ### Responsive Images
 
 In modern web development, images must adopt to the column width in which they are rendered.
-Therefore the ``<img ...>`` tag, in addition to the well known ``src`` attribute, also accepts 
+Therefore the ``<img ...>`` tag, in addition to the well known ``src`` attribute, also accepts
 additional ``srcset``'s, one for each media query. **DjangoCMS-Cascade** calculates the required
 widths for each image, depending on the current column layout considering all media breakpoints.
 
 
-## Help needed
-
-If you like this project, please invest some time and test it with Django-1.8/1.9 and Python-3.4.
-
-If you are a native English speaker, please check the documentation for spelling errors and grammar
-since that's not my native language.
-
-
-## Features
+Features
+--------
 
 * Use the scaffolding technique from the preferred CSS framework to subdivide a placeholder into a
   [grid system](http://getbootstrap.com/css/#grid).
@@ -86,10 +87,10 @@ since that's not my native language.
   [stacked to horizontal](http://getbootstrap.com/css/#grid-example-basic) classes per element.
 * Use styled [buttons](http://getbootstrap.com/css/#buttons) to add links.
 * Wrap special content into a [Jumbotron](http://getbootstrap.com/components/#jumbotron) or a
-  [Carousel](http://getbootstrap.com/javascript/#carousel) 
+  [Carousel](http://getbootstrap.com/javascript/#carousel).
 * Add ``<img>`` and ``<picture>`` elements in a responsive way, so that more than one image URL
-  point onto the resized sources, one for each viewport using the ``srcset`` tags or the ``<source>``
-  elements.
+  point onto the resized sources, one for each viewport using the ``srcset`` tags or the
+  ``<source>`` elements.
 * Use segmentation to conditionally render parts of the DOM.
 * It is very easy to integrate additional elements from the preferred CSS framework. For instance,
   implementing the Bootstrap Carousel, required only 50 lines of Python code and two simple Django
@@ -111,12 +112,17 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
 * It is easily possible to customize the templates shipped with the plugins.
 
 
-### Build status
+Help needed
+-----------
 
-[![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
+If you like this project, please invest some time and test it with Django-1.8/1.9 and Python-3.4.
+
+If you are a native English speaker, please check the documentation for spelling mistakes and
+grammar since English not my mother tongue.
 
 
-### History
+History
+-------
 
 This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-text-wrapper) for the
 DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960.
@@ -126,10 +132,3 @@ website with as many widgets as possible, without having to edit templates.
 
 DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins. This feature made
 it possible to implement this kind of plugin.
-
-
-## License
-
-Released under the terms of MIT License.
-
-Copyright &copy; 2016, Jacob Rief <jacob.rief@gmail.com>
