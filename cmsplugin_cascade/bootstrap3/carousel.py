@@ -136,7 +136,7 @@ class CarouselSlidePlugin(BootstrapPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         if obj:
-            caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
+            caption = self.html_parser.html.unescape(obj.glossary.get('caption', ''))
             obj.glossary.update(caption=caption)
 
         parent_obj = self.get_parent_instance(request)
