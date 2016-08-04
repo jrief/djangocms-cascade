@@ -35,7 +35,8 @@ class ClassNamesWidget(widgets.TextInput):
 
 class PluginExtraFieldsAdmin(admin.ModelAdmin):
     list_display = ('plugin_type', 'site')
-    DISTANCE_UNITS = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")), ('px', _("px")), ('%', _("%")),)
+    DISTANCE_UNITS = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")),
+                      ('px,%', _("px and %")), ('px', _("px")), ('%', _("%")),)
     classname_fields = ((
         PartialFormField('class_names',
             ClassNamesWidget(),
