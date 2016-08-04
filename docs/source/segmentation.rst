@@ -4,8 +4,9 @@
 Segmentation of the DOM
 =======================
 
-The **SegmentationPlugin** allows to personalize the DOM structure, depending on various parameters
-supplied with the Django request object. Some use cases are:
+The **SegmentationPlugin** allows to personalize the DOM structure, depending on the context used to
+render the corresponding page. Since **djangoCMS** always uses a RequestContext_ while rendering its
+pages, we always have access onto the request object. Some use cases are:
 
 * Depending on the user, show a different portion of the DOM, if he is a certain user or not logged
   in at all.
