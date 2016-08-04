@@ -46,6 +46,9 @@ if hasattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES'):
 CMSPLUGIN_CASCADE = getattr(settings, 'CMSPLUGIN_CASCADE', {})
 orig_config = dict(CMSPLUGIN_CASCADE)
 
+# Specify location of CSS file used to load fonts from http://fontawesome.io/
+CMSPLUGIN_CASCADE.setdefault('fontawesome_css_url', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css')
+
 CMSPLUGIN_CASCADE.setdefault('alien_plugins', ['TextPlugin'])
 
 # Use a prefix to symbolize a Cascade plugin in case there are ambiguous names.

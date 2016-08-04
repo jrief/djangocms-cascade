@@ -21,7 +21,7 @@ class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
     def render(self):
         return format_html('<div class="form-row">{0}</div>',
             format_html_join('', '<div class="field-box">'
-                '<div class="container-thumbnail"><i class="icon-{1}"></i><div class="label">{0}</div></div>'
+                '<div class="container-thumbnail"><i class="fa fa-{1} fa-4x"></i><div class="label">{0}</div></div>'
                 '</div>', ((force_text(w), BS3_BREAKPOINTS[w.choice_value][1]) for w in self)
             ))
 
@@ -58,7 +58,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     glossary_variables = ['container_max_widths', 'media_queries']
 
     class Media:
-        css = {'all': ('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css',)}
+        css = {'all': (settings.CMSPLUGIN_CASCADE['fontawesome_css_url'],)}
 
     @classmethod
     def get_identifier(cls, obj):
