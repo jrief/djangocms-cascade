@@ -16,11 +16,13 @@ class CascadePageAdmin(admin.ModelAdmin):
         return {}
 
     def get_urls(self):
-        return patterns('',
+        urls = [
             url(r'^get_page_sections/$', lambda: None, name='get_page_sections'),  # just to reverse
             url(r'^get_page_sections/(?P<page_pk>\d+)$',
                 self.admin_site.admin_view(self.get_page_sections)),
-        ) + super(CascadePageAdmin, self).get_urls()
+        ]
+        urls.extend(super(CascadePageAdmin, self).get_urls())
+        return urls
 
     def get_page_sections(self, request, page_pk=None):
         choices = []
