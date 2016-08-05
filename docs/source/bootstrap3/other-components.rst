@@ -27,9 +27,20 @@ the same behaviour as for the Container plugin. Then we optionally can chose an 
 background color, it's size, attachment, position and repetitions. For more details read
 `this article`_ on how to configure background images using pure CSS.
 
-To increase the height of a Jumbotron, configure a top- and bottom paddings and set it's values
-accordingly. The default, given by the Bootstrap 3 framework is two times 48 pixels for each
-the top- and bottom paddings.
+A Jumbotron without and content has a default height of 96 pixels, which is 48 pixels for the
+default top- and bottom paddings, each. These values are given by the Bootstrap 3 framework.
+
+To increase the height of a Jumbotron you have two choices. The simpler one is to add some
+content to the Jumbotron plugin which then increases the height. Another method is to explicitly
+allow to set the height of a Jumbotron plugin. In the Django admin enter into
+
+.. code-block::
+
+    Home › django CMS Cascade › Custom CSS classes and styles
+
+and chose or add the **BootstrapJumbotronPlugin**. Then locate and check the checkbox for "height"
+in section "Customized Heights Fields". Don't forget to save. Now you can explicitly change the
+height of all Jumbotron plugins.
 
 .. _Jumbotron: http://getbootstrap.com/components/#jumbotron
 .. _this article: https://css-tricks.com/almanac/properties/b/background-image/
