@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 from collections import OrderedDict
 import warnings
 from django.conf import settings
@@ -116,3 +117,11 @@ CMSPLUGIN_CASCADE.setdefault('plugins_with_extra_render_templates', {
         ('cascade/link/text-link-linebreak.html', _("with line break")),
     )
 })
+
+# Folder where extracted icon fonts are stored.
+CMSPLUGIN_CASCADE.setdefault('icon_font_root',
+                             os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'icon_fonts')))
+try:
+    os.makedirs(CMSPLUGIN_CASCADE['icon_font_root'])
+except os.error:
+    pass
