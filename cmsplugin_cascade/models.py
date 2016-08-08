@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os, shutil
+from collections import OrderedDict
+from django.conf import settings
 from django.db import models
-from django.db.models.signals import pre_delete
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from jsonfield.fields import JSONField
@@ -153,18 +156,17 @@ class CascadePage(PageExtension):
         except cls.DoesNotExist:
             cls.objects.create(extended_object=cms_page)
 
+    @classmethod
+    def delete_cascade_element(cls, instance=None, **kwargs):
+        if isinstance(instance, CascadeModelBase):
+            try:
+                instance.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
+                instance.page.cascadepage.save()
+            except (AttributeError, KeyError):
+                pass
+
 extension_pool.register(CascadePage)
-
-
-def delete_cascade_element(sender, instance=None, **kwargs):
-    if isinstance(instance, CascadeModelBase):
-        try:
-            instance.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
-            instance.page.cascadepage.save()
-        except (AttributeError, KeyError):
-            pass
-
-pre_delete.connect(delete_cascade_element)
+models.signals.pre_delete.connect(CascadePage.delete_cascade_element, dispatch_uid='delete_cascade_element')
 
 
 @python_2_unicode_compatible
@@ -185,5 +187,29 @@ class IconFont(models.Model):
     def __str__(self):
         return self.identifier
 
+    def get_icon_families(self):
+        """
+        Return an ordered dict of css classes required to render these icons
+        """
+        families = OrderedDict()
+        for glyph in self.config_data['glyphs']:
+            src = glyph.pop('src', 'default')
+            families.setdefault(src, [])
+            css = glyph.get('css')
+            if css:
+                families[src].append(css)
+        return families
 
-# TODO: add signal handler on delete
+    def get_stylesheet_url(self):
+        icon_font_url = os.path.relpath(CMSPLUGIN_CASCADE['icon_font_root'], settings.MEDIA_ROOT)
+        parts = (icon_font_url, self.font_folder, 'css', 'fontello.css')
+        return urljoin(settings.MEDIA_URL, '/'.join(parts))
+
+    @classmethod
+    def delete_icon_font(cls, instance=None, **kwargs):
+        if isinstance(instance, cls):
+            shutil.rmtree(instance.font_folder, ignore_errors=True)
+            temp_folder = os.path.pardir(instance.font_folder)
+            os.rmdir(temp_folder)
+
+models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')

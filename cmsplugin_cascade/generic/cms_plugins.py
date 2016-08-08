@@ -2,13 +2,18 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.conf.urls import url
 from django.forms import widgets
-from django.utils.html import format_html
+from django.http.response import JsonResponse, HttpResponseNotFound
+from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.mixins import TransparentMixin
+from cmsplugin_cascade.models import IconFont
+from cmsplugin_cascade.utils import resolve_dependencies
 
 
 class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
@@ -103,4 +108,152 @@ class CustomSnippetPlugin(TransparentMixin, CascadePluginBase):
             return format_html('{}', cls.render_template_choices.get(render_template))
 
 if CustomSnippetPlugin.render_template_choices:
+    # register only, if at least one template has been defined
     plugin_pool.register_plugin(CustomSnippetPlugin)
+
+
+class FontIconRenderer(widgets.RadioFieldRenderer):
+    @classmethod
+    def get_widget(cls, instance):
+        assert isinstance(instance, IconFont)
+        GLYPHICONS = ('asterisk', 'plus', 'euro', 'eur', 'minus', 'cloud', 'envelope', 'pencil', 'glass',)
+        choices = tuple((k, k) for k in GLYPHICONS)
+        radio_widget = widgets.RadioSelect(choices=choices, renderer=cls)
+        return radio_widget
+
+    def render(self):
+        return format_html(
+            '<div class="form-row">'
+            '<div class="field-box"><div class="label" title="No icon">{0}'
+            '<span class="glyphicon glyphicon-minus" style="color: transparent;"></span>'
+            '</div></div>{1}</div>',
+            self[0].tag(),
+            format_html_join('\n',
+                '<div class="field-box">'
+                    '<div class="label" title="{1}">{0}<span class="glyphicon glyphicon-{1}"></span></div>'
+                '</div>',
+                [(w.tag(), w.choice_value,) for w in self][1:]
+            ))
+
+
+class FontIconPlugin(CascadePluginBase):
+    name = _("Font Icon")
+    parent_classes = None
+    require_parent = False
+    allow_children = False
+    render_template = 'cascade/generic/fonticon.html'
+    change_form_template = 'cascade/admin/fonticon_plugin_change_form.html'
+    SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
+
+    class Media:
+        css = {'all': ('cascade/css/admin/fonticonplugin.css',)}
+        js = resolve_dependencies('cascade/js/admin/fonticonplugin.js')
+
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        extra_context = dict(extra_context or {}, icon_fonts=IconFont.objects.all())
+        return super(FontIconPlugin, self).changeform_view(
+             request, object_id=object_id, form_url=form_url, extra_context=extra_context)
+
+    def get_form(self, request, obj=None, **kwargs):
+        font_choices = IconFont.objects.values_list('id', 'identifier')
+        glossary_fields = (
+            PartialFormField(
+                'icon_font',
+                widgets.Select(choices=font_choices),
+                label=_("Font"),
+            ),
+            PartialFormField(
+                'content',
+                widgets.HiddenInput(),
+                label=_("Select Icon"),
+            ),
+            PartialFormField(
+                'font-size',
+                widgets.Select(choices=self.SIZE_CHOICES),
+                label=_("Icon Size"),
+            ),
+            PartialFormField('text-align',
+                widgets.RadioSelect(
+                    choices=(('', _("Do not align")), ('text-left', _("Left")),
+                             ('text-center', _("Center")), ('text-right', _("Right")))),
+                label=_("Text Align"),
+                initial='',
+                help_text=_("Align the icon inside the parent column.")
+            ),
+        )
+        kwargs.update(glossary_fields=glossary_fields)
+        form = super(FontIconPlugin, self).get_form(request, obj=obj, **kwargs)
+        return form
+
+    def get_plugin_urls(self):
+        urlpatterns = [
+            url(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
+            url(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
+        ]
+        urlpatterns.extend(super(FontIconPlugin, self).get_plugin_urls())
+        return urlpatterns
+
+    def fetch_fonticons(self, request, iconfont_id=None):
+        try:
+            icon_font = IconFont.objects.get(id=iconfont_id)
+        except IconFont.DoesNotExist:
+            return HttpResponseNotFound("IconFont with id={} does not exist".format(iconfont_id))
+        else:
+            data = dict(icon_font.config_data)
+            data.pop('glyphs', None)
+            data['families'] = icon_font.get_icon_families()
+            return JsonResponse(data)
+
+    @classmethod
+    def get_identifier(cls, instance):
+        identifier = super(FontIconPlugin, cls).get_identifier(instance)
+        icon_font = cls.get_icon_font(instance)
+        if icon_font:
+            content = mark_safe('<i class="{}{}"></i>'.format(
+                icon_font.config_data.get('css_prefix_text', 'icon-'),
+                instance.glossary.get('content')))
+            return format_html('{0}{1}', identifier, content)
+        return identifier
+
+    @classmethod
+    def get_icon_font(self, instance):
+        if not hasattr(instance, '_cached_icon_font'):
+            try:
+                instance._cached_icon_font = IconFont.objects.get(id=instance.glossary.get('icon_font'))
+            except IconFont.DoesNotExist:
+                instance._cached_icon_font = None
+        return instance._cached_icon_font
+
+    @classmethod
+    def get_tag_type(self, instance):
+        if instance.glossary.get('text-align'):
+            return 'div'
+        return 'span'
+
+    @classmethod
+    def get_css_classes(cls, instance):
+        css_classes = super(FontIconPlugin, cls).get_css_classes(instance)
+        icon_font = cls.get_icon_font(instance)
+        if icon_font:
+            css_classes.append('{}{}'.format(
+                icon_font.config_data.get('css_prefix_text', 'icon-'),
+                instance.glossary.get('content')))
+        text_align = instance.glossary.get('text-align')
+        if text_align:
+            css_classes.append(text_align)
+        return css_classes
+
+    @classmethod
+    def get_inline_styles(cls, instance):
+        inline_styles = super(FontIconPlugin, cls).get_inline_styles(instance)
+        inline_styles['font-size'] = instance.glossary.get('font-size', '1em')
+        return inline_styles
+
+    def render(self, context, instance, placeholder):
+        context['instance'] = instance
+        icon_font = self.get_icon_font(instance)
+        if icon_font:
+            context['stylesheet_url'] = icon_font.get_stylesheet_url()
+        return context
+
+plugin_pool.register_plugin(FontIconPlugin)

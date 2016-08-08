@@ -1,0 +1,29 @@
+.glossary-field.glossary_content h2 {
+	margin: 16px 0 8px;
+}
+.glossary-field.glossary_content ul.font-family {
+	overflow: hidden;
+	line-height: 42px;
+}
+.glossary-field.glossary_content ul.font-family li {
+	font-size: 24px;
+	box-sizing: border-box;
+	display: inline;
+	min-width: initial;
+	height: 38px;
+	width: auto;
+	margin: 0;
+	border: 2px solid transparent;
+	border-radius: 50%;
+	padding: 2px;
+}
+.glossary-field.glossary_content ul.font-family li.selected {
+	background-color: #cccc00;
+}
+.glossary-field.glossary_content ul.font-family li:hover {
+	border-color: #880000;
+}
+.glossary-field.glossary_content ul.font-family li > i {
+	text-align: center;
+	vertical-align: middle;
+}

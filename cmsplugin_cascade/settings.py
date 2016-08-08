@@ -60,6 +60,7 @@ CMSPLUGIN_CASCADE['dependencies'] = {
     'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
     'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
     'cascade/js/admin/jumbotronplugin.js': 'cascade/js/ring.js',
+    'cascade/js/admin/fonticonplugin.js': 'cascade/js/ring.js',
     'cascade/js/admin/linkpluginbase.js': ('cascade/js/admin/sharableglossary.js',),
     'cascade/js/admin/defaultlinkplugin.js': ('cascade/js/admin/linkpluginbase.js',),
     'cascade/js/admin/imageplugin.js': ('cascade/js/admin/linkpluginbase.js',),
