@@ -208,8 +208,9 @@ class IconFont(models.Model):
     @classmethod
     def delete_icon_font(cls, instance=None, **kwargs):
         if isinstance(instance, cls):
-            shutil.rmtree(instance.font_folder, ignore_errors=True)
-            temp_folder = os.path.pardir(instance.font_folder)
+            font_folder = os.path.join(CMSPLUGIN_CASCADE['icon_font_root'], instance.font_folder)
+            shutil.rmtree(font_folder, ignore_errors=True)
+            temp_folder = os.path.abspath(os.path.join(font_folder, os.path.pardir))
             os.rmdir(temp_folder)
 
 models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')
