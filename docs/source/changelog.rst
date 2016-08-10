@@ -5,9 +5,13 @@ Release History
 ===============
 
 
-0.9.1.dev0
-----------
-
+0.9.1
+-----
+* Prepared for django-1.10
+* Upgrade ring.js to version 2.1.0
+* In LinkPlugin, forgive if sub-dict ``link`` was missing in ``glossary``
+* Fixed HTML escaping problem in Bootstrap Carousel
+* Increase height of Select2 fields
 
 0.9.0
 -----
