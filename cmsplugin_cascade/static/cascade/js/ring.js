@@ -54,7 +54,10 @@ function declare(_) {
         __properties__: {__ringConstructor__: function() {}},
         __classId__: 1,
         __parents__: [],
-        __classIndex__: {"1": ring.Object}
+        __classIndex__: {"1": ring.Object},
+        $extend: function(props) {
+            return ring.create([this], props);
+        }
     });
     _.extend(ring.Object.prototype, {
         __ringConstructor__: ring.Object.__properties__.__ringConstructor__
@@ -110,6 +113,9 @@ function declare(_) {
             if (cons)
                 props.__ringConstructor__ = cons;
         }
+        // put the classInit aside to use later
+        var classInit = props.classInit;
+        delete props.classInit;
         // create real class
         var claz = function Instance() {
             this.$super = null;
@@ -120,14 +126,14 @@ function declare(_) {
         var toMerge = _.pluck(parents, "__mro__");
         toMerge = toMerge.concat([parents]);
         var __mro__ = [claz].concat(mergeMro(toMerge));
-        //generate prototype
+        // generate prototype
         var prototype = Object.prototype;
         _.each(_.clone(__mro__).reverse(), function(claz) {
             var current = objectCreate(prototype);
             _.extend(current, claz.__properties__);
             _.each(_.keys(current), function(key) {
                 var p = current[key];
-                if (typeof p !== "function" || ! fnTest.test(p) ||
+                if (typeof p !== "function" || ! fnTest.test(p) || p.__classId__ ||
                     (key !== "__ringConstructor__" && claz.__ringConvertedObject__))
                     return;
                 current[key] = (function(name, fct, supProto) {
@@ -157,10 +163,7 @@ function declare(_) {
             claz.__classIndex__[c.__classId__] = c;
         });
         // class init
-        if (claz.prototype.classInit) {
-            claz.__classInit__ = claz.prototype.classInit;
-            delete claz.prototype.classInit;
-        }
+        claz.__classInit__ = classInit;
         _.each(_.chain(claz.__mro__).clone().reverse().value(), function(c) {
             if (c.__classInit__) {
                 var ret = c.__classInit__(claz.prototype);
@@ -168,6 +171,8 @@ function declare(_) {
                     claz.prototype = ret;
             }
         });
+        // $extend
+        claz.$extend = ring.Object.$extend;
 
         return claz;
     };
@@ -271,7 +276,7 @@ function declare(_) {
             ring.instance(1, "number") // returns true
     */
     ring.instance = function(obj, type) {
-        if (typeof(obj) === "object" && obj.constructor && obj.constructor.__classIndex__ &&
+        if (obj !== null && typeof(obj) === "object" && obj.constructor && obj.constructor.__classIndex__ &&
             typeof(type) === "function" && typeof(type.__classId__) === "number") {
             return obj.constructor.__classIndex__[type.__classId__] !== undefined;
         }
