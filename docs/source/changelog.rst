@@ -4,15 +4,22 @@
 Release History
 ===============
 
-
-0.9.1.dev0
+0.9.2.dev0
 ----------
 * Refactored ``cmsplugin_cascade/widgets.py`` and moved function ``_compile_validation_pattern``
   into class ``CascadingSizeWidgetMixin``. It now is possible to allow the special constants
   ``auto``, ``inherit`` and ``initial`` in size related input fields.
 * Added **BootstrapJumbotronPlugin**. This for instance can be used to place background images
   extending over the full width of a page using a parallax effect.
+* Added utility to manage font icons.
 
+0.9.1
+-----
+* Prepared for django-1.10
+* Upgrade ring.js to version 2.1.0
+* In LinkPlugin, forgive if sub-dict ``link`` was missing in ``glossary``
+* Fixed HTML escaping problem in Bootstrap Carousel
+* Increase height of Select2 fields
 
 0.9.0
 -----
