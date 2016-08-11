@@ -13,9 +13,18 @@ from cms.models import Page
 from cmsplugin_cascade.models import CascadePage
 
 if 'django_select2' in settings.INSTALLED_APPS:
-    SelectWidget = import_string('django_select2.forms.Select2Widget')
+    Select2Widget = import_string('django_select2.forms.Select2Widget')
 else:
-    SelectWidget = import_string('django.forms.widgets.Select')
+    Select2Widget = import_string('django.forms.widgets.Select')
+
+
+class SelectWidget(Select2Widget):
+    @property
+    def media(self):
+        parent_media = super(SelectWidget, self).media
+        # prepend JS snippet to re-add 'jQuery' to the global namespace
+        parent_media._js.insert(0, 'cascade/js/admin/jquery.restore.js')
+        return parent_media
 
 
 class LinkSearchField(fields.ChoiceField):
