@@ -4,6 +4,10 @@
 Release History
 ===============
 
+0.9.2
+-----
+* Restore global jQuery object (required by the Select2 widget) in explicit file instead of doing
+  it implicitly in ``linkpluginbase.js``
 
 0.9.1
 -----
