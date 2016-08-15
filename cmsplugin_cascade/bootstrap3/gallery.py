@@ -100,7 +100,7 @@ class BootstrapGalleryPlugin(CascadePluginBase):
         PartialFormField('image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
             label=_("Image Responsiveness"),
-            initial=['img-responsive']
+            initial=['img-responsive'],
         ),
         PartialFormField('image-width-responsive',
             CascadingSizeWidget(allowed_units=['%'], required=False),
@@ -132,7 +132,7 @@ class BootstrapGalleryPlugin(CascadePluginBase):
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
             label=_("Resize Options"),
             help_text=_("Options to use when resizing the image."),
-            initial=['crop', 'subject_location', 'high_resolution']
+            initial=['crop', 'subject_location', 'high_resolution'],
         ),
     )
 
