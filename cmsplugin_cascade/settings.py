@@ -3,53 +3,24 @@ from __future__ import unicode_literals
 
 import os
 from collections import OrderedDict
-import warnings
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
-from cmsplugin_cascade.extra_fields.config import default_plugin_extra_fields
+from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig, default_plugin_extra_fields
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
 
 CASCADE_PLUGINS = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', ('cmsplugin_cascade.generic', 'cmsplugin_cascade.link',))
 
-# all other configuration settings are replaced by a dictionary
-if hasattr(settings, 'CMSPLUGIN_CASCADE_ALIEN_PLUGINS'):
-    warnings.warn("CMSPLUGIN_CASCADE_ALIEN_PLUGINS is deprecated. "
-                  "Use CMSPLUGIN_CASCADE['alien_plugins'] instead.")
-
-if hasattr(settings, 'CMSPLUGIN_CASCADE_DEPENDENCIES'):
-    warnings.warn("CMSPLUGIN_CASCADE_DEPENDENCIES is deprecated. "
-                  "Use CMSPLUGIN_CASCADE['dependencies'] instead.")
-
-if hasattr(settings, 'CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS'):
-    warnings.warn("CMSPLUGIN_CASCADE_WITH_EXTRAFIELDS is deprecated. "
-                  "Use CMSPLUGIN_CASCADE['plugins_with_extra_fields'] instead.")
-
-if hasattr(settings, 'CMSPLUGIN_CASCADE_WITH_SHARABLES'):
-    warnings.warn("CMSPLUGIN_CASCADE_WITH_SHARABLES is deprecated. "
-                  "Use CMSPLUGIN_CASCADE['plugins_with_sharables'] instead.")
-
-if hasattr(settings, 'CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES'):
-    warnings.warn("CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES is deprecated. "
-                  "Use CMSPLUGIN_CASCADE['link_plugin_classes'] instead.")
-
-if hasattr(settings, 'CMSPLUGIN_CASCADE_EXTRA_INLINE_STYLES'):
-    warnings.warn("CMSPLUGIN_CASCADE_EXTRA_INLINE_STYLES is deprecated. "
-                  "Use CMSPLUGIN_CASCADE['extra_inline_styles'] instead.")
-
-if hasattr(settings, 'CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS'):
-    warnings.warn("CMSPLUGIN_CASCADE_SEGMENTATION_MIXINS is deprecated. "
-                  "Use CMSPLUGIN_CASCADE['segmentation_mixins'] instead.")
-
-if hasattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES'):
-    warnings.warn("CMSPLUGIN_CASCADE_PLUGINS_WITH_EXTRA_RENDER_TEMPLATES is deprecated. "
-                  "Use CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'] instead.")
-
 CMSPLUGIN_CASCADE = getattr(settings, 'CMSPLUGIN_CASCADE', {})
 orig_config = dict(CMSPLUGIN_CASCADE)
 
-# Specify location of CSS file used to load fonts from http://fontawesome.io/
+# Incompatibilities with djangocms-cascade < version 0.10.x
+if not isinstance(CMSPLUGIN_CASCADE.get('plugins_with_extra_fields', {}), dict):
+    raise ImproperlyConfigured("CMSPLUGIN_CASCADE['plugins_with_extra_fields'] must be declared as dict.")
+
 CMSPLUGIN_CASCADE.setdefault('fontawesome_css_url', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css')
+"""Specify location of CSS file used to load fonts from http://fontawesome.io/"""
 
 CMSPLUGIN_CASCADE.setdefault('alien_plugins', ['TextPlugin'])
 
@@ -67,6 +38,7 @@ CMSPLUGIN_CASCADE['dependencies'] = {
     'cascade/js/admin/imageplugin.js': ('cascade/js/admin/linkpluginbase.js',),
     'cascade/js/admin/pictureplugin.js': ('cascade/js/admin/linkpluginbase.js',),
 }
+"""The editor of some plugins requires JavaScript file. Here we can specify which is a list of dependencies"""
 CMSPLUGIN_CASCADE['dependencies'].update(orig_config.get('dependencies', {}))
 
 if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
@@ -74,7 +46,9 @@ if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
         'BootstrapButtonPlugin': default_plugin_extra_fields,
         'BootstrapContainerPlugin': default_plugin_extra_fields,
         'BootstrapRowPlugin': default_plugin_extra_fields,
-        'BootstrapJumbotronPlugin': default_plugin_extra_fields,
+        'BootstrapJumbotronPlugin': PluginExtraFieldsConfig(
+            allow_id_tag=False, css_classes={'multiple': '', 'class_names': ''},
+            inline_styles={'extra_fields:Heights': ['height'], 'extra_units:Heights': 'px,em,%',}),
         'SimpleWrapperPlugin': default_plugin_extra_fields,
         'HeadingPlugin': default_plugin_extra_fields,
         'HorizontalRulePlugin': default_plugin_extra_fields,
@@ -83,6 +57,10 @@ if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
         orig_config.get('plugins_with_extra_fields', {}))
 else:
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = {}
+"""
+With 'plugins_with_extra_fields' we can specify a set of plugins eligible for accepting extra inline
+styles.
+"""
 
 if 'cmsplugin_cascade.sharable' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE.setdefault('plugins_with_sharables', {})
