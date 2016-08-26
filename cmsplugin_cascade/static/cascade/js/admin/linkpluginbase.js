@@ -1,6 +1,3 @@
-
-window['jQuery'] = jQuery || django.jQuery;  // re-add to global namespace since select2 otherwise does not work
-
 django.jQuery(function($) {
 	'use strict';
 	var $link_type = $("#id_link_type"), $cmspage_select = $("#id_cms_page");

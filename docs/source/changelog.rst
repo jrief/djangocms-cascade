@@ -4,14 +4,21 @@
 Release History
 ===============
 
-0.9.2.dev0
+0.10.x
 ----------
-* Refactored ``cmsplugin_cascade/widgets.py`` and moved function ``_compile_validation_pattern``
-  into class ``CascadingSizeWidgetMixin``. It now is possible to allow the special constants
-  ``auto``, ``inherit`` and ``initial`` in size related input fields.
+#* Refactored ``cmsplugin_cascade/widgets.py`` and moved function ``_compile_validation_pattern``
+#  into class ``CascadingSizeWidgetMixin``. It now is possible to allow the special constants
+#  ``auto``, ``inherit`` and ``initial`` in size related input fields.
+* ``CMSPLUGIN_CASCADE['plugins_with_extra_fields']`` is a dict instead of a tuple. This allows
+  the site administrator to enable extra styles globally and without adding them via the backend.
 * Added **BootstrapJumbotronPlugin**. This for instance can be used to place background images
   extending over the full width of a page using a parallax effect.
 * Added utility to manage font icons.
+
+0.9.2
+-----
+* Restore global jQuery object (required by the Select2 widget) in explicit file instead of doing
+  it implicitly in ``linkpluginbase.js``
 
 0.9.1
 -----
