@@ -7,6 +7,7 @@
 	{{ instance.background_position }}
 	{{ instance.background_repeat }}
 	{{ instance.background_size }}
+	{{ instance.inline_styles }}
 }
 {% for elem in elements %}
 {% thumbnail instance.image elem.size crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
@@ -18,10 +19,8 @@
 {% endfor %}
 </style>
 {% endspaceless %}{% endaddtoblock %}
-{% with inline_styles=instance.inline_styles %}
-<div id="cascadeelement_id-{{ instance.pk }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+<div id="cascadeelement_id-{{ instance.pk }}" class="{{ instance.css_classes }}">
 {% for plugin in instance.child_plugin_instances %}
 	{% render_plugin plugin %}
 {% endfor %}
 </div>
-{% endwith %}
