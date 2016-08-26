@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.forms import widgets
+from django.forms.models import ModelForm
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
@@ -53,18 +55,28 @@ class ImageBackgroundMixin(object):
             size = self.glossary['background-size']
             if size == 'width/height':
                 size = self.glossary['background-width-height']
-                if size['width'] and size['height']:
-                    return 'background-size: {width} {height};'.format(**size)
+                return 'background-size: {width} {height};'.format(**size)
             else:
                 return 'background-size: {};'.format(size)
         except KeyError:
             pass
 
 
+class JumbotronPluginForm(ImageForm):
+    """
+    Form class to validate the JumbotronPlugin.
+    """
+    def clean_glossary(self):
+        glossary = super(JumbotronPluginForm, self).clean_glossary()
+        if glossary['background-size'] == 'width/height' and not glossary['background-width-height']['width']:
+            raise ValidationError(_("You must at least set a background width."))
+        return glossary
+
+
 class BootstrapJumbotronPlugin(BootstrapPluginBase):
     name = _("Jumbotron")
     model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
-    form = ImageForm
+    form = JumbotronPluginForm
     default_css_class = 'jumbotron'
     parent_classes = None
     require_parent = False
