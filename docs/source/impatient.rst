@@ -63,7 +63,7 @@ create a superuser:
 .. code-block:: bash
 
 	cd $VIRTUAL_ENV/src/djangocms-cascade
-	bower install --require
+	npm install
 	cd examples
 	./manage.py migrate --settings=bs3demo.settings
 	./manage.py createsuperuser --settings=bs3demo.settings

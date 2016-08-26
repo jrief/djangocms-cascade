@@ -52,7 +52,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     by a user defined configuration, this meta-class conditionally inherits from additional mixin
     classes.
     """
-    plugins_with_extra_fields = list(settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
+    plugins_with_extra_fields = dict(settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
     plugins_with_bookmark = list(settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
     plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
 

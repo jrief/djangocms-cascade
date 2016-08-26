@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
-from cms import __version__ as CMS_VERSION
+from cmsplugin_cascade.extra_fields.config import default_plugin_extra_fields
 
 DEBUG = True
 
@@ -27,8 +27,6 @@ DATABASES = {
         'NAME': os.path.join(WORK_DIR, 'db.sqlite3'),
     },
 }
-
-CMS_VERSION = tuple(int(n) for n in CMS_VERSION.split('.')[:2])
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -197,11 +195,14 @@ CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.segmentation', 'cmsplugin_cascad
     'cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
 CMSPLUGIN_CASCADE = {
-    'plugins_with_extra_fields': [
-        'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
-        'BootstrapColumnPlugin', 'BootstrapRowPlugin', 'BootstrapPicturePlugin',
-        'SimpleWrapperPlugin',
-    ],
+    'plugins_with_extra_fields': {
+        'BootstrapButtonPlugin': default_plugin_extra_fields,
+        'BootstrapContainerPlugin': default_plugin_extra_fields,
+        'BootstrapColumnPlugin': default_plugin_extra_fields,
+        'BootstrapRowPlugin': default_plugin_extra_fields,
+        'BootstrapPicturePlugin': default_plugin_extra_fields,
+        'SimpleWrapperPlugin': default_plugin_extra_fields,
+    },
     'plugins_with_sharables': {
         'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed',
                                  'image-height', 'resize-options',),

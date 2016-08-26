@@ -6,6 +6,7 @@ from collections import OrderedDict
 import warnings
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from cmsplugin_cascade.extra_fields.config import default_plugin_extra_fields
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
 
@@ -69,13 +70,19 @@ CMSPLUGIN_CASCADE['dependencies'] = {
 CMSPLUGIN_CASCADE['dependencies'].update(orig_config.get('dependencies', {}))
 
 if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
-    CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = [
-        'BootstrapButtonPlugin', 'BootstrapContainerPlugin', 'BootstrapRowPlugin',
-        'BootstrapJumbotronPlugin', 'SimpleWrapperPlugin', 'HeadingPlugin', 'HorizontalRulePlugin',
-    ]
-    CMSPLUGIN_CASCADE['plugins_with_extra_fields'].extend(orig_config.get('plugins_with_extra_fields', []))
+    CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = {
+        'BootstrapButtonPlugin': default_plugin_extra_fields,
+        'BootstrapContainerPlugin': default_plugin_extra_fields,
+        'BootstrapRowPlugin': default_plugin_extra_fields,
+        'BootstrapJumbotronPlugin': default_plugin_extra_fields,
+        'SimpleWrapperPlugin': default_plugin_extra_fields,
+        'HeadingPlugin': default_plugin_extra_fields,
+        'HorizontalRulePlugin': default_plugin_extra_fields,
+    }
+    CMSPLUGIN_CASCADE['plugins_with_extra_fields'].update(
+        orig_config.get('plugins_with_extra_fields', {}))
 else:
-    CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = []
+    CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = {}
 
 if 'cmsplugin_cascade.sharable' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE.setdefault('plugins_with_sharables', {})
