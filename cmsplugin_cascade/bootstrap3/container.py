@@ -59,13 +59,15 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     WIDGET_CHOICES = tuple(widget_choices)
 
     glossary_fields = (
-        PartialFormField('breakpoints',
+        PartialFormField(
+            'breakpoints',
             widgets.CheckboxSelectMultiple(choices=WIDGET_CHOICES, renderer=ContainerBreakpointsRenderer),
             label=_('Available Breakpoints'),
             initial=breakpoints[::-1],
             help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
-        PartialFormField('fluid',
+        PartialFormField(
+            'fluid',
             widgets.CheckboxInput(),
             label=_('Fluid Container'), initial=False,
             help_text=_("Changing your outermost '.container' to '.container-fluid'.")
