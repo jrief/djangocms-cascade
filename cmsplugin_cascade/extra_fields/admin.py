@@ -20,7 +20,7 @@ class ClassNamesWidget(widgets.TextInput):
     Use this field to enter a list of comma separated CSS class names.
     """
     DEFAULT_ATTRS = {'style': 'width: 25em;'}
-    validation_pattern = re.compile('^[A-Za-z0-9_-]+$')
+    validation_pattern = re.compile(r'^[A-Za-z0-9_-]+$')
     invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
 
     def __init__(self, attrs=DEFAULT_ATTRS, required=False):
@@ -74,8 +74,10 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
 
     def plugins_for_site(self):
         if not hasattr(self, '_plugins_for_site'):
-            cascade_plugins = set([p for p in plugin_pool.get_all_plugins() if issubclass(p, ExtraFieldsMixin)])
-            self._plugins_for_site = [(p.__name__, '{} {}'.format(p.module, force_text(p.name))) for p in cascade_plugins]
+            cascade_plugins = set([p for p in plugin_pool.get_all_plugins()
+                                   if issubclass(p, ExtraFieldsMixin)])
+            self._plugins_for_site = [(p.__name__, '{} {}'.format(p.module, force_text(p.name)))
+                                      for p in cascade_plugins]
         return self._plugins_for_site
 
     def get_form(self, request, obj=None, **kwargs):
