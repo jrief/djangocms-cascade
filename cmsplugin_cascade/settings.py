@@ -6,7 +6,7 @@ from collections import OrderedDict
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
-from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig, default_plugin_extra_fields
+from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
 
@@ -15,7 +15,7 @@ CASCADE_PLUGINS = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', ('cmsplugin_cas
 CMSPLUGIN_CASCADE = getattr(settings, 'CMSPLUGIN_CASCADE', {})
 orig_config = dict(CMSPLUGIN_CASCADE)
 
-# Incompatibilities with djangocms-cascade < version 0.10.x
+# Incompatibility with djangocms-cascade < version 0.10.x
 if not isinstance(CMSPLUGIN_CASCADE.get('plugins_with_extra_fields', {}), dict):
     raise ImproperlyConfigured("CMSPLUGIN_CASCADE['plugins_with_extra_fields'] must be declared as dict.")
 
@@ -43,18 +43,22 @@ CMSPLUGIN_CASCADE['dependencies'].update(orig_config.get('dependencies', {}))
 
 if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = {
-        'BootstrapButtonPlugin': default_plugin_extra_fields,
-        'BootstrapContainerPlugin': default_plugin_extra_fields,
-        'BootstrapRowPlugin': default_plugin_extra_fields,
-        'BootstrapJumbotronPlugin': PluginExtraFieldsConfig(
-            allow_id_tag=False, css_classes={'multiple': '', 'class_names': ''},
-            inline_styles={'extra_fields:Heights': ['height'], 'extra_units:Heights': 'px,em,%',}),
-        'SimpleWrapperPlugin': default_plugin_extra_fields,
-        'HeadingPlugin': default_plugin_extra_fields,
-        'HorizontalRulePlugin': default_plugin_extra_fields,
+        'BootstrapButtonPlugin': PluginExtraFieldsConfig(),
+        'BootstrapContainerPlugin': PluginExtraFieldsConfig(),
+        'BootstrapRowPlugin': PluginExtraFieldsConfig(),
+        'BootstrapJumbotronPlugin': PluginExtraFieldsConfig(inline_styles={
+            'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
+            'extra_units:Paddings': 'px,em'}, allow_override=False),
+        'SimpleWrapperPlugin': PluginExtraFieldsConfig(),
+        'HeadingPlugin': PluginExtraFieldsConfig(),
+        'HorizontalRulePlugin': PluginExtraFieldsConfig(),
     }
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'].update(
         orig_config.get('plugins_with_extra_fields', {}))
+    for plugin, config in CMSPLUGIN_CASCADE['plugins_with_extra_fields'].items():
+        if not isinstance(config, PluginExtraFieldsConfig):
+            msg = "CMSPLUGIN_CASCADE['plugins_with_extra_fields']['{}'] must instantiate a class of type PluginExtraFieldsConfig"
+            raise ImproperlyConfigured(msg.format(plugin))
 else:
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = {}
 """

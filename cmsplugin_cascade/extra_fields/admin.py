@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import re
 from django.core.exceptions import ValidationError
 from django.contrib import admin
 from django.utils.encoding import force_text
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.forms import widgets
 from cms.plugin_pool import plugin_pool
@@ -19,7 +21,7 @@ class ClassNamesWidget(widgets.TextInput):
     """
     Use this field to enter a list of comma separated CSS class names.
     """
-    DEFAULT_ATTRS = {'style': 'width: 25em;'}
+    DEFAULT_ATTRS = {'style': 'width: 35em;'}
     validation_pattern = re.compile(r'^[A-Za-z0-9_-]+$')
     invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
 
@@ -73,20 +75,26 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
             else:
                 self.style_fields.append(extra_field)
 
+    @cached_property
     def plugins_for_site(self):
-        if not hasattr(self, '_plugins_for_site'):
-            cascade_plugins = set([p for p in plugin_pool.get_all_plugins()
-                                   if issubclass(p, ExtraFieldsMixin)])
-            self._plugins_for_site = [(p.__name__, '{} {}'.format(p.module, force_text(p.name)))
-                                      for p in cascade_plugins]
-        return self._plugins_for_site
+        def show_in_backend(plugin):
+            try:
+                config = settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'][plugin.__name__]
+            except KeyError:
+                return False
+            else:
+                assert issubclass(plugin, ExtraFieldsMixin)
+                return config.allow_override
+
+        cascade_plugins = set([p for p in plugin_pool.get_all_plugins() if show_in_backend(p)])
+        return [(p.__name__, '{} {}'.format(p.module, force_text(p.name))) for p in cascade_plugins]
 
     def get_form(self, request, obj=None, **kwargs):
         """
         Build the form used for changing the model.
         """
         kwargs.update(widgets={
-            'plugin_type': widgets.Select(choices=self.plugins_for_site()),
+            'plugin_type': widgets.Select(choices=self.plugins_for_site),
             'css_classes': JSONMultiWidget(self.classname_fields),
             'inline_styles': JSONMultiWidget(self.style_fields)
         })
@@ -101,6 +109,6 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         """
         Only if at least one plugin uses the class ExtraFieldsMixin, allow to add an instance.
         """
-        return len(self.plugins_for_site()) > 0
+        return len(self.plugins_for_site) > 0
 
 admin.site.register(PluginExtraFields, PluginExtraFieldsAdmin)

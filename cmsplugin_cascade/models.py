@@ -5,7 +5,7 @@ import os, shutil
 from collections import OrderedDict
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
@@ -13,6 +13,7 @@ from jsonfield.fields import JSONField
 from filer.fields.file import FilerFileField
 from cms.extensions import PageExtension
 from cms.extensions.extension_pool import extension_pool
+from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models_base import CascadeModelBase
 from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
 
@@ -97,6 +98,7 @@ class SortableInlineCascadeElement(models.Model):
         return ""
 
 
+@python_2_unicode_compatible
 class PluginExtraFields(models.Model):
     """
     Store a set of allowed extra CSS classes and inline styles to be used for Cascade plugins
@@ -112,11 +114,15 @@ class PluginExtraFields(models.Model):
         verbose_name = verbose_name_plural = _("Custom CSS classes and styles")
         unique_together = ('plugin_type', 'site')
 
+    def __str__(self):
+        #return force_text(plugin_pool.get_plugin(self.plugin_type).name)
+        return force_text(self.plugin_type)
+
 
 class Segmentation(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = _("Segmentation")
-        managed = False  # its a dummy model
+        managed = False  # it's a dummy model
         db_table = None
 
 

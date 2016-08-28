@@ -26,7 +26,7 @@ class ExtraFieldsMixin(object):
 
     def get_form(self, request, obj=None, **kwargs):
         from cmsplugin_cascade.models import PluginExtraFields
-        from .config import PluginExtraFieldsConfig, default_plugin_extra_fields
+        from .config import PluginExtraFieldsConfig
 
         glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
         clsname = self.__class__.__name__
@@ -34,7 +34,7 @@ class ExtraFieldsMixin(object):
             site = get_current_site(request)
             extra_fields = PluginExtraFields.objects.get(plugin_type=clsname, site=site)
         except ObjectDoesNotExist:
-            extra_fields = settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname, default_plugin_extra_fields)
+            extra_fields = settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
 
         if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
             # add a text input field to let the user name an ID tag for this HTML element
