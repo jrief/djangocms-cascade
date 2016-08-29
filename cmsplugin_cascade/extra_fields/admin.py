@@ -36,7 +36,7 @@ class ClassNamesWidget(widgets.TextInput):
 
 
 class PluginExtraFieldsAdmin(admin.ModelAdmin):
-    list_display = ('plugin_type', 'site')
+    list_display = ('name', 'module', 'site', 'allowed_classes_styles')
     DISTANCE_UNITS = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")),
                       ('px,%', _("px and %")), ('px', _("px")), ('%', _("%")),)
     classname_fields = ((
@@ -87,7 +87,7 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
                 return config.allow_override
 
         cascade_plugins = set([p for p in plugin_pool.get_all_plugins() if show_in_backend(p)])
-        return [(p.__name__, '{} {}'.format(p.module, force_text(p.name))) for p in cascade_plugins]
+        return [(p.__name__, '{}: {}'.format(p.module, force_text(p.name))) for p in cascade_plugins]
 
     def get_form(self, request, obj=None, **kwargs):
         """
@@ -110,5 +110,15 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         Only if at least one plugin uses the class ExtraFieldsMixin, allow to add an instance.
         """
         return len(self.plugins_for_site) > 0
+
+    def module(self, obj):
+        return plugin_pool.get_plugin(obj.plugin_type).module
+    module.short_description = _("Module")
+
+    def allowed_classes_styles(self, obj):
+        clsn = [cn for cn in obj.css_classes.get('class_names', '').split(',') if cn]
+        sef = [len(group) for ef, group in obj.inline_styles.items() if ef.startswith('extra_fields:')]
+        return "{} / {}".format(len(clsn), sum(sef))
+    allowed_classes_styles.short_description = _("Allowed Classes and Styles")
 
 admin.site.register(PluginExtraFields, PluginExtraFieldsAdmin)

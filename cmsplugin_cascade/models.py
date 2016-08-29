@@ -6,6 +6,7 @@ from collections import OrderedDict
 from django.conf import settings
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible, force_text
+from django.utils.functional import cached_property
 from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
@@ -115,8 +116,11 @@ class PluginExtraFields(models.Model):
         unique_together = ('plugin_type', 'site')
 
     def __str__(self):
-        #return force_text(plugin_pool.get_plugin(self.plugin_type).name)
-        return force_text(self.plugin_type)
+        return force_text(self.name)
+
+    @cached_property
+    def name(self):
+        return plugin_pool.get_plugin(self.plugin_type).name
 
 
 class Segmentation(models.Model):
