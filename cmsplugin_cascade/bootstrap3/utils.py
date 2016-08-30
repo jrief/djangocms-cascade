@@ -72,13 +72,7 @@ def compute_media_queries(element):
             key = 'container_fluid_max_widths' if fluid else 'container_max_widths'
             max_widths[bp] = parent_glossary[key][bp]
         except KeyError:
-            if fluid:
-                if bp == 'lg':
-                    max_widths[bp] = settings.CMSPLUGIN_CASCADE['bootstrap3']['fluid-lg-width']
-                else:
-                    max_widths[bp] = BS3_BREAKPOINTS[bp][0]
-            else:
-                max_widths[bp] = BS3_BREAKPOINTS[bp][3]
+            max_widths[bp] = BS3_BREAKPOINTS[bp][4 if fluid else 3]
         if last_index > 0:
             if index == 0:
                 next_bp = breakpoints[1]

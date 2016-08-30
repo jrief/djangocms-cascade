@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms import widgets
-from django.forms.models import ModelForm
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
@@ -23,31 +22,32 @@ class ImageBackgroundMixin(object):
     def background_color(self):
         try:
             disabled, color = self.glossary['background-color']
-            if not disabled:
+            if not disabled and disabled != 'disabled':
                 return 'background-color: {};'.format(color)
         except (KeyError, TypeError, ValueError):
             pass
+        return ''
 
     @property
     def background_attachment(self):
         try:
             return 'background-attachment: {background-attachment};'.format(**self.glossary)
         except KeyError:
-            pass
+            return ''
 
     @property
     def background_position(self):
         try:
             return 'background-position: {background-vertical-position} {background-horizontal-position};'.format(**self.glossary)
         except KeyError:
-            pass
+            return ''
 
     @property
     def background_repeat(self):
         try:
             return 'background-repeat: {background-repeat};'.format(**self.glossary)
         except KeyError:
-            pass
+            return ''
 
     @property
     def background_size(self):
@@ -60,6 +60,7 @@ class ImageBackgroundMixin(object):
                 return 'background-size: {};'.format(size)
         except KeyError:
             pass
+        return ''
 
 
 class JumbotronPluginForm(ImageForm):
@@ -99,14 +100,6 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             initial=list(BS3_BREAKPOINT_KEYS)[::-1],
             help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
-        PartialFormField(
-            'responsive-heights',
-            MultipleCascadingSizeWidget(BS3_BREAKPOINT_KEYS,
-                                        allowed_units=['px', '%'], required=False),
-            label=_("Adapt Picture Heights"),
-            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
-            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
-        ),
     )
     glossary_fields = (
         PartialFormField(
@@ -122,7 +115,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         ),
         PartialFormField(
             'background-attachment',
-            widgets.Select(choices=[(c, c) for c in ATTACHMENT_CHOICES]),
+            widgets.RadioSelect(choices=[(c, c) for c in ATTACHMENT_CHOICES]),
             initial='local',
             label=_("This property specifies how to move the background relative to the viewport."),
         ),
@@ -179,7 +172,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         # if the jumbotron is the root of the placeholder, we consider it as "fluid"
-        obj.glossary.setdefault('fluid', obj.parent is None)
+        obj.glossary['fluid'] = obj.parent is None
         sanitized = super(BootstrapJumbotronPlugin, cls).sanitize_model(obj)
         compute_media_queries(obj)
         return sanitized
