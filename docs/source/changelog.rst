@@ -12,8 +12,10 @@ Release History
 * ``CMSPLUGIN_CASCADE['plugins_with_extra_fields']`` is a dict instead of a tuple. This allows
   the site administrator to enable extra styles globally and without adding them via the backend.
 * Tuples in ``CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']`` now accepts five parameters instead
-  of four. The 5th parameter now specifies the image width for fluid containers and the Jumbotron
+  of four. The 5th parameter specifies the image width for fluid containers and the Jumbotron
   plugin.
+* The plugin's change form now can add an introduction and a footnote HTML. This is useful to add
+  some explanation text.
 
 0.9.2
 -----

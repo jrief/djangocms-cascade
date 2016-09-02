@@ -280,9 +280,12 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         return None, None
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        # determined dependencies for ring.js
-        bases = self.get_ring_bases()
-        context['base_plugins'] = ['django.cascade.{}'.format(b) for b in bases]
+        context.update(
+            base_plugins=['django.cascade.{}'.format(b) for b in self.get_ring_bases()],
+            plugin_title=string_concat(self.module, " ", self.name, " Plugin"),
+            plugin_intro=mark_safe(getattr(self, 'intro_html', '')),
+            plugin_footnote=mark_safe(getattr(self, 'footnote_html', '')),
+        )
 
         # remove glossary field from rendered form
         form = context['adminform'].form
