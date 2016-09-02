@@ -141,11 +141,14 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         PartialFormField(
             'background-width-height',
             MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%'],
-                                        allowed_consts=['auto'], required=False),
+                                        required=False),
             label=_("Background width and height"),
             help_text=_("This property specifies the width and height of a background image."),
         ),
     )
+    footnote_html = """
+<p>For more information about the Jumbotron please read </p>
+    """
 
     class Media:
         css = {'all': (settings.CMSPLUGIN_CASCADE['fontawesome_css_url'],)}

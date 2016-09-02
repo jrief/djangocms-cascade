@@ -6,9 +6,6 @@ Release History
 
 0.10.x
 ----------
-#* Refactored ``cmsplugin_cascade/widgets.py`` and moved function ``_compile_validation_pattern``
-#  into class ``CascadingSizeWidgetMixin``. It now is possible to allow the special constants
-#  ``auto``, ``inherit`` and ``initial`` in size related input fields.
 * Added **BootstrapJumbotronPlugin**. This for instance can be used to place background images
   extending over the full width of a page using a parallax effect.
 * Added utility to manage font icons.

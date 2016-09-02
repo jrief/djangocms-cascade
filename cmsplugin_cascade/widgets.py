@@ -95,11 +95,10 @@ class NumberInputWidget(widgets.NumberInput):
 
 class CascadingSizeWidgetMixin(object):
     POSSIBLE_UNITS = ('px', 'em', '%')
-    POSSIBLE_CONSTS = ('auto', 'inherit', 'initial')
     required_message = _("In '%(label)s': This field is required.")
     invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number, ending in %(endings)s.")
 
-    def compile_validation_pattern(self, units=None, consts=None):
+    def compile_validation_pattern(self, units=None):
         """
         Assure that passed in units are valid size units, or if missing, use all possible units.
         Return a tuple with a regular expression to be used for validating and an error message
@@ -111,13 +110,7 @@ class CascadingSizeWidgetMixin(object):
             for u in units:
                 if u not in self.POSSIBLE_UNITS:
                     raise ValidationError('{} is not a valid unit for a size field'.format(u))
-        if consts is None:
-            regex = re.compile(r'^(-?\d+)({})$'.format('|'.join(units)))
-        else:
-            for c in consts:
-                if c not in self.POSSIBLE_CONSTS:
-                    raise ValidationError('{} is not a valid constant for a size field'.format(c))
-            regex = re.compile(r'^((-?\d+)({0})|{1})$'.format('|'.join(units), '|'.join(consts)))
+        regex = re.compile(r'^(-?\d+)({})$'.format('|'.join(units)))
         endings = (' %s ' % ugettext("or")).join("'%s'" % u.replace('%', '%%') for u in units)
         params = {'label': '%(label)s', 'value': '%(value)s', 'field': '%(field)s', 'endings': endings}
         return regex, self.invalid_message % params
@@ -130,13 +123,13 @@ class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
     """
     DEFAULT_ATTRS = {'style': 'width: 5em;'}
 
-    def __init__(self, allowed_units=None, allowed_consts=None, attrs=None, required=None):
+    def __init__(self, allowed_units=None, attrs=None, required=None):
         if required is not None:
             self.required = required
         if attrs is None:
             attrs = self.DEFAULT_ATTRS
         self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
-            units=allowed_units, consts=allowed_consts)
+            units=allowed_units)
         super(CascadingSizeWidget, self).__init__(attrs=attrs)
 
     def validate(self, value):
@@ -270,9 +263,9 @@ class MultipleCascadingSizeWidget(CascadingSizeWidgetMixin, MultipleTextInputWid
     DEFAULT_ATTRS = {'style': 'width: 4em;'}
     invalid_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending in %(endings)s.")
 
-    def __init__(self, labels, allowed_units=None, allowed_consts=None, attrs=None, required=True):
+    def __init__(self, labels, allowed_units=None, attrs=None, required=True):
         if attrs is None:
             attrs = self.DEFAULT_ATTRS
         self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
-            units=allowed_units, consts=allowed_consts)
+            units=allowed_units)
         super(MultipleCascadingSizeWidget, self).__init__(labels, required=required, attrs=attrs)
