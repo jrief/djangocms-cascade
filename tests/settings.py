@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from cmsplugin_cascade.extra_fields.config import default_plugin_extra_fields
+from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
 ROOT_URLCONF = 'tests.urls'
 
@@ -101,12 +101,12 @@ CMSPLUGIN_CASCADE_PLUGINS = (
 
 CMSPLUGIN_CASCADE = {
     'plugins_with_extra_fields': {
-        'BootstrapButtonPlugin': default_plugin_extra_fields,
-        'BootstrapContainerPlugin': default_plugin_extra_fields,
-        'BootstrapColumnPlugin': default_plugin_extra_fields,
-        'BootstrapRowPlugin': default_plugin_extra_fields,
-        'BootstrapPicturePlugin': default_plugin_extra_fields,
-        'SimpleWrapperPlugin': default_plugin_extra_fields,
+        'BootstrapButtonPlugin': PluginExtraFieldsConfig(),
+        'BootstrapContainerPlugin': PluginExtraFieldsConfig(),
+        'BootstrapColumnPlugin': PluginExtraFieldsConfig(),
+        'BootstrapRowPlugin': PluginExtraFieldsConfig(),
+        'BootstrapPicturePlugin': PluginExtraFieldsConfig(),
+        'SimpleWrapperPlugin': PluginExtraFieldsConfig(),
     },
     'plugins_with_sharables': {
         'BootstrapImagePlugin': (

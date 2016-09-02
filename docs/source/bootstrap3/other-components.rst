@@ -11,7 +11,7 @@ As body, the panel element accepts other plugins, normally this is a Text plugin
 
 .. _Panels: http://getbootstrap.com/components/#panels
 
-
+.. bootstrap3/jumbotron
 =========
 Jumbotron
 =========
