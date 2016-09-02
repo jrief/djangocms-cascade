@@ -18,29 +18,21 @@ Jumbotron
 
 Bootstrap is shipped with CSS helpers to facilitate the creation of a Jumbotron_, sometimes also
 named "Hero" element. In **djangocms-cascade**, such a Jumbotron plugin can be added anywhere,
-even as the root element of a placeholder, in other words, even outside of a container plugin.
-The latter configuration is specially useful for images, which shall extend over the full width
-of the web page.
+even as the root element of a placeholder, in other words, even outside of a Bootstrap Container
+plugin. The latter configuration is specially useful for images, which shall extend over the full
+width of the web page.
 
 If used outside a Bootstrap Container, we first must configure the allowed breakpoints. This is
 the same behaviour as for the Container plugin. Then we optionally can chose an image or a
 background color, it's size, attachment, position and repetitions. For more details read
 `this article`_ on how to configure background images using pure CSS.
 
-A Jumbotron without and content has a default height of 96 pixels, which is 48 pixels for the
-default top- and bottom paddings, each. These values are given by the Bootstrap 3 framework.
+A Jumbotron without any content has a default height of 96 pixels, which is 48 pixels for the
+top- and bottom paddings, each. These values are given by the Bootstrap 3 framework.
 
 To increase the height of a Jumbotron you have two choices. The simpler one is to add some
-content to the Jumbotron plugin which then increases the height. Another method is to explicitly
-allow to set the height of a Jumbotron plugin. In the Django admin enter into
-
-.. code-block::
-
-    Home › django CMS Cascade › Custom CSS classes and styles
-
-and chose or add the **BootstrapJumbotronPlugin**. Then locate and check the checkbox for "height"
-in section "Customized Heights Fields". Don't forget to save. Now you can explicitly change the
-height of all Jumbotron plugins.
+content to the Jumbotron plugin which then increases it's height. Another, is to explicitly
+to set other padding of the Jumbotron plugin.
 
 .. _Jumbotron: http://getbootstrap.com/components/#jumbotron
 .. _this article: https://css-tricks.com/almanac/properties/b/background-image/
