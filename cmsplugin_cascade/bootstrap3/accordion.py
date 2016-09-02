@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
