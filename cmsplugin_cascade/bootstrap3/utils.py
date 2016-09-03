@@ -105,7 +105,7 @@ def get_image_tags(context, instance, options):
     resize_options = options.get('resize-options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    subject_location = 'subject_location' in resize_options
+    subject_location = instance.image.subject_location if 'subject_location' in resize_options else False
     resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
     if is_responsive:
@@ -185,7 +185,7 @@ def get_picture_elements(context, instance):
     resize_options = instance.glossary.get('resize-options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    subject_location = 'subject_location' in resize_options
+    subject_location = instance.image.subject_location if 'subject_location' in resize_options else False
     max_width = 0
     max_zoom = 0
     elements = []
