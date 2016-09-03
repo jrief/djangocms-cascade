@@ -4,6 +4,11 @@
 Release History
 ===============
 
+0.9.3
+-----
+* Fixed: enabled subject_location did not work properly for **ImagePlugin** and **PicturePlugin**.
+* Fixed indention in admin interface for extra fields model.
+
 0.9.2
 -----
 * Restore global jQuery object (required by the Select2 widget) in explicit file instead of doing
