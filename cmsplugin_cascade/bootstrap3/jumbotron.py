@@ -15,6 +15,7 @@ from .plugin_base import BootstrapPluginBase
 from .image import ImageForm
 from .utils import get_widget_choices, compute_media_queries, get_picture_elements, BS3_BREAKPOINT_KEYS
 from .container import ContainerBreakpointsRenderer
+from .picture import BootstrapPicturePlugin
 
 
 class ImageBackgroundMixin(object):
@@ -79,7 +80,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
     form = JumbotronPluginForm
     default_css_class = 'jumbotron'
-    parent_classes = None
+    parent_classes = ['BootstrapColumnPlugin']
     require_parent = False
     allow_children = True
     alien_child_classes = True
@@ -99,6 +100,22 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             label=_("Available Breakpoints"),
             initial=list(BS3_BREAKPOINT_KEYS)[::-1],
             help_text=_("Supported display widths for Bootstrap's grid system.")
+        ),
+        PartialFormField(
+            'container_max_heights',
+            MultipleCascadingSizeWidget(BS3_BREAKPOINT_KEYS,
+                                        allowed_units=['px', '%'], required=False),
+            label=_("Adapt Picture Heights"),
+            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
+            help_text=_(
+                "Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
+        ),
+        PartialFormField(
+            'resize-options',
+             widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
+             label=_("Resize Options"),
+             help_text=_("Options to use when resizing the image."),
+             initial=['crop', 'subject_location', 'high_resolution']
         ),
     )
     glossary_fields = (
