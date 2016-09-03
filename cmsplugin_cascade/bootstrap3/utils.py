@@ -136,7 +136,8 @@ def get_image_tags(context, instance, options):
                 if high_res:
                     size = (size[0] * 2, size[1] * 2)
                 key = '{0}w'.format(size[0])
-                tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+                tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale,
+                                        'subject_location': subject_location}
         # use an existing image as fallback for the <img ...> element
         if not max_width > 0:
             logger.warning('image tags: image max width is zero')
@@ -151,7 +152,8 @@ def get_image_tags(context, instance, options):
                 else:
                     tags['srcsets']['1x'] = {'size': size, 'crop': crop,
                         'upscale': upscale, 'subject_location': subject_location}
-    tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+    tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale,
+                   'subject_location': subject_location}
     return tags
 
 
