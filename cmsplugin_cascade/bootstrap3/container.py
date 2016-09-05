@@ -42,14 +42,16 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapJumbotronPlugin']
     form = BootstrapContainerForm
     glossary_fields = (
-        PartialFormField('breakpoints',
+        PartialFormField(
+            'breakpoints',
             widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
                                            renderer=ContainerBreakpointsRenderer),
             label=_('Available Breakpoints'),
             initial=list(BS3_BREAKPOINTS)[::-1],
             help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
-        PartialFormField('fluid',
+        PartialFormField(
+            'fluid',
             widgets.CheckboxInput(),
             label=_('Fluid Container'), initial=False,
             help_text=_("Changing your outermost '.container' to '.container-fluid'.")

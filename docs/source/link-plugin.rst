@@ -106,7 +106,7 @@ a URL and thus add the method get_absolute_url_ to that Django model. Since such
 CMS page, nor a URL to an external web page, it would be convenient to access that model using a
 special Link type.
 
-For example, in **djangoSHOP** we can allow to link directly from a CMS page to a shop's product.
+For example, in django-shop_ we can allow to link directly from a CMS page to a shop's product.
 This is achieved by reconfiguring the Link Plugin inside Cascade with:
 
 .. code-block:: python
@@ -132,5 +132,5 @@ selected, the site administrator can choose between all of the shops products.
 
 .. _djangocms-link: https://github.com/divio/djangocms-link
 .. _djangocms-text-ckeditor: https://github.com/divio/djangocms-text-ckeditor
-.. _get_absolute_url: https://docs.djangoproject.com/en/1.7/ref/models/instances/#get-absolute-url
+.. _get_absolute_url: https://docs.djangoproject.com/en/stable/ref/models/instances/#get-absolute-url
 .. _django-shop: https://github.com/awesto/django-shop

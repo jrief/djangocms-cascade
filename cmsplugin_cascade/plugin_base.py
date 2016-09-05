@@ -95,6 +95,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
     change_form_template = 'cascade/admin/change_form.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
+    parent_classes = None
     alien_child_classes = False
 
     class Media:

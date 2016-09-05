@@ -105,7 +105,7 @@ def get_image_tags(context, instance, options):
     resize_options = options.get('resize-options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    subject_location = 'subject_location' in resize_options
+    subject_location = instance.image.subject_location if 'subject_location' in resize_options else False
     resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
     if is_responsive:
@@ -136,7 +136,8 @@ def get_image_tags(context, instance, options):
                 if high_res:
                     size = (size[0] * 2, size[1] * 2)
                 key = '{0}w'.format(size[0])
-                tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+                tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale,
+                                        'subject_location': subject_location}
         # use an existing image as fallback for the <img ...> element
         if not max_width > 0:
             logger.warning('image tags: image max width is zero')
@@ -151,7 +152,8 @@ def get_image_tags(context, instance, options):
                 else:
                     tags['srcsets']['1x'] = {'size': size, 'crop': crop,
                         'upscale': upscale, 'subject_location': subject_location}
-    tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+    tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale,
+                   'subject_location': subject_location}
     return tags
 
 
@@ -183,7 +185,7 @@ def get_picture_elements(context, instance):
     resize_options = instance.glossary.get('resize-options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    subject_location = 'subject_location' in resize_options
+    subject_location = instance.image.subject_location if 'subject_location' in resize_options else False
     max_width = 0
     max_zoom = 0
     elements = []
