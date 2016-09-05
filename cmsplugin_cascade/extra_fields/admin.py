@@ -40,12 +40,14 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     DISTANCE_UNITS = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")),
                       ('px,%', _("px and %")), ('px', _("px")), ('%', _("%")),)
     classname_fields = ((
-        PartialFormField('class_names',
+        PartialFormField(
+            'class_names',
             ClassNamesWidget(),
             label=_("CSS class names"),
             help_text=_("Freely selectable CSS classnames for this Plugin, separated by commas."),
         ),
-        PartialFormField('multiple',
+        PartialFormField(
+            'multiple',
             widgets.CheckboxInput(),
             label=_("Allow multiple"),
         ),
@@ -58,7 +60,8 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         super(PluginExtraFieldsAdmin, self).__init__(model, admin_site)
         self.style_fields = []
         for style, choices_tuples in settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
-            extra_field = PartialFormField('extra_fields:{0}'.format(style),
+            extra_field = PartialFormField(
+                'extra_fields:{0}'.format(style),
                 widgets.CheckboxSelectMultiple(choices=((c, c) for c in choices_tuples[0])),
                 label=_("Customized {0} Fields:").format(style),
             )
@@ -66,7 +69,8 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
             if issubclass(Widget, MultipleCascadingSizeWidget):
                 self.style_fields.append((
                     extra_field,
-                    PartialFormField('extra_units:{0}'.format(style),
+                    PartialFormField(
+                        'extra_units:{0}'.format(style),
                         widgets.Select(choices=self.DISTANCE_UNITS),
                         label=_("Units for {0} Fields:").format(style),
                         initial=self.DISTANCE_UNITS[0][0],
