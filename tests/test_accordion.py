@@ -20,7 +20,7 @@ BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap
 
 class AccordionPluginTest(CMSTestCase):
     def setUp(self):
-        page = create_page('HOME', 'testing.html', 'en', published=True, in_navigation=True)
+        page = create_page('HOME', 'cascade/testing.html', 'en', published=True, in_navigation=True)
         self.placeholder = page.placeholders.get(slot='Main Content')
         self.request = self.get_request(language='en', page=page)
         self.admin_site = admin.sites.AdminSite()
