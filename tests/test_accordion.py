@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib import admin
@@ -74,7 +75,6 @@ class AccordionPluginTest(CMSTestCase):
         except KeyError:
             pass
         html = self.build_accordion_plugins()
-        #print html
         soup = BeautifulSoup(html)
         panel_group = soup.find('div', class_='panel-group')
         self.assertIsNotNone(panel_group)
@@ -83,7 +83,6 @@ class AccordionPluginTest(CMSTestCase):
     def test_angular_bootstrap_accordion(self):
         settings.CMSPLUGIN_CASCADE['bootstrap3'].update({'template_basedir': 'angular-ui'})
         html = self.build_accordion_plugins()
-        #print html
         soup = BeautifulSoup(html)
         accordion = soup.find('accordion')
         self.assertIsNotNone(accordion)

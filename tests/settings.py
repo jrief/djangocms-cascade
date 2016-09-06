@@ -89,7 +89,7 @@ LANGUAGES = (
 LANGUAGE_CODE = 'en'
 
 CMS_TEMPLATES = (
-    ('testing.html', 'Default Page'),
+    ('cascade/testing.html', 'Default Page'),
 )
 
 CMSPLUGIN_CASCADE_PLUGINS = (
