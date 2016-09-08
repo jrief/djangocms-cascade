@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from django.apps import apps
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade import settings
 
 
@@ -46,3 +50,13 @@ def rectify_partial_form_field(base_field, partial_form_fields):
             fieldset = [fieldset]
         for field in fieldset:
             base_field.validators.append(field.run_validators)
+
+def validate_link(link_data):
+    """
+    Check if the given model exists, otherwise raise a Validation error
+    """
+    try:
+        Model = apps.get_model(*link_data['model'].split('.'))
+        Model.objects.get(pk=link_data['pk'])
+    except Model.DoesNotExist:
+        raise ValidationError(_("Unable to link onto '{0}'.").format(Model.__name__))
