@@ -4,6 +4,10 @@
 Release History
 ===============
 
+0.9.4
+-----
+* Added function ``.utils.validate_link`` to check if submitted link information is valid.
+
 0.9.3
 -----
 * Moved template 'testing.html' -> 'cascade/testing.html'.
