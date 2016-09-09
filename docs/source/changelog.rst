@@ -17,6 +17,15 @@ Release History
 * The plugin's change form now can add an introduction and a footnote HTML. This is useful to add
   some explanation text.
 
+0.9.4
+-----
+* Added function ``.utils.validate_link`` to check if submitted link information is valid.
+
+0.9.3
+-----
+* Moved template 'testing.html' -> 'cascade/testing.html'.
+* Added German translations.
+
 0.9.2
 -----
 * Restore global jQuery object (required by the Select2 widget) in explicit file instead of doing

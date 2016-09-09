@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib import admin
@@ -19,7 +20,7 @@ BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap
 
 class AccordionPluginTest(CMSTestCase):
     def setUp(self):
-        page = create_page('HOME', 'testing.html', 'en', published=True, in_navigation=True)
+        page = create_page('HOME', 'cascade/testing.html', 'en', published=True, in_navigation=True)
         self.placeholder = page.placeholders.get(slot='Main Content')
         self.request = self.get_request(language='en', page=page)
         self.admin_site = admin.sites.AdminSite()
@@ -74,7 +75,6 @@ class AccordionPluginTest(CMSTestCase):
         except KeyError:
             pass
         html = self.build_accordion_plugins()
-        #print html
         soup = BeautifulSoup(html)
         panel_group = soup.find('div', class_='panel-group')
         self.assertIsNotNone(panel_group)
@@ -83,7 +83,6 @@ class AccordionPluginTest(CMSTestCase):
     def test_angular_bootstrap_accordion(self):
         settings.CMSPLUGIN_CASCADE['bootstrap3'].update({'template_basedir': 'angular-ui'})
         html = self.build_accordion_plugins()
-        #print html
         soup = BeautifulSoup(html)
         accordion = soup.find('accordion')
         self.assertIsNotNone(accordion)
