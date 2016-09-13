@@ -7,8 +7,9 @@ class PluginExtraFieldsConfig(object):
     Each Cascade Plugin can be configured to accept extra fields, such as an ID tag, one or more
     CSS classes or inlines styles. It is possible to configure these fields globally using an
     instance of this class, or to configure them on a per site base using the appropriate
-    admin's backend interface at
-    Start › django CMS Cascade › Custom CSS classes and styles › PluginExtraFields
+    admin's backend interface at:
+
+    *Start › django CMS Cascade › Custom CSS classes and styles › PluginExtraFields*
 
     :param allow_id_tag: If ``True``, allows to set the ``id`` attribute in HTML elements.
 

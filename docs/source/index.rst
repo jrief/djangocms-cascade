@@ -38,6 +38,7 @@ Contents:
   installation
   link-plugin
   bootstrap3/grid
+  section
   segmentation
   sharable-fields
   customize-styles
