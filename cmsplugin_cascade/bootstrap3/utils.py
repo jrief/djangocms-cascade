@@ -98,9 +98,11 @@ def get_image_tags(context, instance, options):
     Create a context returning the tags to render an <img ...> element:
     ``sizes``, ``srcset``, a fallback ``src`` and if required inline styles.
     """
-    if not instance.image:
+    try:
+        aspect_ratio = compute_aspect_ratio(instance.image)
+    except Exception as e:
+        # if accessing the image file fails, abort here
         return
-    aspect_ratio = compute_aspect_ratio(instance.image)
     is_responsive = options.get('is_responsive', False)
     resize_options = options.get('resize-options', {})
     crop = 'crop' in resize_options
