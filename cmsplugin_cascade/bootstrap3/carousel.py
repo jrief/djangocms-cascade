@@ -14,7 +14,7 @@ from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.widgets import TextEditorWidget
-from djangocms_text_ckeditor.utils import plugin_tags_to_user_html, plugin_tags_to_admin_html, plugin_tags_to_db
+from djangocms_text_ckeditor.utils import plugin_tags_to_user_html
 from cmsplugin_cascade.fields import PartialFormField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
@@ -24,8 +24,6 @@ from . import settings, utils
 from .plugin_base import BootstrapPluginBase
 from .image import ImageForm
 from .picture import BootstrapPicturePlugin
-
-html_parser = HTMLParser()
 
 
 class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
@@ -124,28 +122,21 @@ class CarouselPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(CarouselPlugin)
 
 
-class SlideForm(ImageForm):
-    def clean_glossary(self):
-        glossary = super(SlideForm, self).clean_glossary()
-        caption = html_parser.unescape(glossary.get('caption', ''))
-        glossary['caption'] = plugin_tags_to_db(caption)
-        return glossary
-
-
 class CarouselSlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
-    form = SlideForm
+    form = ImageForm
     default_css_class = 'img-responsive'
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
     render_template = 'cascade/bootstrap3/carousel-slide.html'
     change_form_template = 'cascade/admin/text_plugin_change_form.html'
+    html_parser = HTMLParser()
 
     def get_form(self, request, obj=None, **kwargs):
         if obj:
-            caption = html_parser.unescape(obj.glossary.get('caption', ''))
+            caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
             obj.glossary.update(caption=caption)
 
         parent_obj = self.get_parent_instance(request)
@@ -165,9 +156,8 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
         elements = utils.get_picture_elements(context, instance)
-        caption = html_parser.unescape(instance.glossary.get('caption', ''))
+        caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
         fluid = instance.get_complete_glossary().get('fluid') == 'on'
-        print(plugin_tags_to_user_html(caption, context, placeholder))
         context.update({
             'is_responsive': True,
             'instance': instance,
