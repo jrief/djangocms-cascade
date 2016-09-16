@@ -4,12 +4,12 @@
 {% with inline_styles=instance.inline_styles %}
 <div id="cmsplugin_{{ instance.id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 	{% for panel in instance.child_plugin_instances %}
-		{% with panel_type=panel.glossary.panel_type heading_size=panel.glossary.heading_size panel_title=panel.glossary.panel_title|safe %}
+		{% with panel_type=panel.glossary.panel_type heading_tag=panel.glossary.heading_size|default:"div" panel_title=panel.glossary.panel_title|safe %}
 	<div class="panel {{ panel_type }}">
 		<div class="panel-heading">
-			{% if heading_size %}<{{ heading_size }} class="panel-title">{% endif %}
+			<{{ heading_tag }} class="panel-title">
 				<a data-toggle="collapse" data-parent="#cmsplugin_{{ instance.id }}" href="#cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}">{{ panel_title }}</a>
-			{% if heading_size %}</{{ heading_size }}>{% endif %}
+			</{{ heading_tag }}>
 		</div>
 		<div id="cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}" class="panel-collapse collapse{% if forloop.first  and instance.glossary.first_is_open = "on" %} in{% endif %}">
 			{% render_plugin panel %}
