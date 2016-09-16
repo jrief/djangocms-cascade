@@ -12,7 +12,7 @@ class CascadeTestCase(CMSTestCase):
     admin_password = 'secret'
 
     def setUp(self):
-        self._createAdminUser()
+        self.create_admin_user()
         page = create_page('HOME', 'cascade/testing.html', 'en', published=True, in_navigation=True,
             created_by=self.user)
         self.placeholder = Placeholder.objects.create(slot='Main Content')
@@ -22,7 +22,7 @@ class CascadeTestCase(CMSTestCase):
         self.admin_site = admin.sites.AdminSite()
         self.page_admin = PageAdmin(page, self.admin_site)
 
-    def _createAdminUser(self):
+    def create_admin_user(self):
         self.user = User.objects.create_user('admin', 'admin@example.com', self.admin_password)
         self.user.is_staff = True
         self.user.is_superuser = True
