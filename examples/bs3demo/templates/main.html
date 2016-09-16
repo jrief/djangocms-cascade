@@ -13,19 +13,15 @@
 	{% endif %}
 {% endblock header %}
 
-{% block main %}
-<section>
-	{% placeholder "Main Content" or %}
-	<div class="container">
-		<div class="row starter-template">
-			<div class="col-xs-12">
-				<h1>Add Bootstrap container here</h1>
-				<p class="lead">Use this placeholder as a quick way to start editing a new CMS page.</p>
-				<p>All you have to do is to append <code>?edit</code> to the URL, switch to “Structure” mode
-				and add a <strong>Bootstrap Container Plugin</strong> or <strong>Jumbotron Plugin</strong>.</p>
-			</div>
+{% block main %}{% placeholder "Main Content" or %}
+<div class="container">
+	<div class="row starter-template">
+		<div class="col-xs-12">
+			<h1>Add Bootstrap container here</h1>
+			<p class="lead">Use this placeholder as a quick way to start editing a new CMS page.</p>
+			<p>All you have to do is to append <code>?edit</code> to the URL, switch to “Structure” mode
+			and add a <strong>Bootstrap Container Plugin</strong> or <strong>Jumbotron Plugin</strong>.</p>
 		</div>
 	</div>
-	{% endplaceholder %}
-</section>
-{% endblock main %}
+</div>
+{% endplaceholder %}{% endblock main %}
