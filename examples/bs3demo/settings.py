@@ -99,7 +99,6 @@ STATICFILES_FINDERS = (
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
-    ('bower_components', os.path.join(PROJECT_ROOT, 'bower_components')),
     ('node_modules', os.path.join(PROJECT_ROOT, 'node_modules')),
 )
 
