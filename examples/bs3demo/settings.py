@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
-from cmsplugin_cascade.extra_fields.config import default_plugin_extra_fields
+from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
 DEBUG = True
 
@@ -119,6 +119,7 @@ TEMPLATES = [{
             'cms.context_processors.cms_settings',
             'sekizai.context_processors.sekizai',
             'django.template.context_processors.request',
+            'bs3demo.context_processors.cascade',
         ),
     },
 }]
@@ -194,14 +195,8 @@ CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.segmentation', 'cmsplugin_cascad
     'cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
 CMSPLUGIN_CASCADE = {
-    'plugins_with_extra_fields': {
-        'BootstrapButtonPlugin': default_plugin_extra_fields,
-        'BootstrapContainerPlugin': default_plugin_extra_fields,
-        'BootstrapColumnPlugin': default_plugin_extra_fields,
-        'BootstrapRowPlugin': default_plugin_extra_fields,
-        'BootstrapPicturePlugin': default_plugin_extra_fields,
-        'SimpleWrapperPlugin': default_plugin_extra_fields,
-    },
+    'fontawesome_css_url': 'node_modules/font-awesome/css/font-awesome.css',
+    'alien_plugins': ('TextPlugin', 'TextLinkPlugin',),
     'plugins_with_sharables': {
         'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed',
                                  'image-height', 'resize-options',),
@@ -209,7 +204,15 @@ CMSPLUGIN_CASCADE = {
         'BootstrapButtonPlugin': ('link',),
         'TextLinkPlugin': ('link', 'target',),
     },
+    'plugins_with_extra_fields': {
+        'BootstrapRowPlugin': PluginExtraFieldsConfig(inline_styles={
+            'extra_fields:Margins': ['margin-top', 'margin-bottom'],
+            'extra_units:Margins': 'px,em'}),
+    },
+    'bootstrap3': {},
 }
+if os.getenv('DJANGO_CLIENT_FRAMEWORK', '').startswith('angular'):
+    CMSPLUGIN_CASCADE['bootstrap3']['template_basedir'] = 'angular-ui'
 
 CACSCADE_WORKAREA_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg'],
@@ -227,15 +230,15 @@ CMS_PLACEHOLDER_CONF = {
     # this placeholder is used in templates/main.html, it shows how to
     # scaffold a djangoCMS page starting with an empty placeholder
     'Main Content': {
-        'plugins': ['BootstrapContainerPlugin'],
+        'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
         'text_only_plugins': ['TextLinkPlugin'],
-        'parent_classes': {'BootstrapContainerPlugin': None},
+        'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
         'glossary': CACSCADE_WORKAREA_GLOSSARY,
     },
     # this placeholder is used in templates/wrapped.html, it shows how to
     # add content to an existing Bootstrap column
     'Bootstrap Column': {
-        'plugins': ['BootstrapRowPlugin', 'TextPlugin'],
+        'plugins': ['BootstrapRowPlugin', 'TextPlugin', ],
         'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
         'glossary': CACSCADE_WORKAREA_GLOSSARY,
@@ -248,6 +251,9 @@ CKEDITOR_SETTINGS = {
     'toolbar': 'CMS',
 }
 
+SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'
+SELECT2_JS = 'node_modules/select2/dist/js/select2.min.js'
+
 FILER_ALLOW_REGULAR_USERS_TO_ADD_ROOT_FOLDERS = True
 
 FILER_DUMP_PAYLOAD = True
@@ -256,7 +262,6 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.colorspace',
     'easy_thumbnails.processors.autocrop',
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
-    #'easy_thumbnails.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',
 )
 

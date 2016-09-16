@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from cmsplugin_cascade.cms_plugins import framework
+from django.conf import settings
 
 
 def cascade(request):
@@ -7,6 +7,6 @@ def cascade(request):
     Adds additional context variables to the default context.
     """
     context = {
-        'framework': framework,
+        'DJANGO_CLIENT_FRAMEWORK': settings.CMSPLUGIN_CASCADE['bootstrap3'].get('template_basedir'),
     }
     return context
