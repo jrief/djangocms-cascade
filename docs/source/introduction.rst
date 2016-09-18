@@ -4,7 +4,7 @@
 Introduction
 ============
 
-**DjangoCMS-Cascade** is a collection of plugins for Django-CMS_ >=3.2 to add various HTML elements
+**DjangoCMS-Cascade** is a collection of plugins for Django-CMS_ >=3.3 to add various HTML elements
 from CSS frameworks, such as `Twitter Bootstrap`_ to the Django templatetag_ placeholder_. This
 Django App makes it very easy to add other CSS frameworks, or to extend an existing collection with
 additional elements.

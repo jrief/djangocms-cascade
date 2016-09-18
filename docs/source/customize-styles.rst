@@ -8,7 +8,7 @@ Plugins shipped with **djangocms-cascade** offer a basic set of CSS classes as d
 chosen CSS framework. These offered classes normally do not fulfill the requirements for real world
 sites.
 
-While **djangocms-cascade** is easily extendible, it would be overkill to re-implement the available
+While **djangocms-cascade** is easily expendable, it would be overkill to re-implement the available
 plugins, just to add an extra field for a customized CSS class or an extra inline style. For that
 purpose, one can add a set of potential CSS classes and potential CSS inline styles for Cascade
 plugins, enabled for this feature. Moreover, this feature can be adopted individually on a per-site
@@ -19,56 +19,63 @@ base.
 Configure a Cascade plugins to accept extra fields
 ==================================================
 
-Configuring a plugin to allow an HTML id tag, an extra CSS classes or some inline styles is very
-easy. In the projects ``settings.py``, assure that ``'cmsplugin_cascade.extra_fields'`` is part of
-your ``INSTALLED_APPS``.
+It is possible to configure each plugin to accept an additional ID tag, one ore more CSS classes or
+some inline styles. By default the plugins: BootstrapButtonPlugin, BootstrapRowPlugin,
+BootstrapJumbotronPlugin and the SimpleWrapperPlugin are eligible for accepting extra styles.
+Additionally, by default the user can override the margins of the HeadingPlugin and the
+HorizontalRulePlugin.
 
-Then add a list of Cascade plugins, which shall be extendible. It is a good idea to enable at least
-these plugins for extendibility:
+To override these defaults, first assure that ``'cmsplugin_cascade.extra_fields'`` is part of
+your ``INSTALLED_APPS``. Then add a dictionary of Cascade plugins, which shall be extendible
+to the project's ``settings.py``, for instance:
 
 .. code-block:: python
 
 	CMSPLUGIN_CASCADE = {
 	    ...
-	    'plugins_with_extra_fields': ('BootstrapButtonPlugin', 'BootstrapRowPlugin',
-	        'SimpleWrapperPlugin', 'HorizontalRulePlugin',
-	    ),
+	    'plugins_with_extra_fields': {
+	        'BootstrapButtonPlugin': PluginExtraFieldsConfig(),
+	        'BootstrapRowPlugin': PluginExtraFieldsConfig(),
+	        'BootstrapJumbotronPlugin': PluginExtraFieldsConfig(inline_styles={
+	            'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
+	            'extra_units:Paddings': 'px,em'}),
+	        'SimpleWrapperPlugin': PluginExtraFieldsConfig(),
+	        'HeadingPlugin': PluginExtraFieldsConfig(inline_styles={
+	            'extra_fields:Paddings': ['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
+	            'extra_units:Paddings': 'px,em'}, allow_override=False),
+	        'HorizontalRulePlugin': PluginExtraFieldsConfig(inline_styles={
+	            'extra_fields:Paddings': ['margin-top', 'margin-bottom'],
+	            'extra_units:Paddings': 'px,em'}, allow_override=False),
+	    },
 	    ...
 	}
 
-If at least one plugin has been added to this settings variable, the Django administration backend
-offers an additional view:
+Here the class ``PluginExtraFieldsConfig`` can be used to fine-tune which extra fields can be
+set while editing the plugin. Assigning that class without arguments to a plugin, allows us to
+specify the extra fields using the Django administration backend at:
 
-*Home › Cmsplugin_cascade › Custom CSS classes and styles › Add Custom CSS classes styles*
+*Home › django CMS Cascade › Custom CSS classes and styles*
 
-Here the site administrator can specify, which extra CSS classes, ID tags and extra inline styles
-may be used by a concrete plugin.
+Here the site administrator can specify for each concrete plugin, which extra CSS classes, ID tags
+and extra inline styles shall be used.
 
+If we use ``PluginExtraFieldsConfig(allow_override=False)``, then we can not override the
+configuration using the administration backend, but must specify all settings in it's constructor:
 
-Configure the kind of extra inline styles a Cascade plugin may accept
-=====================================================================
-
-By default, **djangocms-cascade** specifies a sensible set of CSS styles, which can be added to
-the Cascade plugins, if enabled. This set however might not be enough for your installation and
-therefore can be extended by the settings variable ``CMSPLUGIN_CASCADE['extra_inline_styles']``
-containing an ``OrderedDict``. The key element is an arbitrary name. The value element is a 2-tuple
-whose first element is a list of CSS inline styles. The second element of this tuple specifies
-the widget to be used to render the input fields.
-
-Please check the default in ``cmsplugin_cascade/settings.py`` on how to set this list of extra
-inline styles.
+.. autoclass:: cmsplugin_cascade.extra_fields.config.PluginExtraFieldsConfig
+   :members:
 
 
-Enable extra fields
-===================
+Enable extra fields through the administration backend
+======================================================
 
 To enable this feature, in the administration backend navigate to
 
-*Home › Cmsplugin_cascade › Custom CSS classes and styles*  and click onto the button named
+*Home › django CMS Cascade › Custom CSS classes and styles*  and click onto the button named
 **Add Custom CSS classes styles**.
 
-From the field named “Plugin Name”, for instance select **Bootstrap Simple Wrapper**. Then, from the
-field named “Site”, select the current site.
+From the field named “Plugin Name”, select one of the available plugins, for example
+**Bootstrap Simple Wrapper**. Then, from the field named “Site”, select the current site.
 
 |customize-styles|
 

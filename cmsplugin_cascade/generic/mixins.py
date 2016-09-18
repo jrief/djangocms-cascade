@@ -29,8 +29,9 @@ class SectionForm(models.ModelForm):
         except (AttributeError, ObjectDoesNotExist):
             pass
         else:
-            element_ids[str(instance.pk)] = element_id
-            return len(element_ids) == len(set(element_ids.values()))
+            if element_id:
+                element_ids[str(instance.pk)] = element_id
+                return len(element_ids) == len(set(element_ids.values()))
 
 
 class SectionModelMixin(object):

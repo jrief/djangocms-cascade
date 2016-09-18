@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-try:
-    from django.contrib.sites.shortcuts import get_current_site
-except ImportError:
-    from django.contrib.sites.models import get_current_site
+
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
 from django.utils import six
@@ -28,14 +26,17 @@ class ExtraFieldsMixin(object):
 
     def get_form(self, request, obj=None, **kwargs):
         from cmsplugin_cascade.models import PluginExtraFields
+        from .config import PluginExtraFieldsConfig
 
         glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
+        clsname = self.__class__.__name__
         try:
             site = get_current_site(request)
-            extra_fields = PluginExtraFields.objects.get(plugin_type=self.__class__.__name__, site=site)
+            extra_fields = PluginExtraFields.objects.get(plugin_type=clsname, site=site)
         except ObjectDoesNotExist:
-            pass
-        else:
+            extra_fields = settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
+
+        if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
             # add a text input field to let the user name an ID tag for this HTML element
             if extra_fields.allow_id_tag:
                 glossary_fields.append(PartialFormField('extra_element_id',
@@ -73,6 +74,7 @@ class ExtraFieldsMixin(object):
                         key = 'extra_inline_styles:{0}'.format(inline_style)
                         label = '{0}: {1}'.format(style, inline_style)
                         glossary_fields.append(PartialFormField(key, Widget(), label=label))
+
         kwargs.update(glossary_fields=glossary_fields)
         return super(ExtraFieldsMixin, self).get_form(request, obj, **kwargs)
 

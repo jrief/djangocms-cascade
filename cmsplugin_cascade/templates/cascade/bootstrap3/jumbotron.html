@@ -1,0 +1,26 @@
+{% load cms_tags thumbnail sekizai_tags %}
+{% addtoblock "css" %}{% spaceless %}
+<style>
+#cascadeelement_id-{{ instance.pk }} {
+	{{ instance.background_color }}
+	{{ instance.background_attachment }}
+	{{ instance.background_position }}
+	{{ instance.background_repeat }}
+	{{ instance.background_size }}
+	{{ instance.inline_styles }}
+}
+{% for elem in elements %}
+{% thumbnail instance.image elem.size crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
+@media{{ elem.media }} {
+	#cascadeelement_id-{{ instance.pk }} {
+		background-image: url({{ thumb.url }});
+	}
+}
+{% endfor %}
+</style>
+{% endspaceless %}{% endaddtoblock %}
+<div id="cascadeelement_id-{{ instance.pk }}" class="{{ instance.css_classes }}">
+{% for plugin in instance.child_plugin_instances %}
+	{% render_plugin plugin %}
+{% endfor %}
+</div>

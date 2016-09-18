@@ -1,14 +1,13 @@
 {% extends "cascade/admin/change_form.html" %}
-{% load admin_static %}
+{% load cms_static %}
 
 {% block extrahead %}
 {{ block.super }}
-<script src="{% static "cms/js/modules/cms.base.js" %}"></script>
+<script src="{% static_with_version "cms/js/dist/bundle.admin.base.min.js" %}"></script>
 <script>
 (function($) {
 // CMS.$ will be passed for $
 $(document).ready(function () {
-	console.log("djangocms_text_ckeditor");
 	CMS.API.Helpers.csrf('{{ csrf_token }}');
 });
 })(CMS.$);

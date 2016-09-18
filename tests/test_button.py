@@ -29,7 +29,7 @@ class ButtonWrapperPluginTest(TestCase):
         self.assertHTMLEqual(html, '<a href="https://www.djangoproject.com/" class="btn btn-primary">Django</a>')
 
     def test_internal_link(self):
-        page = create_page('HOME', 'testing.html', 'en')
+        page = create_page('HOME', 'cascade/testing.html', 'en')
         glossary = {'link_content': 'HOME', 'button-type': 'btn-success',
             'link': {'pk': page.id, 'model': 'cms.Page', 'type': 'cmspage'}, 'target': ''}
         model_instance = add_plugin(self.placeholder, BootstrapButtonPlugin, 'en', glossary=glossary)

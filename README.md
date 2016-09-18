@@ -4,7 +4,7 @@ djangocms-cascade
 [![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
 [![Python versions](https://img.shields.io/pypi/pyversions/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 [![Software license](https://img.shields.io/pypi/l/djangocms-cascade.svg)](https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT)
-[![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/jrief/djangocms-cascade)
+[![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/awesto/djangocms-cascade)
  [![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
@@ -17,13 +17,16 @@ Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedoc
 Please see the [Release Notes](http://djangocms-cascade.readthedocs.io/en/latest/changelog.html)
 before upgrading from an older version.
 
+Currently **DjangoCMS-Cascade** does not work with **djangocms-text-ckeditor** >= 3.1. Please stay with
+version 3.0.1 until this issue hase been fixed.
+
 
 Why Use DjangoCMS-Cascade?
 --------------------------
 
 > Add DOM elements to a Django-CMS placeholder
 
-**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.1 to add various HTML elements
+**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.3 to add various HTML elements
 to any CMS [placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates)
 in a hierarchical tree.
 
@@ -109,7 +112,9 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
   resized to predefined values.
 * By allowing extra fields, one can add an optional ``id`` tag, CSS classes and inline styles. This
   is configurable on a plugin and site base.
-* It is easily possible to customize the templates shipped with the plugins.
+* It is possible to customize the rendering templates shipped with the plugins.
+* Since all data is JSON, you can dump the content of one placeholder and insert it into another one,
+  even on a foreign site. This for instance is useful to transfer pages from the staging site to production.
 
 
 Help needed
@@ -119,16 +124,3 @@ If you like this project, please invest some time and test it with Django-1.8/1.
 
 If you are a native English speaker, please check the documentation for spelling mistakes and
 grammar since English not my mother tongue.
-
-
-History
--------
-
-This project started as a simple [wrapper](https://github.com/jrief/cmsplugin-text-wrapper) for the
-DjangoCMS TextPlugin, so that text elements could be shifted horizontally using the Grid System 960.
-Later on, support for 960.gs was dropped in favor of Twitter Bootstrap. Now the aim of the project
-is to fully support all Bootstrap components and more, so that djangoCMS can be used to build a
-website with as many widgets as possible, without having to edit templates.
-
-DjangoCMS starting with version 3.0, allows to nest plugins inside other plugins. This feature made
-it possible to implement this kind of plugin.

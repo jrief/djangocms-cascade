@@ -21,3 +21,4 @@ form .glossary_button-type .btn, .glossary_button-size .btn { margin-bottom: 5px
 .field-box > .select2-container { min-width: 350px; }
 .field-box.field-link_type { float: none; margin-bottom: 15px; }
 form .form-row .select2-selection { height: 36px; }
+.form-row .django-select2 { min-width: 350px !important; }

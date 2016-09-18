@@ -1,0 +1,5 @@
+{% load sekizai_tags %}
+{% addtoblock "ext-css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}
+{% with tag_type=instance.tag_type css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+<{{ tag_type }} class="{{ css_classes }}" style="{{ inline_styles }}"></{{ tag_type }}>
+{% endwith %}

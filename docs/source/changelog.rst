@@ -4,10 +4,31 @@
 Release History
 ===============
 
+0.10.0
+----------
+* Added **BootstrapJumbotronPlugin**. This for instance can be used to place background images
+  extending over the full width of a page using a parallax effect.
+* *Experimental*: Utility to manage font icons, so that symbol icons can be used anywhere in any
+  size.
+* ``CMSPLUGIN_CASCADE['plugins_with_extra_fields']`` is a dict instead of a tuple. This allows
+  the site administrator to enable extra styles globally and without adding them using the
+  administration backend.
+* Tuples in ``CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']`` now accepts five parameters instead
+  of four. The 5th parameter specifies the image width for fluid containers and the Jumbotron
+  plugin.
+* The plugin's change form now can add an introduction and a footnote HTML. This is useful to add
+  some explanation text.
+
+0.9.4
+-----
+* Added function ``.utils.validate_link`` to check if submitted link information is valid.
+
 0.9.3
 -----
 * Fixed: enabled subject_location did not work properly for **ImagePlugin** and **PicturePlugin**.
 * Fixed indention in admin interface for extra fields model.
+* Moved template 'testing.html' -> 'cascade/testing.html'.
+* Added German translations.
 
 0.9.2
 -----

@@ -97,42 +97,49 @@ class BootstrapGalleryPlugin(CascadePluginBase):
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
     glossary_fields = (
-        PartialFormField('image-shapes',
+        PartialFormField(
+            'image-shapes',
             widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
             label=_("Image Responsiveness"),
-            initial=['img-responsive']
+            initial=['img-responsive'],
         ),
-        PartialFormField('image-width-responsive',
+        PartialFormField(
+            'image-width-responsive',
             CascadingSizeWidget(allowed_units=['%'], required=False),
             label=_("Responsive Image Width"),
             initial='100%',
             help_text=_("Set the image width in percent relative to containing element."),
         ),
-        PartialFormField('image-width-fixed',
+        PartialFormField(
+            'image-width-fixed',
             CascadingSizeWidget(allowed_units=['px'], required=False),
             label=_("Fixed Image Width"),
             help_text=_("Set a fixed image width in pixels."),
         ),
-        PartialFormField('image-height',
+        PartialFormField(
+            'image-height',
             CascadingSizeWidget(allowed_units=['px', '%'], required=False),
             label=_("Adapt Image Height"),
             help_text=_("Set a fixed height in pixels, or percent relative to the image width."),
         ),
-        PartialFormField('thumbnail-width',
+        PartialFormField(
+            'thumbnail-width',
             CascadingSizeWidget(allowed_units=['px']),
             label=_("Thumbnail Width"),
             help_text=_("Set a fixed thumbnail width in pixels."),
         ),
-        PartialFormField('thumbnail-height',
+        PartialFormField(
+            'thumbnail-height',
             CascadingSizeWidget(allowed_units=['px', '%']),
             label=_("Thumbnail Height"),
             help_text=_("Set a fixed height in pixels, or percent relative to the thumbnail width."),
         ),
-        PartialFormField('resize-options',
+        PartialFormField(
+            'resize-options',
             widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
             label=_("Resize Options"),
             help_text=_("Options to use when resizing the image."),
-            initial=['crop', 'subject_location', 'high_resolution']
+            initial=['crop', 'subject_location', 'high_resolution'],
         ),
     )
 

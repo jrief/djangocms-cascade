@@ -1,20 +1,19 @@
 {% extends "main.html" %}
 {% load cms_tags %}
 
-{% block sections %}
-<section>
-	<div class="container">
-		<div class="row starter-template">
-			<div class="col-xs-12">
-				{% with placeholder_glossary=COLUMN_GLOSSARY %}{% placeholder "Bootstrap Column" or %}
-				<h1>Add some Bootstrap plugins here</h1>
-				<p class="lead">Use this placeholder as a quick way to start editing a new CMS page.<br/>
-				All you have to do is to append <code>?edit</code> to the URL and switch to “Structure” mode.<br/>
-				Into this hard coded Bootstrap Column, add a <strong>Text</strong>-, <strong>Image</strong>- or <strong>Row</strong>-plugin.
-				</p>
-				{% endplaceholder %}{% endwith %}
-			</div>
+{% block main %}
+<div class="container">
+	<div class="row starter-template">
+		<div class="col-xs-12">
+			{% placeholder "Bootstrap Column" or %}
+			<h1>Add some Bootstrap plugins here</h1>
+			<p class="lead">Use this placeholder as a quick way to start editing a new CMS page.</p>
+			<p>All you have to do is to append <code>?edit</code> to the URL and switch to “Structure” mode.<br/>
+			Into this hard coded Bootstrap Column, add a <strong>Text Plugin</strong>.
+			If you want to further subdivide this column, add a <strong>Row Plugin</strong> with their own columns.
+			</p>
+			{% endplaceholder %}
 		</div>
 	</div>
-</section>
-{% endblock sections %}
+</div>
+{% endblock main %}

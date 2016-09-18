@@ -11,6 +11,7 @@ from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 from cms.models import Page
 from cmsplugin_cascade.models import CascadePage
+from cmsplugin_cascade.utils import validate_link
 
 if 'django_select2' in settings.INSTALLED_APPS:
     Select2Widget = import_string('django_select2.forms.Select2Widget')
@@ -103,8 +104,8 @@ class LinkForm(ModelForm):
 
     def clean_glossary(self):
         """
-        This method rectifies the behavior of JSONFormFieldBase.clean which
-        converts the value of empty fields to None, while it shall be an empty dict.
+        This method rectifies the behavior of JSONFormFieldBase.clean which converts
+        the value of empty fields to None, although it shall be an empty dict.
         """
         glossary = self.cleaned_data['glossary']
         if glossary is None:
@@ -130,6 +131,7 @@ class LinkForm(ModelForm):
                 'model': 'cms.Page',
                 'pk': self.cleaned_data['cms_page'],
             }
+            validate_link(self.cleaned_data['link_data'])
 
     def clean_section(self):
         if self.cleaned_data.get('link_type') == 'cmspage':

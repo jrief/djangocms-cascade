@@ -68,23 +68,29 @@ in the editors window. Fluid Containers have no hards breakpoints, they adopt th
 whatever the browser pretends and are slightly larger than their non-fluid counterpart.
 
 A fluid container makes it impossible to determine the maximum width of responsive images for the
-large media breakpoint, because it is applied whenever the browser width extends 1200 pixels,
-but there is no upper limit. Since for responsive images we somehow must specify a maximum
-width, the default is set to 1980 pixels. This in ``settings.py`` can be changed, to say 2500
-pixels, using the following configuration:
+*large media breakpoint*, because it is applied whenever the browser width extends 1200 pixels,
+but there is no upper limit. For responsive images in the smaller breakpoints (“tiny”, “small”
+and “medium”) we use the width of the next larger breakpoint, but for images in the “large” media
+breakpoints we somehow must specify an arbitrary maximum width. The default width is set to 1980
+pixels, but can be changed, to say 2500 pixels, using the following configuration in your
+``settings.py``:
 
 .. code-block:: python
 
 	CMSPLUGIN_CASCADE = {
 	    ...
-	    'bootstrap3': {
-	        'fluid-lg-width': 2500,
-	    },
+	    'bootstrap3': (
+	        ('xs', (768, 'mobile', _("mobile phones"), 750, 768)),
+	        ('sm', (768, 'tablet', _("tablets"), 750, 992)),
+	        ('md', (992, 'laptop', _("laptops"), 970, 1200)),
+	        ('lg', (1200, 'desktop', _("large desktops"), 1170, 2500)),
+	    ),
 	}
 
-.. note:: Fluid container are specially useful for hero images and full-width carousels. When
-	required, add a free standing fluid container to the placeholder and as its only child, use
-	the picture or carousel plugin. Its content then is stretched to the brower's full width.
+.. note:: Fluid container are specially useful for Hero images, full-width Carousels and the
+	Jumbotron plugin. When required, add a free standing fluid container to the placeholder and as
+	it's only child, use the picture or carousel plugin. Its content then is stretched to the
+	browser's full width.
 
 Bootstrap Row
 =============

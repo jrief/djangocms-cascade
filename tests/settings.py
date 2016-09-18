@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+
 ROOT_URLCONF = 'tests.urls'
 
 SECRET_KEY = 'test'
@@ -89,7 +91,7 @@ LANGUAGES = (
 LANGUAGE_CODE = 'en'
 
 CMS_TEMPLATES = (
-    ('testing.html', 'Default Page'),
+    ('cascade/testing.html', 'Default Page'),
 )
 
 CMSPLUGIN_CASCADE_PLUGINS = (
@@ -98,11 +100,14 @@ CMSPLUGIN_CASCADE_PLUGINS = (
 )
 
 CMSPLUGIN_CASCADE = {
-    'plugins_with_extra_fields': [
-        'BootstrapButtonPlugin', 'BootstrapContainerPlugin',
-        'BootstrapColumnPlugin', 'BootstrapRowPlugin',
-        'BootstrapPicturePlugin', 'SimpleWrapperPlugin',
-    ],
+    'plugins_with_extra_fields': {
+        'BootstrapButtonPlugin': PluginExtraFieldsConfig(),
+        'BootstrapContainerPlugin': PluginExtraFieldsConfig(),
+        'BootstrapColumnPlugin': PluginExtraFieldsConfig(),
+        'BootstrapRowPlugin': PluginExtraFieldsConfig(),
+        'BootstrapPicturePlugin': PluginExtraFieldsConfig(),
+        'SimpleWrapperPlugin': PluginExtraFieldsConfig(),
+    },
     'plugins_with_sharables': {
         'BootstrapImagePlugin': (
             'image-shapes',

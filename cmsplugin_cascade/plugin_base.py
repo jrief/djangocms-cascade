@@ -52,7 +52,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     by a user defined configuration, this meta-class conditionally inherits from additional mixin
     classes.
     """
-    plugins_with_extra_fields = list(settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
+    plugins_with_extra_fields = dict(settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
     plugins_with_bookmark = list(settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
     plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
 
@@ -95,6 +95,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
     change_form_template = 'cascade/admin/change_form.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
+    parent_classes = None
     alien_child_classes = False
 
     class Media:
@@ -280,9 +281,12 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         return None, None
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        # determined dependencies for ring.js
-        bases = self.get_ring_bases()
-        context['base_plugins'] = ['django.cascade.{}'.format(b) for b in bases]
+        context.update(
+            base_plugins=['django.cascade.{}'.format(b) for b in self.get_ring_bases()],
+            plugin_title=string_concat(self.module, " ", self.name, " Plugin"),
+            plugin_intro=mark_safe(getattr(self, 'intro_html', '')),
+            plugin_footnote=mark_safe(getattr(self, 'footnote_html', '')),
+        )
 
         # remove glossary field from rendered form
         form = context['adminform'].form

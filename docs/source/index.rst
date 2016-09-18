@@ -10,10 +10,6 @@ Check for the latest release of this project on Github_.
 
 Please report bugs or ask questions using the `Issue Tracker`_.
 
-In **djangoCMS-Cascade** version 0.7.0, the configuration settings have been hugely refactored.
-If you were using version 0.6.2 or lower, check your ``settings.py`` for deprecated configuration
-directives.
-
 
 Project's goals
 ---------------
@@ -42,6 +38,7 @@ Contents:
   installation
   link-plugin
   bootstrap3/grid
+  section
   segmentation
   sharable-fields
   customize-styles

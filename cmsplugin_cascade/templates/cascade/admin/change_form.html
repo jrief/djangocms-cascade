@@ -2,14 +2,17 @@
 {% load admin_static admin_urls i18n %}
 
 {% block field_sets %}
+	<h1>{{ plugin_title }}</h1>
+	{{ plugin_intro }}
 	{% if empty_form %}
 <div class="module">
-	<h1>{% trans "There are no further settings for this plugin" %}</h1>
+	<h2>{% trans "There are no further settings for this plugin" %}</h2>
 	<p>{% trans "Please hit OK to save." %}</p>
 </div>
 	{% else %}
 	{{ block.super }}
 	{% endif %}
+	{{ plugin_footnote }}
 {% endblock %}
 
 {% block after_field_sets %}

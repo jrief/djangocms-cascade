@@ -2,10 +2,33 @@
 from __future__ import unicode_literals
 
 import logging
+from collections import OrderedDict
+from django.conf import settings
 from django.forms import widgets
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 
+__all__ = ['reduce_breakpoints', 'compute_media_queries', 'get_image_tags', 'get_picture_elements',
+           'get_widget_choices']
+
 logger = logging.getLogger('cascade')
+
+BS3_BREAKPOINTS = OrderedDict(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+
+
+def get_widget_choices():
+    breakpoints = list(BS3_BREAKPOINTS)
+    i = 0
+    widget_choices = []
+    for br, br_options in BS3_BREAKPOINTS.items():
+        if i == 0:
+            widget_choices.append((br, '{} (<{}px)'.format(br_options[2], br_options[0])))
+        elif i == len(breakpoints[:-1]):
+            widget_choices.append((br, '{} (≥{}px)'.format(br_options[2], br_options[0])))
+        else:
+            widget_choices.append((br, '{} (≥{}px and <{}px)'.format(br_options[2], br_options[0], BS3_BREAKPOINTS[breakpoints[(i + 1)]][0])))
+        i += 1
+    return widget_choices
 
 
 def reduce_breakpoints(plugin, field_name, request=None):
@@ -32,6 +55,36 @@ def reduce_breakpoints(plugin, field_name, request=None):
     widget.labels, widget.widgets = (list(t) for t in zip(*temp))
 
 
+def compute_media_queries(element):
+    """
+    For e given Cascade element, compute the current media queries for each breakpoint,
+    even for nested containers, rows and columns.
+    """
+    parent_glossary = element.get_parent_glossary()
+    # compute the max width and the required media queries for each chosen breakpoint
+    element.glossary['container_max_widths'] = max_widths = {}
+    element.glossary['media_queries'] = media_queries = {}
+    breakpoints = element.glossary.get('breakpoints', parent_glossary.get('breakpoints', []))
+    last_index = len(breakpoints) - 1
+    fluid = element.glossary.get('fluid')
+    for index, bp in enumerate(breakpoints):
+        try:
+            key = 'container_fluid_max_widths' if fluid else 'container_max_widths'
+            max_widths[bp] = parent_glossary[key][bp]
+        except KeyError:
+            max_widths[bp] = BS3_BREAKPOINTS[bp][4 if fluid else 3]
+        if last_index > 0:
+            if index == 0:
+                next_bp = breakpoints[1]
+                media_queries[bp] = ['(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
+            elif index == last_index:
+                media_queries[bp] = ['(min-width: {0}px)'.format(BS3_BREAKPOINTS[bp][0])]
+            else:
+                next_bp = breakpoints[index + 1]
+                media_queries[bp] = ['(min-width: {0}px)'.format(BS3_BREAKPOINTS[bp][0]),
+                                     '(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
+
+
 def compute_aspect_ratio(image):
     if image.exif.get('Orientation', 1) > 4:
         # image is rotated by 90 degrees, while keeping width and height
@@ -45,9 +98,11 @@ def get_image_tags(context, instance, options):
     Create a context returning the tags to render an <img ...> element:
     ``sizes``, ``srcset``, a fallback ``src`` and if required inline styles.
     """
-    if not instance.image:
+    try:
+        aspect_ratio = compute_aspect_ratio(instance.image)
+    except Exception as e:
+        # if accessing the image file fails, abort here
         return
-    aspect_ratio = compute_aspect_ratio(instance.image)
     is_responsive = options.get('is_responsive', False)
     resize_options = options.get('resize-options', {})
     crop = 'crop' in resize_options
@@ -83,7 +138,8 @@ def get_image_tags(context, instance, options):
                 if high_res:
                     size = (size[0] * 2, size[1] * 2)
                 key = '{0}w'.format(size[0])
-                tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+                tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale,
+                                        'subject_location': subject_location}
         # use an existing image as fallback for the <img ...> element
         if not max_width > 0:
             logger.warning('image tags: image max width is zero')
@@ -98,7 +154,8 @@ def get_image_tags(context, instance, options):
                 else:
                     tags['srcsets']['1x'] = {'size': size, 'crop': crop,
                         'upscale': upscale, 'subject_location': subject_location}
-    tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
+    tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale,
+                   'subject_location': subject_location}
     return tags
 
 

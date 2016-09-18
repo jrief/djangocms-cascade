@@ -5,12 +5,12 @@ Section Bookmarks
 =================
 
 If you have a long page, and you want to allow the visitors of your site to quickly navigate to
-different sections, then you can use bookmarks and create links to the different sections of an HTML
-page.
+different sections, then you can use bookmarks and create links to the different sections of any
+HTML page.
 
-When a user clicks on a bookmark link, then that page will load as usual but will scroll immediately,
-so that the bookmark is at the very top of the page. Bookmarks are also known as anchors. They can
-be added to any HTML element using the attribute ``id``. For example:
+When a user clicks on a bookmark link, then that page will load as usual but will scroll down
+immediately, so that the bookmark is at the very top of the page. Bookmarks are also known as
+anchors. They can be added to any HTML element using the attribute ``id``. For example:
 
 .. code-block:: html
 
@@ -25,9 +25,9 @@ Configuration
 =============
 
 The HTML standard allows the usage of the ``id`` attribute on any element, but in practice it only
-makes sense on ``<section>``, ``<article>`` and the various heading elements. Cascade by default is
-configured to allow bookmarks on the **SimpleWrapperPlugin** and the **HeadingPlugin**. This can
-be overridden in the project's configuration settings using:
+makes sense on ``<section>``, ``<article>`` and the heading elements ``<h1>``...``<h6>``.
+Cascade by default is configured to allow bookmarks on the **SimpleWrapperPlugin** and the
+**HeadingPlugin**. This can be overridden in the project's configuration settings using:
 
 .. code-block:: python
 
@@ -65,11 +65,11 @@ When editing a plugin that is eligible for adding a bookmark, an extra input fie
 
 .. |section-bookmark| image:: /_static/section-bookmark.png
 
-You may add any identifier to this field, as long as it is unique on that page. Otherwise the form
-will be rejected when saving.
+You may add any identifier to this field, as long as it is unique on that page. Otherwise the
+plugin's editor will be reject the given inputs, while saving.
 
 
-Hyperlinking to a bookmark
+Hyperlinking to a Bookmark
 ==========================
 
 When editing a **TextLink**, **BootstrapButton** or the link fields inside the **Image** or
