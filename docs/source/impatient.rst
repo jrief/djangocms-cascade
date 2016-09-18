@@ -12,7 +12,7 @@ used as a fully functional reference implementation, used by the unit tests of p
 Create a Python Virtual Environment
 ===================================
 
-To keep environments separate, create a virtual environment, install the Python dependencies.
+To keep environments separate, create a virtual environment and install external dependencies.
 Missing packages with JavaScript files and Style Sheets, which are not available via pip must be
 installed via npm:
 
@@ -25,7 +25,7 @@ installed via npm:
 	(cascadenv)$ npm install
 
 
-Finally initialize the database and create a superuser:
+Initialize the database, create a superuser and start the development server:
 
 .. code-block:: bash
 
