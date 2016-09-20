@@ -18,6 +18,8 @@ installed via npm:
 
 .. code-block:: bash
 
+
+    $ git clone https://github.com/jrief/djangocms-cascade.git
 	$ cd djangocms-cascade
 	$ virtualenv cascadenv
 	$ source cascadenv/bin/activate
