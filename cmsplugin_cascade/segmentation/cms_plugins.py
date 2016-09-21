@@ -61,13 +61,15 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
             condition = self.html_parser.unescape(instance.glossary['condition'])
+            evaluated_to = False
+            template_error_message = None
             try:
                 eval_template = Template(self.eval_template_string.format(condition))
                 evaluated_to = eval_template.render(context) == 'True'
-                template_error_message = None
+                
             except TemplateSyntaxError as err:
                 # TODO: render error message into template
-                evaluated_to = False
+                
                 template_error_message = err.message
             finally:
                 if evaluated_to:
