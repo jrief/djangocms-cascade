@@ -4,8 +4,12 @@
 Release History
 ===============
 
+0.10.1
+------
+* Fix #185: Undefined variables in case of uncaught exception.
+
 0.10.0
-----------
+------
 * Added **BootstrapJumbotronPlugin**. This for instance can be used to place background images
   extending over the full width of a page using a parallax effect.
 * *Experimental*: Utility to manage font icons, so that symbol icons can be used anywhere in any
