@@ -62,6 +62,10 @@ class UploadIconsForms(ModelForm):
         if not common_prefix:
             raise ValidationError(_("The uploaded zip archive is not packed correctly"))
         try:
+            try:
+                os.makedirs(CMSPLUGIN_CASCADE['icon_font_root'])
+            except os.error:
+                pass  # the directory exists already
             temp_folder = tempfile.mkdtemp(prefix='', dir=CMSPLUGIN_CASCADE['icon_font_root'])
             for member in zip_ref.infolist():
                 zip_ref.extract(member, temp_folder)
