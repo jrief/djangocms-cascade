@@ -55,6 +55,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
     plugins_with_extra_fields = dict(settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
     plugins_with_bookmark = list(settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
     plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
+    plugins_with_extra_render_templates = settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys()
 
     def __new__(cls, name, bases, attrs):
         model_mixins = attrs.pop('model_mixins', ())
@@ -72,7 +73,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             base_model = SharableCascadeElement
         else:
             base_model = CascadeElement
-        if name in settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys():
+        if name in cls.plugins_with_extra_render_templates:
             RenderTemplateMixin.media = media_property(RenderTemplateMixin)
             bases = (RenderTemplateMixin,) + bases
         if name == 'SegmentPlugin':
