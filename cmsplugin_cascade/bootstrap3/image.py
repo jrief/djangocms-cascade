@@ -27,7 +27,7 @@ class ImageFormMixin(object):
         try:
             self.base_fields['image_file'].initial = kwargs['instance'].image.pk
         except (AttributeError, KeyError):
-            self.base_fields['image_file'].initial = None
+            pass
         self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
         super(ImageFormMixin, self).__init__(*args, **kwargs)
 
