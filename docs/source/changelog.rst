@@ -4,6 +4,10 @@
 Release History
 ===============
 
+0.10.2
+------
+* Fix #188: Using shared settings does not remember it's value.
+
 0.10.1
 ------
 * Fix #185: Undefined variables in case of uncaught exception.
