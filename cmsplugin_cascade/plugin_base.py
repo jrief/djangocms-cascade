@@ -13,6 +13,7 @@ from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.placeholder import get_placeholder_conf
 from cms.utils.compat.dj import is_installed
 from . import settings
+from .fields import PartialFormField
 from .mixins import TransparentMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
@@ -59,6 +60,7 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
 
     def __new__(cls, name, bases, attrs):
         model_mixins = attrs.pop('model_mixins', ())
+        cls.build_glossary_fields(attrs)
         if name in cls.plugins_with_extra_fields:
             ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)
             bases = (ExtraFieldsMixin,) + bases
@@ -90,6 +92,16 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             attrs['name'] = mark_safe_lazy(string_concat(
                 settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
+
+    @staticmethod
+    def build_glossary_fields(attrs):
+        glossary_fields = [n for n, f in attrs.items() if isinstance(f, PartialFormField)]
+        if glossary_fields:
+            attrs.setdefault('glossary_fields', [])
+            for name in glossary_fields:
+                field = attrs.pop(name)
+                field.name = name
+                attrs['glossary_fields'].append(field)
 
 
 class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPluginBase)):

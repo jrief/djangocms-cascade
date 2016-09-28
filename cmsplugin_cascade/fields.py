@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.forms import widgets
 from django.forms.utils import ErrorList
 from django.core.exceptions import ValidationError
@@ -11,8 +12,6 @@ class PartialFormField(object):
     JSONField in the database.
     """
     def __init__(self, name, widget, label=None, initial='', help_text='', error_class=ErrorList):
-        if not name:
-            raise AttributeError('The field must have a name')
         self.name = name
         if not isinstance(widget, widgets.Widget):
             raise AttributeError('The field `widget` must be derived from django.forms.widgets.Widget')

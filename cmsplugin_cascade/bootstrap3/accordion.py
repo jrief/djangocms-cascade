@@ -37,19 +37,32 @@ class BootstrapAccordionPlugin(TransparentMixin, BootstrapPluginBase):
     child_classes = None
     render_template = 'cascade/bootstrap3/{}/accordion.html'
     fields = ('num_children', 'glossary',)
-    glossary_fields = (
-        PartialFormField('close_others',
-            widgets.CheckboxInput(),
-            label=_("Close others"),
-            initial=True,
-            help_text=_("Open only one panel at a time.")
-        ),
-        PartialFormField('first_is_open',
-            widgets.CheckboxInput(),
-            label=_("First panel open"),
-            initial=True,
-            help_text=_("Start with the first panel open.")
-        ),
+    # glossary_fields = (
+    #     PartialFormField('close_others',
+    #         widgets.CheckboxInput(),
+    #         label=_("Close others"),
+    #         initial=True,
+    #         help_text=_("Open only one panel at a time.")
+    #     ),
+    #     PartialFormField('first_is_open',
+    #         widgets.CheckboxInput(),
+    #         label=_("First panel open"),
+    #         initial=True,
+    #         help_text=_("Start with the first panel open.")
+    #     ),
+    # )
+    close_others = PartialFormField('',
+         widgets.CheckboxInput(),
+         label=_("Close others"),
+         initial=True,
+         help_text=_("Open only one panel at a time.")
+    )
+
+    first_is_open = PartialFormField('',
+         widgets.CheckboxInput(),
+         label=_("First panel open"),
+         initial=True,
+         help_text=_("Start with the first panel open.")
     )
 
     @classmethod
@@ -73,21 +86,39 @@ class BootstrapAccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
     parent_classes = ('BootstrapAccordionPlugin',)
     require_parent = True
     alien_child_classes = True
-    glossary_fields = (
-        PartialFormField('panel_type',
-            PanelTypeRenderer.get_widget(),
-            label=_("Panel type"),
-            help_text=_("Display Panel using this style.")
-        ),
-        PartialFormField('heading_size',
-            widgets.Select(choices=panel_heading_sizes),
-            initial='',
-            label=_("Heading Size")
-        ),
-        PartialFormField('panel_title',
-            widgets.TextInput(attrs={'size': 80}),
-            label=_("Panel Title")
-        ),
+
+    # glossary_fields = (
+    #     PartialFormField('panel_type',
+    #         PanelTypeRenderer.get_widget(),
+    #         label=_("Panel type"),
+    #         help_text=_("Display Panel using this style.")
+    #     ),
+    #     PartialFormField('heading_size',
+    #         widgets.Select(choices=panel_heading_sizes),
+    #         initial='',
+    #         label=_("Heading Size")
+    #     ),
+    #     PartialFormField('panel_title',
+    #         widgets.TextInput(attrs={'size': 80}),
+    #         label=_("Panel Title")
+    #     ),
+    # )
+
+    panel_type = PartialFormField('',
+        PanelTypeRenderer.get_widget(),
+        label=_("Panel type"),
+        help_text=_("Display Panel using this style.")
+    )
+
+    heading_size = PartialFormField('',
+        widgets.Select(choices=panel_heading_sizes),
+        initial='',
+        label=_("Heading Size")
+    )
+
+    panel_title = PartialFormField('',
+        widgets.TextInput(attrs={'size': 80}),
+        label=_("Panel Title")
     )
 
     class Media:
