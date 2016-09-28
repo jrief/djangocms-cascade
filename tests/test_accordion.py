@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from bs4 import BeautifulSoup
-from django.conf import settings
 from django.contrib import admin
 from django.test import override_settings
 from cms.api import add_plugin, create_page
