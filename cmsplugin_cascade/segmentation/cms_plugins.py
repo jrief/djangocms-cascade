@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template import Template, TemplateSyntaxError
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.mixins import TransparentMixin
 from cmsplugin_cascade.utils import resolve_dependencies
@@ -23,18 +23,19 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
     such as ``{% if ... %}``.
     """
     name = _("Segment")
-    glossary_fields = (
-        PartialFormField('open_tag',
-            widgets.Select(choices=()),
-            label=_('Condition tag'),
-            help_text=_("Django's condition tag")
-        ),
-        PartialFormField('condition',
-            widgets.Input(),
-            label=_('Condition evaluation'),
-            help_text=_("Evaluation as used in Django's template tags for conditions")
-        ),
+
+    open_tag = GlossaryField(
+        widgets.Select(choices=()),
+        label=_('Condition tag'),
+        help_text=_("Django's condition tag")
     )
+
+    condition = GlossaryField(
+        widgets.Input(),
+        label=_('Condition evaluation'),
+        help_text=_("Evaluation as used in Django's template tags for conditions")
+    )
+
     html_parser = HTMLParser()
     eval_template_string = '{{% if {} %}}True{{% endif %}}'
     default_template = Template('{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}')

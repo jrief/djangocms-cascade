@@ -9,7 +9,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.mixins import TransparentMixin
 from cmsplugin_cascade.models import IconFont
@@ -24,12 +24,11 @@ class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
     alien_child_classes = True
     TAG_CHOICES = tuple((cls, _("<{}> – Element").format(cls))
         for cls in ('div', 'span', 'section', 'article',)) + (('naked', _("Naked Wrapper")),)
-    glossary_fields = (
-        PartialFormField('tag_type',
-            widgets.Select(choices=TAG_CHOICES),
-            label=_("HTML element tag"),
-            help_text=_('Choose a tag type for this HTML element.')
-        ),
+
+    tag_type = GlossaryField(
+        widgets.Select(choices=TAG_CHOICES),
+        label=_("HTML element tag"),
+        help_text=_('Choose a tag type for this HTML element.')
     )
 
     @classmethod
@@ -64,13 +63,13 @@ class HeadingPlugin(CascadePluginBase):
     parent_classes = None
     allow_children = False
     TAG_TYPES = tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
-    glossary_fields = (
-        PartialFormField('tag_type',
-            widgets.Select(choices=TAG_TYPES)),
-        PartialFormField('content',
-            widgets.TextInput(attrs={'style': 'width: 350px; font-weight: bold; font-size: 125%;'}),
-             _("Heading content")),
-    )
+
+    tag_type = GlossaryField(widgets.Select(choices=TAG_TYPES))
+
+    content = GlossaryField(
+        widgets.TextInput(attrs={'style': 'width: 350px; font-weight: bold; font-size: 125%;'}),
+         _("Heading content"))
+
     render_template = 'cascade/generic/heading.html'
 
     class Media:
@@ -157,26 +156,27 @@ class FontIconPlugin(CascadePluginBase):
     def get_form(self, request, obj=None, **kwargs):
         font_choices = IconFont.objects.values_list('id', 'identifier')
         glossary_fields = (
-            PartialFormField(
-                'icon_font',
+            GlossaryField(
                 widgets.Select(choices=font_choices),
                 label=_("Font"),
+                name='icon_font'
             ),
-            PartialFormField(
-                'content',
+            GlossaryField(
                 widgets.HiddenInput(),
                 label=_("Select Icon"),
+                name='content'
             ),
-            PartialFormField(
-                'font-size',
+            GlossaryField(
                 widgets.Select(choices=self.SIZE_CHOICES),
                 label=_("Icon Size"),
+                name='font-size'
             ),
-            PartialFormField('text-align',
+            GlossaryField(
                 widgets.RadioSelect(
                     choices=(('', _("Do not align")), ('text-left', _("Left")),
                              ('text-center', _("Center")), ('text-right', _("Right")))),
                 label=_("Text Align"),
+                name='text-align',
                 initial='',
                 help_text=_("Align the icon inside the parent column.")
             ),

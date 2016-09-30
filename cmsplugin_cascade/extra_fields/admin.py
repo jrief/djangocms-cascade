@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms import widgets
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import settings
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import PluginExtraFields
 from cmsplugin_cascade.extra_fields.mixins import ExtraFieldsMixin
 from cmsplugin_cascade.widgets import JSONMultiWidget, MultipleCascadingSizeWidget
@@ -40,16 +40,16 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     DISTANCE_UNITS = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")),
                       ('px,%', _("px and %")), ('px', _("px")), ('%', _("%")),)
     classname_fields = ((
-        PartialFormField(
-            'class_names',
+        GlossaryField(
             ClassNamesWidget(),
             label=_("CSS class names"),
+            name='class_names',
             help_text=_("Freely selectable CSS classnames for this Plugin, separated by commas."),
         ),
-        PartialFormField(
-            'multiple',
+        GlossaryField(
             widgets.CheckboxInput(),
             label=_("Allow multiple"),
+            name='multiple'
         ),
     ),)
 
@@ -60,19 +60,19 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         super(PluginExtraFieldsAdmin, self).__init__(model, admin_site)
         self.style_fields = []
         for style, choices_tuples in settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
-            extra_field = PartialFormField(
-                'extra_fields:{0}'.format(style),
+            extra_field = GlossaryField(
                 widgets.CheckboxSelectMultiple(choices=((c, c) for c in choices_tuples[0])),
                 label=_("Customized {0} Fields:").format(style),
+                name='extra_fields:{0}'.format(style)
             )
             Widget = choices_tuples[1]
             if issubclass(Widget, MultipleCascadingSizeWidget):
                 self.style_fields.append((
                     extra_field,
-                    PartialFormField(
-                        'extra_units:{0}'.format(style),
+                    GlossaryField(
                         widgets.Select(choices=self.DISTANCE_UNITS),
                         label=_("Units for {0} Fields:").format(style),
+                        name='extra_units:{0}'.format(style),
                         initial=self.DISTANCE_UNITS[0][0],
                     ),
                 ))

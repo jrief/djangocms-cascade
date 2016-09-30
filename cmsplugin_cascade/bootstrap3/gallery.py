@@ -12,7 +12,7 @@ from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cms.utils.compat.dj import is_installed
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import SortableInlineCascadeElement
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.utils import resolve_dependencies
@@ -89,65 +89,63 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     text_enabled = True
     admin_preview = False
     render_template = 'cascade/bootstrap3/gallery.html'
-    default_css_attributes = ('image-shapes',)
-    html_tag_attributes = {'image-title': 'title', 'alt-tag': 'tag'}
+    default_css_attributes = ('image_shapes',)
+    html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     inlines = (GalleryPluginInline,)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
-    glossary_fields = (
-        PartialFormField(
-            'image-shapes',
-            widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
-            label=_("Image Responsiveness"),
-            initial=['img-responsive'],
-        ),
-        PartialFormField(
-            'image-width-responsive',
-            CascadingSizeWidget(allowed_units=['%'], required=False),
-            label=_("Responsive Image Width"),
-            initial='100%',
-            help_text=_("Set the image width in percent relative to containing element."),
-        ),
-        PartialFormField(
-            'image-width-fixed',
-            CascadingSizeWidget(allowed_units=['px'], required=False),
-            label=_("Fixed Image Width"),
-            help_text=_("Set a fixed image width in pixels."),
-        ),
-        PartialFormField(
-            'image-height',
-            CascadingSizeWidget(allowed_units=['px', '%'], required=False),
-            label=_("Adapt Image Height"),
-            help_text=_("Set a fixed height in pixels, or percent relative to the image width."),
-        ),
-        PartialFormField(
-            'thumbnail-width',
-            CascadingSizeWidget(allowed_units=['px']),
-            label=_("Thumbnail Width"),
-            help_text=_("Set a fixed thumbnail width in pixels."),
-        ),
-        PartialFormField(
-            'thumbnail-height',
-            CascadingSizeWidget(allowed_units=['px', '%']),
-            label=_("Thumbnail Height"),
-            help_text=_("Set a fixed height in pixels, or percent relative to the thumbnail width."),
-        ),
-        PartialFormField(
-            'resize-options',
-            widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
-            label=_("Resize Options"),
-            help_text=_("Options to use when resizing the image."),
-            initial=['crop', 'subject_location', 'high_resolution'],
-        ),
+
+    image_shapes = GlossaryField(
+        widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
+        label=_("Image Responsiveness"),
+        initial=['img-responsive'],
+    )
+
+    image_width_responsive = GlossaryField(
+        CascadingSizeWidget(allowed_units=['%'], required=False),
+        label=_("Responsive Image Width"),
+        initial='100%',
+        help_text=_("Set the image width in percent relative to containing element."),
+    )
+
+    image_width_fixed = GlossaryField(
+        CascadingSizeWidget(allowed_units=['px'], required=False),
+        label=_("Fixed Image Width"),
+        help_text=_("Set a fixed image width in pixels."),
+    )
+
+    image_height = GlossaryField(
+        CascadingSizeWidget(allowed_units=['px', '%'], required=False),
+        label=_("Adapt Image Height"),
+        help_text=_("Set a fixed height in pixels, or percent relative to the image width."),
+    )
+
+    thumbnail_width = GlossaryField(
+        CascadingSizeWidget(allowed_units=['px']),
+        label=_("Thumbnail Width"),
+        help_text=_("Set a fixed thumbnail width in pixels."),
+    )
+
+    thumbnail_height = GlossaryField(
+        CascadingSizeWidget(allowed_units=['px', '%']),
+        label=_("Thumbnail Height"),
+        help_text=_("Set a fixed height in pixels, or percent relative to the thumbnail width."),
+    )
+
+    resize_options = GlossaryField(
+        widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
+        label=_("Resize Options"),
+        help_text=_("Options to use when resizing the image."),
+        initial=['crop', 'subject_location', 'high_resolution'],
     )
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/imageplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
-        utils.reduce_breakpoints(self, 'responsive-heights')
+        utils.reduce_breakpoints(self, 'responsive_heights')
         form = super(BootstrapGalleryPlugin, self).get_form(request, obj, **kwargs)
         return form
 
@@ -162,8 +160,8 @@ class BootstrapGalleryPlugin(CascadePluginBase):
                                                 SortableInlineCascadeElement, module=__name__)
                 inline_element.__class__ = ProxyModel
                 options.update(inline_element.glossary, **{
-                    'image-width-fixed': options['thumbnail-width'],
-                    'image-height': options['thumbnail-height'],
+                    'image_width_fixed': options['thumbnail_width'],
+                    'image_height': options['thumbnail_height'],
                     'is_responsive': False,
                 })
                 thumbnail_tags = utils.get_image_tags(context, inline_element, options)
@@ -173,7 +171,7 @@ class BootstrapGalleryPlugin(CascadePluginBase):
             except (KeyError, AttributeError):
                 pass
         inline_styles = instance.glossary.get('inline_styles', {})
-        inline_styles.update(width=options['thumbnail-width'])
+        inline_styles.update(width=options['thumbnail_width'])
         instance.glossary['inline_styles'] = inline_styles
         context.update(dict(instance=instance, placeholder=placeholder, gallery_instances=gallery_instances))
         return context

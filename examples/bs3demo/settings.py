@@ -198,9 +198,9 @@ CMSPLUGIN_CASCADE = {
     'fontawesome_css_url': 'node_modules/font-awesome/css/font-awesome.css',
     'alien_plugins': ('TextPlugin', 'TextLinkPlugin',),
     'plugins_with_sharables': {
-        'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed',
-                                 'image-height', 'resize-options',),
-        'BootstrapPicturePlugin': ('image-shapes', 'responsive-heights', 'image-size', 'resize-options',),
+        'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
+                                 'image_height', 'resize_options',),
+        'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
         'BootstrapButtonPlugin': ('link',),
         'TextLinkPlugin': ('link', 'target',),
     },

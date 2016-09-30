@@ -9,7 +9,7 @@ from django.utils.html import format_html
 from django.forms.fields import IntegerField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.mixins import TransparentMixin
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
@@ -30,11 +30,10 @@ class BootstrapTabSetPlugin(TransparentMixin, BootstrapPluginBase):
     allow_children = True
     child_classes = None
     render_template = 'cascade/bootstrap3/{}/tabset.html'
-    glossary_fields = (
-        PartialFormField('justified',
-            widgets.CheckboxInput(),
-            label=_("Justified tabs")
-        ),
+
+    justified = GlossaryField(
+        widgets.CheckboxInput(),
+        label=_("Justified tabs")
     )
 
     @classmethod
@@ -58,11 +57,10 @@ class BootstrapTabPanePlugin(TransparentMixin, BootstrapPluginBase):
     require_parent = True
     allow_children = True
     alien_child_classes = True
-    glossary_fields = (
-        PartialFormField('tab_title',
-            widgets.TextInput(attrs={'size': 80}),
-            label=_("Tab Title")
-        ),
+
+    tab_title = GlossaryField(
+        widgets.TextInput(attrs={'size': 80}),
+        label=_("Tab Title")
     )
 
     @classmethod

@@ -9,7 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade import settings
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 
 
@@ -39,9 +39,10 @@ class ExtraFieldsMixin(object):
         if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
             # add a text input field to let the user name an ID tag for this HTML element
             if extra_fields.allow_id_tag:
-                glossary_fields.append(PartialFormField('extra_element_id',
+                glossary_fields.append(GlossaryField(
                     widgets.TextInput(),
                     label=_("Named Element ID"),
+                    name='extra_element_id'
                 ))
 
             # add a select box to let the user choose one or more CSS classes
@@ -52,9 +53,10 @@ class ExtraFieldsMixin(object):
                     widget = widgets.CheckboxSelectMultiple(choices=choices)
                 else:
                     widget = widgets.Select(choices=((None, _("Select CSS")),) + tuple(choices))
-                glossary_fields.append(PartialFormField('extra_css_classes',
+                glossary_fields.append(GlossaryField(
                     widget,
                     label=_("Customized CSS Classes"),
+                    name='extra_css_classes',
                     help_text=_("Customized CSS classes to be added to this element.")
                 ))
 
@@ -68,12 +70,12 @@ class ExtraFieldsMixin(object):
                     key = 'extra_inline_styles:{0}'.format(style)
                     allowed_units = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
                     widget = Widget(inline_styles, allowed_units=allowed_units, required=False)
-                    glossary_fields.append(PartialFormField(key, widget, label=style))
+                    glossary_fields.append(GlossaryField(widget, label=style, name=key))
                 else:
                     for inline_style in inline_styles:
                         key = 'extra_inline_styles:{0}'.format(inline_style)
                         label = '{0}: {1}'.format(style, inline_style)
-                        glossary_fields.append(PartialFormField(key, Widget(), label=label))
+                        glossary_fields.append(GlossaryField(Widget(), label=label, name=key))
 
         kwargs.update(glossary_fields=glossary_fields)
         return super(ExtraFieldsMixin, self).get_form(request, obj, **kwargs)

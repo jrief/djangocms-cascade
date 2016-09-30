@@ -13,7 +13,7 @@ from django.utils import six
 from django.utils.safestring import mark_safe
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
-from .fields import PartialFormField
+from .fields import GlossaryField
 
 
 class JSONMultiWidget(widgets.MultiWidget):
@@ -24,12 +24,12 @@ class JSONMultiWidget(widgets.MultiWidget):
         self.partial_fields = partial_fields[:]
         self.normalized_fields = []
         for field in self.partial_fields:
-            if isinstance(field, PartialFormField):
+            if isinstance(field, GlossaryField):
                 self.normalized_fields.append(field)
             elif isinstance(field, (list, tuple)):
-                self.normalized_fields.extend([f for f in field if isinstance(f, PartialFormField)])
+                self.normalized_fields.extend([f for f in field if isinstance(f, GlossaryField)])
             else:
-                raise ValueError("Given fields must be of type PartialFormField or list of thereof")
+                raise ValueError("Given fields must be of type GlossaryField or list of thereof")
         unique_keys = set([field.name for field in self.normalized_fields])
         if len(self.normalized_fields) > len(unique_keys):
             raise ValueError('List of partial_fields may contain only unique keys')
