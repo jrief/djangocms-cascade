@@ -123,6 +123,19 @@ Sometimes it is useful to do a :ref:`segmentation`. Activate this by adding its 
 Restrict plugins to a particular placeholder
 --------------------------------------------
 
+.. warning:: You **must** set ``parent_classes`` for your placeholder, else you
+    won't be able to add a container to your placeholder. This means that as an
+    absolute minimum, you must add this to your settings:
+
+    .. code-block:: python
+
+        CMS_PLACEHOLDER_CONF = {
+            'content': {
+                'parent_classes': {'BootstrapContainerPlugin': None,},
+            },
+        }
+
+
 Unfortunately **djangoCMS** does not allow to declare dynamically which plugins are eligible to be
 added as children of other plugins. This is determined while bootstrapping the Django project and
 thus remain static. We therefore must somehow trick the CMS to behave as we want.
