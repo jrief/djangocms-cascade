@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.forms import widgets
 from django.forms.utils import ErrorList
 from django.core.exceptions import ValidationError
@@ -15,7 +16,7 @@ class PartialFormField(object):
             raise AttributeError('The field must have a name')
         self.name = name
         if not isinstance(widget, widgets.Widget):
-            raise AttributeError('The field `widget` must be derived from django.forms.widgets.Widget')
+            raise AttributeError('The field `widget` must inherit from django.forms.widgets.Widget')
         self.label = label or name
         self.widget = widget
         self.initial = initial
