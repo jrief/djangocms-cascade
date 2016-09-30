@@ -73,6 +73,7 @@ class BootstrapAccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
     parent_classes = ('BootstrapAccordionPlugin',)
     require_parent = True
     alien_child_classes = True
+    render_template = 'cascade/bootstrap3/{}/accordion-panel.html'
     glossary_fields = (
         PartialFormField('panel_type',
             PanelTypeRenderer.get_widget(),
