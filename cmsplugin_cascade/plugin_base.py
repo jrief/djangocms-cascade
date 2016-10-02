@@ -47,7 +47,32 @@ def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 
-class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
+class CascadePluginMixinMetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        cls.build_glossary_fields(bases, attrs)
+        return super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
+
+    @classmethod
+    def build_glossary_fields(cls, bases, attrs):
+        add_glossary_fields = [n for n, f in attrs.items() if isinstance(f, GlossaryField)]
+        if add_glossary_fields:
+            base_glossary_fields = []
+            for base_class in bases:
+                base_glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
+            attrs.setdefault('glossary_fields', base_glossary_fields)
+            for name in add_glossary_fields:
+                field = attrs.pop(name)
+                field.name = name
+                attrs['glossary_fields'].append(field)
+
+
+class CascadePluginMixinBase(six.with_metaclass(CascadePluginMixinMetaclass)):
+    """
+    Use this as a base for mixin classes used by other CascadePlugins
+    """
+
+
+class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetaclass):
     """
     All plugins from djangocms-cascade can be instantiated in different ways. In order to allow this
     by a user defined configuration, this meta-class conditionally inherits from additional mixin
@@ -60,8 +85,6 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
 
     def __new__(cls, name, bases, attrs):
         model_mixins = attrs.pop('model_mixins', ())
-        # TODO: merge with glossary_fields from base class
-        cls.build_glossary_fields(bases, attrs)
         if name in cls.plugins_with_extra_fields:
             ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)
             bases = (ExtraFieldsMixin,) + bases
@@ -93,19 +116,6 @@ class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
             attrs['name'] = mark_safe_lazy(string_concat(
                 settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
-
-    @staticmethod
-    def build_glossary_fields(bases, attrs):
-        add_glossary_fields = [n for n, f in attrs.items() if isinstance(f, GlossaryField)]
-        if add_glossary_fields:
-            base_glossary_fields = []
-            for base_class in bases:
-                base_glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
-            attrs.setdefault('glossary_fields', base_glossary_fields)
-            for name in add_glossary_fields:
-                field = attrs.pop(name)
-                field.name = name
-                attrs['glossary_fields'].append(field)
 
 
 class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPluginBase)):

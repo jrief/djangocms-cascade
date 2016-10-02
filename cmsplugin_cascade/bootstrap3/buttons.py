@@ -9,6 +9,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.link.forms import TextLinkFormMixin
@@ -61,7 +62,7 @@ class ButtonSizeRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapButtonMixin(object):
+class BootstrapButtonMixin(CascadePluginMixinBase):
     require_parent = True
     parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
