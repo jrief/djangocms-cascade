@@ -63,11 +63,11 @@ class PicturePluginTest(CascadeTestCase):
         image = self.upload_demo_image()
         post_data = QueryDict('', mutable=True)
         post_data.update({'image_file': image.pk, 'link_type': 'none',
-            'responsive-heights-xs': '50%', 'responsive-heights-sm': '66%',
-            'responsive-heights-md': '75%', 'responsive-heights-lg': '100%',
-            'responsive-zoom-lg': '40%', 'responsive-zoom-lg': '25%',
-            'responsive-zoom-lg': '15%', 'responsive-zoom-lg': '0%'})
-        post_data.setlist('resize-options', ['crop'])
+            'responsive_heights-xs': '50%', 'responsive_heights-sm': '66%',
+            'responsive_heights-md': '75%', 'responsive_heights-lg': '100%',
+            'responsive_zoom-lg': '40%', 'responsive_zoom-lg': '25%',
+            'responsive_zoom-lg': '15%', 'responsive_zoom-lg': '0%'})
+        post_data.setlist('resize_options', ['crop'])
         picture_model._image_model = image
         form = ModelForm(post_data, None, instance=picture_model)
         self.assertTrue(form.is_valid())
@@ -90,7 +90,7 @@ class PicturePluginTest(CascadeTestCase):
         self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.jpg$', sources['(min-width: 1200px)'])))
 
         # with Retina images
-        post_data.setlist('resize-options', ['crop', 'high_resolution'])
+        post_data.setlist('resize_options', ['crop', 'high_resolution'])
         form = ModelForm(post_data, None, instance=picture_model)
         self.assertTrue(form.is_valid())
         picture_plugin.save_model(self.request, picture_model, form, False)

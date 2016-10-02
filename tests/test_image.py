@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import os
 from bs4 import BeautifulSoup
 from django.core.files import File as DjangoFile
@@ -10,8 +11,8 @@ from cms.api import add_plugin
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import SharableCascadeElement
 from cmsplugin_cascade.bootstrap3 import settings
-from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
-        BootstrapColumnPlugin)
+from cmsplugin_cascade.bootstrap3.container import (
+    BootstrapContainerPlugin, BootstrapRowPlugin, BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.image import BootstrapImagePlugin
 from .test_base import CascadeTestCase
 from .utils import get_request_context
@@ -61,7 +62,7 @@ class ImagePluginTest(CascadeTestCase):
         ModelForm = image_plugin.get_form(self.request, image_model)
         image = self.upload_demo_image()
         post_data = QueryDict('', mutable=True)
-        post_data.update({'image_file': image.pk, 'link_type': 'none', 'image-width-fixed': '300px'})
+        post_data.update({'image_file': image.pk, 'link_type': 'none', 'image_width_fixed': '300px'})
         image_model._image_model = image
         form = ModelForm(post_data, None, instance=image_model)
         self.assertTrue(form.is_valid())
@@ -78,7 +79,7 @@ class ImagePluginTest(CascadeTestCase):
         self.assertTrue('demo_image.png__300x100_q85_subsampling-2' in str(soup.img))
 
         # use a responsive image
-        post_data.setlist('image-shapes', ['img-responsive'])
+        post_data.setlist('image_shapes', ['img-responsive'])
         form = ModelForm(post_data, None, instance=image_model)
         self.assertTrue(form.is_valid())
         image_plugin.save_model(self.request, image_model, form, False)

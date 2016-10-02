@@ -12,7 +12,7 @@ class ButtonWrapperPluginTest(TestCase):
         self.placeholder = Placeholder.objects.create(slot='test')
 
     def test_plugin_context(self):
-        glossary = {'link_content': 'Knopf', 'button-type': 'btn-default'}
+        glossary = {'link_content': 'Knopf', 'button_type': 'btn-default'}
         model_instance = add_plugin(self.placeholder, BootstrapButtonPlugin, 'en', glossary=glossary)
         button_plugin = model_instance.get_plugin_class_instance()
         context = button_plugin.render({}, model_instance, None)
@@ -22,7 +22,7 @@ class ButtonWrapperPluginTest(TestCase):
         self.assertEqual(button_plugin.get_identifier(model_instance), 'Knopf')
 
     def test_external_link(self):
-        glossary = {'link_content': 'Django', 'button-type': 'btn-primary',
+        glossary = {'link_content': 'Django', 'button_type': 'btn-primary',
                     'link': {'url': 'https://www.djangoproject.com/', 'type': 'exturl'}}
         model_instance = add_plugin(self.placeholder, BootstrapButtonPlugin, 'en', glossary=glossary)
         html = model_instance.render_plugin({})
@@ -30,7 +30,7 @@ class ButtonWrapperPluginTest(TestCase):
 
     def test_internal_link(self):
         page = create_page('HOME', 'cascade/testing.html', 'en')
-        glossary = {'link_content': 'HOME', 'button-type': 'btn-success',
+        glossary = {'link_content': 'HOME', 'button_type': 'btn-success',
             'link': {'pk': page.id, 'model': 'cms.Page', 'type': 'cmspage'}, 'target': ''}
         model_instance = add_plugin(self.placeholder, BootstrapButtonPlugin, 'en', glossary=glossary)
         html = model_instance.render_plugin({})
