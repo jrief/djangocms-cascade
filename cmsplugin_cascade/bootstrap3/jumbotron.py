@@ -22,7 +22,7 @@ class ImageBackgroundMixin(object):
     @property
     def background_color(self):
         try:
-            disabled, color = self.glossary['background-color']
+            disabled, color = self.glossary['background_color']
             if not disabled and disabled != 'disabled':
                 return 'background-color: {};'.format(color)
         except (KeyError, TypeError, ValueError):
