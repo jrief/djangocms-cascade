@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import warnings
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
@@ -56,14 +57,18 @@ class CascadePluginMixinMetaclass(type):
     def build_glossary_fields(cls, bases, attrs):
         add_glossary_fields = [n for n, f in attrs.items() if isinstance(f, GlossaryField)]
         if add_glossary_fields:
-            base_glossary_fields = []
+            # merge the newly detected glossary fields with the list of glossary fields from the base classes
+            glossary_fields = []
             for base_class in bases:
-                base_glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
-            attrs.setdefault('glossary_fields', base_glossary_fields)
+                glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
+            if 'glossary_fields' in attrs:
+                warnings.warn("A list of 'glossary_fields' is not required any more and deprecated.")
+                glossary_fields.extend(attrs['glossary_fields'])
             for name in add_glossary_fields:
                 field = attrs.pop(name)
                 field.name = name
-                attrs['glossary_fields'].append(field)
+                glossary_fields.append(field)
+            attrs['glossary_fields'] = glossary_fields
 
 
 class CascadePluginMixinBase(six.with_metaclass(CascadePluginMixinMetaclass)):

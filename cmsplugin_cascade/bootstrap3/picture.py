@@ -12,11 +12,11 @@ from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from .image import ImageFormMixin
+from .image import ImageFormMixin, ImageAnnotationMixin
 from .utils import BS3_BREAKPOINT_KEYS, reduce_breakpoints, get_picture_elements
 
 
-class BootstrapPicturePlugin(LinkPluginBase):
+class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     name = _("Picture")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     module = 'Bootstrap'
@@ -30,24 +30,10 @@ class BootstrapPicturePlugin(LinkPluginBase):
     default_css_class = 'img-responsive'
     default_css_attributes = ('image_shapes',)
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
-    fields = ('image_file',) + LinkPluginBase.fields  # @UndefinedVariable
+    fields = ('image_file',) + LinkPluginBase.fields
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
-
-    image_title = GlossaryField(
-        widgets.TextInput(),
-        label=_('Image Title'),
-        help_text=_("Caption text added to the 'title' attribute of the <img> element."),
-    )
-
-    alt_tag = GlossaryField(
-        widgets.TextInput(),
-        label=_('Alternative Description'),
-        help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
-    )
-
-    # TODO: getattr(LinkPluginBase, 'glossary_fields', ())
 
     responsive_heights = GlossaryField(
         MultipleCascadingSizeWidget(BS3_BREAKPOINT_KEYS, allowed_units=['px', '%'], required=False),
@@ -72,6 +58,9 @@ class BootstrapPicturePlugin(LinkPluginBase):
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
+
+    def __init__(self, *args, **kwargs):
+        super(BootstrapPicturePlugin, self).__init__(*args, **kwargs)
 
     def get_form(self, request, obj=None, **kwargs):
         reduce_breakpoints(self, 'responsive_heights')

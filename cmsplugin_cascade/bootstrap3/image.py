@@ -12,6 +12,7 @@ from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
+from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
@@ -48,7 +49,25 @@ class ImageForm(ImageFormMixin, ModelForm):
     image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
 
 
-class BootstrapImagePlugin(LinkPluginBase):
+class ImageAnnotationMixin(CascadePluginMixinBase):
+    """
+    This mixin class prepends the glossary fields 'image_title' and 'alt_tag' in front of the
+    glossary fields provided by the class LinkPluginBase.
+    """
+    image_title = GlossaryField(
+        widgets.TextInput(),
+        label=_('Image Title'),
+        help_text=_("Caption text added to the 'title' attribute of the <img> element."),
+    )
+
+    alt_tag = GlossaryField(
+        widgets.TextInput(),
+        label=_('Alternative Description'),
+        help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
+    )
+
+
+class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     name = _("Image")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     module = 'Bootstrap'
@@ -67,20 +86,6 @@ class BootstrapImagePlugin(LinkPluginBase):
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
                       ('high_resolution', _("Optimized for Retina")),)
-
-    image_title = GlossaryField(
-        widgets.TextInput(),
-        label=_('Image Title'),
-        help_text=_("Caption text added to the 'title' attribute of the <img> element."),
-    )
-
-    alt_tag = GlossaryField(
-        widgets.TextInput(),
-        label=_('Alternative Description'),
-        help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
-    )
-
-    # TODO: getattr(LinkPluginBase, 'glossary_fields', ()) + (
 
     image_shapes = GlossaryField(
         widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
