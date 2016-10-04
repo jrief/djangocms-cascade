@@ -54,7 +54,7 @@ Each of those form fields handle a special field value, or in some cases, a list
 They all require a widget, which is used when rendering the editors form.
 
 Lets add a simple selector to choose between a red and a green color. Do this by adding a
-``PartialFormField`` to a member list named ``glossary_fields``.
+``GlossaryField`` to the plugin class.
 
 .. code-block:: python
 
@@ -63,24 +63,21 @@ Lets add a simple selector to choose between a red and a green color. Do this by
 	
 	class StylishPlugin(CascadePluginBase):
 	    ...
-	    glossary_fields = (
-	        PartialFormField('color',
-	            widgets.Select(choices=(('red', 'Red'), ('green', 'Green'),)),
-	            label="Element's Color",
-	            initial='red',
-	            help_text="Specify the color of the DOM element."
-	        ),
-	        # more PartialFormField objects
+	    color = GlossaryField(
+	        widgets.Select(choices=(('red', 'Red'), ('green', 'Green'),)),
+	        label="Element's Color",
+	        initial='red',
+	        help_text="Specify the color of the DOM element."
 	    )
 
 In the plugin's editor, the form now pops up with a single select box, where the user can choose
 between a *red* and a *green* element.
 
-A ``PartialFormField`` accepts five arguments:
+A ``GlossaryField`` accepts five arguments:
 
-* The name of the field. It must be unique in the given list of ``glossary_fields``.
 * The widget. This can be a built-in Django widget or any valid widget derived from it.
-* The ``label`` used to describe the field. If omitted, the ``name`` of the partial form field is used.
+* The ``label`` used to describe the field. If omitted, the ``name`` of the form field is used.
+* The ``name`` of the field.
 * An optional ``initial`` value to be used with Radio- or Select fields.
 * An optional ``help_text`` to describe the field's purpose.
 
@@ -109,9 +106,9 @@ part of the module ``cmsplugin_cascade.widgets``.
 Overriding the Form
 ===================
 
-For the plugin editor, **djangocms-cascade** automatically creates a form for each
-``PartialFormField`` in the list of ``glossary_fields``. Sometimes however, you might need more
-control over the fields displayed in the editor, versus the fields stored inside the ``glossary``.
+For the editor, **djangocms-cascade** automatically creates a form for each ``GlossaryField`` in
+the plugin's class. Sometimes however, you might need more control over the fields displayed in
+the editor, versus the fields stored inside the ``glossary``.
 
 Similar to the Django's ``admin.ModelAdmin``, this can be achieved by overriding the plugins form
 element. Such a customized form can add as many fields as required, while the controlled glossary
@@ -150,12 +147,7 @@ injected during the creation of the proxy model. Example:
 	    name = 'My special Plugin'
 	    model_mixins = (MySpecialPropertyMixin,)
 	    render_template = 'my_module/my_special_plugin.html'
-	    glossary_fields = (
-	        PartialFormField('field_name',
-	            widgets.TextInput(),
-	        ),
-	        # other partial form fields
-	    )
+	    field_name = GlossaryField(widgets.TextInput())
 	    ...
 
 The proxy model created for this plugin class, now contains the extra method ``content()``, which
@@ -190,7 +182,7 @@ Additionally ``BootstrapPluginBase`` allows the following attributes:
 
 :tag_type:
 	A HTML element into which this plugin is wrapped. Generic templates can render their
-	content into any ``tag_type. Specialized rendering templates usually have a hard coded tag
+	content into any ``tag_type``. Specialized rendering templates usually have a hard coded tag
 	type, then this attribute can be omitted.
 
 :require_parent:
@@ -227,11 +219,6 @@ Additionally ``BootstrapPluginBase`` allows the following attributes:
 	A list of plugins which shall be added as children to a plugin, but which themselves do not
 	declare this plugin in their ``parent_classes``.
 
-:glossary_fields:
-	Default: None
-
-	A list of ``PartialFormField``'s. See the documentation above for details.
-
 :default_css_class:
 	Default: None.
 
@@ -261,7 +248,14 @@ Additionally ``BootstrapPluginBase`` allows the following attributes:
 	Tuple of mixin classes, with additional methods to be added the auto-generated proxy model
 	for the given plugin class.
 
-	Check section “Overriding the Model” for a detailed explanation.
+	Check section "Overriding the Model" for a detailed explanation.
+
+Deprecated attributes
+---------------------
+
+:glossary_fields:
+	This list of ``PartialFormFields`` had been replaced by arbitrary class attributes of type
+	``GlossaryField``.
 
 .. _CMSPluginBase attributes: https://django-cms.readthedocs.org/en/develop/extending_cms/custom_plugins.html#plugin-attribute-reference
 .. _proxy model: https://docs.djangoproject.com/en/dev/topics/db/models/#proxy-models

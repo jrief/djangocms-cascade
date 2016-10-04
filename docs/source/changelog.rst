@@ -4,6 +4,13 @@
 Release History
 ===============
 
+0.11.0
+------
+* Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these
+  fields to the plugin class, as we would in a Django ``forms.Form`` or ``models.Model``, for
+  instance: ``fieldname = GlossaryField(widget, label="A Label", initial=some_value)``.
+  This is only important for Django apps extending ``CascadePluginBase``.
+
 0.10.2
 ------
 * Fix #188: Using shared settings does not remember it's value.
