@@ -146,7 +146,7 @@ class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
 class ColorPickerWidget(widgets.MultiWidget):
     """
     Use this field to enter a color value. Clicking onto this widget will pop up a color picker.
-    The value passed to the PartialField is guaranteed to be in #rgb format.
+    The value passed to the GlossaryField is guaranteed to be in #rgb format.
     """
     DEFAULT_COLOR = '#ffffff'
     DEFAULT_ATTRS = {'style': 'width: 5em;', 'type': 'color'}
@@ -269,3 +269,52 @@ class MultipleCascadingSizeWidget(CascadingSizeWidgetMixin, MultipleTextInputWid
         self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
             units=allowed_units)
         super(MultipleCascadingSizeWidget, self).__init__(labels, required=required, attrs=attrs)
+
+
+class SetBorderWidget(widgets.MultiWidget):
+    """
+    Use this field to enter the three values of a border: width style color.
+    """
+    DEFAULT_COLOR = '#000000'
+    BORDER_STYLES = [(s, s) for s in ('dashed', 'dotted', 'double', 'groove', 'hidden', 'inset',
+                                      'none', 'outset', 'ridge', 'solid')]
+
+    validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
+    invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
+
+    def __init__(self, attrs=None):
+        widget_list = [CascadingSizeWidget(), widgets.Select(choices=self.BORDER_STYLES),
+                       widgets.TextInput(attrs={'style': 'width: 5em;', 'type': 'color'})]
+        super(SetBorderWidget, self).__init__(widget_list)
+
+    def decompress(self, values):
+        if not isinstance(values, (list, tuple)) or len(values) != 3:
+            values = ('0px', 'none', self.DEFAULT_COLOR,)
+        return values
+
+    def value_from_datadict(self, data, files, name):
+        values = (
+            escape(data.get('{0}-width'.format(name), '0px')),
+            escape(data.get('{0}-style'.format(name), 'none')),
+            escape(data.get('{0}-color'.format(name), self.DEFAULT_COLOR)),
+        )
+        return values
+
+    def render(self, name, values, attrs):
+        width, style, color = values
+        elem_id = attrs['id']
+        attrs = dict(attrs)
+        html = '<div class="clearfix">'
+        key, attrs['id'] = '{0}-width'.format(name), '{0}-width'.format(elem_id)
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, width, attrs))
+        key, attrs['id'] = '{0}-style'.format(name), '{0}-style'.format(elem_id)
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[1].render(key, style, attrs))
+        key, attrs['id'] = '{0}-color'.format(name), '{0}-color'.format(elem_id)
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[2].render(key, color, attrs))
+        html += '</div>'
+        return mark_safe(html)
+
+    def validate(self, values):
+        color = values[2]
+        if not self.validation_pattern.match(color):
+            raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
