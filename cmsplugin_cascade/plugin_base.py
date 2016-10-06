@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import warnings
+from collections import OrderedDict
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
@@ -61,13 +61,14 @@ class CascadePluginMixinMetaclass(type):
             glossary_fields = []
             for base_class in bases:
                 glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
-            if 'glossary_fields' in attrs:
-                warnings.warn("A list of 'glossary_fields' is not required any more and deprecated.")
-                glossary_fields.extend(attrs['glossary_fields'])
             for name in add_glossary_fields:
                 field = attrs.pop(name)
                 field.name = name
                 glossary_fields.append(field)
+            if 'glossary_field_order' in attrs:
+                unordered_fields = dict((gf.name, gf) for gf in glossary_fields)
+                glossary_fields = OrderedDict((k, unordered_fields[k])
+                                              for k in attrs['glossary_field_order']).values()
             attrs['glossary_fields'] = glossary_fields
 
 
