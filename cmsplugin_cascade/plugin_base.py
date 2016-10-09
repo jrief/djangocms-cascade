@@ -50,25 +50,58 @@ mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 class CascadePluginMixinMetaclass(type):
     def __new__(cls, name, bases, attrs):
+        print('=======', name)
         cls.build_glossary_fields(bases, attrs)
-        return super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
+        new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
+        print('\n\n')
+        return new_class
 
     @classmethod
     def build_glossary_fields(cls, bases, attrs):
+        # collect glossary_fields from all base classes
+        glossary_fields = []
+        for base_class in bases:
+            glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
+
+        # detect attributes declared as GlossaryField and merge them with the list from the base classes
         add_glossary_fields = [n for n, f in attrs.items() if isinstance(f, GlossaryField)]
         if add_glossary_fields:
-            # merge the newly detected glossary fields with the list of glossary fields from the base classes
-            glossary_fields = []
-            for base_class in bases:
-                glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
             for name in add_glossary_fields:
                 field = attrs.pop(name)
                 field.name = name
                 glossary_fields.append(field)
-            if 'glossary_field_order' in attrs:
-                unordered_fields = dict((gf.name, gf) for gf in glossary_fields)
-                glossary_fields = OrderedDict((k, unordered_fields[k])
-                                              for k in attrs['glossary_field_order']).values()
+        glossary_fields1 = glossary_fields
+
+        # if reordering is desired, reorder the glossary fields
+        if 'glossary_field_order' in attrs:
+            unordered_fields = dict((gf.name, gf) for gf in glossary_fields)
+            glossary_fields = OrderedDict((k, unordered_fields[k])
+                                          for k in attrs['glossary_field_order'] if k in unordered_fields)
+            glossary_fields = glossary_fields.values()
+        else:
+            glossary_fields = glossary_fields
+
+        if 'fields' in attrs:
+            fields = []
+            unordered_fields = dict((gf.name, gf) for gf in glossary_fields1)
+            glossary_fields2 = OrderedDict()
+            for field_name in attrs['fields']:
+                try:
+                    glossary_fields2[field_name] = unordered_fields[field_name]
+                except KeyError:
+                    fields.append(field_name)
+            #attrs['fields'] = fields
+            print(fields)
+            print(glossary_fields)
+            print(glossary_fields2)
+
+        if glossary_fields:
+            print(' a   ', attrs.get('fields', 'no fields'))
+            if attrs.get('fields') is None:
+                for b in bases:
+                    fields = getattr(b, 'fields', None)
+                    if fields:
+                        print(' b    ', fields)
             attrs['glossary_fields'] = glossary_fields
 
 

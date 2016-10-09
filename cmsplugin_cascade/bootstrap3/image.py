@@ -80,7 +80,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     render_template = 'cascade/bootstrap3/linked-image.html'
     default_css_attributes = ('image_shapes',)
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
-    fields = ('image_file',) + LinkPluginBase.fields  # @UndefinedVariable
+    fields = ('image_file',) + LinkPluginBase.fields
     SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
                      ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),

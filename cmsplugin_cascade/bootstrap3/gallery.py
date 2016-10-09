@@ -34,7 +34,7 @@ class GalleryImageForm(ModelForm):
     alt_tag = CharField(label=_("Alternative Description"), required=False,
             widget=widgets.TextInput(attrs={'size': 60}),
             help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."))
-    glossary_fields = ('image_title', 'alt_tag',)
+    glossary_field_order = ('image_title', 'alt_tag',)
 
     class Meta:
         exclude = ('glossary',)

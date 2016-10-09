@@ -72,7 +72,9 @@ styles.
 if 'cmsplugin_cascade.sharable' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE.setdefault('plugins_with_sharables', {})
 else:
-    CMSPLUGIN_CASCADE['plugins_with_sharables'] = {}
+    CMSPLUGIN_CASCADE['plugins_with_sharables'] = {
+        'FontIconPlugin': ('font-size', 'color', 'text-align', 'border', 'border-radius'),
+    }
 
 CMSPLUGIN_CASCADE.setdefault('link_plugin_classes', (
     'cmsplugin_cascade.link.plugin_base.DefaultLinkPluginBase',

@@ -128,7 +128,9 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
     model_mixins = (LinkElementMixin,)
-    fields = ('link_content',) + LinkPluginBase.fields  # @UndefinedVariable
+    fields = ('link_content',) + LinkPluginBase.fields
+    glossary_field_order = ('button_type', 'button_size', 'button_options', 'quick_float',
+                       'icon_left', 'icon_right')
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
@@ -139,14 +141,13 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         content = obj.glossary.get('link_content')
         if not content:
             try:
-                content = force_text(ButtonTypeRenderer.BUTTON_TYPES[obj.glossary['button-type']])
+                content = force_text(ButtonTypeRenderer.BUTTON_TYPES[obj.glossary['button_type']])
             except KeyError:
                 content = _("Empty")
         return format_html('{}{}', identifier, content)
 
     def get_form(self, request, obj=None, **kwargs):
-        link_content = CharField(required=False, label=_("Button Content"),
-            widget=widgets.TextInput(attrs={'id': 'id_name'}))
+        link_content = CharField(required=False, label=_("Button Content"), widget=widgets.TextInput())
         Form = type(str('ButtonForm'), (TextLinkFormMixin, getattr(LinkForm, 'get_form_class')(),),
                     {'link_content': link_content})
         kwargs.update(form=Form)
