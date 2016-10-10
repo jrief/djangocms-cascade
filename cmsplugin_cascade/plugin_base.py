@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from collections import OrderedDict
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
 from django.utils.functional import lazy
@@ -25,7 +25,7 @@ from .widgets import JSONMultiWidget
 from .render_template import RenderTemplateMixin
 
 
-def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
+def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
@@ -36,6 +36,7 @@ def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
+    attrs = {} if attrs is None else dict(attrs)
     try:
         attrs.update(Meta=Meta, __module__=module)
         Model = type(name, bases, attrs)
@@ -50,59 +51,47 @@ mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 class CascadePluginMixinMetaclass(type):
     def __new__(cls, name, bases, attrs):
-        print('=======', name)
         cls.build_glossary_fields(bases, attrs)
         new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
-        print('\n\n')
         return new_class
 
     @classmethod
     def build_glossary_fields(cls, bases, attrs):
-        # collect glossary_fields from all base classes
-        glossary_fields = []
+        # collect glossary fields from all base classes
+        base_glossary_fields = []
         for base_class in bases:
-            glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
+            base_glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
 
-        # detect attributes declared as GlossaryField and merge them with the list from the base classes
-        add_glossary_fields = [n for n, f in attrs.items() if isinstance(f, GlossaryField)]
-        if add_glossary_fields:
-            for name in add_glossary_fields:
+        # collect declared glossary fields from current class
+        declared_glossary_fields = []
+        for name, field in attrs.items():
+            if isinstance(field, GlossaryField):
                 field = attrs.pop(name)
                 field.name = name
-                glossary_fields.append(field)
-        glossary_fields1 = glossary_fields
+                declared_glossary_fields.append(field)
 
-        # if reordering is desired, reorder the glossary fields
+        if 'glossary_fields' in attrs:
+            if declared_glossary_fields:
+                msg = "Can not mix 'glossary_fields' with declared atributes of type 'GlossaryField'"
+                raise ImproperlyConfigured(msg)
+            declared_glossary_fields = list(attrs['glossary_fields'])
+
         if 'glossary_field_order' in attrs:
-            unordered_fields = dict((gf.name, gf) for gf in glossary_fields)
+            # if reordering is desired, reorder the glossary fields
+            unordered_fields = dict((gf.name, gf) for gf in base_glossary_fields)
+            for gf in declared_glossary_fields:
+                unordered_fields.update({gf.name: gf})
+            unordered_fields.update(dict((gf.name, gf) for gf in declared_glossary_fields))
             glossary_fields = OrderedDict((k, unordered_fields[k])
                                           for k in attrs['glossary_field_order'] if k in unordered_fields)
-            glossary_fields = glossary_fields.values()
         else:
-            glossary_fields = glossary_fields
-
-        if 'fields' in attrs:
-            fields = []
-            unordered_fields = dict((gf.name, gf) for gf in glossary_fields1)
-            glossary_fields2 = OrderedDict()
-            for field_name in attrs['fields']:
-                try:
-                    glossary_fields2[field_name] = unordered_fields[field_name]
-                except KeyError:
-                    fields.append(field_name)
-            #attrs['fields'] = fields
-            print(fields)
-            print(glossary_fields)
-            print(glossary_fields2)
+            # merge glossary fields from base classes with the declared ones, overwriting the former ones
+            glossary_fields = OrderedDict((gf.name, gf) for gf in base_glossary_fields)
+            for gf in declared_glossary_fields:
+                glossary_fields.update({gf.name: gf})
 
         if glossary_fields:
-            print(' a   ', attrs.get('fields', 'no fields'))
-            if attrs.get('fields') is None:
-                for b in bases:
-                    fields = getattr(b, 'fields', None)
-                    if fields:
-                        print(' b    ', fields)
-            attrs['glossary_fields'] = glossary_fields
+            attrs['glossary_fields'] = glossary_fields.values()
 
 
 class CascadePluginMixinBase(six.with_metaclass(CascadePluginMixinMetaclass)):
