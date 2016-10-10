@@ -20,10 +20,10 @@ class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
     html_parser = HTMLParser()
 
-    def __init__(self, partial_fields):
-        self.partial_fields = partial_fields[:]
+    def __init__(self, glossary_fields):
+        self.glossary_fields = list(glossary_fields)
         self.normalized_fields = []
-        for field in self.partial_fields:
+        for field in self.glossary_fields:
             if isinstance(field, GlossaryField):
                 self.normalized_fields.append(field)
             elif isinstance(field, (list, tuple)):
@@ -32,7 +32,7 @@ class JSONMultiWidget(widgets.MultiWidget):
                 raise ValueError("Given fields must be of type GlossaryField or list of thereof")
         unique_keys = set([field.name for field in self.normalized_fields])
         if len(self.normalized_fields) > len(unique_keys):
-            raise ValueError('List of partial_fields may contain only unique keys')
+            raise ValueError('List of glossary_fields may contain only unique keys')
         super(JSONMultiWidget, self).__init__((field.widget for field in self.normalized_fields))
 
     def decompress(self, values):
@@ -60,7 +60,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         values = self.decompress(values)
         field_attrs = dict(**attrs)
         render_fieldsets = []
-        for fieldset in self.partial_fields:
+        for fieldset in self.glossary_fields:
             render_fields = []
             if not isinstance(fieldset, (list, tuple)):
                 fieldset = [fieldset]
