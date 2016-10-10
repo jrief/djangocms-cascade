@@ -64,7 +64,7 @@ class CascadePluginMixinMetaclass(type):
 
         # collect declared glossary fields from current class
         declared_glossary_fields = []
-        for field_name in attrs.keys():
+        for field_name in list(attrs.keys()):
             if isinstance(attrs[field_name], GlossaryField):
                 field = attrs.pop(field_name)
                 field.name = field_name
