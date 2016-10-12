@@ -8,8 +8,13 @@ Release History
 ------
 * Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these
   fields to the plugin class, as we would in a Django ``forms.Form`` or ``models.Model``, for
-  instance: ``fieldname = GlossaryField(widget, label="A Label", initial=some_value)``.
-  This is only important for Django apps extending ``CascadePluginBase``.
+  instance: ``fieldname = GlossaryField(widget, label="A Label", initial=some_value)`` instead of
+  ``glossary_fields = <list-or-tuple-of PartialFormField s>``. This is only important for third
+  party apps inheriting from ``CascadePluginBase``.
+
+  **Remember**: In some field names, the ``-`` (dash) has been replaced against an ``_``
+  (underscore). Therefore please run the migration ``0014_glossary_field`` which modifies the
+  plugin's payloads.
 
 0.10.2
 ------
