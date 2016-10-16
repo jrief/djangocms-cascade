@@ -11,7 +11,7 @@ from django.forms.models import ModelForm
 from django.forms.fields import ChoiceField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from . import settings
 from .plugin_base import BootstrapPluginBase
 from .utils import compute_media_queries, get_widget_choices, BS3_BREAKPOINTS, BS3_BREAKPOINT_KEYS
@@ -41,23 +41,21 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     require_parent = False
     parent_classes = ['BootstrapJumbotronPlugin']
     form = BootstrapContainerForm
-    glossary_fields = (
-        PartialFormField(
-            'breakpoints',
-            widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
-                                           renderer=ContainerBreakpointsRenderer),
-            label=_('Available Breakpoints'),
-            initial=list(BS3_BREAKPOINTS)[::-1],
-            help_text=_("Supported display widths for Bootstrap's grid system.")
-        ),
-        PartialFormField(
-            'fluid',
-            widgets.CheckboxInput(),
-            label=_('Fluid Container'), initial=False,
-            help_text=_("Changing your outermost '.container' to '.container-fluid'.")
-        ),
-    )
     glossary_variables = ['container_max_widths', 'media_queries']
+
+    breakpoints = GlossaryField(
+        widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
+                                       renderer=ContainerBreakpointsRenderer),
+        label=_('Available Breakpoints'),
+        initial=list(BS3_BREAKPOINTS)[::-1],
+        help_text=_("Supported display widths for Bootstrap's grid system.")
+    )
+
+    fluid = GlossaryField(
+        widgets.CheckboxInput(),
+        label=_('Fluid Container'), initial=False,
+        help_text=_("Changing your outermost '.container' to '.container-fluid'.")
+    )
 
     class Media:
         css = {'all': (settings.CMSPLUGIN_CASCADE['fontawesome_css_url'],)}
@@ -182,9 +180,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     _("Number of column units for devices wider than {} pixels."),
                     _("Number of column units for all devices.")
                 )
-                glossary_fields.append(PartialFormField('{}-column-width'.format(bp),
+                glossary_fields.append(GlossaryField(
                     widgets.Select(choices=choices),
-                    initial='col-{}-12'.format(bp), label=label, help_text=help_text))
+                    label=label,
+                    name='{}-column-width'.format(bp),
+                    initial='col-{}-12'.format(bp),
+                    help_text=help_text))
             else:
                 choices = (('', _("Inherit from above")),) + \
                     tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
@@ -194,9 +195,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     _("Override column units for devices wider than {} pixels."),
                     _("Override column units for all devices.")
                 )
-                glossary_fields.append(PartialFormField('{}-column-width'.format(bp),
+                glossary_fields.append(GlossaryField(
                     widgets.Select(choices=choices),
-                    initial='', label=label, help_text=help_text))
+                    label=label,
+                    name='{}-column-width'.format(bp),
+                    initial='',
+                    help_text=help_text))
 
             # handle offset
             if breakpoints.index(bp) == 0:
@@ -214,8 +218,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 _("Number of offset units for devices wider than {} pixels."),
                 _("Number of offset units for all devices.")
             )
-            glossary_fields.append(PartialFormField('{}-column-offset'.format(bp),
-                widgets.Select(choices=choices), label=label, help_text=help_text))
+            glossary_fields.append(GlossaryField(
+                widgets.Select(choices=choices),
+                label=label,
+                name='{}-column-offset'.format(bp),
+                help_text=help_text))
 
             # handle column ordering using push/pull settings
             choices = (('', _("No reordering")),) + \
@@ -227,8 +234,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 _("Column ordering for devices wider than {} pixels."),
                 _("Column ordering for all devices.")
             )
-            glossary_fields.append(PartialFormField('{}-column-ordering'.format(bp),
-                widgets.Select(choices=choices), label=label, help_text=help_text))
+            glossary_fields.append(GlossaryField(
+                widgets.Select(choices=choices),
+                label=label,
+                name='{}-column-ordering'.format(bp),
+                help_text=help_text))
 
             # handle responsive utilies
             choices = (('', _("Default")), ('visible-{}'.format(bp), _("Visible")), ('hidden-{}'.format(bp), _("Hidden")),)
@@ -238,8 +248,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 _("Utility classes for showing and hiding content by devices wider than {} pixels."),
                 _("Utility classes for showing and hiding content for all devices.")
             )
-            glossary_fields.append(PartialFormField('{}-responsive-utils'.format(bp),
-                widgets.RadioSelect(choices=choices), label=label, help_text=help_text, initial=''))
+            glossary_fields.append(GlossaryField(
+                widgets.RadioSelect(choices=choices),
+                label=label,
+                name='{}-responsive-utils'.format(bp),
+                initial='',
+                help_text=help_text))
         glossary_fields = [
             glossary_fields[i + len(glossary_fields) // len(breakpoints) * j]
             for i in range(0, len(glossary_fields) // len(breakpoints))

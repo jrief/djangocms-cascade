@@ -11,7 +11,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.mixins import TransparentMixin
 from .plugin_base import BootstrapPluginBase
 
@@ -51,26 +51,29 @@ class BootstrapPanelPlugin(TransparentMixin, BootstrapPluginBase):
     allow_children = True
     child_classes = None
     render_template = 'cascade/bootstrap3/panel.html'
-    glossary_fields = (
-        PartialFormField('panel_type',
-            PanelTypeRenderer.get_widget(),
-            label=_("Panel type"),
-            help_text=_("Display Panel using this style.")
-        ),
-        PartialFormField('heading_size',
-            widgets.Select(choices=panel_heading_sizes),
-            initial='',
-            label=_("Heading Size")
-        ),
-        PartialFormField('heading',
-            widgets.TextInput(attrs={'size': 80}),
-            label=_("Panel Heading")
-        ),
-        PartialFormField('footer',
-            widgets.TextInput(attrs={'size': 80}),
-            label=_("Panel Footer")
-        ),
+
+    panel_type = GlossaryField(
+        PanelTypeRenderer.get_widget(),
+        label=_("Panel type"),
+        help_text=_("Display Panel using this style.")
     )
+
+    heading_size = GlossaryField(
+        widgets.Select(choices=panel_heading_sizes),
+        initial='',
+        label=_("Heading Size")
+    )
+
+    heading = GlossaryField(
+        widgets.TextInput(attrs={'size': 80}),
+        label=_("Panel Heading")
+    )
+
+    footer = GlossaryField(
+        widgets.TextInput(attrs={'size': 80}),
+        label=_("Panel Footer")
+    )
+
     html_parser = HTMLParser()
 
     class Media:

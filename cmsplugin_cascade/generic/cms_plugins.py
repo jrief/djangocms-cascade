@@ -9,11 +9,12 @@ from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.mixins import TransparentMixin
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.utils import resolve_dependencies
+from cmsplugin_cascade.widgets import SetBorderWidget
 
 
 class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
@@ -24,12 +25,11 @@ class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
     alien_child_classes = True
     TAG_CHOICES = tuple((cls, _("<{}> – Element").format(cls))
         for cls in ('div', 'span', 'section', 'article',)) + (('naked', _("Naked Wrapper")),)
-    glossary_fields = (
-        PartialFormField('tag_type',
-            widgets.Select(choices=TAG_CHOICES),
-            label=_("HTML element tag"),
-            help_text=_('Choose a tag type for this HTML element.')
-        ),
+
+    tag_type = GlossaryField(
+        widgets.Select(choices=TAG_CHOICES),
+        label=_("HTML element tag"),
+        help_text=_('Choose a tag type for this HTML element.')
     )
 
     @classmethod
@@ -64,13 +64,13 @@ class HeadingPlugin(CascadePluginBase):
     parent_classes = None
     allow_children = False
     TAG_TYPES = tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
-    glossary_fields = (
-        PartialFormField('tag_type',
-            widgets.Select(choices=TAG_TYPES)),
-        PartialFormField('content',
-            widgets.TextInput(attrs={'style': 'width: 350px; font-weight: bold; font-size: 125%;'}),
-             _("Heading content")),
-    )
+
+    tag_type = GlossaryField(widgets.Select(choices=TAG_TYPES))
+
+    content = GlossaryField(
+        widgets.TextInput(attrs={'style': 'width: 350px; font-weight: bold; font-size: 125%;'}),
+         _("Heading content"))
+
     render_template = 'cascade/generic/heading.html'
 
     class Media:
@@ -132,8 +132,29 @@ class FontIconRenderer(widgets.RadioFieldRenderer):
                 '<div class="field-box">'
                     '<div class="label" title="{1}">{0}<span class="glyphicon glyphicon-{1}"></span></div>'
                 '</div>',
-                [(w.tag(), w.choice_value,) for w in self][1:]
+                [(w.tag(), w.choice_value) for w in self][1:]
             ))
+
+
+class FontIconModelMixin(object):
+    @property
+    def icon_font_attrs(self):
+        icon_font = self.plugin_class.get_icon_font(self)
+        content = self.glossary.get('content')
+        attrs = []
+        if icon_font and content:
+            attrs.append(mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), content)))
+        styles = dict(display='inline-block', color=self.glossary.get('color', '#000000'))
+        border = self.glossary.get('border')
+        if isinstance(border, list) and border[1] != 'none':
+            styles.update(border='{0} {1} {2}'.format(*border))
+            radius = self.glossary.get('border_radius')
+            if radius:
+                styles['border-radius'] = radius
+        attrs.append(format_html('style="{}"',
+                                 format_html_join('', '{0}:{1};',
+                                                  [(k , v) for k, v in styles.items()])))
+        return mark_safe(' '.join(attrs))
 
 
 class FontIconPlugin(CascadePluginBase):
@@ -143,7 +164,53 @@ class FontIconPlugin(CascadePluginBase):
     allow_children = False
     render_template = 'cascade/generic/fonticon.html'
     change_form_template = 'cascade/admin/fonticon_plugin_change_form.html'
+    model_mixins = (FontIconModelMixin,)
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
+    RADIUS_CHOICES = [(None, _("Square"))] + \
+        [('{}px'.format(r), "{} px".format(r)) for r in (1, 2, 3, 5, 7, 10, 15, 20)] + \
+        [('50%', _("Circle"))]
+
+    icon_font = GlossaryField(
+        widgets.Select(),
+        label=_("Font"),
+    )
+
+    content = GlossaryField(
+        widgets.HiddenInput(),
+        label=_("Select Icon"),
+    )
+
+    font_size = GlossaryField(
+        widgets.Select(choices=SIZE_CHOICES),
+        label=_("Icon Size"),
+    )
+
+    color = GlossaryField(
+        widgets.TextInput(attrs={'style': 'width: 5em;', 'type': 'color'}),
+        label=_("Icon color"),
+    )
+
+    text_align = GlossaryField(
+        widgets.RadioSelect(
+            choices=(('', _("Do not align")), ('text-left', _("Left")),
+                     ('text-center', _("Center")), ('text-right', _("Right")))),
+        label=_("Text Align"),
+        initial='',
+        help_text=_("Align the icon inside the parent column.")
+    )
+
+    border = GlossaryField(
+        SetBorderWidget(),
+        label=_("Set border"),
+    )
+
+    border_radius = GlossaryField(
+        widgets.Select(choices=RADIUS_CHOICES),
+        label=_("Border radius"),
+    )
+
+    glossary_field_order = ('icon_font', 'content', 'font_size', 'color', 'text_align', 'border',
+                            'border_radius')
 
     class Media:
         css = {'all': ('cascade/css/admin/fonticonplugin.css',)}
@@ -155,33 +222,8 @@ class FontIconPlugin(CascadePluginBase):
              request, object_id=object_id, form_url=form_url, extra_context=extra_context)
 
     def get_form(self, request, obj=None, **kwargs):
-        font_choices = IconFont.objects.values_list('id', 'identifier')
-        glossary_fields = (
-            PartialFormField(
-                'icon_font',
-                widgets.Select(choices=font_choices),
-                label=_("Font"),
-            ),
-            PartialFormField(
-                'content',
-                widgets.HiddenInput(),
-                label=_("Select Icon"),
-            ),
-            PartialFormField(
-                'font-size',
-                widgets.Select(choices=self.SIZE_CHOICES),
-                label=_("Icon Size"),
-            ),
-            PartialFormField('text-align',
-                widgets.RadioSelect(
-                    choices=(('', _("Do not align")), ('text-left', _("Left")),
-                             ('text-center', _("Center")), ('text-right', _("Right")))),
-                label=_("Text Align"),
-                initial='',
-                help_text=_("Align the icon inside the parent column.")
-            ),
-        )
-        kwargs.update(glossary_fields=glossary_fields)
+        icon_font_field = [gf for gf in self.glossary_fields if gf.name == 'icon_font'][0]
+        icon_font_field.widget.choices = IconFont.objects.values_list('id', 'identifier')
         form = super(FontIconPlugin, self).get_form(request, obj=obj, **kwargs)
         return form
 
@@ -226,19 +268,13 @@ class FontIconPlugin(CascadePluginBase):
 
     @classmethod
     def get_tag_type(self, instance):
-        if instance.glossary.get('text-align'):
+        if instance.glossary.get('text_align'):
             return 'div'
-        return 'span'
 
     @classmethod
     def get_css_classes(cls, instance):
         css_classes = super(FontIconPlugin, cls).get_css_classes(instance)
-        icon_font = cls.get_icon_font(instance)
-        if icon_font:
-            css_classes.append('{}{}'.format(
-                icon_font.config_data.get('css_prefix_text', 'icon-'),
-                instance.glossary.get('content')))
-        text_align = instance.glossary.get('text-align')
+        text_align = instance.glossary.get('text_align')
         if text_align:
             css_classes.append(text_align)
         return css_classes
@@ -246,7 +282,7 @@ class FontIconPlugin(CascadePluginBase):
     @classmethod
     def get_inline_styles(cls, instance):
         inline_styles = super(FontIconPlugin, cls).get_inline_styles(instance)
-        inline_styles['font-size'] = instance.glossary.get('font-size', '1em')
+        inline_styles['font-size'] = instance.glossary.get('font_size', '1em')
         return inline_styles
 
     def render(self, context, instance, placeholder):

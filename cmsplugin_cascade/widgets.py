@@ -13,26 +13,26 @@ from django.utils import six
 from django.utils.safestring import mark_safe
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
-from .fields import PartialFormField
+from .fields import GlossaryField
 
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
     html_parser = HTMLParser()
 
-    def __init__(self, partial_fields):
-        self.partial_fields = partial_fields[:]
+    def __init__(self, glossary_fields):
+        self.glossary_fields = list(glossary_fields)
         self.normalized_fields = []
-        for field in self.partial_fields:
-            if isinstance(field, PartialFormField):
+        for field in self.glossary_fields:
+            if isinstance(field, GlossaryField):
                 self.normalized_fields.append(field)
             elif isinstance(field, (list, tuple)):
-                self.normalized_fields.extend([f for f in field if isinstance(f, PartialFormField)])
+                self.normalized_fields.extend([f for f in field if isinstance(f, GlossaryField)])
             else:
-                raise ValueError("Given fields must be of type PartialFormField or list of thereof")
+                raise ValueError("Given fields must be of type GlossaryField or list of thereof")
         unique_keys = set([field.name for field in self.normalized_fields])
         if len(self.normalized_fields) > len(unique_keys):
-            raise ValueError('List of partial_fields may contain only unique keys')
+            raise ValueError('List of glossary_fields may contain only unique keys')
         super(JSONMultiWidget, self).__init__((field.widget for field in self.normalized_fields))
 
     def decompress(self, values):
@@ -60,7 +60,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         values = self.decompress(values)
         field_attrs = dict(**attrs)
         render_fieldsets = []
-        for fieldset in self.partial_fields:
+        for fieldset in self.glossary_fields:
             render_fields = []
             if not isinstance(fieldset, (list, tuple)):
                 fieldset = [fieldset]
@@ -146,7 +146,7 @@ class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
 class ColorPickerWidget(widgets.MultiWidget):
     """
     Use this field to enter a color value. Clicking onto this widget will pop up a color picker.
-    The value passed to the PartialField is guaranteed to be in #rgb format.
+    The value passed to the GlossaryField is guaranteed to be in #rgb format.
     """
     DEFAULT_COLOR = '#ffffff'
     DEFAULT_ATTRS = {'style': 'width: 5em;', 'type': 'color'}
@@ -269,3 +269,52 @@ class MultipleCascadingSizeWidget(CascadingSizeWidgetMixin, MultipleTextInputWid
         self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
             units=allowed_units)
         super(MultipleCascadingSizeWidget, self).__init__(labels, required=required, attrs=attrs)
+
+
+class SetBorderWidget(widgets.MultiWidget):
+    """
+    Use this field to enter the three values of a border: width style color.
+    """
+    DEFAULT_COLOR = '#000000'
+    BORDER_STYLES = [(s, s) for s in ('dashed', 'dotted', 'double', 'groove', 'hidden', 'inset',
+                                      'none', 'outset', 'ridge', 'solid')]
+
+    validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
+    invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
+
+    def __init__(self, attrs=None):
+        widget_list = [CascadingSizeWidget(), widgets.Select(choices=self.BORDER_STYLES),
+                       widgets.TextInput(attrs={'style': 'width: 5em;', 'type': 'color'})]
+        super(SetBorderWidget, self).__init__(widget_list)
+
+    def decompress(self, values):
+        if not isinstance(values, (list, tuple)) or len(values) != 3:
+            values = ('0px', 'none', self.DEFAULT_COLOR,)
+        return values
+
+    def value_from_datadict(self, data, files, name):
+        values = (
+            escape(data.get('{0}-width'.format(name), '0px')),
+            escape(data.get('{0}-style'.format(name), 'none')),
+            escape(data.get('{0}-color'.format(name), self.DEFAULT_COLOR)),
+        )
+        return values
+
+    def render(self, name, values, attrs):
+        width, style, color = values
+        elem_id = attrs['id']
+        attrs = dict(attrs)
+        html = '<div class="clearfix">'
+        key, attrs['id'] = '{0}-width'.format(name), '{0}-width'.format(elem_id)
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, width, attrs))
+        key, attrs['id'] = '{0}-style'.format(name), '{0}-style'.format(elem_id)
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[1].render(key, style, attrs))
+        key, attrs['id'] = '{0}-color'.format(name), '{0}-color'.format(elem_id)
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[2].render(key, color, attrs))
+        html += '</div>'
+        return mark_safe(html)
+
+    def validate(self, values):
+        color = values[2]
+        if not self.validation_pattern.match(color):
+            raise ValidationError(self.invalid_message, code='invalid', params={'value': color})

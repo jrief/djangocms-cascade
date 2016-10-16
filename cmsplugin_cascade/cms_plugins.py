@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 from .settings import CASCADE_PLUGINS

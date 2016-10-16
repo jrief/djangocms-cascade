@@ -64,14 +64,14 @@ class JumbotronPluginTest(CascadeTestCase):
         # edit jumbotron model
         post_data = QueryDict('', mutable=True)
         post_data.update({
-            'background-size': 'auto',
-            'background-repeat': 'no-repeat',
-            'background-width-height-width': '',
-            'background-attachment': 'fixed',
-            'background-color_color': '#aabbcc',
-            'background-color_disabled': '',
-            'background-vertical-position': 'center',
-            'background-horizontal-position': 'center',
+            'background_size': 'auto',
+            'background_repeat': 'no-repeat',
+            'background_width-height-width': '',
+            'background_attachment': 'fixed',
+            'background_color_color': '#aabbcc',
+            'background_color_disabled': '',
+            'background_vertical_position': 'center',
+            'background_horizontal_position': 'center',
             'breakpoints': ['xs', 'sm', 'md', 'lg'],
             'extra_inline_styles:Paddings-padding-bottom': '',
             'background-width-height-height': '',
@@ -80,7 +80,7 @@ class JumbotronPluginTest(CascadeTestCase):
             'container_max_heights-md': '100%',
             'container_max_heights-lg': '100%',
             'extra_inline_styles:Paddings-padding-top': '200px',
-            'resize-options': ['crop', 'subject_location', 'high_resolution'],
+            'resize_options': ['crop', 'subject_location', 'high_resolution'],
             'image_file': str(self.image.pk),
         })
 

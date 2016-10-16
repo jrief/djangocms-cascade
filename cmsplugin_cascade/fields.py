@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import warnings
 from django.forms import widgets
 from django.forms.utils import ErrorList
 from django.core.exceptions import ValidationError
 
 
-class PartialFormField(object):
+class GlossaryField(object):
     """
     Behave similar to django.forms.Field, encapsulating a partial dictionary, stored as
     JSONField in the database.
     """
-    def __init__(self, name, widget, label=None, initial='', help_text='', error_class=ErrorList):
-        if not name:
-            raise AttributeError('The field must have a name')
+    def __init__(self, widget, label=None, name=None, initial='', help_text='', error_class=ErrorList):
         self.name = name
         if not isinstance(widget, widgets.Widget):
-            raise AttributeError('The field `widget` must inherit from django.forms.widgets.Widget')
-        self.label = label or name
+            raise AttributeError('`widget` must inherit from django.forms.widgets.Widget')
         self.widget = widget
+        self.label = label or name
         self.initial = initial
         self.help_text = help_text
         self.error_class = error_class
@@ -57,3 +56,13 @@ class PartialFormField(object):
         else:
             ids = ['{0}_{1}'.format(prefix_id, self.name)]
         return ids
+
+
+class PartialFormField(GlossaryField):
+    """
+    Former way to declare a partial form field. Now deprecated
+    """
+    def __init__(self, name, widget, label=None, initial='', help_text='', error_class=ErrorList):
+        warnings.warn("PartialFormField is deprecated. Please use a GlossaryField instead")
+        super(PartialFormField, self).__init__(widget, label=None, name=name, initial='',
+                                               help_text='', error_class=ErrorList)

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core.exceptions import ObjectDoesNotExist
+from collections import OrderedDict
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
 from django.utils.functional import lazy
@@ -13,6 +14,7 @@ from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.placeholder import get_placeholder_conf
 from cms.utils.compat.dj import is_installed
 from . import settings
+from .fields import GlossaryField
 from .mixins import TransparentMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
@@ -23,7 +25,7 @@ from .widgets import JSONMultiWidget
 from .render_template import RenderTemplateMixin
 
 
-def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
+def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
@@ -34,6 +36,7 @@ def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
+    attrs = {} if attrs is None else dict(attrs)
     try:
         attrs.update(Meta=Meta, __module__=module)
         Model = type(name, bases, attrs)
@@ -46,7 +49,58 @@ def create_proxy_model(name, model_mixins, base_model, attrs={}, module=None):
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 
-class CascadePluginBaseMetaclass(CMSPluginBaseMetaclass):
+class CascadePluginMixinMetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        cls.build_glossary_fields(bases, attrs)
+        new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
+        return new_class
+
+    @classmethod
+    def build_glossary_fields(cls, bases, attrs):
+        # collect glossary fields from all base classes
+        base_glossary_fields = []
+        for base_class in bases:
+            base_glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
+
+        # collect declared glossary fields from current class
+        declared_glossary_fields = []
+        for field_name in list(attrs.keys()):
+            if isinstance(attrs[field_name], GlossaryField):
+                field = attrs.pop(field_name)
+                field.name = field_name
+                declared_glossary_fields.append(field)
+
+        if 'glossary_fields' in attrs:
+            if declared_glossary_fields:
+                msg = "Can not mix 'glossary_fields' with declared atributes of type 'GlossaryField'"
+                raise ImproperlyConfigured(msg)
+            declared_glossary_fields = list(attrs['glossary_fields'])
+
+        if 'glossary_field_order' in attrs:
+            # if reordering is desired, reorder the glossary fields
+            unordered_fields = dict((gf.name, gf) for gf in base_glossary_fields)
+            for gf in declared_glossary_fields:
+                unordered_fields.update({gf.name: gf})
+            unordered_fields.update(dict((gf.name, gf) for gf in declared_glossary_fields))
+            glossary_fields = OrderedDict((k, unordered_fields[k])
+                                          for k in attrs['glossary_field_order'] if k in unordered_fields)
+        else:
+            # merge glossary fields from base classes with the declared ones, overwriting the former ones
+            glossary_fields = OrderedDict((gf.name, gf) for gf in base_glossary_fields)
+            for gf in declared_glossary_fields:
+                glossary_fields.update({gf.name: gf})
+
+        if glossary_fields:
+            attrs['glossary_fields'] = glossary_fields.values()
+
+
+class CascadePluginMixinBase(six.with_metaclass(CascadePluginMixinMetaclass)):
+    """
+    Use this as a base for mixin classes used by other CascadePlugins
+    """
+
+
+class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetaclass):
     """
     All plugins from djangocms-cascade can be instantiated in different ways. In order to allow this
     by a user defined configuration, this meta-class conditionally inherits from additional mixin

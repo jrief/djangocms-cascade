@@ -3,7 +3,7 @@ django.jQuery(function($) {
 	'use strict';
 
 	var ImagePlugin,
-	    $image_responsive = $('#id_glossary_image-shapes_0'),
+	    $image_responsive = $('#id_glossary_image_shapes_0'),
 	    base_plugins = eval(django.cascade.base_plugins);
 
 	// create class handling the client-side part of ImagePlugin
@@ -22,8 +22,8 @@ django.jQuery(function($) {
 			this.refreshChangeForm();
 		},
 		toggleResponsive: function(checked) {
-			var $image_width_responsive = $('#id_glossary_image-width-responsive').closest('.glossary-widget'),
-				$image_width_fixed = $('#id_glossary_image-width-fixed').closest('.glossary-widget');
+			var $image_width_responsive = $('#id_glossary_image_width_responsive').closest('.glossary-widget'),
+				$image_width_fixed = $('#id_glossary_image_width_fixed').closest('.glossary-widget');
 
 			// if checkbox Image Shapes: Responsive is active, show adaptive width and heights
 			if (checked) {

@@ -7,62 +7,97 @@ djangocms-cascade
 [![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/awesto/djangocms-cascade)
  [![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 
-**DjangoCMS-Cascade** is the Swiss army knife for working with Django CMS plugins.
+**DjangoCMS-Cascade** is the Swiss army knife for working with Django-CMS plugins.
 
-Documentation
--------------
+
+# Why Use DjangoCMS-Cascade?
+
+**DjangoCMS-Cascade** is a collection of plugins for Django-CMS
+[placeholders](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
+Instead of creating one database model for each CMS plugin, Cascade shares one database model for
+all of them. This is possible by storing the payload inside a JSON field instead of declaring each
+attribute explicitly, and it prevents us to handle all kind of nasty database migration problems.
+
+Since **Cascade** keeps track on the widths of all columns, ``<img>`` and ``<picture>`` elements can
+be rendered in a responsive way, so that the browser only loads the image required for the visible
+viewport.
+
+Using a JSON field to store the payload gives us much more flexibility. We can for instance enrich
+our plugins with additional attributes, configured during runtime. This can be used to optionally
+share attributes across different plugins (referenced by an alias name), add CSS classes and styles,
+or offer alternative rendering templates.
+
+Another nice aspect of this approach is, that we can override the functionality used to set links
+onto pages which are not part of the CMS. This is specially useful, since we do not want to
+re-implement this functionality for all plugins, which require links, ie. images, pictures,
+buttons and text-links.
+
+Since the payload of plugins is already serialized, we can even copy them from one site to another
+site supporting **djangocms-cascade**.
+
+
+## Documentation
 
 Find detailed documentation on [ReadTheDocs](http://djangocms-cascade.readthedocs.io/en/latest/).
 
 Please see the [Release Notes](http://djangocms-cascade.readthedocs.io/en/latest/changelog.html)
 before upgrading from an older version.
 
-Currently **DjangoCMS-Cascade** does not work with **djangocms-text-ckeditor** >= 3.1. Please stay with
-version 3.0.1 until this issue hase been fixed.
+
+### News for version 0.11
+
+Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these
+fields to the plugin class, as we would in a Django ``forms.Form`` or ``models.Model``, for instance
+
+```python
+class MyPlugin(CascadePluginBase):
+    name = "My Plugin"
+    ... other attributes ...
+    some_attr = GlossaryField(a_widget, label="A Label", initial=some_value)
+```
+
+instead of
+
+```python
+class MyPlugin(CascadePluginBase):
+    name = "My Plugin"
+    ... other attributes ...
+    glossary_fields = (
+        PartialFormField('some_attr', a_widget, label="A Label", initial=some_value),
+        ...
+    )
+```
+
+Don't forget run ``./manage.py migrate cmsplugin_cascade`` after upgrading to version 0.11.x.
 
 
-Why Use DjangoCMS-Cascade?
---------------------------
+### Caveats
 
-> Add DOM elements to a Django-CMS placeholder
+Currently **DjangoCMS-Cascade** does not work with **djangocms-text-ckeditor** >= 3.1. Please stay
+with version 3.0.1 until this issue hase been fixed.
 
-**DjangoCMS-Cascade** is a collection of plugins for DjangoCMS >= 3.3 to add various HTML elements
-to any CMS [placeholder](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates)
-in a hierarchical tree.
 
-It allows web editors to layout their pages, without having to edit Django templates. In most cases,
-one template with one single placeholder is enough. The editor then can subdivide that placeholder
-into rows and columns, and add additional elements such as buttons, rulers, and much more.
-
-Currently about a dozen components from **Bootstrap-3.x** are available, but **Cascade** makes it
-very easy to add additional components, often with less than 20 lines of Python code and without
-any database migrations.
-
-Since all plugins share the same database table, it is very easy to build inheritance trees. For
-instance, Cascade's own ``LinkPlugin`` inherits from a ``LinkPluginBase``, which also is the parent
-of the ``ImagePlugin`` and the ``ButtonPlugin``. This helps to share the common functionality
-required for linking.
-
+## Architecture
 
 ### It's pluggable
 
 **DjangoCMS-Cascade** is very modular, keeping its CMS modules in functional groups. These groups
 have to be activated independently in your ``settings.py``. It also is possible to activate only
-certain Plugins out of a group. One such group is ``cmsplugin_cascade.bootstrap3``, but it could be
-replaced by a future **Bootstrap-4**, the **Foundation**, **YUI** or whatever other CSS framework
-you prefer.
+certain plugins out of a group. One such group is ``cmsplugin_cascade.bootstrap3``, but it could be
+replaced by a future **Bootstrap-4**, the **Foundation**, **Angular Material** or whatever other CSS
+framework you prefer.
 
 
 ### Configurable individually
 
-Each Cascade Plugin can be styled individually. The site-administrator can specify which CSS styles
-and CSS classes can be added to each plugin. Then the page-editor can pick one of the allowed styles
-to adopt his elements accordingly.
+Each **Cascade** plugin can be styled individually. The site-administrator can specify which CSS
+styles and CSS classes can be added to each plugin. Then the page-editor can pick one of the allowed
+styles to adopt his elements accordingly.
 
 
 ### Reuse your data
 
-Each Cascade Plugin can be configured by the site-administrator to share some or all of its data
+Each **Cascade** plugin can be configured by the site-administrator to share some or all of its data
 fields. This for instance is handy, to keep references onto external URLs in a central place. Or is
 can be used to resize all images sharing a cetrain property in one go.
 
@@ -77,12 +112,18 @@ render different Plugins, depending on whether a user is authenticated or anonym
 
 In modern web development, images must adopt to the column width in which they are rendered.
 Therefore the ``<img ...>`` tag, in addition to the well known ``src`` attribute, also accepts
-additional ``srcset``'s, one for each media query. **DjangoCMS-Cascade** calculates the required
-widths for each image, depending on the current column layout considering all media breakpoints.
+additional ``srcset``'s, one for each media query. Here **djangocms-cascade** calculates the
+required widths for each image, depending on the current column layout considering all media
+breakpoints.
+
+This is also implemented for the ``<picture>`` element with all of it's children, normally
+``<source srcset="...">``.
+
+It also supports resolutions of more than one physical pixel per logical pixel as found in Retina
+displays.
 
 
-Features
---------
+### Other Features
 
 * Use the scaffolding technique from the preferred CSS framework to subdivide a placeholder into a
   [grid system](http://getbootstrap.com/css/#grid).
@@ -117,10 +158,9 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
   even on a foreign site. This for instance is useful to transfer pages from the staging site to production.
 
 
-Help needed
------------
+### Help needed
 
-If you like this project, please invest some time and test it with Django-1.8/1.9 and Python-3.4.
+If someone wants to start a subproject for a CSS framework, other than Bootstrap-3. 
 
 If you are a native English speaker, please check the documentation for spelling mistakes and
-grammar since English not my mother tongue.
+grammar, since English not my mother tongue.

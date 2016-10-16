@@ -104,23 +104,23 @@ def get_image_tags(context, instance, options):
         # if accessing the image file fails, abort here
         return
     is_responsive = options.get('is_responsive', False)
-    resize_options = options.get('resize-options', {})
+    resize_options = options.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
     subject_location = instance.image.subject_location if 'subject_location' in resize_options else False
     resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
     if is_responsive:
-        image_width = _parse_responsive_length(options.get('image-width-responsive') or '100%')
+        image_width = _parse_responsive_length(options.get('image_width_responsive') or '100%')
         assert(image_width[1]), "The given image has no valid width"
         if image_width[1] != 1.0:
             tags['extra_styles'].update({'max-width': '{:.0f}%'.format(100 * image_width[1])})
     else:
-        image_width = _parse_responsive_length(options['image-width-fixed'])
+        image_width = _parse_responsive_length(options['image_width_fixed'])
         if not image_width[0]:
             image_width = (instance.image.width, image_width[1])
     try:
-        image_height = _parse_responsive_length(options['image-height'])
+        image_height = _parse_responsive_length(options['image_height'])
     except KeyError:
         image_height = (None, None)
     set_defaults(options)
@@ -184,7 +184,7 @@ def get_picture_elements(context, instance):
     complete_glossary = instance.get_complete_glossary()
     aspect_ratio = compute_aspect_ratio(instance.image)
     container_max_heights = complete_glossary.get('container_max_heights', {})
-    resize_options = instance.glossary.get('resize-options', {})
+    resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
     subject_location = instance.image.subject_location if 'subject_location' in resize_options else False
@@ -201,7 +201,7 @@ def get_picture_elements(context, instance):
             max_width = max(max_width, round(width))
             size = None
             try:
-                image_height = _parse_responsive_length(instance.glossary['responsive-heights'][bp])
+                image_height = _parse_responsive_length(instance.glossary['responsive_heights'][bp])
             except KeyError:
                 image_height = (None, None)
             if image_height[0]:  # height was given in px
@@ -216,7 +216,7 @@ def get_picture_elements(context, instance):
                     size = (int(width), int(round(width * aspect_ratio * container_height[1])))
             try:
                 zoom = int(
-                    instance.glossary['responsive-zoom'][bp].strip().rstrip('%')
+                    instance.glossary['responsive_zoom'][bp].strip().rstrip('%')
                 )
             except (AttributeError, KeyError, ValueError):
                 zoom = 0

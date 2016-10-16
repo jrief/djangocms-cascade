@@ -4,6 +4,18 @@
 Release History
 ===============
 
+0.11.0
+------
+* Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these
+  fields to the plugin class, as we would in a Django ``forms.Form`` or ``models.Model``, for
+  instance: ``fieldname = GlossaryField(widget, label="A Label", initial=some_value)`` instead of
+  ``glossary_fields = <list-or-tuple-of PartialFormField s>``. This is only important for third
+  party apps inheriting from ``CascadePluginBase``.
+
+  **Remember**: In some field names, the ``-`` (dash) has been replaced against an ``_``
+  (underscore). Therefore please run ``./manage.py migrate cmsplugin_cascade`` which modifies the
+  plugin's payloads.
+
 0.10.2
 ------
 * Fix #188: Using shared settings does not remember it's value.

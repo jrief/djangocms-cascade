@@ -15,7 +15,7 @@ from django.forms.models import ModelForm
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.widgets import TextEditorWidget
 from djangocms_text_ckeditor.utils import plugin_tags_to_user_html
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
@@ -45,33 +45,35 @@ class CarouselPlugin(BootstrapPluginBase):
     fields = ('num_children', 'glossary',)
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
     OPTION_CHOICES = (('slide', _("Animate")), ('pause', _("Pause")), ('wrap', _("Wrap")),)
-    glossary_fields = (
-        PartialFormField('interval',
-            NumberInputWidget(attrs={'size': '2', 'style': 'width: 4em;', 'min': '1'}),
-            label=_("Interval"),
-            initial=5,
-            help_text=_("Change slide after this number of seconds."),
-        ),
-        PartialFormField('options',
-            widgets.CheckboxSelectMultiple(choices=OPTION_CHOICES),
-            label=_('Options'),
-            initial=['slide', 'wrap', 'pause'],
-            help_text=_("Adjust interval for the carousel."),
-        ),
-        PartialFormField('container_max_heights',
-            MultipleCascadingSizeWidget(list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']),
-            allowed_units=['px']),
-            label=_("Carousel heights"),
-            initial=dict((bp[0], '{}px'.format(100 + 50 * i))
-                for i, bp in enumerate(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])),
-            help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
-        ),
-        PartialFormField('resize-options',
-            widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
-            label=_("Resize Options"),
-            help_text=_("Options to use when resizing the image."),
-            initial=['upscale', 'crop', 'subject_location', 'high_resolution']
-        ),
+
+    interval = GlossaryField(
+        NumberInputWidget(attrs={'size': '2', 'style': 'width: 4em;', 'min': '1'}),
+        label=_("Interval"),
+        initial=5,
+        help_text=_("Change slide after this number of seconds."),
+    )
+
+    options = GlossaryField(
+        widgets.CheckboxSelectMultiple(choices=OPTION_CHOICES),
+        label=_('Options'),
+        initial=['slide', 'wrap', 'pause'],
+        help_text=_("Adjust interval for the carousel."),
+    )
+
+    container_max_heights = GlossaryField(
+        MultipleCascadingSizeWidget(list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']),
+        allowed_units=['px']),
+        label=_("Carousel heights"),
+        initial=dict((bp[0], '{}px'.format(100 + 50 * i))
+            for i, bp in enumerate(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])),
+        help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
+    )
+
+    resize_options = GlossaryField(
+        widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
+        label=_("Resize Options"),
+        help_text=_("Options to use when resizing the image."),
+        initial=['upscale', 'crop', 'subject_location', 'high_resolution']
     )
 
     def get_form(self, request, obj=None, **kwargs):
@@ -146,11 +148,9 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
         text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=parent_obj.pk,
             placeholder=parent_obj.placeholder, plugin_language=parent_obj.language)
-        kwargs['glossary_fields'] = (
-            PartialFormField('caption', text_editor_widget, label=_("Slide Caption"),
-                help_text=_("Caption text to be laid over the backgroud image."),
-            ),
-        )
+        caption = GlossaryField(text_editor_widget, label=_("Slide Caption"), name='caption',
+            help_text=_("Caption text to be laid over the backgroud image."))
+        kwargs['glossary_fields'] = (caption,)
         return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
@@ -172,7 +172,7 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     def sanitize_model(cls, obj):
         sanitized = super(CarouselSlidePlugin, cls).sanitize_model(obj)
         complete_glossary = obj.get_complete_glossary()
-        obj.glossary.update({'resize-options': complete_glossary.get('resize-options', [])})
+        obj.glossary.update({'resize_options': complete_glossary.get('resize_options', [])})
         return sanitized
 
     @classmethod

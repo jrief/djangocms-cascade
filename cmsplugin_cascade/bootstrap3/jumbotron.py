@@ -7,7 +7,7 @@ from django.forms import widgets
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget
@@ -22,7 +22,7 @@ class ImageBackgroundMixin(object):
     @property
     def background_color(self):
         try:
-            disabled, color = self.glossary['background-color']
+            disabled, color = self.glossary['background_color']
             if not disabled and disabled != 'disabled':
                 return 'background-color: {};'.format(color)
         except (KeyError, TypeError, ValueError):
@@ -32,30 +32,30 @@ class ImageBackgroundMixin(object):
     @property
     def background_attachment(self):
         try:
-            return 'background-attachment: {background-attachment};'.format(**self.glossary)
+            return 'background-attachment: {background_attachment};'.format(**self.glossary)
         except KeyError:
             return ''
 
     @property
     def background_position(self):
         try:
-            return 'background-position: {background-vertical-position} {background-horizontal-position};'.format(**self.glossary)
+            return 'background-position: {background_vertical_position} {background_horizontal_position};'.format(**self.glossary)
         except KeyError:
             return ''
 
     @property
     def background_repeat(self):
         try:
-            return 'background-repeat: {background-repeat};'.format(**self.glossary)
+            return 'background-repeat: {background_repeat};'.format(**self.glossary)
         except KeyError:
             return ''
 
     @property
     def background_size(self):
         try:
-            size = self.glossary['background-size']
+            size = self.glossary['background_size']
             if size == 'width/height':
-                size = self.glossary['background-width-height']
+                size = self.glossary['background_width_height']
                 return 'background-size: {width} {height};'.format(**size)
             else:
                 return 'background-size: {};'.format(size)
@@ -70,7 +70,7 @@ class JumbotronPluginForm(ImageForm):
     """
     def clean_glossary(self):
         glossary = super(JumbotronPluginForm, self).clean_glossary()
-        if glossary['background-size'] == 'width/height' and not glossary['background-width-height']['width']:
+        if glossary['background_size'] == 'width/height' and not glossary['background_width_height']['width']:
             raise ValidationError(_("You must at least set a background width."))
         return glossary
 
@@ -93,75 +93,72 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     REPEAT_CHOICES = ('repeat', 'repeat-x', 'repeat-y', 'no-repeat')
     SIZE_CHOICES = ('auto', 'width/height', 'cover', 'contain')
     container_glossary_fields = (
-        PartialFormField(
-           'breakpoints',
+        GlossaryField(
             widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
                                            renderer=ContainerBreakpointsRenderer),
             label=_("Available Breakpoints"),
+            name='breakpoints',
             initial=list(BS3_BREAKPOINT_KEYS)[::-1],
             help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
-        PartialFormField(
-            'container_max_heights',
+        GlossaryField(
             MultipleCascadingSizeWidget(BS3_BREAKPOINT_KEYS,
                                         allowed_units=['px', '%'], required=False),
             label=_("Adapt Picture Heights"),
+            name='container_max_heights',
             initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
-            help_text=_(
-                "Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
+            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints.")
         ),
-        PartialFormField(
-            'resize-options',
-             widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
-             label=_("Resize Options"),
-             help_text=_("Options to use when resizing the image."),
-             initial=['crop', 'subject_location', 'high_resolution']
+        GlossaryField(
+            widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
+            label=_("Resize Options"),
+            name='resize_options',
+            initial=['crop', 'subject_location', 'high_resolution'],
+            help_text=_("Options to use when resizing the image.")
         ),
     )
-    glossary_fields = (
-        PartialFormField(
-            'background-color',
-            ColorPickerWidget(),
-            label=_("Background color"),
-        ),
-        PartialFormField(
-            'background-repeat',
-            widgets.RadioSelect(choices=[(c, c) for c in REPEAT_CHOICES]),
-            initial='no-repeat',
-            label=_("This property specifies how an image repeates."),
-        ),
-        PartialFormField(
-            'background-attachment',
-            widgets.RadioSelect(choices=[(c, c) for c in ATTACHMENT_CHOICES]),
-            initial='local',
-            label=_("This property specifies how to move the background relative to the viewport."),
-        ),
-        PartialFormField(
-            'background-vertical-position',
-            widgets.Select(choices=[(c, c) for c in VERTICAL_POSITION_CHOICES]),
-            initial='center',
-            label=_("This property moves a background image vertically within its container."),
-        ),
-        PartialFormField(
-            'background-horizontal-position',
-            widgets.Select(choices=[(c, c) for c in HORIZONTAL_POSITION_CHOICES]),
-            initial='center',
-            label=_("This property moves a background image horizontally within its container."),
-        ),
-        PartialFormField(
-            'background-size',
-            widgets.RadioSelect(choices=[(c, c) for c in SIZE_CHOICES]),
-            initial='auto',
-            label=_("Background size"),
-            help_text=_("This property specifies how an image is sized."),
-        ),
-        PartialFormField(
-            'background-width-height',
-            MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%'],
-                                        required=False),
-            label=_("Background width and height"),
-            help_text=_("This property specifies the width and height of a background image."),
-        ),
+
+    background_color = GlossaryField(
+        ColorPickerWidget(),
+        label=_("Background color"),
+    )
+
+    background_repeat = GlossaryField(
+        widgets.RadioSelect(choices=[(c, c) for c in REPEAT_CHOICES]),
+        initial='no-repeat',
+        label=_("This property specifies how an image repeates."),
+    )
+
+    background_attachment = GlossaryField(
+        widgets.RadioSelect(choices=[(c, c) for c in ATTACHMENT_CHOICES]),
+        initial='local',
+        label=_("This property specifies how to move the background relative to the viewport."),
+    )
+
+    background_vertical_position = GlossaryField(
+        widgets.Select(choices=[(c, c) for c in VERTICAL_POSITION_CHOICES]),
+        initial='center',
+        label=_("This property moves a background image vertically within its container."),
+    )
+
+    background_horizontal_position = GlossaryField(
+        widgets.Select(choices=[(c, c) for c in HORIZONTAL_POSITION_CHOICES]),
+        initial='center',
+        label=_("This property moves a background image horizontally within its container."),
+    )
+
+    background_size = GlossaryField(
+        widgets.RadioSelect(choices=[(c, c) for c in SIZE_CHOICES]),
+        initial='auto',
+        label=_("Background size"),
+        help_text=_("This property specifies how an image is sized."),
+    )
+
+    background_width_height = GlossaryField(
+        MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%'],
+                                    required=False),
+        label=_("Background width and height"),
+        help_text=_("This property specifies the width and height of a background image."),
     )
     footnote_html = """
 <p>For more information about the Jumbotron please read </p>

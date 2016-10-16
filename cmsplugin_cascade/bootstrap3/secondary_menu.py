@@ -5,7 +5,7 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _, get_language_from_request
 from cms.plugin_pool import plugin_pool
 from cms.models.pagemodel import Page
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from .plugin_base import BootstrapPluginBase
 
 
@@ -20,12 +20,11 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     parent_classes = ('BootstrapColumnPlugin',)
     allow_children = False
     render_template = 'cascade/bootstrap3/secmenu-list-group.html'
-    glossary_fields = (
-        PartialFormField('page_id',
-            widgets.Select(choices=()),
-            label=_("CMS Page Id"),
-            help_text=_("Select a CMS page with a given unique Id (in advanced settings).")
-        ),
+
+    page_id = GlossaryField(
+        widgets.Select(choices=()),
+        label=_("CMS Page Id"),
+        help_text=_("Select a CMS page with a given unique Id (in advanced settings).")
     )
 
     @classmethod

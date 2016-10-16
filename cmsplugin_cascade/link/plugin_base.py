@@ -7,7 +7,7 @@ from django.forms import widgets
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from cmsplugin_cascade.fields import PartialFormField
+from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import resolve_dependencies
 from .forms import LinkForm
@@ -18,20 +18,20 @@ class LinkPluginBase(CascadePluginBase):
     allow_children = False
     parent_classes = []
     require_parent = False
-    glossary_fields = (
-        PartialFormField('target',
-            widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
-                         ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
-            initial='',
-            label=_("Link Target"),
-            help_text=_("Open Link in other target.")
-        ),
-        PartialFormField('title',
-            widgets.TextInput(),
-            label=_("Title"),
-            help_text=_("Link's Title")
-        ),
+    target = GlossaryField(
+        widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
+                     ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
+        initial='',
+        label=_("Link Target"),
+        help_text=_("Open Link in other target.")
     )
+
+    title = GlossaryField(
+        widgets.TextInput(),
+        label=_("Title"),
+        help_text=_("Link's Title")
+    )
+
     html_tag_attributes = {'title': 'title', 'target': 'target'}
     # map field from glossary to these form fields
     glossary_field_map = {'link': ('link_type', 'cms_page', 'section', 'ext_url', 'mail_to',)}

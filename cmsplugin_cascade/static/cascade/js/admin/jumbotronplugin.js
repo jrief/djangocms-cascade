@@ -4,10 +4,10 @@ django.jQuery(function($) {
 	// create class handling the client-side part of JumbotronPlugin
 	var JumbotronPlugin, base_plugins = eval(django.cascade.base_plugins),
 	    $fileIdInputSelector = $('.vForeignKeyRawIdAdminField'),
-	    $backgroundColor = $('#id_glossary_background-color_color'),
-	    $backgroundColorDisabled = $('#id_glossary_background-color_disabled'),
-	    $backgroundInputSize = $('input[name="background-size"]'),
-	    $backgroundWidthHeight = $('.glossary_background-width-height').closest('.glossary-widget');
+	    $backgroundColor = $('#id_glossary_background_color_color'),
+	    $backgroundColorDisabled = $('#id_glossary_background_color_disabled'),
+	    $backgroundInputSize = $('input[name="background_size"]'),
+	    $backgroundWidthHeight = $('.glossary_background_width_height').closest('.glossary-widget');
 
 	JumbotronPlugin = ring.create(base_plugins, {
 		constructor: function() {
@@ -28,10 +28,10 @@ django.jQuery(function($) {
 			this.refreshChangeForm();
 		},
 		fileIdInputChanged: function () {
-			var $backgroundHorizontalPosition = $('#id_glossary_background-horizontal-position'),
-			    $backgroundVerticalPosition = $('#id_glossary_background-vertical-position'),
-			    $backgroundAttachment = $('#id_glossary_background-attachment'),
-			    $backgroundRepeat = $('#id_glossary_background-repeat');
+			var $backgroundHorizontalPosition = $('#id_glossary_background_horizontal_position'),
+			    $backgroundVerticalPosition = $('#id_glossary_background_vertical_position'),
+			    $backgroundAttachment = $('#id_glossary_background_attachment'),
+			    $backgroundRepeat = $('#id_glossary_background_repeat');
 			if ($fileIdInputSelector.val()) {
 				$backgroundHorizontalPosition.removeAttr('disabled');
 				$backgroundVerticalPosition.removeAttr('disabled');
@@ -49,7 +49,7 @@ django.jQuery(function($) {
 			}
 		},
 		backgroundDisabledChanged: function() {
-			var $inputField = $('input[name="background-color_disabled"]:checked');
+			var $inputField = $('input[name="background_color_disabled"]:checked');
 			if ($inputField.val() === 'on') {
 				$backgroundColor.attr('disabled', 'disabled');
 			} else {
@@ -57,7 +57,7 @@ django.jQuery(function($) {
 			}
 		},
 		backgroundInputSizeChanged: function() {
-			var $inputField = $('input[name="background-size"]:checked');
+			var $inputField = $('input[name="background_size"]:checked');
 			if ($inputField.val() === 'width/height') {
 				$backgroundWidthHeight.show();
 			} else {
