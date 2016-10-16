@@ -13,7 +13,7 @@ Release History
   party apps inheriting from ``CascadePluginBase``.
 
   **Remember**: In some field names, the ``-`` (dash) has been replaced against an ``_``
-  (underscore). Therefore please run the migration ``0014_glossary_field`` which modifies the
+  (underscore). Therefore please run ``./manage.py migrate cmsplugin_cascade`` which modifies the
   plugin's payloads.
 
 0.10.2

@@ -68,6 +68,8 @@ class MyPlugin(CascadePluginBase):
     )
 ```
 
+Don't forget run ``./manage.py migrate cmsplugin_cascade`` after upgrading to version 0.11.x.
+
 
 ### Caveats
 
