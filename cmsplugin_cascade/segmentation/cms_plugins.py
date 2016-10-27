@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
@@ -8,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from django.template import Template, TemplateSyntaxError
+from django.template import engines, TemplateSyntaxError
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
@@ -38,11 +39,11 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
 
     html_parser = HTMLParser()
     eval_template_string = '{{% if {} %}}True{{% endif %}}'
-    default_template = Template('{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}')
+    default_template = engines['django'].from_string('{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}')
     hiding_template_string = '{% load cms_tags %}<div style="display: none;">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>'
-    hiding_template = Template(hiding_template_string)
+    hiding_template = engines['django'].from_string(hiding_template_string)
     debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
-    empty_template = Template('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
+    empty_template = engines['django'].from_string('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
     require_parent = False
     parent_classes = None
     allow_children = True
@@ -65,7 +66,7 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
             evaluated_to = False
             template_error_message = None
             try:
-                eval_template = Template(self.eval_template_string.format(condition))
+                eval_template = engines['django'].from_string(self.eval_template_string.format(condition))
                 evaluated_to = eval_template.render(context) == 'True'
             except TemplateSyntaxError as err:
                 # TODO: render error message into template
@@ -83,7 +84,7 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
                             template = self.debug_error_template.format(condition=condition,
                                 instance_id=instance.id, message=template_error_message,
                                 template_string=self.hiding_template_string)
-                            template = Template(template)
+                            template = engines['django'].from_string(template)
                         else:
                             template = self.hiding_template
                     else:
@@ -126,7 +127,7 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
             try:
                 if value:
                     condition = self.html_parser.unescape(value)
-                    Template(self.eval_template_string.format(condition))
+                    engines['django'].from_string(self.eval_template_string.format(condition))
             except TemplateSyntaxError as err:
                 raise ValidationError(_("Unable to evaluate condition: {err}").format(err=err.message))
 
