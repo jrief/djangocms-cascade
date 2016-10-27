@@ -51,6 +51,7 @@ class BootstrapPanelPlugin(TransparentMixin, BootstrapPluginBase):
     allow_children = True
     child_classes = None
     render_template = 'cascade/bootstrap3/panel.html'
+    glossary_field_order = ('panel_type', 'heading_size', 'heading', 'footer')
 
     panel_type = GlossaryField(
         PanelTypeRenderer.get_widget(),
