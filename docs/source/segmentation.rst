@@ -34,9 +34,9 @@ plugins. In ``settings.py``, add to
 	)
 
 Then, depending on what kind of data shall be emulated, add a list of two-tuples to the
-configuration settings ``CMSPLUGIN_CASCADE['segmentation_mixins']``. The first entry of each two-tuple
-specifies the mixin class added the the proxy model for the ``SegmentationPlugin``. The second entry
-specifies the mixin class added the the model admin class for the ``SegmentationPlugin``.
+configuration settings ``CMSPLUGIN_CASCADE['segmentation_mixins']``. The first entry of each
+two-tuple specifies the mixin class added the the proxy model for the ``SegmentationPlugin``. The
+second entry specifies the mixin class added the model admin class for the ``SegmentationPlugin``.
 
 .. code-block:: python
 

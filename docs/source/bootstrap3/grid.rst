@@ -276,7 +276,7 @@ this width is 992 pixels. Doing simple math, the outer left column widths gives
 **easy-thumnails** automatically resizes it to a width of 248 pixels.
 
 To calculate the width of the nested columns, first evaluate the width of the outer right column,
-which is 9 / 12 * 992 = 744 pixels. Then this width is subdivided again, using the the width of the
+which is 9 / 12 * 992 = 744 pixels. Then this width is subdivided again, using the width of the
 nested columns, which is 6 / 12 * 744 = 372 pixels.
 
 These calculations are always performed recursively for all nested column and for all available
