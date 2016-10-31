@@ -23,7 +23,7 @@ Uploading the Font
 ==================
 
 In the Django backend, change into ``Start › django CMS Cascade › Uploaded Icon Fonts`` and add an
-Icon Font object. Chose an appropriate name and upload the just downloaded webfont file, without
+Icon Font object. Choose an appropriate name and upload the just downloaded webfont file, without
 unzipping it. After the upload completed, all the imported icons appear grouped by their font
 family. They now are ready for being used.
 

@@ -1,8 +1,8 @@
 .. render-template:
 
-=======================================
-Chose an alternative rendering template
-=======================================
+========================================
+Choose an alternative rendering template
+========================================
 
 Sometimes you must render a plugin with a slightly different template, other than the given default.
 A possible solution is to inherit from this template and override ``render_template``. This however
@@ -74,5 +74,5 @@ Usage
 -----
 
 When editing a **djangoCMS** plugins with alternative rendering templates, the plugin editor
-adds a select box containing alternative rendering templates. Chose one other than the default,
+adds a select box containing alternative rendering templates. Choose one other than the default,
 and the plugin will be rendered using this other template.
