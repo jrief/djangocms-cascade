@@ -6,7 +6,7 @@
 	{% if elem.tag == "source" %}
 	<source srcset="{{ thumb.url }}" media="{{ elem.media }}" />
 	{% elif elem.tag == "img" %}
-	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}"{% if not is_fluid %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %} />
+	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}"{% if not is_fluid %} width="{{ thumb.width|stringformat:"s" }}" height="{{ thumb.height|stringformat:"s" }}"{% endif %} />
 	{% endif %}
 {% endfor %}
 </picture>

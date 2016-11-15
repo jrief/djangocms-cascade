@@ -158,13 +158,19 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         elements = utils.get_picture_elements(context, instance)
         caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
         fluid = instance.get_complete_glossary().get('fluid') == 'on'
+        import djangocms_text_ckeditor
+        from distutils.version import LooseVersion
+        if (LooseVersion(djangocms_text_ckeditor.__version__) < LooseVersion("3.2.1")):
+            caption = plugin_tags_to_user_html(caption, context, placeholder)
+        else:
+            caption = plugin_tags_to_user_html(caption, context)
         context.update({
             'is_responsive': True,
-            'instance': instance,
-            'caption': plugin_tags_to_user_html(caption, context, placeholder),
-            'is_fluid': fluid,
-            'placeholder': placeholder,
-            'elements': elements,
+            'instance'     : instance,
+            'caption'      : caption,
+            'is_fluid'     : fluid,
+            'placeholder'  : placeholder,
+            'elements'     : elements,
         })
         return super(CarouselSlidePlugin, self).render(context, instance, placeholder)
 
