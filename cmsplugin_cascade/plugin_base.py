@@ -302,9 +302,11 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         if request:
             parent_id = request.GET.get('plugin_parent', None)
             if parent_id is None:
-                from cms.models import CMSPlugin
-                parent_id = CMSPlugin.objects.filter(id=request.resolver_match.args[0]
-                                                     ).only("parent_id").order_by('?').first().parent_id
+                resolver_match = request.resolver_match
+                if resolver_match is not None:
+                    from cms.models import CMSPlugin
+                    parent_id = CMSPlugin.objects.filter(id=request.resolver_match.args[0]
+                                                         ).only("parent_id").order_by('?').first().parent_id
         else:
             parent_id = None
         for model in CascadeModelBase._get_cascade_elements():
