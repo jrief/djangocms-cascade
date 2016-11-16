@@ -141,7 +141,7 @@ class CarouselSlidePlugin(BootstrapPluginBase):
             caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
             obj.glossary.update(caption=caption)
 
-        parent_obj = self.get_parent_instance(request)
+        parent_obj = self.get_parent_instance(request, obj)
         if not (parent_obj and issubclass(parent_obj.plugin_class, BootstrapPluginBase)):
             raise ImproperlyConfigured("A CarouselSlidePlugin requires a valid parent")
 

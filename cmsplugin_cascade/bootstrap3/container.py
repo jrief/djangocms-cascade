@@ -154,7 +154,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             else:
                 return phrases[2]
 
-        parent_obj = self.get_parent_instance(request)
+        parent_obj = self.get_parent_instance(request, obj)
         if not (parent_obj and issubclass(parent_obj.plugin_class, BootstrapPluginBase)):
             raise ImproperlyConfigured("A BootstrapColumnPlugin requires a valid parent")
 

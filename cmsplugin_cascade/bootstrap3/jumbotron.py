@@ -169,7 +169,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         js = resolve_dependencies('cascade/js/admin/jumbotronplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
-        if self.get_parent_instance(request) is None:
+        if self.get_parent_instance(request, obj) is None:
             # we only ask for breakpoints, if the jumbotron is the root of the placeholder
             kwargs.update(glossary_fields=list(self.container_glossary_fields))
             kwargs['glossary_fields'].extend(self.glossary_fields)

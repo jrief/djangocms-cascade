@@ -294,21 +294,24 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
                     new_obj.glossary[key] = old_obj.glossary[key]
         super(CascadePluginBase, self).save_model(request, new_obj, form, change)
 
-    def get_parent_instance(self, request=None):
+    def get_parent_instance(self, request=None, obj=None):
         """
         Get the parent model instance corresponding to this plugin. When adding a new plugin, the
         parent might not be available. Therefore as fallback, pass in the request object.
         """
-        if request:
-            parent_id = request.GET.get('plugin_parent', None)
-            if parent_id is None:
-                resolver_match = request.resolver_match
-                if resolver_match is not None:
-                    from cms.models import CMSPlugin
-                    parent_id = CMSPlugin.objects.filter(id=request.resolver_match.args[0]
-                                                         ).only("parent_id").order_by('?').first().parent_id
+        if obj is not None and hasattr(obj, 'parent_id'):
+            parent_id = obj.parent_id
         else:
-            parent_id = None
+            if request:
+                parent_id = request.GET.get('plugin_parent', None)
+                if parent_id is None:
+                    resolver_match = request.resolver_match
+                    if resolver_match is not None:
+                        from cms.models import CMSPlugin
+                        parent_id = CMSPlugin.objects.filter(id=request.resolver_match.args[0]
+                                                             ).only("parent_id").order_by('?').first().parent_id
+            else:
+                parent_id = None
         for model in CascadeModelBase._get_cascade_elements():
             try:
                 return model.objects.get(id=parent_id)
