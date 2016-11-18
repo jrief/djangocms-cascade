@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import os
 import re
 from bs4 import BeautifulSoup
@@ -15,7 +16,6 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
         BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.picture import BootstrapPicturePlugin
 from .test_base import CascadeTestCase
-from .utils import get_request_context
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
@@ -76,9 +76,7 @@ class PicturePluginTest(CascadeTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, picture_model]
         build_plugin_tree(plugin_list)
-        context = get_request_context(self.request)
-        html = container_model.render_plugin(context)
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()))
         self.assertEqual(soup.img['height'], '240')
         self.assertEqual(soup.img['width'], '720')
         self.assertTrue('demo_image.png__720x240_q85_crop_subsampling-2.jpg' in str(soup.img))
@@ -94,8 +92,7 @@ class PicturePluginTest(CascadeTestCase):
         form = ModelForm(post_data, None, instance=picture_model)
         self.assertTrue(form.is_valid())
         picture_plugin.save_model(self.request, picture_model, form, False)
-        html = container_model.render_plugin(context)
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()))
         self.assertEqual(soup.img['height'], '240')
         self.assertEqual(soup.img['width'], '720')
         self.assertTrue('demo_image.png__720x240_q85_crop_subsampling-2.jpg' in soup.img['src'])

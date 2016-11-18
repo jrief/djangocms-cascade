@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from bs4 import BeautifulSoup
-from django.contrib import admin
 from django.test import override_settings
 from cms.api import add_plugin, create_page
 from cms.utils.plugins import build_plugin_tree
@@ -11,18 +10,12 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
 from cmsplugin_cascade.bootstrap3.accordion import (BootstrapAccordionPlugin,
     BootstrapAccordionPanelPlugin)
 from cmsplugin_cascade.bootstrap3 import settings
-from cms.test_utils.testcases import CMSTestCase
-from .utils import get_request_context
+from .test_base import CascadeTestCase
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
 
-class AccordionPluginTest(CMSTestCase):
-    def setUp(self):
-        page = create_page('HOME', 'cascade/testing.html', 'en', published=True, in_navigation=True)
-        self.placeholder = page.placeholders.get(slot='Main Content')
-        self.request = self.get_request(language='en', page=page)
-        self.admin_site = admin.sites.AdminSite()
+class AccordionPluginTest(CascadeTestCase):
 
     def build_accordion_plugins(self):
         # create container
@@ -60,12 +53,11 @@ class AccordionPluginTest(CMSTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, accordion_model, panel_model]
         build_plugin_tree(plugin_list)
-        context = get_request_context(self.request)
 
         self.assertEqual(accordion_plugin.get_identifier(accordion_model), 'with 1 panel')
         self.assertEqual(panel_plugin.get_identifier(panel_model), 'Foo')
 
-        return container_model.render_plugin(context)
+        return self.get_html(container_model, self.get_request_context())
 
     @override_settings()
     def test_bootstrap_accordion(self):

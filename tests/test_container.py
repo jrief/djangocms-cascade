@@ -1,23 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.contrib import admin
 from django.http import QueryDict
 from cms.api import add_plugin, create_page
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
          BootstrapRowForm, BootstrapColumnPlugin, BS3_BREAKPOINT_KEYS)
-from cms.test_utils.testcases import CMSTestCase
-from .utils import get_request_context
+from .test_base import CascadeTestCase
 
 
-class ContainerPluginTest(CMSTestCase):
-    def setUp(self):
-        page = create_page('HOME', 'cascade/testing.html', 'en', published=True, in_navigation=True)
-        self.placeholder = page.placeholders.get(slot='Main Content')
-        self.request = self.get_request(language='en', page=page)
-        self.admin_site = admin.sites.AdminSite()
+class ContainerPluginTest(CascadeTestCase):
 
     def test_container_context(self):
         # add a Bootstrap Container Plugin
@@ -61,8 +54,7 @@ class ContainerPluginTest(CMSTestCase):
 
         # Render the Container Plugin with all of its children
         build_plugin_tree(plugin_list)
-        context = get_request_context(self.request)
-        html = container_model.render_plugin(context)
+        html = self.get_html(container_model, self.get_request_context())
         self.assertHTMLEqual(html, '<div class="container"><div class="row">' +
             '<div class="col-sm-4"></div><div class="col-sm-4"></div><div class="col-sm-4"></div>' +
             '</div></div>')
@@ -90,7 +82,7 @@ class ContainerPluginTest(CMSTestCase):
         form = ModelForm(post_data, None, instance=column_model)
         self.assertTrue(form.is_valid())
         column_plugin.save_model(self.request, column_model, form, False)
-        html = container_model.render_plugin(context)
+        html = self.get_html(container_model, self.get_request_context())
         self.assertHTMLEqual(html, '<div class="container"><div class="row">' +
             '<div class="col-sm-3 col-sm-offset-1"></div><div class="col-sm-4 hidden-sm"></div><div class="col-sm-4"></div>' +
             '</div></div>')

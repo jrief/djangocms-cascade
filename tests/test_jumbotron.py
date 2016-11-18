@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 import os
-from django.contrib import admin
 from django.core.files import File as DjangoFile
 from django.http import QueryDict
 from filer.models.foldermodels import Folder
@@ -15,7 +14,6 @@ from cmsplugin_cascade.bootstrap3.jumbotron import BootstrapJumbotronPlugin, Ima
 from cmsplugin_cascade.bootstrap3 import settings
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from .test_base import CascadeTestCase
-from .utils import get_request_context
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
@@ -95,10 +93,9 @@ class JumbotronPluginTest(CascadeTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, jumbotron_model]
         build_plugin_tree(plugin_list)
-        context = get_request_context(self.request)
 
-        html = container_model.render_plugin(context)
-        print(html)
+        html = self.get_html(container_model, self.get_request_context())
+        # print(html)
         self.assertHTMLEqual("""
 <div class="container"><div class="row"><div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
   <div id="cascadeelement_id-{}" class="jumbotron"></div>
