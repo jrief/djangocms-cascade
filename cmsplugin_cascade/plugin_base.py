@@ -299,19 +299,23 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         Get the parent model instance corresponding to this plugin. When adding a new plugin, the
         parent might not be available. Therefore as fallback, pass in the request object.
         """
-        if obj is not None and hasattr(obj, 'parent_id'):
+        try:
             parent_id = obj.parent_id
-        else:
-            if request:
-                parent_id = request.GET.get('plugin_parent', None)
-                if parent_id is None:
-                    resolver_match = request.resolver_match
-                    if resolver_match is not None:
+        except AttributeError:
+            try:
+                parent_id = self.parent.id
+            except AttributeError:
+                if request:
+                    parent_id = request.GET.get('plugin_parent', None)
+                    if parent_id is None:
                         from cms.models import CMSPlugin
-                        parent_id = CMSPlugin.objects.filter(id=request.resolver_match.args[0]
-                                                             ).only("parent_id").order_by('?').first().parent_id
-            else:
-                parent_id = None
+                        try:
+                            parent_id = CMSPlugin.objects.filter(id=request.resolver_match.args[0]
+                                                                 ).only("parent_id").order_by('?').first().parent_id
+                        except AttributeError:
+                            parent_id = None
+                else:
+                    parent_id = None
         for model in CascadeModelBase._get_cascade_elements():
             try:
                 return model.objects.get(id=parent_id)
