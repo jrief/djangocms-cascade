@@ -312,7 +312,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
                         try:
                             parent_id = CMSPlugin.objects.filter(id=request.resolver_match.args[0]
                                                                  ).only("parent_id").order_by('?').first().parent_id
-                        except AttributeError:
+                        except (AttributeError, IndexError):
                             parent_id = None
                 else:
                     parent_id = None
