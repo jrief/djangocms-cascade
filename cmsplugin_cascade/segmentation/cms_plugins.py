@@ -132,8 +132,8 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
                 raise ValidationError(_("Unable to evaluate condition: {err}").format(err=err.message))
 
         choices = self.get_allowed_open_tags(obj)
-        self.glossary_fields[0].widget.choices = choices
-        self.glossary_fields[1].widget.validate = clean_condition
+        list(self.glossary_fields)[0].widget.choices = choices
+        list(self.glossary_fields)[1].widget.validate = clean_condition
         # remove escape quotes, added by JSON serializer
         if obj:
             condition = self.html_parser.unescape(obj.glossary.get('condition', ''))
