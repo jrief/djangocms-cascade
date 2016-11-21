@@ -52,14 +52,14 @@ django.jQuery(function($) {
 		toggleSharedGlossary: function($option) {
 			var glossary = $option.data('glossary');
 			try {
-				$('#id_link_type').val(glossary['link']['type']);
+				$link_type.val(glossary['link']['type']);
 				try {
-					$("#id_cms_page").select2("data", {id: glossary['link']['pk'], text: glossary['link']['identifier']});
-					$("#id_cms_page").select2('enable', false);
+					$cmspage_select.select2("data", {id: glossary['link']['pk'], text: glossary['link']['identifier']});
+					$cmspage_select.select2('enable', false);
 				} catch(err) {
 					if (!(err instanceof TypeError))
 						throw err;
-					$("#id_cms_page").val(glossary['link']['pk']);
+					$cmspage_select.val(glossary['link']['pk']);
 				}
 				$('#id_ext_url').val(glossary['link']['url']);
 				$('#id_mail_to').val(glossary['link']['email']);
@@ -67,7 +67,7 @@ django.jQuery(function($) {
 				try {
 					if (!(err instanceof TypeError))
 						throw err;
-					$("#id_cms_page").select2('enable', true);
+					$cmspage_select.select2('enable', true);
 				} catch (err) {
 					if (!(err instanceof TypeError))
 						console.error(err);

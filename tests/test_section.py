@@ -9,7 +9,6 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
          BootstrapRowForm, BootstrapColumnPlugin, BS3_BREAKPOINT_KEYS)
 from cmsplugin_cascade.generic.cms_plugins import HeadingPlugin
 from .test_base import CascadeTestCase
-from .utils import get_request_context
 
 
 class SectionPluginTest(CascadeTestCase):
@@ -82,8 +81,9 @@ class SectionPluginTest(CascadeTestCase):
         # render the Container Plugin with the Heading Plgin as a child
         self.plugin_list.append(heading_model)
         build_plugin_tree(self.plugin_list)
-        context = get_request_context(self.request)
-        html = heading_model.render_plugin(context)
+        # context = get_request_context(self.request)
+        # html = heading_model.render_plugin(context)
+        html = self.get_html(heading_model, self.get_request_context())
         expected = '<h2 id="foo">Hello</h2>'
         self.assertHTMLEqual(html, expected)
 

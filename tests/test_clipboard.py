@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import json
 from django import VERSION as DJANGO_VERSION
 from django.http import QueryDict
-from django.utils import six
 from cms.api import add_plugin
 from cms.toolbar.toolbar import CMSToolbar
 from cms.utils.plugins import build_plugin_tree
@@ -12,7 +11,6 @@ from cmsplugin_cascade.models import CascadeElement, CascadeClipboard
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
          BootstrapRowForm, BootstrapColumnPlugin, BS3_BREAKPOINT_KEYS)
 from .test_base import CascadeTestCase
-from .utils import get_request_context
 
 
 class ClipboardPluginTest(CascadeTestCase):
@@ -101,12 +99,11 @@ class ClipboardPluginTest(CascadeTestCase):
             self.assertEqual(str(column_model), 'default width: 4 units')
             plugin_list.append(column_model)
             row_data.append(['BootstrapColumnPlugin', {'glossary': column_model.glossary}, []])
-        container_data = ['BootstrapRowPlugin', {'glossary': row_model.glossary}, row_data]
+        # container_data = ['BootstrapRowPlugin', {'glossary': row_model.glossary}, row_data]
 
         # Render the Container Plugin with all of its children
         build_plugin_tree(plugin_list)
-        context = get_request_context(self.request)
-        html = container_model.render_plugin(context)
+        html = self.get_html(container_model, self.get_request_context())
         self.assertHTMLEqual(html, '<div class="container"><div class="row">' +
                              '<div class="col-sm-4"></div><div class="col-sm-4"></div>' +
                              '<div class="col-sm-4"></div>' +
@@ -135,7 +132,7 @@ class ClipboardPluginTest(CascadeTestCase):
         form = ModelForm(post_data, None, instance=column_model)
         self.assertTrue(form.is_valid())
         column_plugin.save_model(self.request, column_model, form, False)
-        html = container_model.render_plugin(context)
+        html = self.get_html(container_model, self.get_request_context())
         self.assertHTMLEqual(html, '<div class="container"><div class="row">' +
                              '<div class="col-sm-3 col-sm-offset-1"></div>' +
                              '<div class="col-sm-4 hidden-sm"></div><div class="col-sm-4"></div>' +

@@ -1,4 +1,4 @@
-{% load thumbnail %}{% spaceless %}
+{% load thumbnail l10n %}{% spaceless %}
 
 <picture {{ instance.html_tag_attributes }}>
 {% for elem in elements %}
@@ -6,7 +6,7 @@
 	{% if elem.tag == "source" %}
 	<source srcset="{{ thumb.url }}" media="{{ elem.media }}" />
 	{% elif elem.tag == "img" %}
-	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}"{% if not is_fluid %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %} />
+	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}"{% if not is_fluid %} width="{{ thumb.width|unlocalize }}" height="{{ thumb.height|unlocalize }}"{% endif %} />
 	{% endif %}
 {% endfor %}
 </picture>
