@@ -5,18 +5,20 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
+from distutils.version import LooseVersion
+
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template import engines, TemplateSyntaxError, Template as DjangoTemplate, Context as TemplateContext
+
+from cms import __version__ as cms_version
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.mixins import TransparentMixin
 from cmsplugin_cascade.utils import resolve_dependencies
-import cms
-from distutils.version import LooseVersion
 
 
 class Template(DjangoTemplate):
@@ -102,7 +104,7 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
 
         request = context['request']
         toolbar = getattr(request, 'toolbar', None)
-        if (LooseVersion(cms.__version__) < LooseVersion("3.4.0")):
+        if LooseVersion(cms_version) < LooseVersion('3.4.0'):
           edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request) and
                        getattr(placeholder, 'is_editable', True))
         else:
