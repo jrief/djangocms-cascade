@@ -123,7 +123,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
         js = resolve_dependencies('cascade/js/admin/imageplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
-        utils.reduce_breakpoints(self, 'responsive_heights')
+        utils.reduce_breakpoints(self, 'responsive_heights', request=request, obj=obj)
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
         Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
             {'LINK_TYPE_CHOICES': ImageFormMixin.LINK_TYPE_CHOICES, 'image_file': image_file})

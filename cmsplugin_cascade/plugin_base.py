@@ -303,6 +303,9 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
             parent_id = obj.parent_id
         except AttributeError:
             try:
+                # TODO: self.parent presumably is not used anymore in CMS-3.4, because it doesn't
+                # make sense anyway, since the plugin instances shall know their parents, not the
+                # plugins.
                 parent_id = self.parent.id
             except AttributeError:
                 if request:

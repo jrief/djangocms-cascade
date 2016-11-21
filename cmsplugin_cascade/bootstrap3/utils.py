@@ -31,14 +31,14 @@ def get_widget_choices():
     return widget_choices
 
 
-def reduce_breakpoints(plugin, field_name, request=None):
+def reduce_breakpoints(plugin, field_name, request=None, obj=None):
     """
     Narrow down the number of breakpoints in the widget of the named glossary_field. This is useful
     in case the container was defined with a subset of these breakpoints: xs, sm, md, lg.
     """
     if not isinstance(plugin, CascadePluginBase):
         raise ValueError('Plugin is not of type CascadePluginBase')
-    parent_instance = plugin.get_parent_instance(request)
+    parent_instance = plugin.get_parent_instance(request, obj)
     if not parent_instance:
         return
     complete_glossary = parent_instance.get_complete_glossary()
