@@ -45,7 +45,7 @@ class GalleryImageForm(ModelForm):
         except (KeyError, AttributeError):
             initial = {}
         initial.update(kwargs.pop('initial', {}))
-        for key in self.glossary_fields:
+        for key in self.glossary_field_order:
             self.base_fields[key].initial = initial.get(key)
         try:
             self.base_fields['image_file'].initial = initial['image']['pk']
@@ -66,7 +66,7 @@ class GalleryImageForm(ModelForm):
                 self.instance.glossary.update(image=image_data)
             else:
                 self.instance.glossary.pop('image', None)
-            for key in self.glossary_fields:
+            for key in self.glossary_field_order:
                 self.instance.glossary.update({key: cleaned_data.pop(key, '')})
         return cleaned_data
 
@@ -82,6 +82,8 @@ class GalleryPluginInline(SortableInlineAdminMixin, StackedInline):
 class BootstrapGalleryPlugin(CascadePluginBase):
     name = _("Gallery")
     module = 'Bootstrap'
+    intro_html = _("<p>Add images, which make up a set to be used as gallery.</p>"
+                   "<p>All thumbnails for these images are resized to the same widths and heights.</p>")
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     allow_children = False

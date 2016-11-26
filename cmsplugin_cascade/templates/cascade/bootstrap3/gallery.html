@@ -7,9 +7,15 @@
 		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=srcset.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
 		{% endfor %}"
 	{% thumbnail instance.image instance.src.size crop=instance.src.crop upscale=instance.src.upscale subject_location=instance.src.subject_location as thumb %}
-		src="{{ thumb.url }}"{% if not instance.sizes %} width="{{ thumb.width|unlocalize }}" height="{{ thumb.height|unlocalize }}"{% endif %} />
+		src="{{ thumb.url }}"{% if not instance.sizes %} width="{{ thumb.width|unlocalize }}" height="{{ thumb.height|unlocalize }}"{% endif %}
+		title="{{ instance.glossary.image_title }}" alt="{{ instance.glossary.alt_tag }}" />
 	{% endfor %}
 </div>
+{% comment %}
+Currently the template to render an image gallery is not implemented well.
+This is because I didn't come accross yet a good image gallery implemented for Bootstrap-3.
+HTML snippets are wellcommed.
+{% endcomment %}
 <div style="width: 500px;">{% thumbnail gallery_instances.0.image 1665x1665 as thumb %}
 	<div image-src="{{ thumb.url }}" image-zoom zoom-factor="2.5"></div>
 </div>
