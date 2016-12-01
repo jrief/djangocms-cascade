@@ -30,6 +30,8 @@ from .plugin_base import BootstrapPluginBase
 from .image import ImageForm
 from .picture import BootstrapPicturePlugin
 
+# These means "less than or equal to CKEDITOR_FOO_BAR"
+CKEDITOR_3_2_0 = LooseVersion(djangocms_text_ckeditor_version) < LooseVersion("3.2.1")
 
 class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
@@ -135,6 +137,8 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     form = ImageForm
     default_css_class = 'img-responsive'
     parent_classes = ['CarouselPlugin']
+    allow_children = True
+    alien_child_classes = True
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
     render_template = 'cascade/bootstrap3/carousel-slide.html'
@@ -142,20 +146,44 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     html_parser = HTMLParser()
 
     def get_form(self, request, obj=None, **kwargs):
-        if obj:
-            caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
-            obj.glossary.update(caption=caption)
-
         parent_obj = self.get_parent_instance(request, obj)
         if not (parent_obj and issubclass(parent_obj.plugin_class, BootstrapPluginBase)):
             raise ImproperlyConfigured("A CarouselSlidePlugin requires a valid parent")
 
-        # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
-        text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=parent_obj.pk,
-            placeholder=parent_obj.placeholder, plugin_language=parent_obj.language)
-        caption = GlossaryField(text_editor_widget, label=_("Slide Caption"), name='caption',
-            help_text=_("Caption text to be laid over the backgroud image."))
+        if (CKEDITOR_3_2_0):
+            # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
+            text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=obj.pk,
+                                                  placeholder=obj.placeholder,
+                                                  plugin_language=obj.language)
+            caption = GlossaryField(
+                text_editor_widget,
+                label=_("Slide Caption"), name='caption',
+                help_text=_("Caption text to be laid over the backgroud image.")
+            )
+        else:
+            if obj:
+                caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
+                obj.glossary.update(caption=caption)
+
+                if caption:
+                    caption = GlossaryField(
+                        widgets.TextInput(attrs={'size': 150}),
+                        label=_("Slide Caption"), name='caption',
+                        help_text=_("Caption text to be laid over the backgroud image.")
+                    )
+                else:
+                    caption = GlossaryField(
+                        widgets.TextInput(attrs={'hidden': True}),
+                        name=''
+                    )
+            else:
+                caption = GlossaryField(
+                    widgets.TextInput(attrs={'hidden': True}),
+                    name=''
+                )
+
         kwargs['glossary_fields'] = (caption,)
+
         return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
@@ -163,10 +191,11 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         elements = utils.get_picture_elements(context, instance)
         caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
         fluid = instance.get_complete_glossary().get('fluid') == 'on'
-        if LooseVersion(djangocms_text_ckeditor_version) < LooseVersion('3.2.1'):
-            caption = plugin_tags_to_user_html(caption, context, placeholder)
-        else:
-            caption = plugin_tags_to_user_html(caption, context)
+        if caption:
+            if CKEDITOR_3_2_0:
+                caption = plugin_tags_to_user_html(caption, context, placeholder)
+            else:
+                caption = plugin_tags_to_user_html(caption, context)
         context.update({
             'is_responsive': True,
             'instance'     : instance,
