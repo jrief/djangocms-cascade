@@ -6,6 +6,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import filer.fields.file
 import jsonfield.fields
+import cmsplugin_cascade.models
 
 
 class Migration(migrations.Migration):
@@ -22,7 +23,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('identifier', models.CharField(max_length=50, unique=True, verbose_name='Identifier')),
                 ('config_data', jsonfield.fields.JSONField()),
-                ('font_folder', models.FilePathField(allow_files=False, allow_folders=True, path='/Users/jrief/Workspace/upload/stofferia/media/icon_fonts')),
+                ('font_folder', cmsplugin_cascade.models.FilePathField(allow_files=False, allow_folders=True)),
                 ('zip_file', filer.fields.file.FilerFileField(on_delete=django.db.models.deletion.CASCADE, to='filer.File')),
             ],
             options={

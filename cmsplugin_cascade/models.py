@@ -179,6 +179,21 @@ extension_pool.register(CascadePage)
 models.signals.pre_delete.connect(CascadePage.delete_cascade_element, dispatch_uid='delete_cascade_element')
 
 
+class FilePathField(models.FilePathField):
+    """
+    Implementation of `models.FilePathField` which configures the `path` argument by default
+    to avoid the creation of a migration file for each change in local settings.
+    """
+    def __init__(self, **kwargs):
+        kwargs.setdefault('path', CMSPLUGIN_CASCADE['icon_font_root'])
+        super(FilePathField, self).__init__(**kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(FilePathField, self).deconstruct()
+        del kwargs['path']
+        return name, path, args, kwargs
+
+
 @python_2_unicode_compatible
 class IconFont(models.Model):
     """
@@ -187,8 +202,7 @@ class IconFont(models.Model):
     identifier = models.CharField(_("Identifier"), max_length=50, unique=True)
     config_data = JSONField()
     zip_file = FilerFileField()
-    font_folder = models.FilePathField(path=CMSPLUGIN_CASCADE['icon_font_root'],
-                                       allow_files=False, allow_folders=True)
+    font_folder = FilePathField(allow_files=False, allow_folders=True)
 
     class Meta:
         verbose_name = _("Uploaded Icon Font")
