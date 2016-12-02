@@ -29,21 +29,15 @@ def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
-    class Meta:
-        proxy = True
-        # using a dummy name prevents `makemigrations` to create a model migration
-        app_label = 'cascade_dummy'
-
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
     attrs = {} if attrs is None else dict(attrs)
-    try:
-        attrs.update(Meta=Meta, __module__=module)
-        Model = type(name, bases, attrs)
-    except RuntimeError:
-        Meta.app_label = 'cascade_dummy_dummy'
-        attrs.update(Meta=Meta, __module__=module)
-        Model = type(name, bases, attrs)
+
+    # use a dummy name for app_label to prevent `makemigrations` creating a migration for proxy models
+    app_label = 'dummy_{}_{}'.format(*module.split('.'))
+    Meta = type(str('Meta'), (type,), dict(proxy=True, app_label=app_label))
+    attrs.update(Meta=Meta, __module__=module)
+    Model = type(name, bases, attrs)
     return Model
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
