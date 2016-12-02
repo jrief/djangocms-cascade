@@ -1,6 +1,7 @@
 {% include "cascade/bootstrap3/picture.html" %}
-{% if caption %}
+{% load cms_tags %}
+{% if instance.num_children %}
 <div class="carousel-caption">
-	{{ caption|safe }}
+{% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}
 </div>
 {% endif %}

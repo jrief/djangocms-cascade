@@ -27,7 +27,7 @@ from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWi
 from cmsplugin_cascade.link.cms_plugins import TextLinkPlugin
 from . import settings, utils
 from .plugin_base import BootstrapPluginBase
-from .image import ImageForm
+from .image import ImageForm, ImageAnnotationMixin
 from .picture import BootstrapPicturePlugin
 
 
@@ -129,7 +129,7 @@ class CarouselPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(CarouselPlugin)
 
 
-class CarouselSlidePlugin(BootstrapPluginBase):
+class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
     form = ImageForm
@@ -138,10 +138,11 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
     render_template = 'cascade/bootstrap3/carousel-slide.html'
-    change_form_template = 'cascade/admin/text_plugin_change_form.html'
-    html_parser = HTMLParser()
+    child_classes = ('TextPlugin',)
+    Xchange_form_template = 'cascade/admin/text_plugin_change_form.html'
+    Xhtml_parser = HTMLParser()
 
-    def get_form(self, request, obj=None, **kwargs):
+    def Xget_form(self, request, obj=None, **kwargs):
         if obj:
             caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
             obj.glossary.update(caption=caption)
@@ -156,24 +157,23 @@ class CarouselSlidePlugin(BootstrapPluginBase):
         caption = GlossaryField(text_editor_widget, label=_("Slide Caption"), name='caption',
             help_text=_("Caption text to be laid over the backgroud image."))
         kwargs['glossary_fields'] = (caption,)
-        return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
         elements = utils.get_picture_elements(context, instance)
-        caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
+        #caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
         fluid = instance.get_complete_glossary().get('fluid') == 'on'
-        if LooseVersion(djangocms_text_ckeditor_version) < LooseVersion('3.2.1'):
-            caption = plugin_tags_to_user_html(caption, context, placeholder)
-        else:
-            caption = plugin_tags_to_user_html(caption, context)
+        #if LooseVersion(djangocms_text_ckeditor_version) < LooseVersion('3.2.1'):
+        #    caption = plugin_tags_to_user_html(caption, context, placeholder)
+        #else:
+        #    caption = plugin_tags_to_user_html(caption, context)
         context.update({
             'is_responsive': True,
-            'instance'     : instance,
-            'caption'      : caption,
-            'is_fluid'     : fluid,
-            'placeholder'  : placeholder,
-            'elements'     : elements,
+            'instance': instance,
+            # 'caption': caption,
+            'is_fluid': fluid,
+            'placeholder': placeholder,
+            'elements': elements,
         })
         return super(CarouselSlidePlugin, self).render(context, instance, placeholder)
 
