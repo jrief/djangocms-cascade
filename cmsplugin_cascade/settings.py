@@ -111,3 +111,7 @@ CMSPLUGIN_CASCADE.setdefault('plugins_with_extra_render_templates', {
 # Folder where extracted icon fonts are stored.
 CMSPLUGIN_CASCADE.setdefault('icon_font_root',
                              os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'icon_fonts')))
+
+settings.AUTHENTICATION_BACKENDS += (
+    'cmsplugin_cascade.auth_backend.CascadeCustomBackend',
+)
