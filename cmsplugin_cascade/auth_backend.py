@@ -14,7 +14,7 @@ class CascadeCustomBackend(ModelBackend):
         if perm.startswith('dummy_cmsplugin_cascade'):
             codename = perm.split('.', 1)[1]
             if not Permission.objects.filter(codename=codename).exists():
-                perm_splitted = perm_splitted[1].split('_', 1)
+                perm_splitted = codename.split('_', 1)
                 codename = '%s_bootstrapcontainerpluginmodel' % perm_splitted[0]
             perm = 'cmsplugin_cascade.%s' % codename
             return super(CascadeCustomBackend, self).has_perm(user_obj, perm, obj)
