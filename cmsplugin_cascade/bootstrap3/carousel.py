@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from distutils.version import LooseVersion
 import re
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
 
-from django.core.exceptions import ImproperlyConfigured
 from django.forms import widgets
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -16,15 +14,11 @@ from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
 
 from cms.plugin_pool import plugin_pool
-from djangocms_text_ckeditor import __version__ as djangocms_text_ckeditor_version
-from djangocms_text_ckeditor.widgets import TextEditorWidget
-from djangocms_text_ckeditor.utils import plugin_tags_to_user_html
 
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
-from cmsplugin_cascade.link.cms_plugins import TextLinkPlugin
 from . import settings, utils
 from .plugin_base import BootstrapPluginBase
 from .image import ImageForm, ImageAnnotationMixin
@@ -139,38 +133,14 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     fields = ('image_file', 'glossary',)
     render_template = 'cascade/bootstrap3/carousel-slide.html'
     child_classes = ('TextPlugin',)
-    Xchange_form_template = 'cascade/admin/text_plugin_change_form.html'
-    Xhtml_parser = HTMLParser()
-
-    def Xget_form(self, request, obj=None, **kwargs):
-        if obj:
-            caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
-            obj.glossary.update(caption=caption)
-
-        parent_obj = self.get_parent_instance(request, obj)
-        if not (parent_obj and issubclass(parent_obj.plugin_class, BootstrapPluginBase)):
-            raise ImproperlyConfigured("A CarouselSlidePlugin requires a valid parent")
-
-        # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
-        text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=parent_obj.pk,
-            placeholder=parent_obj.placeholder, plugin_language=parent_obj.language)
-        caption = GlossaryField(text_editor_widget, label=_("Slide Caption"), name='caption',
-            help_text=_("Caption text to be laid over the backgroud image."))
-        kwargs['glossary_fields'] = (caption,)
 
     def render(self, context, instance, placeholder):
-        # image shall be rendered in a responsive context using the ``<picture>`` element
+        # slide image shall be rendered in a responsive context using the ``<picture>`` element
         elements = utils.get_picture_elements(context, instance)
-        #caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
         fluid = instance.get_complete_glossary().get('fluid') == 'on'
-        #if LooseVersion(djangocms_text_ckeditor_version) < LooseVersion('3.2.1'):
-        #    caption = plugin_tags_to_user_html(caption, context, placeholder)
-        #else:
-        #    caption = plugin_tags_to_user_html(caption, context)
         context.update({
             'is_responsive': True,
             'instance': instance,
-            # 'caption': caption,
             'is_fluid': fluid,
             'placeholder': placeholder,
             'elements': elements,
