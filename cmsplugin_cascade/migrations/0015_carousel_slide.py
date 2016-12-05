@@ -83,8 +83,8 @@ def backwards(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cmsplugin_cascade', '0014_glossary_field'),
         ('djangocms_text_ckeditor', '0004_auto_20160706_1339'),
+        ('cmsplugin_cascade', '0014_glossary_field'),
     ]
 
     operations = [
