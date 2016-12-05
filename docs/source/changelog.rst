@@ -7,6 +7,8 @@ Release History
 0.11.1
 ------
 * Added preconfigured ``FilePathField`` to prevent the creation of useless migration files.
+* SegmentPlugin.get_form OrderedDict value lookups now compatible with python3.
+* Fixed database migration failing on multiple database setup.
 
 0.11.0
 ------
