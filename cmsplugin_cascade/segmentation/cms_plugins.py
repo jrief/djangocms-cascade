@@ -89,8 +89,9 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
                 else:
                     request._evaluated_instances[instance.id] = False
                     if edit_mode:
-                        # in edit mode hidden plugins have to be rendered nevertheless using CSS
-                        # style="display: none", otherwise they are invisible in the plugin structure
+                        # In edit mode, hidden plugins have to be rendered nevertheless. Therefore
+                        # we use `style="display: none"`, otherwise the plugin would be invisible
+                        # in structure mode, while editing.
                         if template_error_message:
                             template = self.debug_error_template.format(condition=condition,
                                 instance_id=instance.id, message=template_error_message,

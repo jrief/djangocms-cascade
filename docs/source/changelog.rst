@@ -4,12 +4,18 @@
 Release History
 ===============
 
-0.12.0
+0.12.0.dev0
 ------
 * Added compatibility for django-CMS-3.4 and higher.
 * Added compatibility for djangocms-text-ckeditor-3.2 and higher.
 * In the ``CarouselSlide`` plugin, caption is added as child text plugin instead of using the
   glossary.
+
+0.11.1
+------
+* Added preconfigured ``FilePathField`` to prevent the creation of useless migration files.
+* SegmentPlugin.get_form OrderedDict value lookups now compatible with python3.
+* Fixed database migration failing on multiple database setup.
 
 0.11.0
 ------
