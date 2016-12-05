@@ -4,6 +4,13 @@
 Release History
 ===============
 
+0.12.0
+------
+* Added compatibility for django-CMS-3.4 and higher.
+* Added compatibility for djangocms-text-ckeditor-3.2 and higher.
+* In the ``CarouselSlide`` plugin, caption is added as child text plugin instead of using the
+  glossary.
+
 0.11.0
 ------
 * Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these
