@@ -126,6 +126,8 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             attrs['sharable_fields'] = cls.plugins_with_sharables[name]
             base_model = SharableCascadeElement
         else:
+            attrs['exclude'] = list(attrs.get('exclude', []))
+            attrs['exclude'].append('shared_glossary')
             base_model = CascadeElement
         if name in cls.plugins_with_extra_render_templates:
             RenderTemplateMixin.media = media_property(RenderTemplateMixin)

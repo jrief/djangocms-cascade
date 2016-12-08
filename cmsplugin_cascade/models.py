@@ -40,7 +40,7 @@ class CascadeElement(CascadeModelBase):
     """
     The concrete model class to store arbitrary data for plugins derived from CascadePluginBase.
     """
-    shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL, editable=False)
+    shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         db_table = 'cmsplugin_cascade_element'

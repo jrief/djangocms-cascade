@@ -6,10 +6,17 @@ Release History
 
 0.12.0.dev0
 ------
-* Added compatibility for django-CMS-3.4 and higher.
-* Added compatibility for djangocms-text-ckeditor-3.2 and higher.
-* In the ``CarouselSlide`` plugin, caption is added as child text plugin instead of using the
-  glossary.
+* Added compatibility for Django version 1.10.
+* Added compatibility for django-CMS version 3.4.
+* Added compatibility for djangocms-text-ckeditor-3.2.
+* In the ``CarouselSlide`` plugin, caption is added as a child ``TextPlugin`` instead of using the
+  glossary. Currently the migration of ``TextLinkPlugins`` inside this caption field does not work
+  properly. Please create an issue, if you really need it.
+* Added method ``value_omitted_from_data`` to ``JSONMultiWidget`` to override the Django method
+  implemented in ``django.forms.widgets.MultiWidget``.
+* In ``cmsplugin_cascade.models.CascadeElement`` the foreign key ``shared_glossary`` now is marked
+  as editable. Instead to plugins without sharable glossary, the attribute
+  ``exclude = ['shared_glossary']`` is added.
 
 0.11.1
 ------
