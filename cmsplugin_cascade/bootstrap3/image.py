@@ -33,6 +33,7 @@ class ImageFormMixin(object):
         super(ImageFormMixin, self).__init__(*args, **kwargs)
 
     def clean_glossary(self):
+        # TODO: remove this someday
         assert isinstance(self.cleaned_data['glossary'], dict)
         return self.cleaned_data['glossary']
 
