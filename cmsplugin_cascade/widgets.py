@@ -56,6 +56,12 @@ class JSONMultiWidget(widgets.MultiWidget):
                 result[field.name] = escape(data.get(field.name, ''))
         return result
 
+    def value_omitted_from_data(self, data, files, name):
+        return all(
+            field.widget.value_omitted_from_data(data, files, field.name)
+            for field in self.normalized_fields
+        )
+
     def render(self, name, values, attrs):
         values = self.decompress(values)
         field_attrs = dict(**attrs)
