@@ -59,9 +59,6 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     class Media:
         js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
 
-    def __init__(self, *args, **kwargs):
-        super(BootstrapPicturePlugin, self).__init__(*args, **kwargs)
-
     def get_form(self, request, obj=None, **kwargs):
         reduce_breakpoints(self, 'responsive_heights')
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
