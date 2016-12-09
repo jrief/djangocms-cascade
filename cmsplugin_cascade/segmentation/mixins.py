@@ -144,7 +144,7 @@ class EmulateUserAdminMixin(object):
             'admin/%s/%s/change_list.html' % (app_label, opts.model_name),
             'admin/%s/change_list.html' % app_label,
             'admin/change_list.html'
-        ], context, current_app=self.admin_site.name)
+        ], context)
 
     def clear_emulations(self, request):
         request.session.pop('emulate_user_id', None)
