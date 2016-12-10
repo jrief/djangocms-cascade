@@ -77,7 +77,8 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
             evaluated_to = False
             template_error_message = None
             try:
-                eval_template = engines['django'].from_string(self.eval_template_string.format(condition))
+                template_string = self.eval_template_string.format(condition)
+                eval_template = engines['django'].from_string(template_string)
                 evaluated_to = eval_template.render(context) == 'True'
             except TemplateSyntaxError as err:
                 # TODO: render error message into template
