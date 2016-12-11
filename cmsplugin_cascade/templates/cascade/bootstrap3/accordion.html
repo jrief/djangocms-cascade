@@ -11,7 +11,7 @@
 				<a data-toggle="collapse" data-parent="#cmsplugin_{{ instance.id }}" href="#cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}">{{ panel_title }}</a>
 			</{{ heading_tag }}>
 		</div>
-		<div id="cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}" class="panel-collapse collapse{% if forloop.first  and instance.glossary.first_is_open = "on" %} in{% endif %}">
+		<div id="cmsplugin_{{ instance.id }}_{{ forloop.counter0 }}" class="panel-collapse collapse{% if forloop.first and instance.glossary.first_is_open == "on" %} in{% endif %}">
 			{% render_plugin panel %}
 		</div>
 	</div>
