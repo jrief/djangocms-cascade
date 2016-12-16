@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from collections import OrderedDict
+
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.forms.widgets import media_property
 from django.utils import six
@@ -9,13 +10,13 @@ from django.utils.functional import lazy
 from django.utils.module_loading import import_string
 from django.utils.translation import string_concat
 from django.utils.safestring import SafeText, mark_safe
+
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
-from cms.utils.placeholder import get_placeholder_conf
 from cms.utils.compat.dj import is_installed
+
 from . import settings
 from .fields import GlossaryField
-from .mixins import TransparentMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .generic.mixins import SectionMixin, SectionModelMixin
@@ -148,6 +149,70 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
+class TransparentWrapper(object):
+    """
+    Add this mixin class to other Cascade plugins, wishing to be added transparently between other
+    plugins restricting parent-children relationships.
+    For instance: A BootstrapColumnPlugin can only be added as a child to a RowPlugin. This means
+    that no other wrapper can be added between those two plugins. By adding this mixin class we can
+    allow any plugin to behave transparently, just as if it would not have be inserted into the DOM
+    tree. When moving plugins in- and out of transparent wrapper plugins, always reload the page, so
+    that the parent-children relationships can be updated.
+    """
+    child_plugins_cache = False
+    parent_plugins_cache = False
+
+    @classmethod
+    def get_child_classes(cls, slot, page, instance=None):
+        if hasattr(cls, 'direct_child_classes'):
+            return cls.direct_child_classes
+        while True:
+            instance = instance.get_parent_instance()
+            if instance is None:
+                return super(TransparentWrapper, cls).get_child_classes(slot, page, instance)
+            if not issubclass(instance.plugin_class, TransparentWrapper):
+                return instance.plugin_class.get_child_classes(slot, page, instance)
+
+    @classmethod
+    def get_parent_classes(cls, slot, page, instance=None):
+        if hasattr(cls, 'direct_parent_classes'):
+            return cls.direct_parent_classes
+        parent_classes = set(super(TransparentWrapper, cls).get_parent_classes(slot, page, instance) or [])
+        if isinstance(instance, CascadeElement):
+            instance = instance.get_parent_instance()
+            if instance is not None:
+                parent_classes.add(instance.plugin_type)
+        # print("===== PARENTS =====")
+        # print(cls.__name__)
+        # print(tuple(parent_classes))
+        return tuple(parent_classes)
+
+
+class TransparentContainer(TransparentWrapper):
+    """
+    This mixin class marks each plugin inheriting from it, as a transparent container.
+    Such a plugin is added to the global list of entitled parent plugins, which is required if we
+    want to place and move all other Cascade plugins below this container.
+
+    Often, transparent wrapping classes come in pairs. For instance the `AccordionPlugin` containing
+    one or more `PanelPlugin`. Here the `AccordionPlugin` must inherit from `TransparentWrapper`,
+    whereas the `AccordionPlugin` must inherit from the `TransparentContainer`.
+    """
+    @staticmethod
+    def get_plugins():
+        from cms.plugin_pool import plugin_pool
+        global _leaf_transparent_plugins
+
+        try:
+            return _leaf_transparent_plugins
+        except NameError:
+            _leaf_transparent_plugins = [
+                plugin.__name__ for plugin in plugin_pool.get_all_plugins()
+                    if issubclass(plugin, TransparentContainer)
+            ]
+            return _leaf_transparent_plugins
+
+
 class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPluginBase)):
     change_form_template = 'cascade/admin/change_form.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
@@ -165,22 +230,34 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         elif not hasattr(self, 'glossary_fields'):
             self.glossary_fields = []
 
-    def get_parent_classes(self, slot, page):
-        template = page and page.get_template() or None
-        ph_conf = get_placeholder_conf('parent_classes', slot, template, default={})
-        parent_classes = ph_conf.get(self.__class__.__name__, self.parent_classes)
-        if parent_classes is None:
-            return
-        # allow all parent classes which inherit from TransparentMixin
-        parent_classes = set(parent_classes)
-        for p in plugin_pool.get_all_plugins():
-            if self.allow_children and issubclass(p, TransparentMixin):
-                parent_classes.add(p.__name__)
-        return tuple(parent_classes)
+    @classmethod
+    def get_child_plugin_candidates(cls, slot, page):
+        child_classes = set()
+        # by examining the allowed parent classes of each child, reduce the set of candidates
+        for child_class in super(CascadePluginBase, cls).get_child_plugin_candidates(slot, page):
+            if issubclass(child_class, CascadePluginBase):
+                own_child_classes = getattr(cls, 'child_classes', None) or []
+                child_parent_classes = child_class.get_parent_classes(slot, page)
+                if isinstance(child_parent_classes, (list, tuple)) and cls.__name__ in child_parent_classes:
+                    child_classes.add(child_class)
+                elif child_class.__name__ in own_child_classes:
+                    child_classes.add(child_class)
+                elif issubclass(child_class, TransparentWrapper) and child_parent_classes is None:
+                    child_classes.add(child_class)
+            else:
+                if cls.alien_child_classes and child_class.__name__ in settings.CMSPLUGIN_CASCADE['alien_plugins']:
+                    child_classes.add(child_class)
+        return tuple(child_classes)
 
-    def get_child_classes(self, slot, page):
-        if isinstance(self.child_classes, (list, tuple)):
-            return self.child_classes
+    @classmethod
+    def get_child_classes(cls, slot, page, instance=None):
+        child_classes = cls.get_child_plugin_candidates(slot, page)
+
+        print("===== CHILDREN =====")
+        print(cls.__name__)
+        print([cc.__name__ for cc in child_classes])
+        return [cc.__name__ for cc in child_classes]
+
         # otherwise determine child_classes by evaluating parent_classes from other plugins
         child_classes = set()
         for p in plugin_pool.get_all_plugins():
@@ -190,6 +267,19 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
               self.alien_child_classes is True and p.__name__ in settings.CMSPLUGIN_CASCADE['alien_plugins']):
                 child_classes.add(p.__name__)
         return tuple(child_classes)
+
+    @classmethod
+    def get_parent_classes(cls, slot, page, instance=None):
+        parent_classes = super(CascadePluginBase, cls).get_parent_classes(slot, page)
+        if parent_classes is None:
+            if cls.get_require_parent(slot, page) is False:
+                return
+            parent_classes = []
+
+        # add all plugins marked as 'transparent', since they all are potential parents
+        parent_classes = set(parent_classes)
+        parent_classes.update(TransparentContainer.get_plugins())
+        return tuple(parent_classes)
 
     @classmethod
     def get_identifier(cls, instance):
