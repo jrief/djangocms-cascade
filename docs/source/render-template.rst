@@ -5,11 +5,12 @@ Choose an alternative rendering template
 ========================================
 
 Sometimes you must render a plugin with a slightly different template, other than the given default.
-A possible solution is to inherit from this template and override ``render_template``. This however
-adds another plugin to the list of registered CMS plugins.
+A possible solution is to create a new plugin, inheriting from the given one and overriding
+the ``render_template`` attribute with a customized template. This however adds another plugin to
+the list of registered CMS plugins.
 
-A simpler solution to solve this problem is to allow a plugin to be rendered with a template out of
-a set of alternatives.
+A simpler solution to solve this problem, is to allow a plugin to be rendered with a customized
+template out of a set of alternatives.
 
 
 Change the path for template lookups
@@ -50,7 +51,7 @@ Configure Cascade Plugins to be rendered using alternative templates
 
 All plugins which offer more than one rendering template, shall be added in the projects
 ``settings.py`` to the dictionary ``CMSPLUGIN_CASCADE['plugins_with_extra_render_templates']``.
-Each item in this dictionary consists of a key naming the plugin and a value containing a list of
+Each item in this dictionary consists of a key, naming the plugin, and a value containing a list of
 two-tuples. The first element of this two-tuple must be the templates filename, while the second
 element shall contain an arbitrary name to identify that template.
 
@@ -74,5 +75,5 @@ Usage
 -----
 
 When editing a **djangoCMS** plugins with alternative rendering templates, the plugin editor
-adds a select box containing alternative rendering templates. Choose one other than the default,
-and the plugin will be rendered using this other template.
+adds a select box containing choices for alternative rendering templates. Choose one other than the
+default, and the plugin will be rendered using that template.
