@@ -11,7 +11,6 @@ from django.utils.module_loading import import_string
 from django.utils.translation import string_concat
 from django.utils.safestring import SafeText, mark_safe
 
-from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
 
@@ -185,7 +184,7 @@ class TransparentWrapper(object):
         # print("===== PARENTS =====")
         # print(cls.__name__)
         # print(tuple(parent_classes))
-        return tuple(parent_classes)
+        return list(parent_classes)
 
 
 class TransparentContainer(TransparentWrapper):
@@ -244,7 +243,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         # add all plugins marked as 'transparent', since they all are potential parents
         parent_classes = set(parent_classes)
         parent_classes.update(TransparentContainer.get_plugins())
-        return tuple(parent_classes)
+        return list(parent_classes)
 
     @classmethod
     def get_child_classes(cls, slot, page, instance=None):
@@ -264,7 +263,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
                 if cls.alien_child_classes and plugin_type in settings.CMSPLUGIN_CASCADE['alien_plugins']:
                     child_classes.add(child_class)
 
-        return (cc.__name__ for cc in child_classes)
+        return list(cc.__name__ for cc in child_classes)
 
     @classmethod
     def get_parent_classes(cls, slot, page, instance=None):
