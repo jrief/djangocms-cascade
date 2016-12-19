@@ -12,7 +12,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.mixins import TransparentMixin
+from cmsplugin_cascade.plugin_base import TransparentContainer
 from .plugin_base import BootstrapPluginBase
 
 panel_heading_sizes = (('', _("normal")),) + tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
@@ -40,7 +40,7 @@ class PanelTypeRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapPanelPlugin(TransparentMixin, BootstrapPluginBase):
+class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
     """
     Use this plugin to display a panel with optional panel-header and panel-footer.
     """

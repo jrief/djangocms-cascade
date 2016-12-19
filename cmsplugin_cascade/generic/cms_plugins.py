@@ -10,14 +10,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.mixins import TransparentMixin
+from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.widgets import SetBorderWidget
 
 
-class SimpleWrapperPlugin(TransparentMixin, CascadePluginBase):
+class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
     name = _("Simple Wrapper")
     parent_classes = None
     require_parent = False
@@ -88,13 +87,12 @@ class HeadingPlugin(CascadePluginBase):
 plugin_pool.register_plugin(HeadingPlugin)
 
 
-class CustomSnippetPlugin(TransparentMixin, CascadePluginBase):
+class CustomSnippetPlugin(TransparentContainer, CascadePluginBase):
     """
     Allows to add a customized template anywhere. This plugins will be registered only if the
     project added a template using the configuration setting 'plugins_with_extra_render_templates'.
     """
     name = _("Custom Snippet")
-    parent_classes = None
     require_parent = False
     allow_children = True
     alien_child_classes = True

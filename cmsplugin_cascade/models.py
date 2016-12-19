@@ -56,6 +56,9 @@ class CascadeElement(CascadeModelBase):
         for sortinline_element in oldinstance.sortinline_elements.all():
             init_element(sortinline_element)
 
+    def get_parent_instance(self):
+        return CascadeElement.objects.get(pk=self.parent_id)
+
 
 class SharableCascadeElement(CascadeElement):
     """

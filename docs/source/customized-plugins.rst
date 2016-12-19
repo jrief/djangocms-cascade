@@ -164,6 +164,29 @@ Needless to say, that you can't add any extra database fields to the class named
 ``MySpecialPropertyMixin``, since the corresponding model class is marked as proxy.
 
 
+*Transparent* Plugins
+=====================
+
+Some of the plugins in Cascade's ecosystem are considered as *transparent*. This means that they
+logically don't fit into the given grid-system, but should rather be considered as wrappers of
+other HTML elements.
+
+For example, the `Bootstrap Panel`_ can be added as child of a Column. However, it may contain
+exactly the same plugins, as the Column does. Now, instead of adding the ``PanelPlugin`` as
+a possible parent to all of our existing Bootstrap plugins, we simply declare the Panel as
+"transparent". It then behaves as it's own parent, allowing all plugins as children, which
+themselves are permitted to be added to that column.
+
+Transparent plugins can be stacked. For example, the `Bootstrap Accordion`_ consists of one or more
+Accordion Panels. Both of them are considered as *transparent*, which means that we can add all
+plugins to an Accordion Panels, which we also could add to a Column.
+
+
+
+.. _Bootstrap Panel: http://getbootstrap.com/components/#panels
+.. _Bootstrap Accordion: http://getbootstrap.com/javascript/#collapse
+
+
 Plugin Attribute Reference
 ==========================
 

@@ -16,8 +16,7 @@ from django.template import engines, TemplateSyntaxError, Template as DjangoTemp
 from cms import __version__ as cms_version
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.mixins import TransparentMixin
+from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.utils import resolve_dependencies
 
 
@@ -28,13 +27,26 @@ class Template(DjangoTemplate):
         return super(Template, self).render(context)
 
 
-class SegmentPlugin(TransparentMixin, CascadePluginBase):
+class SegmentPlugin(TransparentContainer, CascadePluginBase):
     """
     A Segment is a part of the DOM which is rendered or not, depending on a condition.
     As condition you may use any expression which is valid inside a Django's template tag,
     such as ``{% if ... %}``.
     """
     name = _("Segment")
+    html_parser = HTMLParser()
+    eval_template_string = '{{% if {} %}}True{{% endif %}}'
+    default_template = engines['django'].from_string('{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}')
+    hiding_template_string = '{% load cms_tags %}<div style="display: none;">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>'
+    hiding_template = engines['django'].from_string(hiding_template_string)
+    debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
+    empty_template = engines['django'].from_string('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
+    require_parent = False
+    direct_parent_classes = None
+    # parent_classes = ['BootstrapContainerPlugin']  # TODO: remove temp
+    allow_children = True
+    child_classes = None
+    cache = False
 
     open_tag = GlossaryField(
         widgets.Select(choices=()),
@@ -47,19 +59,6 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
         label=_('Condition evaluation'),
         help_text=_("Evaluation as used in Django's template tags for conditions")
     )
-
-    html_parser = HTMLParser()
-    eval_template_string = '{{% if {} %}}True{{% endif %}}'
-    default_template = engines['django'].from_string('{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}')
-    hiding_template_string = '{% load cms_tags %}<div style="display: none;">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>'
-    hiding_template = engines['django'].from_string(hiding_template_string)
-    debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
-    empty_template = engines['django'].from_string('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
-    require_parent = False
-    parent_classes = None
-    allow_children = True
-    child_classes = None
-    cache = False
 
     class Media:
         js = resolve_dependencies('cascade/js/admin/segmentplugin.js')

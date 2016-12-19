@@ -38,8 +38,8 @@ class BootstrapContainerForm(ModelForm):
 
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
+    parent_classes = None
     require_parent = False
-    parent_classes = ['BootstrapJumbotronPlugin']
     form = BootstrapContainerForm
     glossary_variables = ['container_max_widths', 'media_queries']
 
@@ -89,12 +89,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         compute_media_queries(obj)
         return sanitized
 
-    def get_parent_classes(self, slot, page):
-        if self.cms_plugin_instance and self.cms_plugin_instance.parent:
-            # enforce that a ContainerPlugin can't have a parent
-            return []
-        return super(BootstrapContainerPlugin, self).get_parent_classes(slot, page)
-
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
@@ -139,6 +133,7 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ('BootstrapRowPlugin',)
+    child_classes = ('BootstrapJumbotronPlugin',)
     alien_child_classes = True
     default_css_attributes = list(itertools.chain(*(('{}-column-width'.format(s),
         '{}-column-offset'.format(s), '{}-column-ordering'.format(s), '{}-responsive-utils'.format(s),)

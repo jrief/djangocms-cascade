@@ -231,46 +231,11 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
             self.glossary_fields = []
 
     @classmethod
-    def get_child_plugin_candidates(cls, slot, page):
-        child_classes = set()
-        # by examining the allowed parent classes of each child, reduce the set of candidates
-        for child_class in super(CascadePluginBase, cls).get_child_plugin_candidates(slot, page):
-            if issubclass(child_class, CascadePluginBase):
-                own_child_classes = getattr(cls, 'child_classes', None) or []
-                child_parent_classes = child_class.get_parent_classes(slot, page)
-                if isinstance(child_parent_classes, (list, tuple)) and cls.__name__ in child_parent_classes:
-                    child_classes.add(child_class)
-                elif child_class.__name__ in own_child_classes:
-                    child_classes.add(child_class)
-                elif issubclass(child_class, TransparentWrapper) and child_parent_classes is None:
-                    child_classes.add(child_class)
-            else:
-                if cls.alien_child_classes and child_class.__name__ in settings.CMSPLUGIN_CASCADE['alien_plugins']:
-                    child_classes.add(child_class)
-        return tuple(child_classes)
-
-    @classmethod
-    def get_child_classes(cls, slot, page, instance=None):
-        child_classes = cls.get_child_plugin_candidates(slot, page)
-
-        print("===== CHILDREN =====")
-        print(cls.__name__)
-        print([cc.__name__ for cc in child_classes])
-        return [cc.__name__ for cc in child_classes]
-
-        # otherwise determine child_classes by evaluating parent_classes from other plugins
-        child_classes = set()
-        for p in plugin_pool.get_all_plugins():
-            if (isinstance(p.parent_classes, (list, tuple)) and self.__class__.__name__ in p.parent_classes or
-              p.parent_classes is None and issubclass(p, CascadePluginBase) or
-              isinstance(self.alien_child_classes, (list, tuple)) and p.__name__ in self.alien_child_classes or
-              self.alien_child_classes is True and p.__name__ in settings.CMSPLUGIN_CASCADE['alien_plugins']):
-                child_classes.add(p.__name__)
-        return tuple(child_classes)
-
-    @classmethod
-    def get_parent_classes(cls, slot, page, instance=None):
-        parent_classes = super(CascadePluginBase, cls).get_parent_classes(slot, page)
+    def _get_parent_classes_transparent(cls, slot, page, instance=None):
+        """
+        Return all parent classes including those marked as "transparent".
+        """
+        parent_classes = super(CascadePluginBase, cls).get_parent_classes(slot, page, instance)
         if parent_classes is None:
             if cls.get_require_parent(slot, page) is False:
                 return
@@ -280,6 +245,30 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         parent_classes = set(parent_classes)
         parent_classes.update(TransparentContainer.get_plugins())
         return tuple(parent_classes)
+
+    @classmethod
+    def get_child_classes(cls, slot, page, instance=None):
+        plugin_type = cls.__name__
+        child_classes = set()
+        for child_class in cls.get_child_plugin_candidates(slot, page):
+            if issubclass(child_class, CascadePluginBase):
+                own_child_classes = getattr(cls, 'child_classes', None) or []
+                child_parent_classes = child_class._get_parent_classes_transparent(slot, page, instance)
+                if isinstance(child_parent_classes, (list, tuple)) and plugin_type in child_parent_classes:
+                    child_classes.add(child_class)
+                elif plugin_type in own_child_classes:
+                    child_classes.add(child_class)
+                elif issubclass(child_class, TransparentWrapper) and child_parent_classes is None:
+                    child_classes.add(child_class)
+            else:
+                if cls.alien_child_classes and plugin_type in settings.CMSPLUGIN_CASCADE['alien_plugins']:
+                    child_classes.add(child_class)
+
+        return (cc.__name__ for cc in child_classes)
+
+    @classmethod
+    def get_parent_classes(cls, slot, page, instance=None):
+        return cls._get_parent_classes_transparent(slot, page, instance)
 
     @classmethod
     def get_identifier(cls, instance):

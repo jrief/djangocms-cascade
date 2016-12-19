@@ -80,8 +80,8 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
     form = JumbotronPluginForm
     default_css_class = 'jumbotron'
-    parent_classes = ['BootstrapColumnPlugin']
     require_parent = False
+    parent_classes = ('BootstrapColumnPlugin',)
     allow_children = True
     alien_child_classes = True
     raw_id_fields = ('image_file',)
