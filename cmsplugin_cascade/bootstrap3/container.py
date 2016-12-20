@@ -42,6 +42,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     require_parent = False
     form = BootstrapContainerForm
     glossary_variables = ['container_max_widths', 'media_queries']
+    glossary_field_order = ('breakpoints', 'fluid')
 
     breakpoints = GlossaryField(
         widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
