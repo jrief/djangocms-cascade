@@ -57,7 +57,8 @@ class JSONMultiWidget(widgets.MultiWidget):
         return result
 
     def value_omitted_from_data(self, data, files, name):
-        return all(
+        # required since Django-1.10 during invocation of `construct_instance`
+        return self.normalized_fields and all(
             field.widget.value_omitted_from_data(data, files, field.name)
             for field in self.normalized_fields
         )
