@@ -79,7 +79,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         Create a serialized representation of all the plugins belonging to the clipboard.
         """
         def populate_data(parent, data):
-            for child in plugin_qs.filter(parent=parent):
+            for child in plugin_qs.filter(parent=parent).order_by('position'):
                 instance, dummy = child.get_plugin_instance(self.admin_site)
                 try:
                     entry = (child.plugin_type, instance.get_data_representation(), [])
