@@ -44,6 +44,15 @@ Please see the [Release Notes](http://djangocms-cascade.readthedocs.io/en/latest
 before upgrading from an older version.
 
 
+## Compatibility
+
+Django-CMS 3.4 introduced a bunch of changes in their API. Therefore please follow these releases:
+
+**djangocms-cascade** 0.11.x has been tested with Django 1.9.x, django-CMS 3.3.x and
+djangocms-text-ckeditor 3.0.x. For newer releases of django-CMS please use the upcoming version
+0.12 of **djangocms-cascade**.
+
+
 ### News for version 0.11
 
 Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these

@@ -9,7 +9,6 @@ env:
   matrix:
   - DJANGO='django18' CMS='cms33'
   - DJANGO='django19' CMS='cms33'
-  - DJANGO='django19' CMS='cms34'
 
 install:
   - pip install tox
