@@ -1,4 +1,4 @@
--r django19.txt
+-r django110.txt
 pluggy==0.3.1
 py==1.4.31
 pypandoc==1.2.0
