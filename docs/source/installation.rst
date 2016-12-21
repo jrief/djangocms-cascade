@@ -18,8 +18,24 @@ or the current development release from github
 
 Dependencies
 ============
-* Django_ >=1.8
-* DjangoCMS_ >=3.2
+
+Due to some incompatibilities in the API of Django, django-CMS and djangocms-text-ckeditor, please
+only use this combination of external dependencies:
+
+djangocms-cascade-0.11.x
+------------------------
+
+* Django_ >=1.8, <=1.9
+* DjangoCMS_ >=3.2, <=3.3
+* djangocms-text-ckeditor_ == 3.0
+
+djangocms-cascade-0.12.x
+------------------------
+
+* Django_ >=1.9
+* DjangoCMS_ >=3.4.3
+* djangocms-text-ckeditor_ >= 3.3
+
 
 
 Create a database schema
@@ -231,4 +247,5 @@ template coding anymore.
 .. _pip: http://pypi.python.org/pypi/pip
 .. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/
 .. _djangocms-link: https://github.com/divio/djangocms-link
+.. _djangocms-text-ckeditor: https://github.com/divio/djangocms-text-ckeditor
 .. _bower: http://bower.io/
