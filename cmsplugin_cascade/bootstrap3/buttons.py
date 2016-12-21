@@ -67,7 +67,6 @@ class BootstrapButtonMixin(CascadePluginMixinBase):
     parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
-    text_enabled = True
     default_css_class = 'btn'
     default_css_attributes = ('button_type', 'button_size', 'button_options', 'quick_float',)
 

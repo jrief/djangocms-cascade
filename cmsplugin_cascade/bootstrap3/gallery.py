@@ -88,7 +88,6 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)
-    text_enabled = True
     admin_preview = False
     render_template = 'cascade/bootstrap3/gallery.html'
     default_css_attributes = ('image_shapes',)

@@ -5,7 +5,9 @@ from django.forms.fields import CharField
 from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+
 from cms.plugin_pool import plugin_pool
+
 from .config import LinkPluginBase, LinkElementMixin, LinkForm
 from .forms import TextLinkFormMixin
 
@@ -13,6 +15,7 @@ from .forms import TextLinkFormMixin
 class TextLinkPlugin(LinkPluginBase):
     name = _("Link")
     model_mixins = (LinkElementMixin,)
+    text_enabled = True
     render_template = 'cascade/link/text-link.html'
     fields = ('link_content',) + LinkPluginBase.fields
 

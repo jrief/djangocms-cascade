@@ -14,7 +14,6 @@ from .forms import LinkForm
 
 
 class LinkPluginBase(CascadePluginBase):
-    text_enabled = True
     allow_children = False
     parent_classes = []
     require_parent = False
