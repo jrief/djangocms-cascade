@@ -35,7 +35,7 @@ class JumbotronPluginTest(CascadeTestCase):
         # create container
         container_model = add_plugin(self.placeholder, BootstrapContainerPlugin, 'en',
             glossary={'breakpoints': BS3_BREAKPOINT_KEYS})
-        container_plugin = container_model.get_plugin_class_instance(self.admin_site)
+        container_plugin = container_model.get_plugin_class_instance()
         self.assertIsInstance(container_plugin, BootstrapContainerPlugin)
 
         # add one row
@@ -55,7 +55,7 @@ class JumbotronPluginTest(CascadeTestCase):
         jumbotron_model = add_plugin(self.placeholder, BootstrapJumbotronPlugin, 'en', target=column_model)
         self.assertIsInstance(jumbotron_model, ImagePropertyMixin)
         self.assertIsInstance(jumbotron_model, ImageBackgroundMixin)
-        jumbotron_plugin = jumbotron_model.get_plugin_class_instance(self.admin_site)
+        jumbotron_plugin = jumbotron_model.get_plugin_class_instance()
         self.assertIsInstance(jumbotron_plugin, BootstrapJumbotronPlugin)
         jumbotron_plugin.cms_plugin_instance = jumbotron_model.cmsplugin_ptr
 

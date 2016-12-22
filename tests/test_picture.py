@@ -35,7 +35,7 @@ class PicturePluginTest(CascadeTestCase):
         # create container
         container_model = add_plugin(self.placeholder, BootstrapContainerPlugin, 'en',
             glossary={'breakpoints': BS3_BREAKPOINT_KEYS})
-        container_plugin = container_model.get_plugin_class_instance(self.admin_site)
+        container_plugin = container_model.get_plugin_class_instance()
         self.assertIsInstance(container_plugin, BootstrapContainerPlugin)
 
         # add one row
@@ -54,7 +54,7 @@ class PicturePluginTest(CascadeTestCase):
         # add a picture
         picture_model = add_plugin(self.placeholder, BootstrapPicturePlugin, 'en', target=column_model)
         self.assertIsInstance(picture_model, SharableCascadeElement)
-        picture_plugin = picture_model.get_plugin_class_instance(self.admin_site)
+        picture_plugin = picture_model.get_plugin_class_instance()
         self.assertIsInstance(picture_plugin, BootstrapPicturePlugin)
         picture_plugin.cms_plugin_instance = picture_model.cmsplugin_ptr
 

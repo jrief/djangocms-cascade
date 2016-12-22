@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from bs4 import BeautifulSoup
 from django.contrib.auth.models import AnonymousUser
-from django.template import RequestContext
+from django.contrib.auth import get_user_model
 from cms.api import add_plugin
 from cms.utils.plugins import build_plugin_tree
 from djangocms_text_ckeditor.cms_plugins import TextPlugin
@@ -13,6 +13,18 @@ from .test_base import CascadeTestCase
 
 
 class SegmentationPluginTest(CascadeTestCase):
+    def setUp(self):
+        super(SegmentationPluginTest, self).setUp()
+        UserModel = get_user_model()
+        try:
+            self.staff_user = UserModel.objects.get(username='staff')
+        except UserModel.DoesNotExist:
+            self.staff_user = self.get_staff_user_with_no_permissions()
+        try:
+            self.staff_user = UserModel.objects.get(username='staff')
+        except UserModel.DoesNotExist:
+            self.staff_user = self.get_staff_user_with_no_permissions()
+
     def test_plugin_context(self):
         # create container
         wrapper_model = add_plugin(self.placeholder, SimpleWrapperPlugin, 'en',
@@ -50,15 +62,15 @@ class SegmentationPluginTest(CascadeTestCase):
         build_plugin_tree(plugin_list)
 
         # render the plugins as admin user
-        soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()))
+        soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()), 'html.parser')
         self.assertHTMLEqual(soup.p.text, 'User is admin')
 
         # render the plugins as staff user
-        self.request.user = self.get_staff_user_with_no_permissions()
-        soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()))
+        self.request.user = self.staff_user
+        soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()), 'html.parser')
         self.assertHTMLEqual(soup.p.text, 'User is staff')
 
         # render the plugins as anonymous user
         self.request.user = AnonymousUser
-        soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()))
+        soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()), 'html.parser')
         self.assertHTMLEqual(soup.p.text, 'User is anonymous')

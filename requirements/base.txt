@@ -5,7 +5,7 @@ beautifulsoup4==4.4.1
 django-admin-sortable2==0.6.4
 django-classy-tags==0.7.2
 django-filer==1.2.5
-django-mptt==0.8.6
+django-mptt=0.8.7
 django-polymorphic==1.0.2
 django-sass-processor==0.5.2
 django-sekizai==0.10.0
