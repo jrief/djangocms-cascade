@@ -8,13 +8,17 @@ from django.forms.utils import flatatt
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+
 from cms.api import add_plugin
 from cms.models.placeholdermodel import Placeholder
 from cms.models.placeholderpluginmodel import PlaceholderReference
 from cms.plugin_pool import plugin_pool
 from cms.utils import get_language_from_request
+
 from jsonfield.fields import JSONField
 from djangocms_text_ckeditor.models import Text
+from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin_tags
+
 from cmsplugin_cascade.models import CascadeClipboard
 
 
@@ -111,6 +115,16 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 # for some unknown reasons add_plugin sets instance.numchild 0,
                 # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
                 plugins_from_data(instance, entry[2])
+
+                if isinstance(instance, Text):
+                    # we must convert the old plugin IDs into the new ones,
+                    # otherwise links are not displayed
+                    id_dict = dict(zip(
+                        plugin_tags_to_id_list(instance.body),
+                        (t[0] for t in instance.get_children().values_list('id'))
+                    ))
+                    instance.body = replace_plugin_tags(instance.body, id_dict)
+                    instance.save()
 
         clipboard = Placeholder.objects.filter(slot='clipboard').last()
         clipboard.cmsplugin_set.all().delete()
