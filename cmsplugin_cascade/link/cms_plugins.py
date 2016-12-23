@@ -18,6 +18,7 @@ class TextLinkPlugin(LinkPluginBase):
     text_enabled = True
     render_template = 'cascade/link/text-link.html'
     fields = ('link_content',) + LinkPluginBase.fields
+    parent_classes = ('TextPlugin',)
 
     @classmethod
     def get_identifier(cls, obj):
@@ -31,5 +32,13 @@ class TextLinkPlugin(LinkPluginBase):
             {'link_content': link_content})
         kwargs.update(form=Form)
         return super(TextLinkPlugin, self).get_form(request, obj, **kwargs)
+
+    @classmethod
+    def requires_parent_plugin(cls, slot, page):
+        """
+        Workaround for `PluginPool.get_all_plugins()`, otherwise TextLinkPlugin is not allowed
+        as a child of a `TextPlugin`.
+        """
+        return False
 
 plugin_pool.register_plugin(TextLinkPlugin)
