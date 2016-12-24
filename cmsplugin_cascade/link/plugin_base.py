@@ -47,24 +47,20 @@ class LinkPluginBase(CascadePluginBase):
         # otherwise try to resolve by model
         if 'model' in link and 'pk' in link:
             if not hasattr(obj, '_link_model'):
+                Model = apps.get_model(*link['model'].split('.'))
                 try:
-                    Model = apps.get_model(*link['model'].split('.'))
                     obj._link_model = Model.objects.get(pk=link['pk'])
-                except LookupError:
-                    # the model does not exist
-                    pass
                 except Model.DoesNotExist:
-                    # the instance does not exist
-                    pass
-                else:
-                    href = obj._link_model.get_absolute_url()
-                    if 'section' in link:
-                        try:
-                            element_ids = obj._link_model.cascadepage.glossary['element_ids']
-                            href = '{}#{}'.format(href, element_ids[link['section']])
-                        except (KeyError, ObjectDoesNotExist):
-                            pass
-                    return href
+                    obj._link_model = None
+            if obj._link_model:
+                href = obj._link_model.get_absolute_url()
+                if 'section' in link:
+                    try:
+                        element_ids = obj._link_model.cascadepage.glossary['element_ids']
+                        href = '{}#{}'.format(href, element_ids[link['section']])
+                    except (KeyError, ObjectDoesNotExist):
+                        pass
+                return href
 
     def get_ring_bases(self):
         bases = super(LinkPluginBase, self).get_ring_bases()
