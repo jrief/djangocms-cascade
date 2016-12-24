@@ -76,7 +76,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             request.POST['_continue'] = True
         super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
         if request.POST.get('restore_clipboard'):
-            self._deserialize_clipboard(language, obj.data)
+            self._deserialize_clipboard(request, obj.data)
 
     def _serialize_clipboard(self, language):
         """
@@ -103,18 +103,18 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             populate_data(None, data['plugins'])
         return data
 
-    def _deserialize_clipboard(self, language, data):
+    def _deserialize_clipboard(self, request, data):
         """
         Restore clipboard by creating plugins from given data.
         """
-        def plugins_from_data(parent, data):
+        def plugins_from_data(placeholder, parent, data):
             for entry in data:
                 plugin_type = plugin_pool.get_plugin(entry[0])
                 kwargs = dict(entry[1])
-                instance = add_plugin(clipboard, plugin_type, language, target=parent, **kwargs)
+                instance = add_plugin(placeholder, plugin_type, language, target=parent, **kwargs)
                 # for some unknown reasons add_plugin sets instance.numchild 0,
                 # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
-                plugins_from_data(instance, entry[2])
+                plugins_from_data(placeholder, instance, entry[2])
 
                 if isinstance(instance, Text):
                     # we must convert the old plugin IDs into the new ones,
@@ -126,6 +126,39 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                     instance.body = replace_plugin_tags(instance.body, id_dict)
                     instance.save()
 
-        clipboard = Placeholder.objects.filter(slot='clipboard').last()
-        clipboard.cmsplugin_set.all().delete()
-        plugins_from_data(None, data['plugins'])
+        language = get_language_from_request(request)
+
+        clipboard = request.toolbar.clipboard
+        clipboard.cmsplugin_set.exclude(plugin_type='PlaceholderPlugin').delete()
+        assert (clipboard.cmsplugin_set.count() <= 1,
+                "Too many instances of PlaceholderPlugin for the current clipboard")
+        ref_plugin = clipboard.cmsplugin_set.first()
+        if ref_plugin is None:
+            root_plugin = add_plugin(clipboard, 'PlaceholderPlugin', language, name='clipboard')
+        else:
+            root_plugin = ref_plugin.cms_placeholderreference
+
+            #PlaceholderReference.objects.create(name='clipboard', root_plugin)
+            #ref.plugin_type = "PlaceholderPlugin"
+            #ref.language = language
+            #ref.placeholder = dummy_placeholder
+            #ref.save()
+            #ref.copy_from(dummy_placeholder, language)
+
+
+        #assert clipboard.cms_placeholderreference is not None
+
+        #ref = PlaceholderReference()
+        #ref.name = dummy_placeholder.get_label()   # 'Main Content'  # TODO: just for testing
+        #ref.plugin_type = "PlaceholderPlugin"
+        #ref.language = language
+        #ref.placeholder = dummy_placeholder
+        #ref.save()
+        #ref.copy_from(dummy_placeholder, language)
+
+        # siehe Datenbank
+        plugins_from_data(root_plugin.placeholder_ref, None, data['plugins'])
+
+        print(root_plugin)
+        # clipboard = request.user.djangocms_usersettings.clipboard
+        # clipboard = Placeholder.objects.filter(slot='clipboard').last()
