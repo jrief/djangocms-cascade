@@ -9,8 +9,10 @@ from django.forms.models import ModelForm
 from django.http import JsonResponse
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
+
 from cmsplugin_cascade.models import CascadePage, IconFont
 from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
+
 import tempfile
 try:
     import czipfile as zipfile
