@@ -258,7 +258,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
                     child_classes.add(child_class)
                 elif plugin_type in own_child_classes:
                     child_classes.add(child_class)
-                elif issubclass(child_class, TransparentWrapper) and child_parent_classes is None:
+                elif child_parent_classes is None:
                     child_classes.add(child_class)
             else:
                 if cls.alien_child_classes and child_class.__name__ in settings.CMSPLUGIN_CASCADE['alien_plugins']:
