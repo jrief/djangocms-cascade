@@ -10,7 +10,6 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
 from cms.api import add_plugin
-from cms.models.placeholdermodel import Placeholder
 from cms.models.placeholderpluginmodel import PlaceholderReference
 from cms.plugin_pool import plugin_pool
 from cms.utils import get_language_from_request
@@ -132,36 +131,13 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         language = get_language_from_request(request)
 
         clipboard = request.toolbar.clipboard
-        clipboard.cmsplugin_set.exclude(plugin_type='PlaceholderPlugin').delete()
-        assert (clipboard.cmsplugin_set.count() <= 1,
-                "Too many instances of PlaceholderPlugin for the current clipboard")
         ref_plugin = clipboard.cmsplugin_set.first()
         if ref_plugin is None:
+            # the clipboard is empty
             root_plugin = add_plugin(clipboard, 'PlaceholderPlugin', language, name='clipboard')
         else:
+            # remove old entries from the clipboard
             root_plugin = ref_plugin.cms_placeholderreference
-
-            #PlaceholderReference.objects.create(name='clipboard', root_plugin)
-            #ref.plugin_type = "PlaceholderPlugin"
-            #ref.language = language
-            #ref.placeholder = dummy_placeholder
-            #ref.save()
-            #ref.copy_from(dummy_placeholder, language)
-
-
-        #assert clipboard.cms_placeholderreference is not None
-
-        #ref = PlaceholderReference()
-        #ref.name = dummy_placeholder.get_label()   # 'Main Content'  # TODO: just for testing
-        #ref.plugin_type = "PlaceholderPlugin"
-        #ref.language = language
-        #ref.placeholder = dummy_placeholder
-        #ref.save()
-        #ref.copy_from(dummy_placeholder, language)
-
-        # siehe Datenbank
+            inst = ref_plugin.get_plugin_instance()[0]
+            inst.placeholder_ref.get_plugins().delete()
         plugins_from_data(root_plugin.placeholder_ref, None, data['plugins'])
-
-        print(root_plugin)
-        # clipboard = request.user.djangocms_usersettings.clipboard
-        # clipboard = Placeholder.objects.filter(slot='clipboard').last()
