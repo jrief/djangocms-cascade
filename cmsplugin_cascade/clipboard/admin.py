@@ -19,7 +19,7 @@ from jsonfield.fields import JSONField
 from djangocms_text_ckeditor.models import Text
 from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin_tags
 
-from cmsplugin_cascade.models import CascadeClipboard
+from cmsplugin_cascade.models import CascadeElement, CascadeClipboard
 
 
 class JSONAdminWidget(widgets.Textarea):
@@ -111,7 +111,10 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             for entry in data:
                 plugin_type = plugin_pool.get_plugin(entry[0])
                 kwargs = dict(entry[1])
+                inlines = kwargs.pop('inlines', [])
                 instance = add_plugin(placeholder, plugin_type, language, target=parent, **kwargs)
+                if isinstance(instance, CascadeElement):
+                    instance.plugin_class.add_inline_elements(instance, inlines)
                 # for some unknown reasons add_plugin sets instance.numchild 0,
                 # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
                 plugins_from_data(placeholder, instance, entry[2])

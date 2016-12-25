@@ -334,6 +334,19 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
             instance.glossary = {}
         return False
 
+    @classmethod
+    def get_data_representation(cls, instance):
+        """
+        Return a representation of the given instance suitable for a serialized representation.
+        """
+        return {'glossary': instance.glossary}
+
+    @classmethod
+    def add_inline_elements(cls, instance, inlines):
+        """
+        Hook to create (sortable) inline elements for the given instance.
+        """
+
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
         """
         Extend the number of children so that the parent object contains wanted children.

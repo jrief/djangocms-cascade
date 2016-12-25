@@ -108,7 +108,7 @@ class CascadeModelBase(CMSPlugin):
         """
         Hook to return a serializable representation of this element.
         """
-        return {'glossary': self.glossary}
+        return self.plugin_class.get_data_representation(self)
 
     @classmethod
     def _get_cascade_elements(cls):
