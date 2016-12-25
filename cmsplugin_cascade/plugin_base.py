@@ -122,7 +122,8 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         if name in cls.plugins_with_sharables:
             SharableGlossaryMixin.media = media_property(SharableGlossaryMixin)
             bases = (SharableGlossaryMixin,) + bases
-            attrs['fields'] += (('save_shared_glossary', 'save_as_identifier'), 'shared_glossary',)
+            attrs['fields'] = list(attrs.get('fields', ['glossary']))
+            attrs['fields'].extend([('save_shared_glossary', 'save_as_identifier'), 'shared_glossary'])
             attrs['sharable_fields'] = cls.plugins_with_sharables[name]
             base_model = SharableCascadeElement
         else:
