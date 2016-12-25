@@ -231,7 +231,8 @@ class IconFont(models.Model):
 
     def get_stylesheet_url(self):
         icon_font_url = os.path.relpath(CMSPLUGIN_CASCADE['icon_font_root'], settings.MEDIA_ROOT)
-        parts = (icon_font_url, self.font_folder, 'css', 'fontello.css')
+        name = self.config_data.get('name') or 'fontello'
+        parts = (icon_font_url, self.font_folder, 'css/{}.css'.format(name))
         return urljoin(settings.MEDIA_URL, '/'.join(parts))
 
     @classmethod
