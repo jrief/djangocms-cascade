@@ -70,6 +70,9 @@ styles.
 """
 
 CMSPLUGIN_CASCADE.setdefault('plugins_with_sharables', {})
+CMSPLUGIN_CASCADE['plugins_with_sharables'].setdefault(
+    'FontIconPlugin', ('font_size', 'color', 'text_align', 'border', 'border_radius'),
+)
 
 CMSPLUGIN_CASCADE.setdefault('link_plugin_classes', (
     'cmsplugin_cascade.link.plugin_base.DefaultLinkPluginBase',
