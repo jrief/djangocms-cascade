@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import json
 from bs4 import BeautifulSoup
-from django import VERSION as DJANGO_VERSION
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.http import QueryDict
@@ -11,6 +10,7 @@ from django.http import QueryDict
 from cms.api import add_plugin
 from cms.toolbar.toolbar import CMSToolbar
 from cms.utils.plugins import build_plugin_tree
+
 from cmsplugin_cascade.models import CascadeElement, CascadeClipboard
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
          BootstrapRowForm, BootstrapColumnPlugin, BS3_BREAKPOINT_KEYS)
@@ -188,12 +188,8 @@ class ClipboardPluginTest(CascadeTestCase):
             # check that clipboard is empty
             self.assertEqual(request.toolbar.clipboard.cmsplugin_set.count(), 0)
 
-            # copy plugins from clipboard to placeholder
-            change_clipboard_url = '/en/admin/cmsplugin_cascade/cascadeclipboard/{}/'
-            if DJANGO_VERSION < (1, 9):
-                change_clipboard_url = change_clipboard_url.format(cascade_clipboard.pk)
-            else:
-                change_clipboard_url = (change_clipboard_url + 'change/').format(cascade_clipboard.pk)
+            # copy plugins from CascadeClipboard to CMS clipboard
+            change_clipboard_url = reverse('admin:cmsplugin_cascade_cascadeclipboard_change', args=(cascade_clipboard.pk,))
             data = {'identifier': self.identifier, 'restore_clipboard': 'Restore', 'data': json.dumps(self.placeholder_data)}
             response = self.client.post(change_clipboard_url, data)
             self.assertEqual(response.status_code, 302)
@@ -205,4 +201,11 @@ class ClipboardPluginTest(CascadeTestCase):
             self.assertEqual(ul.li.text, 'The Persited Clipboard Content "Test saved clipboard" was changed successfully. You may edit it again below.')
 
             # check if clipboard has been populated with plugins from serialized data
-            self.assertEqual(request.toolbar.clipboard.cmsplugin_set.count(), 5)
+            ref_plugin = request.toolbar.clipboard.get_plugins().first()
+            self.assertEqual(ref_plugin.plugin_type, 'PlaceholderPlugin')
+            inst = ref_plugin.get_plugin_instance()[0]
+            plugins = inst.placeholder_ref.get_plugins()
+            self.assertEqual(plugins.count(), 5)
+            self.assertEqual(plugins[0].plugin_type, 'BootstrapContainerPlugin')
+            self.assertEqual(plugins[1].plugin_type, 'BootstrapRowPlugin')
+            self.assertEqual(plugins[2].plugin_type, 'BootstrapColumnPlugin')
