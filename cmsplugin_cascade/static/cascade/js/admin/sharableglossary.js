@@ -49,7 +49,7 @@ django.jQuery(function($) {
 						$('input[name=' + name + ']').val(value);
 					}
 				});
-				// disable some fields, since they obtain their values the shared glossary
+				// disable some fields, since they obtain their values from the shared glossary
 				$.each(django.cascade.sharable_fields, function(k, element_id) {
 					$('#' + element_id).prop('disabled', 'disabled');
 				});
