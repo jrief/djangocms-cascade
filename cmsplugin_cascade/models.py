@@ -199,9 +199,14 @@ class IconFont(models.Model):
     """
     Instances of uploaded icon fonts, such as FontAwesone, MaterialIcons, etc.
     """
-    identifier = models.CharField(_("Identifier"), max_length=50, unique=True)
+    identifier = models.CharField(
+        _("Identifier"), max_length=50, unique=True,
+        help_text=_("A unique identifier to distinguish this icon font.")
+    )
     config_data = JSONField()
-    zip_file = FilerFileField()
+    zip_file = FilerFileField(
+        help_text=_('Upload a zip file created on <a href="http://fontello.com/" target="_blank">Fontello</a> containing fonts.')
+    )
     font_folder = FilePathField(allow_files=False, allow_folders=True)
 
     class Meta:
