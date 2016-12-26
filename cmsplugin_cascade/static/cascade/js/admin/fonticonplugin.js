@@ -9,6 +9,8 @@ django.jQuery(function($) {
 
 	FontIcon = ring.create(base_plugins, {
 		constructor: function() {
+			if (!$selectIconFont)
+				return;
 			self = this;
 			this.$super();
 
