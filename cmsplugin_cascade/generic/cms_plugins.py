@@ -8,12 +8,13 @@ from django.http.response import JsonResponse, HttpResponseNotFound
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.widgets import SetBorderWidget
+from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget
 
 
 class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
@@ -179,8 +180,9 @@ class FontIconPlugin(CascadePluginBase):
     )
 
     font_size = GlossaryField(
-        widgets.Select(choices=SIZE_CHOICES),
+        CascadingSizeWidget(allowed_units=['px', 'em']),
         label=_("Icon Size"),
+        initial='1em',
     )
 
     color = GlossaryField(
