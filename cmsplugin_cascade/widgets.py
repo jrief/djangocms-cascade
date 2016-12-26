@@ -131,8 +131,7 @@ class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
     DEFAULT_ATTRS = {'style': 'width: 5em;'}
 
     def __init__(self, allowed_units=None, attrs=None, required=None):
-        if required is not None:
-            self.required = required
+        self.required = True if required is None else required
         if attrs is None:
             attrs = self.DEFAULT_ATTRS
         self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
