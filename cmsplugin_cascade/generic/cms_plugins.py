@@ -14,7 +14,7 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget
+from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 
 
 class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
@@ -143,7 +143,13 @@ class FontIconModelMixin(object):
         attrs = []
         if icon_font and content:
             attrs.append(mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), content)))
-        styles = dict(display='inline-block', color=self.glossary.get('color', '#000000'))
+        styles = {
+            'display': 'inline-block',
+            'color': self.glossary.get('color', '#000000'),
+        }
+        disabled, background_color = self.glossary.get('background_color', (True, '#000000'))
+        if not disabled:
+            styles['background-color'] = background_color
         border = self.glossary.get('border')
         if isinstance(border, list) and border[1] != 'none':
             styles.update(border='{0} {1} {2}'.format(*border))
@@ -190,6 +196,11 @@ class FontIconPlugin(CascadePluginBase):
         label=_("Icon color"),
     )
 
+    background_color = GlossaryField(
+        ColorPickerWidget(),
+        label=_("Background color"),
+    )
+
     text_align = GlossaryField(
         widgets.RadioSelect(
             choices=(('', _("Do not align")), ('text-left', _("Left")),
@@ -209,8 +220,8 @@ class FontIconPlugin(CascadePluginBase):
         label=_("Border radius"),
     )
 
-    glossary_field_order = ('icon_font', 'content', 'font_size', 'color', 'text_align', 'border',
-                            'border_radius')
+    glossary_field_order = ('icon_font', 'content', 'font_size', 'color', 'background_color',
+                            'text_align', 'border', 'border_radius')
 
     class Media:
         css = {'all': ('cascade/css/admin/fonticonplugin.css',)}
