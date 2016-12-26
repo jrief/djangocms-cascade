@@ -134,3 +134,13 @@ class SharableGlossaryMixin(object):
         bases = super(SharableGlossaryMixin, self).get_ring_bases()
         bases.append('SharableGlossaryMixin')
         return bases
+
+    @classmethod
+    def get_data_representation(cls, instance):
+        data = super(SharableGlossaryMixin, cls).get_data_representation(instance)
+        if instance.shared_glossary:
+            data.setdefault('glossary', {})
+            data['glossary'].update(instance.shared_glossary.glossary)
+            data.update(shared_glossary=instance.shared_glossary.identifier)
+        return data
+

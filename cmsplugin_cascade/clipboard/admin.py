@@ -83,12 +83,13 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         """
         def populate_data(parent, data):
             for child in plugin_qs.filter(parent=parent).order_by('position'):
-                instance, dummy = child.get_plugin_instance(self.admin_site)
+                instance, plugin = child.get_plugin_instance(self.admin_site)
+                plugin_type = plugin.__class__.__name__
                 try:
-                    entry = (child.plugin_type, instance.get_data_representation(), [])
+                    entry = (plugin_type, plugin.get_data_representation(instance), [])
                 except AttributeError:
                     if isinstance(instance, Text):
-                        entry = (child.plugin_type, {'body': instance.body}, [])
+                        entry = (plugin_type, {'body': instance.body}, [])
                     else:
                         continue
                 data.append(entry)

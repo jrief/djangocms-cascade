@@ -76,10 +76,6 @@ class SharableCascadeElement(CascadeElement):
             attribute.update(self.shared_glossary.glossary)
         return attribute
 
-    def get_data_representation(self):
-        # TODO: merge with shared_glossary
-        return {'glossary': self.glossary}
-
 
 class InlineCascadeElement(models.Model):
     cascade_element = models.ForeignKey(CascadeElement, related_name='inline_elements')
