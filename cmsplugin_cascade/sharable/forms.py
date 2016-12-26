@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import json
+
 from django import forms
 from django.forms import fields
 from django.apps import apps
@@ -10,8 +11,9 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
+
 from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
+from cmsplugin_cascade.models import SharedGlossary
 
 
 class SelectSharedGlossary(forms.Select):
@@ -81,8 +83,9 @@ class SharableCascadeForm(forms.ModelForm):
 
 class SharableGlossaryMixin(object):
     """
-    Add this mixin class to Plugin classes which refer to the model ``SharableCascadeElement`` or
-    inherit from it. This class adds the appropriate methods to the plugin class in order to store
+    Every plugin class of type ``CascadePluginBase`` additionally inherits from this mixin,
+    if the plugin is marked as sharable.
+    This class adds the appropriate methods to the plugin class in order to store
     an assortment of glossary values as a glossary reusable by other plugin instances.
     """
     class Media:
@@ -144,3 +147,13 @@ class SharableGlossaryMixin(object):
             data.update(shared_glossary=instance.shared_glossary.identifier)
         return data
 
+    @classmethod
+    def add_shared_reference(cls, instance, shared_glossary_identifier):
+        try:
+            shared_glossary = SharedGlossary.objects.get(plugin_type=instance.plugin_type,
+                                                         identifier=shared_glossary_identifier)
+        except SharedGlossary.DoesNotExist:
+            pass
+        else:
+            instance.shared_glossary = shared_glossary
+            instance.save(update_fields=['shared_glossary'])

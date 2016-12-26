@@ -348,6 +348,12 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         Hook to create (sortable) inline elements for the given instance.
         """
 
+    @classmethod
+    def add_shared_reference(cls, instance, shared_glossary):
+        """
+        Hook to add a reference pointing onto an existing SharedGlossary instance.
+        """
+
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
         """
         Extend the number of children so that the parent object contains wanted children.

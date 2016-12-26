@@ -9,6 +9,7 @@ from cmsplugin_cascade.widgets import JSONMultiWidget
 from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
 
 
+@admin.register(SharedGlossary)
 class SharedGlossaryAdmin(admin.ModelAdmin):
     change_form_template = 'cascade/admin/change_form.html'
     list_display = ('identifier', 'plugin_type', 'used_by',)
@@ -84,5 +85,3 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         bases.remove('SharableGlossaryMixin')
         context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
         return super(SharedGlossaryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
-
-admin.site.register(SharedGlossary, SharedGlossaryAdmin)
