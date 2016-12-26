@@ -374,8 +374,11 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
         # help_text can not be cleared using an empty string in modelform_factory
         form.base_fields['glossary'].help_text = ''
-        for field in glossary_fields:
-            form.base_fields['glossary'].validators.append(field.run_validators)
+        if request.method == 'POST':
+            is_shared = bool(request.POST.get('shared_glossary'))
+            for field in glossary_fields:
+                if not (is_shared and field.name in self.sharable_fields):
+                    form.base_fields['glossary'].validators.append(field.run_validators)
         form.glossary_fields = glossary_fields
         return form
 
