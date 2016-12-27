@@ -164,6 +164,10 @@ class ColorPickerWidget(widgets.MultiWidget):
         widget_list = [widgets.TextInput(attrs=attrs), widgets.CheckboxInput()]
         super(ColorPickerWidget, self).__init__(widget_list)
 
+    def __iter__(self):
+        for name in ('color', 'disabled'):
+            yield name
+
     def decompress(self, values):
         if not isinstance(values, (list, tuple)) or len(values) != 2:
             values = ('disabled', self.DEFAULT_COLOR,)
