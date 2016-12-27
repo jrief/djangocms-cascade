@@ -4,6 +4,10 @@
 Release History
 ===============
 
+0.11.1
+------
+* Added preconfigured ``FilePathField`` to prevent the creation of useless migration files.
+
 0.11.0
 ------
 * Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these
