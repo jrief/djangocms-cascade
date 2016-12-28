@@ -2,12 +2,12 @@ Pillow==3.3.0
 Unidecode==0.4.18
 argparse==1.2.1
 beautifulsoup4==4.4.1
-django-admin-sortable2==0.6.4
+django-admin-sortable2==0.6.7
 django-classy-tags==0.7.2
 django-filer==1.2.5
 django-mptt=0.8.7
 django-polymorphic==1.0.2
-django-sass-processor==0.5.2
+django-sass-processor==0.5.3
 django-sekizai==0.10.0
 Django-Select2==5.8.9
 django-treebeard==4.1.0
