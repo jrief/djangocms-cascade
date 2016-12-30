@@ -193,10 +193,11 @@ class ColorPickerWidget(widgets.MultiWidget):
         html += '</div>'
         return mark_safe(html)
 
-    def validate(self, values):
-        color = values[1]
-        if not self.validation_pattern.match(color):
-            raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
+    def validate(self, values, field_name):
+        if field_name == 'color':
+            color = values[1]
+            if not self.validation_pattern.match(color):
+                raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
 
 
 class SelectOverflowWidget(widgets.Select):
