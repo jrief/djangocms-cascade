@@ -116,7 +116,7 @@ class EmulateUserAdminMixin(object):
             list_display = list(user_model_admin.list_display)
         list_display.remove(list_display_link)
         list_display.insert(0, 'display_as_link')
-        display_as_link.allow_tags = True
+        display_as_link.allow_tags = True  # TODO: presumably not required anymore since Django-1.9
         try:
             display_as_link.short_description = user_model_admin.identifier.short_description
         except AttributeError:

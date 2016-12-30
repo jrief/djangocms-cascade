@@ -43,7 +43,6 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
     empty_template = engines['django'].from_string('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
     require_parent = False
     direct_parent_classes = None
-    # parent_classes = ['BootstrapContainerPlugin']  # TODO: remove temp
     allow_children = True
     child_classes = None
     cache = False

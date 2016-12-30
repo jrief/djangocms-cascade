@@ -116,4 +116,3 @@ class IconFontAdmin(admin.ModelAdmin):
                  ((src.title(), format_html_join('', format_string, ((g,) for g in glyphs)))
                  for src, glyphs in families.items())))
     preview_icons.short_description = _("Preview Icons")
-    preview_icons.allow_tags = True
