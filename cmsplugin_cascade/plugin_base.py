@@ -24,7 +24,7 @@ from .generic.mixins import SectionMixin, SectionModelMixin
 from .sharable.forms import SharableGlossaryMixin
 from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
-from .render_template import RenderTemplateMixin
+from .render_template import RenderTemplateMixin, HidePluginMixin
 
 
 def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
@@ -112,9 +112,12 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
     plugins_with_bookmark = list(settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
     plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
     plugins_with_extra_render_templates = settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys()
+    allow_plugin_hiding = settings.CMSPLUGIN_CASCADE['allow_plugin_hiding']
 
     def __new__(cls, name, bases, attrs):
         model_mixins = attrs.pop('model_mixins', ())
+        if cls.allow_plugin_hiding and 'name' in attrs:
+            bases = (HidePluginMixin,) + bases
         if name in cls.plugins_with_extra_fields:
             ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)
             bases = (ExtraFieldsMixin,) + bases
@@ -148,6 +151,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         if 'name' in attrs and settings.CMSPLUGIN_CASCADE['plugin_prefix']:
             attrs['name'] = mark_safe_lazy(string_concat(
                 settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
+
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
