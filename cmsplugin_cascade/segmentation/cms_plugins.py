@@ -103,13 +103,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
             return template
 
         request = context['request']
-        toolbar = getattr(request, 'toolbar', None)
-        if LooseVersion(cms_version) < LooseVersion('3.4.0'):
-          edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request) and
-                       getattr(placeholder, 'is_editable', True))
-        else:
-          edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request.user) and
-                       getattr(placeholder, 'is_editable', True))
+        edit_mode = self.in_edit_mode(request, placeholder)
         open_tag = instance.glossary.get('open_tag')
         if open_tag == 'if':
             template = conditionally_eval()

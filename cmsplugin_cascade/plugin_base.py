@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from collections import OrderedDict
+from distutils.version import LooseVersion
 
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.forms.widgets import media_property
@@ -11,6 +12,7 @@ from django.utils.module_loading import import_string
 from django.utils.translation import string_concat
 from django.utils.safestring import SafeText, mark_safe
 
+from cms import __version__ as cms_version
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
 
@@ -478,3 +480,16 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         current plugin. The named JavaScript plugin must have been created using ``ring.create``.
         """
         return []
+
+    def in_edit_mode(self, request, placeholder):
+        """
+        Returns True, if the plugin is in "edit mode".
+        """
+        toolbar = getattr(request, 'toolbar', None)
+        edit_mode = getattr(toolbar, 'edit_mode', False) and getattr(placeholder, 'is_editable', True)
+        if edit_mode:
+            if LooseVersion(cms_version) < LooseVersion('3.4.0'):
+                edit_mode = placeholder.has_change_permission(request)
+            else:
+                edit_mode = placeholder.has_change_permission(request.user)
+        return edit_mode
