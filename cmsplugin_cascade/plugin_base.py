@@ -24,7 +24,8 @@ from .generic.mixins import SectionMixin, SectionModelMixin
 from .sharable.forms import SharableGlossaryMixin
 from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
-from .render_template import RenderTemplateMixin, HidePluginMixin
+from .hide_plugins import HidePluginMixin
+from .render_template import RenderTemplateMixin
 
 
 def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):

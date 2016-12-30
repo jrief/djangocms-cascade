@@ -43,6 +43,7 @@ Contents:
   sharable-fields
   customize-styles
   render-template
+  hide-plugins
   clipboard
   customized-plugins
   generic-plugins
