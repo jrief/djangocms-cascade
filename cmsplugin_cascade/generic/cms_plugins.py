@@ -262,7 +262,8 @@ class FontIconPlugin(CascadePluginBase):
         identifier = super(FontIconPlugin, cls).get_identifier(instance)
         icon_font = cls.get_icon_font(instance)
         if icon_font:
-            content = mark_safe('<i class="{}{}"></i>'.format(
+            content = mark_safe('{}: <i class="{}{}"></i>'.format(
+                icon_font.identifier,
                 icon_font.config_data.get('css_prefix_text', 'icon-'),
                 instance.glossary.get('content')))
             return format_html('{0}{1}', identifier, content)
