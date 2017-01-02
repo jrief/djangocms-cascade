@@ -1,0 +1,3 @@
+{% load static sekizai_tags %}
+{% addtoblock "css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}
+<i {{ instance.icon_font_class }}>{% if in_edit_mode %}<img src="{% static 'djangocms_text_ckeditor/ckeditor_plugins/cmsplugins/icons/cmsplugins.png' %}" />{% endif %}</i>

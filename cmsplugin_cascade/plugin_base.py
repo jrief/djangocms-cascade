@@ -117,7 +117,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
 
     def __new__(cls, name, bases, attrs):
         model_mixins = attrs.pop('model_mixins', ())
-        if cls.allow_plugin_hiding and 'name' in attrs:
+        if cls.allow_plugin_hiding and 'name' in attrs and not attrs.get('text_enabled'):
             bases = (HidePluginMixin,) + bases
         if name in cls.plugins_with_extra_fields:
             ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)

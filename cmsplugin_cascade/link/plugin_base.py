@@ -17,6 +17,7 @@ class LinkPluginBase(CascadePluginBase):
     allow_children = False
     parent_classes = []
     require_parent = False
+
     target = GlossaryField(
         widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
                      ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),

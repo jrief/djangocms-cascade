@@ -53,7 +53,9 @@ django.jQuery(function($) {
 
 			// mark selected icon
 			$box.find('ul.font-family li.selected').removeClass('selected');
-			$box.find('ul.font-family li[title=' + $content.val() + ']').addClass('selected');
+			if ($content.val()) {
+				$box.find('ul.font-family li[title=' + $content.val() + ']').addClass('selected');
+			}
 		},
 		refreshChangeForm: function() {
 			this.fontChanged();
