@@ -287,41 +287,12 @@ plugin_pool.register_plugin(FontIconPlugin)
 
 
 class TextIconModelMixin(object):
-    inline_css_template = '''
-#{plugin_id} {{
-  display: inline-block;
-  width: 1em;
-  line-height: 1em;
-  background-color: red;
-}}
-#{plugin_id}:before {{
-  content: '{content}';
-  font-family: {font_family};
-  font-style: normal;
-  font-weight: normal;
-  display: inline-block;
-  margin-right: .2em;
-  text-align: center;
-  font-variant: normal;
-  text-transform: none;
-  margin-left: .2em;
-}}'''
-
     @property
     def icon_font_class(self):
         icon_font = self.plugin_class.get_icon_font(self)
         content = self.glossary.get('content')
         if icon_font and content:
             return mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), content))
-
-        return ''
-
-    @property
-    def inline_css(self):
-        icon_font = self.plugin_class.get_icon_font(self)
-        #content = self.glossary.get('content')
-        if icon_font:
-            return format_html(self.inline_css_template, plugin_id=self.pk, content='\e804', font_family="maki")
         return ''
 
 
@@ -358,11 +329,5 @@ class TextIconPlugin(FontIconPluginMixin, CascadePluginBase):
         context = super(TextIconPlugin, self).render(context, instance, placeholder)
         context['in_edit_mode'] = self.in_edit_mode(context['request'], instance.placeholder)
         return context
-
-    def icon_src(self, instance):
-        return '/static/cascade/x.png'
-
-    def text_editor_button_icon(self, editor_name, icon_context):
-        return '<i class="icon-bar"></i>'
 
 plugin_pool.register_plugin(TextIconPlugin)
