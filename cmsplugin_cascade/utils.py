@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from cmsplugin_cascade import settings
+from django.utils.functional import keep_lazy_text
+
+
+@keep_lazy_text
+def format_lazy(url):
+    return 'default:{}'.format(url)
 
 
 def remove_duplicates(lst):
@@ -24,6 +28,8 @@ def resolve_dependencies(filenames):
     Use this function to automatically resolve dependencies of CSS and JavaScript files in the
     ``Media`` subclasses.
     """
+    from cmsplugin_cascade import settings
+
     dependencies = []
     if isinstance(filenames, (list, tuple)):
         for filename in filenames:
@@ -55,6 +61,8 @@ def validate_link(link_data):
     """
     Check if the given model exists, otherwise raise a Validation error
     """
+    from django.apps import apps
+
     try:
         Model = apps.get_model(*link_data['model'].split('.'))
         Model.objects.get(pk=link_data['pk'])

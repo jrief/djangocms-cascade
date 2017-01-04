@@ -4,7 +4,8 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.conf.urls import url
 from django.forms import widgets
-from django.http.response import JsonResponse, HttpResponseNotFound
+from django.http.response import HttpResponse, JsonResponse, HttpResponseNotFound
+from django.template.loader import render_to_string
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -329,5 +330,19 @@ class TextIconPlugin(FontIconPluginMixin, CascadePluginBase):
         context = super(TextIconPlugin, self).render(context, instance, placeholder)
         context['in_edit_mode'] = self.in_edit_mode(context['request'], instance.placeholder)
         return context
+
+    def get_plugin_urls(self):
+        urls = [
+            url(r'^wysiwig-config.js$', self.render_wysiwig_config,
+                name='cascade_texticon_wysiwig_config'),
+        ]
+        return urls
+
+    def render_wysiwig_config(self, request):
+        context = {
+            'icon_fonts': IconFont.objects.all()
+        }
+        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.js', context)
+        return HttpResponse(javascript, content_type='application/javascript')
 
 plugin_pool.register_plugin(TextIconPlugin)
