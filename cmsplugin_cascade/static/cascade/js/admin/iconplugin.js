@@ -1,13 +1,13 @@
 django.jQuery(function($) {
 	'use strict';
 
-	// create class handling the client-side part of FontIconPlugin
-	var self, FontIcon, base_plugins = eval(django.cascade.base_plugins),
+	// create class handling the client-side part of an IconPlugin
+	var self, IconPlugin, base_plugins = eval(django.cascade.base_plugins),
 	    $selectIconFont = $('#id_glossary_icon_font'),
-	    $content = $('#id_glossary_content'),
-	    $box = $content.closest('.glossary-box');
+	    $symbol = $('#id_glossary_symbol'),
+	    $box = $symbol.closest('.glossary-box');
 
-	FontIcon = ring.create(base_plugins, {
+	IconPlugin = ring.create(base_plugins, {
 		constructor: function() {
 			if (!$selectIconFont)
 				return;
@@ -37,24 +37,24 @@ django.jQuery(function($) {
 		selectIcon: function() {
 			$box.find('ul.font-family li.selected').removeClass('selected');
 			$(this).addClass('selected');
-			$content.val($(this).attr('title'));
+			$symbol.val($(this).attr('title'));
 		},
 		renderIcons: function(response) {
 			var css_prefix_text = response.css_prefix_text || 'icon-';
 			$box.find('h2, ul').remove();
 			$.each(response.families, function(key, icons) {
 				var lis = [];
-				$content.before('<h2>' + key + '</h2>');
+				$symbol.before('<h2>' + key + '</h2>');
 				$.each(icons, function(idx, icon) {
 					lis.push('<li title="' + icon + '"><i class="' + css_prefix_text + icon + '"></i></li>');
 				});
-				$content.before('<ul class="font-family">' + lis.join('') + '</ul>');
+				$symbol.before('<ul class="font-family">' + lis.join('') + '</ul>');
 			});
 
 			// mark selected icon
 			$box.find('ul.font-family li.selected').removeClass('selected');
-			if ($content.val()) {
-				$box.find('ul.font-family li[title=' + $content.val() + ']').addClass('selected');
+			if ($symbol.val()) {
+				$box.find('ul.font-family li[title=' + $symbol.val() + ']').addClass('selected');
 			}
 		},
 		refreshChangeForm: function() {
@@ -64,5 +64,5 @@ django.jQuery(function($) {
 
 	});
 
-	new FontIcon();
+	new IconPlugin();
 });

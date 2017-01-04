@@ -22,7 +22,7 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
     parent_classes = None
     require_parent = False
     allow_children = False
-    render_template = 'cascade/generic/fonticon.html'
+    render_template = 'cascade/plugins/icon.html'
     model_mixins = (IconModelMixin,)
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
     RADIUS_CHOICES = [(None, _("Square"))] + \
@@ -34,9 +34,9 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
         label=_("Font"),
     )
 
-    content = GlossaryField(
+    symbol = GlossaryField(
         widgets.HiddenInput(),
-        label=_("Select Icon"),
+        label=_("Select Symbol"),
     )
 
     font_size = GlossaryField(
@@ -74,12 +74,12 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
         label=_("Border radius"),
     )
 
-    glossary_field_order = ('icon_font', 'content', 'font_size', 'color', 'background_color',
+    glossary_field_order = ('icon_font', 'symbol', 'font_size', 'color', 'background_color',
                             'text_align', 'border', 'border_radius')
 
     class Media:
-        css = {'all': ('cascade/css/admin/fonticonplugin.css',)}
-        js = resolve_dependencies('cascade/js/admin/fonticonplugin.js')
+        css = {'all': ('cascade/css/admin/iconplugin.css',)}
+        js = resolve_dependencies('cascade/js/admin/iconplugin.js')
 
     @classmethod
     def get_tag_type(self, instance):
@@ -114,16 +114,16 @@ class TextIconModelMixin(object):
     @property
     def icon_font_class(self):
         icon_font = self.plugin_class.get_icon_font(self)
-        content = self.glossary.get('content')
-        if icon_font and content:
-            return mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), content))
+        symbol = self.glossary.get('symbol')
+        if icon_font and symbol:
+            return mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol))
         return ''
 
 
 class TextIconPlugin(IconPluginMixin, CascadePluginBase):
     name = _("Icon")
     text_enabled = True
-    render_template = 'cascade/generic/texticon.html'
+    render_template = 'cascade/plugins/texticon.html'
     parent_classes = ('TextPlugin',)
     model_mixins = (TextIconModelMixin,)
     allow_children = False
@@ -134,25 +134,20 @@ class TextIconPlugin(IconPluginMixin, CascadePluginBase):
         label=_("Font"),
     )
 
-    content = GlossaryField(
+    symbol = GlossaryField(
         widgets.HiddenInput(),
-        label=_("Select Icon"),
+        label=_("Select Symbol"),
     )
 
-    glossary_field_order = ('icon_font', 'content')
+    glossary_field_order = ('icon_font', 'symbol')
 
     class Media:
-        css = {'all': ('cascade/css/admin/fonticonplugin.css',)}
-        js = resolve_dependencies('cascade/js/admin/fonticonplugin.js')
+        css = {'all': ('cascade/css/admin/iconplugin.css',)}
+        js = resolve_dependencies('cascade/js/admin/iconplugin.js')
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):
         return False
-
-    def render(self, context, instance, placeholder):
-        context = super(TextIconPlugin, self).render(context, instance, placeholder)
-        context['in_edit_mode'] = self.in_edit_mode(context['request'], instance.placeholder)
-        return context
 
     def get_plugin_urls(self):
         urls = [

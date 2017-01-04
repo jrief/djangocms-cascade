@@ -36,7 +36,7 @@ CMSPLUGIN_CASCADE['dependencies'] = {
     'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
     'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
     'cascade/js/admin/jumbotronplugin.js': 'cascade/js/ring.js',
-    'cascade/js/admin/fonticonplugin.js': 'cascade/js/ring.js',
+    'cascade/js/admin/iconplugin.js': 'cascade/js/ring.js',
     'cascade/js/admin/linkpluginbase.js': ('cascade/js/admin/sharableglossary.js',),
     'cascade/js/admin/defaultlinkplugin.js': ('cascade/js/admin/linkpluginbase.js',),
     'cascade/js/admin/imageplugin.js': ('cascade/js/admin/linkpluginbase.js',),
@@ -75,7 +75,7 @@ styles.
 
 CMSPLUGIN_CASCADE.setdefault('plugins_with_sharables', {})
 CMSPLUGIN_CASCADE['plugins_with_sharables'].setdefault(
-    'FontIconPlugin', ('font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius'),
+    'IconPlugin', ('font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius'),
 )
 
 CMSPLUGIN_CASCADE.setdefault('link_plugin_classes', (

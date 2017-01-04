@@ -13,10 +13,10 @@ class IconModelMixin(object):
     @property
     def icon_font_attrs(self):
         icon_font = self.plugin_class.get_icon_font(self)
-        content = self.glossary.get('content')
+        symbol = self.glossary.get('symbol')
         attrs = []
-        if icon_font and content:
-            attrs.append(mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), content)))
+        if icon_font and symbol:
+            attrs.append(mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol)))
         styles = {
             'display': 'inline-block',
             'color': self.glossary.get('color', '#000000'),
@@ -44,11 +44,11 @@ class IconPluginMixin(object):
         identifier = super(IconPluginMixin, cls).get_identifier(instance)
         icon_font = cls.get_icon_font(instance)
         if icon_font:
-            content = mark_safe('{}: <i class="{}{}"></i>'.format(
+            symbol = mark_safe('{}: <i class="{}{}"></i>'.format(
                 icon_font.identifier,
                 icon_font.config_data.get('css_prefix_text', 'icon-'),
-                instance.glossary.get('content')))
-            return format_html('{0}{1}', identifier, content)
+                instance.glossary.get('symbol')))
+            return format_html('{0}{1}', identifier, symbol)
         return identifier
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
