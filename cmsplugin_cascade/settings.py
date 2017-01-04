@@ -10,7 +10,11 @@ from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
 
 
-CASCADE_PLUGINS = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', ('cmsplugin_cascade.generic', 'cmsplugin_cascade.link',))
+CASCADE_PLUGINS = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', (
+    'cmsplugin_cascade.generic',
+    'cmsplugin_cascade.icon',
+    'cmsplugin_cascade.link',
+))
 
 CMSPLUGIN_CASCADE = getattr(settings, 'CMSPLUGIN_CASCADE', {})
 orig_config = dict(CMSPLUGIN_CASCADE)
