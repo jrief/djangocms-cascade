@@ -41,7 +41,7 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
 
     font_size = GlossaryField(
         CascadingSizeWidget(allowed_units=['px', 'em']),
-        label=_("Icon Size"),
+        label=_("Icon size"),
         initial='1em',
     )
 
@@ -59,7 +59,7 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
         widgets.RadioSelect(
             choices=(('', _("Do not align")), ('text-left', _("Left")),
                      ('text-center', _("Center")), ('text-right', _("Right")))),
-        label=_("Text Align"),
+        label=_("Text alignment"),
         initial='',
         help_text=_("Align the icon inside the parent column.")
     )
