@@ -25,9 +25,11 @@ class UploadIconsForms(ModelForm):
     @property
     def media(self):
         media = super(UploadIconsForms, self).media
-        if self.instance:
+        try:
             css_url = self.instance.get_stylesheet_url()
             media.add_css({'all': ('cascade/css/admin/iconfont.css', css_url,)})
+        except AttributeError:
+            pass
         return media
 
     def unzip_archive(self, zip_ref):
