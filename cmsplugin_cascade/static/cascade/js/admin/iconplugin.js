@@ -9,7 +9,7 @@ django.jQuery(function($) {
 
 	IconPlugin = ring.create(base_plugins, {
 		constructor: function() {
-			if (!$selectIconFont)
+			if ($selectIconFont.length === 0)
 				return;
 			self = this;
 			this.$super();
@@ -22,7 +22,10 @@ django.jQuery(function($) {
 			this.refreshChangeForm();
 		},
 		fontChanged: function () {
-			var link = {
+			var link;
+			if ($selectIconFont.length === 0)
+				return;
+			link = {
 				id: "id_iconfont_link",
 				rel: "stylesheet",
 				type: "text/css",
