@@ -143,6 +143,8 @@ class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
             if self.required:
                 raise ValidationError(self.required_message, code='required', params={})
             return
+        if value == '0':
+            return
         match = self.validation_pattern.match(value)
         if not (match and match.group(1).isdigit()):
             params = {'value': value}
@@ -335,7 +337,8 @@ class SetBorderWidget(widgets.MultiWidget):
 
     def validate(self, values, key):
         if key == 'width':
-            self.widgets[0].validate(values[0])
+            if values[0]:
+                self.widgets[0].validate(values[0])
         elif key == 'style':
             style = values[1]
             if style not in self.BORDER_STYLES:

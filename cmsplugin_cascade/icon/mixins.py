@@ -25,7 +25,7 @@ class IconModelMixin(object):
         if not disabled:
             styles['background-color'] = background_color
         border = self.glossary.get('border')
-        if isinstance(border, list) and border[1] != 'none':
+        if isinstance(border, list) and border[0] and border[1] != 'none':
             styles.update(border='{0} {1} {2}'.format(*border))
             radius = self.glossary.get('border_radius')
             if radius:
