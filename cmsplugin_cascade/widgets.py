@@ -287,8 +287,8 @@ class SetBorderWidget(widgets.MultiWidget):
     Use this field to enter the three values of a border: width style color.
     """
     DEFAULT_COLOR = '#000000'
-    BORDER_STYLES = ['dashed', 'dotted', 'double', 'groove', 'hidden', 'inset', 'none', 'outset',
-                     'ridge', 'solid']
+    BORDER_STYLES = ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'hidden',
+                     'inset', 'outset', 'ridge']
 
     invalid_border_message = _("In '%(label)s': Value '%(value)s' is not a valid border style.")
     color_validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
