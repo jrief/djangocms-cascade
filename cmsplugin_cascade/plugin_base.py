@@ -153,7 +153,13 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             attrs['name'] = mark_safe_lazy(string_concat(
                 settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
 
-        return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
+        if name == 'CascadePluginBase':
+            attrs['_ring_plugin_bases'] = {}
+        new_class = super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
+        ring_bases = set([b.ring_plugin for b in bases if hasattr(b, 'ring_plugin')])
+        if ring_bases:
+            new_class._ring_plugin_bases[name] = list(ring_bases)
+        return new_class
 
 
 class TransparentWrapper(object):
