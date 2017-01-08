@@ -8,12 +8,14 @@ from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.link.forms import TextLinkFormMixin
-from .glyphicons import GlyphiconRenderer
+from cmsplugin_cascade.icon.mixins import IconPluginMixin
+from cmsplugin_cascade.utils import resolve_dependencies
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):
@@ -62,7 +64,7 @@ class ButtonSizeRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapButtonMixin(CascadePluginMixinBase):
+class BootstrapButtonMixin(IconPluginMixin, CascadePluginMixinBase):
     require_parent = True
     parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
@@ -97,29 +99,36 @@ class BootstrapButtonMixin(CascadePluginMixinBase):
         help_text=_("Float the button to the left or right.")
     )
 
-    icon_left = GlossaryField(
-        GlyphiconRenderer.get_widget(),
-        label=_("Prepend icon"),
+    icon_align = GlossaryField(
+        widgets.RadioSelect(choices=(('', _("No Icon")), ('icon-left', _("Icon placed left")),
+                                     ('icon-right', _("Icon placed right")),)),
+        label=_("Icon alignment"),
         initial='',
-        help_text=_("Prepend a Glyphicon before the content.")
+        help_text=_("Add an Icon before or after the button content.")
     )
 
-    icon_right = GlossaryField(
-        GlyphiconRenderer.get_widget(),
-        label=_("Append icon"),
-        initial='',
-        help_text=_("Append a Glyphicon after the content.")
+    icon_font = GlossaryField(
+        widgets.Select(),
+        label=_("Font"),
+    )
+
+    symbol = GlossaryField(
+        widgets.HiddenInput(),
+        label=_("Select Symbol"),
     )
 
     def render(self, context, instance, placeholder):
         context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
-        mini_template = '{0}<span class="glyphicon glyphicon-{1} {2}" aria-hidden="true"></span>{3}'
-        icon_left = instance.glossary.get('icon_left')
-        if icon_left:
-            context['icon_left'] = format_html(mini_template, '', icon_left, 'cascade-icon-left', ' ')
-        icon_right = instance.glossary.get('icon_right')
-        if icon_right:
-            context['icon_right'] = format_html(mini_template, ' ', icon_right, 'cascade-icon-right', '')
+        icon_font = self.get_icon_font(instance)
+        symbol = instance.glossary.get('symbol')
+        if icon_font and symbol:
+            context['stylesheet_url'] = icon_font.get_stylesheet_url()
+            mini_template = '{0}<i class="icon-{1} {2}" aria-hidden="true"></i>{3}'
+            icon_align = instance.glossary.get('icon_align')
+            if icon_align == 'icon-left':
+                context['icon_left'] = format_html(mini_template, '', symbol, 'cascade-icon-left', ' ')
+            elif icon_align == 'icon-right':
+                context['icon_right'] = format_html(mini_template, ' ', symbol, 'cascade-icon-right', '')
         return context
 
 
@@ -129,10 +138,11 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     fields = ('link_content',) + LinkPluginBase.fields
     glossary_field_order = ('button_type', 'button_size', 'button_options', 'quick_float',
-                       'icon_left', 'icon_right')
+                            'icon_align', 'icon_font', 'symbol')
 
     class Media:
-        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
+        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',
+                       'cascade/css/admin/iconplugin.css',)}
 
     @classmethod
     def get_identifier(cls, obj):
