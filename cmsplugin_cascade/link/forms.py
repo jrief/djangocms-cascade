@@ -73,11 +73,11 @@ class LinkForm(ModelForm):
 
         # populate Select field for choosing a CMS page
         try:
-            site = instance.page.site
+            site = instance.placeholder.page.site
         except AttributeError:
             site = Site.objects.get_current()
-        choices = ((p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
-                   for p in Page.objects.drafts().on_site(site))
+        choices = [(p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
+                   for p in Page.objects.drafts().on_site(site)]
         self.base_fields['cms_page'].choices = choices
 
         if callable(set_initial_linktype):
