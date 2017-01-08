@@ -36,8 +36,8 @@ except ImportError:
         return keep_lazy(six.text_type)(func)
 
 @keep_lazy_text
-def format_lazy(url):
-    return 'default:{}'.format(url)
+def format_lazy(format_string, *args, **kwargs):
+    return format_string.format(*args, **kwargs)
 
 
 def remove_duplicates(lst):
