@@ -169,8 +169,8 @@ class CascadePage(PageExtension):
     def delete_cascade_element(cls, instance=None, **kwargs):
         if isinstance(instance, CascadeModelBase):
             try:
-                instance.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
-                instance.page.cascadepage.save()
+                instance.placeholder.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
+                instance.placeholder.page.cascadepage.save()
             except (AttributeError, KeyError):
                 pass
 
