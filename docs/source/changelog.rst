@@ -17,6 +17,8 @@ Release History
 * In ``cmsplugin_cascade.models.CascadeElement`` the foreign key ``shared_glossary`` now is marked
   as editable. Instead to plugins without sharable glossary, the attribute
   ``exclude = ['shared_glossary']`` is added.
+* Instead of handling ring.js plugin inheritance through ``get_ring_bases()``, Cascade plugins
+  just have to add ``ring_plugin = '...'`` to their class declaration.
 
 0.11.1
 ------
