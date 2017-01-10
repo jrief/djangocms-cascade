@@ -24,7 +24,7 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
     allow_children = False
     render_template = 'cascade/plugins/icon.html'
     model_mixins = (IconModelMixin,)
-    ring_plugin = 'IconPlugin'
+    ring_plugin = 'FramedIconPlugin'
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
     RADIUS_CHOICES = [(None, _("Square"))] + \
         [('{}px'.format(r), "{} px".format(r)) for r in (1, 2, 3, 5, 7, 10, 15, 20)] + \
@@ -80,7 +80,7 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
 
     class Media:
         css = {'all': ('cascade/css/admin/iconplugin.css',)}
-        js = resolve_dependencies('cascade/js/admin/iconplugin.js')
+        js = resolve_dependencies('cascade/js/admin/framediconplugin.js')
 
     @classmethod
     def get_tag_type(self, instance):
