@@ -87,6 +87,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     raw_id_fields = ('image_file',)
     fields = ('glossary', 'image_file',)
     render_template = 'cascade/bootstrap3/jumbotron.html'
+    ring_plugin = 'JumbotronPlugin'
     ATTACHMENT_CHOICES = ('scroll', 'fixed', 'local')
     VERTICAL_POSITION_CHOICES = ('top', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'bottom')
     HORIZONTAL_POSITION_CHOICES = ('left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right')

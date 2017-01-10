@@ -2,14 +2,14 @@ django.jQuery(function($) {
 	'use strict';
 
 	// create class handling the client-side part of JumbotronPlugin
-	var JumbotronPlugin, base_plugins = eval(django.cascade.base_plugins),
+	var base_plugins = eval(django.cascade.ring_plugin_bases.JumbotronPlugin),
 	    $fileIdInputSelector = $('.vForeignKeyRawIdAdminField'),
 	    $backgroundColor = $('#id_glossary_background_color_color'),
 	    $backgroundColorDisabled = $('#id_glossary_background_color_disabled'),
 	    $backgroundInputSize = $('input[name="background_size"]'),
 	    $backgroundWidthHeight = $('.glossary_background_width_height').closest('.glossary-widget');
 
-	JumbotronPlugin = ring.create(base_plugins, {
+	django.cascade.JumbotronPlugin = ring.create(base_plugins, {
 		constructor: function() {
 			var self = this;
 			this.$super();
@@ -72,6 +72,4 @@ django.jQuery(function($) {
 		}
 
 	});
-
-	new JumbotronPlugin();
 });

@@ -2,12 +2,10 @@
 django.jQuery(function($) {
 	'use strict';
 
-	var ImagePlugin,
-	    $image_responsive = $('#id_glossary_image_shapes_0'),
-	    base_plugins = eval(django.cascade.base_plugins);
+	var $image_responsive = $('#id_glossary_image_shapes_0');
 
 	// create class handling the client-side part of ImagePlugin
-	ImagePlugin = ring.create(base_plugins, {
+	django.cascade.ImagePlugin = ring.create(eval(django.cascade.ring_plugin_bases.ImagePlugin), {
 		constructor: function() {
 			var self = this;
 			this.$super();
@@ -39,6 +37,4 @@ django.jQuery(function($) {
 			this.$super && this.$super();
 		}
 	});
-
-	new ImagePlugin();
 });

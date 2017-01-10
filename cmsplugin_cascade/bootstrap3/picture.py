@@ -25,6 +25,7 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     allow_children = False
     raw_id_fields = ('image_file',)
     admin_preview = False
+    ring_plugin = 'PicturePlugin'
     render_template = 'cascade/bootstrap3/linked-picture.html'
     default_css_class = 'img-responsive'
     default_css_attributes = ('image_shapes',)

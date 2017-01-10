@@ -114,7 +114,7 @@ This is achieved by reconfiguring the Link Plugin inside Cascade with:
 	CMSPLUGIN_CASCADE = {
 	    ...
 	    'dependencies': {
-	        'shop/js/admin/shoplinkplugin.js': 'cascade/js/admin/linkpluginbase.js',
+	        'shop/js/admin/shoplinkplugin.js': 'cascade/js/admin/linkplugin.js',
 	    },
 	    'link_plugin_classes': (
 	        'shop.cascade.plugin_base.CatalogLinkPluginBase',

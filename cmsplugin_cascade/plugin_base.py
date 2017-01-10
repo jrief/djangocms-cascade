@@ -53,9 +53,19 @@ mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 
 class CascadePluginMixinMetaclass(type):
+    ring_plugin_bases = {}
+
     def __new__(cls, name, bases, attrs):
         cls.build_glossary_fields(bases, attrs)
         new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
+        ring_plugin = attrs.get('ring_plugin')
+        if ring_plugin:
+            ring_plugin_bases = [b.ring_plugin for b in bases
+                                 if hasattr(b, 'ring_plugin') and b.ring_plugin != ring_plugin]
+            if ring_plugin in cls.ring_plugin_bases:
+                cls.ring_plugin_bases[ring_plugin].update(ring_plugin_bases)
+            else:
+                cls.ring_plugin_bases[ring_plugin] = set(ring_plugin_bases)
         return new_class
 
     @classmethod
@@ -153,13 +163,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             attrs['name'] = mark_safe_lazy(string_concat(
                 settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
 
-        if name == 'CascadePluginBase':
-            attrs['_ring_plugin_bases'] = {}
-        new_class = super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
-        ring_bases = set([b.ring_plugin for b in bases if hasattr(b, 'ring_plugin')])
-        if ring_bases:
-            new_class._ring_plugin_bases[name] = list(ring_bases)
-        return new_class
+        return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
 class TransparentWrapper(object):
@@ -468,12 +472,18 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         return None, None
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        ring_plugin_bases = dict((ring_plugin, ['django.cascade.{}'.format(b) for b in bases])
+                                 for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items())
         context.update(
-            base_plugins=['django.cascade.{}'.format(b) for b in self.get_ring_bases()],
+            ring_plugin_bases=ring_plugin_bases,
             plugin_title=string_concat(self.module, " ", self.name, " Plugin"),
             plugin_intro=mark_safe(getattr(self, 'intro_html', '')),
             plugin_footnote=mark_safe(getattr(self, 'footnote_html', '')),
         )
+        if hasattr(self, 'ring_plugin'):
+            context.update(
+                ring_plugin=self.ring_plugin,
+            )
 
         # remove glossary field from rendered form
         form = context['adminform'].form
@@ -484,13 +494,6 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         except KeyError:
             pass
         return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
-
-    def get_ring_bases(self):
-        """
-        Hook to return a list of base plugins required to build the JavaScript counterpart for the
-        current plugin. The named JavaScript plugin must have been created using ``ring.create``.
-        """
-        return []
 
     def in_edit_mode(self, request, placeholder):
         """

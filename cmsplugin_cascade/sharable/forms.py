@@ -88,6 +88,8 @@ class SharableGlossaryMixin(object):
     This class adds the appropriate methods to the plugin class in order to store
     an assortment of glossary values as a glossary reusable by other plugin instances.
     """
+    ring_plugin = 'SharableGlossaryMixin'
+
     class Media:
             js = resolve_dependencies('cascade/js/admin/sharableglossary.js')
 
@@ -132,11 +134,6 @@ class SharableGlossaryMixin(object):
                 share_fields.extend(glossary_field.get_element_ids(form['glossary'].auto_id))
         context.update(sharable_fields=mark_safe(json.dumps(share_fields)))
         return super(SharableGlossaryMixin, self).render_change_form(request, context, add, change, form_url, obj)
-
-    def get_ring_bases(self):
-        bases = super(SharableGlossaryMixin, self).get_ring_bases()
-        bases.append('SharableGlossaryMixin')
-        return bases
 
     @classmethod
     def get_data_representation(cls, instance):

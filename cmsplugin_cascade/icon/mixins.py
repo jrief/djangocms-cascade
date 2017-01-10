@@ -7,6 +7,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 
 from cmsplugin_cascade.models import IconFont
+from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
 
 class IconModelMixin(object):
@@ -36,8 +37,9 @@ class IconModelMixin(object):
         return mark_safe(' '.join(attrs))
 
 
-class IconPluginMixin(object):
+class IconPluginMixin(CascadePluginMixinBase):
     change_form_template = 'cascade/admin/fonticon_plugin_change_form.html'
+    ring_plugin = 'IconPlugin'
 
     @classmethod
     def get_identifier(cls, instance):

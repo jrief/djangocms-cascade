@@ -41,6 +41,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
     hiding_template = engines['django'].from_string(hiding_template_string)
     debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
     empty_template = engines['django'].from_string('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
+    ring_plugin = 'SegmentPlugin'
     require_parent = False
     direct_parent_classes = None
     allow_children = True

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.contrib import admin
 from django import forms
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
+
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.plugin_base import CascadePluginMixinMetaclass
 from cmsplugin_cascade.widgets import JSONMultiWidget
 from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
 
@@ -66,10 +69,6 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     def media(self):
         media = super(SharedGlossaryAdmin, self).media
         media += forms.Media(css={'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)})
-        try:
-            media += self.plugin_instance().media
-        except AttributeError:
-            pass
         return media
 
     def used_by(self, obj):
@@ -80,8 +79,13 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     used_by.short_description = _("Used by plugins")
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        bases = self.plugin_instance().get_ring_bases()
-        # since the Sharable Admin reuses the JavaScript plugins, remove the one, regarding shareability itself
-        bases.remove('SharableGlossaryMixin')
-        context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
+        try:
+            context['media'] += self.plugin_instance().media
+        except (AttributeError, KeyError):
+            pass
+        context.update(
+            ring_plugin=self.plugin_instance().ring_plugin,
+            ring_plugin_bases=dict((ring_plugin, ['django.cascade.{}'.format(b) for b in bases if b != 'SharableGlossaryMixin'])
+                                   for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items())
+        )
         return super(SharedGlossaryAdmin, self).render_change_form(request, context, add, change, form_url, obj)

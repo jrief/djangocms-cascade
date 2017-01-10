@@ -10,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.link.forms import TextLinkFormMixin
@@ -64,13 +63,14 @@ class ButtonSizeRenderer(RadioFieldRenderer):
             ))
 
 
-class BootstrapButtonMixin(IconPluginMixin, CascadePluginMixinBase):
+class BootstrapButtonMixin(IconPluginMixin):
     require_parent = True
     parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
     default_css_class = 'btn'
     default_css_attributes = ('button_type', 'button_size', 'button_options', 'quick_float',)
+    ring_plugin = 'ButtonPlugin'
 
     button_type = GlossaryField(
         ButtonTypeRenderer.get_widget(),
@@ -139,11 +139,12 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     fields = ('link_content',) + LinkPluginBase.fields
     glossary_field_order = ('button_type', 'button_size', 'button_options', 'quick_float',
                             'icon_align', 'icon_font', 'symbol')
+    ring_plugin = 'ButtonPlugin'
 
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',
                        'cascade/css/admin/iconplugin.css',)}
-        js = resolve_dependencies('cascade/js/admin/iconplugin.js')
+        js = resolve_dependencies('cascade/js/admin/buttonplugin.js')
 
     @classmethod
     def get_identifier(cls, obj):

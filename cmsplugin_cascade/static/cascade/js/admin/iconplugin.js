@@ -2,12 +2,12 @@ django.jQuery(function($) {
 	'use strict';
 
 	// create class handling the client-side part of an IconPlugin
-	var self, IconPlugin, base_plugins = eval(django.cascade.base_plugins),
-	    $selectIconFont = $('#id_glossary_icon_font'),
+	var $selectIconFont = $('#id_glossary_icon_font'),
 	    $symbol = $('#id_glossary_symbol'),
-	    $box = $symbol.closest('.glossary-box');
+	    $box = $symbol.closest('.glossary-box'),
+	    self;
 
-	IconPlugin = ring.create(base_plugins, {
+	django.cascade.IconPlugin = ring.create(eval(django.cascade.ring_plugin_bases.IconPlugin), {
 		constructor: function() {
 			if ($selectIconFont.length === 0)
 				return;
@@ -66,6 +66,4 @@ django.jQuery(function($) {
 		}
 
 	});
-
-	new IconPlugin();
 });
