@@ -1,22 +1,20 @@
 django.jQuery(function($) {
 	'use strict';
 
-	// create class handling the client-side part of an IconPlugin
+	// create class handling the client-side part of plugins inheriting from IconPluginMixin
 	var $selectIconFont = $('#id_glossary_icon_font'),
 	    $symbol = $('#id_glossary_symbol'),
-	    $box = $symbol.closest('.glossary-box'),
-	    self;
+	    $box = $symbol.closest('.glossary-box');
 
 	django.cascade.IconPlugin = ring.create(eval(django.cascade.ring_plugin_bases.IconPlugin), {
 		constructor: function() {
 			if ($selectIconFont.length === 0)
 				return;
-			self = this;
 			this.$super();
 
 			// install event handlers
-			$selectIconFont.on('change', self.fontChanged);
-			$box.on('click', 'ul.font-family li', self.selectIcon);
+			$selectIconFont.on('change', this.fontChanged);
+			$box.on('click', 'ul.font-family li', this.selectIcon);
 
 			// set defaults
 			this.refreshChangeForm();
@@ -35,7 +33,7 @@ django.jQuery(function($) {
 			$("<link/>", link).appendTo("head");
 
 			$('#id_iconfont_families').remove();
-			$.get(django.cascade.fetch_fonticons_url + $selectIconFont.val()).done(self.renderIcons);
+			$.get(django.cascade.fetch_fonticons_url + $selectIconFont.val()).done(this.renderIcons);
 		},
 		selectIcon: function() {
 			$box.find('ul.font-family li.selected').removeClass('selected');
@@ -64,6 +62,5 @@ django.jQuery(function($) {
 			this.fontChanged();
 			this.$super && this.$super();
 		}
-
 	});
 });
