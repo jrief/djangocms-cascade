@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from types import MethodType
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _, ungettext
 from django.utils.encoding import force_text
 from django.utils.html import format_html
+
 from cms.constants import REFRESH_PAGE
 
 
@@ -109,7 +110,7 @@ class EmulateUserAdminMixin(object):
             display_as_link.short_description = user_model_admin.identifier.short_description
         except AttributeError:
             display_as_link.short_description = admin.utils.label_for_field(list_display_link, self.UserModel)
-        self.display_as_link = MethodType(display_as_link, self, EmulateUserAdminMixin)
+        self.display_as_link = six.create_bound_method(display_as_link, self)
 
         ChangeList = self.get_changelist(request)
         cl = ChangeList(request, self.UserModel, list_display,

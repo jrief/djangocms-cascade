@@ -48,9 +48,11 @@ class LinkPluginBase(CascadePluginBase):
         # otherwise try to resolve by model
         if 'model' in link and 'pk' in link:
             if not hasattr(obj, '_link_model'):
-                Model = apps.get_model(*link['model'].split('.'))
                 try:
+                    Model = apps.get_model(*link['model'].split('.'))
                     obj._link_model = Model.objects.get(pk=link['pk'])
+                except LookupError:
+                    obj._link_model = None
                 except Model.DoesNotExist:
                     obj._link_model = None
             if obj._link_model:

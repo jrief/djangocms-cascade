@@ -276,16 +276,24 @@ class SetBorderWidget(widgets.MultiWidget):
     Use this field to enter the three values of a border: width style color.
     """
     DEFAULT_COLOR = '#000000'
-    BORDER_STYLES = [(s, s) for s in ('dashed', 'dotted', 'double', 'groove', 'hidden', 'inset',
-                                      'none', 'outset', 'ridge', 'solid')]
+    BORDER_STYLES = ['dashed', 'dotted', 'double', 'groove', 'hidden', 'inset', 'none', 'outset',
+                     'ridge', 'solid']
 
-    validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
-    invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
+    invalid_border_message = _("In '%(label)s': Value '%(value)s' is not a valid border style.")
+    color_validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
+    invalid_color_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
 
     def __init__(self, attrs=None):
-        widget_list = [CascadingSizeWidget(), widgets.Select(choices=self.BORDER_STYLES),
-                       widgets.TextInput(attrs={'style': 'width: 5em;', 'type': 'color'})]
+        widget_list = [
+            CascadingSizeWidget(),
+            widgets.Select(choices=[(s, s) for s in self.BORDER_STYLES]),
+            widgets.TextInput(attrs={'style': 'width: 5em;', 'type': 'color'})
+        ]
         super(SetBorderWidget, self).__init__(widget_list)
+
+    def __iter__(self):
+        for name in ('width', 'style', 'color'):
+            yield name
 
     def decompress(self, values):
         if not isinstance(values, (list, tuple)) or len(values) != 3:
@@ -305,16 +313,25 @@ class SetBorderWidget(widgets.MultiWidget):
         elem_id = attrs['id']
         attrs = dict(attrs)
         html = '<div class="clearfix">'
-        key, attrs['id'] = '{0}-width'.format(name), '{0}-width'.format(elem_id)
+        key, attrs['id'] = '{0}-width'.format(name), '{0}_width'.format(elem_id)
         html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, width, attrs))
-        key, attrs['id'] = '{0}-style'.format(name), '{0}-style'.format(elem_id)
+        key, attrs['id'] = '{0}-style'.format(name), '{0}_style'.format(elem_id)
         html += format_html('<div class="sibling-field">{0}</div>', self.widgets[1].render(key, style, attrs))
-        key, attrs['id'] = '{0}-color'.format(name), '{0}-color'.format(elem_id)
+        key, attrs['id'] = '{0}-color'.format(name), '{0}_color'.format(elem_id)
         html += format_html('<div class="sibling-field">{0}</div>', self.widgets[2].render(key, color, attrs))
         html += '</div>'
         return mark_safe(html)
 
-    def validate(self, values):
-        color = values[2]
-        if not self.validation_pattern.match(color):
-            raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
+    def validate(self, values, key):
+        if key == 'width':
+            self.widgets[0].validate(values[0])
+        elif key == 'style':
+            style = values[1]
+            if style not in self.BORDER_STYLES:
+                raise ValidationError(self.invalid_border_message, code='invalid', params={'value': style})
+        elif key == 'color':
+            color = values[2]
+            if not self.color_validation_pattern.match(color):
+                raise ValidationError(self.invalid_color_message, code='invalid', params={'value': color})
+        else:
+            raise KeyError("{} is not a valid border widget attribute.".format(key))
