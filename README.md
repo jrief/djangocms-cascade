@@ -15,22 +15,34 @@ djangocms-cascade
 **DjangoCMS-Cascade** is a collection of plugins for Django-CMS
 [placeholders](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
 Instead of creating one database model for each CMS plugin, Cascade shares one database model for
-all of them. This is possible by storing the payload inside a JSON field instead of declaring each
-attribute explicitly, and it prevents us to handle all kind of nasty database migration problems.
+all of them. The payload then is stored inside a JSON field instead of declaring each attribute explicitly.
+This furthermore prevents us to handle all kind of nasty database migration problems.
+
+
+### Perfect for nested grid systems
 
 Since **Cascade** keeps track on the widths of all columns, ``<img>`` and ``<picture>`` elements can
 be rendered in a responsive way, so that the browser only loads the image required for the visible
 viewport.
+
+
+### Extend plugins with additional features
 
 Using a JSON field to store the payload gives us much more flexibility. We can for instance enrich
 our plugins with additional attributes, configured during runtime. This can be used to optionally
 share attributes across different plugins (referenced by an alias name), add CSS classes and styles,
 or offer alternative rendering templates.
 
+
+### Set links onto your own views
+
 Another nice aspect of this approach is, that we can override the functionality used to set links
 onto pages which are not part of the CMS. This is specially useful, since we do not want to
 re-implement this functionality for all plugins, which require links, ie. images, pictures,
 buttons and text-links.
+
+
+### Copy content and paste it somewhere else
 
 Since the payload of plugins is already serialized, we can even copy them from one site to another
 site supporting **djangocms-cascade**.
@@ -50,7 +62,7 @@ Django-CMS 3.4 introduced a bunch of changes in their API. Therefore please foll
 
 **djangocms-cascade** 0.11.x has been tested with Django 1.9.x, django-CMS 3.3.x and
 djangocms-text-ckeditor 3.0.x. For newer releases of django-CMS please use the upcoming version
-0.12 of **djangocms-cascade**.
+0.12 of **djangocms-cascade**, which is avaliable only via GitHub.
 
 
 ### News for version 0.11
@@ -83,7 +95,8 @@ Don't forget run ``./manage.py migrate cmsplugin_cascade`` after upgrading to ve
 ### Caveats
 
 Currently **DjangoCMS-Cascade** does not work with **djangocms-text-ckeditor** >= 3.1. Please stay
-with version 3.0.1 until this issue hase been fixed.
+with version 3.0.1 until this issue hase been fixed. **Cascade** version 0.12 supports the latest version
+of **djangocms-text-ckeditor**.
 
 
 ## Architecture
@@ -142,11 +155,14 @@ displays.
 * Wrap special content into a [Jumbotron](http://getbootstrap.com/components/#jumbotron) or a
   [Carousel](http://getbootstrap.com/javascript/#carousel).
 * Add ``<img>`` and ``<picture>`` elements in a responsive way, so that more than one image URL
-  point onto the resized sources, one for each viewport using the ``srcset`` tags or the
+  points onto the resized sources, one for each viewport using the ``srcset`` tags or the
   ``<source>`` elements.
 * Use segmentation to conditionally render parts of the DOM.
+* Temporarily hide a plugin to show up in the DOM.
+* Upload an self composed font from [Fontello](http://fontello.com/) and use it's icon in plain text
+  or as framed eye catchers.
 * It is very easy to integrate additional elements from the preferred CSS framework. For instance,
-  implementing the Bootstrap Carousel, required only 50 lines of Python code and two simple Django
+  implementing the Bootstrap Carousel, requires only 50 lines of Python code and two simple Django
   templates.
 * Since all the data is stored in JSON, no database migration is required if a field is added,
   modified or removed from the plugin.
