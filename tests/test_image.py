@@ -23,7 +23,7 @@ class ImagePluginTest(CascadeTestCase):
     maxDiff = None
 
     def upload_demo_image(self):
-        demo_image = os.path.abspath(os.path.join(os.path.dirname(__file__), 'demo_image.png'))
+        demo_image = os.path.abspath(os.path.join(os.path.dirname(__file__), 'assets/demo_image.png'))
         folder, dummy = Folder.objects.get_or_create(name='Samples', parent=None)
         file_obj = DjangoFile(open(demo_image, 'rb'), name='demo_image.png')
         image = Image.objects.create(owner=self.user, original_filename='Demo Image',
