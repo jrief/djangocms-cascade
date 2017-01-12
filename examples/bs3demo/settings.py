@@ -195,7 +195,6 @@ CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.segmentation', 'cmsplugin_cascad
     'cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
 
 CMSPLUGIN_CASCADE = {
-    'fontawesome_css_url': 'node_modules/font-awesome/css/font-awesome.css',
     'alien_plugins': ('TextPlugin', 'TextLinkPlugin',),
     'plugins_with_sharables': {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',

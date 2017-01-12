@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import itertools
+from django.conf import settings
 from django.forms import widgets
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.utils.html import format_html, format_html_join
@@ -12,16 +13,21 @@ from django.forms.fields import ChoiceField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField
-from . import settings
+from .settings import CMSPLUGIN_CASCADE
 from .plugin_base import BootstrapPluginBase
 from .utils import compute_media_queries, get_widget_choices, BS3_BREAKPOINTS, BS3_BREAKPOINT_KEYS
 
 
 class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
     def render(self):
+
         return format_html('<div class="form-row">{0}</div>',
-            format_html_join('', '<div class="field-box">'
-                '<div class="container-thumbnail"><i class="fa fa-{1} fa-4x"></i><div class="label">{0}</div></div>'
+            format_html_join('',
+                '<div class="field-box">'
+                    '<div class="container-thumbnail">'
+                        '<img src="' + settings.STATIC_URL + 'cascade/admin/{1}.svg" style="height: 55px;" />'
+                        '<div class="label">{0}</div>'
+                    '</div>'
                 '</div>', ((force_text(w), BS3_BREAKPOINTS[w.choice_value][1]) for w in self)
             ))
 
@@ -57,9 +63,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         label=_('Fluid Container'), initial=False,
         help_text=_("Changing your outermost '.container' to '.container-fluid'.")
     )
-
-    class Media:
-        css = {'all': (settings.CMSPLUGIN_CASCADE['fontawesome_css_url'],)}
 
     @classmethod
     def get_identifier(cls, obj):
@@ -276,8 +279,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 width_val = obj.glossary.get(width_key, '').lstrip('col-{0}-'.format(bp))
                 if width_val.isdigit():
                     column_units = int(width_val)
-                new_width = float(parent_glossary['container_max_widths'][bp]) * column_units / 12 - settings.CMSPLUGIN_CASCADE['bootstrap3']['gutter']
-                new_width = round(new_width, 2)
+                new_width = float(parent_glossary['container_max_widths'][bp]) * column_units / 12
+                new_width = round(new_width - CMSPLUGIN_CASCADE['bootstrap3']['gutter'], 2)
                 if new_width != obj.glossary['container_max_widths'].get(bp):
                     obj.glossary['container_max_widths'][bp] = new_width
                     sanitized = True

@@ -166,7 +166,6 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     """
 
     class Media:
-        css = {'all': (settings.CMSPLUGIN_CASCADE['fontawesome_css_url'],)}
         js = resolve_dependencies('cascade/js/admin/jumbotronplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):

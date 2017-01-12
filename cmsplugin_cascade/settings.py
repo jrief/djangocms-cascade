@@ -23,9 +23,6 @@ orig_config = dict(CMSPLUGIN_CASCADE)
 if not isinstance(CMSPLUGIN_CASCADE.get('plugins_with_extra_fields', {}), dict):
     raise ImproperlyConfigured("CMSPLUGIN_CASCADE['plugins_with_extra_fields'] must be declared as dict.")
 
-CMSPLUGIN_CASCADE.setdefault('fontawesome_css_url', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css')
-"""Specify location of CSS file used to load fonts from http://fontawesome.io/"""
-
 CMSPLUGIN_CASCADE.setdefault('alien_plugins', ['TextPlugin'])
 
 # Use a prefix to symbolize a Cascade plugin in case there are ambiguous names.
