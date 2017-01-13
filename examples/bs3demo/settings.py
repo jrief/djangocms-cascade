@@ -3,7 +3,11 @@ from __future__ import unicode_literals
 
 import os
 import sys
+
+from django.core.urlresolvers import reverse_lazy
+
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade.utils import format_lazy
 
 DEBUG = True
 
@@ -43,10 +47,12 @@ INSTALLED_APPS = (
     'cmsplugin_cascade',
     'cmsplugin_cascade.clipboard',
     'cmsplugin_cascade.extra_fields',
+    'cmsplugin_cascade.icon',
     'cmsplugin_cascade.sharable',
     'cmsplugin_cascade.segmentation',
     'cms',
     'cms_bootstrap3',
+    'adminsortable2',
     'menus',
     'treebeard',
     'filer',
@@ -104,21 +110,20 @@ STATICFILES_DIRS = (
 
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
     'APP_DIRS': True,
     'OPTIONS': {
         'context_processors': (
             'django.contrib.auth.context_processors.auth',
-            'django.core.context_processors.debug',
-            'django.core.context_processors.i18n',
-            'django.core.context_processors.media',
-            'django.core.context_processors.static',
-            'django.core.context_processors.tz',
-            'django.core.context_processors.request',
-            'django.contrib.messages.context_processors.messages',
-            'cms.context_processors.cms_settings',
-            'sekizai.context_processors.sekizai',
+            'django.template.context_processors.debug',
+            'django.template.context_processors.i18n',
+            'django.template.context_processors.media',
+            'django.template.context_processors.static',
+            'django.template.context_processors.tz',
+            'django.template.context_processors.csrf',
             'django.template.context_processors.request',
+            'django.contrib.messages.context_processors.messages',
+            'sekizai.context_processors.sekizai',
+            'cms.context_processors.cms_settings',
             'bs3demo.context_processors.cascade',
         ),
     },
@@ -230,7 +235,6 @@ CMS_PLACEHOLDER_CONF = {
     # scaffold a djangoCMS page starting with an empty placeholder
     'Main Content': {
         'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
-        'text_only_plugins': ['TextLinkPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
         'glossary': CACSCADE_WORKAREA_GLOSSARY,
     },
@@ -248,6 +252,7 @@ CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono',
     'toolbar': 'CMS',
+    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
 }
 
 SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'
