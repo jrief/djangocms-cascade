@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from bs4 import BeautifulSoup
 from django.test import override_settings
-from cms.api import add_plugin, create_page
+from cms.api import add_plugin
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
         BootstrapColumnPlugin)

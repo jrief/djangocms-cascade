@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 
+from django.core.urlresolvers import reverse_lazy
+
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade.utils import format_lazy
 
 ROOT_URLCONF = 'tests.urls'
 
@@ -16,10 +19,12 @@ DATABASES = {
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'APP_DIRS': True,
-    'DIRS': [],
+    'DIRS': ['tests/templates'],
     'OPTIONS': {
         'context_processors': (
             'django.contrib.auth.context_processors.auth',
@@ -52,11 +57,13 @@ MIDDLEWARE_CLASSES = (
 )
 
 INSTALLED_APPS = [
-    'django.contrib.contenttypes',
     'django.contrib.auth',
-    'django.contrib.sites',
+    'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
     'django.contrib.admin',
+    'django.contrib.staticfiles',
     'jsonfield',
     'reversion',
     'filer',
@@ -70,6 +77,7 @@ INSTALLED_APPS = [
     'cmsplugin_cascade',
     'cmsplugin_cascade.clipboard',
     'cmsplugin_cascade.extra_fields',
+    'cmsplugin_cascade.icon',
     'cmsplugin_cascade.sharable',
     'cmsplugin_cascade.segmentation',
 ]
@@ -87,7 +95,7 @@ LANGUAGES = (
 LANGUAGE_CODE = 'en'
 
 CMS_TEMPLATES = (
-    ('cascade/testing.html', 'Default Page'),
+    ('testing.html', 'Default Page'),
 )
 
 CMSPLUGIN_CASCADE_PLUGINS = (
@@ -163,4 +171,24 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
     'png': '/opt/local/bin/optipng {filename}',
     'gif': '/opt/local/bin/optipng {filename}',
     'jpeg': '/opt/local/bin/jpegoptim {filename}',
+}
+
+CKEDITOR_SETTINGS = {
+    'language': '{{ language }}',
+    'skin': 'moono',
+    'toolbar': 'CMS',
+    'toolbar_HTMLField': [
+        ['Undo', 'Redo'],
+        ['cmsplugins', '-', 'ShowBlocks'],
+        ['Format', 'Styles'],
+        ['TextColor', 'BGColor', '-', 'PasteText', 'PasteFromWord'],
+        ['Maximize', ''],
+        '/',
+        ['Bold', 'Italic', 'Underline', '-', 'Subscript', 'Superscript', '-', 'RemoveFormat'],
+        ['JustifyLeft', 'JustifyCenter', 'JustifyRight'],
+        ['HorizontalRule'],
+        ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Table'],
+        ['Source']
+    ],
+    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
 }

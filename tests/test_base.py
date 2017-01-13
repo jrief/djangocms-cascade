@@ -14,7 +14,7 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
     home_page = None
 
     def setUp(self):
-        self.home_page = create_page(title='HOME', template='cascade/testing.html', language='en')
+        self.home_page = create_page(title='HOME', template='testing.html', language='en')
         self.placeholder = self.home_page.placeholders.get(slot='Main Content')
 
         self.request = self.get_request(self.home_page, 'en')
