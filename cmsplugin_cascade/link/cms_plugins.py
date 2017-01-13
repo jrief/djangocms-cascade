@@ -8,6 +8,7 @@ from django.utils.safestring import mark_safe
 
 from cms.plugin_pool import plugin_pool
 
+from cmsplugin_cascade.utils import resolve_dependencies
 from .config import LinkPluginBase, LinkElementMixin, LinkForm
 from .forms import TextLinkFormMixin
 
@@ -17,8 +18,12 @@ class TextLinkPlugin(LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     text_enabled = True
     render_template = 'cascade/link/text-link.html'
+    ring_plugin = 'TextLinkPlugin'
     fields = ('link_content',) + LinkPluginBase.fields
     parent_classes = ('TextPlugin',)
+
+    class Media:
+        js = resolve_dependencies('cascade/js/admin/textlinkplugin.js')
 
     @classmethod
     def get_identifier(cls, obj):
