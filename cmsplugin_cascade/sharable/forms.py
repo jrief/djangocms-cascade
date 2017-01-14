@@ -67,7 +67,7 @@ class SharableCascadeForm(forms.ModelForm):
         try:
             self.base_fields['shared_glossary'].initial = kwargs['instance'].shared_glossary.pk
         except (AttributeError, KeyError):
-            pass
+            self.base_fields['shared_glossary'].initial = ''
         super(SharableCascadeForm, self).__init__(*args, **kwargs)
 
     def clean_save_as_identifier(self):
