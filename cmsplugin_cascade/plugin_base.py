@@ -124,10 +124,12 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
     plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
     plugins_with_extra_render_templates = settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys()
     allow_plugin_hiding = settings.CMSPLUGIN_CASCADE['allow_plugin_hiding']
+    exclude_hiding_plugin = list(settings.CMSPLUGIN_CASCADE['exclude_hiding_plugin'])
 
     def __new__(cls, name, bases, attrs):
         model_mixins = attrs.pop('model_mixins', ())
-        if cls.allow_plugin_hiding and 'name' in attrs and not attrs.get('text_enabled'):
+        if (cls.allow_plugin_hiding and name not in cls.exclude_hiding_plugin and 'name' in attrs and
+            not attrs.get('text_enabled')):
             bases = (HidePluginMixin,) + bases
         if name in cls.plugins_with_extra_fields:
             ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)

@@ -77,6 +77,10 @@ CMSPLUGIN_CASCADE['plugins_with_sharables'].setdefault(
     'IconPlugin', ('font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius'),
 )
 
+CMSPLUGIN_CASCADE.setdefault('exclude_hiding_plugin', (
+    'SegmentPlugin',
+))
+
 CMSPLUGIN_CASCADE.setdefault('link_plugin_classes', (
     'cmsplugin_cascade.link.plugin_base.DefaultLinkPluginBase',
     'cmsplugin_cascade.link.plugin_base.LinkElementMixin',
