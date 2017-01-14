@@ -1,4 +1,6 @@
--r django110.txt
+-r base.txt
+https://github.com/jrief/django-cms/archive/f9b62031f64aa7d775f9d1befa7b6a70d0d1a719.zip#egg=django-cms
+lxml==3.5.0
 pluggy==0.3.1
 py==1.4.31
 pypandoc==1.2.0
