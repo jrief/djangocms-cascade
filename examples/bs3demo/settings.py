@@ -205,7 +205,7 @@ CMSPLUGIN_CASCADE = {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
         'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
-        'BootstrapButtonPlugin': ('link',),
+        'BootstrapButtonPlugin': ('button_type', 'button_size', 'button_options', 'icon_font',),
         'TextLinkPlugin': ('link', 'target',),
     },
     'plugins_with_extra_fields': {
@@ -214,6 +214,7 @@ CMSPLUGIN_CASCADE = {
             'extra_units:Margins': 'px,em'}),
     },
     'bootstrap3': {},
+    'allow_plugin_hiding': True,
 }
 if os.getenv('DJANGO_CLIENT_FRAMEWORK', '').startswith('angular'):
     CMSPLUGIN_CASCADE['bootstrap3']['template_basedir'] = 'angular-ui'
