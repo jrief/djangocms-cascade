@@ -15,7 +15,8 @@ from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
 @admin.register(SharedGlossary)
 class SharedGlossaryAdmin(admin.ModelAdmin):
     change_form_template = 'cascade/admin/change_form.html'
-    list_display = ('identifier', 'plugin_type', 'used_by',)
+    list_display = ('identifier', 'plugin_name', 'used_by',)
+    readonly_fields = ('plugin_name',)
     list_filter = ('plugin_type',)
 
     def get_fieldsets(self, request, obj=None):
@@ -89,3 +90,8 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
                                    for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items())
         )
         return super(SharedGlossaryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
+
+    def plugin_name(self, obj):
+        plugin_instance = plugin_pool.get_plugin(obj.plugin_type)
+        return plugin_instance.name
+    plugin_name.short_description = _("Plugin Type")
