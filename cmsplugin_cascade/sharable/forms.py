@@ -90,8 +90,8 @@ class SharableGlossaryMixin(object):
     """
     ring_plugin = 'SharableGlossaryMixin'
 
-    class Media:
-            js = resolve_dependencies('cascade/js/admin/sharableglossary.js')
+    #class Media:
+    #        js = resolve_dependencies('cascade/js/admin/sharableglossary.js')
 
     def get_form(self, request, obj=None, **kwargs):
         """

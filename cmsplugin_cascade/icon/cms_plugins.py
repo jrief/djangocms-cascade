@@ -17,7 +17,7 @@ from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, Colo
 from .mixins import IconPluginMixin, IconModelMixin
 
 
-class IconPlugin(IconPluginMixin, CascadePluginBase):
+class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
     name = _("Icon")
     parent_classes = None
     require_parent = False
@@ -75,12 +75,12 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
         label=_("Border radius"),
     )
 
-    glossary_field_order = ('icon_font', 'symbol', 'font_size', 'color', 'background_color',
-                            'text_align', 'border', 'border_radius')
+    glossary_field_order = ('icon_font', 'symbol', 'text_align', 'font_size',
+                            'color', 'background_color', 'border', 'border_radius')
 
     class Media:
         css = {'all': ('cascade/css/admin/iconplugin.css',)}
-        js = resolve_dependencies('cascade/js/admin/framediconplugin.js')
+        #js = resolve_dependencies('cascade/js/admin/framediconplugin.js')
 
     @classmethod
     def get_tag_type(self, instance):
@@ -89,7 +89,7 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
 
     @classmethod
     def get_css_classes(cls, instance):
-        css_classes = super(IconPlugin, cls).get_css_classes(instance)
+        css_classes = super(FramedIconPlugin, cls).get_css_classes(instance)
         text_align = instance.glossary.get('text_align')
         if text_align:
             css_classes.append(text_align)
@@ -97,7 +97,7 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
 
     @classmethod
     def get_inline_styles(cls, instance):
-        inline_styles = super(IconPlugin, cls).get_inline_styles(instance)
+        inline_styles = super(FramedIconPlugin, cls).get_inline_styles(instance)
         inline_styles['font-size'] = instance.glossary.get('font_size', '1em')
         return inline_styles
 
@@ -108,7 +108,7 @@ class IconPlugin(IconPluginMixin, CascadePluginBase):
             context['stylesheet_url'] = icon_font.get_stylesheet_url()
         return context
 
-plugin_pool.register_plugin(IconPlugin)
+plugin_pool.register_plugin(FramedIconPlugin)
 
 
 class TextIconModelMixin(object):
@@ -125,6 +125,7 @@ class TextIconPlugin(IconPluginMixin, CascadePluginBase):
     name = _("Icon")
     text_enabled = True
     render_template = 'cascade/plugins/texticon.html'
+    ring_plugin = 'IconPlugin'
     parent_classes = ('TextPlugin',)
     model_mixins = (TextIconModelMixin,)
     allow_children = False
@@ -144,7 +145,7 @@ class TextIconPlugin(IconPluginMixin, CascadePluginBase):
 
     class Media:
         css = {'all': ('cascade/css/admin/iconplugin.css',)}
-        js = resolve_dependencies('cascade/js/admin/iconplugin.js')
+        #js = resolve_dependencies('cascade/js/admin/iconplugin.js')
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):

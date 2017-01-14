@@ -26,6 +26,7 @@ from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
+from .utils import resolve_dependencies, remove_duplicates
 
 
 def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
@@ -56,16 +57,44 @@ class CascadePluginMixinMetaclass(type):
     ring_plugin_bases = {}
 
     def __new__(cls, name, bases, attrs):
+        class Media:
+            pass
+
         cls.build_glossary_fields(bases, attrs)
-        new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
         ring_plugin = attrs.get('ring_plugin')
         if ring_plugin:
             ring_plugin_bases = [b.ring_plugin for b in bases
                                  if hasattr(b, 'ring_plugin') and b.ring_plugin != ring_plugin]
-            if ring_plugin in cls.ring_plugin_bases:
-                cls.ring_plugin_bases[ring_plugin].update(ring_plugin_bases)
+
+            if ring_plugin not in cls.ring_plugin_bases:
+                cls.ring_plugin_bases[ring_plugin] = []
+            cls.ring_plugin_bases[ring_plugin].extend(ring_plugin_bases)
+            cls.ring_plugin_bases[ring_plugin] = remove_duplicates(cls.ring_plugin_bases[ring_plugin])
+
+            #if ring_plugin in cls.ring_plugin_bases:
+            #    cls.ring_plugin_bases[ring_plugin].update(ring_plugin_bases)
+            #else:
+            #    cls.ring_plugin_bases[ring_plugin] = set(ring_plugin_bases)
+
+            # resolve Media files using the dependency relations we already know
+            attrs.setdefault('Media', Media)
+            # js = attrs['Media'].js if hasattr(attrs['Media'], 'js') else []
+            dependencies = list(cls.ring_plugin_bases[ring_plugin])
+            dependencies.append(ring_plugin)
+            js = resolve_dependencies(dependencies)
+            if hasattr(attrs['Media'], 'js'):
+                for e in js:
+                    if e in attrs['Media'].js:
+                        attrs['Media'].js.remove(e)
+                attrs['Media'].js.extend(js)
             else:
-                cls.ring_plugin_bases[ring_plugin] = set(ring_plugin_bases)
+                attrs['Media'].js = js
+
+        new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
+        if ring_plugin:
+            print(name, cls.ring_plugin_bases[ring_plugin])
+        if hasattr(new_class, 'Media') and hasattr(new_class.Media, 'js'):
+            print(ring_plugin, new_class.Media.js)
         return new_class
 
     @classmethod

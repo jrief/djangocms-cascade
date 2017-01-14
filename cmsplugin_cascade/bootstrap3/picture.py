@@ -56,8 +56,8 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
         initial=['subject_location', 'high_resolution']
     )
 
-    class Media:
-        js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
+    #class Media:
+    #    js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
         reduce_breakpoints(self, 'responsive_heights')

@@ -142,8 +142,8 @@ class BootstrapGalleryPlugin(CascadePluginBase):
         initial=['crop', 'subject_location', 'high_resolution'],
     )
 
-    class Media:
-        js = resolve_dependencies('cascade/js/admin/imageplugin.js')
+    #class Media:
+    #    js = resolve_dependencies('cascade/js/admin/imageplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
         utils.reduce_breakpoints(self, 'responsive_heights')

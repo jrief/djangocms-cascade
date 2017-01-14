@@ -77,6 +77,7 @@ class DefaultLinkPluginBase(LinkPluginBase):
     The default `LinkPluginBase` class. It is injected by the class creator in link.config
     """
     fields = (('link_type', 'cms_page', 'section', 'ext_url', 'mail_to',), 'glossary',)
+    ring_plugin = 'LinkPluginBase'
 
 
 @python_2_unicode_compatible

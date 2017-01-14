@@ -165,8 +165,8 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
 <p>For more information about the Jumbotron please read </p>
     """
 
-    class Media:
-        js = resolve_dependencies('cascade/js/admin/jumbotronplugin.js')
+    #class Media:
+    #    js = resolve_dependencies('cascade/js/admin/jumbotronplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request, obj) is None:

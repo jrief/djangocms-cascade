@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
+from django.contrib.staticfiles.finders import get_finders
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -59,8 +60,14 @@ def resolve_dependencies(filenames):
     """
     from cmsplugin_cascade import settings
 
+    def find_file(path):
+        for finder in get_finders():
+            result = finder.find(path)
+            if result:
+                return result
+
     dependencies = []
-    if isinstance(filenames, (list, tuple)):
+    if isinstance(filenames, (list, tuple, set)):
         for filename in filenames:
             dependencies.extend(resolve_dependencies(filename))
     else:
@@ -68,7 +75,8 @@ def resolve_dependencies(filenames):
         dependency_list = settings.CMSPLUGIN_CASCADE['dependencies'].get(filename)
         if dependency_list:
             dependencies.extend(resolve_dependencies(dependency_list))
-        dependencies.append(filename)
+        if find_file(filename):
+            dependencies.append(filename)
     return remove_duplicates(dependencies)
 
 

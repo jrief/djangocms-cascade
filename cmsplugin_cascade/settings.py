@@ -30,16 +30,28 @@ CMSPLUGIN_CASCADE.setdefault('plugin_prefix', None)
 
 CMSPLUGIN_CASCADE['dependencies'] = {
     'cascade/js/ring.js': 'cascade/js/underscore.js',
-    'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
-    'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
-    'cascade/js/admin/jumbotronplugin.js': 'cascade/js/ring.js',
-    'cascade/js/admin/iconplugin.js': 'cascade/js/ring.js',
-    'cascade/js/admin/framediconplugin.js': ('cascade/js/admin/iconplugin.js', 'cascade/js/admin/sharableglossary.js'),
-    'cascade/js/admin/linkplugin.js': 'cascade/js/admin/sharableglossary.js',
-    'cascade/js/admin/textlinkplugin.js': 'cascade/js/admin/linkplugin.js',
-    'cascade/js/admin/imageplugin.js': 'cascade/js/admin/linkplugin.js',
-    'cascade/js/admin/pictureplugin.js': 'cascade/js/admin/linkplugin.js',
-    'cascade/js/admin/buttonplugin.js': ('cascade/js/admin/iconplugin.js', 'cascade/js/admin/linkplugin.js'),
+    #'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
+    #'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
+    #'cascade/js/admin/jumbotronplugin.js': 'cascade/js/ring.js',
+    #'cascade/js/admin/iconplugin.js': 'cascade/js/ring.js',
+    #'cascade/js/admin/framediconplugin.js': ('cascade/js/admin/iconplugin.js', 'cascade/js/admin/sharableglossary.js'),
+    #'cascade/js/admin/linkplugin.js': 'cascade/js/admin/sharableglossary.js',
+    #'cascade/js/admin/textlinkplugin.js': 'cascade/js/admin/linkplugin.js',
+    #'cascade/js/admin/imageplugin.js': 'cascade/js/admin/linkplugin.js',
+    #'cascade/js/admin/pictureplugin.js': 'cascade/js/admin/linkplugin.js',
+    #'cascade/js/admin/buttonplugin.js': ('cascade/js/admin/iconplugin.js', 'cascade/js/admin/linkplugin.js'),
+
+    'SharableGlossaryMixin': ('cascade/js/ring.js', 'cascade/js/admin/sharableglossary.js'),
+    'SegmentPlugin': ('cascade/js/ring.js', 'cascade/js/admin/segmentplugin.js'),
+    'LinkPluginBase': ('cascade/js/ring.js', 'cascade/js/admin/linkplugin.js'),
+    'TextLinkPlugin': ('LinkPluginBase', 'cascade/js/admin/textlinkplugin.js'),
+    'ButtonPlugin': ('LinkPluginBase', 'cascade/js/admin/buttonplugin.js'),
+    'IconPlugin': ('cascade/js/ring.js', 'cascade/js/admin/iconplugin.js'),
+    'ImagePlugin': ('cascade/js/ring.js', 'cascade/js/admin/imageplugin.js'),
+    'PicturePlugin': ('cascade/js/ring.js', 'cascade/js/admin/pictureplugin.js'),
+    'JumbotronPlugin': ('cascade/js/ring.js', 'cascade/js/admin/jumbotronplugin.js'),
+    'FramedIconPlugin': ('IconPlugin', 'cascade/js/admin/framediconplugin.js'),
+    #'TextIconPlugin': ('cascade/js/ring.js', 'cascade/js/admin/iconplugin.js'),
 }
 """The editor of some plugins requires JavaScript file. Here we can specify which is a list of dependencies"""
 CMSPLUGIN_CASCADE['dependencies'].update(orig_config.get('dependencies', {}))
@@ -74,7 +86,7 @@ styles.
 
 CMSPLUGIN_CASCADE.setdefault('plugins_with_sharables', {})
 CMSPLUGIN_CASCADE['plugins_with_sharables'].setdefault(
-    'IconPlugin', ('font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius'),
+    'FramedIconPlugin', ('font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius'),
 )
 
 CMSPLUGIN_CASCADE.setdefault('exclude_hiding_plugin', (
