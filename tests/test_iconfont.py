@@ -20,7 +20,7 @@ from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
 from cmsplugin_cascade.bootstrap3.container import BootstrapContainerPlugin
-from cmsplugin_cascade.icon.cms_plugins import IconPlugin
+from cmsplugin_cascade.icon.cms_plugins import FramedIconPlugin
 from .test_base import CascadeTestCase
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
@@ -92,10 +92,10 @@ class IconFontTestCase(CascadeTestCase):
             glossary = {"font_size": "10em", "color": "#88258e", "background_color": ["on","#c8ffcd"],
                         "symbol": "emo-wink", "icon_font": icon_font.pk,
                         "border_radius":"50%","border":["","solid","#000000"]}
-            icon_model = add_plugin(self.placeholder, IconPlugin, 'en', target=container_model,
+            icon_model = add_plugin(self.placeholder, FramedIconPlugin, 'en', target=container_model,
                                     glossary=glossary)
             icon_plugin = icon_model.get_plugin_class_instance()
-            self.assertIsInstance(icon_plugin, IconPlugin)
+            self.assertIsInstance(icon_plugin, FramedIconPlugin)
 
             # render the plugins
             plugin_list = [container_model, icon_model]
