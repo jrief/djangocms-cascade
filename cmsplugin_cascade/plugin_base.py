@@ -66,15 +66,10 @@ class CascadePluginMixinMetaclass(type):
             ring_plugin_bases = [b.ring_plugin for b in bases
                                  if hasattr(b, 'ring_plugin') and b.ring_plugin != ring_plugin]
 
-            if ring_plugin not in cls.ring_plugin_bases:
-                cls.ring_plugin_bases[ring_plugin] = []
+            # remember the dependencies
+            cls.ring_plugin_bases.setdefault(ring_plugin, [])
             cls.ring_plugin_bases[ring_plugin].extend(ring_plugin_bases)
             cls.ring_plugin_bases[ring_plugin] = remove_duplicates(cls.ring_plugin_bases[ring_plugin])
-
-            #if ring_plugin in cls.ring_plugin_bases:
-            #    cls.ring_plugin_bases[ring_plugin].update(ring_plugin_bases)
-            #else:
-            #    cls.ring_plugin_bases[ring_plugin] = set(ring_plugin_bases)
 
             # resolve Media files using the dependency relations we already know
             attrs.setdefault('Media', Media)
