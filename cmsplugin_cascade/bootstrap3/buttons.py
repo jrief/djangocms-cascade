@@ -70,7 +70,7 @@ class BootstrapButtonMixin(IconPluginMixin):
     allow_children = False
     default_css_class = 'btn'
     default_css_attributes = ('button_type', 'button_size', 'button_options', 'quick_float',)
-    ring_plugin = 'ButtonPlugin'
+    ring_plugin = 'ButtonMixin'
 
     button_type = GlossaryField(
         ButtonTypeRenderer.get_widget(),
