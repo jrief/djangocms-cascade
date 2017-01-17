@@ -2,20 +2,13 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.conf.urls import url
 from django.forms import widgets
-from django.http.response import HttpResponse, JsonResponse, HttpResponseNotFound
-from django.template.loader import render_to_string
-from django.utils.html import format_html, format_html_join
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
 
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
-from cmsplugin_cascade.models import IconFont
-from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 
 
 class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
@@ -70,7 +63,7 @@ class HeadingPlugin(CascadePluginBase):
 
     content = GlossaryField(
         widgets.TextInput(attrs={'style': 'width: 350px; font-weight: bold; font-size: 125%;'}),
-         _("Heading content"))
+        label=_("Heading content"))
 
     render_template = 'cascade/generic/heading.html'
 
