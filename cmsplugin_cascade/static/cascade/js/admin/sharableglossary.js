@@ -30,7 +30,7 @@ django.jQuery(function($) {
 			}
 
 			// handle checkbox 'Remember these settings as'
-			$('#id_save_as_identifier').prop('disabled', 'disabled');
+			$('#id_save_as_identifier').prop('disabled', true);
 			$('#id_save_shared_glossary').change(this.toggleSharedSettingsIdentifier);
 		},
 		toggleSharedGlossary: function($option) {
@@ -49,14 +49,14 @@ django.jQuery(function($) {
 						$('input[name=' + name + ']').val(value);
 					}
 				});
-				// disable some fields, since they obtain their values from the shared glossary
+				// disable fields marked as sharable, since they obtained their values from the shared glossary
 				$.each(django.cascade.sharable_fields, function(k, element_id) {
-					$('#' + element_id).prop('disabled', 'disabled');
+					$('#' + element_id).prop('disabled', true);
 				});
 			} else {
 				$save_shared_glossary.show();
 				$.each(django.cascade.sharable_fields, function(k, element_id) {
-					$('#' + element_id).prop('disabled', '');
+					$('#' + element_id).prop('disabled', false);
 				});
 			}
 			if (this.$super) {
@@ -69,9 +69,9 @@ django.jQuery(function($) {
 			var $save_as_identifier = $('#id_save_as_identifier');
 
 			if (evt.target.checked) {
-				$save_as_identifier.prop('disabled', '');
+				$save_as_identifier.prop('disabled', false);
 			} else {
-				$save_as_identifier.prop('disabled', 'disabled');
+				$save_as_identifier.prop('disabled', true);
 				$save_as_identifier.val('');
 			}
 		}

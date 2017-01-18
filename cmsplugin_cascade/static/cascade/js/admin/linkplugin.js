@@ -55,7 +55,7 @@ django.jQuery(function($) {
 				$link_type.val(glossary['link']['type']);
 				try {
 					$cmspage_select.select2("data", {id: glossary['link']['pk'], text: glossary['link']['identifier']});
-					$cmspage_select.select2('enable', false);
+					$cmspage_select.prop('disabled', true);
 				} catch(err) {
 					if (!(err instanceof TypeError))
 						throw err;
@@ -67,7 +67,7 @@ django.jQuery(function($) {
 				try {
 					if (!(err instanceof TypeError))
 						throw err;
-					$cmspage_select.select2('enable', true);
+					$cmspage_select.prop('disabled', false);
 				} catch (err) {
 					if (!(err instanceof TypeError))
 						console.error(err);
