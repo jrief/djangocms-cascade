@@ -62,11 +62,17 @@ class SharableCascadeForm(forms.ModelForm):
     these additional form fields are added during runtime.
     """
     shared_glossary = forms.ModelChoiceField(
-        label=_("Shared Settings"), required=False, queryset=SharedGlossary.objects.all(),
-        widget=SelectSharedGlossary(), empty_label=_("Use individual settings"),
+        label=_("Shared Settings"),
+        required=False,
+        queryset=SharedGlossary.objects.all(),
+        widget=SelectSharedGlossary(),
+        empty_label=_("Use individual settings"),
         help_text=_("Use settings shared with other plugins of this type"))
-    save_shared_glossary = fields.BooleanField(label=_("Remember these settings as:"),
-                                               required=False)
+
+    save_shared_glossary = fields.BooleanField(
+        label=_("Remember these settings as:"),
+        required=False)
+
     save_as_identifier = fields.CharField(label='', required=False)
 
     def __init__(self, *args, **kwargs):
