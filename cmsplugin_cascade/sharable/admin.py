@@ -60,9 +60,15 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         # always False, since a SharedGlossary can only be added by a plugin
         return False
 
-    def change_view(self, request, object_id, form_url='', extra_context={}):
+    def add_view(self, request, form_url='', extra_context=None):
+        raise AssertionError("This method shall never be called")
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
         obj = self.get_object(request, object_id)
-        extra_context['title'] = _("Change %s") % force_text(str(obj.plugin_type))
+        self.plugin_instance = plugin_pool.get_plugin(obj.plugin_type)
+        extra_context = dict(extra_context or {},
+                             title=format_html(_("Change shared settings of {} plugin"), self.plugin_instance.name),
+                             icon_fonts=IconFont.objects.all())
         return super(SharedGlossaryAdmin, self).change_view(request, object_id,
             form_url, extra_context=extra_context)
 
