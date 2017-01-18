@@ -12,7 +12,6 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.models import IconFont
-from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 from .mixins import IconPluginMixin, IconModelMixin
 

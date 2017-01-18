@@ -17,7 +17,6 @@ from cms import __version__ as cms_version
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
-from cmsplugin_cascade.utils import resolve_dependencies
 
 
 class Template(DjangoTemplate):

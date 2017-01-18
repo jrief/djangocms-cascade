@@ -26,7 +26,7 @@ from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
-from .utils import resolve_dependencies, remove_duplicates
+from .utils import remove_duplicates
 
 
 def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):

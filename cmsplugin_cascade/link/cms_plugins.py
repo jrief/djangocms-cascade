@@ -8,7 +8,6 @@ from django.utils.safestring import mark_safe
 
 from cms.plugin_pool import plugin_pool
 
-from cmsplugin_cascade.utils import resolve_dependencies
 from .config import LinkPluginBase, LinkElementMixin, LinkForm
 from .forms import TextLinkFormMixin
 

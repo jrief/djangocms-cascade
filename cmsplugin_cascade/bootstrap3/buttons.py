@@ -14,7 +14,6 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.link.forms import TextLinkFormMixin
 from cmsplugin_cascade.icon.mixins import IconPluginMixin
-from cmsplugin_cascade.utils import resolve_dependencies
 
 
 class ButtonTypeRenderer(RadioFieldRenderer):
