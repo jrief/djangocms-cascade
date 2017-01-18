@@ -38,6 +38,7 @@ Contents:
   installation
   link-plugin
   bootstrap3/grid
+  client-side
   section
   segmentation
   sharable-fields
