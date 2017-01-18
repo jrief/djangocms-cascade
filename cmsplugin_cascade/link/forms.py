@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
 from django.forms import fields
 from django.forms.models import ModelForm
@@ -186,6 +186,8 @@ class LinkForm(ModelForm):
         Fields borrowed by `SharedGlossaryAdmin` to build its temporary change form, only are
         required if they are declared in `sharable_fields`. Otherwise just deactivate them.
         """
+        if 'link_content' not in sharable_fields:
+            cls.base_fields['link_content'].required = False
         if 'link' not in sharable_fields:
             cls.base_fields['link_type'].required = False
 
@@ -194,11 +196,6 @@ class TextLinkFormMixin(object):
     """
     To be used in combination with `LinkForm` for easily accessing the field `link_content`.
     """
-    def clean_link_content(self):
-        if not self.cleaned_data.get('link_content'):
-            raise ValidationError(_("Please set a content for this link"))
-        return self.cleaned_data['link_content']
-
     def clean(self):
         cleaned_data = super(TextLinkFormMixin, self).clean()
         if self.is_valid():

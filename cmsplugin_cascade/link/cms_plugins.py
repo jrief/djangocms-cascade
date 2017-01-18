@@ -29,7 +29,7 @@ class TextLinkPlugin(LinkPluginBase):
         return mark_safe(obj.glossary.get('link_content', ''))
 
     def get_form(self, request, obj=None, **kwargs):
-        link_content = CharField(required=False, label=_("Link Content"),
+        link_content = CharField(required=True, label=_("Link Content"),
             # replace auto-generated id so that CKEditor automatically transfers the text into this input field
             widget=TextInput(attrs={'id': 'id_name'}), help_text=_("Content of Link"))
         Form = type(str('TextLinkForm'), (TextLinkFormMixin, LinkForm.get_form_class(),),  # @UndefinedVariable
