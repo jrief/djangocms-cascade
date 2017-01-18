@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import warnings
+
 from django.core.exceptions import ValidationError
 from django.contrib.staticfiles.finders import get_finders
 from django.utils.translation import ugettext_lazy as _
@@ -59,6 +61,12 @@ def resolve_dependencies(filenames):
     ``Media`` subclasses.
     """
     from cmsplugin_cascade import settings
+
+    warnings.warn(
+        'resolve_dependencies() is deprecated and will be removed.',
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
     def find_file(path):
         for finder in get_finders():
