@@ -28,35 +28,6 @@ CMSPLUGIN_CASCADE.setdefault('alien_plugins', ['TextPlugin'])
 # Use a prefix to symbolize a Cascade plugin in case there are ambiguous names.
 CMSPLUGIN_CASCADE.setdefault('plugin_prefix', None)
 
-CMSPLUGIN_CASCADE['dependencies'] = {
-    'cascade/js/ring.js': 'cascade/js/underscore.js',
-    #'cascade/js/admin/sharableglossary.js': 'cascade/js/ring.js',
-    #'cascade/js/admin/segmentplugin.js': 'cascade/js/ring.js',
-    #'cascade/js/admin/jumbotronplugin.js': 'cascade/js/ring.js',
-    #'cascade/js/admin/iconplugin.js': 'cascade/js/ring.js',
-    #'cascade/js/admin/framediconplugin.js': ('cascade/js/admin/iconplugin.js', 'cascade/js/admin/sharableglossary.js'),
-    #'cascade/js/admin/linkplugin.js': 'cascade/js/admin/sharableglossary.js',
-    #'cascade/js/admin/textlinkplugin.js': 'cascade/js/admin/linkplugin.js',
-    #'cascade/js/admin/imageplugin.js': 'cascade/js/admin/linkplugin.js',
-    #'cascade/js/admin/pictureplugin.js': 'cascade/js/admin/linkplugin.js',
-    #'cascade/js/admin/buttonplugin.js': ('cascade/js/admin/iconplugin.js', 'cascade/js/admin/linkplugin.js'),
-
-    'SharableGlossaryMixin': ('cascade/js/ring.js', 'cascade/js/admin/sharableglossary.js'),
-    'SegmentPlugin': ('cascade/js/ring.js', 'cascade/js/admin/segmentplugin.js'),
-    'LinkPluginBase': ('cascade/js/ring.js', 'cascade/js/admin/linkplugin.js'),
-    'TextLinkPlugin': ('LinkPluginBase', 'cascade/js/admin/textlinkplugin.js'),
-    'IconPlugin': ('cascade/js/ring.js', 'cascade/js/admin/iconplugin.js'),
-    'ButtonMixin': ('cascade/js/ring.js', 'IconPlugin', 'cascade/js/admin/buttonmixin.js'),
-    'ButtonPlugin': ('LinkPluginBase', 'ButtonMixin', 'cascade/js/admin/buttonplugin.js'),
-    'ImagePlugin': ('cascade/js/ring.js', 'cascade/js/admin/imageplugin.js'),
-    'PicturePlugin': ('cascade/js/ring.js', 'cascade/js/admin/pictureplugin.js'),
-    'JumbotronPlugin': ('cascade/js/ring.js', 'cascade/js/admin/jumbotronplugin.js'),
-    'FramedIconPlugin': ('IconPlugin', 'cascade/js/admin/framediconplugin.js'),
-    #'TextIconPlugin': ('cascade/js/ring.js', 'cascade/js/admin/iconplugin.js'),
-}
-"""The editor of some plugins requires JavaScript file. Here we can specify which is a list of dependencies"""
-CMSPLUGIN_CASCADE['dependencies'].update(orig_config.get('dependencies', {}))
-
 if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = {
         'BootstrapButtonPlugin': PluginExtraFieldsConfig(),
