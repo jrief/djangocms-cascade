@@ -57,9 +57,6 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
     ring_plugin_bases = {}
 
     def __new__(cls, name, bases, attrs):
-        class Media:
-            pass
-
         cls.build_glossary_fields(bases, attrs)
         ring_plugin = attrs.get('ring_plugin')
         if ring_plugin:
@@ -71,25 +68,7 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
             cls.ring_plugin_bases[ring_plugin].extend(ring_plugin_bases)
             cls.ring_plugin_bases[ring_plugin] = remove_duplicates(cls.ring_plugin_bases[ring_plugin])
 
-            # resolve Media files using the dependency relations we already know
-            attrs.setdefault('Media', Media)
-            # js = attrs['Media'].js if hasattr(attrs['Media'], 'js') else []
-            dependencies = list(cls.ring_plugin_bases[ring_plugin])
-            dependencies.append(ring_plugin)
-            js = resolve_dependencies(dependencies)
-            if hasattr(attrs['Media'], 'js'):
-                for e in js:
-                    if e in attrs['Media'].js:
-                        attrs['Media'].js.remove(e)
-                attrs['Media'].js.extend(js)
-            else:
-                attrs['Media'].js = js
-
         new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
-        if ring_plugin:
-            print(name, cls.ring_plugin_bases[ring_plugin])
-        if hasattr(new_class, 'Media') and hasattr(new_class.Media, 'js'):
-            print(ring_plugin, new_class.Media.js)
         return new_class
 
     @classmethod
@@ -222,9 +201,6 @@ class TransparentWrapper(object):
             instance = instance.get_parent_instance()
             if instance is not None:
                 parent_classes.add(instance.plugin_type)
-        # print("===== PARENTS =====")
-        # print(cls.__name__)
-        # print(tuple(parent_classes))
         return list(parent_classes)
 
 
@@ -261,7 +237,8 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
     alien_child_classes = False
 
     class Media:
-        css = {'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)}
+        css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
+        js = ['cascade/js/underscore.js', 'cascade/js/ring.js']
 
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
         super(CascadePluginBase, self).__init__(model, admin_site)

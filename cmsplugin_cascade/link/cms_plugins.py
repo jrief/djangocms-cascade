@@ -21,8 +21,8 @@ class TextLinkPlugin(LinkPluginBase):
     fields = ('link_content',) + LinkPluginBase.fields
     parent_classes = ('TextPlugin',)
 
-    #class Media:
-    #    js = resolve_dependencies('cascade/js/admin/textlinkplugin.js')
+    class Media:
+        js = ['cascade/js/admin/textlinkplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):

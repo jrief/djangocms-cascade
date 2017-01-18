@@ -59,8 +59,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
         help_text=_("Evaluation as used in Django's template tags for conditions")
     )
 
-    #class Media:
-    #    js = resolve_dependencies('cascade/js/admin/segmentplugin.js')
+    class Media:
+        js = ['cascade/js/admin/segmentplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):

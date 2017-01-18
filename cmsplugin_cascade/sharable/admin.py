@@ -19,6 +19,9 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     readonly_fields = ('plugin_name',)
     list_filter = ('plugin_type',)
 
+    class Media:
+        css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
+
     def get_fieldsets(self, request, obj=None):
         """Return the fieldsets from associated plugin"""
         fields = []
@@ -71,12 +74,6 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
                              icon_fonts=IconFont.objects.all())
         return super(SharedGlossaryAdmin, self).change_view(request, object_id,
             form_url, extra_context=extra_context)
-
-    @property
-    def media(self):
-        media = super(SharedGlossaryAdmin, self).media
-        media += forms.Media(css={'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)})
-        return media
 
     def used_by(self, obj):
         """

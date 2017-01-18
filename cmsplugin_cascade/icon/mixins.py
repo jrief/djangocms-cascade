@@ -41,6 +41,10 @@ class IconPluginMixin(CascadePluginMixinBase):
     change_form_template = 'cascade/admin/fonticon_plugin_change_form.html'
     ring_plugin = 'IconPlugin'
 
+    class Media:
+        css = {'all': ['cascade/css/admin/iconplugin.css']}
+        js = ['cascade/js/admin/iconplugin.js']
+
     @classmethod
     def get_identifier(cls, instance):
         identifier = super(IconPluginMixin, cls).get_identifier(instance)

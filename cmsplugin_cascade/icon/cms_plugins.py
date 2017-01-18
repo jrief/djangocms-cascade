@@ -78,8 +78,7 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
                             'color', 'background_color', 'border', 'border_radius')
 
     class Media:
-        css = {'all': ('cascade/css/admin/iconplugin.css',)}
-        #js = resolve_dependencies('cascade/js/admin/framediconplugin.js')
+        js = ['cascade/js/admin/framediconplugin.js']
 
     @classmethod
     def get_tag_type(self, instance):
@@ -141,10 +140,6 @@ class TextIconPlugin(IconPluginMixin, CascadePluginBase):
     )
 
     glossary_field_order = ('icon_font', 'symbol')
-
-    class Media:
-        css = {'all': ('cascade/css/admin/iconplugin.css',)}
-        #js = resolve_dependencies('cascade/js/admin/iconplugin.js')
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):

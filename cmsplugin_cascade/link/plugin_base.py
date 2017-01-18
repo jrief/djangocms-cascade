@@ -20,6 +20,9 @@ class LinkPluginBase(CascadePluginBase):
     require_parent = False
     ring_plugin = 'LinkPluginBase'
 
+    class Media:
+        js = ['cascade/js/admin/linkplugin.js']
+
     target = GlossaryField(
         widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
                      ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),

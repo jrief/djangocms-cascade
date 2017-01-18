@@ -116,6 +116,9 @@ class BootstrapButtonMixin(IconPluginMixin):
         label=_("Select Symbol"),
     )
 
+    class Media:
+        js = ['cascade/js/admin/buttonmixin.js']
+
     def render(self, context, instance, placeholder):
         context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
         icon_font = self.get_icon_font(instance)
@@ -141,9 +144,10 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     ring_plugin = 'ButtonPlugin'
 
     class Media:
-        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',
-                       'cascade/css/admin/iconplugin.css',)}
-        #js = resolve_dependencies('cascade/js/admin/buttonplugin.js')
+        css = {'all': ['cascade/css/admin/bootstrap.min.css',
+                       'cascade/css/admin/bootstrap-theme.min.css',
+                       'cascade/css/admin/iconplugin.css']}
+        js = ['cascade/js/admin/buttonplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):
