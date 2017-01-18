@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.forms import widgets
+from django.forms import widgets, MediaDefiningClass
+from django.utils.six import with_metaclass
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import get_template, TemplateDoesNotExist
 
@@ -9,7 +10,7 @@ from cmsplugin_cascade import settings
 from cmsplugin_cascade.fields import GlossaryField
 
 
-class RenderTemplateMixin(object):
+class RenderTemplateMixin(with_metaclass(MediaDefiningClass)):
     """
     If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_templates']``,
     then this ``RenderTemplateMixin`` class is added automatically to its plugin class in order

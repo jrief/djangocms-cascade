@@ -11,6 +11,7 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
+from django.utils.six import with_metaclass
 
 from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.models import SharedGlossary
@@ -81,7 +82,7 @@ class SharableCascadeForm(forms.ModelForm):
         return super(SharableCascadeForm, self).save(commit)
 
 
-class SharableGlossaryMixin(object):
+class SharableGlossaryMixin(with_metaclass(forms.MediaDefiningClass)):
     """
     Every plugin class of type ``CascadePluginBase`` additionally inherits from this mixin,
     if the plugin is marked as sharable.

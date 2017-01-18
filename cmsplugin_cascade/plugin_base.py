@@ -5,7 +5,7 @@ from collections import OrderedDict
 from distutils.version import LooseVersion
 
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
-from django.forms.widgets import media_property
+from django.forms import MediaDefiningClass
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.module_loading import import_string
@@ -53,7 +53,7 @@ def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 
-class CascadePluginMixinMetaclass(type):
+class CascadePluginMixinMetaclass(MediaDefiningClass):
     ring_plugin_bases = {}
 
     def __new__(cls, name, bases, attrs):
@@ -156,13 +156,11 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             not attrs.get('text_enabled')):
             bases = (HidePluginMixin,) + bases
         if name in cls.plugins_with_extra_fields:
-            ExtraFieldsMixin.media = media_property(ExtraFieldsMixin)
             bases = (ExtraFieldsMixin,) + bases
         if name in cls.plugins_with_bookmark:
             bases = (SectionMixin,) + bases
             model_mixins = (SectionModelMixin,) + model_mixins
         if name in cls.plugins_with_sharables:
-            SharableGlossaryMixin.media = media_property(SharableGlossaryMixin)
             bases = (SharableGlossaryMixin,) + bases
             attrs['fields'] = list(attrs.get('fields', ['glossary']))
             attrs['fields'].extend([('save_shared_glossary', 'save_as_identifier'), 'shared_glossary'])
@@ -173,7 +171,6 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             attrs['exclude'].append('shared_glossary')
             base_model = CascadeElement
         if name in cls.plugins_with_extra_render_templates:
-            RenderTemplateMixin.media = media_property(RenderTemplateMixin)
             bases = (RenderTemplateMixin,) + bases
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
