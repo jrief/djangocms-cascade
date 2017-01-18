@@ -2,11 +2,11 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from django import forms
 from django.utils.translation import ugettext as _
-from django.utils.encoding import force_text
+from django.utils.html import format_html
 
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.plugin_base import CascadePluginMixinMetaclass
 from cmsplugin_cascade.widgets import JSONMultiWidget
 from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
@@ -14,7 +14,7 @@ from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
 
 @admin.register(SharedGlossary)
 class SharedGlossaryAdmin(admin.ModelAdmin):
-    change_form_template = 'cascade/admin/change_form.html'
+    change_form_template = 'cascade/admin/sharedglossary_change_form.html'
     list_display = ('identifier', 'plugin_name', 'used_by',)
     readonly_fields = ('plugin_name',)
     list_filter = ('plugin_type',)
@@ -42,12 +42,12 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         the model field `glossary`. The layout, validation and media files for these dynamic fields
         are borrowed from the corresponding plugin.
         """
-        self.plugin_instance = plugin_pool.get_plugin(obj.plugin_type)
         sharable_fields = getattr(self.plugin_instance, 'sharable_fields', [])
         glossary_fields = [f for f in self.plugin_instance.glossary_fields if f.name in sharable_fields]
         kwargs.update(widgets={'glossary': JSONMultiWidget(glossary_fields)}, labels={'glossary': ''})
         try:
-            kwargs.update(form=self.plugin_instance.form)
+            form = self.plugin_instance().get_form(request)
+            kwargs.update(form=form)
         except AttributeError:
             pass
         ModelForm = super(SharedGlossaryAdmin, self).get_form(request, obj, **kwargs)
