@@ -156,7 +156,7 @@ class TextIconPlugin(IconPluginMixin, CascadePluginBase):
         context = {
             'icon_fonts': IconFont.objects.all()
         }
-        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.js', context)
+        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
         return HttpResponse(javascript, content_type='application/javascript')
 
 plugin_pool.register_plugin(TextIconPlugin)
