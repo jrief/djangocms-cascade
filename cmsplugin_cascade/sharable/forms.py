@@ -14,13 +14,18 @@ from django.utils.encoding import force_text
 from django.utils.six import with_metaclass
 
 from cmsplugin_cascade.utils import resolve_dependencies
+from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models import SharedGlossary
 
 
 class SelectSharedGlossary(forms.Select):
     def render_option(self, selected_choices, option_value, option_label):
         if option_value:
-            glossary = self.choices.queryset.get(pk=option_value).glossary
+            shared_instance = self.choices.queryset.get(pk=option_value)
+            plugin_instance = plugin_pool.get_plugin(shared_instance.plugin_type)
+            # use the saved glossary and filter it by fields marked as sharable
+            glossary = dict((key, value) for key, value in shared_instance.glossary.items()
+                            if key in plugin_instance.sharable_fields)
             self._enrich_link(glossary)
             data = format_html(' data-glossary="{0}"', json.dumps(glossary))
         else:
