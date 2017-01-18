@@ -3,12 +3,13 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.apps import apps
 from django.forms import fields
 from django.forms.models import ModelForm
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
+
 from cms.models import Page
 from cmsplugin_cascade.models import CascadePage
 from cmsplugin_cascade.utils import validate_link
@@ -132,18 +133,22 @@ class LinkForm(ModelForm):
                 'pk': self.cleaned_data['cms_page'],
             }
             validate_link(self.cleaned_data['link_data'])
+        return self.cleaned_data['cms_page']
 
     def clean_section(self):
         if self.cleaned_data.get('link_type') == 'cmspage':
             self.cleaned_data['link_data']['section'] = self.cleaned_data['section']
+        return self.cleaned_data['section']
 
     def clean_ext_url(self):
         if self.cleaned_data.get('link_type') == 'exturl':
             self.cleaned_data['link_data'] = {'type': 'exturl', 'url': self.cleaned_data['ext_url']}
+        return self.cleaned_data['ext_url']
 
     def clean_mail_to(self):
         if self.cleaned_data.get('link_type') == 'email':
             self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
+        return self.cleaned_data['mail_to']
 
     def set_initial_none(self, initial):
         pass
@@ -189,6 +194,11 @@ class TextLinkFormMixin(object):
     """
     To be used in combination with `LinkForm` for easily accessing the field `link_content`.
     """
+    def clean_link_content(self):
+        if not self.cleaned_data.get('link_content'):
+            raise ValidationError(_("Please set a content for this link"))
+        return self.cleaned_data['link_content']
+
     def clean(self):
         cleaned_data = super(TextLinkFormMixin, self).clean()
         if self.is_valid():
