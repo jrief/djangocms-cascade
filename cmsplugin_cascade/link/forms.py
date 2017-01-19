@@ -186,9 +186,9 @@ class LinkForm(ModelForm):
         Fields borrowed by `SharedGlossaryAdmin` to build its temporary change form, only are
         required if they are declared in `sharable_fields`. Otherwise just deactivate them.
         """
-        if 'link_content' not in sharable_fields:
+        if 'link_content' in cls.base_fields and 'link_content' not in sharable_fields:
             cls.base_fields['link_content'].required = False
-        if 'link' not in sharable_fields:
+        if 'link_type' in cls.base_fields and 'link' not in sharable_fields:
             cls.base_fields['link_type'].required = False
 
 
