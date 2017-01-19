@@ -1,1 +1,3 @@
-<span class="badge">{{ instance.glossary.content }}</span>
+{% load sekizai_tags sass_tags %}
+{% addtoblock "css" %}<link rel="stylesheet" href="{% sass_src 'bs3demo/css/badge.scss' %}" type="text/css" />{% endaddtoblock %}
+<div class="badge-ribbon">{{ instance.glossary.content }}</div>
