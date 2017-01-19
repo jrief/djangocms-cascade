@@ -90,14 +90,13 @@ class JSONMultiWidget(widgets.MultiWidget):
 
 
 class NumberInputWidget(widgets.NumberInput):
-    validation_pattern = re.compile('^-?\d+$')
-    required = True
+    validation_pattern = re.compile('^-?\d+(\.\d{1,2})?$')
     required_message = _("In '%(label)s': This field is required.")
-    invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number.")
+    invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid decimal number.")
 
     def validate(self, value):
-        if not self.validation_pattern.match(value):
-            raise ValidationError(self.validation_message, code='invalid', params={'value': value})
+        if value and not self.validation_pattern.match(value):
+            raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
 
 
 class CascadingSizeWidgetMixin(object):
