@@ -6,8 +6,11 @@ from collections import OrderedDict
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
+
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget, SelectOverflowWidget
+from cmsplugin_cascade.widgets import (
+    NumberInputWidget, CascadingSizeWidget, MultipleCascadingSizeWidget, ColorPickerWidget,
+    SelectOverflowWidget)
 
 
 CASCADE_PLUGINS = getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', (
@@ -32,16 +35,27 @@ if 'cmsplugin_cascade.extra_fields' in settings.INSTALLED_APPS:
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'] = {
         'BootstrapButtonPlugin': PluginExtraFieldsConfig(),
         'BootstrapRowPlugin': PluginExtraFieldsConfig(),
-        'BootstrapJumbotronPlugin': PluginExtraFieldsConfig(inline_styles={
-            'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
-            'extra_units:Paddings': 'px,em'}),
+        'BootstrapJumbotronPlugin': PluginExtraFieldsConfig(
+            inline_styles={
+                'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
+                'extra_units:Paddings': 'px,em'
+            }
+        ),
         'SimpleWrapperPlugin': PluginExtraFieldsConfig(),
-        'HeadingPlugin': PluginExtraFieldsConfig(inline_styles={
-            'extra_fields:Paddings': ['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
-            'extra_units:Paddings': 'px,em'}, allow_override=False),
-        'HorizontalRulePlugin': PluginExtraFieldsConfig(inline_styles={
-            'extra_fields:Paddings': ['margin-top', 'margin-bottom'],
-            'extra_units:Paddings': 'px,em'}, allow_override=False),
+        'HeadingPlugin': PluginExtraFieldsConfig(
+            inline_styles={
+                'extra_fields:Margins': ['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
+                'extra_units:Margins': 'px,em'
+            },
+            allow_override=False
+        ),
+        'HorizontalRulePlugin': PluginExtraFieldsConfig(
+            inline_styles={
+                'extra_fields:Paddings': ['margin-top', 'margin-bottom'],
+                'extra_units:Paddings': 'px,em'
+            },
+            allow_override=False
+        ),
     }
     CMSPLUGIN_CASCADE['plugins_with_extra_fields'].update(
         orig_config.get('plugins_with_extra_fields', {}))
@@ -86,6 +100,7 @@ CMSPLUGIN_CASCADE['extra_inline_styles'] = OrderedDict((
     ('Widths', (('min-width', 'width', 'max-width',), MultipleCascadingSizeWidget)),
     ('Heights', (('min-height', 'height', 'max-height',), MultipleCascadingSizeWidget)),
     ('Font Size', (('font-size',), MultipleCascadingSizeWidget)),
+    ('Line Height', (('line-height',), NumberInputWidget)),
     ('Colors', (('color', 'background-color',), ColorPickerWidget)),
     ('Overflow', (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget)),
 ))

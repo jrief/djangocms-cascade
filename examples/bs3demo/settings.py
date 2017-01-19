@@ -184,8 +184,8 @@ if sys.argv[1] == 'test':
     )
 else:
     CMS_TEMPLATES = (
-         ('main.html', "Main Content"),
-         ('wrapped.html', "Wrapped Bootstrap Column"),
+         ('bs3demo/main.html', "Main Content"),
+         ('bs3demo/wrapped.html', "Wrapped Bootstrap Column"),
     )
 
 CMS_SEO_FIELDS = True
@@ -213,11 +213,24 @@ CMSPLUGIN_CASCADE = {
         'BootstrapButtonPlugin': ('button_type', 'button_size', 'button_options', 'icon_font',),
         'TextLinkPlugin': ('link', 'target',),
     },
-    'plugins_with_extra_fields': {
-        'BootstrapRowPlugin': PluginExtraFieldsConfig(inline_styles={
-            'extra_fields:Margins': ['margin-top', 'margin-bottom'],
-            'extra_units:Margins': 'px,em'}),
-    },
+    # 'plugins_with_extra_fields': {
+    #     'BootstrapRowPlugin': PluginExtraFieldsConfig(
+    #         inline_styles={
+    #             'extra_fields:Margins': ['margin-top', 'margin-bottom'],
+    #             'extra_units:Margins': 'px,em',
+    #         }
+    #     ),
+    #     'BootstrapColumnPlugin': PluginExtraFieldsConfig(
+    #         css_classes={'multiple': True, 'class_names': 'white'},
+    #         inline_styles={
+    #             'extra_fields:Height': ['height'],
+    #             'extra_units:Height': 'px',
+    #             'extra_fields:Paddings': ['padding-top', 'padding-right', 'padding-bottom', 'padding-left'],
+    #             'extra_units:Paddings': 'px,em',
+    #         }
+    #     ),
+    # },
+    'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
     'bootstrap3': {},
     'allow_plugin_hiding': True,
 }
