@@ -25,7 +25,7 @@ class SectionForm(models.ModelForm):
         Return None if instance is not yet associated with a page.
         """
         try:
-            element_ids = instance.page.cascadepage.glossary.get('element_ids', {})
+            element_ids = instance.placeholder.page.cascadepage.glossary.get('element_ids', {})
         except (AttributeError, ObjectDoesNotExist):
             pass
         else:
@@ -63,7 +63,7 @@ class SectionMixin(object):
 
     def save_model(self, request, obj, form, change):
         super(SectionMixin, self).save_model(request, obj, form, change)
-        CascadePage.assure_relation(obj.page)
+        CascadePage.assure_relation(obj.placeholder.page)
         element_id = obj.glossary['element_id']
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness
@@ -75,6 +75,6 @@ class SectionMixin(object):
                 obj.glossary['element_id'] = element_id
                 obj.save()
 
-        obj.page.cascadepage.glossary.setdefault('element_ids', {})
-        obj.page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id
-        obj.page.cascadepage.save()
+        obj.placeholder.page.cascadepage.glossary.setdefault('element_ids', {})
+        obj.placeholder.page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id
+        obj.placeholder.page.cascadepage.save()
