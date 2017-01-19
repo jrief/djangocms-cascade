@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import os, shutil
 from collections import OrderedDict
+
 from django.conf import settings
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible, force_text
@@ -10,8 +11,10 @@ from django.utils.functional import cached_property
 from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
+
 from jsonfield.fields import JSONField
 from filer.fields.file import FilerFileField
+
 from cms.extensions import PageExtension
 from cms.extensions.extension_pool import extension_pool
 from cms.plugin_pool import plugin_pool
@@ -34,6 +37,16 @@ class SharedGlossary(models.Model):
 
     def __str__(self):
         return self.identifier
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        """
+        Only entries which are declared as sharable, shall be stored in the sharable glossary.
+        """
+        plugin_instance = plugin_pool.get_plugin(self.plugin_type)
+        glossary = dict((key, value) for key, value in self.glossary.items()
+                        if key in plugin_instance.sharable_fields)
+        self.glossary = glossary
+        super(SharedGlossary, self).save(force_insert, force_update, using, update_fields)
 
 
 class CascadeElement(CascadeModelBase):
