@@ -13,6 +13,7 @@ djangocms-text-ckeditor==3.3.1
 easy-thumbnails==2.3
 html5lib==0.9999999
 jsonfield==1.0.3
+lxml==3.5.0
 pluggy==0.3.1
 py==1.4.30
 pytest==2.9.2

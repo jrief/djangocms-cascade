@@ -230,11 +230,9 @@ def get_picture_elements(context, instance):
                 media_queries = []
             if high_res:
                 size = (size[0] * 2, size[1] * 2)
-                media_queries.append('(min-resolution: 1.5dppx)')
-                #media_queries.append('(min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)')
+                media_queries.append('(min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)')
             elif True in resolutions:
-                media_queries.append('(max-resolution: 1.5dppx)')
-                #media_queries.append('(max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)')
+                media_queries.append('(max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)')
             media = ' and '.join(media_queries)
             elements.append({'tag': 'source', 'size': size, 'zoom': zoom, 'crop': crop,
                     'upscale': upscale, 'subject_location': subject_location, 'media': media})
