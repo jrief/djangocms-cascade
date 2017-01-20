@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os, tempfile, shutil
+import os
 from bs4 import BeautifulSoup
 import json
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test import override_settings
 from django.test.client import Client
 from django.core.urlresolvers import reverse, resolve
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -25,7 +23,7 @@ from .test_base import CascadeTestCase
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
-@override_settings()
+
 class IconFontTestCase(CascadeTestCase):
     client = Client()
 
@@ -33,12 +31,6 @@ class IconFontTestCase(CascadeTestCase):
         super(IconFontTestCase, self).setUp()
         UserModel = get_user_model()
         self.admin_user = UserModel.objects.get(username='admin')
-        self.workdir = tempfile.mkdtemp()
-        settings.MEDIA_ROOT = os.path.join(self.workdir, 'media')
-        settings.CMSPLUGIN_CASCADE['icon_font_root'] = os.path.join(self.workdir, 'icon_fonts')
-
-    def tearDown(self):
-        shutil.rmtree(self.workdir, ignore_errors=True)
 
     def test_add_font(self):
         with self.login_user_context(self.admin_user):
@@ -51,7 +43,7 @@ class IconFontTestCase(CascadeTestCase):
             request.FILES.update(file=uploaded_file)
             response = ajax_upload(request)
             self.assertEqual(response.status_code, 200)
-            content = json.loads(response.content)
+            content = json.loads(response.content.decode('utf-8'))
             self.assertDictContainsSubset({'label': 'fontello-b504201f.zip'}, content)
 
             # save the form and submit the remaining fields

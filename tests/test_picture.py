@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
-import re
+import os, re
 from bs4 import BeautifulSoup
 from django.core.files import File as DjangoFile
 from django.http import QueryDict
+
 from filer.models.foldermodels import Folder
 from filer.models.imagemodels import Image
+
 from cms.api import add_plugin
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.bootstrap3 import settings
