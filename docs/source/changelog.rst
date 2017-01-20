@@ -8,7 +8,7 @@ Release History
 ------
 * Added compatibility for Django version 1.10.
 * Added compatibility for django-CMS version 3.4.
-* Added compatibility for djangocms-text-ckeditor-3.2.
+* Added compatibility for djangocms-text-ckeditor-3.4.
 * In the ``CarouselSlide`` plugin, caption is added as a child ``TextPlugin`` instead of using the
   glossary. Currently the migration of ``TextLinkPlugins`` inside this caption field does not work
   properly. Please create an issue, if you really need it.
@@ -19,6 +19,20 @@ Release History
   ``exclude = ['shared_glossary']`` is added.
 * Instead of handling ring.js plugin inheritance through ``get_ring_bases()``, Cascade plugins
   just have to add ``ring_plugin = '...'`` to their class declaration.
+* Function ``cmsplugin_cascade.utils.resolve_dependencies`` is deprecated, since Javascript
+  dependencies now are handled via their natural inheritance relation.
+* The configuration option ``settings.CMSPLUGIN_CASCADE['dependencies']`` has been removed.
+* Added method ``save()`` to model ``SharedGlossary``, which filters the glossary to be stored to
+  only those fields marked as sharable.
+* Accessing the CMS page via ``plugin_instance.page`` is deprecated and has been replaced by
+  invocations to ``plugin_instance.placeholder.page``.
+* Removed directory ``static/cascade/css/fonts/glyphicons-halflings``, since they are available
+  through the Bootstrap npm packages.
+* All Javascript files accessing a property ``disabled``, now use the proper jQuery function
+  intended for it.
+* Added inrerface to upload fonts and use them as framed icons, text icons or button
+  decorators.
+
 
 0.11.1
 ------
