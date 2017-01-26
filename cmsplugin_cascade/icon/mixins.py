@@ -95,3 +95,10 @@ class IconPluginMixin(CascadePluginMixinBase):
             except IconFont.DoesNotExist:
                 instance._cached_icon_font = None
         return instance._cached_icon_font
+
+    def render(self, context, instance, placeholder):
+        context['instance'] = instance
+        icon_font = self.get_icon_font(instance)
+        if icon_font:
+            context['stylesheet_url'] = icon_font.get_stylesheet_url()
+        return context

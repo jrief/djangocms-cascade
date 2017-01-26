@@ -5,8 +5,9 @@ from django.conf.urls import url
 from django.forms import widgets
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
@@ -99,18 +100,11 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
         inline_styles['font-size'] = instance.glossary.get('font_size', '1em')
         return inline_styles
 
-    def render(self, context, instance, placeholder):
-        context['instance'] = instance
-        icon_font = self.get_icon_font(instance)
-        if icon_font:
-            context['stylesheet_url'] = icon_font.get_stylesheet_url()
-        return context
-
 plugin_pool.register_plugin(FramedIconPlugin)
 
 
 class TextIconModelMixin(object):
-    @property
+    @cached_property
     def icon_font_class(self):
         icon_font = self.plugin_class.get_icon_font(self)
         symbol = self.glossary.get('symbol')
