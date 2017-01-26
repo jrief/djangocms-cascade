@@ -33,7 +33,9 @@ django.jQuery(function($) {
 			$("<link/>", link).appendTo("head");
 
 			$('#id_iconfont_families').remove();
-			$.get(django.cascade.fetch_fonticons_url + $selectIconFont.val()).done(this.renderIcons);
+			if ($selectIconFont.val()) {
+				$.get(django.cascade.fetch_fonticons_url + $selectIconFont.val()).done(this.renderIcons);
+			}
 		},
 		selectIcon: function() {
 			$box.find('ul.font-family li.selected').removeClass('selected');
