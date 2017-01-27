@@ -28,6 +28,10 @@ from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
 
+mark_safe_lazy = lazy(mark_safe, six.text_type)
+
+fake_proxy_models = {}
+
 
 def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
     """
@@ -35,22 +39,14 @@ def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
     """
     class Meta:
         proxy = True
-        # using a dummy name prevents `makemigrations` to create a model migration
-        app_label = 'cascade_dummy'
+        app_label = 'cmsplugin_cascade'
 
     name = str(name + 'Model')
     bases = model_mixins + (base_model,)
-    attrs = {} if attrs is None else dict(attrs)
-    try:
-        attrs.update(Meta=Meta, __module__=module)
-        Model = type(name, bases, attrs)
-    except RuntimeError:
-        Meta.app_label = 'cascade_dummy_dummy'
-        attrs.update(Meta=Meta, __module__=module)
-        Model = type(name, bases, attrs)
+    attrs = dict(attrs or {}, Meta=Meta, __module__=module)
+    Model = type(name, bases, attrs)
+    fake_proxy_models[name] = bases
     return Model
-
-mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 
 class CascadePluginMixinMetaclass(MediaDefiningClass):
