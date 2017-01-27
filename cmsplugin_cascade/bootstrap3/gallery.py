@@ -8,14 +8,16 @@ from django.contrib.admin import StackedInline
 from django.contrib.admin.sites import site
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
+
 from cms.plugin_pool import plugin_pool
 from cms.utils.compat.dj import is_installed
+
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import SortableInlineCascadeElement
 from cmsplugin_cascade.mixins import ImagePropertyMixin
-from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from . import utils
