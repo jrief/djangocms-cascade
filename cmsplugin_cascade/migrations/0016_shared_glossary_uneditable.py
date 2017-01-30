@@ -18,4 +18,8 @@ class Migration(migrations.Migration):
             name='shared_glossary',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='cmsplugin_cascade.SharedGlossary'),
         ),
+        migrations.AlterModelOptions(
+            name='cascadeelement',
+            options={'verbose_name': 'Element'},
+        ),
     ]

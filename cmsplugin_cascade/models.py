@@ -57,6 +57,7 @@ class CascadeElement(CascadeModelBase):
 
     class Meta:
         db_table = 'cmsplugin_cascade_element'
+        verbose_name = _("Element")
 
     def copy_relations(self, oldinstance):
         def init_element(inline_element):
