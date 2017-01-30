@@ -30,8 +30,11 @@ Release History
   through the Bootstrap npm packages.
 * All Javascript files accessing a property ``disabled``, now use the proper jQuery function
   intended for it.
-* Added inrerface to upload fonts and use them as framed icons, text icons or button
+* Added interface to upload fonts and use them as framed icons, text icons or button
   decorators.
+* The permission system now is fine grained. Administrators can give their staff users
+  add/change/delete permissions to each of the many Cascade plugins. When adding new plugins, this
+  does not even require a database migration.
 
 
 0.11.1

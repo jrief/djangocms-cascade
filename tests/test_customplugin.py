@@ -15,4 +15,4 @@ class CustomPluginTest(TestCase):
         plugin_pool.register_plugin(CustomPlugin)
 
     def test_proxy_model_has_correct_app_label(self):
-        self.assertEqual(CustomPlugin.model._meta.app_label, 'cascade_dummy')
+        self.assertEqual(CustomPlugin.model._meta.app_label, 'cmsplugin_cascade')
