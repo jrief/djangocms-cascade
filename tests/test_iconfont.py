@@ -96,8 +96,9 @@ class IconFontTestCase(CascadeTestCase):
             soup = BeautifulSoup(html, 'lxml')
 
             # look for the icon symbol
-            span = soup.find('span', class_='icon-emo-wink')
-            self.assertEquals(span.attrs['style'], 'color:#88258e;display:inline-block;')
+            style = soup.find('span', class_='icon-emo-wink').attrs['style'].split(';')
+            self.assertIn('color:#88258e', style)
+            self.assertIn('display:inline-block', style)
 
             # look for the CSS file
             response = self.client.get(container_model.placeholder.page.get_absolute_url() + '?edit')
