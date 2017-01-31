@@ -38,6 +38,11 @@ Contents:
   installation
   link-plugin
   bootstrap3/grid
+  bootstrap3/gallery
+  bootstrap3/image-picture
+  bootstrap3/navbar
+  bootstrap3/other-components
+  icon-fonts
   client-side
   section
   segmentation

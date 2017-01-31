@@ -5,7 +5,7 @@ Release History
 ===============
 
 0.12.0.dev0
-------
+-----------
 * Added compatibility for Django version 1.10.
 * Added compatibility for django-CMS version 3.4.
 * Added compatibility for djangocms-text-ckeditor-3.4.

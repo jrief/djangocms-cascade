@@ -60,7 +60,7 @@ this special setting to our configuration:
 Uploading the Font
 ==================
 
-In order to start with an external font icon, chose one or more icons and/or whole font families
+In order to start with an external font icon, choose one or more icons and/or whole font families
 from the Fontello_ website and download the generated webfont file to a local folder.
 
 In Django's admin backend, change into ``Start › django CMS Cascade › Uploaded Icon Fonts`` and
@@ -78,9 +78,13 @@ possible symbols appears. Choose the desired symbol, its size and color. Optiona
 background color, the relative position in respect of its wrapping element and a border width with
 style and color. After saving the form, that element should appear inside the chosen container.
 
+It is good practice to only use one uploaded icon font per site. If you forgot a symbol, go back
+to the Fontello_ site and recreate your icon font. Then replace that icon font by uploading it
+again.
+
 .. warning:: If you use more than one font on the same page, please assure that Fontello assigns
-	unique glyph codes to all of the symbols. Otherwise, if the glyph codes collapse, they might
-	be overridden and the visual result is not what you expect.
+	unique glyph codes to all of the symbols – this usually is not the case. Otherwise, the
+	glyph codes will collapse, and the visual result is not what you expect.
 
 
 Shared Settings

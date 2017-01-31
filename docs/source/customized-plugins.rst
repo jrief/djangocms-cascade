@@ -1,4 +1,4 @@
-.. customized-plugins:
+.. _customized-plugins:
 
 =================
 Extending Cascade
@@ -6,8 +6,8 @@ Extending Cascade
 
 All Cascade plugins are derived from the same base class ``CascadeModelBase``, which stores all its
 model fields inside a dictionary, serialized as JSON string in the database. This makes it much
-easier to extend the Cascade eco-system, since no database migration is required when adding a new,
-or extending plugins from this project.
+easier to extend the Cascade eco-system, since no database migration [#migration]_ is required when
+adding a new, or extending plugins from this project.
 
 The database model ``CascadeModelBase`` stores all the plugin settings in a single JSON field named
 ``glossary``. This in practice behaves like a Django context, but in order to avoid confusion with
@@ -164,6 +164,13 @@ Needless to say, that you can't add any extra database fields to the class named
 ``MySpecialPropertyMixin``, since the corresponding model class is marked as proxy.
 
 
+Javascript
+----------
+
+In case your customized plugin requires some Javascript code to improve the editor's experience,
+please refer to the section :ref:`client-side`.
+
+
 *Transparent* Plugins
 =====================
 
@@ -282,3 +289,17 @@ Deprecated attributes
 
 .. _CMSPluginBase attributes: https://django-cms.readthedocs.org/en/develop/extending_cms/custom_plugins.html#plugin-attribute-reference
 .. _proxy model: https://docs.djangoproject.com/en/dev/topics/db/models/#proxy-models
+
+
+Plugin Permissions
+==================
+
+To register (or unregister) a plugin, simply invoke ``./manage.py migrate cmsplugin_cascade``. This
+will add (or remove) the content type and the model permissions. We therefore can control in a very
+fine grained manner, which user or group is allowed to edit which types of plugins.
+
+.. rubric:: Footnotes
+
+.. [#migration] After having created a customized plugin, it must be registered in Django's
+		permission system, otherwise only administrators, but no staff users, are allowed to add,
+		change or delete them.

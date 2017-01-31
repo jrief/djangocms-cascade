@@ -43,7 +43,7 @@ The Python class of our custom Cascade plugin then might look like:
 	    class Media:
 	        js = ['mycustomproject/js/admin/mycustomplugin.js']
 
-whereas it's Javascript counterpart may look like:
+whereas it's Javascript counterpart might look like:
 
 .. code-block:: javascript
 	:caption: mycustomproject/js/admin/mycustomplugin.js
@@ -80,7 +80,7 @@ replication the code required to handle the link input fields, we can rewrite ou
 	    ... class attributes as in the previous example
 
 Since ``LinkPluginBase`` provides it's own ``ring_plugin`` attribute, the corresponding Javascript
-code also must inherit from that base class. Cascade handles this for you automatically, if the
+code *also must inherit* from that base class. Cascade handles this for you automatically, if the
 Javascript code of the plugin is structured as:
 
 .. code-block:: javascript

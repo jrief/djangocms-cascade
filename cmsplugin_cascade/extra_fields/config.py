@@ -14,8 +14,8 @@ class PluginExtraFieldsConfig(object):
     :param allow_id_tag: If ``True``, allows to set the ``id`` attribute in HTML elements.
 
     :param css_classes: A dictionary containing:
-        ``class_names`` a comma separated string of allowed class names.
-        ``multiple`` a Boolean indicating if more multiple classes are allowed concurrently.
+    ``class_names`` a comma separated string of allowed class names.
+    ``multiple`` a Boolean indicating if more multiple classes are allowed concurrently.
 
     :param inline_styles: A dictionary containing:
 
