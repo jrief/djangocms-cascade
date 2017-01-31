@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models.signals import pre_migrate, post_migrate
+from django.db.utils import DatabaseError
 from django.utils.text import force_text
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,18 +32,21 @@ class CascadeConfig(AppConfig):
         Iterate over contenttypes and remove those not in proxy models
         """
         ContentType = apps.get_model('contenttypes', 'ContentType')
-
-        exclude = sender.get_proxy_models().keys()
-        for ctype in ContentType.objects.filter(app_label=sender.label).exclude(model__in=exclude).all():
-            model = ctype.model_class()
-            if model is None:
-                sender.revoke_permissions(ctype)
-                ContentType.objects.get(app_label=sender.label, model=ctype).delete()
+        try:
+            queryset = ContentType.objects.filter(app_label=sender.label)
+            for ctype in queryset.exclude(model__in=sender.get_proxy_models().keys()):
+                model = ctype.model_class()
+                if model is None:
+                    sender.revoke_permissions(ctype)
+                    ContentType.objects.get(app_label=sender.label, model=ctype).delete()
+        except DatabaseError:
+            return
 
     @classmethod
     def post_migrate(cls, sender=None, **kwargs):
         """
-        Iterate over fake_proxy_models and add contenttypes and permissions for missing proxy models
+        Iterate over fake_proxy_models and add contenttypes and permissions for missing proxy
+        models, if this has not been done by Django yet
         """
         ContentType = apps.get_model('contenttypes', 'ContentType')
 
