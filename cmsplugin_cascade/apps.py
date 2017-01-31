@@ -5,7 +5,7 @@ from django.apps import AppConfig, apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
-from django.db.models.signals import post_migrate
+from django.db.models.signals import pre_migrate, post_migrate
 from django.utils.text import force_text
 from django.utils.translation import ugettext_lazy as _
 
@@ -22,30 +22,44 @@ class CascadeConfig(AppConfig):
                 msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config'))`"
                 raise ImproperlyConfigured(msg)
 
-        post_migrate.connect(CascadeConfig.set_permissions, sender=self)
+        pre_migrate.connect(self.__class__.pre_migrate, sender=self)
+        post_migrate.connect(self.__class__.post_migrate, sender=self)
 
     @classmethod
-    def set_permissions(cls, sender=None, **kwargs):
-        from cmsplugin_cascade.plugin_base import fake_proxy_models
-
+    def pre_migrate(cls, sender=None, **kwargs):
+        """
+        Iterate over contenttypes and remove those not in proxy models
+        """
         ContentType = apps.get_model('contenttypes', 'ContentType')
 
-        # iterate over fake_proxy_models and add contenttypes and permissions for missing proxy models
-        proxy_model_names = []
-        for model_name in fake_proxy_models.keys():
-            proxy_model = sender.get_model(model_name)
-            model_name = proxy_model._meta.model_name
-            proxy_model_names.append(model_name)
-            ctype, created = ContentType.objects.get_or_create(app_label=sender.label, model=model_name)
-            if created:
-                sender.grant_permissions(proxy_model)
-
-        # iterate over contenttypes and remove those not in proxy models
-        for ctype in ContentType.objects.filter(app_label=sender.label).exclude(model__in=proxy_model_names).all():
+        exclude = sender.get_proxy_models().keys()
+        for ctype in ContentType.objects.filter(app_label=sender.label).exclude(model__in=exclude).all():
             model = ctype.model_class()
             if model is None:
                 sender.revoke_permissions(ctype)
                 ContentType.objects.get(app_label=sender.label, model=ctype).delete()
+
+    @classmethod
+    def post_migrate(cls, sender=None, **kwargs):
+        """
+        Iterate over fake_proxy_models and add contenttypes and permissions for missing proxy models
+        """
+        ContentType = apps.get_model('contenttypes', 'ContentType')
+
+        for model_name, proxy_model in sender.get_proxy_models().items():
+            ctype, created = ContentType.objects.get_or_create(app_label=sender.label, model=model_name)
+            if created:
+                sender.grant_permissions(proxy_model)
+
+    def get_proxy_models(self):
+        from cmsplugin_cascade.plugin_base import fake_proxy_models
+
+        proxy_models = {}
+        for model_name in fake_proxy_models.keys():
+            proxy_model = self.get_model(model_name)
+            model_name = proxy_model._meta.model_name  # the model_name in lowercase normally
+            proxy_models[model_name] = proxy_model
+        return proxy_models
 
     def grant_permissions(self, proxy_model):
         """
