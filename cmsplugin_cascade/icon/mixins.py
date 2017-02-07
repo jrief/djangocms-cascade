@@ -91,7 +91,7 @@ class IconPluginMixin(CascadePluginMixinBase):
     def get_icon_font(self, instance):
         if not hasattr(instance, '_cached_icon_font'):
             try:
-                instance._cached_icon_font = IconFont.objects.get(id=instance.glossary.get('icon_font'))
+                instance._cached_icon_font = IconFont.objects.get(id=instance.glossary.get('icon_font') or 0)
             except IconFont.DoesNotExist:
                 instance._cached_icon_font = None
         return instance._cached_icon_font
