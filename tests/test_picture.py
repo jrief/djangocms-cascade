@@ -99,13 +99,13 @@ class PicturePluginTest(CascadeTestCase):
         self.assertTrue('demo_image.png__720x240_q85_crop_subsampling-2.jpg' in soup.img['src'])
         sources = dict((s['media'], s['srcset']) for s in soup.picture.find_all('source'))
 
-        self.assertTrue('demo_image.png__720x120_q85_crop_subsampling-2.jpg' in sources['(max-width: 768px) and (max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__1440x240_q85_crop_subsampling-2.jpg' in sources['(max-width: 768px) and (min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__345x76_q85_crop_subsampling-2.jpg' in sources['(min-width: 768px) and (max-width: 992px) and (max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__690x152_q85_crop_subsampling-2.jpg' in sources['(min-width: 768px) and (max-width: 992px) and (min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__293x73_q85_crop_subsampling-2.jpg' in sources['(min-width: 992px) and (max-width: 1200px) and (max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__586x146_q85_crop_subsampling-2.jpg' in sources['(min-width: 992px) and (max-width: 1200px) and (min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)'])
+        self.assertTrue('demo_image.png__720x120_q85_crop_subsampling-2.jpg 1x' in sources['(max-width: 768px)'])
+        self.assertTrue('demo_image.png__1440x240_q85_crop_subsampling-2.jpg 2x' in sources['(max-width: 768px)'])
+        self.assertTrue('demo_image.png__345x76_q85_crop_subsampling-2.jpg 1x' in sources['(min-width: 768px) and (max-width: 992px)'])
+        self.assertTrue('demo_image.png__690x152_q85_crop_subsampling-2.jpg 2x' in sources['(min-width: 768px) and (max-width: 992px)'])
+        self.assertTrue('demo_image.png__293x73_q85_crop_subsampling-2.jpg 1x' in sources['(min-width: 992px) and (max-width: 1200px)'])
+        self.assertTrue('demo_image.png__586x146_q85_crop_subsampling-2.jpg 2x' in sources['(min-width: 992px) and (max-width: 1200px)'])
 
         # Due to an different round implimentation in python3 height can vary by 1 to 2 pixels
-        self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.jpg$', sources['(min-width: 1200px) and (max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)'])))
-        self.assertTrue(bool(re.search(r'demo_image.png__524x17\d_q85_crop_subsampling-2.jpg$', sources['(min-width: 1200px) and (min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)'])))
+        self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.jpg\s1x', sources['(min-width: 1200px)'])))
+        self.assertTrue(bool(re.search(r'demo_image.png__524x17\d_q85_crop_subsampling-2.jpg\s2x', sources['(min-width: 1200px)'])))

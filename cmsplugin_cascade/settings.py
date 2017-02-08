@@ -126,3 +126,7 @@ Useful to temporarily deactivate plugins, instead of removing them.
 # Folder where extracted icon fonts are stored.
 CMSPLUGIN_CASCADE.setdefault('icon_font_root',
                              os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'icon_fonts')))
+
+CSS_PREFIXES = {
+    'image_set': ['-webkit-image-set', '-moz-image-set', '-o-image-set', '-ms-image-set', 'image-set'],
+}

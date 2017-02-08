@@ -5,7 +5,10 @@ from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+
 from cms.plugin_pool import plugin_pool
+
+from cmsplugin_cascade import settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget
@@ -181,6 +184,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             'instance': instance,
             'placeholder': placeholder,
             'elements': [e for e in elements if 'media' in e] if elements else [],
+            'CSS_PREFIXES': settings.CSS_PREFIXES,
         })
         return super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
 

@@ -191,57 +191,55 @@ def get_picture_elements(context, instance):
     max_width = 0
     max_zoom = 0
     elements = []
-    resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
-    for high_res in resolutions:
-        for bp in complete_glossary['breakpoints']:
-            try:
-                width = float(complete_glossary['container_max_widths'][bp])
-            except KeyError:
-                width = 0
-            max_width = max(max_width, round(width))
-            size = None
-            try:
-                image_height = _parse_responsive_length(instance.glossary['responsive_heights'][bp])
-            except KeyError:
-                image_height = (None, None)
-            if image_height[0]:  # height was given in px
-                size = (int(width), image_height[0])
-            elif image_height[1]:  # height was given in %
-                size = (int(width), int(round(width * aspect_ratio * image_height[1])))
-            elif bp in container_max_heights:
-                container_height = _parse_responsive_length(container_max_heights[bp])
-                if container_height[0]:
-                    size = (int(width), container_height[0])
-                elif container_height[1]:
-                    size = (int(width), int(round(width * aspect_ratio * container_height[1])))
-            try:
-                zoom = int(
-                    instance.glossary['responsive_zoom'][bp].strip().rstrip('%')
-                )
-            except (AttributeError, KeyError, ValueError):
-                zoom = 0
-            max_zoom = max(max_zoom, zoom)
-            if size is None:
-                # as fallback, adopt height to current width
-                size = (int(width), int(round(width * aspect_ratio)))
-            try:
-                media_queries = complete_glossary['media_queries'][bp][:]
-            except KeyError:
-                media_queries = []
-            if high_res:
-                size = (size[0] * 2, size[1] * 2)
-                media_queries.append('(min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)')
-            elif True in resolutions:
-                media_queries.append('(max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)')
-            media = ' and '.join(media_queries)
-            elements.append({'tag': 'source', 'size': size, 'zoom': zoom, 'crop': crop,
-                    'upscale': upscale, 'subject_location': subject_location, 'media': media})
+    for bp in complete_glossary['breakpoints']:
+        try:
+            width = float(complete_glossary['container_max_widths'][bp])
+        except KeyError:
+            width = 0
+        max_width = max(max_width, round(width))
+        size = None
+        try:
+            image_height = _parse_responsive_length(instance.glossary['responsive_heights'][bp])
+        except KeyError:
+            image_height = (None, None)
+        if image_height[0]:  # height was given in px
+            size = (int(width), image_height[0])
+        elif image_height[1]:  # height was given in %
+            size = (int(width), int(round(width * aspect_ratio * image_height[1])))
+        elif bp in container_max_heights:
+            container_height = _parse_responsive_length(container_max_heights[bp])
+            if container_height[0]:
+                size = (int(width), container_height[0])
+            elif container_height[1]:
+                size = (int(width), int(round(width * aspect_ratio * container_height[1])))
+        try:
+            zoom = int(
+                instance.glossary['responsive_zoom'][bp].strip().rstrip('%')
+            )
+        except (AttributeError, KeyError, ValueError):
+            zoom = 0
+        max_zoom = max(max_zoom, zoom)
+        if size is None:
+            # as fallback, adopt height to current width
+            size = (int(width), int(round(width * aspect_ratio)))
+        try:
+            media_queries = complete_glossary['media_queries'][bp][:]
+        except KeyError:
+            media_queries = []
+        media = ' and '.join(media_queries)
+        elem = {'tag': 'source', 'size': size, 'zoom': zoom, 'crop': crop,
+                'upscale': upscale, 'subject_location': subject_location, 'media': media}
+        if 'high_resolution' in resize_options:
+            elem['size2'] = (size[0] * 2, size[1] * 2)
+        elements.append(elem)
+
+    # add a fallback image for old browsers which can't handle the <picture> element
     if image_height[1]:
         size = (int(max_width), int(round(max_width * aspect_ratio * image_height[1])))
     else:
         size = (int(max_width), int(round(max_width * aspect_ratio)))
-    elements.append({'tag': 'img', 'size': size, 'zoom': max_zoom, 'crop': crop, 'upscale': upscale,
-                     'subject_location': subject_location})
+    elements.append({'tag': 'img', 'size': size, 'zoom': max_zoom, 'crop': crop,
+                     'upscale': upscale, 'subject_location': subject_location})
     return elements
 
 
