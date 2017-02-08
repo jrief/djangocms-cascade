@@ -107,6 +107,7 @@ class CarouselPlugin(BootstrapPluginBase):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super(CarouselPlugin, self).save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, CarouselSlidePlugin)
+        obj.sanitize_children()
 
     @classmethod
     def sanitize_model(cls, obj):
@@ -150,8 +151,10 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = super(CarouselSlidePlugin, cls).sanitize_model(obj)
-        complete_glossary = obj.get_complete_glossary()
-        obj.glossary.update({'resize_options': complete_glossary.get('resize_options', [])})
+        resize_options = obj.get_parent_glossary().get('resize_options', [])
+        if obj.glossary.get('resize_options') != resize_options:
+            obj.glossary.update(resize_options=resize_options)
+            sanitized = True
         return sanitized
 
     @classmethod
