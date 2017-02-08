@@ -76,5 +76,5 @@ class AccordionPluginTest(CascadeTestCase):
         settings.CMSPLUGIN_CASCADE['bootstrap3'].update({'template_basedir': 'angular-ui'})
         html = self.build_accordion_plugins()
         soup = BeautifulSoup(html)
-        accordion = soup.find('accordion')
+        accordion = soup.find('uib-accordion')
         self.assertIsNotNone(accordion)

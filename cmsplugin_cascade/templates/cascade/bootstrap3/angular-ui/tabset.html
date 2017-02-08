@@ -1,10 +1,10 @@
 {% load static cms_tags %}
 {% spaceless %}{% with justified=instance.glossary.justified %}
 
-<tabset{% if justified %} justified="true"{% endif %}>
+<uib-tabset{% if justified %} justified="true"{% endif %}>
 {% for pane in instance.child_plugin_instances %}
-	<tab heading="{{ pane.glossary.tab_title|safe }}">{% render_plugin pane %}</tab>
+	<uib-tab heading="{{ pane.glossary.tab_title|safe }}">{% render_plugin pane %}</uib-tab>
 {% endfor %}
-</tabset>
+</uib-tabset>
 
 {% endwith %}{% endspaceless %}
