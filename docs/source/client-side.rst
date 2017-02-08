@@ -104,10 +104,10 @@ The important parts here is the call to ``eval(django.cascade.ring_plugin_bases.
 which resolves the Javascript functions our custom plugin inherits from.
 
 
-.. note:: In case you forgot to add a missing Javascript requirement, then ring.js complains that
-	it can't access the attribute of ``__classId__`` of undefined. If you run into this problem,
-	recheck that all Javascript files have been loaded and initialized in the correct order.
-
+.. note:: In case you forgot to add a missing Javascript requirement, then ring.js complains with
+	the error message ``Uncaught TypeError: Cannot read property '__classId__' of undefined``. 
+	If you run into this problem, recheck that all Javascript files have been loaded and
+	initialized in the correct order.
 
 .. _ring.js: http://ringjs.neoname.eu/
 .. _static asset definitions: https://docs.djangoproject.com/en/stable/topics/forms/media/
