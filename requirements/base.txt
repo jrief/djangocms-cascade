@@ -4,7 +4,7 @@ argparse==1.2.1
 beautifulsoup4==4.4.1
 django-admin-sortable2==0.6.7
 django-classy-tags==0.7.2
-https://github.com/jrief/django-cms/archive/fixes/flexible-parent+child_classes.zip#egg=django-cms
+django-cms==3.4.2
 django-filer==1.2.5
 django-mptt==0.8.7
 django-polymorphic==1.0.2

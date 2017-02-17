@@ -34,17 +34,16 @@ Release History
   through the Bootstrap npm packages.
 * All Javascript files accessing a property ``disabled``, now use the proper jQuery function
   intended for it.
-* Added interface to upload fonts and use them as framed icons, text icons or button
-  decorators.
+* Added interface to upload fonts and use them as framed icons, text icons or button decorators.
 * The permission system now is fine grained. Administrators can give their staff users
   add/change/delete permissions to each of the many Cascade plugins. When adding new plugins, this
   does not even require a database migration.
 * Fixed: On saving a **CarouselPlugin**, the glossary of it's children, ie. **CarouselSlidePlugin**,
   is sanitized.
-* Handle handle high resolution of the **PicturePlugin** through ``srcset`` rather than a ``@media``
+* Handle the high resolution of the **PicturePlugin** through ``srcset`` rather than a ``@media``
   query.
-* Handle handle the high resolution background of the **JumbotronPlugin** through ``image-set``
-  rather than a ``@media`` query.
+* Handle the high resolution background of the **JumbotronPlugin** through ``image-set`` rather than
+  a ``@media`` query.
 
 
 0.11.1

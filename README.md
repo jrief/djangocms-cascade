@@ -15,8 +15,8 @@ djangocms-cascade
 **DjangoCMS-Cascade** is a collection of plugins for Django-CMS
 [placeholders](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
 Instead of creating one database model for each CMS plugin, Cascade shares one database model for
-all of them. The payload then is stored inside a JSON field instead of declaring each attribute explicitly.
-This furthermore prevents us to handle all kind of nasty database migration problems.
+all of them. The payload then is stored inside a JSON field instead of declaring each attribute
+explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
 
 
 ### Perfect for nested grid systems
@@ -61,35 +61,23 @@ before upgrading from an older version.
 Django-CMS 3.4 introduced a bunch of changes in their API. Therefore please follow these releases:
 
 **djangocms-cascade** 0.11.x has been tested with Django 1.9.x, django-CMS 3.3.x and
-djangocms-text-ckeditor 3.0.x. For newer releases of django-CMS please use the upcoming version
-0.12 of **djangocms-cascade**, which is avaliable only via GitHub.
+djangocms-text-ckeditor 3.0.x.
+
+For django-CMS 3.4 and above, please use version 0.12 of **djangocms-cascade**.
 
 
-### News for version 0.11
+### News for version 0.12
 
-Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these
-fields to the plugin class, as we would in a Django ``forms.Form`` or ``models.Model``, for instance
+**Important** Please read the release notes, since version 0.12 introduced a lot of new features.
+Some highlights:
 
-```python
-class MyPlugin(CascadePluginBase):
-    name = "My Plugin"
-    ... other attributes ...
-    some_attr = GlossaryField(a_widget, label="A Label", initial=some_value)
-```
+* Compatible with Django-1.10, django-CMS-3.4 and djangocms-text-ckeditor-3.4.
+* Fine grained permissions for staff users on all plugins.
+* For AngularJS users only: Upgrade to versions of Angular-UI-Bootstrap with ``uib-`` prefix.
+* Upload fonts from [Fontello](http://fontello.com/) and use them as framed icons, text icons or
+  button decorators.
 
-instead of
-
-```python
-class MyPlugin(CascadePluginBase):
-    name = "My Plugin"
-    ... other attributes ...
-    glossary_fields = (
-        PartialFormField('some_attr', a_widget, label="A Label", initial=some_value),
-        ...
-    )
-```
-
-Don't forget run ``./manage.py migrate cmsplugin_cascade`` after upgrading to version 0.11.x.
+Don't forget run ``./manage.py migrate cmsplugin_cascade`` after upgrading to version 0.12.x.
 
 
 ### Caveats
