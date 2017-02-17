@@ -8,6 +8,7 @@ Release History
 -----------
 * Added compatibility for Django version 1.10.
 * Added compatibility for django-CMS version 3.4.
+* Added monkey patch to resolve issues handled by PR https://github.com/divio/django-cms/pull/5809
 * Added compatibility for djangocms-text-ckeditor-3.4.
 * **Important for AngularJS users**: Please upgrade to angular-ui-bootstrap version 0.14.3. All
   versions later than 0.13 use the prefix ``uib-`` on all AngularJS directives, hence this upgrade
