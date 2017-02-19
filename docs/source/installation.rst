@@ -16,6 +16,7 @@ or the current development release from github
 
 	$ pip install -e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
 
+
 Dependencies
 ============
 
@@ -36,6 +37,19 @@ djangocms-cascade-0.12.x
 * DjangoCMS_ >=3.4.3
 * djangocms-text-ckeditor_ >= 3.3
 
+Optional packages
+-----------------
+
+If you intend to use Image, Picture, Jumbotron, or FontIcons you will have to install django-filer
+in addition:
+
+.. code-block:: bash
+
+	$ pip install django-filer
+
+For a full list of working requirements see the `requirements folder`_ in the sources.
+
+.. _requirements folder: https://github.com/jrief/djangocms-cascade/tree/master/requirements
 
 
 Create a database schema
@@ -215,7 +229,7 @@ Bootstrap 3 with AngularJS
 --------------------------
 
 Some Bootstrap3 plugins can be rendered using templates which are suitable for the very popular
-`Angular UI Bootstrap`_ framework. This can be done during runtime; when editing the plugin a 
+`Angular UI Bootstrap`_ framework. This can be done during runtime; when editing the plugin a
 select box appears which allows to chose an alternative template for rendering.
 
 
