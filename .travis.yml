@@ -4,6 +4,7 @@ python:
   - 2.7
   - 3.4
   - 3.5
+  - 3.6
 
 env:
   matrix:
@@ -18,7 +19,10 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PYVER=py27; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.4' ]]; then export PYVER=py34; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then export PYVER=py35; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then export PYVER=py35; fi"  
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then export PYVER=py36; fi"
+
+  
 
 script:
   - tox -e"$PYVER-$DJANGO-$CMS"
