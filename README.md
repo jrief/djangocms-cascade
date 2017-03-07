@@ -79,14 +79,6 @@ Some highlights:
 
 Don't forget run ``./manage.py migrate cmsplugin_cascade`` after upgrading to version 0.12.x.
 
-
-### Caveats
-
-Currently **DjangoCMS-Cascade** does not work with **djangocms-text-ckeditor** >= 3.1. Please stay
-with version 3.0.1 until this issue hase been fixed. **Cascade** version 0.12 supports the latest version
-of **djangocms-text-ckeditor**.
-
-
 ## Architecture
 
 ### It's pluggable
