@@ -114,8 +114,13 @@ CMSPLUGIN_CASCADE.setdefault('plugins_with_extra_render_templates', {
     'TextLinkPlugin': (
         ('cascade/link/text-link.html', _("default")),
         ('cascade/link/text-link-linebreak.html', _("with line break")),
-    )
+    ),
+    'BootstrapSecondaryMenuPlugin': (
+        ('cascade/bootstrap3/secmenu-list-group.html', _("default")),
+        ('cascade/bootstrap3/secmenu-unstyled-list.html', _("unstyled")),
+    ),
 })
+
 
 CMSPLUGIN_CASCADE.setdefault('allow_plugin_hiding', False)
 """
