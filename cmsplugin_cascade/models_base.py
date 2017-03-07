@@ -4,7 +4,10 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import mark_safe, format_html_join
+from django.utils.functional import cached_property
+
 from jsonfield.fields import JSONField
+
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cms.utils.placeholder import get_placeholder_conf
@@ -24,11 +27,9 @@ class CascadeModelBase(CMSPlugin):
     def __str__(self):
         return self.plugin_class.get_identifier(self)
 
-    @property
+    @cached_property
     def plugin_class(self):
-        if not hasattr(self, '_plugin_class'):
-            self._plugin_class = self.get_plugin_class()
-        return self._plugin_class
+        return self.get_plugin_class()
 
     @property
     def tag_type(self):
