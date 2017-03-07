@@ -30,7 +30,7 @@ CLASSIFIERS = [
 setup(
     name='djangocms-cascade',
     version=__version__,
-    description='Collection of extendible plugins for DjangoCMS >3.3 for adding various widgets to any CMS placeholder',
+    description='Collection of extendible plugins for DjangoCMS >=3.4 for adding various widgets to any CMS placeholder',
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     url='https://github.com/jrief/djangocms-cascade',

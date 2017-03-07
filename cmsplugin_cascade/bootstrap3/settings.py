@@ -35,4 +35,3 @@ CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].setdefault('BootstrapSe
     ('cascade/bootstrap3/secmenu-list-group.html', _("default")),
     ('cascade/bootstrap3/secmenu-unstyled-list.html', _("unstyled")),
 ))
-
