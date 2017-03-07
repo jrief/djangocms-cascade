@@ -4,8 +4,8 @@
 Release History
 ===============
 
-0.12.0.dev0
------------
+0.12.0
+------
 * Added compatibility for Django version 1.10.
 * Added compatibility for django-CMS version 3.4.
 * Added monkey patch to resolve issues handled by PR https://github.com/divio/django-cms/pull/5809
@@ -44,6 +44,7 @@ Release History
   query.
 * Handle the high resolution background of the **JumbotronPlugin** through ``image-set`` rather than
   a ``@media`` query.
+* Use default configurations from provides Cascade settings rathern than from the Django project.
 
 
 0.11.1
