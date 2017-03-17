@@ -4,6 +4,13 @@
 Release History
 ===============
 
+0.12.1
+------
+* Fixed: Do not invoke ``{% addtoblock "css" %}...`` for empty values of ``stylesheet_url``.
+* Renamed buttons in clipboard admin to "Insert Data" (instead of "Save") and "Restore Data"
+  (instead of "restore").
+
+
 0.12.0
 ------
 * Added compatibility for Django version 1.10.
