@@ -58,12 +58,12 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
 
     def save_clipboard(self, obj):
         return format_html('<input type="submit" value="{}" class="default pull-left" name="save_clipboard" />',
-                           _("Save"))
+                           _("Insert Data"))
     save_clipboard.short_description = _("From CMS Clipboard")
 
     def restore_clipboard(self, obj):
         return format_html('<input type="submit" value="{}" class="default pull-left" name="restore_clipboard" />',
-                           _("Restore"))
+                           _("Restore Data"))
     restore_clipboard.short_description = _("To CMS Clipboard")
 
     def save_model(self, request, obj, form, change):
