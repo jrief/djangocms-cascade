@@ -6,6 +6,11 @@ Release History
 
 0.12.1
 ------
+* Fixed: Allow transparent instances as root objects.
+
+
+0.12.1
+------
 * Fixed: Do not invoke ``{% addtoblock "css" %}...`` for empty values of ``stylesheet_url``.
 * Renamed buttons in clipboard admin to "Insert Data" (instead of "Save") and "Restore Data"
   (instead of "restore").
