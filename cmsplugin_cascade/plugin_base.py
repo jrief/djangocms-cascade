@@ -182,7 +182,7 @@ class TransparentWrapper(object):
         if hasattr(cls, 'direct_child_classes'):
             return cls.direct_child_classes
         while True:
-            instance = instance.get_parent_instance()
+            instance = instance.get_parent_instance() if instance and instance.parent else None
             if instance is None:
                 return super(TransparentWrapper, cls).get_child_classes(slot, page, instance)
             if not issubclass(instance.plugin_class, TransparentWrapper):
@@ -194,7 +194,7 @@ class TransparentWrapper(object):
             return cls.direct_parent_classes
         parent_classes = set(super(TransparentWrapper, cls).get_parent_classes(slot, page, instance) or [])
         if isinstance(instance, CascadeElement):
-            instance = instance.get_parent_instance()
+            instance = instance.get_parent_instance() if instance and instance.parent else None
             if instance is not None:
                 parent_classes.add(instance.plugin_type)
         return list(parent_classes)
