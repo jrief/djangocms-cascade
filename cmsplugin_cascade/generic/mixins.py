@@ -13,9 +13,7 @@ from cmsplugin_cascade.models import CascadePage
 class SectionForm(models.ModelForm):
     def clean_glossary(self):
         glossary = self.cleaned_data['glossary']
-        if self.check_unique_element_id(self.instance, glossary['element_id']) is False:
-            msg = _("The element ID `{element_id}` is not unique for this page.")
-            raise ValidationError(msg.format(**glossary))
+        self.check_unique_element_id(self.instance, glossary['element_id'])
         return glossary
 
     @classmethod
@@ -30,8 +28,10 @@ class SectionForm(models.ModelForm):
             pass
         else:
             if element_id:
-                element_ids[str(instance.pk)] = element_id
-                return len(element_ids) == len(set(element_ids.values()))
+                for key, value in element_ids.items():
+                    if str(key) != str(instance.pk) and element_id == value:
+                        msg = _("The element ID '{}' is not unique for this page.")
+                        raise ValidationError(msg.format(element_id))
 
 
 class SectionModelMixin(object):
@@ -39,6 +39,15 @@ class SectionModelMixin(object):
         id_attr = self.glossary.get('element_id')
         if id_attr:
             return '{bookmark_prefix}{0}'.format(id_attr, **CMSPLUGIN_CASCADE)
+
+    def delete(self):
+        try:
+            self.placeholder.page.cascadepage.glossary['element_ids'].pop(str(self.pk))
+        except (AttributeError, KeyError, ObjectDoesNotExist):
+            pass
+        else:
+            self.placeholder.page.cascadepage.save()
+        super(SectionModelMixin, self).delete()
 
 
 class SectionMixin(object):
@@ -68,9 +77,14 @@ class SectionMixin(object):
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness
             postfix = 0
-            while form.check_unique_element_id(obj, element_id) is False:
-                postfix += 1
-                element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
+            while True:
+                try:
+                    form.check_unique_element_id(obj, element_id)
+                except ValidationError:
+                    postfix += 1
+                    element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
+                else:
+                    break
             if postfix:
                 obj.glossary['element_id'] = element_id
                 obj.save()
