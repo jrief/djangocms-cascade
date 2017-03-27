@@ -4,13 +4,13 @@
 Release History
 ===============
 
-0.12.2
+0.12.3
 ------
 * Fixed: When using an Element ID while adding a Heading Plugin, under certain circumstances
   the validation ran into an infinite loop.
 
 
-0.12.1
+0.12.2
 ------
 * Fixed: Allow transparent instances as root objects.
 
