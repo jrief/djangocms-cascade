@@ -4,6 +4,12 @@
 Release History
 ===============
 
+0.12.2
+------
+* Fixed: When using an Element ID while adding a Heading Plugin, under certain circumstances
+  the validation ran into an infinite loop.
+
+
 0.12.1
 ------
 * Fixed: Do not invoke ``{% addtoblock "css" %}...`` for empty values of ``stylesheet_url``.
