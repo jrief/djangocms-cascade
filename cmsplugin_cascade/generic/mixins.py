@@ -40,14 +40,14 @@ class SectionModelMixin(object):
         if id_attr:
             return '{bookmark_prefix}{0}'.format(id_attr, **CMSPLUGIN_CASCADE)
 
-    def delete(self):
+    def delete(self, *args, **kwargs):
         try:
             self.placeholder.page.cascadepage.glossary['element_ids'].pop(str(self.pk))
         except (AttributeError, KeyError, ObjectDoesNotExist):
             pass
         else:
             self.placeholder.page.cascadepage.save()
-        super(SectionModelMixin, self).delete()
+        super(SectionModelMixin, self).delete(*args, **kwargs)
 
 
 class SectionMixin(object):
