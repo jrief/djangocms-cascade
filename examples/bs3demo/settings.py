@@ -32,7 +32,7 @@ DATABASES = {
     },
 }
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
-    'reversion',
+    #'reversion',
     'djangocms_text_ckeditor',
     'django_select2',
     'cmsplugin_cascade',
@@ -60,9 +60,9 @@ INSTALLED_APPS = (
     'sass_processor',
     'sekizai',
     'bs3demo',
-)
+]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -74,7 +74,7 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
-)
+]
 
 # silence false-positive warning 1_6.W001
 # https://docs.djangoproject.com/en/1.8/ref/checks/#backwards-compatibility
@@ -97,16 +97,16 @@ STATIC_ROOT = os.path.join(WORK_DIR, 'static')
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-STATICFILES_FINDERS = (
+STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'sass_processor.finders.CssFinder',
-)
+]
 
-STATICFILES_DIRS = (
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     ('node_modules', os.path.join(PROJECT_ROOT, 'node_modules')),
-)
+]
 
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -300,9 +300,9 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
 
 #THUMBNAIL_DEBUG = True
 
-SASS_PROCESSOR_INCLUDE_DIRS = (
+SASS_PROCESSOR_INCLUDE_DIRS = [
     os.path.join(PROJECT_ROOT, 'node_modules'),
-)
+]
 
 # to access files such as fonts via staticfiles finders
 NODE_MODULES_URL = STATIC_URL + 'node_modules/'
