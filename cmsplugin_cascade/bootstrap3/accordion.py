@@ -74,6 +74,7 @@ class BootstrapAccordionPanelPlugin(TransparentContainer, BootstrapPluginBase):
     require_parent = True
     alien_child_classes = True
     render_template = 'cascade/bootstrap3/{}/accordion-panel.html'
+    glossary_field_order = ('panel_type', 'heading_size', 'panel_title')
 
     panel_type = GlossaryField(
         PanelTypeRenderer.get_widget(),
