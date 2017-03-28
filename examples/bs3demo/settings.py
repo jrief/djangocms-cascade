@@ -14,7 +14,7 @@ DEBUG = True
 BASE_DIR = os.path.dirname(__file__)
 
 # Root directory for this Django project
-PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, os.path.pardir, os.path.pardir))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, os.path.pardir))
 
 # Directory where working files, such as media and databases are kept
 WORK_DIR = os.path.join(PROJECT_ROOT, 'workdir')
