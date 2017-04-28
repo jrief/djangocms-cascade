@@ -25,4 +25,4 @@ before_script:
   
 
 script:
-  - tox -e"$PYVER-$DJANGO-$CMS"
+  - tox -r -e"$PYVER-$DJANGO-$CMS"
