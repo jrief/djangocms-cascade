@@ -1,2 +1,2 @@
--r base.txt
 Django==1.9.12
+-r base.txt

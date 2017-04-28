@@ -19,22 +19,21 @@ installed via npm:
 .. code-block:: bash
 
 
-    $ git clone https://github.com/jrief/djangocms-cascade.git
-    $ cd djangocms-cascade
-    $ virtualenv cascadenv
-    $ source cascadenv/bin/activate
-    (cascadenv)$ pip install -r requirements/django19.txt
-    (cascadenv)$ npm install
-
+	$ git clone --depth=1 https://github.com/jrief/djangocms-cascade.git
+	$ cd djangocms-cascade
+	$ virtualenv cascadenv
+	$ source cascadenv/bin/activate
+	(cascadenv)$ pip install -r requirements/django110.txt
 
 Initialize the database, create a superuser and start the development server:
 
 .. code-block:: bash
 
-    cd examples
-    ./manage.py migrate
-    ./manage.py createsuperuser
-    ./manage.py runserver
+	$ cd examples
+	$ npm install
+	$ ./manage.py migrate
+	$ ./manage.py createsuperuser
+	$ ./manage.py runserver
 
 Point a browser to http://localhost:8000/admin/login/?next=/ and log in as the super user you just
 created. Hit "next" and fill out the form to create your first page. Afterwards, click **Structure**
