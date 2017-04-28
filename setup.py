@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from setuptools import setup, find_packages
 from cmsplugin_cascade import __version__
 try:
-    from pypandoc import convert_file
+    from pypandoc import convert
 except ImportError:
     import io
 
@@ -39,7 +39,7 @@ setup(
     license='LICENSE-MIT',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
-    long_description=convert_file('README.md', 'rst'),
+    long_description=convert('README.md', 'rst'),
     include_package_data=True,
     zip_safe=False,
 )
