@@ -4,6 +4,12 @@
 Release History
 ===============
 
+0.12.5
+------
+* Fixed: Wrapper for transparent plugins did not find all children which declared
+  these kind of plugins as their parents.
+
+
 0.12.4
 ------
 * Fixed: Initial Image is reseted after reopening Image plugin editor.
