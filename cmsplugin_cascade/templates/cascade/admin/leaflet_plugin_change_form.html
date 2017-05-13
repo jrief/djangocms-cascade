@@ -1,7 +1,10 @@
 {% extends "cascade/admin/change_form.html" %}
-{% load cms_tags %}
+{% load cms_tags cms_js_tags %}
 
 {% block after_field_sets %}
 	{{ block.super }}
 	<div id="leaflet_edit_map"></div>
+	<script type="text/javascript">
+	django.cascade.leaflet_settings = {{ settings|json }};
+	</script>
 {% endblock %}

@@ -19,6 +19,7 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.plugin_base import create_proxy_model
+from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from . import utils
@@ -99,30 +100,28 @@ class LeafletPlugin(BootstrapPluginBase):
     )
 
     map_width_responsive = GlossaryField(
-        CascadingSizeWidget(allowed_units=['%'],
-        required=False),
+        CascadingSizeWidget(allowed_units=['%'], required=False),
         label=_("Responsive Map Width"),
         initial='100%',
         help_text=_("Set the map width in percent relative to containing element."),
     )
 
     map_width_fixed = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px'],
-        required=False),
+        CascadingSizeWidget(allowed_units=['px'], required=False),
         label=_("Fixed Map Width"),
         help_text=_("Set a fixed map width in pixels."),
     )
 
     map_height = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px', '%'],
-        required=True),
+        CascadingSizeWidget(allowed_units=['px', '%'], required=True),
         label=_("Adapt Map Height"),
+        initial='400px',
         help_text=_("Set a fixed height in pixels, or percent relative to the map width."),
     )
 
-    latitude = GlossaryField(widgets.HiddenInput(), hidden=True)
-    longitude = GlossaryField(widgets.HiddenInput(), hidden=True)
-    zoomlevel = GlossaryField(widgets.HiddenInput(), hidden=True)
+    latitude = GlossaryField(widgets.HiddenInput(), hidden=True, initial=30.0)
+    longitude = GlossaryField(widgets.HiddenInput(), hidden=True, initial=-40.0)
+    zoomlevel = GlossaryField(widgets.HiddenInput(), hidden=True, initial=3)
 
     class Media:
         css = {'all': ['node_modules/leaflet/dist/leaflet.css', 'cascade/css/admin/leafletplugin.css']}
@@ -133,8 +132,12 @@ class LeafletPlugin(BootstrapPluginBase):
         form = super(LeafletPlugin, self).get_form(request, obj, **kwargs)
         return form
 
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = dict(extra_context or {}, settings=CMSPLUGIN_CASCADE['leaflet'])
+        return super(LeafletPlugin, self).change_view(request, object_id, form_url, extra_context)
+
     def render(self, context, instance, placeholder):
-        gallery_instances = []
+        markers = []
         options = dict(instance.get_complete_glossary())
         for inline_element in instance.sortinline_elements.all():
             # since inline_element requires the property `image`, add ImagePropertyMixin
@@ -153,7 +156,8 @@ class LeafletPlugin(BootstrapPluginBase):
         inline_styles = instance.glossary.get('inline_styles', {})
         #inline_styles.update(width=options['thumbnail_width'])
         #instance.glossary['inline_styles'] = inline_styles
-        context.update(dict(instance=instance, placeholder=placeholder, gallery_instances=gallery_instances))
+        context.update(dict(instance=instance, placeholder=placeholder, settings=CMSPLUGIN_CASCADE['leaflet'],
+                            markers=markers))
         return context
 
     @classmethod

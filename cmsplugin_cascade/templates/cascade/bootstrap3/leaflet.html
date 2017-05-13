@@ -1,4 +1,4 @@
-{% load static sekizai_tags thumbnail l10n %}
+{% load static cms_js_tags sekizai_tags thumbnail l10n %}
 
 {% addtoblock "css" %}<link href="{% static 'node_modules/leaflet/dist/leaflet.css' %}" rel="stylesheet" type="text/css" />{% endaddtoblock %}
 {% addtoblock "js" %}<script src="{% static 'node_modules/leaflet/dist/leaflet.js' %}" type="text/javascript" />{% endaddtoblock %}
@@ -14,14 +14,14 @@
 
 {% addtoblock "js" %}
 <script type="text/javascript">
-var mymap = L.map('cascadeelement_id-{{ instance.pk }}').setView([51.505, -0.09], 13);
-L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-	maxZoom: 18,
-	accessToken: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
-	id: 'mapbox.streets'
-}).addTo(mymap);
+var glossary = {{ instance.glossary|json }};
+var mymap = L.map('cascadeelement_id-{{ instance.pk }}').setView([glossary.latitude, glossary.longitude], glossary.zoomlevel);
+L.tileLayer(
+	'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
+	{{ settings|json }}
+).addTo(mymap);
 
-L.marker([51.5, -0.09]).addTo(mymap)
+L.marker([glossary.latitude, glossary.longitude]).addTo(mymap)
 	.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 </script>
 {% endaddtoblock %}

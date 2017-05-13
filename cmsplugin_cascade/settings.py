@@ -127,6 +127,12 @@ Useful to temporarily deactivate plugins, instead of removing them.
 CMSPLUGIN_CASCADE.setdefault('icon_font_root',
                              os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'icon_fonts')))
 
+CMSPLUGIN_CASCADE.setdefault('leaflet', {})
+CMSPLUGIN_CASCADE['leaflet'].setdefault('id', 'mapbox.streets'),
+CMSPLUGIN_CASCADE['leaflet'].setdefault('maxZoom', 18),
+CMSPLUGIN_CASCADE['leaflet'].setdefault('accessToken', 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'),
+#CMSPLUGIN_CASCADE['leaflet'].setdefault('attribution', 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'),
+
 CSS_PREFIXES = {
     'image_set': ['-webkit-image-set', '-moz-image-set', '-o-image-set', '-ms-image-set', 'image-set'],
 }
