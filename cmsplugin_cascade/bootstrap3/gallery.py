@@ -89,7 +89,6 @@ class BootstrapGalleryPlugin(CascadePluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     allow_children = False
-    raw_id_fields = ('image_file',)
     admin_preview = False
     render_template = 'cascade/bootstrap3/gallery.html'
     default_css_attributes = ('image_shapes',)
@@ -143,9 +142,6 @@ class BootstrapGalleryPlugin(CascadePluginBase):
         help_text=_("Options to use when resizing the image."),
         initial=['crop', 'subject_location', 'high_resolution'],
     )
-
-    #class Media:
-    #    js = resolve_dependencies('cascade/js/admin/imageplugin.js')
 
     def get_form(self, request, obj=None, **kwargs):
         utils.reduce_breakpoints(self, 'responsive_heights')

@@ -12,7 +12,7 @@ class GlossaryField(object):
     Behave similar to django.forms.Field, encapsulating a partial dictionary, stored as
     JSONField in the database.
     """
-    def __init__(self, widget, label=None, name=None, initial='', help_text='', error_class=ErrorList):
+    def __init__(self, widget, label=None, name=None, initial='', help_text='', hidden=False, error_class=ErrorList):
         self.name = name
         if not isinstance(widget, widgets.Widget):
             raise AttributeError('`widget` must inherit from django.forms.widgets.Widget')
@@ -20,6 +20,7 @@ class GlossaryField(object):
         self.label = label or name
         self.initial = initial
         self.help_text = help_text
+        self.hidden = hidden
         self.error_class = error_class
 
     def run_validators(self, value):

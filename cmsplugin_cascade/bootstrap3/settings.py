@@ -7,10 +7,10 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE, orig_config
 
-CASCADE_PLUGINS = ('buttons', 'carousel', 'accordion', 'container', 'image', 'picture', 'panel',
-                   'tabs', 'gallery', 'jumbotron')
+CASCADE_PLUGINS = ['buttons', 'carousel', 'accordion', 'container', 'image', 'leaflet', 'picture',
+                   'panel', 'tabs', 'gallery', 'jumbotron']
 if 'cms_bootstrap3' in settings.INSTALLED_APPS:
-    CASCADE_PLUGINS += ('secondary_menu',)
+    CASCADE_PLUGINS.append('secondary_menu')
 
 if 'fluid-lg-width' in orig_config.get('bootstrap3', {}):
     msg = "The configuration directive CMSPLUGIN_CASCADE['bootstrap3']['fluid-lg-width'] in gone"
