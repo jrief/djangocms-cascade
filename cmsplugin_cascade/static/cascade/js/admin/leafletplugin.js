@@ -7,6 +7,7 @@ django.jQuery(function($) {
 		constructor: function() {
 			var self = this;
 			this.$super();
+			this.leaflet = JSON.parse($('#id_leaflet').val());
 			this.setup();
 
 			// install event handlers
@@ -16,7 +17,7 @@ django.jQuery(function($) {
 			this.refreshChangeForm();
 		},
 		setup: function() {
-			this.mymap = L.map('leaflet_edit_map').setView([$('#id_glossary_latitude').val(), $('#id_glossary_longitude').val()], $('#id_glossary_zoomlevel').val());
+			this.mymap = L.map('leaflet_edit_map').setView([this.leaflet.lat, this.leaflet.lng], this.leaflet.zoom);
 
 			L.tileLayer(
 				'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
@@ -26,10 +27,12 @@ django.jQuery(function($) {
 		},
 		onMapChange: function(evt, self) {
 			console.log(evt);
-			var center = this.mymap.getCenter();
-			$('#id_glossary_latitude').val(center.lat);
-			$('#id_glossary_longitude').val(center.lng);
-			$('#id_glossary_zoomlevel').val(this.mymap.getZoom());
+			$.extend(
+				this.leaflet,
+				this.mymap.getCenter(),
+				{zoom: this.mymap.getZoom()}
+			);
+			$('#id_leaflet').val(JSON.stringify(this.leaflet));
 		},
 		toggleResponsive: function(checked) {
 			var $map_width_responsive = $('#id_glossary_map_width_responsive').closest('.glossary-widget'),

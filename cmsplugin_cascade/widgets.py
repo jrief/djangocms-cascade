@@ -67,36 +67,27 @@ class JSONMultiWidget(widgets.MultiWidget):
         values = self.decompress(values)
         field_attrs = dict(**attrs)
         render_fieldsets = []
-        render_hidden_fields = []
         for fieldset in self.glossary_fields:
             render_fields = []
-            # TODO: check for hidden fields
             if not isinstance(fieldset, (list, tuple)):
                 fieldset = [fieldset]
             for field in fieldset:
                 field_attrs['id'] = '{id}_{0}'.format(field.name, **attrs)
                 field_value = values.get(field.name)
-                if field.hidden:
-                    render_hidden_fields.append((field.widget.render(field.name, field_value, field_attrs),))
-                else:
-                    if isinstance(field_value, six.string_types):
-                        field_value = self.html_parser.unescape(field_value)
-                    render_fields.append((
-                        field.name,
-                        six.text_type(field.label),
-                        field.widget.render(field.name, field_value, field_attrs),
-                        six.text_type(field.help_text),
-                    ))
-            if render_fields:
-                html = format_html_join('',
-                    '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',
-                    render_fields)
-                render_fieldsets.append((html,))
-        return format_html(
-            '{0}{1}',
-            format_html_join('\n', '<div class="glossary-widget">{0}</div>', render_fieldsets),
-            format_html_join('\n', '{0}', render_hidden_fields),
-        )
+                if isinstance(field_value, six.string_types):
+                    field_value = self.html_parser.unescape(field_value)
+                render_fields.append((
+                    field.name,
+                    six.text_type(field.label),
+                    field.widget.render(field.name, field_value, field_attrs),
+                    six.text_type(field.help_text),
+                ))
+            html = format_html_join('',
+                 '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',
+                 render_fields)
+            render_fieldsets.append((html,))
+        return format_html_join('\n', '<div class="glossary-widget">{0}</div>', render_fieldsets)
+
 
 class NumberInputWidget(widgets.NumberInput):
     validation_pattern = re.compile('^-?\d+(\.\d{1,2})?$')

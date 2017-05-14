@@ -6,7 +6,7 @@
 {% addtoblock "css" %}
 <style>
 #cascadeelement_id-{{ instance.pk }} {
-	width: 100%;
+	width: {{ instance.glossary.width }};
 	height: 300px;
 }
 </style>
@@ -14,8 +14,8 @@
 
 {% addtoblock "js" %}
 <script type="text/javascript">
-var glossary = {{ instance.glossary|json }};
-var mymap = L.map('cascadeelement_id-{{ instance.pk }}').setView([glossary.latitude, glossary.longitude], glossary.zoomlevel);
+var data = {{ instance.glossary.leaflet|json }};
+var mymap = L.map('cascadeelement_id-{{ instance.pk }}').setView([data.lat, data.lng], data.zoom);
 L.tileLayer(
 	'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
 	{{ settings|json }}

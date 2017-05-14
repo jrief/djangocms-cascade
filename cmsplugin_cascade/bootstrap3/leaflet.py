@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.forms import widgets, ModelChoiceField, CharField
-from django.forms.models import ModelForm
+import json
+
+from django.forms.fields import CharField, Field
+from django.forms.models import ModelForm, ModelChoiceField
+from django.forms import widgets
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin import StackedInline
 from django.contrib.admin.sites import site
+from django.core.exceptions import ValidationError
 from django.utils.html import format_html
+from django.utils.text import unescape_entities
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils import six
 
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
@@ -18,25 +24,36 @@ from cms.utils.compat.dj import is_installed
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.mixins import ImagePropertyMixin
-from cmsplugin_cascade.plugin_base import create_proxy_model
+from cmsplugin_cascade.plugin_base import create_proxy_model, CascadePluginBase
 from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
 from cmsplugin_cascade.widgets import CascadingSizeWidget
-from .plugin_base import BootstrapPluginBase
-from . import utils
 
 
-class LeafletForm(ModelForm):
-    image_file = ModelChoiceField(queryset=Image.objects.all(), label=_("Image"), required=False)
-    image_title = CharField(label=_("Image Title"), required=False,
-            widget=widgets.TextInput(attrs={'size': 60}),
-            help_text=_("Caption text added to the 'title' attribute of the <img> element."))
-    alt_tag = CharField(label=_("Alternative Description"), required=False,
-            widget=widgets.TextInput(attrs={'size': 60}),
-            help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."))
-    glossary_field_order = ('image_title', 'alt_tag',)
+class MarkerForm(ModelForm):
+    image_file = ModelChoiceField(
+        queryset=Image.objects.all(),
+        label=_("Image"),
+        required=False,
+    )
+
+    image_title = CharField(
+        label=_("Image Title"),
+        required=False,
+        widget=widgets.TextInput(attrs={'size': 60}),
+        help_text=_("Caption text added to the 'title' attribute of the <img> element."),
+    )
+
+    alt_tag = CharField(
+        label=_("Alternative Description"),
+        required=False,
+        widget=widgets.TextInput(attrs={'size': 60}),
+        help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
+    )
+
+    glossary_field_order = ['image_title', 'alt_tag']
 
     class Meta:
-        exclude = ('glossary',)
+        exclude = ['glossary']
 
     def __init__(self, *args, **kwargs):
         try:
@@ -54,10 +71,10 @@ class LeafletForm(ModelForm):
         if not is_installed('adminsortable2'):
             self.base_fields['order'].widget = widgets.HiddenInput()
             self.base_fields['order'].initial = 0
-        super(LeafletForm, self).__init__(*args, **kwargs)
+        super(MarkerForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        cleaned_data = super(LeafletForm, self).clean()
+        cleaned_data = super(MarkerForm, self).clean()
         if self.is_valid():
             image_file = self.cleaned_data.pop('image_file', None)
             if image_file:
@@ -72,12 +89,56 @@ class LeafletForm(ModelForm):
 
 class LeafletPluginInline(StackedInline):
     model = InlineCascadeElement
-    form = LeafletForm
+    form = MarkerForm
     raw_id_fields = ['image_file']
     extra = 1
 
 
-class LeafletPlugin(BootstrapPluginBase):
+class LeafletForm(ModelForm):
+    DEFAULTS = {
+        'lat': 30.0,
+        'lng': -40.0,
+        'zoom': 3,
+    }
+
+    leaflet = Field(widget=widgets.HiddenInput)
+
+    class Meta:
+        fields = ['glossary']
+
+    def __init__(self, data=None, *args, **kwargs):
+        if 'instance' in kwargs:
+            initial = dict(kwargs['instance'].glossary)
+            initial['leaflet'] = json.dumps(initial.pop('leaflet', self.DEFAULTS))
+        else:
+            initial = {'leaflet': json.dumps(self.DEFAULTS)}
+        super(LeafletForm, self).__init__(data, initial=initial, *args, **kwargs)
+
+    def clean(self):
+        try:
+            leaflet = self.cleaned_data['leaflet']
+            if isinstance(leaflet, six.string_types):
+                self.cleaned_data['glossary'].update(leaflet=json.loads(leaflet))
+            elif isinstance(leaflet, dict):
+                self.cleaned_data['glossary'].update(leaflet=leaflet)
+            else:
+                raise ValueError
+        except (ValueError, KeyError):
+            raise ValidationError("Invalid internal leaflet data. Check your Javascript imports.")
+
+    def clean_glossary(self):
+        glossary = self.cleaned_data['glossary']
+        msg = _("Please specify a valid width")
+        if 'responsive' in glossary['map_shapes']:
+            if not glossary['map_width_responsive']:
+                raise ValidationError(msg)
+        else:
+            if not glossary['map_width_fixed']:
+                raise ValidationError(msg)
+        return glossary
+
+
+class LeafletPlugin(CascadePluginBase):
     name = _("Map")
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin']
@@ -91,12 +152,12 @@ class LeafletPlugin(BootstrapPluginBase):
     inlines = (LeafletPluginInline,)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")),)
     glossary_field_order = ('map_shapes', 'map_width_responsive', 'map_width_fixed', 'map_height')
-    #'latitude', 'longitude', 'zoomlevel')
+    form = LeafletForm
 
     map_shapes = GlossaryField(
         widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
         label=_("Map Responsiveness"),
-        initial=['img-responsive'],
+        initial=['responsive'],
     )
 
     map_width_responsive = GlossaryField(
@@ -119,18 +180,9 @@ class LeafletPlugin(BootstrapPluginBase):
         help_text=_("Set a fixed height in pixels, or percent relative to the map width."),
     )
 
-    latitude = GlossaryField(widgets.HiddenInput(), hidden=True, initial=30.0)
-    longitude = GlossaryField(widgets.HiddenInput(), hidden=True, initial=-40.0)
-    zoomlevel = GlossaryField(widgets.HiddenInput(), hidden=True, initial=3)
-
     class Media:
         css = {'all': ['node_modules/leaflet/dist/leaflet.css', 'cascade/css/admin/leafletplugin.css']}
         js = ['node_modules/leaflet/dist/leaflet.js', 'cascade/js/admin/leafletplugin.js']
-
-    def get_form(self, request, obj=None, **kwargs):
-        utils.reduce_breakpoints(self, 'responsive_heights')
-        form = super(LeafletPlugin, self).get_form(request, obj, **kwargs)
-        return form
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, settings=CMSPLUGIN_CASCADE['leaflet'])

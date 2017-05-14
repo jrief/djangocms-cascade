@@ -94,11 +94,8 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
             for gf in declared_glossary_fields:
                 unordered_fields.update({gf.name: gf})
             unordered_fields.update(dict((gf.name, gf) for gf in declared_glossary_fields))
-            glossary_fields = OrderedDict()
-            for k in attrs['glossary_field_order']:
-                if k in unordered_fields:
-                    glossary_fields[k] = unordered_fields.pop(k)
-            glossary_fields.update((k, v) for k, v in unordered_fields.items() if v.hidden)
+            glossary_fields = OrderedDict((k, unordered_fields[k])
+                                          for k in attrs['glossary_field_order'] if k in unordered_fields)
         else:
             # merge glossary fields from base classes with the declared ones, overwriting the former ones
             glossary_fields = OrderedDict((gf.name, gf) for gf in base_glossary_fields)
