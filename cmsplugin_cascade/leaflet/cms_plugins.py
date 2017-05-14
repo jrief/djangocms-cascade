@@ -11,7 +11,6 @@ from django.contrib.admin import StackedInline
 from django.contrib.admin.sites import site
 from django.core.exceptions import ValidationError
 from django.utils.html import format_html
-from django.utils.text import unescape_entities
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils import six
 
@@ -126,17 +125,6 @@ class LeafletForm(ModelForm):
         except (ValueError, KeyError):
             raise ValidationError("Invalid internal leaflet data. Check your Javascript imports.")
 
-    def clean_glossary(self):
-        glossary = self.cleaned_data['glossary']
-        msg = _("Please specify a valid width")
-        if 'responsive' in glossary['map_shapes']:
-            if not glossary['map_width_responsive']:
-                raise ValidationError(msg)
-        else:
-            if not glossary['map_width_fixed']:
-                raise ValidationError(msg)
-        return glossary
-
 
 class LeafletPlugin(CascadePluginBase):
     name = _("Map")
@@ -147,30 +135,17 @@ class LeafletPlugin(CascadePluginBase):
     change_form_template = 'cascade/admin/leaflet_plugin_change_form.html'
     ring_plugin = 'LeafletPlugin'
     admin_preview = False
-    render_template = 'cascade/bootstrap3/leaflet.html'
-    #html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
+    render_template = 'cascade/plugins/leaflet.html'
     inlines = (LeafletPluginInline,)
     SHAPE_CHOICES = (('img-responsive', _("Responsive")),)
-    glossary_field_order = ('map_shapes', 'map_width_responsive', 'map_width_fixed', 'map_height')
+    glossary_field_order = ('map_width', 'map_height')
     form = LeafletForm
 
-    map_shapes = GlossaryField(
-        widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
-        label=_("Map Responsiveness"),
-        initial=['responsive'],
-    )
-
-    map_width_responsive = GlossaryField(
-        CascadingSizeWidget(allowed_units=['%'], required=False),
-        label=_("Responsive Map Width"),
+    map_width = GlossaryField(
+        CascadingSizeWidget(allowed_units=['px', '%'], required=True),
+        label=_("Map Width"),
         initial='100%',
         help_text=_("Set the map width in percent relative to containing element."),
-    )
-
-    map_width_fixed = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px'], required=False),
-        label=_("Fixed Map Width"),
-        help_text=_("Set a fixed map width in pixels."),
     )
 
     map_height = GlossaryField(
@@ -224,7 +199,7 @@ class LeafletPlugin(CascadePluginBase):
     def get_identifier(cls, obj):
         identifier = super(LeafletPlugin, cls).get_identifier(obj)
         num_elems = obj.sortinline_elements.count()
-        content = ungettext_lazy("with {0} image", "with {0} images", num_elems).format(num_elems)
+        content = ungettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
         return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(LeafletPlugin)
