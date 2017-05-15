@@ -15,14 +15,17 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 var data = {{ instance.glossary.leaflet|json }};
-var mymap = L.map('cascadeelement_id-{{ instance.pk }}').setView([data.lat, data.lng], data.zoom);
+var viewMap = L.map('cascadeelement_id-{{ instance.pk }}').setView([data.lat, data.lng], data.zoom);
 L.tileLayer(
 	'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
 	{{ settings|json }}
-).addTo(mymap);
+).addTo(viewMap);
 
-L.marker([glossary.latitude, glossary.longitude]).addTo(mymap)
-	.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+{% for marker in markers %}
+var marker = L.marker({{ marker.glossary.leaflet|json }});
+marker.bindTooltip("{{ marker.glossary.marker_title }}");
+marker.addTo(viewMap);
+{% endfor %}
 </script>
 {% endaddtoblock %}
 

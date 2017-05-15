@@ -175,27 +175,9 @@ class LeafletPlugin(CascadePluginBase):
         return super(LeafletPlugin, self).change_view(request, object_id, form_url, extra_context)
 
     def render(self, context, instance, placeholder):
-        markers = []
-        options = dict(instance.get_complete_glossary())
-        for inline_element in instance.sortinline_elements.all():
-            # since inline_element requires the property `image`, add ImagePropertyMixin
-            # to its class during runtime
-            try:
-                ProxyModel = create_proxy_model('GalleryImage', (ImagePropertyMixin,),
-                                                LeafletPluginInline, module=__name__)
-                inline_element.__class__ = ProxyModel
-                #options.update(inline_element.glossary, **{
-                #    'image_width_fixed': options['thumbnail_width'],
-                #    'image_height': options['thumbnail_height'],
-                #    'is_responsive': False,
-                #})
-            except (KeyError, AttributeError):
-                pass
-        inline_styles = instance.glossary.get('inline_styles', {})
-        #inline_styles.update(width=options['thumbnail_width'])
-        #instance.glossary['inline_styles'] = inline_styles
-        context.update(dict(instance=instance, placeholder=placeholder, settings=CMSPLUGIN_CASCADE['leaflet'],
-                            markers=markers))
+        context.update(dict(instance=instance, placeholder=placeholder,
+                            settings=CMSPLUGIN_CASCADE['leaflet'],
+                            markers=instance.inline_elements.all()))
         return context
 
     @classmethod
@@ -209,7 +191,7 @@ class LeafletPlugin(CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(LeafletPlugin, cls).get_identifier(obj)
-        num_elems = obj.sortinline_elements.count()
+        num_elems = obj.inline_elements.count()
         content = ungettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
         return format_html('{0}{1}', identifier, content)
 

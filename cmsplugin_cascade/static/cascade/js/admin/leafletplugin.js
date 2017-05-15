@@ -15,12 +15,13 @@ django.jQuery(function($) {
 			this.resetCenter();
 			this.setMarkers();
 			$('#inline_elements-group .add-row a').on('click', this, this.addInlineElement);
+			this.editMap.on('drag', this.onMapDrag, this);
 		},
 		resetCenter: function(event) {
 			var self = event ? event.options : this;
 			self.editMap.setView([self.leafletStart.lat, self.leafletStart.lng], self.leafletStart.zoom);
 		},
-		onMapChange: function(evt) {
+		onMapDrag: function(evt) {
 			$.extend(
 				this.leaflet,
 				this.editMap.getCenter(),
@@ -33,21 +34,19 @@ django.jQuery(function($) {
 			$.each($('#inline_elements-group .inline-related.has_original'), function() {
 				var title = $(this).find('.field-marker_title input').val();
 				var inputField = $(this).find('.field-leaflet input');
-				var marker = L.marker(JSON.parse(inputField.val()), {
-					draggable: true,
-					title: title
-				}).addTo(self.editMap);
+				var marker = L.marker(JSON.parse(inputField.val()), {draggable: true});
+				marker.addTo(self.editMap);
+				marker.bindTooltip(title);
 				marker.on('dragend', self.dragMarker, inputField);
 			});
 		},
 		addMarker: function(event) {
 			var title = $('#inline_elements-group .last-related .field-marker_title input').val();
 			var inputField = $('#inline_elements-group .last-related .field-leaflet input');
-			var marker = L.marker(event.latlng, {
-				draggable: true,
-				title: title
-			}).addTo(this.editMap);
+			var marker = L.marker(event.latlng, {draggable: true});
 			inputField.val(JSON.stringify(marker.getLatLng()));
+			marker.addTo(this.editMap);
+			marker.bindTooltip(title);
 			marker.on('dragend', this.dragMarker, inputField);
 
 			$('#leaflet_edit_map').removeClass('leaflet-crosshair');
@@ -59,7 +58,6 @@ django.jQuery(function($) {
 			this.val(JSON.stringify(marker.getLatLng()));
 		},
 		addInlineElement: function(event) {
-			console.log(event);
 			var $this = $(this);
 			$this.addClass('disable-click');
 			$('#inline_elements-group .inline-deletelink').one('click', function() {
