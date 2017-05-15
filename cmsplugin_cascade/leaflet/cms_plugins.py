@@ -18,7 +18,6 @@ from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 
 from cms.plugin_pool import plugin_pool
-from cms.utils.compat.dj import is_installed
 
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
@@ -29,68 +28,69 @@ from cmsplugin_cascade.widgets import CascadingSizeWidget
 
 
 class MarkerForm(ModelForm):
-    image_file = ModelChoiceField(
+    marker_title = CharField(
+        label=_("Marker Title"),
+        widget=widgets.TextInput(attrs={'size': 60}),
+    )
+
+    marker_image = ModelChoiceField(
         queryset=Image.objects.all(),
-        label=_("Image"),
+        label=_("Marker Image"),
         required=False,
     )
 
-    image_title = CharField(
-        label=_("Image Title"),
-        required=False,
-        widget=widgets.TextInput(attrs={'size': 60}),
-        help_text=_("Caption text added to the 'title' attribute of the <img> element."),
-    )
+    leaflet = Field(widget=widgets.HiddenInput)
 
-    alt_tag = CharField(
-        label=_("Alternative Description"),
-        required=False,
-        widget=widgets.TextInput(attrs={'size': 60}),
-        help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
-    )
-
-    glossary_field_order = ['image_title', 'alt_tag']
+    glossary_field_order = ['marker_title', 'marker_image']
 
     class Meta:
         exclude = ['glossary']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         try:
             initial = dict(kwargs['instance'].glossary)
         except (KeyError, AttributeError):
             initial = {}
         initial.update(kwargs.pop('initial', {}))
+        initial['leaflet'] = json.dumps(initial.pop('leaflet', {}))
         for key in self.glossary_field_order:
             self.base_fields[key].initial = initial.get(key)
         try:
-            self.base_fields['image_file'].initial = initial['image']['pk']
+            self.base_fields['marker_image'].initial = initial['image']['pk']
         except KeyError:
-            self.base_fields['image_file'].initial = None
-        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-        if not is_installed('adminsortable2'):
-            self.base_fields['order'].widget = widgets.HiddenInput()
-            self.base_fields['order'].initial = 0
-        super(MarkerForm, self).__init__(*args, **kwargs)
+            self.base_fields['marker_image'].initial = None
+        self.base_fields['marker_image'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
+        super(MarkerForm, self).__init__(data, initial=initial, *args, **kwargs)
 
     def clean(self):
-        cleaned_data = super(MarkerForm, self).clean()
-        if self.is_valid():
-            image_file = self.cleaned_data.pop('image_file', None)
-            if image_file:
-                image_data = {'pk': image_file.pk, 'model': 'filer.Image'}
-                self.instance.glossary.update(image=image_data)
+        try:
+            leaflet = self.cleaned_data['leaflet']
+            if isinstance(leaflet, six.string_types):
+                self.instance.glossary.update(leaflet=json.loads(leaflet))
+            elif isinstance(leaflet, dict):
+                self.instance.glossary.update(leaflet=leaflet)
             else:
-                self.instance.glossary.pop('image', None)
-            for key in self.glossary_field_order:
-                self.instance.glossary.update({key: cleaned_data.pop(key, '')})
-        return cleaned_data
+                raise ValueError
+        except (ValueError, KeyError):
+            raise ValidationError("Invalid internal leaflet data. Check your Javascript imports.")
+
+        image_file = self.cleaned_data.pop('image_file', None)
+        if image_file:
+            image_data = {'pk': image_file.pk, 'model': 'filer.Image'}
+            self.instance.glossary.update(image=image_data)
+        else:
+            self.instance.glossary.pop('image', None)
+        for key in self.glossary_field_order:
+            self.instance.glossary.update({key: self.cleaned_data.get(key)})
 
 
-class LeafletPluginInline(StackedInline):
+class MarkerInline(StackedInline):
     model = InlineCascadeElement
     form = MarkerForm
     raw_id_fields = ['image_file']
-    extra = 1
+    verbose_name = _("Marker")
+    verbose_name_plural = _("Markers")
+    extra = 0
 
 
 class LeafletForm(ModelForm):
@@ -106,11 +106,12 @@ class LeafletForm(ModelForm):
         fields = ['glossary']
 
     def __init__(self, data=None, *args, **kwargs):
-        if 'instance' in kwargs:
+        try:
             initial = dict(kwargs['instance'].glossary)
-            initial['leaflet'] = json.dumps(initial.pop('leaflet', self.DEFAULTS))
-        else:
-            initial = {'leaflet': json.dumps(self.DEFAULTS)}
+        except (KeyError, AttributeError):
+            initial = {}
+        initial.update(kwargs.pop('initial', {}))
+        initial['leaflet'] = json.dumps(initial.pop('leaflet', self.DEFAULTS))
         super(LeafletForm, self).__init__(data, initial=initial, *args, **kwargs)
 
     def clean(self):
@@ -128,16 +129,14 @@ class LeafletForm(ModelForm):
 
 class LeafletPlugin(CascadePluginBase):
     name = _("Map")
-    module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin']
-    require_parent = True
+    parent_classes = None
+    require_parent = False
     allow_children = False
     change_form_template = 'cascade/admin/leaflet_plugin_change_form.html'
     ring_plugin = 'LeafletPlugin'
     admin_preview = False
     render_template = 'cascade/plugins/leaflet.html'
-    inlines = (LeafletPluginInline,)
-    SHAPE_CHOICES = (('img-responsive', _("Responsive")),)
+    inlines = (MarkerInline,)
     glossary_field_order = ('map_width', 'map_height')
     form = LeafletForm
 
@@ -156,8 +155,20 @@ class LeafletPlugin(CascadePluginBase):
     )
 
     class Media:
-        css = {'all': ['node_modules/leaflet/dist/leaflet.css', 'cascade/css/admin/leafletplugin.css']}
-        js = ['node_modules/leaflet/dist/leaflet.js', 'cascade/js/admin/leafletplugin.js']
+        css = {'all': [
+            'node_modules/leaflet/dist/leaflet.css',
+            'node_modules/leaflet-easybutton/src/easy-button.css',
+            'cascade/css/admin/leafletplugin.css',
+        ]}
+        js = [
+            'node_modules/leaflet/dist/leaflet.js',
+            'node_modules/leaflet-easybutton/src/easy-button.js',
+            'cascade/js/admin/leafletplugin.js',
+        ]
+
+    def add_view(self, request, form_url='', extra_context=None):
+        extra_context = dict(extra_context or {}, settings=CMSPLUGIN_CASCADE['leaflet'])
+        return super(LeafletPlugin, self).add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, settings=CMSPLUGIN_CASCADE['leaflet'])

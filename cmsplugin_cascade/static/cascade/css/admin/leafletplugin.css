@@ -3,3 +3,11 @@
 	height: 500px;
 	margin-bottom: 20px;
 }
+.map-button {
+	font-size: 30px;
+	line-height: 20px;
+}
+.disable-click {
+	pointer-events: none;
+	opacity: 0.3;
+}
