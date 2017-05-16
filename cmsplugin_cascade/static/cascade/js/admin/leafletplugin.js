@@ -15,6 +15,8 @@ django.jQuery(function($) {
 			this.resetCenter();
 			this.setMarkers();
 			$('#inline_elements-group .add-row a').on('click', this, this.addInlineElement);
+			$('#inline_elements-group .field-use_icon input').on('change', this, this.changeUseIcon);
+			$.each($('#inline_elements-group .field-use_icon input'), this.changeUseIcon);
 			this.editMap.on('drag', this.onMapDrag, this);
 		},
 		resetCenter: function(event) {
@@ -66,6 +68,16 @@ django.jQuery(function($) {
 			});
 			$('#leaflet_edit_map').addClass('leaflet-crosshair');
 			event.data.editMap.on('click', event.data.addMarker, event.data);
+		},
+		changeUseIcon: function(event) {
+			debugger;
+			var checkbox = event ? $(event.target) : $(this);
+			var markerImage = checkbox.parents('fieldset').first().find('.field-marker_image');
+			if (checkbox.is(':checked')) {
+				markerImage.show();
+			} else {
+				markerImage.hide();
+			}
 		}
 		/*
 		selectInlineElement: function(event) {
