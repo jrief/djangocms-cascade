@@ -16,7 +16,7 @@ django.jQuery(function($) {
 			this.setMarkers();
 			$('#inline_elements-group .add-row a').on('click', this, this.addInlineElement);
 			$('#inline_elements-group .field-use_icon input').on('change', this, this.changeUseIcon);
-			$.each($('#inline_elements-group .field-use_icon input'), this.changeUseIcon);
+			$.each($('#inline_elements-group .inline-related'), this.changeUseIcon);
 			this.editMap.on('drag', this.onMapDrag, this);
 		},
 		resetCenter: function(event) {
@@ -70,34 +70,20 @@ django.jQuery(function($) {
 			event.data.editMap.on('click', event.data.addMarker, event.data);
 		},
 		changeUseIcon: function(event) {
-			debugger;
-			var checkbox = event ? $(event.target) : $(this);
-			var markerImage = checkbox.parents('fieldset').first().find('.field-marker_image');
+			var checkbox, markerImage;
+			if (event.target) {
+				checkbox = $(event.target);
+				markerImage = checkbox.parents('.inline-related').find('.field-marker_image');
+			} else {
+				checkbox = $(this).find('.field-use_icon input');
+				markerImage = $(this).find('.field-marker_image');
+			}
 			if (checkbox.is(':checked')) {
 				markerImage.show();
 			} else {
 				markerImage.hide();
 			}
 		}
-		/*
-		selectInlineElement: function(event) {
-			var self = event.data,
-				inlineElement = $('#' + event.currentTarget.id),
-				isSelected = inlineElement.hasClass('selected-inline'),
-				leafletInputField = inlineElement.find('.field-leaflet').find('input');
-
-			$('#inline_elements-group').find('.inline-related').removeClass('selected-inline');
-			if (!isSelected) {
-				inlineElement.addClass('selected-inline');
-				if (leafletInputField.val()) {
-					self.editMap.on('click', self.changeMarker, {self: self, input: leafletInputField});
-				} else {
-					$('#leaflet_edit_map').addClass('leaflet-crosshair');
-					self.editMap.on('click', self.addMarker, {self: self, input: leafletInputField});
-				}
-			}
-		}
-		*/
 	});
 
 });
