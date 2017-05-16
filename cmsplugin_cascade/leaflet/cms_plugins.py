@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import json
 
-from django.forms.fields import CharField, Field
+from django.forms.fields import CharField, BooleanField, Field
 from django.forms.models import ModelForm, ModelChoiceField
 from django.forms import widgets
 from django.db.models.fields.related import ManyToOneRel
@@ -21,16 +21,22 @@ from cms.plugin_pool import plugin_pool
 
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
-from cmsplugin_cascade.mixins import ImagePropertyMixin
-from cmsplugin_cascade.plugin_base import create_proxy_model, CascadePluginBase
+from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 
 
 class MarkerForm(ModelForm):
-    marker_title = CharField(
+    title = CharField(
         label=_("Marker Title"),
         widget=widgets.TextInput(attrs={'size': 60}),
+        help_text=_("Please choose a title, then go to the map to set a marker pin")
+    )
+
+    use_icon = BooleanField(
+        label=_("Use customized marker icon"),
+        initial=False,
+        required=False,
     )
 
     marker_image = ModelChoiceField(
@@ -41,26 +47,33 @@ class MarkerForm(ModelForm):
 
     leaflet = Field(widget=widgets.HiddenInput)
 
-    glossary_field_order = ['marker_title', 'marker_image']
+    glossary_field_order = ['title']
 
     class Meta:
         exclude = ['glossary']
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         try:
             initial = dict(kwargs['instance'].glossary)
+            has_original = True
         except (KeyError, AttributeError):
             initial = {}
+            has_original = False
         initial.update(kwargs.pop('initial', {}))
-        initial['leaflet'] = json.dumps(initial.pop('leaflet', {}))
+        self.base_fields['leaflet'].initial = json.dumps(initial.pop('leaflet', {}))
         for key in self.glossary_field_order:
             self.base_fields[key].initial = initial.get(key)
         try:
             self.base_fields['marker_image'].initial = initial['image']['pk']
         except KeyError:
             self.base_fields['marker_image'].initial = None
+            self.base_fields['use_icon'].initial = False
+        else:
+            self.base_fields['use_icon'].initial = True
         self.base_fields['marker_image'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-        super(MarkerForm, self).__init__(data, initial=initial, *args, **kwargs)
+        super(MarkerForm, self).__init__(*args, **kwargs)
+        if has_original:
+            self.fields['title'].help_text = None
 
     def clean(self):
         try:
@@ -74,9 +87,9 @@ class MarkerForm(ModelForm):
         except (ValueError, KeyError):
             raise ValidationError("Invalid internal leaflet data. Check your Javascript imports.")
 
-        image_file = self.cleaned_data.pop('image_file', None)
-        if image_file:
-            image_data = {'pk': image_file.pk, 'model': 'filer.Image'}
+        marker_image = self.cleaned_data.pop('marker_image', None)
+        if marker_image:
+            image_data = {'pk': marker_image.pk, 'model': 'filer.Image'}
             self.instance.glossary.update(image=image_data)
         else:
             self.instance.glossary.pop('image', None)
@@ -87,7 +100,7 @@ class MarkerForm(ModelForm):
 class MarkerInline(StackedInline):
     model = InlineCascadeElement
     form = MarkerForm
-    raw_id_fields = ['image_file']
+    raw_id_fields = ['marker_image']
     verbose_name = _("Marker")
     verbose_name_plural = _("Markers")
     extra = 0
