@@ -23,7 +23,7 @@ L.tileLayer(
 
 {% for marker in markers %}
 var marker = L.marker({{ marker.glossary.leaflet|json }});
-marker.bindTooltip("{{ marker.glossary.marker_title }}");
+marker.bindTooltip("{{ marker.glossary.title }}");
 marker.addTo(viewMap);
 {% endfor %}
 </script>

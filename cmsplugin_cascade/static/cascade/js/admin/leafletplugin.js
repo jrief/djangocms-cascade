@@ -32,7 +32,7 @@ django.jQuery(function($) {
 		setMarkers: function() {
 			var self = this;
 			$.each($('#inline_elements-group .inline-related.has_original'), function() {
-				var title = $(this).find('.field-marker_title input').val();
+				var title = $(this).find('.field-title input').val();
 				var inputField = $(this).find('.field-leaflet input');
 				var marker = L.marker(JSON.parse(inputField.val()), {draggable: true});
 				marker.addTo(self.editMap);
@@ -41,8 +41,9 @@ django.jQuery(function($) {
 			});
 		},
 		addMarker: function(event) {
-			var title = $('#inline_elements-group .last-related .field-marker_title input').val();
-			var inputField = $('#inline_elements-group .last-related .field-leaflet input');
+			var element = $('#inline_elements-group .inline-related.last-related.dynamic-inline_elements:last');
+			var title = element.find('.field-title input').val();
+			var inputField = element.find('.field-leaflet input');
 			var marker = L.marker(event.latlng, {draggable: true});
 			inputField.val(JSON.stringify(marker.getLatLng()));
 			marker.addTo(this.editMap);
