@@ -73,10 +73,14 @@ django.jQuery(function($) {
 			var checkbox, markerImage;
 			if (event.target) {
 				checkbox = $(event.target);
-				markerImage = checkbox.parents('.inline-related').find('.field-marker_image');
+				markerImage = checkbox.parents('.inline-related').find('.field-marker_image')
+					.add(checkbox.parents('.inline-related').find('.field-marker_width'))
+					.add(checkbox.parents('.inline-related').find('.field-marker_anchor'));
 			} else {
 				checkbox = $(this).find('.field-use_icon input');
-				markerImage = $(this).find('.field-marker_image');
+				markerImage = $(this).find('.field-marker_image')
+					.add($(this).find('.field-marker_width'))
+					.add($(this).find('.field-marker_anchor'));
 			}
 			if (checkbox.is(':checked')) {
 				markerImage.show();

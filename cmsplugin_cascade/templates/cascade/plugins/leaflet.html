@@ -22,7 +22,20 @@ L.tileLayer(
 ).addTo(viewMap);
 
 {% for marker in markers %}
-var marker = L.marker({{ marker.glossary.leaflet|json }});
+var marker;
+	{% if marker.image %}
+		{% thumbnail marker.image marker.size as thumb %}
+		{% thumbnail marker.image marker.size2x as thumb2x %}
+var icon =  L.icon({
+	iconUrl: "{{ thumb.url }}",
+	iconRetinaUrl: "{{ thumb2x.url }}",
+	{% if marker.anchor %}iconAnchor: {{ marker.anchor }},{% endif %}
+	iconSize: {{ marker.size }}
+});
+marker = L.marker({{ marker.glossary.leaflet|json }}, {icon: icon});
+	{% else %}
+marker = L.marker({{ marker.glossary.leaflet|json }});
+	{% endif %}
 marker.bindTooltip("{{ marker.glossary.title }}");
 marker.addTo(viewMap);
 {% endfor %}

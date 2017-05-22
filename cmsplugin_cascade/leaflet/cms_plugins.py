@@ -5,6 +5,7 @@ import json
 
 from django.forms.fields import CharField, BooleanField, Field
 from django.forms.models import ModelForm, ModelChoiceField
+from django.forms.utils import ErrorList
 from django.forms import widgets
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin import StackedInline
@@ -21,9 +22,43 @@ from cms.plugin_pool import plugin_pool
 
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
-from cmsplugin_cascade.plugin_base import CascadePluginBase
+from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
+from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
-from cmsplugin_cascade.widgets import CascadingSizeWidget
+from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
+from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
+
+
+class GlossaryFormField(Field):
+    error_class = ErrorList
+
+    def __init__(self, widget=None, **kwargs):
+        if widget:
+            kwargs['required'] = widget.required
+        super(GlossaryFormField, self).__init__(widget=widget, **kwargs)
+
+    def run_validators(self, value):
+        if not callable(getattr(self.widget, 'validate', None)):
+            return
+        errors = []
+        if callable(getattr(self.widget, '__iter__', None)):
+            for field_name in self.widget:
+                try:
+                    self.widget.validate(value, field_name)
+                except ValidationError as e:
+                    if isinstance(getattr(e, 'params', None), dict):
+                        e.params.update(label=self.label)
+                    messages = self.error_class([m for m in e.messages])
+                    errors.extend(messages)
+        else:
+            try:
+                self.widget.validate(value)
+            except ValidationError as e:
+                if isinstance(getattr(e, 'params', None), dict):
+                    e.params.update(label=self.label)
+                errors = self.error_class([m for m in e.messages])
+        if errors:
+            raise ValidationError(errors)
 
 
 class MarkerForm(ModelForm):
@@ -45,9 +80,23 @@ class MarkerForm(ModelForm):
         required=False,
     )
 
+    marker_width = GlossaryFormField(
+        widget=CascadingSizeWidget(allowed_units=['px'], required=False),
+        label=_("Marker Width"),
+        required=False,
+        help_text=_("Width of the marker icon in pixels."),
+    )
+
+    marker_anchor = GlossaryFormField(
+        widget=MultipleCascadingSizeWidget(['left', 'top'], allowed_units=['px'], required=False),
+        required=False,
+        label=_("Marker Anchor"),
+        help_text=_("The coordinates of the icon's anchor (relative to its top left corner)."),
+    )
+
     leaflet = Field(widget=widgets.HiddenInput)
 
-    glossary_field_order = ['title']
+    glossary_field_order = ['title', 'marker_width', 'marker_anchor']
 
     class Meta:
         exclude = ['glossary']
@@ -95,6 +144,8 @@ class MarkerForm(ModelForm):
             self.instance.glossary.pop('image', None)
         for key in self.glossary_field_order:
             self.instance.glossary.update({key: self.cleaned_data.get(key)})
+
+        # TODO: check patterns of size/anchor
 
 
 class MarkerInline(StackedInline):
@@ -188,9 +239,37 @@ class LeafletPlugin(CascadePluginBase):
         return super(LeafletPlugin, self).change_view(request, object_id, form_url, extra_context)
 
     def render(self, context, instance, placeholder):
+        marker_instances = []
+        for inline_element in instance.inline_elements.all():
+            # since inline_element requires the property `image`, add ImagePropertyMixin
+            # to its class during runtime
+            try:
+                ProxyModel = create_proxy_model('LeafletMarker', (ImagePropertyMixin,),
+                                                InlineCascadeElement, module=__name__)
+                inline_element.__class__ = ProxyModel
+                try:
+                    aspect_ratio = compute_aspect_ratio(inline_element.image)
+                    width = parse_responsive_length(inline_element.glossary.get('marker_width') or '25px')
+                    inline_element.size = list(get_image_size(width[0], (None, None), aspect_ratio))
+                    inline_element.size2x = 2 * inline_element.size[0], 2 * inline_element.size[1]
+                except Exception:
+                    # if accessing the image file fails, skip size computations
+                    pass
+                else:
+                    try:
+                        marker_anchor = inline_element.glossary['marker_anchor']
+                        top = parse_responsive_length(marker_anchor['top'])
+                        left = parse_responsive_length(marker_anchor['left'])
+                        inline_element.anchor = [top[0], left[0]]
+                    except Exception:
+                        pass
+                marker_instances.append(inline_element)
+            except (KeyError, AttributeError):
+                pass
+
         context.update(dict(instance=instance, placeholder=placeholder,
                             settings=CMSPLUGIN_CASCADE['leaflet'],
-                            markers=instance.inline_elements.all()))
+                            markers=marker_instances))
         return context
 
     @classmethod
