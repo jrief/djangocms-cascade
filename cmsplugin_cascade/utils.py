@@ -113,3 +113,38 @@ def validate_link(link_data):
         Model.objects.get(pk=link_data['pk'])
     except Model.DoesNotExist:
         raise ValidationError(_("Unable to link onto '{0}'.").format(Model.__name__))
+
+
+def compute_aspect_ratio(image):
+    if image.exif.get('Orientation', 1) > 4:
+        # image is rotated by 90 degrees, while keeping width and height
+        return float(image.width) / float(image.height)
+    else:
+        return float(image.height) / float(image.width)
+
+
+def get_image_size(width, image_height, aspect_ratio):
+    if image_height[0]:
+        # height was given in px
+        return (width, image_height[0])
+    elif image_height[1]:
+        # height was given in %
+        return (width, int(round(width * image_height[1])))
+    else:
+        # as fallback, adopt height to current width
+        return (width, int(round(width * aspect_ratio)))
+
+
+def parse_responsive_length(responsive_length):
+    """
+    Takes a string containing a length definition in pixels or percent and parses it to obtain
+    a computational length. It returns a tuple where the first element is the length in pixels and
+    the second element is its length in percent divided by 100.
+    Note that one of both returned elements is None.
+    """
+    responsive_length = responsive_length.strip()
+    if responsive_length.endswith('px'):
+        return (int(responsive_length.rstrip('px')), None)
+    elif responsive_length.endswith('%'):
+        return (None, float(responsive_length.rstrip('%')) / 100)
+    return (None, None)

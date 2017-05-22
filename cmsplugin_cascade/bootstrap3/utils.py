@@ -5,7 +5,10 @@ import logging
 from collections import OrderedDict
 from django.conf import settings
 from django.forms import widgets
+
 from cmsplugin_cascade.plugin_base import CascadePluginBase
+from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
+
 
 __all__ = ['reduce_breakpoints', 'compute_media_queries', 'get_image_tags', 'get_picture_elements',
            'get_widget_choices']
@@ -85,14 +88,6 @@ def compute_media_queries(element):
                                      '(max-width: {0}px)'.format(BS3_BREAKPOINTS[next_bp][0])]
 
 
-def compute_aspect_ratio(image):
-    if image.exif.get('Orientation', 1) > 4:
-        # image is rotated by 90 degrees, while keeping width and height
-        return float(image.width) / float(image.height)
-    else:
-        return float(image.height) / float(image.width)
-
-
 def get_image_tags(context, instance, options):
     """
     Create a context returning the tags to render an <img ...> element:
@@ -111,16 +106,16 @@ def get_image_tags(context, instance, options):
     resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
     if is_responsive:
-        image_width = _parse_responsive_length(options.get('image_width_responsive') or '100%')
+        image_width = parse_responsive_length(options.get('image_width_responsive') or '100%')
         assert(image_width[1]), "The given image has no valid width"
         if image_width[1] != 1.0:
             tags['extra_styles'].update({'max-width': '{:.0f}%'.format(100 * image_width[1])})
     else:
-        image_width = _parse_responsive_length(options['image_width_fixed'])
+        image_width = parse_responsive_length(options['image_width_fixed'])
         if not image_width[0]:
             image_width = (instance.image.width, image_width[1])
     try:
-        image_height = _parse_responsive_length(options['image_height'])
+        image_height = parse_responsive_length(options['image_height'])
     except KeyError:
         image_height = (None, None)
     set_defaults(options)
@@ -131,7 +126,7 @@ def get_image_tags(context, instance, options):
                 continue
             width = int(image_width[1] * options['container_max_widths'][bp])
             max_width = max(max_width, width)
-            size = _get_image_size(width, image_height, aspect_ratio)
+            size = get_image_size(width, image_height, aspect_ratio)
             if bp in options['media_queries']:
                 tags['sizes'].append('{0} {1}px'.format(' and '.join(options['media_queries'][bp]), width))
             for high_res in resolutions:
@@ -145,7 +140,7 @@ def get_image_tags(context, instance, options):
             logger.warning('image tags: image max width is zero')
         size = (int(round(max_width)), int(round(max_width * aspect_ratio)))
     else:
-        size = _get_image_size(image_width[0], image_height, aspect_ratio)
+        size = get_image_size(image_width[0], image_height, aspect_ratio)
         if len(resolutions) > 1:
             for high_res in resolutions:
                 if high_res:
@@ -199,7 +194,7 @@ def get_picture_elements(context, instance):
         max_width = max(max_width, round(width))
         size = None
         try:
-            image_height = _parse_responsive_length(instance.glossary['responsive_heights'][bp])
+            image_height = parse_responsive_length(instance.glossary['responsive_heights'][bp])
         except KeyError:
             image_height = (None, None)
         if image_height[0]:  # height was given in px
@@ -207,7 +202,7 @@ def get_picture_elements(context, instance):
         elif image_height[1]:  # height was given in %
             size = (int(width), int(round(width * aspect_ratio * image_height[1])))
         elif bp in container_max_heights:
-            container_height = _parse_responsive_length(container_max_heights[bp])
+            container_height = parse_responsive_length(container_max_heights[bp])
             if container_height[0]:
                 size = (int(width), container_height[0])
             elif container_height[1]:
@@ -241,30 +236,3 @@ def get_picture_elements(context, instance):
     elements.append({'tag': 'img', 'size': size, 'zoom': max_zoom, 'crop': crop,
                      'upscale': upscale, 'subject_location': subject_location})
     return elements
-
-
-def _get_image_size(width, image_height, aspect_ratio):
-    if image_height[0]:
-        # height was given in px
-        return (width, image_height[0])
-    elif image_height[1]:
-        # height was given in %
-        return (width, int(round(width * image_height[1])))
-    else:
-        # as fallback, adopt height to current width
-        return (width, int(round(width * aspect_ratio)))
-
-
-def _parse_responsive_length(responsive_length):
-    """
-    Takes a string containing a length definition in pixels or percent and parses it to obtain
-    a computational length. It returns a tuple where the first element is the length in pixels and
-    the second element is its length in percent divided by 100.
-    Note that one of both returned elements is None.
-    """
-    responsive_length = responsive_length.strip()
-    if responsive_length.endswith('px'):
-        return (int(responsive_length.rstrip('px')), None)
-    elif responsive_length.endswith('%'):
-        return (None, float(responsive_length.rstrip('%')) / 100)
-    return (None, None)
