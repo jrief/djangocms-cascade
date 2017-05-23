@@ -17,7 +17,7 @@
 var data = {{ instance.glossary.leaflet|json }};
 var viewMap = L.map('cascadeelement_id-{{ instance.pk }}').setView([data.lat, data.lng], data.zoom);
 L.tileLayer(
-	'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
+	"{{ settings.tilesURL }}",
 	{{ settings|json }}
 ).addTo(viewMap);
 

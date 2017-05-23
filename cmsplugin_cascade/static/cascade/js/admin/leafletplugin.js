@@ -8,7 +8,7 @@ django.jQuery(function($) {
 			this.leaflet = $.extend({}, this.leafletStart);
 			this.editMap = L.map('leaflet_edit_map');
 			L.tileLayer(
-				'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
+				django.cascade.leaflet_settings.tilesURL,
 				django.cascade.leaflet_settings
 			).addTo(this.editMap);
 			L.easyButton('<span class="map-button" title="Center">&target;</span>', this.resetCenter, this).addTo(this.editMap);
