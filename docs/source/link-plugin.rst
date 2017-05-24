@@ -113,21 +113,72 @@ This is achieved by reconfiguring the Link Plugin inside Cascade with:
 
 	CMSPLUGIN_CASCADE = {
 	    ...
-	    'dependencies': {
-	        'shop/js/admin/shoplinkplugin.js': 'cascade/js/admin/linkplugin.js',
-	    },
 	    'link_plugin_classes': (
 	        'shop.cascade.plugin_base.CatalogLinkPluginBase',
 	        'cmsplugin_cascade.link.plugin_base.LinkElementMixin',
 	        'shop.cascade.plugin_base.CatalogLinkForm',
 	    ),
+	    ...
 	}
 
-The tuple specified through ``link_plugin_classes`` replaces the base class for the LinkPlugi class
-and the form class for its editor. Please refer to the django-shop_ for implementation details of
-the classes.
+The tuple specified through ``link_plugin_classes`` replaces the base class for the **LinkPlugin**
+class and the form class used by its editor.
 
-Now the select box for **Link type** will offer one additional option: “Product”. When this is
+Here two classes are replaced, the **LinkPlugin** base class is implemented as:
+
+.. code-block:: python
+	:caption: shop/cascade/plugin_base.py
+
+	from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
+
+	class CatalogLinkPluginBase(LinkPluginBase):
+	    fields = (('link_type', 'cms_page', 'section', 'product'), 'glossary',)
+	    ring_plugin = 'ShopLinkPlugin'
+
+	    class Media:
+	        css = {'all': ['shop/css/admin/editplugin.css']}
+	        js = ['shop/js/admin/shoplinkplugin.js']
+
+it adds the field ``product`` to list of fields rendered by the editor.
+
+Additionally, we have to override the form class:
+
+.. code-block:: python
+	:caption: shop/cascade/plugin_base.py
+
+	from django.forms.fields import ModelChoiceField
+	from cmsplugin_cascade.link.forms import LinkForm
+	from myshop.models import MyProduct
+
+	class CatalogLinkForm(LinkForm):
+	    LINK_TYPE_CHOICES = [('cmspage', _("CMS Page")), ('product', _("Product")]
+
+	    product = ModelChoiceField(
+	        required=False,
+	        queryset=MyProduct.objects.all(),
+	        label='',
+	        help_text=_("An internal link onto a product from the shop"),
+	    )
+
+	    def clean_product(self):
+	        if self.cleaned_data.get('link_type') == 'product':
+	            app_label = MyProduct._meta.app_label
+	            self.cleaned_data['link_data'] = {
+	                'type': 'product',
+	                'model': '{0}.{1}'.format(app_label, MyProduct.__name__),
+	                'pk': self.cleaned_data['product'],
+	            }
+
+	    def set_initial_product(self, initial):
+	        try:
+	            # check if that product still exists, otherwise return nothing
+	            Model = apps.get_model(*initial['link']['model'].split('.'))
+	            initial['product'] = Model.objects.get(pk=initial['link']['pk']).pk
+	        except (KeyError, ValueError, ObjectDoesNotExist):
+	            pass
+
+
+Now the select box for **Link type** will offer one additional option: "Product". When this is
 selected, the site administrator can choose between all of the shops products.
 
 .. _djangocms-link: https://github.com/divio/djangocms-link
