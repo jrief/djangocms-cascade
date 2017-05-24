@@ -168,12 +168,6 @@ class MarkerInline(StackedInline):
 
 
 class LeafletForm(ModelForm):
-    DEFAULTS = {
-        'lat': 30.0,
-        'lng': -40.0,
-        'zoom': 3,
-    }
-
     leaflet = Field(widget=widgets.HiddenInput)
 
     class Meta:
@@ -185,7 +179,7 @@ class LeafletForm(ModelForm):
         except (KeyError, AttributeError):
             initial = {}
         initial.update(kwargs.pop('initial', {}))
-        initial['leaflet'] = json.dumps(initial.pop('leaflet', self.DEFAULTS))
+        initial['leaflet'] = json.dumps(initial.pop('leaflet', CMSPLUGIN_CASCADE['leaflet']['defaultPosition']))
         super(LeafletForm, self).__init__(data, initial=initial, *args, **kwargs)
 
     def clean(self):

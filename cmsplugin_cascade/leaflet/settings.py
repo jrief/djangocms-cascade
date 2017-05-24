@@ -9,6 +9,7 @@ CASCADE_PLUGINS = ['map']
 
 CMSPLUGIN_CASCADE.setdefault('leaflet', orig_config.get('leaflet', {}))
 CMSPLUGIN_CASCADE['leaflet'].setdefault('tilesURL', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+CMSPLUGIN_CASCADE['leaflet'].setdefault('defaultPosition', {'lat': 30.0, 'lng': -40.0, 'zoom': 3});
 CMSPLUGIN_CASCADE['leaflet'].setdefault('id', 'mapbox.streets'),
 CMSPLUGIN_CASCADE['leaflet'].setdefault('maxZoom', 18),
 CMSPLUGIN_CASCADE['leaflet'].setdefault('detectRetina', True)
