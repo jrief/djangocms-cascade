@@ -29,6 +29,8 @@
     "bootstrap": "~3.3.7",
     "bootstrap-sass": "~3.3.7",
     "jquery": "^3.2.1",
+    "leaflet": "^1.0.3",
+    "leaflet-easybutton": "^2.2.0",
     "picturefill": "~3.0.2",
     "select2": "~4.0.3"
   }
