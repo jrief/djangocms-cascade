@@ -181,12 +181,15 @@ class TransparentWrapper(object):
     def get_child_classes(cls, slot, page, instance=None):
         if hasattr(cls, 'direct_child_classes'):
             return cls.direct_child_classes
+        child_classes = set(super(TransparentWrapper, cls).get_child_classes(slot, page, instance))
         while True:
             instance = instance.get_parent_instance() if instance and instance.parent else None
             if instance is None:
-                return super(TransparentWrapper, cls).get_child_classes(slot, page, instance)
+                child_classes.update(super(TransparentWrapper, cls).get_child_classes(slot, page, instance))
+                return list(child_classes)
             if not issubclass(instance.plugin_class, TransparentWrapper):
-                return instance.plugin_class.get_child_classes(slot, page, instance)
+                child_classes.update(instance.plugin_class.get_child_classes(slot, page, instance))
+                return list(child_classes)
 
     @classmethod
     def get_parent_classes(cls, slot, page, instance=None):

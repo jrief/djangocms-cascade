@@ -24,12 +24,12 @@ class ImageFormMixin(object):
         tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
 
     def __init__(self, *args, **kwargs):
+        super(ImageFormMixin, self).__init__(*args, **kwargs)
         try:
-            self.base_fields['image_file'].initial = kwargs['instance'].image.pk
+            self.fields['image_file'].initial = kwargs['instance'].image.pk
         except (AttributeError, KeyError):
             pass
-        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-        super(ImageFormMixin, self).__init__(*args, **kwargs)
+        self.fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
 
     def clean_glossary(self):
         # TODO: remove this someday

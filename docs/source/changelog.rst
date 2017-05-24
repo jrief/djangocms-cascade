@@ -4,6 +4,19 @@
 Release History
 ===============
 
+0.12.5
+------
+* Fixed: Wrapper for transparent plugins did not find all children which declared
+  these kind of plugins as their parents.
+
+
+0.12.4
+------
+* Fixed: Initial Image is reseted after reopening Image plugin editor.
+* Changed order of fields in Accordion plugin editor.
+* Moved directory ``workdir`` for demo project from root folder into examples.
+
+
 0.12.3
 ------
 * Fixed: When using an Element ID while adding a Heading Plugin, under certain circumstances
