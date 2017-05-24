@@ -100,7 +100,7 @@ class MarkerForm(ModelForm):
         help_text=_("Optional rich text to display in popup."),
     )
 
-    leaflet = Field(widget=widgets.HiddenInput)
+    position = Field(widget=widgets.HiddenInput)
 
     glossary_field_order = ['title', 'marker_width', 'marker_anchor', 'popup_text']
 
@@ -115,7 +115,7 @@ class MarkerForm(ModelForm):
             initial = {}
             has_original = False
         initial.update(kwargs.pop('initial', {}))
-        self.base_fields['leaflet'].initial = json.dumps(initial.pop('leaflet', {}))
+        self.base_fields['position'].initial = json.dumps(initial.pop('position', {}))
         for key in self.glossary_field_order:
             self.base_fields[key].initial = initial.get(key)
         try:
@@ -132,15 +132,15 @@ class MarkerForm(ModelForm):
 
     def clean(self):
         try:
-            leaflet = self.cleaned_data['leaflet']
-            if isinstance(leaflet, six.string_types):
-                self.instance.glossary.update(leaflet=json.loads(leaflet))
-            elif isinstance(leaflet, dict):
-                self.instance.glossary.update(leaflet=leaflet)
+            position = self.cleaned_data['position']
+            if isinstance(position, six.string_types):
+                self.instance.glossary.update(position=json.loads(position))
+            elif isinstance(position, dict):
+                self.instance.glossary.update(position=position)
             else:
                 raise ValueError
         except (ValueError, KeyError):
-            raise ValidationError("Invalid internal leaflet data. Check your Javascript imports.")
+            raise ValidationError("Invalid internal position data. Check your Javascript imports.")
 
         marker_image = self.cleaned_data.pop('marker_image', None)
         if marker_image:
@@ -168,7 +168,7 @@ class MarkerInline(StackedInline):
 
 
 class LeafletForm(ModelForm):
-    leaflet = Field(widget=widgets.HiddenInput)
+    map_position = Field(widget=widgets.HiddenInput)
 
     class Meta:
         fields = ['glossary']
@@ -179,20 +179,20 @@ class LeafletForm(ModelForm):
         except (KeyError, AttributeError):
             initial = {}
         initial.update(kwargs.pop('initial', {}))
-        initial['leaflet'] = json.dumps(initial.pop('leaflet', CMSPLUGIN_CASCADE['leaflet']['defaultPosition']))
+        initial['map_position'] = json.dumps(initial.pop('map_position', CMSPLUGIN_CASCADE['leaflet']['default_position']))
         super(LeafletForm, self).__init__(data, initial=initial, *args, **kwargs)
 
     def clean(self):
         try:
-            leaflet = self.cleaned_data['leaflet']
-            if isinstance(leaflet, six.string_types):
-                self.cleaned_data['glossary'].update(leaflet=json.loads(leaflet))
-            elif isinstance(leaflet, dict):
-                self.cleaned_data['glossary'].update(leaflet=leaflet)
+            map_position = self.cleaned_data['map_position']
+            if isinstance(map_position, six.string_types):
+                self.cleaned_data['glossary'].update(map_position=json.loads(map_position))
+            elif isinstance(map_position, dict):
+                self.cleaned_data['glossary'].update(map_position=map_position)
             else:
                 raise ValueError
         except (ValueError, KeyError):
-            raise ValidationError("Invalid internal leaflet data. Check your Javascript imports.")
+            raise ValidationError("Invalid internal position data. Check your Javascript imports.")
 
 
 class LeafletPlugin(CascadePluginBase):
@@ -271,7 +271,8 @@ class LeafletPlugin(CascadePluginBase):
             except (KeyError, AttributeError):
                 pass
 
-        context.update(dict(instance=instance, placeholder=placeholder,
+        context.update(dict(instance=instance,
+                            placeholder=placeholder,
                             settings=CMSPLUGIN_CASCADE['leaflet'],
                             markers=marker_instances))
         return context

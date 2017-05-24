@@ -1,6 +1,6 @@
 {% load static cms_js_tags sekizai_tags thumbnail l10n %}
 
-{% addtoblock "js" %}<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD71sHrtkZMnLqTbgRmY_NsO0A9l9BQmv4&callback=initMap"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
 
 {% addtoblock "css" %}
 <style>
@@ -14,19 +14,18 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 function initMap() {
-	var data = {{ instance.glossary.leaflet|json }};
+	var mapPosition = {{ instance.glossary.map_position|json }};
 	var viewMap = new google.maps.Map(document.getElementById('cascadeelement_id-{{ instance.pk }}'), {
-		zoom: data.zoom,
-		center: data
+		zoom: mapPosition.zoom,
+		center: mapPosition
 	});
 	{% for marker in markers %}
 	(function(position) {
-	console.log(position);
 		var marker = new google.maps.Marker({
 			position: position,
 			map: viewMap
 		});
-	})({{ marker.glossary.leaflet|json }});
+	})({{ marker.glossary.position|json }});
 	{% endfor %}
 }
 </script>

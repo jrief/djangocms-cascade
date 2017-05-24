@@ -4,8 +4,8 @@ django.jQuery(function($) {
 	django.cascade.LeafletPlugin = ring.create(eval(django.cascade.ring_plugin_bases.LeafletPlugin), {
 		constructor: function() {
 			this.$super();
-			this.leafletStart = JSON.parse($('#id_leaflet').val());
-			this.leaflet = $.extend({}, this.leafletStart);
+			this.mapPosition = JSON.parse($('#id_map_position').val());
+			this.startPosition = $.extend({}, this.mapPosition);
 			this.editMap = L.map('leaflet_edit_map');
 			L.tileLayer(
 				django.cascade.leaflet_settings.tilesURL,
@@ -21,21 +21,21 @@ django.jQuery(function($) {
 		},
 		resetCenter: function(event) {
 			var self = event ? event.options : this;
-			self.editMap.setView([self.leafletStart.lat, self.leafletStart.lng], self.leafletStart.zoom);
+			self.editMap.setView([self.startPosition.lat, self.startPosition.lng], self.startPosition.zoom);
 		},
 		onMapDrag: function(evt) {
 			$.extend(
-				this.leaflet,
+				this.mapPosition,
 				this.editMap.getCenter(),
 				{zoom: this.editMap.getZoom()}
 			);
-			$('#id_leaflet').val(JSON.stringify(this.leaflet));
+			$('#id_map_position').val(JSON.stringify(this.mapPosition));
 		},
 		setMarkers: function() {
 			var self = this;
 			$.each($('#inline_elements-group .inline-related.has_original'), function() {
 				var title = $(this).find('.field-title input').val();
-				var inputField = $(this).find('.field-leaflet input');
+				var inputField = $(this).find('.field-position input');
 				var marker = L.marker(JSON.parse(inputField.val()), {draggable: true});
 				marker.addTo(self.editMap);
 				marker.bindTooltip(title);
@@ -45,7 +45,7 @@ django.jQuery(function($) {
 		addMarker: function(event) {
 			var element = $('#inline_elements-group .inline-related.last-related.dynamic-inline_elements:last');
 			var title = element.find('.field-title input').val();
-			var inputField = element.find('.field-leaflet input');
+			var inputField = element.find('.field-position input');
 			var marker = L.marker(event.latlng, {draggable: true});
 			inputField.val(JSON.stringify(marker.getLatLng()));
 			marker.addTo(this.editMap);

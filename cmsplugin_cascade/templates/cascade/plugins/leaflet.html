@@ -15,8 +15,8 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 (function() {
-	var data = {{ instance.glossary.leaflet|json }};
-	var viewMap = L.map('cascadeelement_id-{{ instance.pk }}').setView([data.lat, data.lng], data.zoom);
+	var position = {{ instance.glossary.map_position|json }};
+	var viewMap = L.map('cascadeelement_id-{{ instance.pk }}').setView([position.lat, position.lng], position.zoom);
 	L.tileLayer(
 		"{{ settings.tilesURL }}",
 		{{ settings|json }}
@@ -33,9 +33,9 @@
 		{% if marker.anchor %}iconAnchor: {{ marker.anchor }},{% endif %}
 		iconSize: {{ marker.size }}
 	});
-	marker = L.marker({{ marker.glossary.leaflet|json }}, {icon: icon});
+	marker = L.marker({{ marker.glossary.position|json }}, {icon: icon});
 		{% else %}
-	marker = L.marker({{ marker.glossary.leaflet|json }});
+	marker = L.marker({{ marker.glossary.position|json }});
 		{% endif %}
 	marker.bindTooltip("{{ marker.glossary.title }}");
 		{% if marker.glossary.popup_text %}

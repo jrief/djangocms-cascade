@@ -111,10 +111,14 @@ CMSPLUGIN_CASCADE.setdefault('segmentation_mixins', [
 ])
 
 CMSPLUGIN_CASCADE.setdefault('plugins_with_extra_render_templates', {
-    'TextLinkPlugin': (
+    'TextLinkPlugin': [
         ('cascade/link/text-link.html', _("default")),
         ('cascade/link/text-link-linebreak.html', _("with line break")),
-    )
+    ],
+    'LeafletPlugin': [
+        ('cascade/plugins/leaflet.html', _("default")),
+        ('cascade/plugins/googlemap.html', _("Google Map")),
+    ],
 })
 
 CMSPLUGIN_CASCADE.setdefault('allow_plugin_hiding', False)
