@@ -11,7 +11,7 @@ from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin import StackedInline
 from django.contrib.admin.sites import site
 from django.core.exceptions import ValidationError
-from django.utils.html import format_html
+from django.utils.html import format_html, strip_tags, strip_spaces_between_tags
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils import six
 
@@ -19,6 +19,7 @@ from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
 
 from cms.plugin_pool import plugin_pool
+from djangocms_text_ckeditor.fields import HTMLFormField
 
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
@@ -94,9 +95,14 @@ class MarkerForm(ModelForm):
         help_text=_("The coordinates of the icon's anchor (relative to its top left corner)."),
     )
 
+    popup_text = HTMLFormField(
+        required=False,
+        help_text=_("Optional rich text to display in popup."),
+    )
+
     leaflet = Field(widget=widgets.HiddenInput)
 
-    glossary_field_order = ['title', 'marker_width', 'marker_anchor']
+    glossary_field_order = ['title', 'marker_width', 'marker_anchor', 'popup_text']
 
     class Meta:
         exclude = ['glossary']
@@ -142,10 +148,14 @@ class MarkerForm(ModelForm):
             self.instance.glossary.update(image=image_data)
         else:
             self.instance.glossary.pop('image', None)
+
+        popup_text = self.cleaned_data.pop('popup_text', None)
+        if strip_tags(popup_text):
+            popup_text = strip_spaces_between_tags(popup_text)
+            self.cleaned_data.update(popup_text=popup_text)
+
         for key in self.glossary_field_order:
             self.instance.glossary.update({key: self.cleaned_data.get(key)})
-
-        # TODO: check patterns of size/anchor
 
 
 class MarkerInline(StackedInline):

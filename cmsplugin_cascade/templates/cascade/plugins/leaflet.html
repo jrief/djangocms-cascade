@@ -37,6 +37,9 @@ marker = L.marker({{ marker.glossary.leaflet|json }}, {icon: icon});
 marker = L.marker({{ marker.glossary.leaflet|json }});
 	{% endif %}
 marker.bindTooltip("{{ marker.glossary.title }}");
+	{% if marker.glossary.popup_text %}
+marker.bindPopup("{{ marker.glossary.popup_text|safe }}");
+	{% endif %}
 marker.addTo(viewMap);
 {% endfor %}
 </script>
