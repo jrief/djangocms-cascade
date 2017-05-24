@@ -14,34 +14,36 @@
 
 {% addtoblock "js" %}
 <script type="text/javascript">
-var data = {{ instance.glossary.leaflet|json }};
-var viewMap = L.map('cascadeelement_id-{{ instance.pk }}').setView([data.lat, data.lng], data.zoom);
-L.tileLayer(
-	"{{ settings.tilesURL }}",
-	{{ settings|json }}
-).addTo(viewMap);
+(function() {
+	var data = {{ instance.glossary.leaflet|json }};
+	var viewMap = L.map('cascadeelement_id-{{ instance.pk }}').setView([data.lat, data.lng], data.zoom);
+	L.tileLayer(
+		"{{ settings.tilesURL }}",
+		{{ settings|json }}
+	).addTo(viewMap);
 
-{% for marker in markers %}
-var marker;
-	{% if marker.image %}
-		{% thumbnail marker.image marker.size as thumb %}
-		{% thumbnail marker.image marker.size2x as thumb2x %}
-var icon =  L.icon({
-	iconUrl: "{{ thumb.url }}",
-	iconRetinaUrl: "{{ thumb2x.url }}",
-	{% if marker.anchor %}iconAnchor: {{ marker.anchor }},{% endif %}
-	iconSize: {{ marker.size }}
-});
-marker = L.marker({{ marker.glossary.leaflet|json }}, {icon: icon});
-	{% else %}
-marker = L.marker({{ marker.glossary.leaflet|json }});
-	{% endif %}
-marker.bindTooltip("{{ marker.glossary.title }}");
-	{% if marker.glossary.popup_text %}
-marker.bindPopup("{{ marker.glossary.popup_text|safe }}");
-	{% endif %}
-marker.addTo(viewMap);
+	{% for marker in markers %}
+	var marker;
+		{% if marker.image %}
+			{% thumbnail marker.image marker.size as thumb %}
+			{% thumbnail marker.image marker.size2x as thumb2x %}
+	var icon =  L.icon({
+		iconUrl: "{{ thumb.url }}",
+		iconRetinaUrl: "{{ thumb2x.url }}",
+		{% if marker.anchor %}iconAnchor: {{ marker.anchor }},{% endif %}
+		iconSize: {{ marker.size }}
+	});
+	marker = L.marker({{ marker.glossary.leaflet|json }}, {icon: icon});
+		{% else %}
+	marker = L.marker({{ marker.glossary.leaflet|json }});
+		{% endif %}
+	marker.bindTooltip("{{ marker.glossary.title }}");
+		{% if marker.glossary.popup_text %}
+	marker.bindPopup("{{ marker.glossary.popup_text|safe }}");
+		{% endif %}
+	marker.addTo(viewMap);
 {% endfor %}
+})();
 </script>
 {% endaddtoblock %}
 
