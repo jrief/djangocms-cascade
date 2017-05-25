@@ -12,6 +12,7 @@ from django.contrib.admin import StackedInline
 from django.contrib.admin.sites import site
 from django.core.exceptions import ValidationError
 from django.utils.html import format_html, strip_tags, strip_spaces_between_tags
+from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils import six
 
@@ -60,6 +61,12 @@ class GlossaryFormField(Field):
                 errors = self.error_class([m for m in e.messages])
         if errors:
             raise ValidationError(errors)
+
+
+class MarkerModelMixin(object):
+    @property
+    def data(self):
+        return mark_safe(json.dumps(self.glossary))
 
 
 class MarkerForm(ModelForm):
@@ -195,6 +202,12 @@ class LeafletForm(ModelForm):
             raise ValidationError("Invalid internal position data. Check your Javascript imports.")
 
 
+class LeafletModelMixin(object):
+    @property
+    def map_position(self):
+        return mark_safe(json.dumps(self.glossary.get('map_position', {})))
+
+
 class LeafletPlugin(CascadePluginBase):
     name = _("Map")
     parent_classes = None
@@ -206,7 +219,9 @@ class LeafletPlugin(CascadePluginBase):
     render_template = 'cascade/plugins/leaflet.html'
     inlines = (MarkerInline,)
     glossary_field_order = ('map_width', 'map_height')
+    model_mixins = (LeafletModelMixin,)
     form = LeafletForm
+    settings = mark_safe(json.dumps(CMSPLUGIN_CASCADE['leaflet']))
 
     map_width = GlossaryField(
         CascadingSizeWidget(allowed_units=['px', '%'], required=True),
@@ -235,11 +250,11 @@ class LeafletPlugin(CascadePluginBase):
         ]
 
     def add_view(self, request, form_url='', extra_context=None):
-        extra_context = dict(extra_context or {}, settings=CMSPLUGIN_CASCADE['leaflet'])
+        extra_context = dict(extra_context or {}, settings=self.settings)
         return super(LeafletPlugin, self).add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
-        extra_context = dict(extra_context or {}, settings=CMSPLUGIN_CASCADE['leaflet'])
+        extra_context = dict(extra_context or {}, settings=self.settings)
         return super(LeafletPlugin, self).change_view(request, object_id, form_url, extra_context)
 
     def render(self, context, instance, placeholder):
@@ -248,7 +263,8 @@ class LeafletPlugin(CascadePluginBase):
             # since inline_element requires the property `image`, add ImagePropertyMixin
             # to its class during runtime
             try:
-                ProxyModel = create_proxy_model('LeafletMarker', (ImagePropertyMixin,),
+                ProxyModel = create_proxy_model('LeafletMarker',
+                                                (ImagePropertyMixin, MarkerModelMixin),
                                                 InlineCascadeElement, module=__name__)
                 inline_element.__class__ = ProxyModel
                 try:
@@ -273,7 +289,8 @@ class LeafletPlugin(CascadePluginBase):
 
         context.update(dict(instance=instance,
                             placeholder=placeholder,
-                            settings=CMSPLUGIN_CASCADE['leaflet'],
+                            settings=self.settings,
+                            config=CMSPLUGIN_CASCADE['leaflet'],
                             markers=marker_instances))
         return context
 

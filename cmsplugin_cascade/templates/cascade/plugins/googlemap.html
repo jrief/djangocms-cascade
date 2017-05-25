@@ -1,6 +1,6 @@
-{% load static cms_js_tags sekizai_tags thumbnail l10n %}
+{% load static sekizai_tags thumbnail l10n %}
 
-{% addtoblock "js" %}<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
 
 {% addtoblock "css" %}
 <style>
@@ -14,18 +14,31 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 function initMap() {
-	var mapPosition = {{ instance.glossary.map_position|json }};
+	var mapPosition = {{ instance.map_position }};
 	var viewMap = new google.maps.Map(document.getElementById('cascadeelement_id-{{ instance.pk }}'), {
 		zoom: mapPosition.zoom,
 		center: mapPosition
 	});
 	{% for marker in markers %}
-	(function(position) {
+	(function(data) {
+		var iconUrl, infowindow;
+		{% if marker.image %}
+			{% thumbnail marker.image marker.size as thumb %}
+		iconUrl = "{{ thumb.url }}";
+		{% endif %}
 		var marker = new google.maps.Marker({
-			position: position,
-			map: viewMap
+			position: data.position,
+			title: data.title,
+			icon: iconUrl
 		});
-	})({{ marker.glossary.position|json }});
+		if (data.popup_text) {
+			infowindow = new google.maps.InfoWindow({content: data.popup_text});
+			marker.addListener('click', function() {
+				infowindow.open(viewMap, marker);
+			});
+		}
+		marker.setMap(viewMap);
+	})({{ marker.data }});
 	{% endfor %}
 }
 </script>
