@@ -88,3 +88,70 @@ aspect ratio.
 By settings the marker's anchor, the icon can be positioned exactly.
 
 Markers can be repositioned at any time and the new coordinates are saved together with the map.
+
+
+Alternative Tiles
+=================
+
+By default, **djangocms-cascade** is shipped using tiles from the `Open Street Map`_ project.
+This is mainly because these tiles can be used without requiring a license key. However, they load
+slowly and their appearance might not be what your customers expect.
+
+
+Mapbox
+------
+
+A good alternative are tiles from Mapbox_. Please refer to their terms and conditions for details.
+There you can also apply for an access token, they offer free plans for low traffic sites.
+
+Then add to the project's ``settings.py``:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'leaflet': {
+	        'tilesURL': 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
+	        'accessToken': YOUR-MAPBOX-ACCESS-TOKEN,
+	    }
+	    ...
+	}
+
+
+Google Maps
+-----------
+
+The problem with Google is that its Terms of Use forbid any means of tile access other than through
+the Google Maps API. Therefore in the frontend, Google Maps are rendered using a different template,
+which is not based on the LeafletJS library. This means that you must edit your maps using Mapbox or
+OpenStreetMap titles, and Google Maps are only rendered in the frontend.
+
+To start with, apply for a `Google Maps API key`_ and add it to the project's ``settings.py``:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'leaflet': {
+	        'apiKey': YOUR-GOOGLE-MAPS-API-KEY,
+	    }
+	    ...
+	}
+
+When editing a **Map** plugin, choose *Google Map* from the select field named *Render template*.
+
+If want to use Google maps exclusively, change this in your project's ``settings.py``:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'plugins_with_extra_render_templates': {
+	        'LeafletPlugin': [
+	            ('cascade/plugins/googlemap.html', "Google Map"),
+	        ],
+	    }
+	    ...
+	}
+
+.. _Google Maps API key: https://developers.google.com/maps/documentation/javascript/get-api-key
