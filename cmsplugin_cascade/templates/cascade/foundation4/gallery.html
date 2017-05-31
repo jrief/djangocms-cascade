@@ -1,0 +1,17 @@
+{% load static thumbnail %}{% spaceless %}
+{% with css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+<div style="{{ inline_styles }}">
+	{% for instance in gallery_instances %}
+	<img {% if instance.sizes %}sizes="{{ instance.sizes|join:', ' }}"{% endif %}
+		srcset="{% for key, srcset in instance.srcsets.items %}
+		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=srcset.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
+		{% endfor %}"
+	{% thumbnail instance.image instance.src.size crop=instance.src.crop upscale=instance.src.upscale subject_location=instance.src.subject_location as thumb %}
+		src="{{ thumb.url }}"{% if not instance.sizes %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %} />
+	{% endfor %}
+</div>
+<div style="width: 500px;">{% thumbnail gallery_instances.0.image 1665x1665 as thumb %}
+	<div image-src="{{ thumb.url }}" image-zoom zoom-factor="2.5"></div>
+</div>
+{% endwith %}
+{% endspaceless %}

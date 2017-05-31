@@ -1,0 +1,27 @@
+{% load static cms_tags sekizai_tags %}
+
+{% addtoblock "js" %}<script src="{% static 'jquery/dist/jquery.js' %}" type="text/javascript"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script src="{% static 'bootstrap/dist/js/bootstrap.js' %}" type="text/javascript"></script>{% endaddtoblock %}
+
+{% with bootstrap_element="carousel" inline_styles=instance.inline_styles %}
+<div id="cmsplugin_{{ instance.id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %} {{ instance.html_tag_attributes }}>
+	<ol class="carousel-indicators">
+	{% for slide in instance.child_plugin_instances %}
+		<li data-target="#cmsplugin_{{ instance.id }}" data-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active"{% endif %}></li>
+	{% endfor %}
+	</ol>
+	<div class="carousel-inner">
+	{% for slide in instance.child_plugin_instances %}
+		<div class="item{% if forloop.first %} active{% endif %}">
+		{% render_plugin slide %}
+		</div>
+	{% endfor %}
+	</div>
+	<a class="left carousel-control" href="#cmsplugin_{{ instance.id }}" data-slide="prev">
+		<span class="glyphicon glyphicon-chevron-left"></span>
+	</a>
+	<a class="right carousel-control" href="#cmsplugin_{{ instance.id }}" data-slide="next">
+		<span class="glyphicon glyphicon-chevron-right"></span>
+	</a>
+</div>
+{% endwith %}
