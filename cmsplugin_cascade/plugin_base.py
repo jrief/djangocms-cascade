@@ -246,6 +246,9 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         elif not hasattr(self, 'glossary_fields'):
             self.glossary_fields = []
 
+    def __repr__(self):
+        return "<class '{}'>".format(self.__class__.__name__)
+
     @classmethod
     def _get_parent_classes_transparent(cls, slot, page, instance=None):
         """
