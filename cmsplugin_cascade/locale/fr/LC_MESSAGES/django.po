@@ -357,22 +357,22 @@ msgstr "Conteneur"
 #: bootstrap3/container.py:42
 #, python-brace-format
 msgid "Tiny (<{sm[0]}px)"
-msgstr "Minuscule"
+msgstr "Minuscule (<{sm[0]}px)"
 
 #: bootstrap3/container.py:43
 #, python-brace-format
 msgid "Small (≥{sm[0]}px and <{md[0]}px)"
-msgstr "Petit"
+msgstr "Petit (≥{sm[0]}px and <{md[0]}px)"
 
 #: bootstrap3/container.py:44
 #, python-brace-format
 msgid "Medium (≥{md[0]}px and <{lg[0]}px)"
-msgstr "Moyen"
+msgstr "Moyen (≥{md[0]}px and <{lg[0]}px)"
 
 #: bootstrap3/container.py:45
 #, python-brace-format
 msgid "Large (≥{lg[0]}px)"
-msgstr "Grand"
+msgstr "Grand (≥{lg[0]}px)"
 
 #: bootstrap3/container.py:50
 msgid "Available Breakpoints"
