@@ -1,0 +1,1525 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-09 14:56+0200\n"
+"PO-Revision-Date: 2017-06-09 15:59+0200\n"
+"Last-Translator: Nicolas P <np>\n"
+"Language-Team: français <>\n"
+"Language: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#: cmsplugin_cascade/apps.py:16
+msgid "django CMS Cascade"
+msgstr "django CMS Cascade"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:26
+msgid "Panels"
+msgstr "Panneaux"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:27
+msgid "Number of panels for this panel group."
+msgstr "Nombre de panneaux pour ce groupe de panneaux."
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:31
+msgid "Accordion"
+msgstr "Accordéon"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:43
+msgid "Close others"
+msgstr "Fermer les autres"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:45
+msgid "Open only one panel at a time."
+msgstr "Ouvrir un seul panneau à la fois."
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:50
+msgid "First panel open"
+msgstr "Premier panneau ouvert"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:52
+msgid "Start with the first panel open."
+msgstr "Commencez par ouvrir le premier panneau."
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:59
+#, python-brace-format
+msgid "with {0} panel"
+msgid_plural "with {0} panels"
+msgstr[0] "Avec {0} panneau "
+msgstr[1] "Avec {0} panneaux"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:71
+msgid "Accordion Panel"
+msgstr "Panneau d'accordéon"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:81
+#: cmsplugin_cascade/bootstrap3/panel.py:58
+msgid "Panel type"
+msgstr "Type de panneau"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:82
+#: cmsplugin_cascade/bootstrap3/panel.py:59
+msgid "Display Panel using this style."
+msgstr "Panneau d'affichage utilisant ce style."
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:88
+#: cmsplugin_cascade/bootstrap3/panel.py:65
+msgid "Heading Size"
+msgstr "Taille de la rubrique"
+
+#: cmsplugin_cascade/bootstrap3/accordion.py:93
+msgid "Panel Title"
+msgstr "Titre du panneau"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:23
+#: cmsplugin_cascade/bootstrap3/buttons.py:45
+#: cmsplugin_cascade/bootstrap3/container.py:243
+#: cmsplugin_cascade/bootstrap3/panel.py:25
+msgid "Default"
+msgstr "Par défaut"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:23
+#: cmsplugin_cascade/bootstrap3/panel.py:25
+msgid "Primary"
+msgstr "Primaire"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:24
+#: cmsplugin_cascade/bootstrap3/panel.py:26
+msgid "Success"
+msgstr "Succès"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:24
+#: cmsplugin_cascade/bootstrap3/panel.py:26
+msgid "Info"
+msgstr "Info"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:24
+#: cmsplugin_cascade/bootstrap3/panel.py:26
+msgid "Warning"
+msgstr "Attention"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:25
+#: cmsplugin_cascade/bootstrap3/panel.py:27
+msgid "Danger"
+msgstr "Danger"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:25
+#: cmsplugin_cascade/link/cms_plugins.py:16 cmsplugin_cascade/link/forms.py:50
+msgid "Link"
+msgstr "Lien"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:45
+msgid "Large"
+msgstr "Grand"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:45
+msgid "Small"
+msgstr "Petit"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:46
+msgid "Extra small"
+msgstr "Super petit"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:76
+msgid "Button Type"
+msgstr "Type de bouton"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:78
+msgid "Display Link using this Button Style"
+msgstr "Afficher le lien en utilisant ce style de bouton"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:83
+msgid "Button Size"
+msgstr "Taille du bouton"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:85
+msgid "Display Link using this Button Size"
+msgstr "Afficher le lien à l'aide de cette taille de bouton"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:89
+msgid "Block level"
+msgstr "Niveau de blocage"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:89 cmsplugin_cascade/widgets.py:193
+msgid "Disabled"
+msgstr "Désactivé"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:90
+msgid "Button Options"
+msgstr "Options des boutons"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:94
+msgid "Do not float"
+msgstr "Ne pas flotter"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:94
+msgid "Pull left"
+msgstr "Tire vers la gauche"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:95
+msgid "Pull right"
+msgstr "Tire à droite"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:96
+msgid "Quick Float"
+msgstr "Flot rapide"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:98
+msgid "Float the button to the left or right."
+msgstr "Mettre en place le bouton à droite ou à gauche."
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:102
+msgid "No Icon"
+msgstr "Pas d'icône"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:102
+msgid "Icon placed left"
+msgstr "Icône placé à gauche"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:103
+msgid "Icon placed right"
+msgstr "Icône placée à droite"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:104
+msgid "Icon alignment"
+msgstr "Alignement des icônes"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:106
+#, fuzzy
+#| msgid "Append a Glyphicon after the content."
+msgid "Add an Icon before or after the button content."
+msgstr "Ajouter une icône avant ou après le contenu du bouton."
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:111
+#: cmsplugin_cascade/icon/cms_plugins.py:35
+#: cmsplugin_cascade/icon/cms_plugins.py:128
+msgid "Font"
+msgstr "Fonte"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:116
+#: cmsplugin_cascade/icon/cms_plugins.py:40
+#: cmsplugin_cascade/icon/cms_plugins.py:133
+#, fuzzy
+#| msgid "Select CSS"
+msgid "Select Symbol"
+msgstr "Sélectionnez le symbole"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:139
+msgid "Button"
+msgstr "Bouton"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:160
+msgid "Empty"
+msgstr "Vide"
+
+#: cmsplugin_cascade/bootstrap3/buttons.py:164
+msgid "Button Content"
+msgstr "Contenu du bouton"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:31
+msgid "Slides"
+msgstr "Slides"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:32
+msgid "Number of slides for this carousel."
+msgstr "Nombre de slides pour ce carrousel."
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:37
+msgid "Carousel"
+msgstr "Carrousel"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:46
+msgid "Animate"
+msgstr "Animer"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:46
+msgid "Pause"
+msgstr "Pause"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:46
+msgid "Wrap"
+msgstr "Emballage"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:50
+msgid "Interval"
+msgstr "Intervalle"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:52
+msgid "Change slide after this number of seconds."
+msgstr "Changer le slide après ce nombre de secondes."
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:57
+msgid "Options"
+msgstr "Options"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:59
+msgid "Adjust interval for the carousel."
+msgstr "Ajuster l'intervalle pour le carrousel."
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:65
+msgid "Carousel heights"
+msgstr "Hauteur du carrousel"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:68
+msgid "Heights of Carousel in pixels for distinct Bootstrap's breakpoints."
+msgstr ""
+"Hauteurs du carrousel en pixels pour les points d'arrêt distincts de "
+"Bootstrap."
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:73
+#: cmsplugin_cascade/bootstrap3/gallery.py:142
+#: cmsplugin_cascade/bootstrap3/image.py:117
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:116
+#: cmsplugin_cascade/bootstrap3/picture.py:54
+msgid "Resize Options"
+msgstr "Options de redimensionnement"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:74
+#: cmsplugin_cascade/bootstrap3/gallery.py:143
+#: cmsplugin_cascade/bootstrap3/image.py:118
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:119
+#: cmsplugin_cascade/bootstrap3/picture.py:55
+msgid "Options to use when resizing the image."
+msgstr "Options à utiliser lors du redimensionnement de l'image."
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:86
+#, python-brace-format
+msgid "with {0} slide"
+msgid_plural "with {0} slides"
+msgstr[0] "Avec {0} Slide"
+msgstr[1] "Avec {0} Slides"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:128
+msgid "Slide"
+msgstr "Slide"
+
+#: cmsplugin_cascade/bootstrap3/carousel.py:166
+msgid "Empty Slide"
+msgstr "Slide Vide"
+
+#: cmsplugin_cascade/bootstrap3/container.py:41
+msgid "At least one breakpoint must be selected."
+msgstr "Au moins un point d'arrêt doit être sélectionné."
+
+#: cmsplugin_cascade/bootstrap3/container.py:46
+msgid "Container"
+msgstr "Conteneur"
+
+#: cmsplugin_cascade/bootstrap3/container.py:56
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:101
+msgid "Available Breakpoints"
+msgstr "Points d'arrêt disponibles"
+
+#: cmsplugin_cascade/bootstrap3/container.py:58
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:104
+msgid "Supported display widths for Bootstrap's grid system."
+msgstr ""
+"Largeurs d'affichage prises en charge pour le système de grille de Bootstrap."
+
+#: cmsplugin_cascade/bootstrap3/container.py:63
+msgid "Fluid Container"
+msgstr "Fluid Container"
+
+#: cmsplugin_cascade/bootstrap3/container.py:64
+msgid "Changing your outermost '.container' to '.container-fluid'."
+msgstr "Modification de votre \".container\" externe vers '.container-fluid'."
+
+#: cmsplugin_cascade/bootstrap3/container.py:74
+#, python-brace-format
+msgid "{0}for {1}"
+msgstr "{0}pour {1}"
+
+#: cmsplugin_cascade/bootstrap3/container.py:104
+#, python-brace-format
+msgid "{0} column"
+msgid_plural "{0} columns"
+msgstr[0] "{0} colonne"
+msgstr[1] "{0} colonnes"
+
+#: cmsplugin_cascade/bootstrap3/container.py:105
+msgid "Columns"
+msgstr "Colonnes"
+
+#: cmsplugin_cascade/bootstrap3/container.py:106
+msgid "Number of columns to be created with this row."
+msgstr "Nombre de colonnes à créer avec cette ligne."
+
+#: cmsplugin_cascade/bootstrap3/container.py:110
+msgid "Row"
+msgstr "Rangée"
+
+#: cmsplugin_cascade/bootstrap3/container.py:120
+#, python-brace-format
+msgid "with {0} column"
+msgid_plural "with {0} columns"
+msgstr[0] "Avec {0} colonne"
+msgstr[1] "Avec {0} colonnes"
+
+#: cmsplugin_cascade/bootstrap3/container.py:138
+msgid "Column"
+msgstr "Colonne"
+
+#: cmsplugin_cascade/bootstrap3/container.py:161
+msgid "{} unit"
+msgid_plural "{} units"
+msgstr[0] "{} unité"
+msgstr[1] "{} Unités"
+
+#: cmsplugin_cascade/bootstrap3/container.py:176
+#: cmsplugin_cascade/bootstrap3/container.py:191
+msgid "Column width for {}"
+msgstr "Largeur de colonne pour {}"
+
+#: cmsplugin_cascade/bootstrap3/container.py:178
+msgid "Number of column units for devices narrower than {} pixels."
+msgstr "Nombre d'unités de colonne pour appareils plus étroits que {} pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:179
+msgid "Number of column units for devices wider than {} pixels."
+msgstr ""
+"Nombre d'unités de colonne pour les périphériques plus larges que {} pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:180
+msgid "Number of column units for all devices."
+msgstr "Nombre d'unités de colonne pour tous les appareils."
+
+#: cmsplugin_cascade/bootstrap3/container.py:189
+#: cmsplugin_cascade/bootstrap3/container.py:209
+msgid "Inherit from above"
+msgstr "Hériter d'en haut"
+
+#: cmsplugin_cascade/bootstrap3/container.py:193
+msgid "Override column units for devices narrower than {} pixels."
+msgstr ""
+"Annuler les unités de colonne pour les périphériques plus étroits que {} "
+"pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:194
+msgid "Override column units for devices wider than {} pixels."
+msgstr ""
+"Annuler les unités de colonne pour des périphériques plus larges que {} "
+"pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:195
+msgid "Override column units for all devices."
+msgstr "Annuler les unités de colonne pour tous les périphériques."
+
+#: cmsplugin_cascade/bootstrap3/container.py:206
+msgid "No offset"
+msgstr "Pas décalage"
+
+#: cmsplugin_cascade/bootstrap3/container.py:214
+msgid "Offset for {}"
+msgstr "Décalage pour {}"
+
+#: cmsplugin_cascade/bootstrap3/container.py:216
+msgid "Number of offset units for devices narrower than {} pixels."
+msgstr ""
+"Nombre d'unités de décalage pour les appareils plus petits que {} pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:217
+msgid "Number of offset units for devices wider than {} pixels."
+msgstr "Nombre d'unités de décalage pour les appareils que résister {} pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:218
+msgid "Number of offset units for all devices."
+msgstr "Nombre d'unités de décalage pour tous les appareils."
+
+#: cmsplugin_cascade/bootstrap3/container.py:227
+msgid "No reordering"
+msgstr "Pas de réorganisation"
+
+#: cmsplugin_cascade/bootstrap3/container.py:228
+msgid "Push {}"
+msgstr "presser {}"
+
+#: cmsplugin_cascade/bootstrap3/container.py:229
+msgid "Pull {}"
+msgstr "Intégration {}"
+
+#: cmsplugin_cascade/bootstrap3/container.py:230
+#, python-brace-format
+msgid "Column ordering for {0}"
+msgstr "Ordre de colonne pour {0}"
+
+#: cmsplugin_cascade/bootstrap3/container.py:232
+msgid "Column ordering for devices narrower than {} pixels."
+msgstr "Ordre des colonnes pour les périphériques plus étroits que {} pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:233
+msgid "Column ordering for devices wider than {} pixels."
+msgstr "Ordre des colonnes pour les périphériques plus larges que {} pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:234
+msgid "Column ordering for all devices."
+msgstr "Ordre des colonnes pour tous les périphériques."
+
+#: cmsplugin_cascade/bootstrap3/container.py:243
+msgid "Visible"
+msgstr "Visible"
+
+#: cmsplugin_cascade/bootstrap3/container.py:243
+msgid "Hidden"
+msgstr "Caché"
+
+#: cmsplugin_cascade/bootstrap3/container.py:244
+msgid "Responsive utilities for {}"
+msgstr "Responsive utilitaires pour {}"
+
+#: cmsplugin_cascade/bootstrap3/container.py:246
+msgid ""
+"Utility classes for showing and hiding content by devices narrower than {} "
+"pixels."
+msgstr ""
+"Classes utilitaire pour afficher et cacher du contenu pour des appareils "
+"plus étroits que {} pixels"
+
+#: cmsplugin_cascade/bootstrap3/container.py:247
+msgid ""
+"Utility classes for showing and hiding content by devices wider than {} "
+"pixels."
+msgstr ""
+"Classes utilitaire pour afficher et cacher le contenu pour des appareils "
+"plus larges que {} pixels."
+
+#: cmsplugin_cascade/bootstrap3/container.py:248
+msgid "Utility classes for showing and hiding content for all devices."
+msgstr ""
+"Classes utilitaire pour afficher et cacher du contenu pour tous les "
+"périphériques."
+
+#: cmsplugin_cascade/bootstrap3/container.py:312
+#, python-brace-format
+msgid "widths: {0} units"
+msgstr "Largeurs: {0} unités"
+
+#: cmsplugin_cascade/bootstrap3/container.py:315
+#, python-brace-format
+msgid "default width: {0} unit"
+msgid_plural "default width: {0} units"
+msgstr[0] "Largeur par défaut: {0} unité"
+msgstr[1] "Largeur par défaut: {0} unités"
+
+#: cmsplugin_cascade/bootstrap3/container.py:317
+msgid "unknown width"
+msgstr "Largeur inconnue"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:32
+#: cmsplugin_cascade/bootstrap3/image.py:49
+#: cmsplugin_cascade/bootstrap3/image.py:71
+#: cmsplugin_cascade/bootstrap3/image.py:127
+#: cmsplugin_cascade/bootstrap3/leaflet.py:28
+#: cmsplugin_cascade/bootstrap3/picture.py:64
+msgid "Image"
+msgstr "Image"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:33
+#: cmsplugin_cascade/bootstrap3/image.py:59
+#: cmsplugin_cascade/bootstrap3/leaflet.py:29
+msgid "Image Title"
+msgstr "Image Title"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:35
+#: cmsplugin_cascade/bootstrap3/image.py:60
+#: cmsplugin_cascade/bootstrap3/leaflet.py:31
+msgid "Caption text added to the 'title' attribute of the <img> element."
+msgstr "Texte de légende ajouté à l'attribut 'title' de l'élément <img>."
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:36
+#: cmsplugin_cascade/bootstrap3/image.py:65
+#: cmsplugin_cascade/bootstrap3/leaflet.py:32
+msgid "Alternative Description"
+msgstr "Description alternative"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:38
+#: cmsplugin_cascade/bootstrap3/image.py:66
+#: cmsplugin_cascade/bootstrap3/leaflet.py:34
+msgid ""
+"Textual description of the image added to the 'alt' tag of the <img> element."
+msgstr ""
+"Description textuelle de l'image ajoutée à la balise 'alt' de l'élément "
+"<img>."
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:85
+msgid "Gallery"
+msgstr "Galerie"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:87
+msgid ""
+"<p>Add images, which make up a set to be used as gallery.</p><p>All "
+"thumbnails for these images are resized to the same widths and heights.</p>"
+msgstr ""
+"<p> Ajoutez des images, qui constituent un ensemble à utiliser comme "
+"galerie. </p><p> Tous les miniatures de ces images sont redimensionnées avec "
+"les mêmes largeurs et hauteurs.</p>"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:98
+#: cmsplugin_cascade/bootstrap3/image.py:84
+#: cmsplugin_cascade/bootstrap3/leaflet.py:91
+msgid "Responsive"
+msgstr "Responsive"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:99
+#: cmsplugin_cascade/bootstrap3/image.py:86
+#: cmsplugin_cascade/bootstrap3/picture.py:34
+msgid "Upscale image"
+msgstr "Image haut de gamme"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:99
+#: cmsplugin_cascade/bootstrap3/image.py:86
+#: cmsplugin_cascade/bootstrap3/picture.py:34
+msgid "Crop image"
+msgstr "Recadrer l'image"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:100
+#: cmsplugin_cascade/bootstrap3/image.py:87
+#: cmsplugin_cascade/bootstrap3/picture.py:35
+msgid "With subject location"
+msgstr "Avec l'emplacement du sujet"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:101
+#: cmsplugin_cascade/bootstrap3/image.py:88
+#: cmsplugin_cascade/bootstrap3/picture.py:36
+msgid "Optimized for Retina"
+msgstr "Optimisé pour Retina"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:105
+msgid "Image Responsiveness"
+msgstr "Réactivité de l'image"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:111
+#: cmsplugin_cascade/bootstrap3/image.py:98
+msgid "Responsive Image Width"
+msgstr "Largeur de l'image réactive"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:113
+#: cmsplugin_cascade/bootstrap3/image.py:100
+msgid "Set the image width in percent relative to containing element."
+msgstr ""
+"Réglez la largeur de l'image en pour cent par rapport à l'élément contenant."
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:118
+#: cmsplugin_cascade/bootstrap3/image.py:105
+msgid "Fixed Image Width"
+msgstr "Largeur de l'image fixe"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:119
+#: cmsplugin_cascade/bootstrap3/image.py:106
+msgid "Set a fixed image width in pixels."
+msgstr "Définir une largeur de l'image fixe en pixels."
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:124
+#: cmsplugin_cascade/bootstrap3/image.py:111
+msgid "Adapt Image Height"
+msgstr "Adapter l'hauteur de l'image"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:125
+#: cmsplugin_cascade/bootstrap3/image.py:112
+msgid "Set a fixed height in pixels, or percent relative to the image width."
+msgstr ""
+"Définir une hauteur fixe en pixels, ou pour cent par rapport à la largeur de "
+"l'image."
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:130
+msgid "Thumbnail Width"
+msgstr "Largeur de vignette"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:131
+msgid "Set a fixed thumbnail width in pixels."
+msgstr "Définir une largeur fixe de la vignette en pixels."
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:136
+msgid "Thumbnail Height"
+msgstr "Hauteur de la vignette"
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:137
+msgid ""
+"Set a fixed height in pixels, or percent relative to the thumbnail width."
+msgstr ""
+"Définissez une hauteur fixe en pixels, ou un pourcentage par rapport à la "
+"largeur des vignettes."
+
+#: cmsplugin_cascade/bootstrap3/gallery.py:194
+#: cmsplugin_cascade/bootstrap3/leaflet.py:171
+#, python-brace-format
+msgid "with {0} image"
+msgid_plural "with {0} images"
+msgstr[0] "Avec {0} image"
+msgstr[1] "Avec {0} images"
+
+#: cmsplugin_cascade/bootstrap3/image.py:23
+msgid "No Link"
+msgstr "Pas de lien"
+
+#: cmsplugin_cascade/bootstrap3/image.py:84
+msgid "Rounded"
+msgstr "Arrondi"
+
+#: cmsplugin_cascade/bootstrap3/image.py:85
+#: cmsplugin_cascade/icon/cms_plugins.py:31
+msgid "Circle"
+msgstr "Cercle"
+
+#: cmsplugin_cascade/bootstrap3/image.py:85
+msgid "Thumbnail"
+msgstr "Vignette"
+
+#: cmsplugin_cascade/bootstrap3/image.py:92
+msgid "Image Shapes"
+msgstr "Formes d'image"
+
+#: cmsplugin_cascade/bootstrap3/image.py:159
+msgid "No Image"
+msgstr "Pas d'image"
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:75
+msgid "You must at least set a background width."
+msgstr "Vous devez au moins définir une largeur de fond."
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:80
+msgid "Jumbotron"
+msgstr "Écran géant"
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:109
+#: cmsplugin_cascade/bootstrap3/picture.py:40
+msgid "Adapt Picture Heights"
+msgstr "Adapter les hauteurs d'image"
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:112
+#: cmsplugin_cascade/bootstrap3/picture.py:42
+msgid ""
+"Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."
+msgstr ""
+"Hauteurs de l'image en pourcentage ou en pixels pour les points d'arrêt "
+"distincts de Bootstrap."
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:125
+#: cmsplugin_cascade/icon/cms_plugins.py:56
+msgid "Background color"
+msgstr "Couleur de fond"
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:131
+msgid "This property specifies how an image repeates."
+msgstr "Cette propriété spécifie comment une image se répète."
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:137
+msgid ""
+"This property specifies how to move the background relative to the viewport."
+msgstr ""
+"Cette propriété spécifie comment déplacer l'arrière-plan par rapport à la "
+"fenêtre."
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:143
+msgid "This property moves a background image vertically within its container."
+msgstr ""
+"Cette propriété déplace une image d'arrière-plan verticalement dans son "
+"conteneur."
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:149
+msgid ""
+"This property moves a background image horizontally within its container."
+msgstr ""
+"Cette propriété déplace une image de fond horizontalement dans son conteneur."
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:155
+msgid "Background size"
+msgstr "Taille de l'arrière-plan"
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:156
+msgid "This property specifies how an image is sized."
+msgstr "Cette propriété spécifie comment une image est dimensionnée."
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:162
+msgid "Background width and height"
+msgstr "Largeur et hauteur du fond"
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:163
+msgid "This property specifies the width and height of a background image."
+msgstr ""
+"Cette propriété spécifie la largeur et la hauteur d'une image d'arrière-plan."
+
+#: cmsplugin_cascade/bootstrap3/jumbotron.py:205
+msgid "Without background image"
+msgstr "Sans image de fond"
+
+#: cmsplugin_cascade/bootstrap3/leaflet.py:80
+msgid "Map"
+msgstr "Carte"
+
+#: cmsplugin_cascade/bootstrap3/leaflet.py:97
+#, fuzzy
+#| msgid "Image Responsiveness"
+msgid "Map Responsiveness"
+msgstr "Réactivité de l'image"
+
+#: cmsplugin_cascade/bootstrap3/leaflet.py:104
+#, fuzzy
+#| msgid "Responsive Image Width"
+msgid "Responsive Map Width"
+msgstr "Largeur de carte réceptive"
+
+#: cmsplugin_cascade/bootstrap3/leaflet.py:106
+#, fuzzy
+#| msgid "Set the image width in percent relative to containing element."
+msgid "Set the map width in percent relative to containing element."
+msgstr ""
+"Définissez la largeur de la carte en pourcentage par rapport à l'élément "
+"contenant."
+
+#: cmsplugin_cascade/bootstrap3/leaflet.py:112
+#, fuzzy
+#| msgid "Fixed Image Width"
+msgid "Fixed Map Width"
+msgstr "Largeur de l'image fixe"
+
+#: cmsplugin_cascade/bootstrap3/leaflet.py:113
+#, fuzzy
+#| msgid "Set a fixed image width in pixels."
+msgid "Set a fixed map width in pixels."
+msgstr "Définissez une largeur de carte fixe en pixels."
+
+#: cmsplugin_cascade/bootstrap3/leaflet.py:119
+#, fuzzy
+#| msgid "Adapt Image Height"
+msgid "Adapt Map Height"
+msgstr "Adaptez la hauteur de la carte"
+
+#: cmsplugin_cascade/bootstrap3/leaflet.py:120
+#, fuzzy
+#| msgid ""
+#| "Set a fixed height in pixels, or percent relative to the image width."
+msgid "Set a fixed height in pixels, or percent relative to the map width."
+msgstr ""
+"Définissez une hauteur fixe en pixels, ou un pourcentage par rapport à la "
+"largeur de la carte.."
+
+#: cmsplugin_cascade/bootstrap3/panel.py:18
+msgid "normal"
+msgstr "normal"
+
+#: cmsplugin_cascade/bootstrap3/panel.py:18
+#: cmsplugin_cascade/generic/cms_plugins.py:61
+msgid "Heading {}"
+msgstr "Titre {}"
+
+#: cmsplugin_cascade/bootstrap3/panel.py:39
+msgid "Content"
+msgstr "Contenu"
+
+#: cmsplugin_cascade/bootstrap3/panel.py:47
+msgid "Panel"
+msgstr "Panneau"
+
+#: cmsplugin_cascade/bootstrap3/panel.py:70
+msgid "Panel Heading"
+msgstr "Panneau de titre"
+
+#: cmsplugin_cascade/bootstrap3/panel.py:75
+msgid "Panel Footer"
+msgstr "Panneau bas de page"
+
+#: cmsplugin_cascade/bootstrap3/picture.py:20
+msgid "Picture"
+msgstr "Photo"
+
+#: cmsplugin_cascade/bootstrap3/picture.py:47
+msgid "Adapt Picture Zoom"
+msgstr "Adapter le zoom d'image"
+
+#: cmsplugin_cascade/bootstrap3/picture.py:49
+msgid ""
+"Magnification of picture in percent for distinct Bootstrap's breakpoints."
+msgstr ""
+"Grossissement de l'image en pourcentage pour les points d'arrêt distincts de "
+"Bootstrap."
+
+#: cmsplugin_cascade/bootstrap3/picture.py:97
+msgid "No Picture"
+msgstr "Pas de photo"
+
+#: cmsplugin_cascade/bootstrap3/secondary_menu.py:17
+msgid "Secondary Menu"
+msgstr "Menu secondaire"
+
+#: cmsplugin_cascade/bootstrap3/secondary_menu.py:26
+msgid "CMS Page Id"
+msgstr "ID de la page CMS"
+
+#: cmsplugin_cascade/bootstrap3/secondary_menu.py:27
+msgid "Select a CMS page with a given unique Id (in advanced settings)."
+msgstr ""
+"Sélectionnez une page CMS avec un identifiant unique donné (dans les "
+"paramètres avancés)."
+
+#: cmsplugin_cascade/bootstrap3/settings.py:21
+msgid "mobile phones"
+msgstr "téléphones portables"
+
+#: cmsplugin_cascade/bootstrap3/settings.py:22
+msgid "tablets"
+msgstr "tablette"
+
+#: cmsplugin_cascade/bootstrap3/settings.py:23
+msgid "laptops"
+msgstr "Ordinateurs portables"
+
+#: cmsplugin_cascade/bootstrap3/settings.py:24
+msgid "large desktops"
+msgstr "Ordinateurs de bureau"
+
+#: cmsplugin_cascade/bootstrap3/settings.py:35
+#: cmsplugin_cascade/settings.py:115
+msgid "default"
+msgstr "standard"
+
+#: cmsplugin_cascade/bootstrap3/settings.py:36
+msgid "unstyled"
+msgstr "pas de style"
+
+#: cmsplugin_cascade/bootstrap3/tabs.py:21
+msgid "Tabs"
+msgstr "Onglets"
+
+#: cmsplugin_cascade/bootstrap3/tabs.py:22
+msgid "Number of tabs."
+msgstr "Nombre d'onglets."
+
+#: cmsplugin_cascade/bootstrap3/tabs.py:26
+msgid "Tab Set"
+msgstr "Ensemble d'onglets"
+
+#: cmsplugin_cascade/bootstrap3/tabs.py:36
+msgid "Justified tabs"
+msgstr "Onglets justifiés"
+
+#: cmsplugin_cascade/bootstrap3/tabs.py:43
+#, fuzzy
+#| msgid "with {0} panel"
+#| msgid_plural "with {0} panels"
+msgid "with {} tab"
+msgid_plural "with {} tabs"
+msgstr[0] "Avec l'onglet {}"
+msgstr[1] "Avec {} onglets"
+
+#: cmsplugin_cascade/bootstrap3/tabs.py:55
+#, fuzzy
+#| msgid "Panel"
+msgid "Tab Pane"
+msgstr "Tableau des onglets"
+
+#: cmsplugin_cascade/bootstrap3/tabs.py:63
+#, fuzzy
+#| msgid "Title"
+msgid "Tab Title"
+msgstr "Titre de l'onglet"
+
+#: cmsplugin_cascade/clipboard/admin.py:42
+msgid "Copy to Clipboard"
+msgstr "Copier dans le presse-papier"
+
+#: cmsplugin_cascade/clipboard/admin.py:43
+msgid "Successfully pasted JSON data"
+msgstr "Les données JSON ont été collées avec succès"
+
+#: cmsplugin_cascade/clipboard/admin.py:44
+msgid "Successfully copied JSON data"
+msgstr "Les données JSON ont été copiées avec succès"
+
+#: cmsplugin_cascade/clipboard/admin.py:61
+msgid "Insert Data"
+msgstr "Insérer des données"
+
+#: cmsplugin_cascade/clipboard/admin.py:62
+msgid "From CMS Clipboard"
+msgstr "Du Presse-papiers CMS"
+
+#: cmsplugin_cascade/clipboard/admin.py:66
+msgid "Restore Data"
+msgstr "Restaurer les données"
+
+#: cmsplugin_cascade/clipboard/admin.py:67
+msgid "To CMS Clipboard"
+msgstr "Au Presse-papiers CMS"
+
+#: cmsplugin_cascade/extra_fields/admin.py:26 cmsplugin_cascade/widgets.py:161
+#: cmsplugin_cascade/widgets.py:296
+#, python-format
+msgid "In '%(label)s': Value '%(value)s' is not a valid color."
+msgstr "Dans '%(label)s': Valeur '%(value)s' n'est pas une couleur valide."
+
+#: cmsplugin_cascade/extra_fields/admin.py:35
+#, python-format
+msgid "'%s' is not a valid CSS class name."
+msgstr "'%s' n'est pas un nom de classe CSS valide."
+
+#: cmsplugin_cascade/extra_fields/admin.py:40
+msgid "px, em and %"
+msgstr "px, em et %"
+
+#: cmsplugin_cascade/extra_fields/admin.py:40
+msgid "px and em"
+msgstr "px et em"
+
+#: cmsplugin_cascade/extra_fields/admin.py:41
+#, fuzzy
+#| msgid "px and em"
+msgid "px and %"
+msgstr "px et em"
+
+#: cmsplugin_cascade/extra_fields/admin.py:41
+msgid "px"
+msgstr ""
+
+#: cmsplugin_cascade/extra_fields/admin.py:41
+msgid "%"
+msgstr ""
+
+#: cmsplugin_cascade/extra_fields/admin.py:45
+msgid "CSS class names"
+msgstr "Nom de classe CSS"
+
+#: cmsplugin_cascade/extra_fields/admin.py:47
+msgid "Freely selectable CSS classnames for this Plugin, separated by commas."
+msgstr ""
+"Noms de classe CSS sélectionnables pour ce plugin, séparés par des virgules."
+
+#: cmsplugin_cascade/extra_fields/admin.py:51
+msgid "Allow multiple"
+msgstr "Autoriser plusieurs"
+
+#: cmsplugin_cascade/extra_fields/admin.py:65
+#, python-brace-format
+msgid "Customized {0} Fields:"
+msgstr "Champs Personnalisés {0}:"
+
+#: cmsplugin_cascade/extra_fields/admin.py:74
+#, python-brace-format
+msgid "Units for {0} Fields:"
+msgstr "Unités pour {0} Champs:"
+
+#: cmsplugin_cascade/extra_fields/admin.py:120
+msgid "Module"
+msgstr "Module"
+
+#: cmsplugin_cascade/extra_fields/admin.py:126
+#, fuzzy
+#| msgid "Custom CSS classes and styles"
+msgid "Allowed Classes and Styles"
+msgstr "Classes et styles autorisés"
+
+#: cmsplugin_cascade/extra_fields/mixins.py:45
+msgid "Named Element ID"
+msgstr "ID d'élément nommé"
+
+#: cmsplugin_cascade/extra_fields/mixins.py:56
+msgid "Select CSS"
+msgstr "Sélectionnez CSS"
+
+#: cmsplugin_cascade/extra_fields/mixins.py:59
+msgid "Customized CSS Classes"
+msgstr "Classes CSS personnalisées"
+
+#: cmsplugin_cascade/extra_fields/mixins.py:61
+msgid "Customized CSS classes to be added to this element."
+msgstr "Classes CSS personnalisées à ajouter à cet élément."
+
+#: cmsplugin_cascade/generic/cms_plugins.py:16
+msgid "Simple Wrapper"
+msgstr "Enveloppe simple"
+
+#: cmsplugin_cascade/generic/cms_plugins.py:21
+msgid "<{}> – Element"
+msgstr "<{}> – Élément"
+
+#: cmsplugin_cascade/generic/cms_plugins.py:22
+msgid "Naked Wrapper"
+msgstr "Enveloppe Nu"
+
+#: cmsplugin_cascade/generic/cms_plugins.py:26
+msgid "HTML element tag"
+msgstr "Tag d'élément HTML"
+
+#: cmsplugin_cascade/generic/cms_plugins.py:27
+msgid "Choose a tag type for this HTML element."
+msgstr "Choisissez un type de tag pour cet élément HTML."
+
+#: cmsplugin_cascade/generic/cms_plugins.py:47
+msgid "Horizontal Rule"
+msgstr "Règle horizontale"
+
+#: cmsplugin_cascade/generic/cms_plugins.py:58
+#, fuzzy
+#| msgid "Heading {}"
+msgid "Heading"
+msgstr "Titre"
+
+#: cmsplugin_cascade/generic/cms_plugins.py:67
+#, fuzzy
+#| msgid "Heading Size"
+msgid "Heading content"
+msgstr "Taille de la rubrique"
+
+#: cmsplugin_cascade/generic/cms_plugins.py:91
+msgid "Custom Snippet"
+msgstr "Extrait personnalisé"
+
+#: cmsplugin_cascade/generic/mixins.py:33
+msgid "The element ID '{}' is not unique for this page."
+msgstr "L'élément ID '{}' n'est pas unique pour cette page."
+
+#: cmsplugin_cascade/generic/mixins.py:58
+#, fuzzy
+#| msgid "Named Element ID"
+msgid "Element ID"
+msgstr "ID de l'élément"
+
+#: cmsplugin_cascade/generic/mixins.py:60
+msgid "A unique identifier for this element."
+msgstr "Un identifiant unique pour cet élément."
+
+#: cmsplugin_cascade/hide_plugins.py:37
+#, fuzzy
+#| msgid "Used by plugins"
+msgid "Hide plugin"
+msgstr "Masquer le plugin"
+
+#: cmsplugin_cascade/hide_plugins.py:39
+msgid "Hide this plugin and all of it's children."
+msgstr "Masquer ce plugin et tous ses enfants."
+
+#: cmsplugin_cascade/icon/admin.py:38
+msgid "The uploaded zip archive is not packed correctly"
+msgstr "L'archive zip téléchargée n'est pas correctement chargée"
+
+#: cmsplugin_cascade/icon/admin.py:54
+msgid "Can not unzip uploaded archive. Reason: {}"
+msgstr "Impossible de décompresser les archives téléchargées. Raison: {}"
+
+#: cmsplugin_cascade/icon/admin.py:91
+msgid "Preview Icons"
+msgstr "Aperçu des icônes"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:21
+#: cmsplugin_cascade/icon/cms_plugins.py:117
+msgid "Icon"
+msgstr "Icône"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:29
+msgid "Square"
+msgstr "Carré"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:45
+msgid "Icon size"
+msgstr "Taille de l'icône"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:51
+msgid "Icon color"
+msgstr "Couleur de l'icône"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:61
+#, fuzzy
+#| msgid "Do not float"
+msgid "Do not align"
+msgstr "Ne pas aligner"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:61
+msgid "Left"
+msgstr "Gauche"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:62
+msgid "Center"
+msgstr "Centre"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:62
+msgid "Right"
+msgstr "Droite"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:63
+msgid "Text alignment"
+msgstr "Alignement du texte"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:65
+msgid "Align the icon inside the parent column."
+msgstr "Alignez l'icône à l'intérieur de la colonne parent."
+
+#: cmsplugin_cascade/icon/cms_plugins.py:70
+msgid "Set border"
+msgstr "Définir une bordure"
+
+#: cmsplugin_cascade/icon/cms_plugins.py:75
+msgid "Border radius"
+msgstr "Rayon de bordure"
+
+#: cmsplugin_cascade/link/cms_plugins.py:32
+msgid "Link Content"
+msgstr "Lien du contenu"
+
+#: cmsplugin_cascade/link/cms_plugins.py:34
+msgid "Content of Link"
+msgstr "Contenu du lien"
+
+#: cmsplugin_cascade/link/forms.py:49
+msgid "CMS Page"
+msgstr "Page CMS"
+
+#: cmsplugin_cascade/link/forms.py:49
+msgid "External URL"
+msgstr "URL externe"
+
+#: cmsplugin_cascade/link/forms.py:49
+msgid "Mail To"
+msgstr "Envoyer à"
+
+#: cmsplugin_cascade/link/forms.py:50
+msgid "Type of link"
+msgstr ""
+
+#: cmsplugin_cascade/link/forms.py:52
+msgid "An internal link onto CMS pages of this site"
+msgstr "Un lien interne sur les pages CMS de ce site"
+
+#: cmsplugin_cascade/link/forms.py:54
+msgid "Page bookmark"
+msgstr "Marqueur de page"
+
+#: cmsplugin_cascade/link/forms.py:55
+msgid "Link onto external page"
+msgstr "Lien vers une page externe"
+
+#: cmsplugin_cascade/link/forms.py:56
+msgid "Open Email program with this address"
+msgstr "Ouvrez le programme de messagerie électronique avec cette adresse"
+
+#: cmsplugin_cascade/link/forms.py:90
+msgid "Page root"
+msgstr "Racine de la page"
+
+#: cmsplugin_cascade/link/plugin_base.py:27
+msgid "Same Window"
+msgstr "Même fenêtre"
+
+#: cmsplugin_cascade/link/plugin_base.py:27
+msgid "New Window"
+msgstr "Nouvelle fenetre"
+
+#: cmsplugin_cascade/link/plugin_base.py:28
+msgid "Parent Window"
+msgstr "Fenêtre parentale"
+
+#: cmsplugin_cascade/link/plugin_base.py:28
+msgid "Topmost Frame"
+msgstr "Cadre le plus haut"
+
+#: cmsplugin_cascade/link/plugin_base.py:30
+msgid "Link Target"
+msgstr "Cible du lien"
+
+#: cmsplugin_cascade/link/plugin_base.py:31
+msgid "Open Link in other target."
+msgstr "Ouvrir le lien dans une autre cible."
+
+#: cmsplugin_cascade/link/plugin_base.py:36
+msgid "Title"
+msgstr "Titre"
+
+#: cmsplugin_cascade/link/plugin_base.py:37
+msgid "Link's Title"
+msgstr "Titre du lien"
+
+#: cmsplugin_cascade/models.py:30 cmsplugin_cascade/models.py:121
+msgid "Plugin Name"
+msgstr "Nom du plugin"
+
+#: cmsplugin_cascade/models.py:31 cmsplugin_cascade/models.py:151
+#: cmsplugin_cascade/models.py:216
+msgid "Identifier"
+msgstr "identificateurs"
+
+#: cmsplugin_cascade/models.py:36
+msgid "Shared between Plugins"
+msgstr "Partagé entre plugins"
+
+#: cmsplugin_cascade/models.py:60
+#, fuzzy
+#| msgid "Segment"
+msgid "Element"
+msgstr "Élément"
+
+#: cmsplugin_cascade/models.py:105
+msgid "Sort by"
+msgstr "Trier par"
+
+#: cmsplugin_cascade/models.py:122
+msgid "Site"
+msgstr "Site"
+
+#: cmsplugin_cascade/models.py:128
+msgid "Custom CSS classes and styles"
+msgstr "Personnalisés les classes CSS et les styles"
+
+#: cmsplugin_cascade/models.py:141
+#: cmsplugin_cascade/segmentation/cms_toolbars.py:15
+msgid "Segmentation"
+msgstr "Segmentation"
+
+#: cmsplugin_cascade/models.py:155
+msgid "Persited Clipboard Content"
+msgstr "Contenu de presse-papiers persistant"
+
+#: cmsplugin_cascade/models.py:165
+#, fuzzy
+#| msgid "There are no further settings for this plugin"
+msgid "User editable settings for this page."
+msgstr "Paramètres éditables par l'utilisateur pour cette page."
+
+#: cmsplugin_cascade/models.py:166
+msgid "Store for arbitrary page data."
+msgstr "Stockez pour des données de page arbitraires."
+
+#: cmsplugin_cascade/models.py:170
+#, fuzzy
+#| msgid "Shared Settings"
+msgid "Cascade Page Settings"
+msgstr "Paramètres de la page Cascade"
+
+#: cmsplugin_cascade/models.py:217
+msgid "A unique identifier to distinguish this icon font."
+msgstr "Un identifiant unique pour distinguer cette police d'icône."
+
+#: cmsplugin_cascade/models.py:221
+msgid ""
+"Upload a zip file created on <a href=\"http://fontello.com/\" target=\"_blank"
+"\">Fontello</a> containing fonts."
+msgstr ""
+"Téléchargez un fichier zip créé sur <a href=\"http://fontello.com/\" target="
+"\"_blank\">Fontello</a> contenant les fontes. "
+
+#: cmsplugin_cascade/models.py:226
+msgid "Uploaded Icon Font"
+msgstr "Police d'icone téléchargée"
+
+#: cmsplugin_cascade/models.py:227
+msgid "Uploaded Icon Fonts"
+msgstr "Polices d'icônes téléchargées"
+
+#: cmsplugin_cascade/render_template.py:27
+msgid "Render template"
+msgstr "Modèle de rendu"
+
+#: cmsplugin_cascade/render_template.py:29
+msgid "Use alternative template for rendering this plugin."
+msgstr "Utilisez un autre modèle pour rendre ce plugin."
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:35
+msgid "Segment"
+msgstr "Segment"
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:52
+msgid "Condition tag"
+msgstr "Condition tag"
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:53
+msgid "Django's condition tag"
+msgstr "Django's condition tag"
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:58
+msgid "Condition evaluation"
+msgstr "Évaluation de la condition"
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:59
+msgid "Evaluation as used in Django's template tags for conditions"
+msgstr "Évaluation utilisée dans les tag de modèle Django pour les conditions"
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:145
+#, python-brace-format
+msgid "Unable to evaluate condition: {err}"
+msgstr "Impossible d'évaluer la condition: {err}"
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:176
+#: cmsplugin_cascade/segmentation/cms_plugins.py:177
+msgid "if"
+msgstr "si"
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:176
+msgid "elif"
+msgstr "sinon si"
+
+#: cmsplugin_cascade/segmentation/cms_plugins.py:176
+msgid "else"
+msgstr "sinon"
+
+#: cmsplugin_cascade/segmentation/mixins.py:68
+msgid "Emulate User"
+msgstr "Emuler l'utilisateur"
+
+#: cmsplugin_cascade/segmentation/mixins.py:70
+msgid "Clear emulations"
+msgstr "Annuler les emulations "
+
+#: cmsplugin_cascade/segmentation/mixins.py:136
+#, python-format
+msgid "%(total_count)s selected"
+msgid_plural "All %(total_count)s selected"
+msgstr[0] "%(total_count)s selectionnés"
+msgstr[1] "All %(total_count)s selectionnés"
+
+#: cmsplugin_cascade/segmentation/mixins.py:141
+#, python-format
+msgid "0 of %(cnt)s selected"
+msgstr "0 of %(cnt)s selectionné"
+
+#: cmsplugin_cascade/segmentation/mixins.py:143
+#, python-format
+msgid "Select %(user_model)s to emulate"
+msgstr "Sélectionnez %(user_model)s à emuler"
+
+#: cmsplugin_cascade/settings.py:116
+msgid "with line break"
+msgstr "Avec rupture de ligne"
+
+#: cmsplugin_cascade/sharable/admin.py:36
+msgid "Shared Fields"
+msgstr "Champs partagés"
+
+#: cmsplugin_cascade/sharable/admin.py:73
+#, fuzzy
+#| msgid "There are no further settings for this plugin"
+msgid "Change shared settings of {} plugin"
+msgstr "Modifier les paramètres partagés de {} plugin"
+
+#: cmsplugin_cascade/sharable/admin.py:83
+msgid "Used by plugins"
+msgstr "Utilisé par des plugins"
+
+#: cmsplugin_cascade/sharable/admin.py:100
+#, fuzzy
+#| msgid "Plugin Name"
+msgid "Plugin Type"
+msgstr "Type de plugin"
+
+#: cmsplugin_cascade/sharable/forms.py:64
+msgid "Shared Settings"
+msgstr "Paramètres partagés"
+
+#: cmsplugin_cascade/sharable/forms.py:68
+msgid "Use individual settings"
+msgstr "Utilisez les paramètres individuels"
+
+#: cmsplugin_cascade/sharable/forms.py:69
+msgid "Use settings shared with other plugins of this type"
+msgstr "Utilisez les paramètres partagés avec d'autres plugins de ce type"
+
+#: cmsplugin_cascade/sharable/forms.py:72
+msgid "Remember these settings as:"
+msgstr "Rappelez-vous ces paramètres comme suit:"
+
+#: cmsplugin_cascade/sharable/forms.py:87
+#, python-brace-format
+msgid "The identifier '{0}' has already been used, please choose another name."
+msgstr "L'identifiant '{0}' a déjà été utilisé, choisissez un autre nom."
+
+#: cmsplugin_cascade/templates/cascade/admin/change_form.html:8
+msgid "There are no further settings for this plugin"
+msgstr "Il n'y a pas d'autres paramètres pour ce plugin"
+
+#: cmsplugin_cascade/templates/cascade/admin/change_form.html:9
+msgid "Please hit OK to save."
+msgstr "Cliquez sur OK pour enregistrer."
+
+#: cmsplugin_cascade/templates/cascade/admin/segmentation_list.html:39
+msgid "Home"
+msgstr "Accueil"
+
+#: cmsplugin_cascade/templates/cascade/admin/segmentation_list.html:42
+msgid "Add"
+msgstr "Ajouter"
+
+#: cmsplugin_cascade/utils.py:115
+#, fuzzy, python-brace-format
+#| msgid "Unable to evaluate condition: {err}"
+msgid "Unable to link onto '{0}'."
+msgstr "Impossible de lier '{0}'."
+
+#: cmsplugin_cascade/widgets.py:94 cmsplugin_cascade/widgets.py:104
+#, python-format
+msgid "In '%(label)s': This field is required."
+msgstr "Dans '%(label)s':Ce champ est requis."
+
+#: cmsplugin_cascade/widgets.py:95
+#, fuzzy, python-format
+#| msgid "In '%(label)s': Value '%(value)s' shall contain a valid number."
+msgid "In '%(label)s': Value '%(value)s' shall contain a valid decimal number."
+msgstr ""
+"Dans '%(label)s': Valeur '%(value)s' doit contenir un nombre décimal valide."
+
+#: cmsplugin_cascade/widgets.py:105
+#, python-format
+msgid ""
+"In '%(label)s': Value '%(value)s' shall contain a valid number, ending in "
+"%(endings)s."
+msgstr ""
+"Dans '%(label)s': Valeur '%(value)s' doit contenir un numéro valide, se "
+"terminant en %(endings)s."
+
+#: cmsplugin_cascade/widgets.py:120
+msgid "or"
+msgstr "ou"
+
+#: cmsplugin_cascade/widgets.py:276
+#, python-format
+msgid ""
+"In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a "
+"valid number, ending in %(endings)s."
+msgstr ""
+"Dans '%(label)s': Valeur '%(value)s' pour le champ '%(field)s' contiendra un "
+"numéro valide, se terminant en %(endings)s."
+
+#: cmsplugin_cascade/widgets.py:294
+#, fuzzy, python-format
+#| msgid "In '%(label)s': Value '%(value)s' is not a valid color."
+msgid "In '%(label)s': Value '%(value)s' is not a valid border style."
+msgstr ""
+"Dans '%(label)s': Valeur '%(value)s' n'est pas un style de bordure valide."
+
+#~ msgid "In '%(label)s': Field '%(field)s' is required."
+#~ msgstr "Dans '%(label)s': Champ '%(field)s' est requis.."
+
+#~ msgid "Prepend icon"
+#~ msgstr "Icône préfix"
+
+#~ msgid "Prepend a Glyphicon before the content."
+#~ msgstr "Préfixer le contenu par un Glyphicon."
+
+#~ msgid "Append icon"
+#~ msgstr "Ajouter l'icône"
+
+#~ msgid "Slide Caption"
+#~ msgstr "Slide Légende"
+
+#~ msgid "Caption text to be laid over the backgroud image."
+#~ msgstr "Le texte de la légende doit être posé sur l'image de fond."
+
+#~ msgid "Tiny (<{sm[0]}px)"
+#~ msgstr "Minuscule (<{sm[0]}px)"
+
+#~ msgid "Small (≥{sm[0]}px and <{md[0]}px)"
+#~ msgstr "Petit (≥{sm[0]}px and <{md[0]}px)"
+
+#~ msgid "Medium (≥{md[0]}px and <{lg[0]}px)"
+#~ msgstr "Moyen (≥{md[0]}px and <{lg[0]}px)"
+
+#~ msgid "Large (≥{lg[0]}px)"
+#~ msgstr "Grand (≥{lg[0]}px)"
+
+#~ msgid "Change %s"
+#~ msgstr "Changements %s"
