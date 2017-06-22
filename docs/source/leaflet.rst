@@ -155,3 +155,20 @@ If want to use Google maps exclusively, change this in your project's ``settings
 	}
 
 .. _Google Maps API key: https://developers.google.com/maps/documentation/javascript/get-api-key
+
+
+Default Starting Position
+=========================
+
+Depending of the region you normally create maps, you can specify the default starting position. If for instance
+your main area of interest is Germany, than these coordinates are a good setting:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'leaflet': {
+	        'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6},
+	    }
+	    ...
+	}
