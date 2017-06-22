@@ -11,14 +11,15 @@ from filer.models.imagemodels import Image
 
 from cms.api import add_plugin
 from cms.utils.plugins import build_plugin_tree
-from cmsplugin_cascade.bootstrap3 import settings
+
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.models import SharableCascadeElement
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
         BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.picture import BootstrapPicturePlugin
 from .test_base import CascadeTestCase
 
-BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
 
 class PicturePluginTest(CascadeTestCase):
