@@ -9,7 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
-from cmsplugin_cascade import settings
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 
@@ -35,7 +35,7 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
             site = get_current_site(request)
             extra_fields = PluginExtraFields.objects.get(plugin_type=clsname, site=site)
         except ObjectDoesNotExist:
-            extra_fields = settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
+            extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
 
         if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
             # add a text input field to let the user name an ID tag for this HTML element
@@ -62,7 +62,7 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
                 ))
 
             # add input fields to let the user enter styling information
-            for style, choices_tuples in settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
+            for style, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
                 if not inline_styles:
                     continue

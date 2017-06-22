@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 
 import logging
 from collections import OrderedDict
-from django.conf import settings
 from django.forms import widgets
 
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
 
@@ -15,8 +15,8 @@ __all__ = ['reduce_breakpoints', 'compute_media_queries', 'get_image_tags', 'get
 
 logger = logging.getLogger('cascade')
 
-BS3_BREAKPOINTS = OrderedDict(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
-BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+BS3_BREAKPOINTS = OrderedDict(app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
 
 def get_widget_choices():

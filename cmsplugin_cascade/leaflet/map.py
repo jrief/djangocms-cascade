@@ -22,13 +22,13 @@ from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.fields import HTMLFormField
 
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
 from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
-from cmsplugin_cascade.leaflet.settings import CMSPLUGIN_CASCADE
 
 
 class GlossaryFormField(Field):
@@ -186,7 +186,8 @@ class LeafletForm(ModelForm):
         except (KeyError, AttributeError):
             initial = {}
         initial.update(kwargs.pop('initial', {}))
-        initial['map_position'] = json.dumps(initial.pop('map_position', CMSPLUGIN_CASCADE['leaflet']['default_position']))
+        initial['map_position'] = json.dumps(initial.pop('map_position',
+                                                         app_settings.CMSPLUGIN_CASCADE['leaflet']['default_position']))
         super(LeafletForm, self).__init__(data, initial=initial, *args, **kwargs)
 
     def clean(self):
@@ -221,7 +222,7 @@ class LeafletPlugin(CascadePluginBase):
     glossary_field_order = ('map_width', 'map_height')
     model_mixins = (LeafletModelMixin,)
     form = LeafletForm
-    settings = mark_safe(json.dumps(CMSPLUGIN_CASCADE['leaflet']))
+    settings = mark_safe(json.dumps(app_settings.CMSPLUGIN_CASCADE['leaflet']))
 
     map_width = GlossaryField(
         CascadingSizeWidget(allowed_units=['px', '%'], required=True),
@@ -290,7 +291,7 @@ class LeafletPlugin(CascadePluginBase):
         context.update(dict(instance=instance,
                             placeholder=placeholder,
                             settings=self.settings,
-                            config=CMSPLUGIN_CASCADE['leaflet'],
+                            config=app_settings.CMSPLUGIN_CASCADE['leaflet'],
                             markers=marker_instances))
         return context
 

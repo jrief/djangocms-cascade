@@ -2,8 +2,9 @@
 from __future__ import unicode_literals
 import os
 from django.template.loader import get_template, TemplateDoesNotExist
+
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from . import settings
 
 
 class BootstrapPluginBase(CascadePluginBase):
@@ -17,7 +18,7 @@ class BootstrapPluginBase(CascadePluginBase):
         if render_template and '{}' in render_template:
             try:
                 # check if overridden template exists
-                template = render_template.format(settings.CMSPLUGIN_CASCADE['bootstrap3']['template_basedir'])
+                template = render_template.format(app_settings.CMSPLUGIN_CASCADE['bootstrap3']['template_basedir'])
                 template = os.path.normpath(template)
                 get_template(template)
                 return template

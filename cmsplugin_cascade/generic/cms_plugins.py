@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
 
-from cmsplugin_cascade import settings as cascade_settings
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 
@@ -92,7 +92,7 @@ class CustomSnippetPlugin(TransparentContainer, CascadePluginBase):
     require_parent = False
     allow_children = True
     alien_child_classes = True
-    render_template_choices = dict(cascade_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].get('CustomSnippetPlugin', ()))
+    render_template_choices = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].get('CustomSnippetPlugin', ()))
     render_template = 'cascade/generic/does_not_exist.html'  # default in case the template could not be found
 
     @classmethod

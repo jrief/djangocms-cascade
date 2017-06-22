@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.forms import widgets, models
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import CascadePage
 
@@ -38,7 +38,7 @@ class SectionModelMixin(object):
     def element_id(self):
         id_attr = self.glossary.get('element_id')
         if id_attr:
-            return '{bookmark_prefix}{0}'.format(id_attr, **CMSPLUGIN_CASCADE)
+            return '{bookmark_prefix}{0}'.format(id_attr, **app_settings.CMSPLUGIN_CASCADE)
 
     def delete(self, *args, **kwargs):
         try:

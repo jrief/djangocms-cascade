@@ -7,6 +7,8 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 
+raise ImproperlyConfigured("Configuration directives have been moved to module app_settings")
+
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from cmsplugin_cascade.widgets import (
     NumberInputWidget, MultipleCascadingSizeWidget, ColorPickerWidget,

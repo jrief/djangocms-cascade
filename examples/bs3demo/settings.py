@@ -215,12 +215,11 @@ CMSPLUGIN_CASCADE = {
         'TextLinkPlugin': ('link', 'target',),
     },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
-    'bootstrap3': {},
     'allow_plugin_hiding': True,
+    'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
 }
 
-if os.getenv('DJANGO_CLIENT_FRAMEWORK', '').startswith('angular'):
-    CMSPLUGIN_CASCADE['bootstrap3']['template_basedir'] = 'angular-ui'
+print(CMSPLUGIN_CASCADE)
 
 CACSCADE_WORKAREA_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg'],

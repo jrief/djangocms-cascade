@@ -6,7 +6,7 @@ from django.utils.six import with_metaclass
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import get_template, TemplateDoesNotExist
 
-from cmsplugin_cascade import settings
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 
 
@@ -18,7 +18,7 @@ class RenderTemplateMixin(with_metaclass(MediaDefiningClass)):
     """
     @classmethod
     def get_template_choices(cls):
-        return settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'][cls.__name__]
+        return app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'][cls.__name__]
 
     def get_form(self, request, obj=None, **kwargs):
         glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
