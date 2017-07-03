@@ -7,7 +7,6 @@ class AppSettings(object):
 
     def _setting(self, name, default=None):
         from django.conf import settings
-        print(getattr(settings, name, default))
         return getattr(settings, name, default)
 
     @property
