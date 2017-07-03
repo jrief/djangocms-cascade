@@ -21,4 +21,4 @@ node_modules/
 workdir/
 filer_public/
 filer_public_thumbnails/
-private_settings.py
+examples/bs3demo/private_settings.py
