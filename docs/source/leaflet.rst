@@ -113,6 +113,7 @@ Then add to the project's ``settings.py``:
 	    'leaflet': {
 	        'tilesURL': 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
 	        'accessToken': YOUR-MAPBOX-ACCESS-TOKEN,
+	        ...
 	    }
 	    ...
 	}
@@ -124,7 +125,7 @@ Google Maps
 The problem with Google is that its Terms of Use forbid any means of tile access other than through
 the Google Maps API. Therefore in the frontend, Google Maps are rendered using a different template,
 which is not based on the LeafletJS library. This means that you must edit your maps using Mapbox or
-OpenStreetMap titles, and Google Maps are only rendered in the frontend.
+OpenStreetMap titles, whereas Google Maps is only rendered in the frontend.
 
 To start with, apply for a `Google Maps API key`_ and add it to the project's ``settings.py``:
 
@@ -133,14 +134,17 @@ To start with, apply for a `Google Maps API key`_ and add it to the project's ``
 	CMSPLUGIN_CASCADE = {
 	    ...
 	    'leaflet': {
+	        ...
 	        'apiKey': YOUR-GOOGLE-MAPS-API-KEY,
+	        ...
 	    }
 	    ...
 	}
 
 When editing a **Map** plugin, choose *Google Map* from the select field named *Render template*.
 
-If want to use Google maps exclusively, change this in your project's ``settings.py``:
+If want to render Google Maps exclusively in the frontend, change this in your project's
+``settings.py``:
 
 .. code-block:: python
 
