@@ -4,6 +4,15 @@
 Release History
 ===============
 
+0.13
+----
+* Added Leaflet Plugin which allows to integrate interactive maps from Google, Mapbox and
+  OpenStreetMap. The editor can add any number of markers using arbitrary logos with an optional
+  popup box.
+* Refactored the app's settings modules to use an ``AppSettings`` class, rather than merging
+  application specific settings on the fly.
+
+
 0.12.5
 ------
 * Fixed: Wrapper for transparent plugins did not find all children which declared
