@@ -43,6 +43,7 @@ Contents:
   bootstrap3/navbar
   bootstrap3/other-components
   icon-fonts
+  leaflet
   client-side
   section
   segmentation

@@ -9,7 +9,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.forms import widgets
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade import settings
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import PluginExtraFields
 from cmsplugin_cascade.extra_fields.mixins import ExtraFieldsMixin
@@ -59,7 +59,7 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     def __init__(self, model, admin_site):
         super(PluginExtraFieldsAdmin, self).__init__(model, admin_site)
         self.style_fields = []
-        for style, choices_tuples in settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
+        for style, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
             extra_field = GlossaryField(
                 widgets.CheckboxSelectMultiple(choices=((c, c) for c in choices_tuples[0])),
                 label=_("Customized {0} Fields:").format(style),
@@ -83,7 +83,7 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     def plugins_for_site(self):
         def show_in_backend(plugin):
             try:
-                config = settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'][plugin.__name__]
+                config = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'][plugin.__name__]
             except KeyError:
                 return False
             else:

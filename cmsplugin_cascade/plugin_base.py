@@ -16,7 +16,7 @@ from cms import __version__ as cms_version
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
 
-from . import settings
+from . import app_settings
 from .fields import GlossaryField
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
@@ -118,12 +118,12 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
     by a user defined configuration, this meta-class conditionally inherits from additional mixin
     classes.
     """
-    plugins_with_extra_fields = dict(settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
-    plugins_with_bookmark = list(settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
-    plugins_with_sharables = dict(settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
-    plugins_with_extra_render_templates = settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys()
-    allow_plugin_hiding = settings.CMSPLUGIN_CASCADE['allow_plugin_hiding']
-    exclude_hiding_plugin = list(settings.CMSPLUGIN_CASCADE['exclude_hiding_plugin'])
+    plugins_with_extra_fields = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
+    plugins_with_bookmark = list(app_settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
+    plugins_with_sharables = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
+    plugins_with_extra_render_templates = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys()
+    allow_plugin_hiding = app_settings.CMSPLUGIN_CASCADE['allow_plugin_hiding']
+    exclude_hiding_plugin = list(app_settings.CMSPLUGIN_CASCADE['exclude_hiding_plugin'])
 
     def __new__(cls, name, bases, attrs):
         model_mixins = attrs.pop('model_mixins', ())
@@ -149,7 +149,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             bases = (RenderTemplateMixin,) + bases
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
-            model_mixins += tuple(import_string(mc[0]) for mc in settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
+            model_mixins += tuple(import_string(mc[0]) for mc in app_settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
         module = attrs.get('__module__')
         attrs['model'] = create_proxy_model(name, model_mixins, base_model, module=module)
         if is_installed('reversion'):
@@ -157,9 +157,9 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             if not reversion.revisions.is_registered(base_model):
                 reversion.revisions.register(base_model)
         # handle ambiguous plugin names by appending a symbol
-        if 'name' in attrs and settings.CMSPLUGIN_CASCADE['plugin_prefix']:
+        if 'name' in attrs and app_settings.CMSPLUGIN_CASCADE['plugin_prefix']:
             attrs['name'] = mark_safe_lazy(string_concat(
-                settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
+                app_settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
 
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
@@ -280,7 +280,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
                 elif child_parent_classes is None:
                     child_classes.add(child_class)
             else:
-                if cls.alien_child_classes and child_class.__name__ in settings.CMSPLUGIN_CASCADE['alien_plugins']:
+                if cls.alien_child_classes and child_class.__name__ in app_settings.CMSPLUGIN_CASCADE['alien_plugins']:
                     child_classes.add(child_class)
 
         return list(cc.__name__ for cc in child_classes)

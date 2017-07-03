@@ -83,8 +83,8 @@ class JSONMultiWidget(widgets.MultiWidget):
                     six.text_type(field.help_text),
                 ))
             html = format_html_join('',
-                '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',
-                render_fields)
+                 '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',
+                 render_fields)
             render_fieldsets.append((html,))
         return format_html_join('\n', '<div class="glossary-widget">{0}</div>', render_fieldsets)
 

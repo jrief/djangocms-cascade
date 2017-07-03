@@ -199,6 +199,7 @@ CMS_CACHE_DURATIONS = {
 CMSPLUGIN_CASCADE_PLUGINS = (
     'cmsplugin_cascade.segmentation',
     'cmsplugin_cascade.generic',
+    'cmsplugin_cascade.leaflet',
     'cmsplugin_cascade.link',
     'cmsplugin_cascade.bootstrap3',
     'bs3demo',
@@ -213,29 +214,12 @@ CMSPLUGIN_CASCADE = {
         'BootstrapButtonPlugin': ('button_type', 'button_size', 'button_options', 'icon_font',),
         'TextLinkPlugin': ('link', 'target',),
     },
-    # 'plugins_with_extra_fields': {
-    #     'BootstrapRowPlugin': PluginExtraFieldsConfig(
-    #         inline_styles={
-    #             'extra_fields:Margins': ['margin-top', 'margin-bottom'],
-    #             'extra_units:Margins': 'px,em',
-    #         }
-    #     ),
-    #     'BootstrapColumnPlugin': PluginExtraFieldsConfig(
-    #         css_classes={'multiple': True, 'class_names': 'white'},
-    #         inline_styles={
-    #             'extra_fields:Height': ['height'],
-    #             'extra_units:Height': 'px',
-    #             'extra_fields:Paddings': ['padding-top', 'padding-right', 'padding-bottom', 'padding-left'],
-    #             'extra_units:Paddings': 'px,em',
-    #         }
-    #     ),
-    # },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
-    'bootstrap3': {},
     'allow_plugin_hiding': True,
+    'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
 }
-if os.getenv('DJANGO_CLIENT_FRAMEWORK', '').startswith('angular'):
-    CMSPLUGIN_CASCADE['bootstrap3']['template_basedir'] = 'angular-ui'
+
+print(CMSPLUGIN_CASCADE)
 
 CACSCADE_WORKAREA_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg'],
@@ -298,11 +282,14 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
     'jpeg': '/opt/local/bin/jpegoptim {filename}',
 }
 
-#THUMBNAIL_DEBUG = True
-
 SASS_PROCESSOR_INCLUDE_DIRS = [
     os.path.join(PROJECT_ROOT, 'node_modules'),
 ]
 
 # to access files such as fonts via staticfiles finders
 NODE_MODULES_URL = STATIC_URL + 'node_modules/'
+
+try:
+    from .private_settings import *
+except ImportError:
+    pass

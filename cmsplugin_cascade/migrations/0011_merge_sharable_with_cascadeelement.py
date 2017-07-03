@@ -5,9 +5,9 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 
-from cmsplugin_cascade import settings as cascade_settings
+from cmsplugin_cascade import app_settings
 
-plugins_with_sharables = cascade_settings.CMSPLUGIN_CASCADE['plugins_with_sharables'].keys()
+plugins_with_sharables = app_settings.CMSPLUGIN_CASCADE['plugins_with_sharables'].keys()
 plugins_with_sharables = ','.join(["'{}'".format(p) for p in plugins_with_sharables])
 
 

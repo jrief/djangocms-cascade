@@ -19,7 +19,7 @@ from cms.extensions import PageExtension
 from cms.extensions.extension_pool import extension_pool
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models_base import CascadeModelBase
-from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
+from cmsplugin_cascade import app_settings
 
 
 @python_2_unicode_compatible
@@ -198,7 +198,7 @@ class FilePathField(models.FilePathField):
     to avoid the creation of a migration file for each change in local settings.
     """
     def __init__(self, **kwargs):
-        kwargs.setdefault('path', CMSPLUGIN_CASCADE['icon_font_root'])
+        kwargs.setdefault('path', app_settings.CMSPLUGIN_CASCADE['icon_font_root'])
         super(FilePathField, self).__init__(**kwargs)
 
     def deconstruct(self):
@@ -243,7 +243,7 @@ class IconFont(models.Model):
         return families
 
     def get_stylesheet_url(self):
-        icon_font_url = os.path.relpath(CMSPLUGIN_CASCADE['icon_font_root'], settings.MEDIA_ROOT)
+        icon_font_url = os.path.relpath(app_settings.CMSPLUGIN_CASCADE['icon_font_root'], settings.MEDIA_ROOT)
         name = self.config_data.get('name') or 'fontello'
         parts = (icon_font_url, self.font_folder, 'css/{}.css'.format(name))
         return urljoin(settings.MEDIA_URL, '/'.join(parts))
@@ -251,7 +251,7 @@ class IconFont(models.Model):
     @classmethod
     def delete_icon_font(cls, instance=None, **kwargs):
         if isinstance(instance, cls):
-            font_folder = os.path.join(CMSPLUGIN_CASCADE['icon_font_root'], instance.font_folder)
+            font_folder = os.path.join(app_settings.CMSPLUGIN_CASCADE['icon_font_root'], instance.font_folder)
             shutil.rmtree(font_folder, ignore_errors=True)
             temp_folder = os.path.abspath(os.path.join(font_folder, os.path.pardir))
             os.rmdir(temp_folder)

@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 
 from importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
-from .settings import CASCADE_PLUGINS
+from . import app_settings
 
 
-for module in CASCADE_PLUGINS:
+for module in app_settings.CASCADE_PLUGINS:
     try:
         # if a module was specified, load all plugins in module settings
         module_settings = import_module('{}.settings'.format(module))

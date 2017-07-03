@@ -9,7 +9,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 
 from cmsplugin_cascade.models import IconFont
-from cmsplugin_cascade.settings import CMSPLUGIN_CASCADE
+from cmsplugin_cascade import app_settings
 
 import tempfile
 try:
@@ -36,12 +36,13 @@ class UploadIconsForms(ModelForm):
         common_prefix = os.path.commonprefix(zip_ref.namelist())
         if not common_prefix:
             raise ValidationError(_("The uploaded zip archive is not packed correctly"))
+        icon_font_root = app_settings.CMSPLUGIN_CASCADE['icon_font_root']
         try:
             try:
-                os.makedirs(CMSPLUGIN_CASCADE['icon_font_root'])
+                os.makedirs(icon_font_root)
             except os.error:
                 pass  # the directory exists already
-            temp_folder = tempfile.mkdtemp(prefix='', dir=CMSPLUGIN_CASCADE['icon_font_root'])
+            temp_folder = tempfile.mkdtemp(prefix='', dir=icon_font_root)
             for member in zip_ref.infolist():
                 zip_ref.extract(member, temp_folder)
             font_folder = os.path.join(temp_folder, common_prefix)
@@ -52,7 +53,7 @@ class UploadIconsForms(ModelForm):
         except Exception as e:
             shutil.rmtree(temp_folder, ignore_errors=True)
             raise ValidationError(_("Can not unzip uploaded archive. Reason: {}").__format__(e))
-        return os.path.relpath(font_folder, CMSPLUGIN_CASCADE['icon_font_root']), config_data
+        return os.path.relpath(font_folder, icon_font_root), config_data
 
     def clean(self):
         cleaned_data = super(UploadIconsForms, self).clean()

@@ -11,9 +11,10 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.models import ModelForm
 from django.forms.fields import ChoiceField
 from cms.plugin_pool import plugin_pool
+
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField
-from .settings import CMSPLUGIN_CASCADE
 from .plugin_base import BootstrapPluginBase
 from .utils import compute_media_queries, get_widget_choices, BS3_BREAKPOINTS, BS3_BREAKPOINT_KEYS
 
@@ -280,7 +281,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 if width_val.isdigit():
                     column_units = int(width_val)
                 new_width = float(parent_glossary['container_max_widths'][bp]) * column_units / 12
-                new_width = round(new_width - CMSPLUGIN_CASCADE['bootstrap3']['gutter'], 2)
+                new_width = round(new_width - app_settings.CMSPLUGIN_CASCADE['bootstrap3']['gutter'], 2)
                 if new_width != obj.glossary['container_max_widths'].get(bp):
                     obj.glossary['container_max_widths'][bp] = new_width
                     sanitized = True

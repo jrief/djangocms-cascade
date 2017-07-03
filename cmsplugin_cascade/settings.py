@@ -7,9 +7,11 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 
+raise ImproperlyConfigured("Configuration directives have been moved to module app_settings")
+
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from cmsplugin_cascade.widgets import (
-    NumberInputWidget, CascadingSizeWidget, MultipleCascadingSizeWidget, ColorPickerWidget,
+    NumberInputWidget, MultipleCascadingSizeWidget, ColorPickerWidget,
     SelectOverflowWidget)
 
 
@@ -111,10 +113,14 @@ CMSPLUGIN_CASCADE.setdefault('segmentation_mixins', [
 ])
 
 CMSPLUGIN_CASCADE.setdefault('plugins_with_extra_render_templates', {
-    'TextLinkPlugin': (
+    'TextLinkPlugin': [
         ('cascade/link/text-link.html', _("default")),
         ('cascade/link/text-link-linebreak.html', _("with line break")),
-    )
+    ],
+    'LeafletPlugin': [
+        ('cascade/plugins/leaflet.html', _("default")),
+        ('cascade/plugins/googlemap.html', _("Google Map")),
+    ],
 })
 
 CMSPLUGIN_CASCADE.setdefault('allow_plugin_hiding', False)
