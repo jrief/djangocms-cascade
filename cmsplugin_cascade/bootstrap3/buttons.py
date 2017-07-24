@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from django.forms import widgets
 from django.forms.fields import CharField
-from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
@@ -16,7 +15,7 @@ from cmsplugin_cascade.link.forms import TextLinkFormMixin
 from cmsplugin_cascade.icon.mixins import IconPluginMixin
 
 
-class ButtonTypeRenderer(RadioFieldRenderer):
+class ButtonTypeWidget(widgets.RadioSelect):
     """
     Render sample buttons in different colors in the button's backend editor.
     """
@@ -25,20 +24,19 @@ class ButtonTypeRenderer(RadioFieldRenderer):
         ('btn-danger', _("Danger")), ('btn-link', _("Link")),))
 
     @classmethod
-    def get_widget(cls):
+    def get_instance(cls):
         choices = tuple((k, v) for k, v in cls.BUTTON_TYPES.items())
-        return widgets.RadioSelect(choices=choices, renderer=cls)
+        return cls(choices=choices)
 
-    def render(self):
+    def render(self, name, value, attrs=None, renderer=None):
+        renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{}</div>',
-            format_html_join('\n', '<div class="field-box">'
-                             '<span class="btn {1}">{2}</span>'
-                             '<div class="label">{0}</div></div>',
-                ((force_text(w), w.choice_value, force_text(self.BUTTON_TYPES[w.choice_value])) for w in self)
-            ))
+            format_html_join('\n',
+                '<div class="field-box"><span class="btn {1}">{2}</span><div class="label">{0}</div></div>',
+                ((force_text(w), w.choice_value, force_text(self.BUTTON_TYPES[w.choice_value])) for w in renderer)))
 
 
-class ButtonSizeRenderer(RadioFieldRenderer):
+class ButtonSizeWidget(widgets.RadioSelect):
     """
     Render sample buttons in different sizes in the button's backend editor.
     """
@@ -46,11 +44,12 @@ class ButtonSizeRenderer(RadioFieldRenderer):
         ('btn-xs', _("Extra small")),))
 
     @classmethod
-    def get_widget(cls):
+    def get_instance(cls):
         choices = tuple((k, v) for k, v in cls.BUTTON_SIZES.items())
-        return widgets.RadioSelect(choices=choices, renderer=cls)
+        return cls(choices=choices)
 
-    def render(self):
+    def render(self, name, value, attrs=None, renderer=None):
+        renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{}</div>',
             format_html_join('\n',
                 '<div class="field-box"><div class="button-samples">'
@@ -58,8 +57,7 @@ class ButtonSizeRenderer(RadioFieldRenderer):
                     '<span class="btn btn-default {1}">{2}</span></div>'
                     '<div class="label">{0}</div>'
                 '</div>',
-                ((force_text(w), w.choice_value, force_text(self.BUTTON_SIZES[w.choice_value])) for w in self)
-            ))
+                ((force_text(w), w.choice_value, force_text(self.BUTTON_SIZES[w.choice_value])) for w in renderer)))
 
 
 class BootstrapButtonMixin(IconPluginMixin):
@@ -72,14 +70,14 @@ class BootstrapButtonMixin(IconPluginMixin):
     ring_plugin = 'ButtonMixin'
 
     button_type = GlossaryField(
-        ButtonTypeRenderer.get_widget(),
+        ButtonTypeWidget.get_instance(),
         label=_("Button Type"),
         initial='btn-default',
         help_text=_("Display Link using this Button Style")
     )
 
     button_size = GlossaryField(
-        ButtonSizeRenderer.get_widget(),
+        ButtonSizeWidget.get_instance(),
         label=_("Button Size"),
         initial='',
         help_text=_("Display Link using this Button Size")

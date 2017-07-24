@@ -19,7 +19,7 @@ from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContain
 from cmsplugin_cascade.widgets import NumberInputWidget
 
 from .plugin_base import BootstrapPluginBase
-from .panel import panel_heading_sizes, PanelTypeRenderer
+from .panel import panel_heading_sizes, PanelTypeWidget
 
 
 class AccordionForm(ManageChildrenFormMixin, ModelForm):
@@ -79,7 +79,7 @@ class BootstrapAccordionPanelPlugin(TransparentContainer, BootstrapPluginBase):
     glossary_field_order = ('panel_type', 'heading_size', 'panel_title')
 
     panel_type = GlossaryField(
-        PanelTypeRenderer.get_widget(),
+        PanelTypeWidget.get_instance(),
         label=_("Panel type"),
         help_text=_("Display Panel using this style.")
     )

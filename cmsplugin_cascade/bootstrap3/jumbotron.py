@@ -15,7 +15,7 @@ from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWi
 from .plugin_base import BootstrapPluginBase
 from .image import ImageForm
 from .utils import get_widget_choices, compute_media_queries, get_picture_elements, BS3_BREAKPOINT_KEYS
-from .container import ContainerBreakpointsRenderer
+from .container import ContainerBreakpointsWidget
 from .picture import BootstrapPicturePlugin
 
 
@@ -96,8 +96,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     SIZE_CHOICES = ('auto', 'width/height', 'cover', 'contain')
     container_glossary_fields = (
         GlossaryField(
-            widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
-                                           renderer=ContainerBreakpointsRenderer),
+            ContainerBreakpointsWidget(choices=get_widget_choices()),
             label=_("Available Breakpoints"),
             name='breakpoints',
             initial=list(BS3_BREAKPOINT_KEYS)[::-1],
