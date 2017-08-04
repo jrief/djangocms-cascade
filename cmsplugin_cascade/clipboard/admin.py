@@ -69,15 +69,15 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         language = get_language_from_request(request)
         if request.POST.get('save_clipboard'):
-            obj.data = self._serialize_clipboard(language)
+            obj.data = self._serialize_from_clipboard(language)
             request.POST['_continue'] = True
         if request.POST.get('restore_clipboard'):
             request.POST['_continue'] = True
         super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
         if request.POST.get('restore_clipboard'):
-            self._deserialize_clipboard(request, obj.data)
+            self._deserialize_to_clipboard(request, obj.data)
 
-    def _serialize_clipboard(self, language):
+    def _serialize_from_clipboard(self, language):
         """
         Create a serialized representation of all the plugins belonging to the clipboard.
         """
@@ -103,24 +103,24 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             populate_data(None, data['plugins'])
         return data
 
-    def _deserialize_clipboard(self, request, data):
+    def _deserialize_to_clipboard(self, request, data):
         """
         Restore clipboard by creating plugins from given data.
         """
         def plugins_from_data(placeholder, parent, data):
-            for entry in data:
-                plugin_type = plugin_pool.get_plugin(entry[0])
-                kwargs = dict(entry[1])
+            for plugin_type, data, children_data in data:
+                plugin_class = plugin_pool.get_plugin(plugin_type)
+                kwargs = dict(data)
                 inlines = kwargs.pop('inlines', [])
                 shared_glossary = kwargs.pop('shared_glossary', None)
-                instance = add_plugin(placeholder, plugin_type, language, target=parent, **kwargs)
+                instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
                 if isinstance(instance, CascadeElement):
                     instance.plugin_class.add_inline_elements(instance, inlines)
                     instance.plugin_class.add_shared_reference(instance, shared_glossary)
 
                 # for some unknown reasons add_plugin sets instance.numchild 0,
                 # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
-                plugins_from_data(placeholder, instance, entry[2])
+                plugins_from_data(placeholder, instance, children_data)
 
                 if isinstance(instance, Text):
                     # we must convert the old plugin IDs into the new ones,
