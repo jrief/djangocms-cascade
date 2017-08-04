@@ -204,4 +204,8 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             content = _("Without background image")
         return format_html('{0}{1}', identifier, content)
 
+    @classmethod
+    def get_data_representation(cls, instance):
+        return {'glossary': instance.glossary, 'pk': instance.pk}
+
 plugin_pool.register_plugin(BootstrapJumbotronPlugin)

@@ -283,7 +283,8 @@ class ReadonlyElement(object):
             plugin_class = readonly_plugins.get(plugin_type)
             element_class = readonly_elements.get(plugin_type)
             if element_class:
-                plugin_instance = element_class(plugin_class(), data.get('glossary', {}), children_data, parent=self)
+                glossary = data.get('glossary', {})
+                plugin_instance = element_class(plugin_class(), data.get('pk'), glossary, children_data, parent=self)
                 yield plugin_instance
 
     def get_complete_glossary(self):

@@ -21,7 +21,8 @@ class CascadeContentRenderer(object):
         for plugin_type, data, children_data in tree_data['plugins']:
             plugin_class = readonly_plugins.get(plugin_type)
             element_class = readonly_elements.get(plugin_type)
-            plugin_instance = element_class(plugin_class(), data.get('glossary', {}), children_data)
+            glossary = data.get('glossary', {})
+            plugin_instance = element_class(plugin_class(), data.get('pk'), glossary, children_data)
             content.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(content))
 
