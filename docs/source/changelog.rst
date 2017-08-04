@@ -4,6 +4,12 @@
 Release History
 ===============
 
+0.13.1
+------
+* Prepare for Django-1.11 compatibility: Replace renderer classes by specialized widgets
+  overriding its ``render()`` method.
+
+
 0.13
 ----
 * Added Leaflet Plugin which allows to integrate interactive maps from Google, Mapbox and
