@@ -5,12 +5,14 @@ import os, shutil
 from collections import OrderedDict
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
+from django.utils.html import format_html_join
+from django.utils.safestring import mark_safe
 from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.sites.models import Site
 
 from jsonfield.fields import JSONField
 from filer.fields.file import FilerFileField
@@ -263,8 +265,9 @@ class ReadonlyElement(object):
     """
     Emulate a CascadeElement to be used by the CascadeContentRenderer instead of the CMSContentRenderer.
     """
-    def __init__(self, plugin, glossary, children_data, parent=None):
+    def __init__(self, plugin, pk, glossary, children_data, parent=None):
         self.plugin = plugin
+        self.pk = pk
         self.glossary = glossary
         self.children_data = children_data
         self.parent = parent
@@ -300,3 +303,22 @@ class ReadonlyElement(object):
         # TODO: use self.placeholder.glossary as the starting dictionary
         template = self.placeholder.page.template if self.placeholder.page else None
         return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
+
+    @property
+    def tag_type(self):
+        return self.plugin_class.get_tag_type(self)
+
+    @property
+    def css_classes(self):
+        css_classes = self.plugin_class.get_css_classes(self)
+        return mark_safe(' '.join(c for c in css_classes if c))
+
+    @property
+    def inline_styles(self):
+        inline_styles = self.plugin_class.get_inline_styles(self)
+        return format_html_join(' ', '{0}: {1};', (s for s in inline_styles.items() if s[1]))
+
+    @property
+    def html_tag_attributes(self):
+        attributes = self.plugin_class.get_html_tag_attributes(self)
+        return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
