@@ -257,3 +257,45 @@ class IconFont(models.Model):
             os.rmdir(temp_folder)
 
 models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')
+
+
+class ReadonlyElement(object):
+    """
+    Emulate a CascadeElement to be used by the CascadeContentRenderer instead of the CMSContentRenderer.
+    """
+    def __init__(self, plugin, glossary, children_data, parent=None):
+        self.plugin = plugin
+        self.glossary = glossary
+        self.children_data = children_data
+        self.parent = parent
+
+        self.inline_elements = InlineCascadeElement.objects.none()
+        self.sortinline_elements = SortableInlineCascadeElement.objects.none()
+
+    @property
+    def plugin_class(self):
+        return self.plugin.__class__
+
+    def child_plugin_instances(self):
+        from .plugin_base import readonly_plugins, readonly_elements
+
+        for plugin_type, data, children_data in self.children_data:
+            plugin_class = readonly_plugins.get(plugin_type)
+            element_class = readonly_elements.get(plugin_type)
+            if element_class:
+                plugin_instance = element_class(plugin_class(), data.get('glossary', {}), children_data, parent=self)
+                yield plugin_instance
+
+    def get_complete_glossary(self):
+        if not hasattr(self, '_complete_glossary_cache'):
+            self._complete_glossary_cache = self.get_parent_glossary().copy()
+            self._complete_glossary_cache.update(self.glossary or {})
+        return self._complete_glossary_cache
+
+    def get_parent_glossary(self):
+        if self.parent:
+            return self.parent.get_complete_glossary()
+        return {}
+        # TODO: use self.placeholder.glossary as the starting dictionary
+        template = self.placeholder.page.template if self.placeholder.page else None
+        return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})

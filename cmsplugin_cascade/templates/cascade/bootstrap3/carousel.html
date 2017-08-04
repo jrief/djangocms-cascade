@@ -1,4 +1,4 @@
-{% load cms_tags %}
+{% load cascade_tags %}
 
 {% with bootstrap_element="carousel" inline_styles=instance.inline_styles %}
 <div id="cmsplugin_{{ instance.id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %} {{ instance.html_tag_attributes }}>

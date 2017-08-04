@@ -1,4 +1,4 @@
-{% load cms_tags %}{% spaceless %}
+{% load cascade_tags %}{% spaceless %}
 {% with inline_styles=instance.inline_styles %}
 
 <uib-accordion close-others="{% if instance.glossary.close_others %}true{% else %}false{% endif %}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>

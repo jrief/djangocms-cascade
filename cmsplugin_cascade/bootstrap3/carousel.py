@@ -147,7 +147,7 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
             'placeholder': placeholder,
             'elements': elements,
         })
-        return super(CarouselSlidePlugin, self).render(context, instance, placeholder)
+        return super(self.__class__, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):

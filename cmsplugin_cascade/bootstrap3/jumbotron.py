@@ -185,7 +185,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             'elements': [e for e in elements if 'media' in e] if elements else [],
             'CSS_PREFIXES': app_settings.CSS_PREFIXES,
         })
-        return super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
+        return super(self.__class__, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):
