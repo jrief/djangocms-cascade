@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from classytags.utils import flatten_context
 from cms.utils import get_language_from_request
 from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
-
+from .mixins import CascadePluginMixin
 
 __all__ = ['register_minion', 'MinionContentRenderer']
 
@@ -110,11 +110,22 @@ class TextMinionElement(object):
         return OBJ_ADMIN_RE.sub(_render_tag, self.body)
 
 
-class MinionPluginBase(object):
+class MinionPluginBase(CascadePluginMixin):
     """
     Whenever djangocms-cascade is used in readonly mode, all Cascade plugins are instantiated a second time
     where class CascadePluginBase is replaced against this class in order to remove its dependency to django-CMS.
     """
+
+    def __init__(self, model=None, admin_site=None, glossary_fields=None):
+        if isinstance(glossary_fields, (list, tuple)):
+            self.glossary_fields = list(glossary_fields)
+        elif not hasattr(self, 'glossary_fields'):
+            self.glossary_fields = []
+
+    @classmethod
+    def super(cls, klass, instance):
+        return super(_minion_plugin_map[klass.__name__], instance)
+
     def render(self, context, instance, placeholder):
         context.update({
             'instance': instance,
@@ -135,6 +146,26 @@ class MinionPluginBase(object):
 
     def in_edit_mode(self, request, placeholder):
         return False
+
+    def get_previous_instance(self, obj):
+        if obj and obj.parent:
+            for pos, sibling in enumerate(obj.parent.children_data):
+                if sibling[1].get('pk') == obj.pk and pos > 0:
+                    prev_pt, prev_data, prev_cd = obj.parent.children_data[pos - 1]
+                    plugin = _minion_plugin_map[prev_pt]()
+                    element_class = _minion_element_map.get(prev_pt)
+                    return element_class(plugin, prev_data, prev_cd, parent=obj.parent), plugin
+        return None, None
+
+    def get_next_instance(self, obj):
+        if obj and obj.parent:
+            for pos, sibling in enumerate(obj.parent.children_data):
+                if sibling[1].get('pk') == obj.pk and pos < len(obj.parent.children_data):
+                    next_pt, next_data, next_cd = obj.parent.children_data[pos + 1]
+                    plugin = _minion_plugin_map[next_pt]()
+                    element_class = _minion_element_map.get(next_pt)
+                    return element_class(plugin, next_data, next_cd, parent=obj.parent), plugin
+        return None, None
 
 
 class TextMinionPlugin(MinionPluginBase):
@@ -187,13 +218,9 @@ class MinionContentRenderer(object):
 def register_minion(name, bases, attrs, model_mixins):
     # create a fake plugin class
     plugin_bases = tuple(_minion_plugin_map.get(b.__name__, b) for b in bases)
-    new_attrs = dict(attrs)
     if name == 'CascadePluginBase':
-        # interrupt MRO: replace methods from CMSPluginBase by MinionPluginBase's
-        for key, val in attrs.items():
-            if hasattr(MinionPluginBase, key):
-                new_attrs.pop(key)
-        _minion_plugin_map[name] = type(str('MinionPluginBase'), plugin_bases, new_attrs)
+        plugin_bases += (MinionPluginBase,)
+        _minion_plugin_map[name] = type(str('MinionPluginBase'), plugin_bases, {})
     else:
         _minion_plugin_map[name] = type(name, plugin_bases, attrs)
 
@@ -203,7 +230,6 @@ def register_minion(name, bases, attrs, model_mixins):
 
 
 _minion_plugin_map = {
-    'CMSPluginBase': MinionPluginBase,
     'TextPlugin': TextMinionPlugin,
 }
 _minion_element_map = {

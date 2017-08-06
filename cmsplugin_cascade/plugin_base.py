@@ -16,7 +16,8 @@ from cms.utils.compat.dj import is_installed
 
 from . import app_settings
 from .fields import GlossaryField
-from .minions import register_minion  # TODO: make this optional
+from .minions import register_minion
+from .mixins import CascadePluginMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .generic.mixins import SectionMixin, SectionModelMixin
@@ -161,6 +162,8 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
                 app_settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
 
         register_minion(name, bases, attrs, model_mixins)
+        if name == 'CascadePluginBase':
+            bases += (CascadePluginMixin, CMSPluginBase,)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
@@ -228,7 +231,7 @@ class TransparentContainer(TransparentWrapper):
             return _leaf_transparent_plugins
 
 
-class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPluginBase)):
+class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
     change_form_template = 'cascade/admin/change_form.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
@@ -248,6 +251,10 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
 
     def __repr__(self):
         return "<class '{}'>".format(self.__class__.__name__)
+
+    @classmethod
+    def super(cls, klass, instance):
+        return super(klass, instance)
 
     @classmethod
     def _get_parent_classes_transparent(cls, slot, page, instance=None):
@@ -297,51 +304,6 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         return SafeText()
 
     @classmethod
-    def get_tag_type(self, instance):
-        """
-        Return the tag_type used to render this plugin.
-        """
-        return instance.glossary.get('tag_type', getattr(self, 'tag_type', 'div'))
-
-    @classmethod
-    def get_css_classes(cls, instance):
-        """
-        Returns a list of CSS classes to be added as class="..." to the current HTML tag.
-        """
-        css_classes = []
-        if hasattr(cls, 'default_css_class'):
-            css_classes.append(cls.default_css_class)
-        for attr in getattr(cls, 'default_css_attributes', []):
-            css_class = instance.glossary.get(attr)
-            if isinstance(css_class, six.string_types):
-                css_classes.append(css_class)
-            elif isinstance(css_class, list):
-                css_classes.extend(css_class)
-        return css_classes
-
-    @classmethod
-    def get_inline_styles(cls, instance):
-        """
-        Returns a dictionary of CSS attributes to be added as style="..." to the current HTML tag.
-        """
-        inline_styles = getattr(cls, 'default_inline_styles', {})
-        css_style = instance.glossary.get('inline_styles')
-        if css_style:
-            inline_styles.update(css_style)
-        return inline_styles
-
-    @classmethod
-    def get_html_tag_attributes(cls, instance):
-        """
-        Returns a dictionary of attributes, which shall be added to the current HTML tag.
-        This method normally is called by the models's property method ``html_tag_ attributes``,
-        which enriches the HTML tag with those attributes converted to a list as
-        ``attr1="val1" attr2="val2" ...``.
-        """
-        attributes = getattr(cls, 'html_tag_attributes', {})
-        return dict((attr, instance.glossary.get(key, '')) for key, attr in attributes.items())
-
-    @classmethod
     def sanitize_model(cls, instance):
         """
         This method is called, before the model is written to the database. It can be overloaded
@@ -359,7 +321,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         """
         Return a representation of the given instance suitable for a serialized representation.
         """
-        return {'glossary': instance.glossary}
+        return {'glossary': instance.glossary, 'pk': instance.pk}
 
     @classmethod
     def add_inline_elements(cls, instance, inlines):
@@ -454,8 +416,8 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         """
         try:
             if obj and obj.parent and obj.position > 0:
-                previnst = obj.parent.get_children().order_by('position')[obj.position - 1]
-                return previnst.get_plugin_instance()
+                prev_inst = obj.parent.get_children().order_by('position')[obj.position - 1]
+                return prev_inst.get_plugin_instance()
         except ObjectDoesNotExist:
             pass
         return None, None
@@ -467,8 +429,8 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         """
         try:
             if obj and obj.parent:
-                nextinst = obj.parent.get_children().order_by('position')[obj.position + 1]
-                return nextinst.get_plugin_instance()
+                next_inst = obj.parent.get_children().order_by('position')[obj.position + 1]
+                return next_inst.get_plugin_instance()
         except (IndexError, ObjectDoesNotExist):
             pass
         return None, None

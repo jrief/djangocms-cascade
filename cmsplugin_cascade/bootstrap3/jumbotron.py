@@ -185,7 +185,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             'elements': [e for e in elements if 'media' in e] if elements else [],
             'CSS_PREFIXES': app_settings.CSS_PREFIXES,
         })
-        return super(self.__class__, self).render(context, instance, placeholder)
+        return self.super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):
@@ -203,11 +203,5 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         except AttributeError:
             content = _("Without background image")
         return format_html('{0}{1}', identifier, content)
-
-    @classmethod
-    def get_data_representation(cls, instance):
-        data = super(BootstrapJumbotronPlugin, cls).get_data_representation(instance)
-        data.update(pk=instance.pk)
-        return data
 
 plugin_pool.register_plugin(BootstrapJumbotronPlugin)

@@ -76,7 +76,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(cls, cls).get_css_classes(obj)
+        css_classes = cls.super(BootstrapContainerPlugin, cls).get_css_classes(obj)
         if obj.glossary.get('fluid'):
             css_classes.append('container-fluid')
         else:

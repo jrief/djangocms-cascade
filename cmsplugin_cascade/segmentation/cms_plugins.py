@@ -5,7 +5,6 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
-from distutils.version import LooseVersion
 
 from django.core.exceptions import ValidationError
 from django.forms import widgets
@@ -127,10 +126,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
         request = context['request']
         if not hasattr(request, '_evaluated_instances'):
             request._evaluated_instances = {}
-        if LooseVersion(cms_version) > LooseVersion('3.3'):
-            context.update(instance.get_context_override(request))
-
-        return super(self.__class__, self).render(context, instance, placeholder)
+        context.update(instance.get_context_override(request))
+        return self.super(SegmentPlugin, self).render(context, instance, placeholder)
 
     def get_form(self, request, obj=None, **kwargs):
         def clean_condition(value):
@@ -175,11 +172,5 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
           change is False and prev_open_tag in ('if', 'elif', None)):
             return (('if', _("if")), ('elif', _("elif")), ('else', _("else")),)
         return (('if', _("if")),)
-
-    @classmethod
-    def get_data_representation(cls, instance):
-        data = super(SegmentPlugin, cls).get_data_representation(instance)
-        data.update(pk=instance.pk)
-        return data
 
 plugin_pool.register_plugin(SegmentPlugin)
