@@ -39,7 +39,7 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, instance):
         identifier = super(BootstrapTabSetPlugin, cls).get_identifier(instance)
-        num_cols = instance.get_children().count()
+        num_cols = instance.get_num_children()
         content = ungettext_lazy('with {} tab', 'with {} tabs', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 

@@ -77,6 +77,12 @@ class CascadeModelBase(CMSPlugin):
             self._complete_glossary_cache.update(self.glossary or {})
         return self._complete_glossary_cache
 
+    def get_num_children(self):
+        """
+        Returns the number of children for this plugin instance.
+        """
+        return self.get_children().count()
+
     def sanitize_children(self):
         """
         Recursively walk down the plugin tree and invoke method ``save(sanitize_only=True)`` for

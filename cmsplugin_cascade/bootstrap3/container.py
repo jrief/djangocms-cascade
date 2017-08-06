@@ -116,7 +116,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapRowPlugin, cls).get_identifier(obj)
-        num_cols = obj.get_children_count()
+        num_cols = obj.get_num_children()
         content = ungettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 

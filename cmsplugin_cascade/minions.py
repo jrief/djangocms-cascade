@@ -45,6 +45,9 @@ class MinionElementBase(object):
             if element_class:
                 yield element_class(plugin_class(), data, children_data, parent=self)
 
+    def get_num_children(self):
+        return len(self.children_data)
+
     def get_complete_glossary(self):
         if not hasattr(self, '_complete_glossary_cache'):
             self._complete_glossary_cache = self.get_parent_glossary().copy()

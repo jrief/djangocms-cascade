@@ -381,7 +381,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass, CMSPlugin
         No child will be removed if wanted_children is smaller than the current number of children.
         """
         from cms.api import add_plugin
-        current_children = parent.get_children().count()
+        current_children = parent.get_num_children()
         for _ in range(current_children, wanted_children):
             child = add_plugin(parent.placeholder, child_class, parent.language, target=parent)
             if isinstance(child_glossary, dict):
