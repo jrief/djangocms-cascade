@@ -4,6 +4,12 @@
 Release History
 ===============
 
+
+0.14
+----
+* Added static tree rendering.
+
+
 0.13.1
 ------
 * Prepare for Django-1.11 compatibility: Replace renderer classes by specialized widgets

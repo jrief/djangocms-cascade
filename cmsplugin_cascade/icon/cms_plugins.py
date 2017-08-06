@@ -88,7 +88,7 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
 
     @classmethod
     def get_css_classes(cls, instance):
-        css_classes = super(cls, cls).get_css_classes(instance)
+        css_classes = super(FramedIconPlugin, cls).get_css_classes(instance)
         text_align = instance.glossary.get('text_align')
         if text_align:
             css_classes.append(text_align)

@@ -58,3 +58,21 @@ Invoking ``super``
 Instead of invoking ``super(MyPlugin, self).some_method()`` use
 ``self.super(MyPlugin, self).some_method()``. This because **djangocms-cascade** creates a
 list of "shadow" plugins, which do not inherit from ``CMSPluginBase``.
+
+
+Templatetag ``render_plugin``
+-----------------------------
+
+Django-CMS provides a templatetag ``render_plugin``. Don't use it in templates provided by
+**djangocms-cascade** plugins. Instead use the templatetag named ``render_plugin`` from
+Cascade. Example:
+
+.. code-block:: Django
+
+	{% load cascade_tags %}
+	<div class="some-css-class">
+	{% for plugin in instance.child_plugin_instances %}
+		{% render_plugin plugin %}
+	{% endfor %}
+	<div>
+
