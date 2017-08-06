@@ -8,7 +8,10 @@ from django.utils.safestring import mark_safe
 
 from classytags.utils import flatten_context
 from cms.utils import get_language_from_request
+from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 
+
+__all__ = ['register_minion', 'MinionContentRenderer']
 
 class EmulateQuerySet(object):
     def __init__(self, elements):
@@ -27,7 +30,6 @@ class MinionElementBase(object):
         self.plugin = plugin
         self.pk = data.get('pk')
         self.glossary = data.get('glossary', {})
-        self.body = data.get('body')
         self.sortinline_elements = self.inline_elements = EmulateQuerySet(data.get('inlines', []))
         self.children_data = children_data
         self.parent = parent
@@ -38,13 +40,10 @@ class MinionElementBase(object):
 
     def child_plugin_instances(self):
         for plugin_type, data, children_data in self.children_data:
-            plugin_class = readonly_plugins.get(plugin_type)
-            element_class = readonly_elements.get(plugin_type)
+            plugin_class = _minion_plugin_map.get(plugin_type)
+            element_class = _minion_element_map.get(plugin_type)
             if element_class:
-                plugin_instance = element_class(plugin_class(), data, children_data, parent=self)
-                yield plugin_instance
-            elif plugin_type == 'TextPlugin':
-                pass  # TODO create an instance emulating a TextPlugin
+                yield element_class(plugin_class(), data, children_data, parent=self)
 
     def get_complete_glossary(self):
         if not hasattr(self, '_complete_glossary_cache'):
@@ -80,14 +79,39 @@ class MinionElementBase(object):
         return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
 
 
+class TextMinionElement(object):
+    def __init__(self, plugin, data, children_data, parent=None):
+        self.plugin = plugin
+        self.pk = data.get('pk')
+        self.body = data.get('body')
+        self.children_data = children_data
+        self.parent = parent
+
+    def tags_to_user_html(self, context, placeholder):
+        content_renderer = context['cms_content_renderer']
+        contents = {}
+        for plugin_type, data, children_data in self.children_data:
+            plugin_class = _minion_plugin_map.get(plugin_type)
+            element_class = _minion_element_map.get(plugin_type)
+            if element_class and 'pk' in data:
+                sub_plugin = plugin_class()
+                sub_instance = element_class(sub_plugin, data, children_data, parent=self)
+                with context.push():
+                    sub_context = sub_plugin.render(context, sub_instance, placeholder)
+                    contents[data['pk']] = content_renderer.render_plugin(sub_instance, sub_context)
+
+        def _render_tag(m):
+            plugin_id = int(m.groupdict()['pk'])
+            return contents[plugin_id]
+
+        return OBJ_ADMIN_RE.sub(_render_tag, self.body)
+
+
 class MinionPluginBase(object):
     """
     Whenever djangocms-cascade is used in readonly mode, all Cascade plugins are instantiated a second time
     where class CascadePluginBase is replaced against this class in order to remove its dependency to django-CMS.
     """
-    def __init__(self, model=None, admin_site=None, glossary_fields=None):
-        pass
-
     def render(self, context, instance, placeholder):
         context.update({
             'instance': instance,
@@ -108,37 +132,13 @@ class MinionPluginBase(object):
 
 
 class TextMinionPlugin(MinionPluginBase):
-    def __init__(self, *args, **kwargs):
-        pass
+    render_template = 'cms/plugins/text.html'
 
     def render(self, context, instance, placeholder):
         context.update({
-            'instance': instance,
+            'body': instance.tags_to_user_html(context, placeholder),
         })
         return context
-
-
-readonly_plugins = {
-    'CMSPluginBase': MinionPluginBase,
-    'TextPlugin': TextMinionPlugin,
-}
-readonly_elements = {
-#    'TextPlugin': type(str('TextReadonlyElement'), (ReadonlyElement,), {}),
-}
-
-def register_minion(name, bases, attrs, model_mixins):
-    # create a fake plugin class
-    plugin_bases = tuple(readonly_plugins.get(b.__name__, b) for b in bases)
-    if name == 'CascadePluginBase':
-        # interrupt MRO: replace methods from CMSPluginBase by MinionPluginBase's
-        for key, val in attrs.items():
-            if hasattr(MinionPluginBase, key):
-                attrs.pop(key)
-    readonly_plugins[name] = type(str('Readonly' + name), plugin_bases, attrs)
-
-    # create a corresponding minion element class
-    element_bases = model_mixins + (MinionElementBase,)
-    readonly_elements[name] = type(str(name + 'Element'), element_bases, {})
 
 
 class MinionContentRenderer(object):
@@ -150,8 +150,8 @@ class MinionContentRenderer(object):
     def render_tree(self, context, tree_data):
         content = []
         for plugin_type, data, children_data in tree_data['plugins']:
-            plugin_class = readonly_plugins.get(plugin_type)
-            element_class = readonly_elements.get(plugin_type)
+            plugin_class = _minion_plugin_map.get(plugin_type)
+            element_class = _minion_element_map.get(plugin_type)
             plugin_instance = element_class(plugin_class(), data, children_data)
             content.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(content))
@@ -176,3 +176,29 @@ class MinionContentRenderer(object):
         if not template in self._cached_templates:
             self._cached_templates[template] = get_template(template)
         return self._cached_templates[template]
+
+
+def register_minion(name, bases, attrs, model_mixins):
+    # create a fake plugin class
+    plugin_bases = tuple(_minion_plugin_map.get(b.__name__, b) for b in bases)
+    if name == 'CascadePluginBase':
+        # interrupt MRO: replace methods from CMSPluginBase by MinionPluginBase's
+        for key, val in attrs.items():
+            if hasattr(MinionPluginBase, key):
+                attrs.pop(key)
+        _minion_plugin_map[name] = type(str('MinionPluginBase'), plugin_bases, attrs)
+    else:
+        _minion_plugin_map[name] = type(name, plugin_bases, attrs)
+
+        # create a corresponding minion element class
+        element_bases = model_mixins + (MinionElementBase,)
+        _minion_element_map[name] = type(str(name + 'Element'), element_bases, {})
+
+
+_minion_plugin_map = {
+    'CMSPluginBase': MinionPluginBase,
+    'TextPlugin': TextMinionPlugin,
+}
+_minion_element_map = {
+    'TextPlugin': TextMinionElement,
+}
