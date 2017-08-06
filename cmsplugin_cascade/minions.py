@@ -89,20 +89,20 @@ class TextMinionElement(object):
 
     def tags_to_user_html(self, context, placeholder):
         content_renderer = context['cms_content_renderer']
-        contents = {}
+        children_instances = {}
         for plugin_type, data, children_data in self.children_data:
             plugin_class = _minion_plugin_map.get(plugin_type)
             element_class = _minion_element_map.get(plugin_type)
             if element_class and 'pk' in data:
                 sub_plugin = plugin_class()
-                sub_instance = element_class(sub_plugin, data, children_data, parent=self)
-                with context.push():
-                    sub_context = sub_plugin.render(context, sub_instance, placeholder)
-                    contents[data['pk']] = content_renderer.render_plugin(sub_instance, sub_context)
+                children_instances[data['pk']] = element_class(sub_plugin, data, children_data, parent=self)
 
         def _render_tag(m):
             plugin_id = int(m.groupdict()['pk'])
-            return contents[plugin_id]
+            instance = children_instances[plugin_id]
+            with context.push():
+                sub_context = instance.plugin.render(context, instance, placeholder)
+                return content_renderer.render_plugin(instance, sub_context)
 
         return OBJ_ADMIN_RE.sub(_render_tag, self.body)
 
