@@ -133,6 +133,9 @@ class MinionPluginBase(object):
             raise TemplateDoesNotExist("plugin {} has no render_template".format(self.__class__))
         return template
 
+    def in_edit_mode(self, request, placeholder):
+        return False
+
 
 class TextMinionPlugin(MinionPluginBase):
     render_template = 'cms/plugins/text.html'
@@ -184,12 +187,13 @@ class MinionContentRenderer(object):
 def register_minion(name, bases, attrs, model_mixins):
     # create a fake plugin class
     plugin_bases = tuple(_minion_plugin_map.get(b.__name__, b) for b in bases)
+    new_attrs = dict(attrs)
     if name == 'CascadePluginBase':
         # interrupt MRO: replace methods from CMSPluginBase by MinionPluginBase's
         for key, val in attrs.items():
             if hasattr(MinionPluginBase, key):
-                attrs.pop(key)
-        _minion_plugin_map[name] = type(str('MinionPluginBase'), plugin_bases, attrs)
+                new_attrs.pop(key)
+        _minion_plugin_map[name] = type(str('MinionPluginBase'), plugin_bases, new_attrs)
     else:
         _minion_plugin_map[name] = type(name, plugin_bases, attrs)
 
