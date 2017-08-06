@@ -206,6 +206,8 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_data_representation(cls, instance):
-        return {'glossary': instance.glossary, 'pk': instance.pk}
+        data = super(BootstrapJumbotronPlugin, cls).get_data_representation(instance)
+        data.update(pk=instance.pk)
+        return data
 
 plugin_pool.register_plugin(BootstrapJumbotronPlugin)

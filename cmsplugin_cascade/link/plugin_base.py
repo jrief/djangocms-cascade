@@ -70,6 +70,12 @@ class LinkPluginBase(CascadePluginBase):
                         pass
                 return href
 
+    @classmethod
+    def get_data_representation(cls, instance):
+        data = super(LinkPluginBase, cls).get_data_representation(instance)
+        data.update(pk=instance.pk)
+        return data
+
     def get_form(self, request, obj=None, **kwargs):
         kwargs.setdefault('form', LinkForm.get_form_class())
         return super(LinkPluginBase, self).get_form(request, obj, **kwargs)

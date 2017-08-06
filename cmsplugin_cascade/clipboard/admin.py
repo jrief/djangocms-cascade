@@ -118,7 +118,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                     instance.plugin_class.add_inline_elements(instance, inlines)
                     instance.plugin_class.add_shared_reference(instance, shared_glossary)
 
-                # for some unknown reasons add_plugin sets instance.numchild 0,
+                # for some unknown reasons add_plugin sets instance.numchild to 0,
                 # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
                 plugins_from_data(placeholder, instance, children_data)
 

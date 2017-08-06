@@ -96,6 +96,12 @@ class IconPluginMixin(CascadePluginMixinBase):
                 instance._cached_icon_font = None
         return instance._cached_icon_font
 
+    @classmethod
+    def get_data_representation(cls, instance):
+        data = super(IconPluginMixin, cls).get_data_representation(instance)
+        data.update(pk=instance.pk)
+        return data
+
     def render(self, context, instance, placeholder):
         context['instance'] = instance
         icon_font = self.get_icon_font(instance)
