@@ -9,8 +9,6 @@ from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
-from django.utils.html import format_html_join
-from django.utils.safestring import mark_safe
 from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
 
@@ -259,66 +257,3 @@ class IconFont(models.Model):
             os.rmdir(temp_folder)
 
 models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')
-
-
-class ReadonlyElement(object):
-    """
-    Emulate a CascadeElement to be used by the CascadeContentRenderer instead of the CMSContentRenderer.
-    """
-    def __init__(self, plugin, pk, glossary, children_data, parent=None):
-        self.plugin = plugin
-        self.pk = pk
-        self.glossary = glossary
-        self.children_data = children_data
-        self.parent = parent
-
-        self.inline_elements = InlineCascadeElement.objects.none()
-        self.sortinline_elements = SortableInlineCascadeElement.objects.none()
-
-    @property
-    def plugin_class(self):
-        return self.plugin.__class__
-
-    def child_plugin_instances(self):
-        from .plugin_base import readonly_plugins, readonly_elements
-
-        for plugin_type, data, children_data in self.children_data:
-            plugin_class = readonly_plugins.get(plugin_type)
-            element_class = readonly_elements.get(plugin_type)
-            if element_class:
-                glossary = data.get('glossary', {})
-                plugin_instance = element_class(plugin_class(), data.get('pk'), glossary, children_data, parent=self)
-                yield plugin_instance
-
-    def get_complete_glossary(self):
-        if not hasattr(self, '_complete_glossary_cache'):
-            self._complete_glossary_cache = self.get_parent_glossary().copy()
-            self._complete_glossary_cache.update(self.glossary or {})
-        return self._complete_glossary_cache
-
-    def get_parent_glossary(self):
-        if self.parent:
-            return self.parent.get_complete_glossary()
-        return {}
-        # TODO: use self.placeholder.glossary as the starting dictionary
-        template = self.placeholder.page.template if self.placeholder.page else None
-        return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
-
-    @property
-    def tag_type(self):
-        return self.plugin_class.get_tag_type(self)
-
-    @property
-    def css_classes(self):
-        css_classes = self.plugin_class.get_css_classes(self)
-        return mark_safe(' '.join(c for c in css_classes if c))
-
-    @property
-    def inline_styles(self):
-        inline_styles = self.plugin_class.get_inline_styles(self)
-        return format_html_join(' ', '{0}: {1};', (s for s in inline_styles.items() if s[1]))
-
-    @property
-    def html_tag_attributes(self):
-        attributes = self.plugin_class.get_html_tag_attributes(self)
-        return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))

@@ -13,7 +13,7 @@ from classytags.core import Options, Tag
 register = template.Library()
 
 
-class TreeRenderer(Tag):
+class MinionRenderer(Tag):
     """
     {% render_tree "tree-data.json" %}
 
@@ -26,7 +26,7 @@ class TreeRenderer(Tag):
     )
 
     def render_tag(self, context, datafile):
-        from cmsplugin_cascade.content_renderers import CascadeContentRenderer
+        from cmsplugin_cascade.minions import MinionContentRenderer
 
         jsonfile = finders.find(datafile)
         if not jsonfile:
@@ -35,12 +35,12 @@ class TreeRenderer(Tag):
         with open(jsonfile) as fp:
             tree_data = json.load(fp)
 
-        content_renderer = CascadeContentRenderer(context['request'])
+        content_renderer = MinionContentRenderer(context['request'])
         with context.push(cms_content_renderer=content_renderer):
             content = content_renderer.render_tree(context, tree_data)
         return content
 
-register.tag('render_tree', TreeRenderer)
+register.tag('render_tree', MinionRenderer)
 
 
 class RenderPlugin(Tag):

@@ -6,7 +6,6 @@ from distutils.version import LooseVersion
 
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.forms import MediaDefiningClass
-from django.template.exceptions import TemplateDoesNotExist
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.module_loading import import_string
@@ -19,8 +18,9 @@ from cms.utils.compat.dj import is_installed
 
 from . import app_settings
 from .fields import GlossaryField
+from .minions import register_minion  # TODO: make this optional
 from .models_base import CascadeModelBase
-from .models import CascadeElement, SharableCascadeElement, ReadonlyElement
+from .models import CascadeElement, SharableCascadeElement
 from .generic.mixins import SectionMixin, SectionModelMixin
 from .sharable.forms import SharableGlossaryMixin
 from .extra_fields.mixins import ExtraFieldsMixin
@@ -113,50 +113,6 @@ class CascadePluginMixinBase(six.with_metaclass(CascadePluginMixinMetaclass)):
     """
 
 
-class CascadeReadonlyBase(object):
-    """
-    Whenever djangocms-cascade is used in readonly mode, all Cascade plugins are instantiated a second time
-    where class CascadePluginBase is replaced against this class in order to remove its dependency to django-CMS.
-    """
-    def __init__(self, model=None, admin_site=None, glossary_fields=None):
-        pass
-
-    def render(self, context, instance, placeholder):
-        context.update({
-            'instance': instance,
-        })
-        return context
-
-    def _get_render_template(self, context, instance, placeholder):
-        if hasattr(self, 'get_render_template'):
-            template = self.get_render_template(context, instance, placeholder)
-        elif getattr(self, 'render_template', False):
-            template = getattr(self, 'render_template', False)
-        else:
-            template = None
-
-        if not template:
-            raise TemplateDoesNotExist("plugin {} has no render_template".format(self.__class__))
-        return template
-
-readonly_plugins, readonly_elements = {'CMSPluginBase': CascadeReadonlyBase}, {}
-
-
-def register_readonly_plugin(name, bases, attrs, model_mixins):
-    # create a fake plugin class
-    plugin_bases = tuple(readonly_plugins.get(b.__name__, b) for b in bases)
-    if name == 'CascadePluginBase':
-        # interrupt MRO: replace methods from CMSPluginBase by CascadeReadonlyBase
-        for key, val in attrs.items():
-            if hasattr(CascadeReadonlyBase, key):
-                attrs.pop(key)
-    readonly_plugins[name] = type(str('Readonly' + name), plugin_bases, attrs)
-
-    # create a corresponding fake element class
-    element_bases = model_mixins + (ReadonlyElement,)
-    readonly_elements[name] = type(str(name + 'Element'), element_bases, {})
-
-
 class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetaclass):
     """
     All plugins from djangocms-cascade can be instantiated in different ways. In order to allow this
@@ -206,7 +162,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             attrs['name'] = mark_safe_lazy(string_concat(
                 app_settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
 
-        register_readonly_plugin(name, bases, attrs, model_mixins)
+        register_minion(name, bases, attrs, model_mixins)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
 
 
