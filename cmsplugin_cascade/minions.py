@@ -40,8 +40,8 @@ class MinionElementBase(object):
 
     def child_plugin_instances(self):
         for plugin_type, data, children_data in self.children_data:
-            plugin_class = _minion_plugin_map.get(plugin_type)
-            element_class = _minion_element_map.get(plugin_type)
+            plugin_class = minion_plugin_map.get(plugin_type)
+            element_class = minion_element_map.get(plugin_type)
             if element_class:
                 yield element_class(plugin_class(), data, children_data, parent=self)
 
@@ -94,8 +94,8 @@ class TextMinionElement(object):
         content_renderer = context['cms_content_renderer']
         children_instances = {}
         for plugin_type, data, children_data in self.children_data:
-            plugin_class = _minion_plugin_map.get(plugin_type)
-            element_class = _minion_element_map.get(plugin_type)
+            plugin_class = minion_plugin_map.get(plugin_type)
+            element_class = minion_element_map.get(plugin_type)
             if element_class and 'pk' in data:
                 sub_plugin = plugin_class()
                 children_instances[data['pk']] = element_class(sub_plugin, data, children_data, parent=self)
@@ -124,7 +124,7 @@ class MinionPluginBase(CascadePluginMixin):
 
     @classmethod
     def super(cls, klass, instance):
-        return super(_minion_plugin_map[klass.__name__], instance)
+        return super(minion_plugin_map[klass.__name__], instance)
 
     def render(self, context, instance, placeholder):
         context.update({
@@ -152,8 +152,8 @@ class MinionPluginBase(CascadePluginMixin):
             for pos, sibling in enumerate(obj.parent.children_data):
                 if sibling[1].get('pk') == obj.pk and pos > 0:
                     prev_pt, prev_data, prev_cd = obj.parent.children_data[pos - 1]
-                    plugin = _minion_plugin_map[prev_pt]()
-                    element_class = _minion_element_map.get(prev_pt)
+                    plugin = minion_plugin_map[prev_pt]()
+                    element_class = minion_element_map.get(prev_pt)
                     return element_class(plugin, prev_data, prev_cd, parent=obj.parent), plugin
         return None, None
 
@@ -162,8 +162,8 @@ class MinionPluginBase(CascadePluginMixin):
             for pos, sibling in enumerate(obj.parent.children_data):
                 if sibling[1].get('pk') == obj.pk and pos < len(obj.parent.children_data):
                     next_pt, next_data, next_cd = obj.parent.children_data[pos + 1]
-                    plugin = _minion_plugin_map[next_pt]()
-                    element_class = _minion_element_map.get(next_pt)
+                    plugin = minion_plugin_map[next_pt]()
+                    element_class = minion_element_map.get(next_pt)
                     return element_class(plugin, next_data, next_cd, parent=obj.parent), plugin
         return None, None
 
@@ -187,8 +187,8 @@ class MinionContentRenderer(object):
     def render_tree(self, context, tree_data):
         content = []
         for plugin_type, data, children_data in tree_data['plugins']:
-            plugin_class = _minion_plugin_map.get(plugin_type)
-            element_class = _minion_element_map.get(plugin_type)
+            plugin_class = minion_plugin_map.get(plugin_type)
+            element_class = minion_element_map.get(plugin_type)
             plugin_instance = element_class(plugin_class(), data, children_data)
             content.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(content))
@@ -217,21 +217,21 @@ class MinionContentRenderer(object):
 
 def register_minion(name, bases, attrs, model_mixins):
     # create a fake plugin class
-    plugin_bases = tuple(_minion_plugin_map.get(b.__name__, b) for b in bases)
+    plugin_bases = tuple(minion_plugin_map.get(b.__name__, b) for b in bases)
     if name == 'CascadePluginBase':
         plugin_bases += (MinionPluginBase,)
-        _minion_plugin_map[name] = type(str('MinionPluginBase'), plugin_bases, {})
+        minion_plugin_map[name] = type(str('MinionPluginBase'), plugin_bases, {})
     else:
-        _minion_plugin_map[name] = type(name, plugin_bases, attrs)
+        minion_plugin_map[name] = type(name, plugin_bases, attrs)
 
         # create a corresponding minion element class
         element_bases = model_mixins + (MinionElementBase,)
-        _minion_element_map[name] = type(str(name + 'Element'), element_bases, {})
+        minion_element_map[name] = type(str(name + 'Element'), element_bases, {})
 
 
-_minion_plugin_map = {
+minion_plugin_map = {
     'TextPlugin': TextMinionPlugin,
 }
-_minion_element_map = {
+minion_element_map = {
     'TextPlugin': TextMinionElement,
 }

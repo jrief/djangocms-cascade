@@ -89,7 +89,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                     entry = (plugin_type, plugin.get_data_representation(instance), [])
                 except AttributeError:
                     if isinstance(instance, Text):
-                        entry = (plugin_type, {'body': instance.body}, [])
+                        entry = (plugin_type, {'body': instance.body, 'pk': instance.pk}, [])
                     else:
                         continue
                 data.append(entry)

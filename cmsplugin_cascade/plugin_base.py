@@ -254,6 +254,12 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
 
     @classmethod
     def super(cls, klass, instance):
+        """
+        Plugins inheriting from CascadePluginBaseMetaclass can have two different base classes,
+        :class:`cmsplugin_cascade.plugin_base.CMSPluginBase` and :class:`cmsplugin_cascade.minions.MinionPluginBase`.
+        Therefore in order to call a method from a inherited class, use this "super" wrapping method.
+        >>> cls.super(MyPlugin, self).a_method()
+        """
         return super(klass, instance)
 
     @classmethod
