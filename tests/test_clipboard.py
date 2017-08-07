@@ -175,6 +175,7 @@ class ClipboardPluginTest(CascadeTestCase):
 
             # now examine the serialized data in the clipboard
             cascade_clipboard = CascadeClipboard.objects.get(identifier=self.identifier)
+            self.remove_primary_keys(cascade_clipboard.data['plugins'])
             self.assertDictEqual(cascade_clipboard.data, self.placeholder_data)
 
     def test_restore_clipboard(self):
@@ -209,3 +210,8 @@ class ClipboardPluginTest(CascadeTestCase):
             self.assertEqual(plugins[0].plugin_type, 'BootstrapContainerPlugin')
             self.assertEqual(plugins[1].plugin_type, 'BootstrapRowPlugin')
             self.assertEqual(plugins[2].plugin_type, 'BootstrapColumnPlugin')
+
+    def remove_primary_keys(self, plugin_data):
+        for plugin_type, data, children_data in plugin_data:
+            data.pop('pk', None)
+            self.remove_primary_keys(children_data)
