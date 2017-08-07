@@ -72,7 +72,7 @@ Cascade. Example:
 	{% load cascade_tags %}
 	<div class="some-css-class">
 	{% for plugin in instance.child_plugin_instances %}
-		{% render_plugin plugin %}
+	    {% render_plugin plugin %}
 	{% endfor %}
 	<div>
 
