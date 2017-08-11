@@ -309,4 +309,10 @@ class LeafletPlugin(CascadePluginBase):
         content = ungettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
         return format_html('{0}{1}', identifier, content)
 
+    @classmethod
+    def get_data_representation(cls, instance):
+        data = super(LeafletPlugin, cls).get_data_representation(instance)
+        data.update(inlines=[ie.glossary for ie in instance.inline_elements.all()])
+        return data
+
 plugin_pool.register_plugin(LeafletPlugin)
