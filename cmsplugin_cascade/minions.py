@@ -5,9 +5,9 @@ from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.html import format_html_join
 from django.utils.safestring import mark_safe
+from django.utils.translation import get_language_from_request
 
 from classytags.utils import flatten_context
-from cms.utils import get_language_from_request
 from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 from .mixins import CascadePluginMixin
 
