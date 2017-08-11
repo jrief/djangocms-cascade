@@ -18,8 +18,8 @@ class EmulateQuerySet(object):
         self.elements = elements
 
     def all(self):
-        for e in self.elements:
-            yield type(str('MinionInlineElement'), (object,), {'glossary': e})()
+        for id, glossary in enumerate(self.elements, 1):
+            yield type(str('MinionInlineElement'), (object,), {'id': id, 'glossary': glossary})()
 
 
 class MinionElementBase(object):
