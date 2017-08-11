@@ -28,11 +28,15 @@ class MinionElementBase(object):
     """
     def __init__(self, plugin, data, children_data, parent=None):
         self.plugin = plugin
-        self.pk = data.get('pk')
+        self.id = data.get('pk')
         self.glossary = data.get('glossary', {})
         self.sortinline_elements = self.inline_elements = EmulateQuerySet(data.get('inlines', []))
         self.children_data = children_data
         self.parent = parent
+
+    @property
+    def pk(self):
+        return self.id
 
     @property
     def plugin_class(self):
@@ -194,7 +198,6 @@ class MinionContentRenderer(object):
         return mark_safe(''.join(content))
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
-        # context = PluginContext(context, instance, placeholder)
         context = instance.plugin.render(context, instance, placeholder)
         context = flatten_context(context)
 
