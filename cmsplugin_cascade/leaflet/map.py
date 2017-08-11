@@ -261,30 +261,29 @@ class LeafletPlugin(CascadePluginBase):
     def render(self, context, instance, placeholder):
         marker_instances = []
         for inline_element in instance.inline_elements.all():
-            # since inline_element requires the property `image`, add ImagePropertyMixin
-            # to its class during runtime
             try:
                 ProxyModel = create_proxy_model('LeafletMarker',
                                                 (ImagePropertyMixin, MarkerModelMixin),
-                                                InlineCascadeElement, module=__name__)
-                inline_element.__class__ = ProxyModel
+                                                InlineCascadeElement,
+                                                module=__name__)
+                marker = ProxyModel(id=inline_element.id, glossary=inline_element.glossary)
                 try:
-                    aspect_ratio = compute_aspect_ratio(inline_element.image)
-                    width = parse_responsive_length(inline_element.glossary.get('marker_width') or '25px')
-                    inline_element.size = list(get_image_size(width[0], (None, None), aspect_ratio))
-                    inline_element.size2x = 2 * inline_element.size[0], 2 * inline_element.size[1]
+                    aspect_ratio = compute_aspect_ratio(marker.image)
+                    width = parse_responsive_length(marker.glossary.get('marker_width') or '25px')
+                    marker.size = list(get_image_size(width[0], (None, None), aspect_ratio))
+                    marker.size2x = 2 * marker.size[0], 2 * marker.size[1]
                 except Exception:
                     # if accessing the image file fails, skip size computations
                     pass
                 else:
                     try:
-                        marker_anchor = inline_element.glossary['marker_anchor']
+                        marker_anchor = marker.glossary['marker_anchor']
                         top = parse_responsive_length(marker_anchor['top'])
                         left = parse_responsive_length(marker_anchor['left'])
-                        inline_element.anchor = [top[0], left[0]]
+                        marker.anchor = [top[0], left[0]]
                     except Exception:
                         pass
-                marker_instances.append(inline_element)
+                marker_instances.append(marker)
             except (KeyError, AttributeError):
                 pass
 
