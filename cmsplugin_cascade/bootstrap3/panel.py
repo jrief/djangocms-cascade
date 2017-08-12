@@ -92,6 +92,6 @@ class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
             'panel_footer': footer,
             'placeholder': placeholder,
         })
-        return super(BootstrapPanelPlugin, self).render(context, instance, placeholder)
+        return self.super(BootstrapPanelPlugin, self).render(context, instance, placeholder)
 
 plugin_pool.register_plugin(BootstrapPanelPlugin)
