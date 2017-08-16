@@ -15,12 +15,14 @@ register = template.Library()
 
 class MinionRenderer(Tag):
     """
-    {% render_tree "tree-data.json" %}
+    Render the serialized content of a placeholder field using the full cascade of plugins.
+    {% render_cascade "cascade-data.json" %}
 
     Keyword arguments:
-    datafile -- Filename containing the tree data. Must be findable
+    datafile -- Filename containing the cascade tree. Must be file locatable by Django's
+    static file finders.
     """
-    name = 'render_tree'
+    name = 'render_cascade'
     options = Options(
         Argument('datafile'),
     )
@@ -37,10 +39,10 @@ class MinionRenderer(Tag):
 
         content_renderer = MinionContentRenderer(context['request'])
         with context.push(cms_content_renderer=content_renderer):
-            content = content_renderer.render_tree(context, tree_data)
+            content = content_renderer.render_cascade(context, tree_data)
         return content
 
-register.tag('render_tree', MinionRenderer)
+register.tag('render_cascade', MinionRenderer)
 
 
 class RenderPlugin(Tag):

@@ -188,7 +188,7 @@ class MinionContentRenderer(object):
         self.language = get_language_from_request(request)
         self._cached_templates = {}
 
-    def render_tree(self, context, tree_data):
+    def render_cascade(self, context, tree_data):
         content = []
         for plugin_type, data, children_data in tree_data['plugins']:
             plugin_class = minion_plugin_map.get(plugin_type)

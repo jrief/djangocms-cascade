@@ -11,7 +11,8 @@ prototyping as provided by the Cascade plugin system.
 
 Since version 0.14 of **djangocms-cascade** one can prototype the page content and export it as
 JSON file using :ref:clipboard. Later on, one can reuse that persisted data and create the same
-content outside of a CMS page.
+content outside of a CMS page. This is specially useful, if you must persist the page content
+in the projects version control system.
 
 
 Usage
@@ -24,21 +25,22 @@ Next, inside Django's administration backend, go to
 
 	Home › django CMS Cascade › Persited Clipboard Content
 
-and *Add Persisted Clipboard Content*. Now the *Data* field will be filled with JSON data.
-Copy that data and paste it into a file which is locatable by Django's static file finders.
+and *Add Persisted Clipboard Content*. Now the *Data* field will be filled with a cascade
+of plugins serialized as JSON data. Copy that data and paste it into a file locatable by Django's
+static file finders.
 
 
 In Templates
 ============
 
 Create a Django template, where instead of adding a Django-CMS placeholder, use the templatetag
-``render_tree``. Example:
+``render_cascade``. Example:
 
 .. code-block:: Django
 
 	{% load cascade_tags %}
 
-	{% render_tree "myapp/mycontent.json" %}
+	{% render_cascade "myapp/mycontent.json" %}
 
 This templatetag now renders the content just as if it would be rendered by the CMS. This means
 that changing the template of a **djangocms-cascade** plugin, immediatly has effect on the rendered
