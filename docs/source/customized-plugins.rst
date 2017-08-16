@@ -171,6 +171,32 @@ In case your customized plugin requires some Javascript code to improve the edit
 please refer to the section :ref:`client-side`.
 
 
+Adding extra fields to the model
+--------------------------------
+
+In rare situations, you might want to add extra fields to the model, which inherit from
+:class:`django.db.models.fields.Field` rather than being emulated by a ``GlossaryField`` –
+so to say, you want *real* database fields.
+
+This can be achieved by creating your own plugin model inheriting from
+:class:`cmsplugin_cascade.models_base.CascadeModelBase` and referring to it in your plugin
+such as:
+
+.. code-block:: python
+
+	class MyPluginModel(CascadeModelBase):
+	    class Meta:
+	        db_table = 'shop_cart_cascadeelement'
+	        verbose_name = _("Cart Element")
+
+	    byte_val = models.PositiveSmallIntegerField("Byte Value")
+
+	class MySpecialPlugin(LinkPluginBase):
+	    module = 'My Module'
+	    name = 'My special Plugin'
+	    model = MyModel
+
+
 *Transparent* Plugins
 =====================
 

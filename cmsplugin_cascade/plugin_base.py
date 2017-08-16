@@ -150,8 +150,13 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
             model_mixins += tuple(import_string(mc[0]) for mc in app_settings.CMSPLUGIN_CASCADE['segmentation_mixins'])
-        module = attrs.get('__module__')
-        attrs['model'] = create_proxy_model(name, model_mixins, base_model, module=module)
+        if 'model' in attrs:
+            # the plugin overrides the CascadeModel
+            if not issubclass(attrs['model'], CascadeModelBase):
+                msg = "Cascade Plugins, overriding the model, must inherit from `CascadeModelBase`."
+                raise ImproperlyConfigured(msg)
+        else:
+            attrs['model'] = create_proxy_model(name, model_mixins, base_model, module=attrs.get('__module__'))
         if is_installed('reversion'):
             import reversion.revisions
             if not reversion.revisions.is_registered(base_model):
