@@ -18,7 +18,7 @@ from .mixins import IconPluginMixin, IconModelMixin
 
 
 class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
-    name = _("Icon")
+    name = _("Icon with frame")
     parent_classes = None
     require_parent = False
     allow_children = False
@@ -114,7 +114,7 @@ class TextIconModelMixin(object):
 
 
 class TextIconPlugin(IconPluginMixin, CascadePluginBase):
-    name = _("Icon")
+    name = _("Icon in text")
     text_enabled = True
     render_template = 'cascade/plugins/texticon.html'
     ring_plugin = 'IconPlugin'
