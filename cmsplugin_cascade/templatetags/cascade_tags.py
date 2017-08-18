@@ -13,7 +13,7 @@ from classytags.core import Options, Tag
 register = template.Library()
 
 
-class MinionRenderer(Tag):
+class StrideRenderer(Tag):
     """
     Render the serialized content of a placeholder field using the full cascade of plugins.
     {% render_cascade "cascade-data.json" %}
@@ -28,7 +28,7 @@ class MinionRenderer(Tag):
     )
 
     def render_tag(self, context, datafile):
-        from cmsplugin_cascade.minions import MinionContentRenderer
+        from cmsplugin_cascade.strides import StrideContentRenderer
 
         jsonfile = finders.find(datafile)
         if not jsonfile:
@@ -37,12 +37,12 @@ class MinionRenderer(Tag):
         with open(jsonfile) as fp:
             tree_data = json.load(fp)
 
-        content_renderer = MinionContentRenderer(context['request'])
+        content_renderer = StrideContentRenderer(context['request'])
         with context.push(cms_content_renderer=content_renderer):
             content = content_renderer.render_cascade(context, tree_data)
         return content
 
-register.tag('render_cascade', MinionRenderer)
+register.tag('render_cascade', StrideRenderer)
 
 
 class RenderPlugin(Tag):

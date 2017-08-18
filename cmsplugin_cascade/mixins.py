@@ -15,7 +15,8 @@ from cmsplugin_cascade.models import InlineCascadeElement, SortableInlineCascade
 
 class CascadePluginMixin(object):
     """
-    This is the common mixin class used for both, the CascadePlugin class and the MinionPlugin class.
+    This is the common mixin class used for both, the :class:`cmsplugin_cascade.plugin_base.CascadePluginBase`
+    and the :class:`cmsplugin_cascade.strides.StridePluginBase`.
     """
 
     @classmethod

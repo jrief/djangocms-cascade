@@ -6,7 +6,7 @@ Use Cascade outside of the CMS
 
 One of the most legitimate points **djangocms-cascade** can be criticised for, is the lack of
 static content rendering. Specially in projects, where we want to work with static pages instead
-of CMS pages, one might fall back to handcrafting HTML, gibing up all the benefits of rapid
+of CMS pages, one might fall back to handcrafting HTML, giving up all the benefits of rapid
 prototyping as provided by the Cascade plugin system.
 
 Since version 0.14 of **djangocms-cascade** one can prototype the page content and export it as
@@ -44,14 +44,15 @@ Create a Django template, where instead of adding a Django-CMS placeholder, use 
 
 This templatetag now renders the content just as if it would be rendered by the CMS. This means
 that changing the template of a **djangocms-cascade** plugin, immediatly has effect on the rendered
-output. It can be considered as a kind of **Model View Control**, where the Model is the content
-peristed as JSON, and the View is the template provided by the plugin.
+output. This is so to say **Model View Control**, where the Model is the content peristed as JSON,
+and the View is the template provided by the plugin. It separates the composition of HTML components
+from their actual representation, allowing a much better division of work during the page creation.
 
 
 Caveats when creating your own Plugins
 ======================================
 
-When developing your own plugins, consider this:
+When developing your own plugins, consider the following precautions:
 
 
 Invoking ``super``
@@ -77,4 +78,3 @@ Cascade. Example:
 	    {% render_plugin plugin %}
 	{% endfor %}
 	<div>
-

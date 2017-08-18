@@ -16,12 +16,12 @@ from cms.utils.compat.dj import is_installed
 
 from . import app_settings
 from .fields import GlossaryField
-from .minions import register_minion
 from .mixins import CascadePluginMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
 from .generic.mixins import SectionMixin, SectionModelMixin
 from .sharable.forms import SharableGlossaryMixin
+from .strides import register_stride
 from .extra_fields.mixins import ExtraFieldsMixin
 from .widgets import JSONMultiWidget
 from .hide_plugins import HidePluginMixin
@@ -166,7 +166,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             attrs['name'] = mark_safe_lazy(string_concat(
                 app_settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
 
-        register_minion(name, bases, attrs, model_mixins)
+        register_stride(name, bases, attrs, model_mixins)
         if name == 'CascadePluginBase':
             bases += (CascadePluginMixin, CMSPluginBase,)
         return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
@@ -261,7 +261,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
     def super(cls, klass, instance):
         """
         Plugins inheriting from CascadePluginBaseMetaclass can have two different base classes,
-        :class:`cmsplugin_cascade.plugin_base.CMSPluginBase` and :class:`cmsplugin_cascade.minions.MinionPluginBase`.
+        :class:`cmsplugin_cascade.plugin_base.CMSPluginBase` and :class:`cmsplugin_cascade.strides.StridePluginBase`.
         Therefore in order to call a method from a inherited class, use this "super" wrapping method.
         >>> cls.super(MyPlugin, self).a_method()
         """

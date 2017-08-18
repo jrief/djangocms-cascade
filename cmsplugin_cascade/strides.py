@@ -11,7 +11,7 @@ from classytags.utils import flatten_context
 from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 from .mixins import CascadePluginMixin
 
-__all__ = ['register_minion', 'MinionContentRenderer']
+__all__ = ['register_stride', 'StrideContentRenderer']
 
 class EmulateQuerySet(object):
     def __init__(self, elements):
@@ -19,10 +19,10 @@ class EmulateQuerySet(object):
 
     def all(self):
         for id, glossary in enumerate(self.elements, 1):
-            yield type(str('MinionInlineElement'), (object,), {'id': id, 'glossary': glossary})()
+            yield type(str('StrideInlineElement'), (object,), {'id': id, 'glossary': glossary})()
 
 
-class MinionElementBase(object):
+class StrideElementBase(object):
     """
     Emulate a CascadeElement to be used by the CascadeContentRenderer instead of the CMSContentRenderer.
     """
@@ -44,8 +44,8 @@ class MinionElementBase(object):
 
     def child_plugin_instances(self):
         for plugin_type, data, children_data in self.children_data:
-            plugin_class = minion_plugin_map.get(plugin_type)
-            element_class = minion_element_map.get(plugin_type)
+            plugin_class = strides_plugin_map.get(plugin_type)
+            element_class = strides_element_map.get(plugin_type)
             if element_class:
                 yield element_class(plugin_class(), data, children_data, parent=self)
 
@@ -86,7 +86,7 @@ class MinionElementBase(object):
         return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
 
 
-class TextMinionElement(object):
+class TextStrideElement(object):
     def __init__(self, plugin, data, children_data, parent=None):
         self.plugin = plugin
         self.pk = data.get('pk')
@@ -98,8 +98,8 @@ class TextMinionElement(object):
         content_renderer = context['cms_content_renderer']
         children_instances = {}
         for plugin_type, data, children_data in self.children_data:
-            plugin_class = minion_plugin_map.get(plugin_type)
-            element_class = minion_element_map.get(plugin_type)
+            plugin_class = strides_plugin_map.get(plugin_type)
+            element_class = strides_element_map.get(plugin_type)
             if element_class and 'pk' in data:
                 sub_plugin = plugin_class()
                 children_instances[data['pk']] = element_class(sub_plugin, data, children_data, parent=self)
@@ -114,7 +114,7 @@ class TextMinionElement(object):
         return OBJ_ADMIN_RE.sub(_render_tag, self.body)
 
 
-class MinionPluginBase(CascadePluginMixin):
+class StridePluginBase(CascadePluginMixin):
     """
     Whenever djangocms-cascade is used in readonly mode, all Cascade plugins are instantiated a second time
     where class CascadePluginBase is replaced against this class in order to remove its dependency to django-CMS.
@@ -128,7 +128,7 @@ class MinionPluginBase(CascadePluginMixin):
 
     @classmethod
     def super(cls, klass, instance):
-        return super(minion_plugin_map[klass.__name__], instance)
+        return super(strides_plugin_map[klass.__name__], instance)
 
     def render(self, context, instance, placeholder):
         context.update({
@@ -156,8 +156,8 @@ class MinionPluginBase(CascadePluginMixin):
             for pos, sibling in enumerate(obj.parent.children_data):
                 if sibling[1].get('pk') == obj.pk and pos > 0:
                     prev_pt, prev_data, prev_cd = obj.parent.children_data[pos - 1]
-                    plugin = minion_plugin_map[prev_pt]()
-                    element_class = minion_element_map.get(prev_pt)
+                    plugin = strides_plugin_map[prev_pt]()
+                    element_class = strides_element_map.get(prev_pt)
                     return element_class(plugin, prev_data, prev_cd, parent=obj.parent), plugin
         return None, None
 
@@ -166,13 +166,13 @@ class MinionPluginBase(CascadePluginMixin):
             for pos, sibling in enumerate(obj.parent.children_data):
                 if sibling[1].get('pk') == obj.pk and pos < len(obj.parent.children_data):
                     next_pt, next_data, next_cd = obj.parent.children_data[pos + 1]
-                    plugin = minion_plugin_map[next_pt]()
-                    element_class = minion_element_map.get(next_pt)
+                    plugin = strides_plugin_map[next_pt]()
+                    element_class = strides_element_map.get(next_pt)
                     return element_class(plugin, next_data, next_cd, parent=obj.parent), plugin
         return None, None
 
 
-class TextMinionPlugin(MinionPluginBase):
+class TextStridePlugin(StridePluginBase):
     render_template = 'cms/plugins/text.html'
 
     def render(self, context, instance, placeholder):
@@ -182,7 +182,7 @@ class TextMinionPlugin(MinionPluginBase):
         return context
 
 
-class MinionContentRenderer(object):
+class StrideContentRenderer(object):
     def __init__(self, request):
         self.request = request
         self.language = get_language_from_request(request)
@@ -191,8 +191,8 @@ class MinionContentRenderer(object):
     def render_cascade(self, context, tree_data):
         content = []
         for plugin_type, data, children_data in tree_data['plugins']:
-            plugin_class = minion_plugin_map.get(plugin_type)
-            element_class = minion_element_map.get(plugin_type)
+            plugin_class = strides_plugin_map.get(plugin_type)
+            element_class = strides_element_map.get(plugin_type)
             plugin_instance = element_class(plugin_class(), data, children_data)
             content.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(content))
@@ -218,23 +218,23 @@ class MinionContentRenderer(object):
         return self._cached_templates[template]
 
 
-def register_minion(name, bases, attrs, model_mixins):
+def register_stride(name, bases, attrs, model_mixins):
     # create a fake plugin class
-    plugin_bases = tuple(minion_plugin_map.get(b.__name__, b) for b in bases)
+    plugin_bases = tuple(strides_plugin_map.get(b.__name__, b) for b in bases)
     if name == 'CascadePluginBase':
-        plugin_bases += (MinionPluginBase,)
-        minion_plugin_map[name] = type(str('MinionPluginBase'), plugin_bases, {})
+        plugin_bases += (StridePluginBase,)
+        strides_plugin_map[name] = type(str('StridePluginBase'), plugin_bases, {})
     else:
-        minion_plugin_map[name] = type(name, plugin_bases, attrs)
+        strides_plugin_map[name] = type(name, plugin_bases, attrs)
 
-        # create a corresponding minion element class
-        element_bases = model_mixins + (MinionElementBase,)
-        minion_element_map[name] = type(str(name + 'Element'), element_bases, {})
+        # create a corresponding stride element class
+        element_bases = model_mixins + (StrideElementBase,)
+        strides_element_map[name] = type(str(name + 'Element'), element_bases, {})
 
 
-minion_plugin_map = {
-    'TextPlugin': TextMinionPlugin,
+strides_plugin_map = {
+    'TextPlugin': TextStridePlugin,
 }
-minion_element_map = {
-    'TextPlugin': TextMinionElement,
+strides_element_map = {
+    'TextPlugin': TextStrideElement,
 }
