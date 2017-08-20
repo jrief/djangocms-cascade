@@ -1,0 +1,29 @@
+{
+  "plugins": [
+    [
+      "FramedIconPlugin",
+      {
+        "pk":1513,
+        "glossary":{
+          "symbol":"umbrella",
+          "border_radius":"",
+          "color":"#ffffff",
+          "text_align":"text-center",
+          "hide_plugin":"",
+          "icon_font":"1",
+          "font_size":"10em",
+          "background_color":[
+            "disabled",
+            "#ffffff"
+          ],
+          "border":[
+            "0px",
+            "none",
+            "#000000"
+          ]
+        }
+      },
+      []
+    ]
+  ]
+}

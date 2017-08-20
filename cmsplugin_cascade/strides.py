@@ -190,7 +190,7 @@ class StrideContentRenderer(object):
 
     def render_cascade(self, context, tree_data):
         content = []
-        for plugin_type, data, children_data in tree_data['plugins']:
+        for plugin_type, data, children_data in tree_data.get('plugins', []):
             plugin_class = strides_plugin_map.get(plugin_type)
             element_class = strides_element_map.get(plugin_type)
             plugin_instance = element_class(plugin_class(), data, children_data)

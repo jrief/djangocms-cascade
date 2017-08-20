@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'cmsplugin_cascade.icon',
     'cmsplugin_cascade.sharable',
     'cmsplugin_cascade.segmentation',
+    'tests',
 ]
 
 USE_I18N = True

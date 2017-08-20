@@ -1,0 +1,44 @@
+{
+  "plugins": [
+    [
+      "BootstrapContainerPlugin",
+      {
+        "pk":1503,
+        "glossary":{
+          "container_max_widths":{
+            "xs":750,
+            "md":970,
+            "sm":750,
+            "lg":1170
+          },
+          "media_queries":{
+            "xs":[
+              "(max-width: 768px)"
+            ],
+            "md":[
+              "(min-width: 992px)",
+              "(max-width: 1200px)"
+            ],
+            "sm":[
+              "(min-width: 768px)",
+              "(max-width: 992px)"
+            ],
+            "lg":[
+              "(min-width: 1200px)"
+            ]
+          },
+          "hide_plugin":"",
+          "breakpoints":[
+            "xs",
+            "sm",
+            "md",
+            "lg"
+          ],
+          "fluid":"",
+          "extra_css_classes": "foo bar"
+        }
+      },
+      []
+    ]
+  ]
+}

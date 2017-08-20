@@ -89,14 +89,14 @@ class CarouselPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(CarouselPlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(CarouselPlugin, cls).get_css_classes(obj)
         if 'slide' in obj.glossary.get('options', []):
             css_classes.append('slide')
         return css_classes
 
     @classmethod
     def get_html_tag_attributes(cls, obj):
-        attributes = super(CarouselPlugin, cls).get_html_tag_attributes(obj)
+        attributes = cls.super(CarouselPlugin, cls).get_html_tag_attributes(obj)
         attributes.update(cls.DEFAULT_CAROUSEL_ATTRIBUTES)
         attributes['data-interval'] = 1000 * int(obj.glossary.get('interval', 5))
         options = obj.glossary.get('options', [])
