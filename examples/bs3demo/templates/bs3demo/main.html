@@ -7,9 +7,9 @@
 
 {% block header %}
 	{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui' %}
-		{% include "bootstrap/includes/ng-nav-navbar.html" with navbar_classes="navbar-default navbar-fixed-top" %}
+		{% include "bootstrap/includes/ng-nav-navbar.html" with navbar_classes="navbar-default navbar-static-top" %}
 	{% else %}
-		{% include "bootstrap/includes/nav-navbar.html" with navbar_classes="navbar-default navbar-fixed-top" %}
+		{% include "bootstrap/includes/nav-navbar.html" with navbar_classes="navbar-default navbar-static-top" %}
 	{% endif %}
 {% endblock header %}
 
