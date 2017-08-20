@@ -3,70 +3,70 @@
     [
       "BootstrapJumbotronPlugin",
       {
-        "pk":1501,
+        "pk":1584,
         "glossary":{
-          "background_vertical_position":"center",
-          "extra_inline_styles:Paddings":{
-            "padding-top":"500px",
-            "padding-bottom":""
+          "background_repeat":"no-repeat",
+          "image":{
+            "model":"filer.Image",
+            "pk":5
           },
+          "background_size":"cover",
+          "fluid":true,
           "resize_options":[
             "crop",
             "subject_location",
             "high_resolution"
           ],
+          "hide_plugin":"",
+          "container_max_heights":{
+            "sm":"100%",
+            "md":"100%",
+            "lg":"100%",
+            "xs":"100%"
+          },
+          "background_horizontal_position":"center",
+          "media_queries":{
+            "sm":[
+              "(min-width: 768px)",
+              "(max-width: 992px)"
+            ],
+            "md":[
+              "(min-width: 992px)",
+              "(max-width: 1200px)"
+            ],
+            "lg":[
+              "(min-width: 1200px)"
+            ],
+            "xs":[
+              "(max-width: 768px)"
+            ]
+          },
+          "background_vertical_position":"center",
+          "container_max_widths":{
+            "sm":992,
+            "md":1200,
+            "lg":1980,
+            "xs":768
+          },
           "breakpoints":[
             "xs",
             "sm",
             "md",
             "lg"
           ],
-          "hide_plugin":"",
           "background_color":[
             "",
             "#12308b"
           ],
-          "fluid":true,
-          "container_max_widths":{
-            "xs":768,
-            "md":1200,
-            "sm":992,
-            "lg":1980
-          },
-          "media_queries":{
-            "xs":[
-              "(max-width: 768px)"
-            ],
-            "md":[
-              "(min-width: 992px)",
-              "(max-width: 1200px)"
-            ],
-            "sm":[
-              "(min-width: 768px)",
-              "(max-width: 992px)"
-            ],
-            "lg":[
-              "(min-width: 1200px)"
-            ]
-          },
-          "image":{
-            "pk":5,
-            "model":"filer.Image"
-          },
-          "background_size":"cover",
-          "background_horizontal_position":"center",
-          "background_repeat":"no-repeat",
-          "container_max_heights":{
-            "xs":"100%",
-            "md":"100%",
-            "lg":"100%",
-            "sm":"100%"
+          "background_attachment":"scroll",
+          "extra_inline_styles:Paddings":{
+            "padding-bottom":"",
+            "padding-top":"500px"
           },
           "background_width_height":{
-            "height":"",
-            "width":""
-          },
-          "background_attachment":"scroll"
+            "width":"",
+            "height":""
+          }
         }
       },
       [
@@ -74,7 +74,7 @@
           "TextPlugin",
           {
             "body":"<h1 style=\"text-align: center;\"><span style=\"color: #ffffe0;\">Manage your website</span></h1>\n\n<p style=\"text-align: center;\"><span style=\"color: #ffffe0;\">with ease</span></p>\n\n<p style=\"text-align: center;\">\u00a0</p>\n\n<p style=\"text-align: center;\">\u00a0</p>",
-            "pk":1502
+            "pk":1585
           },
           []
         ]
@@ -83,56 +83,56 @@
     [
       "BootstrapContainerPlugin",
       {
-        "pk":1503,
+        "pk":1586,
         "glossary":{
-          "container_max_widths":{
-            "xs":750,
-            "md":970,
-            "sm":750,
-            "lg":1170
-          },
+          "fluid":"",
           "media_queries":{
-            "xs":[
-              "(max-width: 768px)"
+            "sm":[
+              "(min-width: 768px)",
+              "(max-width: 992px)"
             ],
             "md":[
               "(min-width: 992px)",
               "(max-width: 1200px)"
             ],
-            "sm":[
-              "(min-width: 768px)",
-              "(max-width: 992px)"
-            ],
             "lg":[
               "(min-width: 1200px)"
+            ],
+            "xs":[
+              "(max-width: 768px)"
             ]
           },
-          "hide_plugin":"",
+          "container_max_widths":{
+            "sm":750,
+            "md":970,
+            "lg":1170,
+            "xs":750
+          },
           "breakpoints":[
             "xs",
             "sm",
             "md",
             "lg"
           ],
-          "fluid":""
+          "hide_plugin":""
         }
       },
       [
         [
           "HeadingPlugin",
           {
-            "pk":1541,
+            "pk":1624,
             "glossary":{
-              "hide_plugin":"",
-              "tag_type":"h1",
               "element_id":"heading-1",
+              "content":"Voluptate velit esse cillum dolore",
+              "hide_plugin":"",
               "extra_inline_styles:Margins":{
-                "margin-left":"50px",
+                "margin-top":"",
                 "margin-bottom":"",
-                "margin-right":"",
-                "margin-top":""
+                "margin-left":"50px",
+                "margin-right":""
               },
-              "content":"Voluptate velit esse cillum dolore"
+              "tag_type":"h1"
             }
           },
           []
@@ -140,12 +140,12 @@
         [
           "BootstrapRowPlugin",
           {
-            "pk":1504,
+            "pk":1587,
             "glossary":{
               "hide_plugin":"",
               "extra_inline_styles:Margins":{
-                "margin-bottom":"",
-                "margin-top":""
+                "margin-top":"",
+                "margin-bottom":""
               }
             }
           },
@@ -153,60 +153,60 @@
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1505,
+                "pk":1588,
                 "glossary":{
-                  "sm-column-offset":"",
-                  "xs-column-ordering":"",
-                  "md-column-ordering":"",
-                  "hide_plugin":"",
-                  "lg-column-ordering":"",
-                  "lg-column-width":"",
-                  "container_max_widths":{
-                    "xs":720.0,
-                    "md":455.0,
-                    "sm":720.0,
-                    "lg":555.0
-                  },
-                  "sm-column-ordering":"",
-                  "md-column-width":"col-md-6",
-                  "xs-column-width":"col-xs-12",
-                  "xs-column-offset":"",
-                  "sm-responsive-utils":"",
                   "xs-responsive-utils":"",
-                  "lg-responsive-utils":"",
+                  "xs-column-ordering":"",
+                  "xs-column-offset":"",
+                  "xs-column-width":"col-xs-12",
+                  "sm-column-offset":"",
                   "lg-column-offset":"",
-                  "md-column-offset":"",
+                  "hide_plugin":"",
+                  "md-column-ordering":"",
+                  "lg-column-ordering":"",
                   "md-responsive-utils":"",
-                  "sm-column-width":""
+                  "container_max_widths":{
+                    "sm":720.0,
+                    "md":455.0,
+                    "lg":555.0,
+                    "xs":720.0
+                  },
+                  "md-column-width":"col-md-6",
+                  "lg-column-width":"",
+                  "sm-column-ordering":"",
+                  "sm-column-width":"",
+                  "md-column-offset":"",
+                  "lg-responsive-utils":"",
+                  "sm-responsive-utils":""
                 }
               },
               [
                 [
                   "SimpleWrapperPlugin",
                   {
-                    "pk":1506,
+                    "pk":1589,
                     "glossary":{
-                      "tag_type":"div",
-                      "extra_inline_styles:Paddings":{
-                        "padding-left":"50px",
-                        "padding-bottom":"20px",
-                        "padding-top":"20px",
-                        "padding-right":"50px"
+                      "element_id":"",
+                      "extra_inline_styles:Heights":{
+                        "height":"347px"
                       },
-                      "hide_plugin":"",
                       "extra_inline_styles:color":[
                         "",
                         "#474747"
                       ],
-                      "element_id":"",
                       "extra_inline_styles:line-height":"2",
-                      "extra_inline_styles:Heights":{
-                        "height":"347px"
-                      },
                       "extra_inline_styles:background-color":[
                         "",
                         "#ffffff"
-                      ]
+                      ],
+                      "hide_plugin":"",
+                      "extra_inline_styles:Paddings":{
+                        "padding-top":"20px",
+                        "padding-right":"50px",
+                        "padding-bottom":"20px",
+                        "padding-left":"50px"
+                      },
+                      "tag_type":"div"
                     }
                   },
                   [
@@ -214,7 +214,7 @@
                       "TextPlugin",
                       {
                         "body":"<h1 style=\"text-align: center;\">What we do?</h1>\n\n<p style=\"text-align: center;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue. Curabitur blandit tempus porttitor. Donec id elit non mi porta gravida at eget metus. Vestibulum id ligula porta felis euismod semper. Aenean lacinia bibendum nulla sed consectetur. Maecenas faucibus mollis interdum. Cras mattis consectetur purus sit amet fermentum.</p>",
-                        "pk":1507
+                        "pk":1590
                       },
                       []
                     ]
@@ -225,56 +225,45 @@
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1508,
+                "pk":1591,
                 "glossary":{
-                  "sm-column-offset":"",
-                  "xs-column-ordering":"",
-                  "md-column-ordering":"",
-                  "hide_plugin":"",
-                  "extra_css_classes":[],
-                  "lg-column-ordering":"",
-                  "lg-column-width":"",
-                  "container_max_widths":{
-                    "xs":720.0,
-                    "md":455.0,
-                    "sm":720.0,
-                    "lg":555.0
-                  },
-                  "sm-column-ordering":"",
-                  "md-column-width":"col-md-6",
-                  "xs-column-width":"col-xs-12",
-                  "xs-column-offset":"",
-                  "sm-responsive-utils":"",
                   "xs-responsive-utils":"",
-                  "lg-responsive-utils":"",
+                  "xs-column-ordering":"",
+                  "xs-column-offset":"",
+                  "xs-column-width":"col-xs-12",
+                  "sm-column-offset":"",
                   "lg-column-offset":"",
-                  "md-column-offset":"",
+                  "hide_plugin":"",
+                  "md-column-ordering":"",
+                  "lg-column-ordering":"",
                   "md-responsive-utils":"",
-                  "sm-column-width":""
+                  "container_max_widths":{
+                    "sm":720.0,
+                    "md":455.0,
+                    "lg":555.0,
+                    "xs":720.0
+                  },
+                  "md-column-width":"col-md-6",
+                  "lg-column-width":"",
+                  "sm-column-ordering":"",
+                  "sm-column-width":"",
+                  "md-column-offset":"",
+                  "extra_css_classes":[],
+                  "lg-responsive-utils":"",
+                  "sm-responsive-utils":""
                 }
               },
               [
                 [
                   "BootstrapImagePlugin",
                   {
-                    "pk":1509,
+                    "pk":1592,
                     "glossary":{
-                      "image_width_responsive":"100%",
-                      "image_width_fixed":"",
-                      "link":{
-                        "type":"none"
-                      },
-                      "alt_tag":"",
                       "target":"",
-                      "title":"",
-                      "image_title":"",
-                      "image_shapes":[
-                        "img-responsive"
-                      ],
-                      "hide_plugin":"",
+                      "image_width_responsive":"100%",
                       "image":{
-                        "pk":8,
-                        "model":"filer.Image"
+                        "model":"filer.Image",
+                        "pk":8
                       },
                       "image_height":"",
                       "resize_options":[
@@ -282,7 +271,18 @@
                         "crop",
                         "subject_location",
                         "high_resolution"
-                      ]
+                      ],
+                      "hide_plugin":"",
+                      "alt_tag":"",
+                      "image_shapes":[
+                        "img-responsive"
+                      ],
+                      "link":{
+                        "type":"none"
+                      },
+                      "title":"",
+                      "image_width_fixed":"",
+                      "image_title":""
                     }
                   },
                   []
@@ -294,12 +294,12 @@
         [
           "BootstrapRowPlugin",
           {
-            "pk":1510,
+            "pk":1593,
             "glossary":{
               "hide_plugin":"",
               "extra_inline_styles:Margins":{
-                "margin-bottom":"",
-                "margin-top":"20px"
+                "margin-top":"20px",
+                "margin-bottom":""
               }
             }
           },
@@ -307,104 +307,102 @@
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1511,
+                "pk":1594,
                 "glossary":{
+                  "xs-responsive-utils":"",
+                  "xs-column-ordering":"",
+                  "xs-column-width":"col-xs-4",
+                  "extra_inline_styles:Font Size":{
+                    "font-size":""
+                  },
+                  "extra_inline_styles:line-height":"",
+                  "lg-column-offset":"",
+                  "md-responsive-utils":"",
+                  "extra_inline_styles:Heights":{
+                    "max-height":"",
+                    "height":"360px",
+                    "min-height":""
+                  },
+                  "md-column-width":"",
+                  "md-column-offset":"",
+                  "xs-column-offset":"",
+                  "extra_css_classes":[],
+                  "lg-responsive-utils":"",
+                  "extra_inline_styles:Paddings":{
+                    "padding-top":"",
+                    "padding-right":"",
+                    "padding-bottom":"",
+                    "padding-left":""
+                  },
+                  "sm-responsive-utils":"",
+                  "lg-column-width":"",
+                  "md-column-ordering":"",
                   "extra_inline_styles:background-color":[
                     "",
                     "#42c8c6"
                   ],
-                  "xs-column-ordering":"",
-                  "xs-column-offset":"",
-                  "lg-column-ordering":"",
-                  "lg-column-width":"",
-                  "xs-responsive-utils":"",
-                  "sm-column-width":"",
-                  "lg-column-offset":"",
-                  "sm-column-offset":"",
-                  "extra_css_classes":[],
                   "hide_plugin":"",
                   "extra_inline_styles:color":[
                     "",
                     "#ffffff"
                   ],
-                  "extra_inline_styles:Paddings":{
-                    "padding-left":"",
-                    "padding-bottom":"",
-                    "padding-top":"",
-                    "padding-right":""
-                  },
-                  "extra_inline_styles:Font Size":{
-                    "font-size":""
-                  },
-                  "extra_inline_styles:Heights":{
-                    "height":"360px",
-                    "min-height":"",
-                    "max-height":""
-                  },
+                  "lg-column-ordering":"",
                   "container_max_widths":{
-                    "xs":220.0,
-                    "md":293.33,
                     "sm":220.0,
-                    "lg":360.0
+                    "md":293.33,
+                    "lg":360.0,
+                    "xs":220.0
                   },
                   "sm-column-ordering":"",
-                  "xs-column-width":"col-xs-4",
-                  "lg-responsive-utils":"",
-                  "md-column-width":"",
-                  "md-column-ordering":"",
-                  "extra_inline_styles:line-height":"",
-                  "md-column-offset":"",
-                  "md-responsive-utils":"",
-                  "sm-responsive-utils":""
+                  "sm-column-width":"",
+                  "sm-column-offset":""
                 }
               },
               [
                 [
                   "SimpleWrapperPlugin",
                   {
-                    "pk":1512,
+                    "pk":1595,
                     "glossary":{
-                      "tag_type":"div",
-                      "extra_inline_styles:background-color":[
-                        "",
-                        "#42c8c6"
-                      ],
-                      "extra_inline_styles:line-height":"",
-                      "extra_css_classes":[],
-                      "hide_plugin":"",
+                      "element_id":"",
+                      "extra_inline_styles:Heights":{
+                        "max-height":"",
+                        "height":"360px",
+                        "min-height":""
+                      },
                       "extra_inline_styles:color":[
                         "",
                         "#ffffff"
                       ],
-                      "element_id":"",
-                      "extra_inline_styles:Paddings":{
-                        "padding-left":"50px",
-                        "padding-bottom":"",
-                        "padding-top":"",
-                        "padding-right":"50px"
-                      },
                       "extra_inline_styles:Font Size":{
                         "font-size":""
                       },
-                      "extra_inline_styles:Heights":{
-                        "height":"360px",
-                        "min-height":"",
-                        "max-height":""
-                      }
+                      "extra_css_classes":[],
+                      "extra_inline_styles:line-height":"",
+                      "extra_inline_styles:background-color":[
+                        "",
+                        "#42c8c6"
+                      ],
+                      "hide_plugin":"",
+                      "extra_inline_styles:Paddings":{
+                        "padding-top":"",
+                        "padding-right":"50px",
+                        "padding-bottom":"",
+                        "padding-left":"50px"
+                      },
+                      "tag_type":"div"
                     }
                   },
                   [
                     [
                       "FramedIconPlugin",
                       {
-                        "pk":1513,
+                        "pk":1596,
                         "glossary":{
-                          "symbol":"umbrella",
                           "border_radius":"",
-                          "color":"#ffffff",
                           "text_align":"text-center",
-                          "hide_plugin":"",
                           "icon_font":"1",
+                          "color":"#ffffff",
                           "font_size":"10em",
                           "background_color":[
                             "disabled",
@@ -414,7 +412,9 @@
                             "0px",
                             "none",
                             "#000000"
-                          ]
+                          ],
+                          "hide_plugin":"",
+                          "symbol":"umbrella"
                         }
                       },
                       []
@@ -422,8 +422,8 @@
                     [
                       "TextPlugin",
                       {
-                        "body":"<h2 style=\"text-align: center;\">\u00a0<cms-plugin alt='Icon - fontawesome: <i class=\"icon-mail\"></i> ' title='Icon - fontawesome: <i class=\"icon-mail\"></i>' id=\"1333\"></cms-plugin>\u00a0Quick Installs</h2>\n\n<p style=\"text-align: center;\">Lorem ipsum dolor sit amet conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>",
-                        "pk":1514
+                        "body":"<h2 style=\"text-align: center;\">\u00a0\u00a0Quick Installs</h2>\n\n<p style=\"text-align: center;\">Lorem ipsum dolor sit amet conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>",
+                        "pk":1597
                       },
                       []
                     ]
@@ -434,114 +434,114 @@
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1515,
+                "pk":1598,
                 "glossary":{
+                  "xs-responsive-utils":"",
+                  "xs-column-ordering":"",
+                  "xs-column-width":"col-xs-4",
+                  "extra_inline_styles:Font Size":{
+                    "font-size":""
+                  },
+                  "extra_inline_styles:line-height":"",
+                  "lg-column-offset":"",
+                  "md-responsive-utils":"",
+                  "extra_inline_styles:Heights":{
+                    "max-height":"",
+                    "height":"360px",
+                    "min-height":""
+                  },
+                  "md-column-width":"",
+                  "md-column-offset":"",
+                  "xs-column-offset":"",
+                  "extra_css_classes":[],
+                  "lg-responsive-utils":"",
+                  "extra_inline_styles:Paddings":{
+                    "padding-top":"",
+                    "padding-right":"",
+                    "padding-bottom":"",
+                    "padding-left":""
+                  },
+                  "sm-responsive-utils":"",
+                  "lg-column-width":"",
+                  "md-column-ordering":"",
                   "extra_inline_styles:background-color":[
                     "",
                     "#f5b10e"
                   ],
-                  "xs-column-ordering":"",
-                  "xs-column-offset":"",
-                  "lg-column-ordering":"",
-                  "lg-column-width":"",
-                  "xs-responsive-utils":"",
-                  "sm-column-width":"",
-                  "lg-column-offset":"",
-                  "sm-column-offset":"",
-                  "extra_css_classes":[],
                   "hide_plugin":"",
                   "extra_inline_styles:color":[
                     "",
                     "#ffffff"
                   ],
-                  "extra_inline_styles:Paddings":{
-                    "padding-left":"",
-                    "padding-bottom":"",
-                    "padding-top":"",
-                    "padding-right":""
-                  },
-                  "extra_inline_styles:Font Size":{
-                    "font-size":""
-                  },
-                  "extra_inline_styles:Heights":{
-                    "height":"360px",
-                    "min-height":"",
-                    "max-height":""
-                  },
+                  "lg-column-ordering":"",
                   "container_max_widths":{
-                    "xs":220.0,
-                    "md":293.33,
                     "sm":220.0,
-                    "lg":360.0
+                    "md":293.33,
+                    "lg":360.0,
+                    "xs":220.0
                   },
                   "sm-column-ordering":"",
-                  "xs-column-width":"col-xs-4",
-                  "lg-responsive-utils":"",
-                  "md-column-width":"",
-                  "md-column-ordering":"",
-                  "extra_inline_styles:line-height":"",
-                  "md-column-offset":"",
-                  "md-responsive-utils":"",
-                  "sm-responsive-utils":""
+                  "sm-column-width":"",
+                  "sm-column-offset":""
                 }
               },
               [
                 [
                   "SimpleWrapperPlugin",
                   {
-                    "pk":1516,
+                    "pk":1599,
                     "glossary":{
-                      "tag_type":"div",
-                      "extra_inline_styles:background-color":[
-                        "",
-                        "#f5b10e"
-                      ],
-                      "extra_inline_styles:line-height":"",
-                      "extra_css_classes":[],
-                      "hide_plugin":"",
+                      "element_id":"",
+                      "extra_inline_styles:Heights":{
+                        "max-height":"",
+                        "height":"360px",
+                        "min-height":""
+                      },
                       "extra_inline_styles:color":[
                         "",
                         "#ffffff"
                       ],
-                      "element_id":"",
-                      "extra_inline_styles:Paddings":{
-                        "padding-left":"50px",
-                        "padding-bottom":"",
-                        "padding-top":"",
-                        "padding-right":"50px"
-                      },
                       "extra_inline_styles:Font Size":{
                         "font-size":""
                       },
-                      "extra_inline_styles:Heights":{
-                        "height":"360px",
-                        "min-height":"",
-                        "max-height":""
-                      }
+                      "extra_css_classes":[],
+                      "extra_inline_styles:line-height":"",
+                      "extra_inline_styles:background-color":[
+                        "",
+                        "#f5b10e"
+                      ],
+                      "hide_plugin":"",
+                      "extra_inline_styles:Paddings":{
+                        "padding-top":"",
+                        "padding-right":"50px",
+                        "padding-bottom":"",
+                        "padding-left":"50px"
+                      },
+                      "tag_type":"div"
                     }
                   },
                   [
                     [
                       "FramedIconPlugin",
                       {
-                        "pk":1517,
+                        "pk":1600,
                         "glossary":{
-                          "symbol":"cog-alt",
-                          "text_align":"text-center",
-                          "color":"#ffffff",
-                          "hide_plugin":"",
-                          "icon_font":"1",
                           "border_radius":"",
+                          "text_align":"text-center",
+                          "icon_font":"1",
+                          "color":"#ffffff",
+                          "font_size":"10em",
                           "background_color":[
                             "disabled",
                             "#ffffff"
                           ],
-                          "font_size":"10em",
                           "border":[
                             "0px",
                             "none",
                             "#000000"
-                          ]
+                          ],
+                          "hide_plugin":"",
+                          "symbol":"cog-alt"
                         }
                       },
                       []
@@ -550,7 +550,7 @@
                       "TextPlugin",
                       {
                         "body":"<h2 style=\"text-align: center;\">Customizable</h2>\n\n<p style=\"text-align: center;\">Lorem ipsum dolor sit amet conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>",
-                        "pk":1518
+                        "pk":1601
                       },
                       []
                     ]
@@ -561,114 +561,114 @@
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1519,
+                "pk":1602,
                 "glossary":{
+                  "xs-responsive-utils":"",
+                  "xs-column-ordering":"",
+                  "xs-column-width":"col-xs-4",
+                  "extra_inline_styles:Font Size":{
+                    "font-size":""
+                  },
+                  "extra_inline_styles:line-height":"",
+                  "lg-column-offset":"",
+                  "md-responsive-utils":"",
+                  "extra_inline_styles:Heights":{
+                    "max-height":"",
+                    "height":"360px",
+                    "min-height":""
+                  },
+                  "md-column-width":"",
+                  "md-column-offset":"",
+                  "xs-column-offset":"",
+                  "extra_css_classes":[],
+                  "lg-responsive-utils":"",
+                  "extra_inline_styles:Paddings":{
+                    "padding-top":"",
+                    "padding-right":"",
+                    "padding-bottom":"",
+                    "padding-left":""
+                  },
+                  "sm-responsive-utils":"",
+                  "lg-column-width":"",
+                  "md-column-ordering":"",
                   "extra_inline_styles:background-color":[
                     "",
                     "#56ba41"
                   ],
-                  "xs-column-ordering":"",
-                  "xs-column-offset":"",
-                  "lg-column-ordering":"",
-                  "lg-column-width":"",
-                  "xs-responsive-utils":"",
-                  "sm-column-width":"",
-                  "lg-column-offset":"",
-                  "sm-column-offset":"",
-                  "extra_css_classes":[],
                   "hide_plugin":"",
                   "extra_inline_styles:color":[
                     "",
                     "#ffffff"
                   ],
-                  "extra_inline_styles:Paddings":{
-                    "padding-left":"",
-                    "padding-bottom":"",
-                    "padding-top":"",
-                    "padding-right":""
-                  },
-                  "extra_inline_styles:Font Size":{
-                    "font-size":""
-                  },
-                  "extra_inline_styles:Heights":{
-                    "height":"360px",
-                    "min-height":"",
-                    "max-height":""
-                  },
+                  "lg-column-ordering":"",
                   "container_max_widths":{
-                    "xs":220.0,
-                    "md":293.33,
                     "sm":220.0,
-                    "lg":360.0
+                    "md":293.33,
+                    "lg":360.0,
+                    "xs":220.0
                   },
                   "sm-column-ordering":"",
-                  "xs-column-width":"col-xs-4",
-                  "lg-responsive-utils":"",
-                  "md-column-width":"",
-                  "md-column-ordering":"",
-                  "extra_inline_styles:line-height":"",
-                  "md-column-offset":"",
-                  "md-responsive-utils":"",
-                  "sm-responsive-utils":""
+                  "sm-column-width":"",
+                  "sm-column-offset":""
                 }
               },
               [
                 [
                   "SimpleWrapperPlugin",
                   {
-                    "pk":1520,
+                    "pk":1603,
                     "glossary":{
-                      "tag_type":"div",
-                      "extra_inline_styles:background-color":[
-                        "",
-                        "#56ba41"
-                      ],
-                      "extra_inline_styles:line-height":"",
-                      "extra_css_classes":[],
-                      "hide_plugin":"",
+                      "element_id":"",
+                      "extra_inline_styles:Heights":{
+                        "max-height":"",
+                        "height":"360px",
+                        "min-height":""
+                      },
                       "extra_inline_styles:color":[
                         "",
                         "#ffffff"
                       ],
-                      "element_id":"",
-                      "extra_inline_styles:Paddings":{
-                        "padding-left":"50px",
-                        "padding-bottom":"",
-                        "padding-top":"",
-                        "padding-right":"50px"
-                      },
                       "extra_inline_styles:Font Size":{
                         "font-size":""
                       },
-                      "extra_inline_styles:Heights":{
-                        "height":"360px",
-                        "min-height":"",
-                        "max-height":""
-                      }
+                      "extra_css_classes":[],
+                      "extra_inline_styles:line-height":"",
+                      "extra_inline_styles:background-color":[
+                        "",
+                        "#56ba41"
+                      ],
+                      "hide_plugin":"",
+                      "extra_inline_styles:Paddings":{
+                        "padding-top":"",
+                        "padding-right":"50px",
+                        "padding-bottom":"",
+                        "padding-left":"50px"
+                      },
+                      "tag_type":"div"
                     }
                   },
                   [
                     [
                       "FramedIconPlugin",
                       {
-                        "pk":1521,
+                        "pk":1604,
                         "glossary":{
-                          "symbol":"bell-alt",
-                          "text_align":"text-center",
-                          "color":"#ffffff",
-                          "hide_plugin":"",
-                          "icon_font":"1",
                           "border_radius":"",
+                          "text_align":"text-center",
+                          "icon_font":"1",
+                          "color":"#ffffff",
+                          "font_size":"10em",
                           "background_color":[
                             "disabled",
                             "#ffffff"
                           ],
-                          "font_size":"10em",
                           "border":[
                             "0px",
                             "none",
                             "#000000"
-                          ]
+                          ],
+                          "hide_plugin":"",
+                          "symbol":"bell-alt"
                         }
                       },
                       []
@@ -677,7 +677,7 @@
                       "TextPlugin",
                       {
                         "body":"<h2 style=\"text-align: center;\">Support</h2>\n\n<p style=\"text-align: center;\">Lorem ipsum dolor sit amet conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>",
-                        "pk":1522
+                        "pk":1605
                       },
                       []
                     ]
@@ -690,12 +690,12 @@
         [
           "BootstrapRowPlugin",
           {
-            "pk":1523,
+            "pk":1606,
             "glossary":{
               "hide_plugin":"",
               "extra_inline_styles:Margins":{
-                "margin-bottom":"",
-                "margin-top":"20px"
+                "margin-top":"20px",
+                "margin-bottom":""
               }
             }
           },
@@ -703,13 +703,13 @@
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1524,
+                "pk":1607,
                 "glossary":{
                   "container_max_widths":{
-                    "xs":720.0,
-                    "md":940.0,
                     "sm":720.0,
-                    "lg":1140.0
+                    "md":940.0,
+                    "lg":1140.0,
+                    "xs":720.0
                   },
                   "xs-column-width":"col-xs-12"
                 }
@@ -718,48 +718,48 @@
                 [
                   "CarouselPlugin",
                   {
-                    "pk":1525,
+                    "pk":1608,
                     "glossary":{
-                      "hide_plugin":"",
-                      "interval":"5",
+                      "resize_options":[
+                        "upscale",
+                        "crop",
+                        "subject_location",
+                        "high_resolution"
+                      ],
                       "options":[
                         "slide",
                         "pause",
                         "wrap"
                       ],
                       "container_max_heights":{
-                        "xs":"200px",
+                        "sm":"250px",
                         "md":"300px",
                         "lg":"350px",
-                        "sm":"250px"
+                        "xs":"200px"
                       },
-                      "resize_options":[
-                        "upscale",
-                        "crop",
-                        "subject_location",
-                        "high_resolution"
-                      ]
+                      "interval":"5",
+                      "hide_plugin":""
                     }
                   },
                   [
                     [
                       "CarouselSlidePlugin",
                       {
-                        "pk":1526,
+                        "pk":1609,
                         "glossary":{
-                          "hide_plugin":"",
-                          "alt_tag":"",
-                          "image_title":"",
-                          "image":{
-                            "pk":4,
-                            "model":"filer.Image"
-                          },
                           "resize_options":[
                             "upscale",
                             "crop",
                             "subject_location",
                             "high_resolution"
-                          ]
+                          ],
+                          "image_title":"",
+                          "image":{
+                            "model":"filer.Image",
+                            "pk":4
+                          },
+                          "alt_tag":"",
+                          "hide_plugin":""
                         }
                       },
                       [
@@ -767,7 +767,7 @@
                           "TextPlugin",
                           {
                             "body":"<h1>Hallo Welt!</h1>",
-                            "pk":1527
+                            "pk":1610
                           },
                           []
                         ]
@@ -776,21 +776,21 @@
                     [
                       "CarouselSlidePlugin",
                       {
-                        "pk":1528,
+                        "pk":1611,
                         "glossary":{
-                          "hide_plugin":"",
-                          "alt_tag":"",
-                          "image_title":"",
-                          "image":{
-                            "pk":7,
-                            "model":"filer.Image"
-                          },
                           "resize_options":[
                             "upscale",
                             "crop",
                             "subject_location",
                             "high_resolution"
-                          ]
+                          ],
+                          "image_title":"",
+                          "image":{
+                            "model":"filer.Image",
+                            "pk":7
+                          },
+                          "alt_tag":"",
+                          "hide_plugin":""
                         }
                       },
                       []
@@ -798,21 +798,21 @@
                     [
                       "CarouselSlidePlugin",
                       {
-                        "pk":1529,
+                        "pk":1612,
                         "glossary":{
-                          "hide_plugin":"",
-                          "alt_tag":"",
-                          "image_title":"",
-                          "image":{
-                            "pk":6,
-                            "model":"filer.Image"
-                          },
                           "resize_options":[
                             "upscale",
                             "crop",
                             "subject_location",
                             "high_resolution"
-                          ]
+                          ],
+                          "image_title":"",
+                          "image":{
+                            "model":"filer.Image",
+                            "pk":6
+                          },
+                          "alt_tag":"",
+                          "hide_plugin":""
                         }
                       },
                       []
@@ -826,12 +826,12 @@
         [
           "BootstrapRowPlugin",
           {
-            "pk":1531,
+            "pk":1614,
             "glossary":{
               "hide_plugin":"",
               "extra_inline_styles:Margins":{
-                "margin-bottom":"20px",
-                "margin-top":"20px"
+                "margin-top":"20px",
+                "margin-bottom":"20px"
               }
             }
           },
@@ -839,55 +839,44 @@
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1532,
+                "pk":1615,
                 "glossary":{
-                  "sm-column-offset":"",
-                  "xs-column-ordering":"",
-                  "md-column-ordering":"",
-                  "hide_plugin":"",
-                  "lg-column-ordering":"",
-                  "lg-column-width":"",
-                  "container_max_widths":{
-                    "xs":720.0,
-                    "md":455.0,
-                    "sm":345.0,
-                    "lg":555.0
-                  },
-                  "sm-column-ordering":"",
-                  "md-column-width":"",
-                  "xs-column-width":"col-xs-12",
-                  "xs-column-offset":"",
-                  "sm-responsive-utils":"",
                   "xs-responsive-utils":"",
-                  "lg-responsive-utils":"",
+                  "xs-column-ordering":"",
+                  "xs-column-offset":"",
+                  "xs-column-width":"col-xs-12",
+                  "sm-column-offset":"",
                   "lg-column-offset":"",
-                  "md-column-offset":"",
+                  "hide_plugin":"",
+                  "md-column-ordering":"",
+                  "lg-column-ordering":"",
                   "md-responsive-utils":"",
-                  "sm-column-width":"col-sm-6"
+                  "container_max_widths":{
+                    "sm":345.0,
+                    "md":455.0,
+                    "lg":555.0,
+                    "xs":720.0
+                  },
+                  "md-column-width":"",
+                  "lg-column-width":"",
+                  "sm-column-ordering":"",
+                  "sm-column-width":"col-sm-6",
+                  "md-column-offset":"",
+                  "lg-responsive-utils":"",
+                  "sm-responsive-utils":""
                 }
               },
               [
                 [
                   "BootstrapImagePlugin",
                   {
-                    "pk":1533,
+                    "pk":1616,
                     "glossary":{
-                      "image_width_responsive":"100%",
-                      "image_width_fixed":"",
-                      "link":{
-                        "type":"none"
-                      },
-                      "alt_tag":"",
                       "target":"",
-                      "title":"",
-                      "image_title":"",
-                      "image_shapes":[
-                        "img-responsive"
-                      ],
-                      "hide_plugin":"",
+                      "image_width_responsive":"100%",
                       "image":{
-                        "pk":9,
-                        "model":"filer.Image"
+                        "model":"filer.Image",
+                        "pk":9
                       },
                       "image_height":"",
                       "resize_options":[
@@ -895,7 +884,18 @@
                         "crop",
                         "subject_location",
                         "high_resolution"
-                      ]
+                      ],
+                      "hide_plugin":"",
+                      "alt_tag":"",
+                      "image_shapes":[
+                        "img-responsive"
+                      ],
+                      "link":{
+                        "type":"none"
+                      },
+                      "title":"",
+                      "image_width_fixed":"",
+                      "image_title":""
                     }
                   },
                   []
@@ -905,66 +905,66 @@
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1534,
+                "pk":1617,
                 "glossary":{
-                  "sm-column-offset":"",
-                  "xs-column-ordering":"",
-                  "md-column-ordering":"",
-                  "hide_plugin":"",
-                  "lg-column-ordering":"",
-                  "lg-column-width":"",
-                  "container_max_widths":{
-                    "xs":720.0,
-                    "md":455.0,
-                    "sm":345.0,
-                    "lg":555.0
-                  },
-                  "sm-column-ordering":"",
-                  "md-column-width":"",
-                  "xs-column-width":"col-xs-12",
-                  "xs-column-offset":"",
-                  "sm-responsive-utils":"",
                   "xs-responsive-utils":"",
-                  "lg-responsive-utils":"",
+                  "xs-column-ordering":"",
+                  "xs-column-offset":"",
+                  "xs-column-width":"col-xs-12",
+                  "sm-column-offset":"",
                   "lg-column-offset":"",
-                  "md-column-offset":"",
+                  "hide_plugin":"",
+                  "md-column-ordering":"",
+                  "lg-column-ordering":"",
                   "md-responsive-utils":"",
-                  "sm-column-width":"col-sm-6"
+                  "container_max_widths":{
+                    "sm":345.0,
+                    "md":455.0,
+                    "lg":555.0,
+                    "xs":720.0
+                  },
+                  "md-column-width":"",
+                  "lg-column-width":"",
+                  "sm-column-ordering":"",
+                  "sm-column-width":"col-sm-6",
+                  "md-column-offset":"",
+                  "lg-responsive-utils":"",
+                  "sm-responsive-utils":""
                 }
               },
               [
                 [
                   "SimpleWrapperPlugin",
                   {
-                    "pk":1535,
+                    "pk":1618,
                     "glossary":{
-                      "tag_type":"div",
-                      "extra_inline_styles:background-color":[
-                        "",
-                        "#ef3e42"
-                      ],
-                      "extra_inline_styles:line-height":"",
-                      "extra_css_classes":[],
-                      "hide_plugin":"",
+                      "element_id":"",
+                      "extra_inline_styles:Heights":{
+                        "max-height":"",
+                        "height":"370px",
+                        "min-height":""
+                      },
                       "extra_inline_styles:color":[
                         "",
                         "#ffffff"
                       ],
-                      "element_id":"",
-                      "extra_inline_styles:Paddings":{
-                        "padding-left":"50px",
-                        "padding-bottom":"",
-                        "padding-top":"50px",
-                        "padding-right":"50px"
-                      },
                       "extra_inline_styles:Font Size":{
                         "font-size":"130%"
                       },
-                      "extra_inline_styles:Heights":{
-                        "height":"370px",
-                        "min-height":"",
-                        "max-height":""
-                      }
+                      "extra_css_classes":[],
+                      "extra_inline_styles:line-height":"",
+                      "extra_inline_styles:background-color":[
+                        "",
+                        "#ef3e42"
+                      ],
+                      "hide_plugin":"",
+                      "extra_inline_styles:Paddings":{
+                        "padding-top":"50px",
+                        "padding-right":"50px",
+                        "padding-bottom":"",
+                        "padding-left":"50px"
+                      },
+                      "tag_type":"div"
                     }
                   },
                   [
@@ -972,34 +972,34 @@
                       "TextPlugin",
                       {
                         "body":"<h2 style=\"text-align: center;\">Let us make<br>\na difference in your<br>\nweb design</h2>\n\n<p style=\"text-align: center;\">Lorem ipsum dolor sit amet conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>",
-                        "pk":1536
+                        "pk":1619
                       },
                       []
                     ],
                     [
                       "BootstrapButtonPlugin",
                       {
-                        "pk":1537,
+                        "pk":1620,
                         "glossary":{
-                          "symbol":"right-open",
-                          "quick_float":"pull-right",
-                          "hide_plugin":"",
-                          "button_size":"btn-lg",
-                          "button_type":"btn-default",
-                          "button_options":[],
                           "link":{
                             "section":"",
+                            "model":"cms.Page",
                             "type":"cmspage",
-                            "pk":5,
-                            "model":"cms.Page"
+                            "pk":5
                           },
+                          "button_options":[],
                           "icon_font":"3",
-                          "icon_align":"icon-right",
                           "extra_inline_styles:Margins":{
-                            "margin-bottom":"",
-                            "margin-top":"20px"
+                            "margin-top":"20px",
+                            "margin-bottom":""
                           },
-                          "link_content":"Continue"
+                          "link_content":"Continue",
+                          "button_size":"btn-lg",
+                          "symbol":"right-open",
+                          "icon_align":"icon-right",
+                          "quick_float":"pull-right",
+                          "button_type":"btn-default",
+                          "hide_plugin":""
                         }
                       },
                       []
@@ -1013,18 +1013,18 @@
         [
           "HeadingPlugin",
           {
-            "pk":1530,
+            "pk":1613,
             "glossary":{
-              "hide_plugin":"",
-              "tag_type":"h3",
               "element_id":"heading",
+              "content":"Where we are",
+              "hide_plugin":"",
               "extra_inline_styles:Margins":{
-                "margin-left":"",
+                "margin-top":"",
                 "margin-bottom":"",
-                "margin-right":"",
-                "margin-top":""
+                "margin-left":"",
+                "margin-right":""
               },
-              "content":"Where we are"
+              "tag_type":"h3"
             }
           },
           []
@@ -1032,28 +1032,28 @@
         [
           "BootstrapRowPlugin",
           {
-            "pk":1538,
+            "pk":1621,
             "glossary":{
-              "hide_plugin":"",
+              "extra_element_id":"",
               "extra_css_classes":"",
+              "hide_plugin":"",
               "extra_inline_styles:Margins":{
-                "margin-bottom":"20px",
-                "margin-top":""
-              },
-              "extra_element_id":""
+                "margin-top":"",
+                "margin-bottom":"20px"
+              }
             }
           },
           [
             [
               "BootstrapColumnPlugin",
               {
-                "pk":1539,
+                "pk":1622,
                 "glossary":{
                   "container_max_widths":{
-                    "xs":720.0,
-                    "md":940.0,
                     "sm":720.0,
-                    "lg":1140.0
+                    "md":940.0,
+                    "lg":1140.0,
+                    "xs":720.0
                   },
                   "xs-column-width":"col-xs-12"
                 }
@@ -1064,47 +1064,47 @@
                   {
                     "inlines":[
                       {
-                        "marker_anchor":{
-                          "left":"35px",
-                          "top":"35px"
-                        },
-                        "position":{
-                          "lat":47.27430835780767,
-                          "lng":11.392865180969238
-                        },
-                        "image":{
-                          "pk":3,
-                          "model":"filer.Image"
-                        },
                         "marker_width":"75px",
+                        "title":"Kirche St. Nikolaus",
+                        "image":{
+                          "model":"filer.Image",
+                          "pk":3
+                        },
+                        "marker_anchor":{
+                          "top":"35px",
+                          "left":"35px"
+                        },
                         "popup_text":"<h1>Kirche in St. Nikolaus</h1><p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>",
-                        "title":"Kirche St. Nikolaus"
+                        "position":{
+                          "lng":11.392865180969238,
+                          "lat":47.27430835780767
+                        }
                       },
                       {
-                        "marker_anchor":{
-                          "left":"",
-                          "top":""
-                        },
                         "popup_text":null,
-                        "position":{
-                          "lat":47.26479535533907,
-                          "lng":11.44007205963135
-                        },
+                        "marker_width":"",
                         "title":"SOHO 2.0",
-                        "marker_width":""
+                        "position":{
+                          "lng":11.44007205963135,
+                          "lat":47.26479535533907
+                        },
+                        "marker_anchor":{
+                          "top":"",
+                          "left":""
+                        }
                       }
                     ],
-                    "pk":1540,
+                    "pk":1623,
                     "glossary":{
-                      "hide_plugin":"",
+                      "map_width":"100%",
                       "map_position":{
                         "zoom":16,
                         "lat":47.263227953097356,
                         "lng":11.434611082077026
                       },
                       "map_height":"400px",
-                      "render_template":"cascade/plugins/googlemap.html",
-                      "map_width":"100%"
+                      "hide_plugin":"",
+                      "render_template":"cascade/plugins/googlemap.html"
                     }
                   },
                   []
