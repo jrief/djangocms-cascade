@@ -66,18 +66,26 @@ djangocms-text-ckeditor 3.0.x.
 For django-CMS 3.4 and above, please use version 0.12 of **djangocms-cascade**.
 
 
-### News for version 0.12
+### News for version 0.14
 
-**Important** Please read the release notes, since version 0.12 introduced a lot of new features.
-Some highlights:
+**Important** Please read the release notes, since version 0.14 introduced a new feature:
 
-* Compatible with Django-1.10, django-CMS-3.4 and djangocms-text-ckeditor-3.4.
-* Fine grained permissions for staff users on all plugins.
-* For AngularJS users only: Upgrade to versions of Angular-UI-Bootstrap with ``uib-`` prefix.
-* Upload fonts from [Fontello](http://fontello.com/) and use them as framed icons, text icons or
-  button decorators.
+A nice feature of **django-CMS**, is to copy the content of a ``{% placeholder ... %}`` to the
+clipboard. In **djangocms-cascade** this content could be serialized as a JSON dictionary and
+moved between sites. This for instance was useful for creating content on the staging system
+and move it to production later.
 
-Don't forget run ``./manage.py migrate cmsplugin_cascade`` after upgrading to version 0.12.x.
+Since version 0.14 you can paste that serialized data to a file and refer to it using the special
+templatetag ``{% render_cascade "path/to/file.json" %}``. This allows editors of websites to
+create pages using the tools provided by django-CMS. Later on, instead of using a CMS page, we
+can route that URL onto a template view, which then renders that same content using a static
+representation of the context, bypassing the database.
+
+Since that JSON file can and shall be added into the project's version control repository, this
+feature is specially useful, if your deployment workflow requires full functioning pages, working
+right out of your continuous integration, but without having to (re)create the content on the
+production site.
+
 
 ## Architecture
 
