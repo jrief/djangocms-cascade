@@ -1,6 +1,6 @@
 {% load static sekizai_tags thumbnail l10n %}
 
-{% addtoblock "js" %}<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script async="true" defer="true" src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
 
 {% addtoblock "css" %}
 <style>
