@@ -1,7 +1,5 @@
 {% load static sekizai_tags thumbnail l10n %}
 
-{% addtoblock "js" %}<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
-
 {% addtoblock "css" %}
 <style>
 #cascadeelement_id-{{ instance.pk }} {
@@ -44,5 +42,7 @@ function initMap() {
 }
 </script>
 {% endaddtoblock %}
+
+{% addtoblock "js" %}<script async="" defer="" src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
 
 <div id="cascadeelement_id-{{ instance.pk }}"></div>
