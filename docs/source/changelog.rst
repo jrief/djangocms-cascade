@@ -5,6 +5,12 @@ Release History
 ===============
 
 
+0.14.1
+------
+* Restored deleted font files.
+* Fix template for rendering a Google map.
+
+
 0.14
 ----
 * Added static rendering of a serialized representation of plugins copied from a ``placeholder``
