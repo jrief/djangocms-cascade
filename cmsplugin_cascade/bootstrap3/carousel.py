@@ -83,20 +83,20 @@ class CarouselPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(CarouselPlugin, cls).get_identifier(obj)
-        num_cols = obj.get_children().count()
+        num_cols = obj.get_num_children()
         content = ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(CarouselPlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(CarouselPlugin, cls).get_css_classes(obj)
         if 'slide' in obj.glossary.get('options', []):
             css_classes.append('slide')
         return css_classes
 
     @classmethod
     def get_html_tag_attributes(cls, obj):
-        attributes = super(CarouselPlugin, cls).get_html_tag_attributes(obj)
+        attributes = cls.super(CarouselPlugin, cls).get_html_tag_attributes(obj)
         attributes.update(cls.DEFAULT_CAROUSEL_ATTRIBUTES)
         attributes['data-interval'] = 1000 * int(obj.glossary.get('interval', 5))
         options = obj.glossary.get('options', [])
@@ -147,7 +147,7 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
             'placeholder': placeholder,
             'elements': elements,
         })
-        return super(CarouselSlidePlugin, self).render(context, instance, placeholder)
+        return self.super(CarouselSlidePlugin, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):

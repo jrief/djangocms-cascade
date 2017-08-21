@@ -101,6 +101,7 @@ class CustomSnippetPlugin(TransparentContainer, CascadePluginBase):
         if render_template:
             return format_html('{}', cls.render_template_choices.get(render_template))
 
+
 if CustomSnippetPlugin.render_template_choices:
     # register only, if at least one template has been defined
     plugin_pool.register_plugin(CustomSnippetPlugin)

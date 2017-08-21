@@ -1,0 +1,20 @@
+{
+  "plugins": [
+    [
+      "BootstrapRowPlugin",
+      {
+        "pk":1538,
+        "glossary":{
+          "hide_plugin":"",
+          "extra_css_classes":"",
+          "extra_inline_styles:Margins":{
+            "margin-bottom":"20px",
+            "margin-top":""
+          },
+          "extra_element_id":""
+        }
+      },
+      []
+    ]
+  ]
+}

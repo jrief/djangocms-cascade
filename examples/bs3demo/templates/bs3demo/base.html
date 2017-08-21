@@ -14,7 +14,9 @@
 
 <body{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui' %} ng-app="cascadeDemo"{% endif %}>
 	{% cms_toolbar %}
-	{% block header %}{% endblock %}
+	<header id="header">
+		{% block header %}{% endblock %}
+	</header>
 	<main>
 		{% block main %}{% endblock %}
 	</main>

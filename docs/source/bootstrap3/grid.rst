@@ -42,7 +42,7 @@ of the container element then must be reduced to that chosen breakpoint:
 
 or, if you prefers the SASS syntax:
 
-.. code-block:: css
+.. code-block:: guess
 
 	@media(min-width: $screen-lg) {
 	  .container {

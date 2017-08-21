@@ -1,4 +1,4 @@
-.. render-template:
+.. _render-template:
 
 ========================================
 Choose an alternative rendering template

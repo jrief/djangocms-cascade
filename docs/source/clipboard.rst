@@ -1,4 +1,4 @@
-.. clipboard:
+.. _clipboard:
 
 =================
 The CMS Clipboard

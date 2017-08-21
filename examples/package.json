@@ -7,6 +7,20 @@
     "example": "examples",
     "test": "tests"
   },
+  "dependencies": {
+    "angular": "^1.5.11",
+    "angular-animate": "^1.5.11",
+    "angular-sanitize": "^1.5.11",
+    "angular-ui-bootstrap": "^0.14.3",
+    "bootstrap": "^3.3.7",
+    "bootstrap-sass": "^3.3.7",
+    "jquery": "^3.2.1",
+    "leaflet": "^1.2.0",
+    "leaflet-easybutton": "^2.2.0",
+    "picturefill": "^3.0.2",
+    "select2": "^4.0.3"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,19 +33,5 @@
   "bugs": {
     "url": "https://github.com/jrief/djangocms-cascade/issues"
   },
-  "homepage": "https://github.com/jrief/djangocms-cascade#readme",
-  "dependencies": {
-    "angular": "~1.5.11",
-    "angular-animate": "~1.5.11",
-    "angular-i18n": "~1.5.11",
-    "angular-sanitize": "~1.5.11",
-    "angular-ui-bootstrap": "~0.14.3",
-    "bootstrap": "~3.3.7",
-    "bootstrap-sass": "~3.3.7",
-    "jquery": "^3.2.1",
-    "leaflet": "^1.0.3",
-    "leaflet-easybutton": "^2.2.0",
-    "picturefill": "~3.0.2",
-    "select2": "~4.0.3"
-  }
+  "homepage": "https://github.com/jrief/djangocms-cascade#readme"
 }

@@ -1,4 +1,4 @@
-.. djangocms-cascade:
+.. _djangocms-cascade:
 
 Welcome to DjangoCMS-Cascade's documentation
 ============================================
@@ -52,6 +52,7 @@ Contents:
   render-template
   hide-plugins
   clipboard
+  strides
   customized-plugins
   generic-plugins
   changelog

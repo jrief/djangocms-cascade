@@ -64,7 +64,7 @@ Lets add a simple selector to choose between a red and a green color. Do this by
 	class StylishPlugin(CascadePluginBase):
 	    ...
 	    color = GlossaryField(
-	        widgets.Select(choices=(('red', 'Red'), ('green', 'Green'),)),
+	        widgets.Select(choices=[('red', 'Red'), ('green', 'Green')]),
 	        label="Element's Color",
 	        initial='red',
 	        help_text="Specify the color of the DOM element."
@@ -77,7 +77,7 @@ A ``GlossaryField`` accepts five arguments:
 
 * The widget. This can be a built-in Django widget or any valid widget derived from it.
 * The ``label`` used to describe the field. If omitted, the ``name`` of the form field is used.
-* The ``name`` of the field.
+* If created dynamically, a ``name``, otherwise the attribute name is used.
 * An optional ``initial`` value to be used with Radio- or Select fields.
 * An optional ``help_text`` to describe the field's purpose.
 
@@ -169,6 +169,32 @@ Javascript
 
 In case your customized plugin requires some Javascript code to improve the editor's experience,
 please refer to the section :ref:`client-side`.
+
+
+Adding extra fields to the model
+--------------------------------
+
+In rare situations, you might want to add extra fields to the model, which inherit from
+:class:`django.db.models.fields.Field` rather than being emulated by a ``GlossaryField`` –
+so to say, you want *real* database fields.
+
+This can be achieved by creating your own plugin model inheriting from
+:class:`cmsplugin_cascade.models_base.CascadeModelBase` and referring to it in your plugin
+such as:
+
+.. code-block:: python
+
+	class MyPluginModel(CascadeModelBase):
+	    class Meta:
+	        db_table = 'shop_cart_cascadeelement'
+	        verbose_name = _("Cart Element")
+
+	    byte_val = models.PositiveSmallIntegerField("Byte Value")
+
+	class MySpecialPlugin(LinkPluginBase):
+	    module = 'My Module'
+	    name = 'My special Plugin'
+	    model = MyModel
 
 
 *Transparent* Plugins

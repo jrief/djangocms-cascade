@@ -1,4 +1,4 @@
-.. customized-styles:
+.. _customized-styles:
 
 =======================================
 Customize CSS classes and inline styles

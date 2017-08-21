@@ -5,12 +5,12 @@ import os, shutil
 from collections import OrderedDict
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
 from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.sites.models import Site
 
 from jsonfield.fields import JSONField
 from filer.fields.file import FilerFileField
@@ -69,9 +69,6 @@ class CascadeElement(CascadeModelBase):
             init_element(inline_element)
         for sortinline_element in oldinstance.sortinline_elements.all():
             init_element(sortinline_element)
-
-    def get_parent_instance(self):
-        return CascadeElement.objects.get(pk=self.parent_id)
 
 
 class SharableCascadeElement(CascadeElement):

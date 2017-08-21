@@ -5,7 +5,6 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
-from distutils.version import LooseVersion
 
 from django.core.exceptions import ValidationError
 from django.forms import widgets
@@ -83,17 +82,17 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
                 template_error_message = err.message
             finally:
                 if evaluated_to:
-                    request._evaluated_instances[instance.id] = True
+                    request._evaluated_instances[instance.pk] = True
                     template = self.default_template
                 else:
-                    request._evaluated_instances[instance.id] = False
+                    request._evaluated_instances[instance.pk] = False
                     if edit_mode:
                         # In edit mode, hidden plugins have to be rendered nevertheless. Therefore
                         # we use `style="display: none"`, otherwise the plugin would be invisible
                         # in structure mode, while editing.
                         if template_error_message:
                             template = self.debug_error_template.format(condition=condition,
-                                instance_id=instance.id, message=template_error_message,
+                                instance_id=instance.pk, message=template_error_message,
                                 template_string=self.hiding_template_string)
                             template = engines['django'].from_string(template)
                         else:
@@ -113,8 +112,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
             if prev_inst is None:
                 # this can happen, if one moves an else- or elif-segment in front of an if-segment
                 template = edit_mode and self.hiding_template or self.empty_template
-            elif request._evaluated_instances.get(prev_inst.id):
-                request._evaluated_instances[instance.id] = True
+            elif request._evaluated_instances.get(prev_inst.pk):
+                request._evaluated_instances[instance.pk] = True
                 # in edit mode hidden plugins have to be rendered nevertheless
                 template = edit_mode and self.hiding_template or self.empty_template
             elif open_tag == 'elif':
@@ -127,10 +126,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
         request = context['request']
         if not hasattr(request, '_evaluated_instances'):
             request._evaluated_instances = {}
-        if LooseVersion(cms_version) > LooseVersion('3.3'):
-            context.update(instance.get_context_override(request))
-
-        return super(SegmentPlugin, self).render(context, instance, placeholder)
+        context.update(instance.get_context_override(request))
+        return self.super(SegmentPlugin, self).render(context, instance, placeholder)
 
     def get_form(self, request, obj=None, **kwargs):
         def clean_condition(value):

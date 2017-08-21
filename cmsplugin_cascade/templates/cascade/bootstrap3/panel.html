@@ -1,4 +1,4 @@
-{% load cms_tags %}{% spaceless %}
+{% load cascade_tags %}{% spaceless %}
 {% with inline_styles=instance.inline_styles %}
 <div class="panel {{ panel_type }} {{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 {% if panel_heading %}<div class="panel-heading">{% if heading_size %}<{{ heading_size }} class="panel-title">{% endif %}{{ panel_heading|safe }}{% if heading_size %}</{{ heading_size }}>{% endif %}</div>{% endif %}

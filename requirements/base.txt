@@ -4,8 +4,8 @@ argparse==1.2.1
 beautifulsoup4==4.5.1
 django-admin-sortable2==0.6.13
 django-classy-tags==0.8.0
-django-cms==3.4.3
-django-filer==1.2.7
+django-cms==3.4.4
+django-filer==1.2.8
 django-mptt==0.8.7
 django-sass-processor==0.5.4
 django-sekizai==0.10.0

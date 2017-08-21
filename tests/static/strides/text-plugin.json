@@ -1,0 +1,12 @@
+{
+  "plugins": [
+    [
+      "TextPlugin",
+      {
+        "body": "<h2 style=\"text-align: center;\">Customizable</h2>\n\n<p>Lorem ipsum dolor</p>",
+        "pk": 1518
+      },
+      []
+    ]
+  ]
+}

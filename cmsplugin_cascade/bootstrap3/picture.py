@@ -82,7 +82,7 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapPicturePlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(BootstrapPicturePlugin, cls).get_css_classes(obj)
         css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)

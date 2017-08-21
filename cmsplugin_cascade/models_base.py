@@ -50,19 +50,22 @@ class CascadeModelBase(CMSPlugin):
         attributes = self.plugin_class.get_html_tag_attributes(self)
         return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
 
+    def get_parent_instance(self):
+        for model in CascadeModelBase._get_cascade_elements():
+            try:
+                return model.objects.get(id=self.parent_id)
+            except model.DoesNotExist:
+                continue
+
     def get_parent_glossary(self):
         """
         Return the glossary from the parent of this object. If there is no parent, retrieve
         the glossary from the placeholder settings, if configured.
         """
-        for model in CascadeModelBase._get_cascade_elements():
-            try:
-                parent = model.objects.get(id=self.parent_id)
-            except model.DoesNotExist:
-                continue
-            else:
-                return parent.get_complete_glossary()
-        # use self.placeholder.glossary as the starting dictionary
+        parent = self.get_parent_instance()
+        if parent:
+            return parent.get_complete_glossary()
+        # otherwise use self.placeholder.glossary as the starting dictionary
         template = self.placeholder.page.template if self.placeholder.page else None
         return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
 
@@ -76,6 +79,12 @@ class CascadeModelBase(CMSPlugin):
             self._complete_glossary_cache = self.get_parent_glossary().copy()
             self._complete_glossary_cache.update(self.glossary or {})
         return self._complete_glossary_cache
+
+    def get_num_children(self):
+        """
+        Returns the number of children for this plugin instance.
+        """
+        return self.get_children().count()
 
     def sanitize_children(self):
         """

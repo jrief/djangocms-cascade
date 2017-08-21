@@ -104,7 +104,6 @@ STATICFILES_FINDERS = [
 ]
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
     ('node_modules', os.path.join(PROJECT_ROOT, 'node_modules')),
 ]
 
@@ -218,8 +217,6 @@ CMSPLUGIN_CASCADE = {
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
 }
-
-print(CMSPLUGIN_CASCADE)
 
 CACSCADE_WORKAREA_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg'],

@@ -57,7 +57,7 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapAccordionPlugin, cls).get_identifier(obj)
-        num_cols = obj.get_children().count()
+        num_cols = obj.get_num_children()
         content = ungettext_lazy('with {0} panel', 'with {0} panels', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
