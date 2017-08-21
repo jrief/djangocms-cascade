@@ -1,4 +1,4 @@
-.. hide-plugins:
+.. _hide-plugins:
 
 ==============================
 Conditionally hide some plugin

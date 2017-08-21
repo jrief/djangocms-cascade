@@ -1,4 +1,4 @@
-.. _minions:
+.. _strides:
 
 ==============================
 Use Cascade outside of the CMS

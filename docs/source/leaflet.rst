@@ -1,4 +1,4 @@
-.. leaflet:
+.. _leaflet:
 
 =====================================
 Map Plugin using the Leaflet frontend
@@ -11,13 +11,13 @@ key (this depends on the chosen tiles layer). By default the **Cascade Leaflet M
 the `Open Street Map`_ tile layer, but this can be changed to Mapbox_, `Google Maps`_ or another
 provider.
 
-This plugin uses third party packages, based on the Leaflet_ JavaScript library for mobile-friendly
+This plugin uses third party packages, based on the `Leaflet JavaScript`_ library for mobile-friendly
 interactive maps.
 
 .. _Open Street Map: http://www.openstreetmap.org/
 .. _Mapbox: https://www.mapbox.com/
 .. _Google Maps: https://developers.google.com/maps/
-.. _Leaflet: http://leafletjs.com/
+.. _Leaflet JavaScript: http://leafletjs.com/
 
 
 Installation

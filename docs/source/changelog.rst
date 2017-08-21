@@ -7,8 +7,8 @@ Release History
 
 0.14
 ----
-* Added static tree rendering.
-
+* Added static rendering of a serialized representation of plugins copied from a ``placeholder``
+  to the clipboard. For details, please read on how to :ref:`strides`.
 
 0.13.1
 ------
