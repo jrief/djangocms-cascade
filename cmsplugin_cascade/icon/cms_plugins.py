@@ -96,7 +96,7 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
 
     @classmethod
     def get_inline_styles(cls, instance):
-        inline_styles = cls.super(cls, cls).get_inline_styles(instance)
+        inline_styles = cls.super(FramedIconPlugin, cls).get_inline_styles(instance)
         inline_styles['font-size'] = instance.glossary.get('font_size', '1em')
         return inline_styles
 
