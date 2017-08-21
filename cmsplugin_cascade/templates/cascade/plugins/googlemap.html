@@ -9,6 +9,8 @@
 </style>
 {% endaddtoblock %}
 
+{% addtoblock "js" %}<script async="" defer="" src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
+
 {% addtoblock "js" %}
 <script type="text/javascript">
 function initMap() {
@@ -42,7 +44,5 @@ function initMap() {
 }
 </script>
 {% endaddtoblock %}
-
-{% addtoblock "js" %}<script async="" defer="" src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
 
 <div id="cascadeelement_id-{{ instance.pk }}"></div>
