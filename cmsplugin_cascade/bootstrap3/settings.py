@@ -30,8 +30,8 @@ def set_defaults(config):
     config['bootstrap3'].setdefault('gutter', 30)
 
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', (
-        ('cascade/bootstrap3/secmenu-list-group.html', _("default")),
-        ('cascade/bootstrap3/secmenu-unstyled-list.html', _("unstyled")),))
+        ('cascade/bootstrap3/secmenu-list-group.html', _("List Group")),
+        ('cascade/bootstrap3/secmenu-unstyled-list.html', _("Unstyled List")),))
 
     if os.getenv('DJANGO_CLIENT_FRAMEWORK', '').startswith('angular'):
         config['bootstrap3']['template_basedir'] = 'angular-ui'
