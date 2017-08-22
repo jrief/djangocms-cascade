@@ -1,8 +1,7 @@
 Pillow==3.3.0
 Unidecode==0.4.18
 argparse==1.2.1
-beautifulsoup4==4.5.1
-django-admin-sortable2==0.6.13
+django-admin-sortable2==0.6.15
 django-classy-tags==0.8.0
 django-cms==3.4.4
 django-filer==1.2.8
@@ -10,10 +9,10 @@ django-mptt==0.8.7
 django-sass-processor==0.5.4
 django-sekizai==0.10.0
 Django-Select2==5.8.10
-django-treebeard==4.1.0
-djangocms-bootstrap3==0.1.1
+django-treebeard==4.1.2
+djangocms-bootstrap3==0.3.0
 djangocms-text-ckeditor==3.4.0
-easy-thumbnails==2.3
+easy-thumbnails==2.4.1
 html5lib==0.9999999
 jsonfield==1.0.3
 libsass==0.12.3
