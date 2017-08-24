@@ -58,6 +58,15 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
         next(iter(self.glossary_fields)).widget.choices = list(choices.items())
         return super(BootstrapSecondaryMenuPlugin, self).get_form(request, obj, **kwargs)
 
+    def render(self, context, instance, placeholder):
+        context = self.super(BootstrapSecondaryMenuPlugin, self).render(context, instance, placeholder)
+        context.update({
+            'page_id': instance.glossary['page_id'],
+            'offset': instance.glossary.get('offset', 0),
+            'limit': instance.glossary.get('limit', 100),
+        })
+        return context
+
     @classmethod
     def sanitize_model(cls, instance):
         try:
