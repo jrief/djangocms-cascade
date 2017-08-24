@@ -81,6 +81,12 @@ class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
     class Media:
         css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
 
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(BootstrapPanelPlugin, cls).get_identifier(obj)
+        heading = cls.html_parser.unescape(obj.glossary.get('heading', ''))
+        return format_html('{0}{1}', identifier, heading)
+
     def render(self, context, instance, placeholder):
         heading = self.html_parser.unescape(instance.glossary.get('heading', ''))
         footer = self.html_parser.unescape(instance.glossary.get('footer', ''))
