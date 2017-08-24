@@ -72,7 +72,6 @@ class SectionMixin(object):
 
     def save_model(self, request, obj, form, change):
         super(SectionMixin, self).save_model(request, obj, form, change)
-        CascadePage.assure_relation(obj.placeholder.page)
         element_id = obj.glossary['element_id']
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness
@@ -89,6 +88,10 @@ class SectionMixin(object):
                 obj.glossary['element_id'] = element_id
                 obj.save()
 
-        obj.placeholder.page.cascadepage.glossary.setdefault('element_ids', {})
-        obj.placeholder.page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id
-        obj.placeholder.page.cascadepage.save()
+        cms_page = obj.placeholder.page
+        if cms_page:
+            # storing the element_id on a placholder only makes sense, if it is non-static
+            CascadePage.assure_relation(cms_page)
+            cms_page.cascadepage.glossary.setdefault('element_ids', {})
+            cms_page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id
+            cms_page.cascadepage.save()
