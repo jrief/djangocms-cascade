@@ -9,12 +9,18 @@ Release History
 ------
 * Restored deleted font files.
 * Fix template for rendering a Google map.
+* Add fields ``offset`` and ``limit`` to **SecondaryMenuPlugin**, to segment the menus.
+* Fix bug in HeadingPlugin: Can not be used in static_placeholder tag.
+* Fix bug in HeadingPlugin: HTML entities, such as ampersand can be used as content.
+* Fix in Panel Plugin: Show identifier in Placeholder tree.
+* Fix in Section Plugin: Can now be used in ``static_placeholder``.
 
 
 0.14
 ----
 * Added static rendering of a serialized representation of plugins copied from a ``placeholder``
   to the clipboard. For details, please read on how to :ref:`strides`.
+
 
 0.13.1
 ------
