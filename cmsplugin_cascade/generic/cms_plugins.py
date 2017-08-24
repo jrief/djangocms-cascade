@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.forms import widgets
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
@@ -75,10 +76,15 @@ class HeadingPlugin(CascadePluginBase):
     def get_identifier(cls, instance):
         identifier = super(HeadingPlugin, cls).get_identifier(instance)
         tag_type = instance.glossary.get('tag_type')
-        content = instance.glossary.get('content')
+        content = mark_safe(instance.glossary.get('content', ''))
         if tag_type:
             return format_html('<code>{0}</code>: {1} {2}', tag_type, content, identifier)
         return content
+
+    def render(self, context, instance, placeholder):
+        context = self.super(HeadingPlugin, self).render(context, instance, placeholder)
+        context.update({'content': mark_safe(instance.glossary.get('content', ''))})
+        return context
 
 plugin_pool.register_plugin(HeadingPlugin)
 
