@@ -153,7 +153,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         content = obj.glossary.get('link_content')
         if not content:
             try:
-                content = force_text(ButtonTypeRenderer.BUTTON_TYPES[obj.glossary['button_type']])
+                content = force_text(ButtonTypeWidget.BUTTON_TYPES[obj.glossary['button_type']])
             except KeyError:
                 content = _("Empty")
         return format_html('{}{}', identifier, content)
