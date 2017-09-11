@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.cache import caches
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.html import format_html_join
@@ -189,21 +190,33 @@ class StrideContentRenderer(object):
         self._cached_templates = {}
 
     def render_cascade(self, context, tree_data):
-        content = []
+        contents = []
         for plugin_type, data, children_data in tree_data.get('plugins', []):
             plugin_class = strides_plugin_map.get(plugin_type)
             element_class = strides_element_map.get(plugin_type)
             plugin_instance = element_class(plugin_class(), data, children_data)
-            content.append(self.render_plugin(plugin_instance, context))
-        return mark_safe(''.join(content))
+            contents.append(self.render_plugin(plugin_instance, context))
+        return mark_safe(''.join(contents))
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
+        if getattr(instance, 'cache', not editable):
+            cache = caches['default']
+            key = 'cascade_element-{}'.format(instance.pk)
+            content = cache.get(key)
+            if content:
+                instance.plugin.sekizai_addtoblock(context, instance)
+                return content
+        else:
+            cache = None
+
         context = instance.plugin.render(context, instance, placeholder)
         context = flatten_context(context)
 
         template = instance.plugin._get_render_template(context, instance, placeholder)
         template = self.get_cached_template(template)
         content = template.render(context)
+        if cache:
+            cache.set(key, content)
         return content
 
     def user_is_on_edit_mode(self):
