@@ -180,8 +180,6 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         # image shall be rendered in a responsive context using the ``<picture>`` element
         elements = get_picture_elements(context, instance)
         context.update({
-            'instance': instance,
-            'placeholder': placeholder,
             'elements': [e for e in elements if 'media' in e] if elements else [],
             'CSS_PREFIXES': app_settings.CSS_PREFIXES,
         })
