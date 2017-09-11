@@ -204,7 +204,6 @@ class StrideContentRenderer(object):
             key = 'cascade_element-{}'.format(instance.pk)
             content = cache.get(key)
             if content:
-                instance.plugin.sekizai_addtoblock(context, instance)
                 return content
         else:
             cache = None
