@@ -10,7 +10,7 @@ from django.forms.fields import IntegerField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.mixins import TransparentMixin
+from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
 
@@ -22,13 +22,13 @@ class TabForm(ManageChildrenFormMixin, ModelForm):
         help_text=_("Number of tabs."))
 
 
-class BootstrapTabSetPlugin(TransparentMixin, BootstrapPluginBase):
+class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     name = _("Tab Set")
     form = TabForm
-    parent_classes = ('BootstrapRowPlugin', 'BootstrapColumnPlugin',)
+    parent_classes = ('BootstrapColumnPlugin',)
+    direct_child_classes = ('BootstrapTabPanePlugin',)
     require_parent = True
     allow_children = True
-    child_classes = None
     render_template = 'cascade/bootstrap3/{}/tabset.html'
 
     justified = GlossaryField(
@@ -39,7 +39,7 @@ class BootstrapTabSetPlugin(TransparentMixin, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, instance):
         identifier = super(BootstrapTabSetPlugin, cls).get_identifier(instance)
-        num_cols = instance.get_children().count()
+        num_cols = instance.get_num_children()
         content = ungettext_lazy('with {} tab', 'with {} tabs', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
@@ -51,9 +51,9 @@ class BootstrapTabSetPlugin(TransparentMixin, BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapTabSetPlugin)
 
 
-class BootstrapTabPanePlugin(TransparentMixin, BootstrapPluginBase):
+class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
     name = _("Tab Pane")
-    parent_classes = ('BootstrapTabSetPlugin',)
+    direct_parent_classes = parent_classes = ('BootstrapTabSetPlugin',)
     require_parent = True
     allow_children = True
     alien_child_classes = True

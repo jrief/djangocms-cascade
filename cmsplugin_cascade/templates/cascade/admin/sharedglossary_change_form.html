@@ -1,0 +1,23 @@
+{% extends "admin/change_form.html" %}
+{% load cms_tags %}
+
+{% block after_field_sets %}
+	{{ block.super }}
+	<script type="text/javascript">
+	django.cascade = django.cascade || {};
+	django.cascade.sharable_fields = {{ sharable_fields|default:"[]" }};
+	django.cascade.page_sections_url = "{% url 'admin:get_page_sections' %}";
+	django.cascade.ring_plugin_bases = {{% for key, bases in ring_plugin_bases.items %}
+		{{ key }}: "[{{ bases|join:", " }}]"{% if not forloop.last %},{% endif %}{% endfor %}
+	};
+	django.cascade.iconfont_stylesheet_urls = {{% for icof in icon_fonts %}
+		'{{ icof.id }}': '{{ icof.get_stylesheet_url }}'{% if not forloop.last %},{% endif %}{% endfor %}
+	};
+	django.cascade.fetch_fonticons_url = "{% cms_admin_url 'fetch_fonticons' %}";
+{% if ring_plugin %}
+	django.jQuery(function($) {
+		new django.cascade.{{ ring_plugin }}();
+	});
+{% endif %}
+	</script>
+{% endblock %}

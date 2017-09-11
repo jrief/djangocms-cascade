@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import itertools
+from django.conf import settings
 from django.forms import widgets
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.utils.html import format_html, format_html_join
@@ -10,19 +11,25 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.models import ModelForm
 from django.forms.fields import ChoiceField
 from cms.plugin_pool import plugin_pool
+
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField
-from . import settings
 from .plugin_base import BootstrapPluginBase
 from .utils import compute_media_queries, get_widget_choices, BS3_BREAKPOINTS, BS3_BREAKPOINT_KEYS
 
 
-class ContainerBreakpointsRenderer(widgets.CheckboxFieldRenderer):
-    def render(self):
+class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
+    def render(self, name, value, attrs=None, renderer=None):
+        renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{0}</div>',
-            format_html_join('', '<div class="field-box">'
-                '<div class="container-thumbnail"><i class="fa fa-{1} fa-4x"></i><div class="label">{0}</div></div>'
-                '</div>', ((force_text(w), BS3_BREAKPOINTS[w.choice_value][1]) for w in self)
+            format_html_join('',
+                '<div class="field-box">'
+                    '<div class="container-thumbnail">'
+                        '<img src="' + settings.STATIC_URL + 'cascade/admin/{1}.svg" style="height: 55px;" />'
+                        '<div class="label">{0}</div>'
+                    '</div>'
+                '</div>', ((force_text(w), BS3_BREAKPOINTS[w.choice_value][1]) for w in renderer)
             ))
 
 
@@ -38,14 +45,14 @@ class BootstrapContainerForm(ModelForm):
 
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
+    parent_classes = None
     require_parent = False
-    parent_classes = ['BootstrapJumbotronPlugin']
     form = BootstrapContainerForm
     glossary_variables = ['container_max_widths', 'media_queries']
+    glossary_field_order = ('breakpoints', 'fluid')
 
     breakpoints = GlossaryField(
-        widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
-                                       renderer=ContainerBreakpointsRenderer),
+        ContainerBreakpointsWidget(choices=get_widget_choices()),
         label=_('Available Breakpoints'),
         initial=list(BS3_BREAKPOINTS)[::-1],
         help_text=_("Supported display widths for Bootstrap's grid system.")
@@ -56,9 +63,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         label=_('Fluid Container'), initial=False,
         help_text=_("Changing your outermost '.container' to '.container-fluid'.")
     )
-
-    class Media:
-        css = {'all': (settings.CMSPLUGIN_CASCADE['fontawesome_css_url'],)}
 
     @classmethod
     def get_identifier(cls, obj):
@@ -72,7 +76,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapContainerPlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(BootstrapContainerPlugin, cls).get_css_classes(obj)
         if obj.glossary.get('fluid'):
             css_classes.append('container-fluid')
         else:
@@ -88,12 +92,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         sanitized = super(BootstrapContainerPlugin, cls).sanitize_model(obj)
         compute_media_queries(obj)
         return sanitized
-
-    def get_parent_classes(self, slot, page):
-        if self.cms_plugin_instance and self.cms_plugin_instance.parent:
-            # enforce that a ContainerPlugin can't have a parent
-            return []
-        return super(BootstrapContainerPlugin, self).get_parent_classes(slot, page)
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
@@ -118,7 +116,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapRowPlugin, cls).get_identifier(obj)
-        num_cols = obj.get_children_count()
+        num_cols = obj.get_num_children()
         content = ungettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
@@ -139,6 +137,7 @@ plugin_pool.register_plugin(BootstrapRowPlugin)
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ('BootstrapRowPlugin',)
+    child_classes = ('BootstrapJumbotronPlugin',)
     alien_child_classes = True
     default_css_attributes = list(itertools.chain(*(('{}-column-width'.format(s),
         '{}-column-offset'.format(s), '{}-column-ordering'.format(s), '{}-responsive-utils'.format(s),)
@@ -280,8 +279,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 width_val = obj.glossary.get(width_key, '').lstrip('col-{0}-'.format(bp))
                 if width_val.isdigit():
                     column_units = int(width_val)
-                new_width = float(parent_glossary['container_max_widths'][bp]) * column_units / 12 - settings.CMSPLUGIN_CASCADE['bootstrap3']['gutter']
-                new_width = round(new_width, 2)
+                new_width = float(parent_glossary['container_max_widths'][bp]) * column_units / 12
+                new_width = round(new_width - app_settings.CMSPLUGIN_CASCADE['bootstrap3']['gutter'], 2)
                 if new_width != obj.glossary['container_max_widths'].get(bp):
                     obj.glossary['container_max_widths'][bp] = new_width
                     sanitized = True

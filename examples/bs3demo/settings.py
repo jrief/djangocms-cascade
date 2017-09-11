@@ -3,14 +3,18 @@ from __future__ import unicode_literals
 
 import os
 import sys
+
+from django.core.urlresolvers import reverse_lazy
+
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade.utils import format_lazy
 
 DEBUG = True
 
 BASE_DIR = os.path.dirname(__file__)
 
 # Root directory for this Django project
-PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, os.path.pardir, os.path.pardir))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, os.path.pardir))
 
 # Directory where working files, such as media and databases are kept
 WORK_DIR = os.path.join(PROJECT_ROOT, 'workdir')
@@ -28,7 +32,7 @@ DATABASES = {
     },
 }
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -37,16 +41,18 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
-    'reversion',
+    #'reversion',
     'djangocms_text_ckeditor',
     'django_select2',
     'cmsplugin_cascade',
     'cmsplugin_cascade.clipboard',
     'cmsplugin_cascade.extra_fields',
+    'cmsplugin_cascade.icon',
     'cmsplugin_cascade.sharable',
     'cmsplugin_cascade.segmentation',
     'cms',
     'cms_bootstrap3',
+    'adminsortable2',
     'menus',
     'treebeard',
     'filer',
@@ -54,9 +60,9 @@ INSTALLED_APPS = (
     'sass_processor',
     'sekizai',
     'bs3demo',
-)
+]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -68,7 +74,7 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
-)
+]
 
 # silence false-positive warning 1_6.W001
 # https://docs.djangoproject.com/en/1.8/ref/checks/#backwards-compatibility
@@ -91,34 +97,32 @@ STATIC_ROOT = os.path.join(WORK_DIR, 'static')
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-STATICFILES_FINDERS = (
+STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'sass_processor.finders.CssFinder',
-)
+]
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+STATICFILES_DIRS = [
     ('node_modules', os.path.join(PROJECT_ROOT, 'node_modules')),
-)
+]
 
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
     'APP_DIRS': True,
     'OPTIONS': {
         'context_processors': (
             'django.contrib.auth.context_processors.auth',
-            'django.core.context_processors.debug',
-            'django.core.context_processors.i18n',
-            'django.core.context_processors.media',
-            'django.core.context_processors.static',
-            'django.core.context_processors.tz',
-            'django.core.context_processors.request',
-            'django.contrib.messages.context_processors.messages',
-            'cms.context_processors.cms_settings',
-            'sekizai.context_processors.sekizai',
+            'django.template.context_processors.debug',
+            'django.template.context_processors.i18n',
+            'django.template.context_processors.media',
+            'django.template.context_processors.static',
+            'django.template.context_processors.tz',
+            'django.template.context_processors.csrf',
             'django.template.context_processors.request',
+            'django.contrib.messages.context_processors.messages',
+            'sekizai.context_processors.sekizai',
+            'cms.context_processors.cms_settings',
             'bs3demo.context_processors.cascade',
         ),
     },
@@ -179,8 +183,8 @@ if sys.argv[1] == 'test':
     )
 else:
     CMS_TEMPLATES = (
-         ('main.html', "Main Content"),
-         ('wrapped.html', "Wrapped Bootstrap Column"),
+         ('bs3demo/main.html', "Main Content"),
+         ('bs3demo/wrapped.html', "Wrapped Bootstrap Column"),
     )
 
 CMS_SEO_FIELDS = True
@@ -191,28 +195,28 @@ CMS_CACHE_DURATIONS = {
     'permissions': 86400,
 }
 
-CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.segmentation', 'cmsplugin_cascade.generic',
-    'cmsplugin_cascade.link', 'cmsplugin_cascade.bootstrap3',)
+CMSPLUGIN_CASCADE_PLUGINS = (
+    'cmsplugin_cascade.segmentation',
+    'cmsplugin_cascade.generic',
+    'cmsplugin_cascade.leaflet',
+    'cmsplugin_cascade.link',
+    'cmsplugin_cascade.bootstrap3',
+    'bs3demo',
+)
 
 CMSPLUGIN_CASCADE = {
-    'fontawesome_css_url': 'node_modules/font-awesome/css/font-awesome.css',
     'alien_plugins': ('TextPlugin', 'TextLinkPlugin',),
     'plugins_with_sharables': {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
         'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
-        'BootstrapButtonPlugin': ('link',),
+        'BootstrapButtonPlugin': ('button_type', 'button_size', 'button_options', 'icon_font',),
         'TextLinkPlugin': ('link', 'target',),
     },
-    'plugins_with_extra_fields': {
-        'BootstrapRowPlugin': PluginExtraFieldsConfig(inline_styles={
-            'extra_fields:Margins': ['margin-top', 'margin-bottom'],
-            'extra_units:Margins': 'px,em'}),
-    },
-    'bootstrap3': {},
+    'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
+    'allow_plugin_hiding': True,
+    'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
 }
-if os.getenv('DJANGO_CLIENT_FRAMEWORK', '').startswith('angular'):
-    CMSPLUGIN_CASCADE['bootstrap3']['template_basedir'] = 'angular-ui'
 
 CACSCADE_WORKAREA_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg'],
@@ -231,7 +235,6 @@ CMS_PLACEHOLDER_CONF = {
     # scaffold a djangoCMS page starting with an empty placeholder
     'Main Content': {
         'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
-        'text_only_plugins': ['TextLinkPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
         'glossary': CACSCADE_WORKAREA_GLOSSARY,
     },
@@ -249,6 +252,7 @@ CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono',
     'toolbar': 'CMS',
+    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
 }
 
 SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'
@@ -275,11 +279,14 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
     'jpeg': '/opt/local/bin/jpegoptim {filename}',
 }
 
-#THUMBNAIL_DEBUG = True
-
-SASS_PROCESSOR_INCLUDE_DIRS = (
+SASS_PROCESSOR_INCLUDE_DIRS = [
     os.path.join(PROJECT_ROOT, 'node_modules'),
-)
+]
 
 # to access files such as fonts via staticfiles finders
 NODE_MODULES_URL = STATIC_URL + 'node_modules/'
+
+try:
+    from .private_settings import *
+except ImportError:
+    pass

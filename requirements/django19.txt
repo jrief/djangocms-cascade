@@ -1,3 +1,2 @@
+Django==1.9.12
 -r base.txt
-Django==1.9.9
-django-cms==3.3.2

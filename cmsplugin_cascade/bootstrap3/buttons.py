@@ -4,19 +4,18 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from django.forms import widgets
 from django.forms.fields import CharField
-from django.forms.widgets import RadioFieldRenderer
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
+
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.link.forms import TextLinkFormMixin
-from .glyphicons import GlyphiconRenderer
+from cmsplugin_cascade.icon.mixins import IconPluginMixin
 
 
-class ButtonTypeRenderer(RadioFieldRenderer):
+class ButtonTypeWidget(widgets.RadioSelect):
     """
     Render sample buttons in different colors in the button's backend editor.
     """
@@ -25,20 +24,19 @@ class ButtonTypeRenderer(RadioFieldRenderer):
         ('btn-danger', _("Danger")), ('btn-link', _("Link")),))
 
     @classmethod
-    def get_widget(cls):
+    def get_instance(cls):
         choices = tuple((k, v) for k, v in cls.BUTTON_TYPES.items())
-        return widgets.RadioSelect(choices=choices, renderer=cls)
+        return cls(choices=choices)
 
-    def render(self):
+    def render(self, name, value, attrs=None, renderer=None):
+        renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{}</div>',
-            format_html_join('\n', '<div class="field-box">'
-                             '<span class="btn {1}">{2}</span>'
-                             '<div class="label">{0}</div></div>',
-                ((force_text(w), w.choice_value, force_text(self.BUTTON_TYPES[w.choice_value])) for w in self)
-            ))
+            format_html_join('\n',
+                '<div class="field-box"><span class="btn {1}">{2}</span><div class="label">{0}</div></div>',
+                ((force_text(w), w.choice_value, force_text(self.BUTTON_TYPES[w.choice_value])) for w in renderer)))
 
 
-class ButtonSizeRenderer(RadioFieldRenderer):
+class ButtonSizeWidget(widgets.RadioSelect):
     """
     Render sample buttons in different sizes in the button's backend editor.
     """
@@ -46,11 +44,12 @@ class ButtonSizeRenderer(RadioFieldRenderer):
         ('btn-xs', _("Extra small")),))
 
     @classmethod
-    def get_widget(cls):
+    def get_instance(cls):
         choices = tuple((k, v) for k, v in cls.BUTTON_SIZES.items())
-        return widgets.RadioSelect(choices=choices, renderer=cls)
+        return cls(choices=choices)
 
-    def render(self):
+    def render(self, name, value, attrs=None, renderer=None):
+        renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{}</div>',
             format_html_join('\n',
                 '<div class="field-box"><div class="button-samples">'
@@ -58,28 +57,27 @@ class ButtonSizeRenderer(RadioFieldRenderer):
                     '<span class="btn btn-default {1}">{2}</span></div>'
                     '<div class="label">{0}</div>'
                 '</div>',
-                ((force_text(w), w.choice_value, force_text(self.BUTTON_SIZES[w.choice_value])) for w in self)
-            ))
+                ((force_text(w), w.choice_value, force_text(self.BUTTON_SIZES[w.choice_value])) for w in renderer)))
 
 
-class BootstrapButtonMixin(CascadePluginMixinBase):
+class BootstrapButtonMixin(IconPluginMixin):
     require_parent = True
     parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin',)
     render_template = 'cascade/bootstrap3/button.html'
     allow_children = False
-    text_enabled = True
     default_css_class = 'btn'
     default_css_attributes = ('button_type', 'button_size', 'button_options', 'quick_float',)
+    ring_plugin = 'ButtonMixin'
 
     button_type = GlossaryField(
-        ButtonTypeRenderer.get_widget(),
+        ButtonTypeWidget.get_instance(),
         label=_("Button Type"),
         initial='btn-default',
         help_text=_("Display Link using this Button Style")
     )
 
     button_size = GlossaryField(
-        ButtonSizeRenderer.get_widget(),
+        ButtonSizeWidget.get_instance(),
         label=_("Button Size"),
         initial='',
         help_text=_("Display Link using this Button Size")
@@ -98,29 +96,39 @@ class BootstrapButtonMixin(CascadePluginMixinBase):
         help_text=_("Float the button to the left or right.")
     )
 
-    icon_left = GlossaryField(
-        GlyphiconRenderer.get_widget(),
-        label=_("Prepend icon"),
+    icon_align = GlossaryField(
+        widgets.RadioSelect(choices=(('', _("No Icon")), ('icon-left', _("Icon placed left")),
+                                     ('icon-right', _("Icon placed right")),)),
+        label=_("Icon alignment"),
         initial='',
-        help_text=_("Prepend a Glyphicon before the content.")
+        help_text=_("Add an Icon before or after the button content.")
     )
 
-    icon_right = GlossaryField(
-        GlyphiconRenderer.get_widget(),
-        label=_("Append icon"),
-        initial='',
-        help_text=_("Append a Glyphicon after the content.")
+    icon_font = GlossaryField(
+        widgets.Select(),
+        label=_("Font"),
     )
+
+    symbol = GlossaryField(
+        widgets.HiddenInput(),
+        label=_("Select Symbol"),
+    )
+
+    class Media:
+        js = ['cascade/js/admin/buttonmixin.js']
 
     def render(self, context, instance, placeholder):
         context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
-        mini_template = '{0}<span class="glyphicon glyphicon-{1} {2}" aria-hidden="true"></span>{3}'
-        icon_left = instance.glossary.get('icon_left')
-        if icon_left:
-            context['icon_left'] = format_html(mini_template, '', icon_left, 'cascade-icon-left', ' ')
-        icon_right = instance.glossary.get('icon_right')
-        if icon_right:
-            context['icon_right'] = format_html(mini_template, ' ', icon_right, 'cascade-icon-right', '')
+        icon_font = self.get_icon_font(instance)
+        symbol = instance.glossary.get('symbol')
+        if icon_font and symbol:
+            context['stylesheet_url'] = icon_font.get_stylesheet_url()
+            mini_template = '{0}<i class="icon-{1} {2}" aria-hidden="true"></i>{3}'
+            icon_align = instance.glossary.get('icon_align')
+            if icon_align == 'icon-left':
+                context['icon_left'] = format_html(mini_template, '', symbol, 'cascade-icon-left', ' ')
+            elif icon_align == 'icon-right':
+                context['icon_right'] = format_html(mini_template, ' ', symbol, 'cascade-icon-right', '')
         return context
 
 
@@ -130,10 +138,14 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     fields = ('link_content',) + LinkPluginBase.fields
     glossary_field_order = ('button_type', 'button_size', 'button_options', 'quick_float',
-                       'icon_left', 'icon_right')
+                            'icon_align', 'icon_font', 'symbol')
+    ring_plugin = 'ButtonPlugin'
 
     class Media:
-        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
+        css = {'all': ['cascade/css/admin/bootstrap.min.css',
+                       'cascade/css/admin/bootstrap-theme.min.css',
+                       'cascade/css/admin/iconplugin.css']}
+        js = ['cascade/js/admin/buttonplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):
@@ -141,7 +153,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         content = obj.glossary.get('link_content')
         if not content:
             try:
-                content = force_text(ButtonTypeRenderer.BUTTON_TYPES[obj.glossary['button_type']])
+                content = force_text(ButtonTypeWidget.BUTTON_TYPES[obj.glossary['button_type']])
             except KeyError:
                 content = _("Empty")
         return format_html('{}{}', identifier, content)

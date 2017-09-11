@@ -56,6 +56,13 @@ class JSONMultiWidget(widgets.MultiWidget):
                 result[field.name] = escape(data.get(field.name, ''))
         return result
 
+    def value_omitted_from_data(self, data, files, name):
+        # required since Django-1.10 during invocation of `construct_instance`
+        return self.normalized_fields and all(
+            field.widget.value_omitted_from_data(data, files, field.name)
+            for field in self.normalized_fields
+        )
+
     def render(self, name, values, attrs):
         values = self.decompress(values)
         field_attrs = dict(**attrs)
@@ -76,21 +83,20 @@ class JSONMultiWidget(widgets.MultiWidget):
                     six.text_type(field.help_text),
                 ))
             html = format_html_join('',
-                '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',
-                render_fields)
+                 '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',
+                 render_fields)
             render_fieldsets.append((html,))
         return format_html_join('\n', '<div class="glossary-widget">{0}</div>', render_fieldsets)
 
 
 class NumberInputWidget(widgets.NumberInput):
-    validation_pattern = re.compile('^-?\d+$')
-    required = True
+    validation_pattern = re.compile('^-?\d+(\.\d{1,2})?$')
     required_message = _("In '%(label)s': This field is required.")
-    invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number.")
+    invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid decimal number.")
 
     def validate(self, value):
-        if not self.validation_pattern.match(value):
-            raise ValidationError(self.validation_message, code='invalid', params={'value': value})
+        if value and not self.validation_pattern.match(value):
+            raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
 
 
 class CascadingSizeWidgetMixin(object):
@@ -124,8 +130,7 @@ class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
     DEFAULT_ATTRS = {'style': 'width: 5em;'}
 
     def __init__(self, allowed_units=None, attrs=None, required=None):
-        if required is not None:
-            self.required = required
+        self.required = True if required is None else required
         if attrs is None:
             attrs = self.DEFAULT_ATTRS
         self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
@@ -136,6 +141,8 @@ class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
         if not value:
             if self.required:
                 raise ValidationError(self.required_message, code='required', params={})
+            return
+        if value == '0':
             return
         match = self.validation_pattern.match(value)
         if not (match and match.group(1).isdigit()):
@@ -157,6 +164,10 @@ class ColorPickerWidget(widgets.MultiWidget):
         attrs = dict(attrs)
         widget_list = [widgets.TextInput(attrs=attrs), widgets.CheckboxInput()]
         super(ColorPickerWidget, self).__init__(widget_list)
+
+    def __iter__(self):
+        for name in ('color', 'disabled'):
+            yield name
 
     def decompress(self, values):
         if not isinstance(values, (list, tuple)) or len(values) != 2:
@@ -183,10 +194,11 @@ class ColorPickerWidget(widgets.MultiWidget):
         html += '</div>'
         return mark_safe(html)
 
-    def validate(self, values):
-        color = values[1]
-        if not self.validation_pattern.match(color):
-            raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
+    def validate(self, values, field_name):
+        if field_name == 'color':
+            color = values[1]
+            if not self.validation_pattern.match(color):
+                raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
 
 
 class SelectOverflowWidget(widgets.Select):
@@ -276,8 +288,8 @@ class SetBorderWidget(widgets.MultiWidget):
     Use this field to enter the three values of a border: width style color.
     """
     DEFAULT_COLOR = '#000000'
-    BORDER_STYLES = ['dashed', 'dotted', 'double', 'groove', 'hidden', 'inset', 'none', 'outset',
-                     'ridge', 'solid']
+    BORDER_STYLES = ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'hidden',
+                     'inset', 'outset', 'ridge']
 
     invalid_border_message = _("In '%(label)s': Value '%(value)s' is not a valid border style.")
     color_validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
@@ -324,7 +336,8 @@ class SetBorderWidget(widgets.MultiWidget):
 
     def validate(self, values, key):
         if key == 'width':
-            self.widgets[0].validate(values[0])
+            if values[0]:
+                self.widgets[0].validate(values[0])
         elif key == 'style':
             style = values[1]
             if style not in self.BORDER_STYLES:

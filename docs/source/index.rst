@@ -1,4 +1,4 @@
-.. djangocms-cascade:
+.. _djangocms-cascade:
 
 Welcome to DjangoCMS-Cascade's documentation
 ============================================
@@ -38,12 +38,21 @@ Contents:
   installation
   link-plugin
   bootstrap3/grid
+  bootstrap3/gallery
+  bootstrap3/image-picture
+  bootstrap3/navbar
+  bootstrap3/other-components
+  icon-fonts
+  leaflet
+  client-side
   section
   segmentation
   sharable-fields
   customize-styles
   render-template
+  hide-plugins
   clipboard
+  strides
   customized-plugins
   generic-plugins
   changelog

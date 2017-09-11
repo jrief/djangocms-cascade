@@ -1,8 +1,8 @@
-{% load cms_tags %}{% spaceless %}
+{% load cascade_tags %}{% spaceless %}
 
-<carousel interval="{{ instance.options.interval|default:5000 }}" style="{{ instance.inline_styles }}">
+<uib-carousel interval="{{ instance.options.interval|default:5000 }}" {# style="{{ instance.inline_styles }}" #}>
 	{% for slide in instance.child_plugin_instances %}
-	<slide>{% render_plugin slide %}</slide>
+	<uib-slide>{% render_plugin slide %}</uib-slide>
 	{% endfor %}
-</carousel>
+</uib-carousel>
 {% endspaceless %}

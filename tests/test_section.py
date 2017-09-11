@@ -91,6 +91,5 @@ class SectionPluginTest(CascadeTestCase):
         heading_model = add_plugin(self.placeholder, HeadingPlugin, 'en', target=self.column_model)
         form = ModelForm(post_data, None, instance=heading_model)
         self.assertFalse(form.is_valid())
-        expected = '<ul class="errorlist"><li>glossary<ul class="errorlist"><li>The element ID `foo` is not unique for this page.</li></ul></li></ul>'
-        print(str(form.errors))
+        expected = '<ul class="errorlist"><li>glossary<ul class="errorlist"><li>The element ID &#39;foo&#39; is not unique for this page.</li></ul></li></ul>'
         self.assertHTMLEqual(str(form.errors), expected)

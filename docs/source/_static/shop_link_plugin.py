@@ -7,7 +7,6 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.link.forms import TextLinkForm
 from cmsplugin_cascade.link.models import SimpleLinkElement
 from cmsplugin_cascade.link.plugin_base import TextLinkPluginBase
-from cmsplugin_cascade.utils import resolve_dependencies
 from shop.models.product import Product
 
 
@@ -55,6 +54,6 @@ class LinkPlugin(TextLinkPluginBase):
     form = LinkForm
 
     class Media:
-        js = resolve_dependencies('shop/js/admin/linkplugin.js')
+        js = ['shop/js/admin/linkplugin.js']
 
 plugin_pool.register_plugin(LinkPlugin)

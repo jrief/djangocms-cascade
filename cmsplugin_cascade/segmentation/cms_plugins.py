@@ -5,7 +5,6 @@ try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
-from distutils.version import LooseVersion
 
 from django.core.exceptions import ValidationError
 from django.forms import widgets
@@ -16,9 +15,7 @@ from django.template import engines, TemplateSyntaxError, Template as DjangoTemp
 from cms import __version__ as cms_version
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.mixins import TransparentMixin
-from cmsplugin_cascade.utils import resolve_dependencies
+from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 
 
 class Template(DjangoTemplate):
@@ -28,13 +25,26 @@ class Template(DjangoTemplate):
         return super(Template, self).render(context)
 
 
-class SegmentPlugin(TransparentMixin, CascadePluginBase):
+class SegmentPlugin(TransparentContainer, CascadePluginBase):
     """
     A Segment is a part of the DOM which is rendered or not, depending on a condition.
     As condition you may use any expression which is valid inside a Django's template tag,
     such as ``{% if ... %}``.
     """
     name = _("Segment")
+    html_parser = HTMLParser()
+    eval_template_string = '{{% if {} %}}True{{% endif %}}'
+    default_template = engines['django'].from_string('{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}')
+    hiding_template_string = '{% load cms_tags %}<div style="display: none;">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>'
+    hiding_template = engines['django'].from_string(hiding_template_string)
+    debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
+    empty_template = engines['django'].from_string('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
+    ring_plugin = 'SegmentPlugin'
+    require_parent = False
+    direct_parent_classes = None
+    allow_children = True
+    child_classes = None
+    cache = False
 
     open_tag = GlossaryField(
         widgets.Select(choices=()),
@@ -48,21 +58,8 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
         help_text=_("Evaluation as used in Django's template tags for conditions")
     )
 
-    html_parser = HTMLParser()
-    eval_template_string = '{{% if {} %}}True{{% endif %}}'
-    default_template = engines['django'].from_string('{% load cms_tags %}{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}')
-    hiding_template_string = '{% load cms_tags %}<div style="display: none;">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>'
-    hiding_template = engines['django'].from_string(hiding_template_string)
-    debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
-    empty_template = engines['django'].from_string('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
-    require_parent = False
-    parent_classes = None
-    allow_children = True
-    child_classes = None
-    cache = False
-
     class Media:
-        js = resolve_dependencies('cascade/js/admin/segmentplugin.js')
+        js = ['cascade/js/admin/segmentplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):
@@ -77,24 +74,25 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
             evaluated_to = False
             template_error_message = None
             try:
-                eval_template = engines['django'].from_string(self.eval_template_string.format(condition))
+                template_string = self.eval_template_string.format(condition)
+                eval_template = engines['django'].from_string(template_string)
                 evaluated_to = eval_template.render(context) == 'True'
             except TemplateSyntaxError as err:
                 # TODO: render error message into template
                 template_error_message = err.message
             finally:
                 if evaluated_to:
-                    request._evaluated_instances[instance.id] = True
+                    request._evaluated_instances[instance.pk] = True
                     template = self.default_template
                 else:
-                    request._evaluated_instances[instance.id] = False
+                    request._evaluated_instances[instance.pk] = False
                     if edit_mode:
                         # In edit mode, hidden plugins have to be rendered nevertheless. Therefore
                         # we use `style="display: none"`, otherwise the plugin would be invisible
                         # in structure mode, while editing.
                         if template_error_message:
                             template = self.debug_error_template.format(condition=condition,
-                                instance_id=instance.id, message=template_error_message,
+                                instance_id=instance.pk, message=template_error_message,
                                 template_string=self.hiding_template_string)
                             template = engines['django'].from_string(template)
                         else:
@@ -104,13 +102,7 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
             return template
 
         request = context['request']
-        toolbar = getattr(request, 'toolbar', None)
-        if LooseVersion(cms_version) < LooseVersion('3.4.0'):
-          edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request) and
-                       getattr(placeholder, 'is_editable', True))
-        else:
-          edit_mode = (toolbar and toolbar.edit_mode and placeholder.has_change_permission(request.user) and
-                       getattr(placeholder, 'is_editable', True))
+        edit_mode = self.in_edit_mode(request, placeholder)
         open_tag = instance.glossary.get('open_tag')
         if open_tag == 'if':
             template = conditionally_eval()
@@ -120,8 +112,8 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
             if prev_inst is None:
                 # this can happen, if one moves an else- or elif-segment in front of an if-segment
                 template = edit_mode and self.hiding_template or self.empty_template
-            elif request._evaluated_instances.get(prev_inst.id):
-                request._evaluated_instances[instance.id] = True
+            elif request._evaluated_instances.get(prev_inst.pk):
+                request._evaluated_instances[instance.pk] = True
                 # in edit mode hidden plugins have to be rendered nevertheless
                 template = edit_mode and self.hiding_template or self.empty_template
             elif open_tag == 'elif':
@@ -131,9 +123,11 @@ class SegmentPlugin(TransparentMixin, CascadePluginBase):
         return template
 
     def render(self, context, instance, placeholder):
-        if not hasattr(context['request'], '_evaluated_instances'):
-            context['request']._evaluated_instances = {}
-        return super(SegmentPlugin, self).render(context, instance, placeholder)
+        request = context['request']
+        if not hasattr(request, '_evaluated_instances'):
+            request._evaluated_instances = {}
+        context.update(instance.get_context_override(request))
+        return self.super(SegmentPlugin, self).render(context, instance, placeholder)
 
     def get_form(self, request, obj=None, **kwargs):
         def clean_condition(value):

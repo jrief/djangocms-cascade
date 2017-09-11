@@ -3,10 +3,9 @@ django.jQuery(function($) {
 	'use strict';
 	var $id_open_tag = $("#id_glossary_open_tag");
 	var $glossary_condition = $("#id_glossary_condition").parents('.glossary-widget');
-	var SegmentPlugin, base_plugins = eval(django.cascade.base_plugins);
 
 	// create class handling the client-side part of SegmentPlugin
-	SegmentPlugin = ring.create(base_plugins, {
+	django.cascade.SegmentPlugin = ring.create(eval(django.cascade.ring_plugin_bases.SegmentPlugin), {
 		constructor: function() {
 			var self = this;
 			this.$super();
@@ -30,5 +29,4 @@ django.jQuery(function($) {
 			}
 		}
 	});
-	new SegmentPlugin();
 });

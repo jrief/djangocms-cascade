@@ -1,3 +1,3 @@
 {% with tag_type=instance.tag_type css_classes=instance.css_classes inline_styles=instance.inline_styles element_id=instance.element_id %}
-<{{ tag_type }}{% if element_id %} id="{{ element_id }}"{% endif %}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>{{ instance.glossary.content }}</{{ tag_type }}>
+<{{ tag_type }}{% if element_id %} id="{{ element_id }}"{% endif %}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>{{ content }}</{{ tag_type }}>
 {% endwith %}

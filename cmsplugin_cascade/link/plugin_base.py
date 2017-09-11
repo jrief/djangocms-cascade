@@ -7,17 +7,22 @@ from django.forms import widgets
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.utils import resolve_dependencies
+
 from .forms import LinkForm
 
 
 class LinkPluginBase(CascadePluginBase):
-    text_enabled = True
     allow_children = False
     parent_classes = []
     require_parent = False
+    ring_plugin = 'LinkPluginBase'
+
+    class Media:
+        js = ['cascade/js/admin/linkplugin.js']
+
     target = GlossaryField(
         widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
                      ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
@@ -65,11 +70,6 @@ class LinkPluginBase(CascadePluginBase):
                         pass
                 return href
 
-    def get_ring_bases(self):
-        bases = super(LinkPluginBase, self).get_ring_bases()
-        bases.append('LinkPluginBase')
-        return bases
-
     def get_form(self, request, obj=None, **kwargs):
         kwargs.setdefault('form', LinkForm.get_form_class())
         return super(LinkPluginBase, self).get_form(request, obj, **kwargs)
@@ -80,9 +80,7 @@ class DefaultLinkPluginBase(LinkPluginBase):
     The default `LinkPluginBase` class. It is injected by the class creator in link.config
     """
     fields = (('link_type', 'cms_page', 'section', 'ext_url', 'mail_to',), 'glossary',)
-
-    class Media:
-        js = resolve_dependencies('cascade/js/admin/defaultlinkplugin.js')
+    ring_plugin = 'LinkPluginBase'
 
 
 @python_2_unicode_compatible

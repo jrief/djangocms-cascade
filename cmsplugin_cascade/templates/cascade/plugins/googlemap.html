@@ -1,0 +1,48 @@
+{% load static sekizai_tags thumbnail l10n %}
+
+{% addtoblock "css" %}
+<style>
+#cascadeelement_id-{{ instance.pk }} {
+	width: {{ instance.glossary.map_width }};
+	height: {{ instance.glossary.map_height }};
+}
+</style>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}<script async="async" defer="defer" src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+function initMap() {
+	var mapPosition = {{ instance.map_position }};
+	var canvas = document.getElementById('cascadeelement_id-' + {{ instance.pk }});
+	var viewMap = new google.maps.Map(canvas, {
+		zoom: mapPosition.zoom,
+		center: mapPosition
+	});
+	{% for marker in markers %}
+	(function(data) {
+		var iconUrl, infowindow;
+		{% if marker.image %}
+			{% thumbnail marker.image marker.size as thumb %}
+		iconUrl = "{{ thumb.url }}";
+		{% endif %}
+		var marker = new google.maps.Marker({
+			position: data.position,
+			title: data.title,
+			icon: iconUrl
+		});
+		if (data.popup_text) {
+			infowindow = new google.maps.InfoWindow({content: data.popup_text});
+			marker.addListener('click', function() {
+				infowindow.open(viewMap, marker);
+			});
+		}
+		marker.setMap(viewMap);
+	})({{ marker.data }});
+	{% endfor %}
+}
+</script>
+{% endaddtoblock %}
+
+<div id="cascadeelement_id-{{ instance.pk }}"></div>

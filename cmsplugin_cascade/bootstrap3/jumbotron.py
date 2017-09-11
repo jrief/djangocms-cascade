@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+
 from cms.plugin_pool import plugin_pool
+
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.mixins import ImagePropertyMixin
-from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget
 from .plugin_base import BootstrapPluginBase
 from .image import ImageForm
 from .utils import get_widget_choices, compute_media_queries, get_picture_elements, BS3_BREAKPOINT_KEYS
-from .container import ContainerBreakpointsRenderer
+from .container import ContainerBreakpointsWidget
 from .picture import BootstrapPicturePlugin
 
 
@@ -80,13 +81,14 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
     form = JumbotronPluginForm
     default_css_class = 'jumbotron'
-    parent_classes = ['BootstrapColumnPlugin']
     require_parent = False
+    parent_classes = ('BootstrapColumnPlugin',)
     allow_children = True
     alien_child_classes = True
     raw_id_fields = ('image_file',)
     fields = ('glossary', 'image_file',)
     render_template = 'cascade/bootstrap3/jumbotron.html'
+    ring_plugin = 'JumbotronPlugin'
     ATTACHMENT_CHOICES = ('scroll', 'fixed', 'local')
     VERTICAL_POSITION_CHOICES = ('top', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'bottom')
     HORIZONTAL_POSITION_CHOICES = ('left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right')
@@ -94,8 +96,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     SIZE_CHOICES = ('auto', 'width/height', 'cover', 'contain')
     container_glossary_fields = (
         GlossaryField(
-            widgets.CheckboxSelectMultiple(choices=get_widget_choices(),
-                                           renderer=ContainerBreakpointsRenderer),
+            ContainerBreakpointsWidget(choices=get_widget_choices()),
             label=_("Available Breakpoints"),
             name='breakpoints',
             initial=list(BS3_BREAKPOINT_KEYS)[::-1],
@@ -165,8 +166,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     """
 
     class Media:
-        css = {'all': (settings.CMSPLUGIN_CASCADE['fontawesome_css_url'],)}
-        js = resolve_dependencies('cascade/js/admin/jumbotronplugin.js')
+        js = ['cascade/js/admin/jumbotronplugin.js']
 
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request, obj) is None:
@@ -180,11 +180,10 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         # image shall be rendered in a responsive context using the ``<picture>`` element
         elements = get_picture_elements(context, instance)
         context.update({
-            'instance': instance,
-            'placeholder': placeholder,
             'elements': [e for e in elements if 'media' in e] if elements else [],
+            'CSS_PREFIXES': app_settings.CSS_PREFIXES,
         })
-        return super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
+        return self.super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):

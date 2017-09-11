@@ -2,22 +2,29 @@
 from __future__ import unicode_literals
 
 import json
+
 from django import forms
 from django.forms import fields
 from django.apps import apps
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_text
-from cmsplugin_cascade.utils import resolve_dependencies
-from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
+from django.utils.six import with_metaclass
+
+from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.models import SharedGlossary
 
 
 class SelectSharedGlossary(forms.Select):
     def render_option(self, selected_choices, option_value, option_label):
         if option_value:
-            glossary = self.choices.queryset.get(pk=option_value).glossary
+            shared_instance = self.choices.queryset.get(pk=option_value)
+            plugin_instance = plugin_pool.get_plugin(shared_instance.plugin_type)
+            # use the saved glossary and filter it by fields marked as sharable
+            glossary = dict((key, value) for key, value in shared_instance.glossary.items()
+                            if key in plugin_instance.sharable_fields)
             self._enrich_link(glossary)
             data = format_html(' data-glossary="{0}"', json.dumps(glossary))
         else:
@@ -54,18 +61,24 @@ class SharableCascadeForm(forms.ModelForm):
     these additional form fields are added during runtime.
     """
     shared_glossary = forms.ModelChoiceField(
-        label=_("Shared Settings"), required=False, queryset=SharedGlossary.objects.all(),
-        widget=SelectSharedGlossary(), empty_label=_("Use individual settings"),
+        label=_("Shared Settings"),
+        required=False,
+        queryset=SharedGlossary.objects.all(),
+        widget=SelectSharedGlossary(),
+        empty_label=_("Use individual settings"),
         help_text=_("Use settings shared with other plugins of this type"))
-    save_shared_glossary = fields.BooleanField(label=_("Remember these settings as:"),
-                                               required=False)
+
+    save_shared_glossary = fields.BooleanField(
+        label=_("Remember these settings as:"),
+        required=False)
+
     save_as_identifier = fields.CharField(label='', required=False)
 
     def __init__(self, *args, **kwargs):
         try:
             self.base_fields['shared_glossary'].initial = kwargs['instance'].shared_glossary.pk
         except (AttributeError, KeyError):
-            pass
+            self.base_fields['shared_glossary'].initial = ''
         super(SharableCascadeForm, self).__init__(*args, **kwargs)
 
     def clean_save_as_identifier(self):
@@ -79,14 +92,17 @@ class SharableCascadeForm(forms.ModelForm):
         return super(SharableCascadeForm, self).save(commit)
 
 
-class SharableGlossaryMixin(object):
+class SharableGlossaryMixin(with_metaclass(forms.MediaDefiningClass)):
     """
-    Add this mixin class to Plugin classes which refer to the model ``SharableCascadeElement`` or
-    inherit from it. This class adds the appropriate methods to the plugin class in order to store
+    Every plugin class of type ``CascadePluginBase`` additionally inherits from this mixin,
+    if the plugin is marked as sharable.
+    This class adds the appropriate methods to the plugin class in order to store
     an assortment of glossary values as a glossary reusable by other plugin instances.
     """
+    ring_plugin = 'SharableGlossaryMixin'
+
     class Media:
-            js = resolve_dependencies('cascade/js/admin/sharableglossary.js')
+        js = ['cascade/js/admin/sharableglossary.js']
 
     def get_form(self, request, obj=None, **kwargs):
         """
@@ -130,7 +146,22 @@ class SharableGlossaryMixin(object):
         context.update(sharable_fields=mark_safe(json.dumps(share_fields)))
         return super(SharableGlossaryMixin, self).render_change_form(request, context, add, change, form_url, obj)
 
-    def get_ring_bases(self):
-        bases = super(SharableGlossaryMixin, self).get_ring_bases()
-        bases.append('SharableGlossaryMixin')
-        return bases
+    @classmethod
+    def get_data_representation(cls, instance):
+        data = super(SharableGlossaryMixin, cls).get_data_representation(instance)
+        if instance.shared_glossary:
+            data.setdefault('glossary', {})
+            data['glossary'].update(instance.shared_glossary.glossary)
+            data.update(shared_glossary=instance.shared_glossary.identifier)
+        return data
+
+    @classmethod
+    def add_shared_reference(cls, instance, shared_glossary_identifier):
+        try:
+            shared_glossary = SharedGlossary.objects.get(plugin_type=instance.plugin_type,
+                                                         identifier=shared_glossary_identifier)
+        except SharedGlossary.DoesNotExist:
+            pass
+        else:
+            instance.shared_glossary = shared_glossary
+            instance.save(update_fields=['shared_glossary'])

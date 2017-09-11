@@ -18,6 +18,6 @@ class ManageChildrenFormMixin(object):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
         if instance:
-            initial = {'num_children': instance.get_children().count()}
+            initial = {'num_children': instance.get_num_children()}
             kwargs.update(initial=initial)
         super(ManageChildrenFormMixin, self).__init__(*args, **kwargs)

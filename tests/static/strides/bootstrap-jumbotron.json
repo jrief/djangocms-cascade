@@ -1,0 +1,84 @@
+{
+  "plugins": [
+    [
+      "BootstrapJumbotronPlugin",
+      {
+        "pk": 1501,
+        "glossary": {
+          "background_vertical_position": "center",
+          "extra_inline_styles:Paddings": {
+            "padding-top": "500px",
+            "padding-bottom": ""
+          },
+          "resize_options": [
+            "crop",
+            "subject_location",
+            "high_resolution"
+          ],
+          "breakpoints": [
+            "xs",
+            "sm",
+            "md",
+            "lg"
+          ],
+          "hide_plugin": "",
+          "background_color": [
+            "",
+            "#12308b"
+          ],
+          "fluid": true,
+          "container_max_widths": {
+            "xs": 768,
+            "md": 1200,
+            "sm": 992,
+            "lg": 1980
+          },
+          "media_queries": {
+            "xs": [
+              "(max-width: 768px)"
+            ],
+            "md": [
+              "(min-width: 992px)",
+              "(max-width: 1200px)"
+            ],
+            "sm": [
+              "(min-width: 768px)",
+              "(max-width: 992px)"
+            ],
+            "lg": [
+              "(min-width: 1200px)"
+            ]
+          },
+          "image": {
+            "pk": 5,
+            "model": "filer.Image"
+          },
+          "background_size": "cover",
+          "background_horizontal_position": "center",
+          "background_repeat": "no-repeat",
+          "container_max_heights": {
+            "xs": "100%",
+            "md": "100%",
+            "lg": "100%",
+            "sm": "100%"
+          },
+          "background_width_height": {
+            "height": "",
+            "width": ""
+          },
+          "background_attachment": "scroll"
+        }
+      },
+      [
+        [
+          "TextPlugin",
+          {
+            "body": "<h1 style=\"text-align: center;\"><span style=\"color: #ffffe0;\">Manage your website</span></h1>\n\n<p style=\"text-align: center;\"><span style=\"color: #ffffe0;\">with ease</span></p>\n\n<p style=\"text-align: center;\">\u00a0</p>\n\n<p style=\"text-align: center;\">\u00a0</p>",
+            "pk": 1502
+          },
+          []
+        ]
+      ]
+    ]
+  ]
+}

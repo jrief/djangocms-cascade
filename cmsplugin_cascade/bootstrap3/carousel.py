@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from distutils.version import LooseVersion
 import re
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
     from HTMLParser import HTMLParser  # py2
 
-from django.core.exceptions import ImproperlyConfigured
 from django.forms import widgets
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -16,18 +14,15 @@ from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
 
 from cms.plugin_pool import plugin_pool
-from djangocms_text_ckeditor import __version__ as djangocms_text_ckeditor_version
-from djangocms_text_ckeditor.widgets import TextEditorWidget
-from djangocms_text_ckeditor.utils import plugin_tags_to_user_html
 
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
-from cmsplugin_cascade.link.cms_plugins import TextLinkPlugin
-from . import settings, utils
+from . import utils
 from .plugin_base import BootstrapPluginBase
-from .image import ImageForm
+from .image import ImageForm, ImageAnnotationMixin
 from .picture import BootstrapPicturePlugin
 
 
@@ -44,7 +39,7 @@ class CarouselPlugin(BootstrapPluginBase):
     form = CarouselSlidesForm
     default_css_class = 'carousel'
     default_css_attributes = ('options',)
-    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
+    parent_classes = ('BootstrapColumnPlugin',)
     render_template = 'cascade/bootstrap3/{}/carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
     fields = ('num_children', 'glossary',)
@@ -66,11 +61,11 @@ class CarouselPlugin(BootstrapPluginBase):
     )
 
     container_max_heights = GlossaryField(
-        MultipleCascadingSizeWidget(list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']),
+        MultipleCascadingSizeWidget(list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints']),
         allowed_units=['px']),
         label=_("Carousel heights"),
         initial=dict((bp[0], '{}px'.format(100 + 50 * i))
-            for i, bp in enumerate(settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])),
+            for i, bp in enumerate(app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])),
         help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
     )
 
@@ -88,20 +83,20 @@ class CarouselPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(CarouselPlugin, cls).get_identifier(obj)
-        num_cols = obj.get_children().count()
+        num_cols = obj.get_num_children()
         content = ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(CarouselPlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(CarouselPlugin, cls).get_css_classes(obj)
         if 'slide' in obj.glossary.get('options', []):
             css_classes.append('slide')
         return css_classes
 
     @classmethod
     def get_html_tag_attributes(cls, obj):
-        attributes = super(CarouselPlugin, cls).get_html_tag_attributes(obj)
+        attributes = cls.super(CarouselPlugin, cls).get_html_tag_attributes(obj)
         attributes.update(cls.DEFAULT_CAROUSEL_ATTRIBUTES)
         attributes['data-interval'] = 1000 * int(obj.glossary.get('interval', 5))
         options = obj.glossary.get('options', [])
@@ -113,6 +108,7 @@ class CarouselPlugin(BootstrapPluginBase):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super(CarouselPlugin, self).save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, CarouselSlidePlugin)
+        obj.sanitize_children()
 
     @classmethod
     def sanitize_model(cls, obj):
@@ -129,7 +125,7 @@ class CarouselPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(CarouselPlugin)
 
 
-class CarouselSlidePlugin(BootstrapPluginBase):
+class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
     form = ImageForm
@@ -138,50 +134,28 @@ class CarouselSlidePlugin(BootstrapPluginBase):
     raw_id_fields = ('image_file',)
     fields = ('image_file', 'glossary',)
     render_template = 'cascade/bootstrap3/carousel-slide.html'
-    change_form_template = 'cascade/admin/text_plugin_change_form.html'
-    html_parser = HTMLParser()
-
-    def get_form(self, request, obj=None, **kwargs):
-        if obj:
-            caption = self.html_parser.unescape(obj.glossary.get('caption', ''))
-            obj.glossary.update(caption=caption)
-
-        parent_obj = self.get_parent_instance(request, obj)
-        if not (parent_obj and issubclass(parent_obj.plugin_class, BootstrapPluginBase)):
-            raise ImproperlyConfigured("A CarouselSlidePlugin requires a valid parent")
-
-        # define glossary fields on the fly, because the TextEditorWidget requires the plugin_pk
-        text_editor_widget = TextEditorWidget(installed_plugins=[TextLinkPlugin], pk=parent_obj.pk,
-            placeholder=parent_obj.placeholder, plugin_language=parent_obj.language)
-        caption = GlossaryField(text_editor_widget, label=_("Slide Caption"), name='caption',
-            help_text=_("Caption text to be laid over the backgroud image."))
-        kwargs['glossary_fields'] = (caption,)
-        return super(CarouselSlidePlugin, self).get_form(request, obj, **kwargs)
+    alien_child_classes = True
 
     def render(self, context, instance, placeholder):
-        # image shall be rendered in a responsive context using the ``<picture>`` element
+        # slide image shall be rendered in a responsive context using the ``<picture>`` element
         elements = utils.get_picture_elements(context, instance)
-        caption = self.html_parser.unescape(instance.glossary.get('caption', ''))
         fluid = instance.get_complete_glossary().get('fluid') == 'on'
-        if LooseVersion(djangocms_text_ckeditor_version) < LooseVersion('3.2.1'):
-            caption = plugin_tags_to_user_html(caption, context, placeholder)
-        else:
-            caption = plugin_tags_to_user_html(caption, context)
         context.update({
             'is_responsive': True,
-            'instance'     : instance,
-            'caption'      : caption,
-            'is_fluid'     : fluid,
-            'placeholder'  : placeholder,
-            'elements'     : elements,
+            'instance': instance,
+            'is_fluid': fluid,
+            'placeholder': placeholder,
+            'elements': elements,
         })
-        return super(CarouselSlidePlugin, self).render(context, instance, placeholder)
+        return self.super(CarouselSlidePlugin, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = super(CarouselSlidePlugin, cls).sanitize_model(obj)
-        complete_glossary = obj.get_complete_glossary()
-        obj.glossary.update({'resize_options': complete_glossary.get('resize_options', [])})
+        resize_options = obj.get_parent_glossary().get('resize_options', [])
+        if obj.glossary.get('resize_options') != resize_options:
+            obj.glossary.update(resize_options=resize_options)
+            sanitized = True
         return sanitized
 
     @classmethod

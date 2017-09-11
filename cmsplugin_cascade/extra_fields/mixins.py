@@ -3,18 +3,19 @@ from __future__ import unicode_literals
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
-from django.forms import widgets
+from django.forms import MediaDefiningClass, widgets
 from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from cmsplugin_cascade import settings
+
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 
 
 @python_2_unicode_compatible
-class ExtraFieldsMixin(object):
+class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
     """
     If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields']``,
     then this ``ExtraFieldsMixin`` class is added automatically to its plugin class in order to
@@ -34,7 +35,7 @@ class ExtraFieldsMixin(object):
             site = get_current_site(request)
             extra_fields = PluginExtraFields.objects.get(plugin_type=clsname, site=site)
         except ObjectDoesNotExist:
-            extra_fields = settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
+            extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
 
         if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
             # add a text input field to let the user name an ID tag for this HTML element
@@ -61,7 +62,7 @@ class ExtraFieldsMixin(object):
                 ))
 
             # add input fields to let the user enter styling information
-            for style, choices_tuples in settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
+            for style, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
                 if not inline_styles:
                     continue

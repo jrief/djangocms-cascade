@@ -11,13 +11,15 @@ from django.utils.text import Truncator
 from django.utils.html import format_html
 from django.forms.models import ModelForm
 from django.forms.fields import IntegerField
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.mixins import TransparentMixin
+from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
+
 from .plugin_base import BootstrapPluginBase
-from .panel import panel_heading_sizes, PanelTypeRenderer
+from .panel import panel_heading_sizes, PanelTypeWidget
 
 
 class AccordionForm(ManageChildrenFormMixin, ModelForm):
@@ -27,14 +29,14 @@ class AccordionForm(ManageChildrenFormMixin, ModelForm):
         help_text=_("Number of panels for this panel group."))
 
 
-class BootstrapAccordionPlugin(TransparentMixin, BootstrapPluginBase):
+class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     name = _("Accordion")
     form = AccordionForm
     default_css_class = 'panel-group'
     require_parent = True
     parent_classes = ('BootstrapColumnPlugin',)
+    direct_child_classes = ('BootstrapAccordionPanelPlugin',)
     allow_children = True
-    child_classes = None
     render_template = 'cascade/bootstrap3/{}/accordion.html'
     fields = ('num_children', 'glossary',)
 
@@ -55,7 +57,7 @@ class BootstrapAccordionPlugin(TransparentMixin, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapAccordionPlugin, cls).get_identifier(obj)
-        num_cols = obj.get_children().count()
+        num_cols = obj.get_num_children()
         content = ungettext_lazy('with {0} panel', 'with {0} panels', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
@@ -67,16 +69,17 @@ class BootstrapAccordionPlugin(TransparentMixin, BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapAccordionPlugin)
 
 
-class BootstrapAccordionPanelPlugin(TransparentMixin, BootstrapPluginBase):
+class BootstrapAccordionPanelPlugin(TransparentContainer, BootstrapPluginBase):
     name = _("Accordion Panel")
     default_css_class = 'panel-body'
-    parent_classes = ('BootstrapAccordionPlugin',)
+    direct_parent_classes = parent_classes = ('BootstrapAccordionPlugin',)
     require_parent = True
     alien_child_classes = True
     render_template = 'cascade/bootstrap3/{}/accordion-panel.html'
+    glossary_field_order = ('panel_type', 'heading_size', 'panel_title')
 
     panel_type = GlossaryField(
-        PanelTypeRenderer.get_widget(),
+        PanelTypeWidget.get_instance(),
         label=_("Panel type"),
         help_text=_("Display Panel using this style.")
     )

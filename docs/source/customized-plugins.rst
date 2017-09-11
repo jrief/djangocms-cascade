@@ -1,4 +1,4 @@
-.. customized-plugins:
+.. _customized-plugins:
 
 =================
 Extending Cascade
@@ -6,8 +6,8 @@ Extending Cascade
 
 All Cascade plugins are derived from the same base class ``CascadeModelBase``, which stores all its
 model fields inside a dictionary, serialized as JSON string in the database. This makes it much
-easier to extend the Cascade eco-system, since no database migration is required when adding a new,
-or extending plugins from this project.
+easier to extend the Cascade eco-system, since no database migration [#migration]_ is required when
+adding a new, or extending plugins from this project.
 
 The database model ``CascadeModelBase`` stores all the plugin settings in a single JSON field named
 ``glossary``. This in practice behaves like a Django context, but in order to avoid confusion with
@@ -64,7 +64,7 @@ Lets add a simple selector to choose between a red and a green color. Do this by
 	class StylishPlugin(CascadePluginBase):
 	    ...
 	    color = GlossaryField(
-	        widgets.Select(choices=(('red', 'Red'), ('green', 'Green'),)),
+	        widgets.Select(choices=[('red', 'Red'), ('green', 'Green')]),
 	        label="Element's Color",
 	        initial='red',
 	        help_text="Specify the color of the DOM element."
@@ -77,7 +77,7 @@ A ``GlossaryField`` accepts five arguments:
 
 * The widget. This can be a built-in Django widget or any valid widget derived from it.
 * The ``label`` used to describe the field. If omitted, the ``name`` of the form field is used.
-* The ``name`` of the field.
+* If created dynamically, a ``name``, otherwise the attribute name is used.
 * An optional ``initial`` value to be used with Radio- or Select fields.
 * An optional ``help_text`` to describe the field's purpose.
 
@@ -162,6 +162,62 @@ for instance may be accessed during template rendering.
 
 Needless to say, that you can't add any extra database fields to the class named
 ``MySpecialPropertyMixin``, since the corresponding model class is marked as proxy.
+
+
+Javascript
+----------
+
+In case your customized plugin requires some Javascript code to improve the editor's experience,
+please refer to the section :ref:`client-side`.
+
+
+Adding extra fields to the model
+--------------------------------
+
+In rare situations, you might want to add extra fields to the model, which inherit from
+:class:`django.db.models.fields.Field` rather than being emulated by a ``GlossaryField`` –
+so to say, you want *real* database fields.
+
+This can be achieved by creating your own plugin model inheriting from
+:class:`cmsplugin_cascade.models_base.CascadeModelBase` and referring to it in your plugin
+such as:
+
+.. code-block:: python
+
+	class MyPluginModel(CascadeModelBase):
+	    class Meta:
+	        db_table = 'shop_cart_cascadeelement'
+	        verbose_name = _("Cart Element")
+
+	    byte_val = models.PositiveSmallIntegerField("Byte Value")
+
+	class MySpecialPlugin(LinkPluginBase):
+	    module = 'My Module'
+	    name = 'My special Plugin'
+	    model = MyModel
+
+
+*Transparent* Plugins
+=====================
+
+Some of the plugins in Cascade's ecosystem are considered as *transparent*. This means that they
+logically don't fit into the given grid-system, but should rather be considered as wrappers of
+other HTML elements.
+
+For example, the `Bootstrap Panel`_ can be added as child of a Column. However, it may contain
+exactly the same plugins, as the Column does. Now, instead of adding the ``PanelPlugin`` as
+a possible parent to all of our existing Bootstrap plugins, we simply declare the Panel as
+"transparent". It then behaves as it's own parent, allowing all plugins as children, which
+themselves are permitted to be added to that column.
+
+Transparent plugins can be stacked. For example, the `Bootstrap Accordion`_ consists of one or more
+Accordion Panels. Both of them are considered as *transparent*, which means that we can add all
+plugins to an Accordion Panels, which we also could add to a Column.
+
+
+
+.. _Bootstrap Panel: http://getbootstrap.com/components/#panels
+.. _Bootstrap Accordion: http://getbootstrap.com/javascript/#collapse
 
 
 Plugin Attribute Reference
@@ -259,3 +315,17 @@ Deprecated attributes
 
 .. _CMSPluginBase attributes: https://django-cms.readthedocs.org/en/develop/extending_cms/custom_plugins.html#plugin-attribute-reference
 .. _proxy model: https://docs.djangoproject.com/en/dev/topics/db/models/#proxy-models
+
+
+Plugin Permissions
+==================
+
+To register (or unregister) a plugin, simply invoke ``./manage.py migrate cmsplugin_cascade``. This
+will add (or remove) the content type and the model permissions. We therefore can control in a very
+fine grained manner, which user or group is allowed to edit which types of plugins.
+
+.. rubric:: Footnotes
+
+.. [#migration] After having created a customized plugin, it must be registered in Django's
+		permission system, otherwise only administrators, but no staff users, are allowed to add,
+		change or delete them.

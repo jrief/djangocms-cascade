@@ -27,6 +27,22 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
         help_text=_("Select a CMS page with a given unique Id (in advanced settings).")
     )
 
+    offset = GlossaryField(
+        widgets.NumberInput(),
+        label=_("Offset"),
+        initial=0,
+        help_text=_("Starting from which child menu."),
+    )
+
+    limit = GlossaryField(
+        widgets.NumberInput(),
+        label=_("Limit"),
+        initial=100,
+        help_text=_("Number of child menus."),
+    )
+
+    glossary_field_order = ['page_id', 'offset', 'limit']
+
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapSecondaryMenuPlugin, cls).get_identifier(obj)
@@ -39,7 +55,25 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
         for page in Page.objects.filter(reverse_id__isnull=False).order_by('publisher_is_draft'):
             if page.reverse_id not in choices:
                 choices[page.reverse_id] = page.get_title(lang)
-        self.glossary_fields[0].widget.choices = choices.items()
+        next(iter(self.glossary_fields)).widget.choices = list(choices.items())
         return super(BootstrapSecondaryMenuPlugin, self).get_form(request, obj, **kwargs)
+
+    def render(self, context, instance, placeholder):
+        context = self.super(BootstrapSecondaryMenuPlugin, self).render(context, instance, placeholder)
+        context.update({
+            'page_id': instance.glossary['page_id'],
+            'offset': instance.glossary.get('offset', 0),
+            'limit': instance.glossary.get('limit', 100),
+        })
+        return context
+
+    @classmethod
+    def sanitize_model(cls, instance):
+        try:
+            if int(instance.glossary['offset']) < 0 or int(instance.glossary['limit']) < 0:
+                raise ValueError()
+        except (KeyError, ValueError):
+            instance.glossary['offset'] = 0
+            instance.glossary['limit'] = 100
 
 plugin_pool.register_plugin(BootstrapSecondaryMenuPlugin)

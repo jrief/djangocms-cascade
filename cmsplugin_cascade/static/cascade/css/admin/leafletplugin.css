@@ -1,0 +1,21 @@
+#leaflet_edit_map {
+	width: 100%;
+	height: 500px;
+	margin-bottom: 20px;
+}
+.map-button {
+	font-size: 30px;
+	line-height: 20px;
+}
+.disable-click {
+	pointer-events: none;
+	opacity: 0.3;
+}
+.field-marker_anchor ul { margin-left: 0; padding-left: 0; }
+.field-marker_anchor ul li { list-style: none; float: left; min-width: 95px; }
+.field-marker_anchor ul.errorlist li { float: none; }
+.field-marker_anchor div.sibling-field { float: left;  margin-left: 20px; width: 9em; }
+.field-marker_anchor div.sibling-field:first-child { margin-left: 0; }
+.field-marker_anchor div.sibling-field label { padding-left: 5px; }
+.field-marker_anchor div.sibling-field input[type="text"] { display: block; width: 8em; margin: 0; }
+.field-marker_anchor h4 { margin-top: 10px !important; margin-bottom: 10px !important; }

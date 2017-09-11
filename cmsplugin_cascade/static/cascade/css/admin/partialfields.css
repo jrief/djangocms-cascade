@@ -1,4 +1,5 @@
 form .glossary-widget { border-bottom: 1px solid #f3f3f3; padding: 8px 0; }
+form .glossary-widget .form-row { border-bottom: none; }
 form .glossary-widget:after { content: "."; clear: both; display: block; visibility: hidden; height: 0px; }
 form .glossary-widget:last-child { border-bottom: none; }
 form .glossary-widget h1 { clear: both; margin: 0 0 4px; font-size: 120%; }

@@ -1,0 +1,9 @@
+{% load sekizai_tags %}
+{% if stylesheet_url %}{% addtoblock "css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}{% endif %}
+{% spaceless %}
+{% with tag_type=instance.tag_type css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+{% if tag_type %}<{{ tag_type }}{% if css_classes %} class="{{ css_classes }}"{% endif %} style="{{ inline_styles }}">{% endif %}
+	<span {{ instance.icon_font_attrs }}></span>
+{% if tag_type %}</{{ tag_type }}>{% endif %}
+{% endwith %}
+{% endspaceless %}

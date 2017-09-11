@@ -1,0 +1,4 @@
+{% load static sekizai_tags %}{% spaceless %}
+{% if stylesheet_url %}{% addtoblock "css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}{% endif %}
+<i {{ instance.icon_font_class }}>{% if not instance.icon_font_class %} &square; {% endif %}</i>
+{% endspaceless %}

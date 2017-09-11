@@ -1,18 +1,26 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.contrib import admin
-from django import forms
 from django.utils.translation import ugettext as _
-from django.utils.encoding import force_text
+from django.utils.html import format_html
+
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.models import IconFont
+from cmsplugin_cascade.plugin_base import CascadePluginMixinMetaclass
 from cmsplugin_cascade.widgets import JSONMultiWidget
 from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
 
 
+@admin.register(SharedGlossary)
 class SharedGlossaryAdmin(admin.ModelAdmin):
-    change_form_template = 'cascade/admin/change_form.html'
-    list_display = ('identifier', 'plugin_type', 'used_by',)
+    change_form_template = 'cascade/admin/sharedglossary_change_form.html'
+    list_display = ('identifier', 'plugin_name', 'used_by',)
+    readonly_fields = ('plugin_name',)
     list_filter = ('plugin_type',)
+
+    class Media:
+        css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
 
     def get_fieldsets(self, request, obj=None):
         """Return the fieldsets from associated plugin"""
@@ -34,12 +42,12 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         the model field `glossary`. The layout, validation and media files for these dynamic fields
         are borrowed from the corresponding plugin.
         """
-        self.plugin_instance = plugin_pool.get_plugin(obj.plugin_type)
         sharable_fields = getattr(self.plugin_instance, 'sharable_fields', [])
         glossary_fields = [f for f in self.plugin_instance.glossary_fields if f.name in sharable_fields]
         kwargs.update(widgets={'glossary': JSONMultiWidget(glossary_fields)}, labels={'glossary': ''})
         try:
-            kwargs.update(form=self.plugin_instance.form)
+            form = self.plugin_instance().get_form(request)
+            kwargs.update(form=form)
         except AttributeError:
             pass
         ModelForm = super(SharedGlossaryAdmin, self).get_form(request, obj, **kwargs)
@@ -55,21 +63,17 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
         # always False, since a SharedGlossary can only be added by a plugin
         return False
 
-    def change_view(self, request, object_id, form_url='', extra_context={}):
+    def add_view(self, request, form_url='', extra_context=None):
+        raise AssertionError("This method shall never be called")
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
         obj = self.get_object(request, object_id)
-        extra_context['title'] = _("Change %s") % force_text(str(obj.plugin_type))
+        self.plugin_instance = plugin_pool.get_plugin(obj.plugin_type)
+        extra_context = dict(extra_context or {},
+                             title=format_html(_("Change shared settings of {} plugin"), self.plugin_instance.name),
+                             icon_fonts=IconFont.objects.all())
         return super(SharedGlossaryAdmin, self).change_view(request, object_id,
             form_url, extra_context=extra_context)
-
-    @property
-    def media(self):
-        media = super(SharedGlossaryAdmin, self).media
-        media += forms.Media(css={'all': ('cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css',)})
-        try:
-            media += self.plugin_instance().media
-        except AttributeError:
-            pass
-        return media
 
     def used_by(self, obj):
         """
@@ -79,10 +83,18 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     used_by.short_description = _("Used by plugins")
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        bases = self.plugin_instance().get_ring_bases()
-        # since the Sharable Admin reuses the JavaScript plugins, remove the one, regarding shareability itself
-        bases.remove('SharableGlossaryMixin')
-        context['base_plugins'] = ['django.cascade.{0}'.format(b) for b in bases]
+        try:
+            context['media'] += self.plugin_instance().media
+        except (AttributeError, KeyError):
+            pass
+        context.update(
+            ring_plugin=self.plugin_instance().ring_plugin,
+            ring_plugin_bases=dict((ring_plugin, ['django.cascade.{}'.format(b) for b in bases if b != 'SharableGlossaryMixin'])
+                                   for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items())
+        )
         return super(SharedGlossaryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
-admin.site.register(SharedGlossary, SharedGlossaryAdmin)
+    def plugin_name(self, obj):
+        plugin_instance = plugin_pool.get_plugin(obj.plugin_type)
+        return plugin_instance.name
+    plugin_name.short_description = _("Plugin Type")

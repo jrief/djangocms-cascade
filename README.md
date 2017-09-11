@@ -15,8 +15,8 @@ djangocms-cascade
 **DjangoCMS-Cascade** is a collection of plugins for Django-CMS
 [placeholders](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
 Instead of creating one database model for each CMS plugin, Cascade shares one database model for
-all of them. The payload then is stored inside a JSON field instead of declaring each attribute explicitly.
-This furthermore prevents us to handle all kind of nasty database migration problems.
+all of them. The payload then is stored inside a JSON field instead of declaring each attribute
+explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
 
 
 ### Perfect for nested grid systems
@@ -61,42 +61,30 @@ before upgrading from an older version.
 Django-CMS 3.4 introduced a bunch of changes in their API. Therefore please follow these releases:
 
 **djangocms-cascade** 0.11.x has been tested with Django 1.9.x, django-CMS 3.3.x and
-djangocms-text-ckeditor 3.0.x. For newer releases of django-CMS please use the upcoming version
-0.12 of **djangocms-cascade**, which is avaliable only via GitHub.
+djangocms-text-ckeditor 3.0.x.
+
+For django-CMS 3.4 and above, please use version 0.12 of **djangocms-cascade**.
 
 
-### News for version 0.11
+### News for version 0.14
 
-Instead of adding a list of ``PartialFormField``s named ``glossary_fields``, we now can add these
-fields to the plugin class, as we would in a Django ``forms.Form`` or ``models.Model``, for instance
+**Important** Please read the release notes, since version 0.14 introduced a new feature:
 
-```python
-class MyPlugin(CascadePluginBase):
-    name = "My Plugin"
-    ... other attributes ...
-    some_attr = GlossaryField(a_widget, label="A Label", initial=some_value)
-```
+A nice feature of **django-CMS**, is to copy the content of a ``{% placeholder ... %}`` to the
+clipboard. In **djangocms-cascade** this content could be serialized as a JSON dictionary and
+moved between sites. This for instance was useful for creating content on the staging system
+and move it to production later.
 
-instead of
+Since version 0.14 you can paste that serialized data to a file and refer to it using the special
+templatetag ``{% render_cascade "path/to/file.json" %}``. This allows editors of websites to
+create pages using the tools provided by django-CMS. Later on, instead of using a CMS page, we
+can route that URL onto a template view, which then renders that same content using a static
+representation of the context, bypassing the database.
 
-```python
-class MyPlugin(CascadePluginBase):
-    name = "My Plugin"
-    ... other attributes ...
-    glossary_fields = (
-        PartialFormField('some_attr', a_widget, label="A Label", initial=some_value),
-        ...
-    )
-```
-
-Don't forget run ``./manage.py migrate cmsplugin_cascade`` after upgrading to version 0.11.x.
-
-
-### Caveats
-
-Currently **DjangoCMS-Cascade** does not work with **djangocms-text-ckeditor** >= 3.1. Please stay
-with version 3.0.1 until this issue hase been fixed. **Cascade** version 0.12 supports the latest version
-of **djangocms-text-ckeditor**.
+Since that JSON file can and shall be added into the project's version control repository, this
+feature is specially useful, if your deployment workflow requires full functioning pages, working
+right out of your continuous integration, but without having to (re)create the content on the
+production site.
 
 
 ## Architecture

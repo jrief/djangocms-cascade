@@ -17,11 +17,11 @@ or the current development release from github
 	$ pip install -e git+https://github.com/jrief/djangocms-cascade.git#egg=djangocms-cascade
 
 
-Dependencies
-============
+Python Package Dependencies
+===========================
 
 Due to some incompatibilities in the API of Django, django-CMS and djangocms-text-ckeditor, please
-only use this combination of external dependencies:
+only use these combinations of Python package dependencies:
 
 djangocms-cascade-0.11.x
 ------------------------
@@ -33,9 +33,27 @@ djangocms-cascade-0.11.x
 djangocms-cascade-0.12.x
 ------------------------
 
-* Django_ >=1.9
+* Django_ >=1.9, <1.11
 * DjangoCMS_ >=3.4.3
 * djangocms-text-ckeditor_ >= 3.3
+
+djangocms-cascade-0.13.x
+------------------------
+
+* Django_ >=1.9, <1.11
+* DjangoCMS_ >=3.4.3
+* djangocms-text-ckeditor_ >= 3.4
+
+djangocms-cascade-0.14.x
+------------------------
+
+* Django_ >=1.9, <1.11
+* DjangoCMS_ >=3.4.4
+* djangocms-text-ckeditor_ >= 3.4
+* django-filer_ >= 1.2.8
+
+other combinations might work, but have not been tested.
+
 
 Optional packages
 -----------------
@@ -60,27 +78,69 @@ Create a database schema
 	./manage.py migrate cmsplugin_cascade
 
 
-Install Bootstrap
-=================
+Install Dependencies not handled by PIP
+=======================================
 
-Since the Bootstrap CSS and JavaScript files are part of their own repository, they are not shipped
-within this package. Furthermore, as they are not part of the PyPI network, they have to be
-installed through another package manager, namely bower_.
+Since the Bootstrap CSS and other JavaScript files are part of their own repositories, they are
+not shipped within this package. Furthermore, as they are not part of the PyPI network, they have
+to be installed through the `Node Package Manager`_, ``npm``.
+
+In your Django projects it is good practice to keep a reference onto external node modules using
+the file ``packages.json`` added to its own version control repository, rather than adding the
+complete node package.
 
 .. code-block:: bash
 
-	cd djangocms-cascade
-	bower install --require
+	cd my-project-dir
+	npm init
+	npm install bootstrap@3 bootstrap-sass@3 jquery@3 leaflet@1 leaflet-easybutton@2.2 picturefill select2@4 --save
 
-Alternatively copy the installed ``bower_components`` into a directory of your project or to any
-other meaningful location, but ensure that the directory ``bower_components`` can be found by
-your StaticFileFinder. In doubt, add that directory to your ``STATICFILES_DIRS``:
+ If the Django project contains already a file named ``package.json``, then skip the ``npm init``
+in the above command.
+
+The node packages ``leaflet`` and ``leaflet-easybutton`` are only required if the Leaflet plugin
+is activated.
+
+The node packages ``picturefill`` is a shim to support the ``srcset`` and ``sizes`` attributes on
+``<img ... />`` elements. Please check `browser support`_ if that feature is required in your
+project.
+
+The node packages ``select2`` is required for autofilling the select box in Link plugins. It is
+optional, but strongly suggested.
+
+Remember to commit the changes in ``package.json`` into the projects version control repository.
+
+Since these Javascript and Stylesheet files are located outside of the project's ``static`` folder,
+we must add them explicitly to our lookup path, using ``STATICFILES_DIRS`` in ``settings.py``:
 
 .. code-block:: python
 
-	STATICFILES_DIRS = (
-	    os.path.abspath(os.path.join(MY_PROJECT_DIR, 'bower_components')),
-	)
+	STATICFILES_DIRS = [
+	    ...
+	    os.path.abspath(os.path.join(MY_PROJECT_DIR, 'node_modules')),
+	]
+
+
+Using AngularJS instead of jQuery
+---------------------------------
+
+If you prefer AngularJS over jQuery, then replace the above install command with:
+
+.. code-block:: bash
+
+	npm install bootstrap@3 bootstrap-sass@3 angular@1.5 angular-animate@1.5 angular-sanitize@1.5 angular-ui-bootstrap@0.14 leaflet@1 leaflet-easybutton@2.2 picturefill select2@4  --save
+
+Remember to point to the prepared AngularJS templates using this setting:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'bootstrap3': {
+	        'template_basedir': 'angular-ui',
+	    },
+	    ...
+	}
 
 
 Configuration
@@ -118,36 +178,70 @@ To activate all available Bootstrap plugins, use:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3',)
+	CMSPLUGIN_CASCADE_PLUGINS = ['cmsplugin_cascade.bootstrap3']
 
 If for some reason, only a subset of the available Bootstrap plugins shall be activated, name each
-of them. If for example only the grid system shall be used, but no other Bootstrap plugins, then
+of them. If for example, only the grid system shall be used but no other Bootstrap plugins, then
 configure:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.bootstrap3.container',)
+	CMSPLUGIN_CASCADE_PLUGINS = ['cmsplugin_cascade.bootstrap3.container']
 
 A very useful plugin is the **LinkPlugin**. It superseds the djangocms-link_-plugin, normally used
 together with the CMS.
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_PLUGINS += ('cmsplugin_cascade.link',)
+	CMSPLUGIN_CASCADE_PLUGINS.append('cmsplugin_cascade.link')
+
+If this plugin is enabled ensure, that the node package ``select2`` has been installed and findable
+by the static files finder using these directives in ``settings.py``:
+
+.. code-block:: python
+
+    SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'
+    SELECT2_JS = 'node_modules/select2/dist/js/select2.min.js'
 
 :ref:`generic-plugins` which are not opinionated towards a specific CSS framework, are kept in a
 separate folder. It is strongly suggested to always activate them:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.generic',)
-
+	CMSPLUGIN_CASCADE_PLUGINS.append('cmsplugin_cascade.generic')
 
 Sometimes it is useful to do a :ref:`segmentation`. Activate this by adding its plugin:
 
 .. code-block:: python
 
-	CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.segmentation',)
+	CMSPLUGIN_CASCADE_PLUGINS.append('cmsplugin_cascade.segmentation')
+
+
+When :ref:`icon-fonts`: on your site, add ``'cmsplugin_cascade.icon'`` to ``INSTALLED_APPS``
+and add it to the configured Cascade plugins:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE_PLUGINS.append('cmsplugin_cascade.icon')
+
+
+Special settings when using the TextPlugin
+------------------------------------------
+
+Since it is possible to add plugins from the Cascade ecosystem as children to the
+`djangocms-text-ckeditor`_, we must add a special configuration:
+
+.. code-block:: python
+
+	from django.core.urlresolvers import reverse_lazy
+	from cmsplugin_cascade.utils import format_lazy
+
+	CKEDITOR_SETTINGS = {
+	    'language': '{{ language }}',
+	    'skin': 'moono',
+	    'toolbar': 'CMS',
+	    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
+	}
 
 
 Restrict plugins to a particular placeholder
@@ -157,18 +251,19 @@ Restrict plugins to a particular placeholder
     won't be able to add a container to your placeholder. This means that as an
     absolute minimum, you must add this to your settings:
 
-    .. code-block:: python
+.. code-block:: python
 
-        CMS_PLACEHOLDER_CONF = {
-            'content': {
-                'parent_classes': {'BootstrapContainerPlugin': None,},
-            },
-        }
-
+	CMS_PLACEHOLDER_CONF = {
+	    ...
+	    'content': {
+	        'parent_classes': {'BootstrapContainerPlugin': None,},
+	    },
+	    ...
+	}
 
 Unfortunately **djangoCMS** does not allow to declare dynamically which plugins are eligible to be
 added as children of other plugins. This is determined while bootstrapping the Django project and
-thus remain static. We therefore must somehow trick the CMS to behave as we want.
+thus remains static. We therefore must somehow trick the CMS to behave as we want.
 
 Say, our Placeholder named "Main Content" shall accept the **BootstrapContainerPlugin** as its only
 child, we then must use this CMS settings directive:
@@ -176,6 +271,7 @@ child, we then must use this CMS settings directive:
 .. code-block:: python
 
 	CMS_PLACEHOLDER_CONF = {
+	    ...
 	    'Main Content Placeholder': {
 	        'plugins': ['BootstrapContainerPlugin'],
 	        'text_only_plugins': ['TextLinkPlugin'],
@@ -192,15 +288,13 @@ child, we then must use this CMS settings directive:
 	            },
 	        },
 	    },
+	    ...
 	}
 
 Here we add the **BootstrapContainerPlugin** to ``plugins`` and ``parent_classes``. This is because
 the Container plugin normally is the root plugin in a placeholder. If this plugin would not restrict
 its parent plugin classes, we would be allowed to use it as a child of any plugin. This could
 destroy the page's grid.
-
-.. note:: Until version 0.7.1 the Container plugin did not restrict it's ``parent_classes`` and
-		therefore we did not have to add it to the ``CMS_PLACEHOLDER_CONF`` settings.
 
 Furthermore, in the above example we must add the **TextLinkPlugin** to ``text_only_plugins``.
 This is because the **TextPlugin** is not part of the Cascade ecosystem and hence does not know
@@ -220,7 +314,7 @@ the configuration directive
 
 	CMSPLUGIN_CASCADE = {
 	    ...
-	    'alien_plugins': ('TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin',),
+	    'alien_plugins': ['TextPlugin', 'FilerImagePlugin', 'OtherLeafPlugin'],
 	    ...
 	}
 
@@ -241,8 +335,10 @@ Django-Sekizai_ to organize these includes, so a strong recommendation is to use
 
 The templates used for a DjangoCMS project shall include a header, footer, the menu bar and
 optionally a breadcrumb, but should leave out an empty working area. When using HTML5, wrap this
-area into an ``<article>`` or ``<section>`` element or just use it unwrapped (suggested). This
-placeholder shall be named using a generic identifier, for instance "Main Content" or similar:
+area into an ``<article>`` or ``<section>`` element or just use it unwrapped.
+
+This placeholder then shall be named using a generic identifier, for instance "Main Content" or
+similar:
 
 .. code-block:: html
 
@@ -262,4 +358,6 @@ template coding anymore.
 .. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/
 .. _djangocms-link: https://github.com/divio/djangocms-link
 .. _djangocms-text-ckeditor: https://github.com/divio/djangocms-text-ckeditor
-.. _bower: http://bower.io/
+.. _django-filer: https://github.com/divio/django-filer
+.. _Node Package Manager: https://nodejs.org/en/download/
+.. _browser support: https://caniuse.com/#search=srcset

@@ -1,0 +1,53 @@
+{% load static sekizai_tags thumbnail l10n %}
+
+{% addtoblock "css" %}<link href="{% static 'node_modules/leaflet/dist/leaflet.css' %}" rel="stylesheet" type="text/css" />{% endaddtoblock %}
+{% addtoblock "js" %}<script src="{% static 'node_modules/leaflet/dist/leaflet.js' %}" type="text/javascript"></script>{% endaddtoblock %}
+
+{% addtoblock "css" %}
+<style>
+#cascadeelement_id-{{ instance.pk }} {
+	width: {{ instance.glossary.map_width }};
+	height: {{ instance.glossary.map_height }};
+}
+</style>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+(function() {
+	var mapPosition = {{ instance.map_position }};
+	var viewMap = L.map('cascadeelement_id-{{ instance.pk }}').setView([mapPosition.lat, mapPosition.lng], mapPosition.zoom);
+	var settings = {{ settings }};
+	L.tileLayer(
+		settings.tilesURL,
+		settings
+	).addTo(viewMap);
+
+	{% for marker in markers %}
+	(function(data) {
+		var marker;
+		{% if marker.image %}
+			{% thumbnail marker.image marker.size as thumb %}
+			{% thumbnail marker.image marker.size2x as thumb2x %}
+		var icon =  L.icon({
+			iconUrl: "{{ thumb.url }}",
+			iconRetinaUrl: "{{ thumb2x.url }}",
+			iconAnchor: data.marker_anchor,
+			iconSize: {{ marker.size }}
+		});
+		marker = L.marker(data.position, {icon: icon});
+		{% else %}
+		marker = L.marker(data.position);
+		{% endif %}
+		marker.bindTooltip(data.title);
+		if (data.popup_text) {
+			marker.bindPopup(data.popup_text);
+		}
+		marker.addTo(viewMap);
+	})({{ marker.data }});
+	{% endfor %}
+})();
+</script>
+{% endaddtoblock %}
+
+<div id="cascadeelement_id-{{ instance.pk }}"></div>

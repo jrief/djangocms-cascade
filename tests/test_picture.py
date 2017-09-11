@@ -1,23 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
-import re
+import os, re
 from bs4 import BeautifulSoup
 from django.core.files import File as DjangoFile
 from django.http import QueryDict
+
 from filer.models.foldermodels import Folder
 from filer.models.imagemodels import Image
+
 from cms.api import add_plugin
 from cms.utils.plugins import build_plugin_tree
-from cmsplugin_cascade.bootstrap3 import settings
+
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.models import SharableCascadeElement
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
         BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.picture import BootstrapPicturePlugin
 from .test_base import CascadeTestCase
 
-BS3_BREAKPOINT_KEYS = list(tp[0] for tp in settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+BS3_BREAKPOINT_KEYS = list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
 
 class PicturePluginTest(CascadeTestCase):
@@ -35,7 +37,7 @@ class PicturePluginTest(CascadeTestCase):
         # create container
         container_model = add_plugin(self.placeholder, BootstrapContainerPlugin, 'en',
             glossary={'breakpoints': BS3_BREAKPOINT_KEYS})
-        container_plugin = container_model.get_plugin_class_instance(self.admin_site)
+        container_plugin = container_model.get_plugin_class_instance()
         self.assertIsInstance(container_plugin, BootstrapContainerPlugin)
 
         # add one row
@@ -54,7 +56,7 @@ class PicturePluginTest(CascadeTestCase):
         # add a picture
         picture_model = add_plugin(self.placeholder, BootstrapPicturePlugin, 'en', target=column_model)
         self.assertIsInstance(picture_model, SharableCascadeElement)
-        picture_plugin = picture_model.get_plugin_class_instance(self.admin_site)
+        picture_plugin = picture_model.get_plugin_class_instance()
         self.assertIsInstance(picture_plugin, BootstrapPicturePlugin)
         picture_plugin.cms_plugin_instance = picture_model.cmsplugin_ptr
 
@@ -97,12 +99,14 @@ class PicturePluginTest(CascadeTestCase):
         self.assertEqual(soup.img['width'], '720')
         self.assertTrue('demo_image.png__720x240_q85_crop_subsampling-2.jpg' in soup.img['src'])
         sources = dict((s['media'], s['srcset']) for s in soup.picture.find_all('source'))
-        self.assertTrue('demo_image.png__720x120_q85_crop_subsampling-2.jpg' in sources['(max-width: 768px) and (max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__1440x240_q85_crop_subsampling-2.jpg' in sources['(max-width: 768px) and (min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__345x76_q85_crop_subsampling-2.jpg' in sources['(min-width: 768px) and (max-width: 992px) and (max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__690x152_q85_crop_subsampling-2.jpg' in sources['(min-width: 768px) and (max-width: 992px) and (min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__293x73_q85_crop_subsampling-2.jpg' in sources['(min-width: 992px) and (max-width: 1200px) and (max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)'])
-        self.assertTrue('demo_image.png__586x146_q85_crop_subsampling-2.jpg' in sources['(min-width: 992px) and (max-width: 1200px) and (min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)'])
+
+        self.assertTrue('demo_image.png__720x120_q85_crop_subsampling-2.jpg 1x' in sources['(max-width: 768px)'])
+        self.assertTrue('demo_image.png__1440x240_q85_crop_subsampling-2.jpg 2x' in sources['(max-width: 768px)'])
+        self.assertTrue('demo_image.png__345x76_q85_crop_subsampling-2.jpg 1x' in sources['(min-width: 768px) and (max-width: 992px)'])
+        self.assertTrue('demo_image.png__690x152_q85_crop_subsampling-2.jpg 2x' in sources['(min-width: 768px) and (max-width: 992px)'])
+        self.assertTrue('demo_image.png__293x73_q85_crop_subsampling-2.jpg 1x' in sources['(min-width: 992px) and (max-width: 1200px)'])
+        self.assertTrue('demo_image.png__586x146_q85_crop_subsampling-2.jpg 2x' in sources['(min-width: 992px) and (max-width: 1200px)'])
+
         # Due to an different round implimentation in python3 height can vary by 1 to 2 pixels
-        self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.jpg$', sources['(min-width: 1200px) and (max-resolution: 1.5dppx), (max-resolution: 144dpi), (-webkit-max-device-pixel-ratio: 1.5), (-o-max-device-pixel-ratio: 3)'])))
-        self.assertTrue(bool(re.search(r'demo_image.png__524x17\d_q85_crop_subsampling-2.jpg$', sources['(min-width: 1200px) and (min-resolution: 1.5dppx), (min-resolution: 144dpi), (-webkit-min-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3)'])))
+        self.assertTrue(bool(re.search(r'demo_image.png__262x8\d_q85_crop_subsampling-2.jpg\s1x', sources['(min-width: 1200px)'])))
+        self.assertTrue(bool(re.search(r'demo_image.png__524x17\d_q85_crop_subsampling-2.jpg\s2x', sources['(min-width: 1200px)'])))

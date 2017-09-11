@@ -1,4 +1,4 @@
-.. segmentation:
+.. _segmentation:
 
 =======================
 Segmentation of the DOM

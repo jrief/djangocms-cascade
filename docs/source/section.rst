@@ -1,4 +1,4 @@
-.. section:
+.. _section:
 
 =================
 Section Bookmarks

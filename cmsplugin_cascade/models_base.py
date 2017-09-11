@@ -4,7 +4,10 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import mark_safe, format_html_join
+from django.utils.functional import cached_property
+
 from jsonfield.fields import JSONField
+
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cms.utils.placeholder import get_placeholder_conf
@@ -24,11 +27,9 @@ class CascadeModelBase(CMSPlugin):
     def __str__(self):
         return self.plugin_class.get_identifier(self)
 
-    @property
+    @cached_property
     def plugin_class(self):
-        if not hasattr(self, '_plugin_class'):
-            self._plugin_class = self.get_plugin_class()
-        return self._plugin_class
+        return self.get_plugin_class()
 
     @property
     def tag_type(self):
@@ -49,22 +50,22 @@ class CascadeModelBase(CMSPlugin):
         attributes = self.plugin_class.get_html_tag_attributes(self)
         return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
 
-    def get_parent(self):
-        raise NotImplementedError("This method is deprecated. Use `get_parent_instance` instead.")
+    def get_parent_instance(self):
+        for model in CascadeModelBase._get_cascade_elements():
+            try:
+                return model.objects.get(id=self.parent_id)
+            except model.DoesNotExist:
+                continue
 
     def get_parent_glossary(self):
         """
         Return the glossary from the parent of this object. If there is no parent, retrieve
         the glossary from the placeholder settings, if configured.
         """
-        for model in CascadeModelBase._get_cascade_elements():
-            try:
-                parent = model.objects.get(id=self.parent_id)
-            except model.DoesNotExist:
-                continue
-            else:
-                return parent.get_complete_glossary()
-        # use self.placeholder.glossary as the starting dictionary
+        parent = self.get_parent_instance()
+        if parent:
+            return parent.get_complete_glossary()
+        # otherwise use self.placeholder.glossary as the starting dictionary
         template = self.placeholder.page.template if self.placeholder.page else None
         return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
 
@@ -78,6 +79,12 @@ class CascadeModelBase(CMSPlugin):
             self._complete_glossary_cache = self.get_parent_glossary().copy()
             self._complete_glossary_cache.update(self.glossary or {})
         return self._complete_glossary_cache
+
+    def get_num_children(self):
+        """
+        Returns the number of children for this plugin instance.
+        """
+        return self.get_children().count()
 
     def sanitize_children(self):
         """
@@ -103,12 +110,6 @@ class CascadeModelBase(CMSPlugin):
                 super(CascadeModelBase, self).save(no_signals=True)
         else:
             super(CascadeModelBase, self).save(*args, **kwargs)
-
-    def get_data_representation(self):
-        """
-        Hook to return a serializable representation of this element.
-        """
-        return {'glossary': self.glossary}
 
     @classmethod
     def _get_cascade_elements(cls):

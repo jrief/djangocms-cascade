@@ -9,6 +9,7 @@ from django.forms import fields
 from django.forms.models import ModelForm
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
+
 from cms.models import Page
 from cmsplugin_cascade.models import CascadePage
 from cmsplugin_cascade.utils import validate_link
@@ -73,11 +74,11 @@ class LinkForm(ModelForm):
 
         # populate Select field for choosing a CMS page
         try:
-            site = instance.page.site
+            site = instance.placeholder.page.site
         except AttributeError:
             site = Site.objects.get_current()
-        choices = ((p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
-                   for p in Page.objects.drafts().on_site(site))
+        choices = [(p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
+                   for p in Page.objects.drafts().on_site(site)]
         self.base_fields['cms_page'].choices = choices
 
         if callable(set_initial_linktype):
@@ -132,18 +133,22 @@ class LinkForm(ModelForm):
                 'pk': self.cleaned_data['cms_page'],
             }
             validate_link(self.cleaned_data['link_data'])
+        return self.cleaned_data['cms_page']
 
     def clean_section(self):
         if self.cleaned_data.get('link_type') == 'cmspage':
             self.cleaned_data['link_data']['section'] = self.cleaned_data['section']
+        return self.cleaned_data['section']
 
     def clean_ext_url(self):
         if self.cleaned_data.get('link_type') == 'exturl':
             self.cleaned_data['link_data'] = {'type': 'exturl', 'url': self.cleaned_data['ext_url']}
+        return self.cleaned_data['ext_url']
 
     def clean_mail_to(self):
         if self.cleaned_data.get('link_type') == 'email':
             self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
+        return self.cleaned_data['mail_to']
 
     def set_initial_none(self, initial):
         pass
@@ -181,7 +186,9 @@ class LinkForm(ModelForm):
         Fields borrowed by `SharedGlossaryAdmin` to build its temporary change form, only are
         required if they are declared in `sharable_fields`. Otherwise just deactivate them.
         """
-        if 'link' not in sharable_fields:
+        if 'link_content' in cls.base_fields and 'link_content' not in sharable_fields:
+            cls.base_fields['link_content'].required = False
+        if 'link_type' in cls.base_fields and 'link' not in sharable_fields:
             cls.base_fields['link_type'].required = False
 
 

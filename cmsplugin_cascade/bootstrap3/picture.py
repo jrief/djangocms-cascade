@@ -5,10 +5,10 @@ from django.forms import widgets, ModelChoiceField
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
@@ -24,8 +24,8 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)
-    text_enabled = False
     admin_preview = False
+    ring_plugin = 'PicturePlugin'
     render_template = 'cascade/bootstrap3/linked-picture.html'
     default_css_class = 'img-responsive'
     default_css_attributes = ('image_shapes',)
@@ -57,10 +57,7 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     )
 
     class Media:
-        js = resolve_dependencies('cascade/js/admin/pictureplugin.js')
-
-    def __init__(self, *args, **kwargs):
-        super(BootstrapPicturePlugin, self).__init__(*args, **kwargs)
+        js = ['cascade/js/admin/pictureplugin.js']
 
     def get_form(self, request, obj=None, **kwargs):
         reduce_breakpoints(self, 'responsive_heights')
@@ -85,7 +82,7 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapPicturePlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(BootstrapPicturePlugin, cls).get_css_classes(obj)
         css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)

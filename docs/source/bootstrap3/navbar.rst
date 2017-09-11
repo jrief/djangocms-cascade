@@ -60,11 +60,11 @@ on computer displays, and as
 
 on mobile devices.
 
-.. note:: Bootstrap3 does not support “hover”, since this event can't be handled by touch screens.
+.. note:: Bootstrap3 does not support "hover", since this event can't be handled by touch screens.
           Therefore the client has to click on the menu item, rather than moving the mouse cursor
           over it. In order to make CMS pages with children selectable, those menu items are
           duplicated. For instance, clicking on **Dropdown** in the Navbar, just opens the pull-down
-          menu. Here the menu item for the page named “Dropdown” is rendered again. Clicking on this
+          menu. Here the menu item for the page named "Dropdown" is rendered again. Clicking on this
           item, finally loads that page from the CMS.
 
 .. note:: Bootstrap3 does not support nested menus, because they wouldn't be usable on mobile

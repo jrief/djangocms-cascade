@@ -21,10 +21,10 @@ class Migration(migrations.Migration):
             name='IconFont',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifier', models.CharField(max_length=50, unique=True, verbose_name='Identifier')),
+                ('identifier', models.CharField(help_text='A unique identifier to distinguish this icon font.', max_length=50, unique=True, verbose_name='Identifier')),
                 ('config_data', jsonfield.fields.JSONField()),
                 ('font_folder', cmsplugin_cascade.models.FilePathField(allow_files=False, allow_folders=True)),
-                ('zip_file', filer.fields.file.FilerFileField(on_delete=django.db.models.deletion.CASCADE, to='filer.File')),
+                ('zip_file', filer.fields.file.FilerFileField(help_text='Upload a zip file created on <a href="http://fontello.com/" target="_blank">Fontello</a> containing fonts.', on_delete=django.db.models.deletion.CASCADE, to='filer.File')),
             ],
             options={
                 'verbose_name': 'Uploaded Icon Font',

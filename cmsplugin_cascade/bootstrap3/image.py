@@ -13,7 +13,6 @@ from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
-from cmsplugin_cascade.utils import resolve_dependencies
 from cmsplugin_cascade.mixins import ImagePropertyMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
@@ -25,14 +24,15 @@ class ImageFormMixin(object):
         tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
 
     def __init__(self, *args, **kwargs):
+        super(ImageFormMixin, self).__init__(*args, **kwargs)
         try:
-            self.base_fields['image_file'].initial = kwargs['instance'].image.pk
+            self.fields['image_file'].initial = kwargs['instance'].image.pk
         except (AttributeError, KeyError):
             pass
-        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-        super(ImageFormMixin, self).__init__(*args, **kwargs)
+        self.fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
 
     def clean_glossary(self):
+        # TODO: remove this someday
         assert isinstance(self.cleaned_data['glossary'], dict)
         return self.cleaned_data['glossary']
 
@@ -71,12 +71,12 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     name = _("Image")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
+    parent_classes = ('BootstrapColumnPlugin',)
     require_parent = True
     allow_children = False
     raw_id_fields = ('image_file',)
-    text_enabled = True
     admin_preview = False
+    ring_plugin = 'ImagePlugin'
     render_template = 'cascade/bootstrap3/linked-image.html'
     default_css_attributes = ('image_shapes',)
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
@@ -120,7 +120,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     )
 
     class Media:
-        js = resolve_dependencies('cascade/js/admin/imageplugin.js')
+        js = ['cascade/js/admin/imageplugin.js']
 
     def get_form(self, request, obj=None, **kwargs):
         utils.reduce_breakpoints(self, 'responsive_heights', request=request, obj=obj)
@@ -144,7 +144,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapImagePlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(BootstrapImagePlugin, cls).get_css_classes(obj)
         css_class = obj.glossary.get('css_class')
         if css_class:
             css_classes.append(css_class)
