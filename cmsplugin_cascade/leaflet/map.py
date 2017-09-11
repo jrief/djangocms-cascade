@@ -141,13 +141,17 @@ class MarkerForm(ModelForm):
         try:
             position = self.cleaned_data['position']
             if isinstance(position, six.string_types):
-                self.instance.glossary.update(position=json.loads(position))
-            elif isinstance(position, dict):
-                self.instance.glossary.update(position=position)
-            else:
+                position = json.loads(position)
+            elif not isinstance(position, dict):
                 raise ValueError
         except (ValueError, KeyError):
             raise ValidationError("Invalid internal position data. Check your Javascript imports.")
+        else:
+            if 'lat' not in position or 'lng' not in position:
+                # place the marker in the center of the current map
+                position = {k: v for k, v in self.instance.cascade_element.glossary['map_position'].items()
+                            if k in ['lat', 'lng']}
+            self.instance.glossary.update(position=position)
 
         marker_image = self.cleaned_data.pop('marker_image', None)
         if marker_image:
