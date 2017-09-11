@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 
 from django import template
+from django.core.cache import caches
 from django.template.exceptions import TemplateSyntaxError
 from django.contrib.staticfiles import finders
 
@@ -28,6 +29,7 @@ class StrideRenderer(Tag):
     )
 
     def render_tag(self, context, datafile):
+        from sekizai.helpers import get_varname
         from cmsplugin_cascade.strides import StrideContentRenderer
 
         jsonfile = finders.find(datafile)
@@ -40,6 +42,15 @@ class StrideRenderer(Tag):
         content_renderer = StrideContentRenderer(context['request'])
         with context.push(cms_content_renderer=content_renderer):
             content = content_renderer.render_cascade(context, tree_data)
+
+        # some templates use Sekizai's templatetag `addtoblock`, which have to be re-added to the context
+        cache = caches['default']
+        if cache:
+            varname = get_varname()
+            SEKIZAI_CONTENT_HOLDER = cache.get_or_set(varname, context.get(varname))
+            if SEKIZAI_CONTENT_HOLDER:
+                for name in SEKIZAI_CONTENT_HOLDER:
+                    context[varname][name] = SEKIZAI_CONTENT_HOLDER[name]
         return content
 
 register.tag('render_cascade', StrideRenderer)
