@@ -32,7 +32,7 @@
 		var icon =  L.icon({
 			iconUrl: "{{ thumb.url }}",
 			iconRetinaUrl: "{{ thumb2x.url }}",
-			iconAnchor: {{ marker.anchor }},
+			{% if marker.anchor %}iconAnchor: {{ marker.anchor }},{% endif %}
 			iconSize: {{ marker.size }}
 		});
 		marker = L.marker(data.position, {icon: icon});

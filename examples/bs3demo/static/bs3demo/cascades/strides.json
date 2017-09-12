@@ -1073,8 +1073,8 @@
                         },
                         "popup_text":null,
                         "marker_anchor":{
-                          "top":"",
-                          "left":""
+                          "top":"50%",
+                          "left":"50%"
                         }
                       }
                     ]
