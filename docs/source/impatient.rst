@@ -35,10 +35,10 @@ Initialize the database, create a superuser and start the development server:
 	$ ./manage.py createsuperuser
 	$ ./manage.py runserver
 
-Point a browser to http://localhost:8000/admin/login/?next=/ and log in as the super user you just
+Point a browser to http://localhost:8000/?edit and log in as the super user you just
 created. Hit "next" and fill out the form to create your first page. Afterwards, click **Structure**
-on the top of the page.  Now a heading named **Main Content** appears. This heading symbolizes
-our main **djangoCMS** Placeholder.
+on the top of the page.  A heading named **Main Content** appears, it symbolizes our main
+**django-CMS** Placeholder.
 
 Locate the plus sign right to the heading and click on it. From its context menu select
 **Container** located in the section **Bootstrap**:
