@@ -18,6 +18,8 @@ PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, os.path.pardir))
 
 # Directory where working files, such as media and databases are kept
 WORK_DIR = os.path.join(PROJECT_ROOT, 'workdir')
+if not os.path.isdir(WORK_DIR):
+    os.makedirs(WORK_DIR)
 
 SITE_ID = 1
 
@@ -282,6 +284,8 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
 SASS_PROCESSOR_INCLUDE_DIRS = [
     os.path.join(PROJECT_ROOT, 'node_modules'),
 ]
+
+SASS_PROCESSOR_ROOT = STATIC_ROOT
 
 # to access files such as fonts via staticfiles finders
 NODE_MODULES_URL = STATIC_URL + 'node_modules/'
