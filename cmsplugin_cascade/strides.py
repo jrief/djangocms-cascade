@@ -195,18 +195,21 @@ class StrideContentRenderer(object):
             plugin_class = strides_plugin_map.get(plugin_type)
             element_class = strides_element_map.get(plugin_type)
             plugin_instance = element_class(plugin_class(), data, children_data)
-            contents.append(self.render_plugin(plugin_instance, context))
+            # create a temporary object to store the plugins cache status
+            cms_cachable_plugins = type(str('CachablePlugins'), (object,), {'value': True})
+            with context.push(cms_cachable_plugins=cms_cachable_plugins):
+                contents.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(contents))
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
-        if getattr(instance, 'cache', not editable):
+        if getattr(instance.plugin, 'cache', not editable):
             cache = caches['default']
             key = 'cascade_element-{}'.format(instance.pk)
             content = cache.get(key)
             if content:
                 return content
         else:
-            cache = None
+            context['cms_cachable_plugins'].value = False
 
         context = instance.plugin.render(context, instance, placeholder)
         context = flatten_context(context)
@@ -214,7 +217,7 @@ class StrideContentRenderer(object):
         template = instance.plugin._get_render_template(context, instance, placeholder)
         template = self.get_cached_template(template)
         content = template.render(context)
-        if cache:
+        if context['cms_cachable_plugins'].value:
             cache.set(key, content)
         return content
 
