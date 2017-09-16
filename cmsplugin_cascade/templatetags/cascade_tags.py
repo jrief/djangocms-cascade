@@ -43,7 +43,7 @@ class StrideRenderer(Tag):
         with context.push(cms_content_renderer=content_renderer):
             content = content_renderer.render_cascade(context, tree_data)
 
-        # some templates use Sekizai's templatetag `addtoblock`, which have to be re-added to the context
+        # some templates use Sekizai's templatetag `addtoblock` or `add_data`, which have to be re-added to the context
         cache = caches['default']
         if cache:
             varname = get_varname()
