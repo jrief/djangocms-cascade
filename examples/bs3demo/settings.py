@@ -218,6 +218,7 @@ CMSPLUGIN_CASCADE = {
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
+    'cache_strides': True,
 }
 
 CACSCADE_WORKAREA_GLOSSARY = {

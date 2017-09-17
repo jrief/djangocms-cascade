@@ -10,9 +10,12 @@ from django.utils.translation import get_language_from_request
 
 from classytags.utils import flatten_context
 from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
-from .mixins import CascadePluginMixin
+
+from cmsplugin_cascade import app_settings
+from cmsplugin_cascade.mixins import CascadePluginMixin
 
 __all__ = ['register_stride', 'StrideContentRenderer']
+
 
 class EmulateQuerySet(object):
     def __init__(self, elements):
@@ -202,7 +205,7 @@ class StrideContentRenderer(object):
         return mark_safe(''.join(contents))
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
-        if getattr(instance.plugin, 'cache', not editable):
+        if app_settings.CMSPLUGIN_CASCADE['cache_strides'] and getattr(instance.plugin, 'cache', not editable):
             cache = caches['default']
             key = 'cascade_element-{}'.format(instance.pk)
             content = cache.get(key)

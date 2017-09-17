@@ -134,6 +134,8 @@ class AppSettings(object):
 
         config.setdefault('allow_plugin_hiding', False)
 
+        config.setdefault('cache_strides', True)
+
         for module_name in self.CASCADE_PLUGINS:
             try:
                 settings_module = import_module('{}.settings'.format(module_name))
