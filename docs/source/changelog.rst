@@ -8,7 +8,7 @@ Release History
 0.14.2
 ------
 * In Leaflet Map Plugin:
-  * For unset markers, place the position in the center of the current map.
+  * For unset markers, place the position into the center of the current map.
   * Fix positioning of the markers anchor.
 * When using templatetag ``render_cascade``, the HTML content is cached to improve performance.
 
