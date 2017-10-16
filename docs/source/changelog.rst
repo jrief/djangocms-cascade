@@ -4,6 +4,13 @@
 Release History
 ===============
 
+0.14.3
+------
+* Fix: If plugin is missing, now templatetag ``render_plugin`` renders empty string, instead
+  of raising a TemplateSyntaxError.
+* Fix: Method ``RenderTemplateMixin.get_render_template()`` now properly expands templates with
+  placeholders.
+
 
 0.14.2
 ------
