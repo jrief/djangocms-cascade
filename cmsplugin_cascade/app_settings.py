@@ -23,7 +23,7 @@ class AppSettings(object):
         from collections import OrderedDict
         from importlib import import_module
         from django.core.exceptions import ImproperlyConfigured
-        from django.utils.translation import ugettext_lazy as _
+        from django.utils.translation import ugettext_lazy
         from cmsplugin_cascade.widgets import (NumberInputWidget, MultipleCascadingSizeWidget, ColorPickerWidget,
                                                SelectOverflowWidget)
 
@@ -125,12 +125,12 @@ class AppSettings(object):
         config.setdefault('plugins_with_extra_render_templates', {})
         config['plugins_with_extra_render_templates'].setdefault(
             'TextLinkPlugin',
-            [('cascade/link/text-link.html', _("default")),
-             ('cascade/link/text-link-linebreak.html', _("with line break")),])
+            [('cascade/link/text-link.html', ugettext_lazy("default")),
+             ('cascade/link/text-link-linebreak.html', ugettext_lazy("with line break")),])
         config['plugins_with_extra_render_templates'].setdefault(
             'LeafletPlugin',
-            [('cascade/plugins/leaflet.html', _("default")),
-             ('cascade/plugins/googlemap.html', _("Google Map")),])
+            [('cascade/plugins/leaflet.html', ugettext_lazy("default")),
+             ('cascade/plugins/googlemap.html', ugettext_lazy("Google Map")),])
 
         config.setdefault('allow_plugin_hiding', False)
 
