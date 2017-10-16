@@ -38,7 +38,7 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     direct_child_classes = ('BootstrapAccordionPanelPlugin',)
     allow_children = True
     render_template = 'cascade/bootstrap3/{}/accordion.html'
-    fields = ('num_children', 'glossary',)
+    fields = ['num_children', 'glossary']
 
     close_others = GlossaryField(
          widgets.CheckboxInput(),
@@ -76,7 +76,7 @@ class BootstrapAccordionPanelPlugin(TransparentContainer, BootstrapPluginBase):
     require_parent = True
     alien_child_classes = True
     render_template = 'cascade/bootstrap3/{}/accordion-panel.html'
-    glossary_field_order = ('panel_type', 'heading_size', 'panel_title')
+    glossary_field_order = ['panel_title', 'heading_size', 'panel_type']
 
     panel_type = GlossaryField(
         PanelTypeWidget.get_instance(),

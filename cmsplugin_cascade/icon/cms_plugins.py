@@ -57,9 +57,12 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
     )
 
     text_align = GlossaryField(
-        widgets.RadioSelect(
-            choices=(('', _("Do not align")), ('text-left', _("Left")),
-                     ('text-center', _("Center")), ('text-right', _("Right")))),
+        widgets.RadioSelect(choices=[
+            ('', _("Do not align")),
+            ('text-left', _("Left")),
+            ('text-center', _("Center")),
+            ('text-right', _("Right"))
+        ]),
         label=_("Text alignment"),
         initial='',
         help_text=_("Align the icon inside the parent column.")
