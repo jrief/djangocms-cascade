@@ -64,7 +64,7 @@ class RenderPlugin(Tag):
 
     def render_tag(self, context, plugin):
         if not plugin:
-            raise TemplateSyntaxError("Plugin is missing")
+            return ''
 
         content_renderer = context['cms_content_renderer']
         content = content_renderer.render_plugin(
