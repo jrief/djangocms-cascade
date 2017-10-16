@@ -36,5 +36,5 @@ class RenderTemplateMixin(with_metaclass(MediaDefiningClass)):
             template = instance.glossary.get('render_template', self.get_template_choices()[0][0])
             get_template(template)
         except (IndexError, TemplateDoesNotExist):
-            template = self.render_template
+            template = super(RenderTemplateMixin, self).get_render_template(context, instance, placeholder)
         return template
