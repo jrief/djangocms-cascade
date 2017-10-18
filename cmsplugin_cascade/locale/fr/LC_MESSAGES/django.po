@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Nicolas PASCAL <np>, 2017.
+# Nicolas P <np>, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-18 13:33+0200\n"
-"PO-Revision-Date: 2017-10-18 14:12+0200\n"
+"POT-Creation-Date: 2017-10-18 21:56+0200\n"
+"PO-Revision-Date: 2017-10-18 21:57+0200\n"
 "Last-Translator: Nicolas P <np>\n"
 "Language-Team: français <>\n"
 "Language: French\n"
@@ -778,7 +778,6 @@ msgid "Limit"
 msgstr "Limite"
 
 #: bootstrap3/secondary_menu.py:41
-#| msgid "Number of tabs."
 msgid "Number of child menus."
 msgstr "Nombre de menus enfants"
 
@@ -803,7 +802,6 @@ msgid "List Group"
 msgstr "groupe de liste"
 
 #: bootstrap3/settings.py:34
-#| msgid "unstyled"
 msgid "Unstyled List"
 msgstr "Pas de style"
 
@@ -824,20 +822,16 @@ msgid "Justified tabs"
 msgstr "Onglets justifiés"
 
 #: bootstrap3/tabs.py:43
-#| msgid "with {0} panel"
-#| msgid_plural "with {0} panels"
 msgid "with {} tab"
 msgid_plural "with {} tabs"
 msgstr[0] "avec l'onglet {}"
 msgstr[1] "avec {} onglets"
 
 #: bootstrap3/tabs.py:55
-#| msgid "Panel"
 msgid "Tab Pane"
 msgstr "Tableau d'onglets"
 
 #: bootstrap3/tabs.py:63
-#| msgid "Title"
 msgid "Tab Title"
 msgstr "Titre de l'onglet"
 
@@ -888,7 +882,6 @@ msgid "px and em"
 msgstr "px et em"
 
 #: extra_fields/admin.py:41
-#| msgid "px and em"
 msgid "px and %"
 msgstr "px et %"
 
@@ -928,7 +921,6 @@ msgid "Module"
 msgstr "Module"
 
 #: extra_fields/admin.py:126
-#| msgid "Custom CSS classes and styles"
 msgid "Allowed Classes and Styles"
 msgstr "Classes et styles autorisés"
 
@@ -973,12 +965,10 @@ msgid "Horizontal Rule"
 msgstr "Règle horizontale"
 
 #: generic/cms_plugins.py:59
-#| msgid "Heading {}"
 msgid "Heading"
 msgstr "Titre"
 
 #: generic/cms_plugins.py:68
-#| msgid "Heading Size"
 msgid "Heading content"
 msgstr "Titre de la rubrique"
 
@@ -991,7 +981,6 @@ msgid "The element ID '{}' is not unique for this page."
 msgstr "L'élément ID '{}' n'est pas unique pour cette page."
 
 #: generic/mixins.py:58
-#| msgid "Named Element ID"
 msgid "Element ID"
 msgstr "ID de l'élément"
 
@@ -1000,7 +989,6 @@ msgid "A unique identifier for this element."
 msgstr "Un identifiant unique pour cet élément."
 
 #: hide_plugins.py:37
-#| msgid "Used by plugins"
 msgid "Hide plugin"
 msgstr "Masquer le plugin"
 
@@ -1037,7 +1025,6 @@ msgid "Icon color"
 msgstr "Couleur de l'icône"
 
 #: icon/cms_plugins.py:61
-#| msgid "Do not float"
 msgid "Do not align"
 msgstr "Ne pas aligner"
 
@@ -1070,12 +1057,10 @@ msgid "Border radius"
 msgstr "Rayon de bordure"
 
 #: icon/cms_plugins.py:120
-#| msgid "Icon alignment"
 msgid "Icon in text"
 msgstr "Icône dans le texte"
 
 #: leaflet/map.py:74
-#| msgid "Panel Title"
 msgid "Marker Title"
 msgstr "Titre du marqueur"
 
@@ -1089,7 +1074,6 @@ msgid "Use customized marker icon"
 msgstr "Utiliser l'icône de marqueur personnalisé"
 
 #: leaflet/map.py:87
-#| msgid "No Image"
 msgid "Marker Image"
 msgstr "Image du marqueur"
 
@@ -1098,7 +1082,6 @@ msgid "Marker Width"
 msgstr "Largeur du marqueur"
 
 #: leaflet/map.py:95
-#| msgid "Set a fixed image width in pixels."
 msgid "Width of the marker icon in pixels."
 msgstr "Largeur de l'image fixe en pixels."
 
@@ -1129,34 +1112,36 @@ msgid "Map"
 msgstr "Carte geo"
 
 #: leaflet/map.py:233
-#| msgid "Fixed Image Width"
 msgid "Map Width"
 msgstr "Largeur de la carte"
 
 #: leaflet/map.py:235
-#| msgid "Set the image width in percent relative to containing element."
 msgid "Set the map width in percent relative to containing element."
 msgstr ""
 "Définissez la largeur de la carte en pourcentage par rapport à l'élément "
 "contenant."
 
 #: leaflet/map.py:240
-#| msgid "Adapt Image Height"
 msgid "Adapt Map Height"
 msgstr "Adaptez la hauteur de la carte"
 
 #: leaflet/map.py:242
-#| msgid ""
-#| "Set a fixed height in pixels, or percent relative to the image width."
 msgid "Set a fixed height in pixels, or percent relative to the map width."
 msgstr ""
 "Définissez une hauteur fixe en pixels, ou un pourcentage par rapport à la "
 "largeur de la carte."
 
-#: leaflet/map.py:318
+#: leaflet/map.py:247
+#| msgid "Adapt Map Height"
+msgid "Adapt Map Minimum Height"
+msgstr "Adaptez la hauteur minimale de la carte"
+
+#: leaflet/map.py:248
+msgid "Optional, set a minimum height in pixels."
+msgstr "Facultatif, définissez une hauteur minimale en pixels."
+
+#: leaflet/map.py:325
 #, python-brace-format
-#| msgid "with {0} image"
-#| msgid_plural "with {0} images"
 msgid "with {0} marker"
 msgid_plural "with {0} markers"
 msgstr[0] "Avec {0} marqueur"
@@ -1251,7 +1236,6 @@ msgid "Shared between Plugins"
 msgstr "Partagé entre plugins"
 
 #: models.py:60
-#| msgid "Segment"
 msgid "Element"
 msgstr "Élément"
 
@@ -1276,7 +1260,6 @@ msgid "Persited Clipboard Content"
 msgstr "Contenu de presse-papiers persistant"
 
 #: models.py:162
-#| msgid "There are no further settings for this plugin"
 msgid "User editable settings for this page."
 msgstr "Paramètres éditables par l'utilisateur pour cette page."
 
@@ -1285,7 +1268,6 @@ msgid "Store for arbitrary page data."
 msgstr "Stockez pour des données de page arbitraires."
 
 #: models.py:167
-#| msgid "Shared Settings"
 msgid "Cascade Page Settings"
 msgstr "Paramètres de la page Cascade"
 
@@ -1384,7 +1366,6 @@ msgid "Shared Fields"
 msgstr "Champs partagés"
 
 #: sharable/admin.py:73
-#| msgid "There are no further settings for this plugin"
 msgid "Change shared settings of {} plugin"
 msgstr "Modifier les paramètres partagés de {} plugin"
 
@@ -1393,7 +1374,6 @@ msgid "Used by plugins"
 msgstr "Utilisé par des plugins"
 
 #: sharable/admin.py:100
-#| msgid "Plugin Name"
 msgid "Plugin Type"
 msgstr "Type de plugin"
 
@@ -1436,7 +1416,6 @@ msgstr "Ajouter"
 
 #: utils.py:115
 #, python-brace-format
-#| msgid "Unable to evaluate condition: {err}"
 msgid "Unable to link onto '{0}'."
 msgstr "Impossible de lier '{0}'."
 
@@ -1447,7 +1426,6 @@ msgstr "Dans '%(label)s':Ce champ est requis."
 
 #: widgets.py:95
 #, python-format
-#| msgid "In '%(label)s': Value '%(value)s' shall contain a valid number."
 msgid "In '%(label)s': Value '%(value)s' shall contain a valid decimal number."
 msgstr ""
 "Dans '%(label)s': Valeur '%(value)s' doit contenir un nombre décimal valide."
