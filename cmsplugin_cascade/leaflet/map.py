@@ -248,7 +248,6 @@ class LeafletPlugin(CascadePluginBase):
         help_text=_("Optional, set a minimum height in pixels."),
     )
 
-
     class Media:
         css = {'all': [
             'node_modules/leaflet/dist/leaflet.css',
