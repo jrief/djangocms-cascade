@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 import itertools
+
+from django import VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.forms import widgets
 from django.core.exceptions import ValidationError, ImproperlyConfigured
@@ -10,6 +12,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.models import ModelForm
 from django.forms.fields import ChoiceField
+
 from cms.plugin_pool import plugin_pool
 
 from cmsplugin_cascade import app_settings
@@ -20,16 +23,21 @@ from .utils import compute_media_queries, get_widget_choices, BS3_BREAKPOINTS, B
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
+    template_name = 'cascade/forms/widgets/container_breakpoints.html'
+
     def render(self, name, value, attrs=None, renderer=None):
+        if DJANGO_VERSION >= (1, 11):
+            return super(ContainerBreakpointsWidget, self).render(name, value, attrs, renderer)
+
         renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{0}</div>',
             format_html_join('',
                 '<div class="field-box">'
                     '<div class="container-thumbnail">'
-                        '<img src="' + settings.STATIC_URL + 'cascade/admin/{1}.svg" style="height: 55px;" />'
+                        '<img src="' + settings.STATIC_URL + 'cascade/admin/breakpoints/{1}.svg" style="height: 55px;" />'
                         '<div class="label">{0}</div>'
                     '</div>'
-                '</div>', ((force_text(w), BS3_BREAKPOINTS[w.choice_value][1]) for w in renderer)
+                '</div>', ((force_text(w), w.choice_value) for w in renderer)
             ))
 
 

@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from collections import OrderedDict
+
+from django import VERSION as DJANGO_VERSION
 from django.forms import widgets
 from django.forms.fields import CharField
 from django.utils.html import format_html, format_html_join
@@ -22,6 +24,7 @@ class ButtonTypeWidget(widgets.RadioSelect):
     BUTTON_TYPES = OrderedDict((('btn-default', _("Default")), ('btn-primary', _("Primary")),
         ('btn-success', _("Success")), ('btn-info', _("Info")), ('btn-warning', _("Warning")),
         ('btn-danger', _("Danger")), ('btn-link', _("Link")),))
+    template_name = 'cascade/forms/widgets/button_types.html'
 
     @classmethod
     def get_instance(cls):
@@ -29,6 +32,9 @@ class ButtonTypeWidget(widgets.RadioSelect):
         return cls(choices=choices)
 
     def render(self, name, value, attrs=None, renderer=None):
+        if DJANGO_VERSION >= (1, 11):
+            return super(ButtonTypeWidget, self).render(name, value, attrs, renderer)
+
         renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{}</div>',
             format_html_join('\n',
@@ -42,6 +48,7 @@ class ButtonSizeWidget(widgets.RadioSelect):
     """
     BUTTON_SIZES = OrderedDict((('btn-lg', _("Large")), ('', _("Default")), ('btn-sm', _("Small")),
         ('btn-xs', _("Extra small")),))
+    template_name = 'cascade/forms/widgets/button_sizes.html'
 
     @classmethod
     def get_instance(cls):
@@ -49,6 +56,9 @@ class ButtonSizeWidget(widgets.RadioSelect):
         return cls(choices=choices)
 
     def render(self, name, value, attrs=None, renderer=None):
+        if DJANGO_VERSION >= (1, 11):
+            return super(ButtonSizeWidget, self).render(name, value, attrs, renderer)
+
         renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{}</div>',
             format_html_join('\n',

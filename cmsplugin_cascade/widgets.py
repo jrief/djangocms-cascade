@@ -63,8 +63,8 @@ class JSONMultiWidget(widgets.MultiWidget):
             for field in self.normalized_fields
         )
 
-    def render(self, name, values, attrs):
-        values = self.decompress(values)
+    def render(self, name, value, attrs):
+        values = self.decompress(value)
         field_attrs = dict(**attrs)
         render_fieldsets = []
         for fieldset in self.glossary_fields:
@@ -246,9 +246,9 @@ class MultipleTextInputWidget(widgets.MultiWidget):
             values[key] = escape(data.get('{0}-{1}'.format(name, key), ''))
         return values
 
-    def render(self, name, values, attrs):
+    def render(self, name, value, attrs):
         widgets = []
-        values = values or {}
+        values = value or {}
         elem_id = attrs['id']
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
