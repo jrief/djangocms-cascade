@@ -223,7 +223,7 @@ class LeafletPlugin(CascadePluginBase):
     admin_preview = False
     render_template = 'cascade/plugins/leaflet.html'
     inlines = (MarkerInline,)
-    glossary_field_order = ('map_width', 'map_height')
+    glossary_field_order = ('map_width', 'map_height', 'map_min_height')
     model_mixins = (LeafletModelMixin,)
     form = LeafletForm
     settings = mark_safe(json.dumps(app_settings.CMSPLUGIN_CASCADE['leaflet']))
@@ -240,6 +240,12 @@ class LeafletPlugin(CascadePluginBase):
         label=_("Adapt Map Height"),
         initial='400px',
         help_text=_("Set a fixed height in pixels, or percent relative to the map width."),
+    )
+
+    map_min_height = GlossaryField(
+        CascadingSizeWidget(allowed_units=['px'], required=False),
+        label=_("Adapt Map Minimum Height"),
+        help_text=_("Optional, set a minimum height in pixels."),
     )
 
     class Media:
