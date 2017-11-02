@@ -9,7 +9,6 @@ djangocms-cascade
 
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django-CMS plugins.
 
-
 # Why Use DjangoCMS-Cascade?
 
 **DjangoCMS-Cascade** is a collection of plugins for Django-CMS
@@ -17,6 +16,10 @@ djangocms-cascade
 Instead of creating one database model for each CMS plugin, Cascade shares one database model for
 all of them. The payload then is stored inside a JSON field instead of declaring each attribute
 explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
+
+### Breaking News
+
+Version 0.14.4 supports Django-1.11
 
 
 ### Perfect for nested grid systems

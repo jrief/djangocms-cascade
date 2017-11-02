@@ -4,6 +4,13 @@
 Release History
 ===============
 
+
+0.14.4
+------
+* Adopted button- and container selection widget rendering to work with Django-1.11.
+* Fixed clipboard issued regarding Django-1.11.
+
+
 0.14.3
 ------
 * Fix: If plugin is missing, now templatetag ``render_plugin`` renders empty string, instead
