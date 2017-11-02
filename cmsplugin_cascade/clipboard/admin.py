@@ -29,7 +29,7 @@ class JSONAdminWidget(widgets.Textarea):
     def render(self, name, value, attrs=None):
         if value is None:
             value = ''
-        final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
         id_data = attrs.get('id', 'id_data')
         clippy_url = static('cascade/admin/clippy.svg')
         return format_html('<textarea{0}>\r\n{1}</textarea> '
@@ -70,8 +70,10 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         language = get_language_from_request(request)
         if request.POST.get('save_clipboard'):
             obj.data = self._serialize_from_clipboard(language)
+            request.POST = request.POST.copy()
             request.POST['_continue'] = True
         if request.POST.get('restore_clipboard'):
+            request.POST = request.POST.copy()
             request.POST['_continue'] = True
         super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
         if request.POST.get('restore_clipboard'):
