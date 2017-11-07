@@ -1,6 +1,8 @@
 djangocms-cascade
 ==================================================================================================================================================
 
+[![Join the chat at https://gitter.im/djangocms-cascade/Lobby](https://badges.gitter.im/djangocms-cascade/Lobby.svg)](https://gitter.im/djangocms-cascade/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
 [![Python versions](https://img.shields.io/pypi/pyversions/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 [![Software license](https://img.shields.io/pypi/l/djangocms-cascade.svg)](https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT)
