@@ -19,7 +19,7 @@ explicitly. This furthermore prevents us to handle all kind of nasty database mi
 
 ### Breaking News
 
-Version 0.14.4 supports Django-1.11
+Version 0.14.4 supports Django-1.11 in combination with django-CMS 3.4.5
 
 
 ### Perfect for nested grid systems
