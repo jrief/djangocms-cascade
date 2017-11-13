@@ -18,7 +18,7 @@ class TextLinkPlugin(LinkPluginBase):
     text_enabled = True
     render_template = 'cascade/link/text-link.html'
     ring_plugin = 'TextLinkPlugin'
-    fields = ('link_content',) + LinkPluginBase.fields
+    fields = ['link_content'] + list(LinkPluginBase.fields)
     parent_classes = ('TextPlugin',)
 
     class Media:
