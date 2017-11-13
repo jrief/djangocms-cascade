@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import sys
 from importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 from . import app_settings
@@ -15,8 +16,9 @@ for module in app_settings.CASCADE_PLUGINS:
             try:
                 import_module('{}.{}'.format(module, p))
             except ImportError as err:
+                traceback = sys.exc_info()[2]
                 msg = "Plugin {} as specified in {}.settings.CMSPLUGIN_CASCADE_PLUGINS could not be loaded: {}"
-                raise ImproperlyConfigured(msg.format(p, module, err))
+                raise ImproperlyConfigured(msg.format(p, module, err.with_traceback(traceback)))
     except ImportError:
         try:
             # otherwise try with cms_plugins in the named module
