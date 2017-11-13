@@ -40,7 +40,7 @@ setup(
     install_requires=[
         'jsonfield',
         'django-classy-tags>=0.8.0',
-        'django-cms>=3.4.4',
+        'django-cms>=3.4.5',
         'djangocms-text-ckeditor>=3.4.0',
     ],
     license='LICENSE-MIT',
