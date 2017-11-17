@@ -1,5 +1,3 @@
-.. _strides:
-
 ==============================
 Use Cascade outside of the CMS
 ==============================
@@ -10,7 +8,7 @@ of CMS pages, one might fall back to handcrafting HTML, giving up all the benefi
 prototyping as provided by the Cascade plugin system.
 
 Since version 0.14 of **djangocms-cascade**, one can prototype the page content and export it as
-JSON file using :ref:`clipboard`. Later on, one can reuse that persisted data and create the same
+JSON file using :doc:`clipboard`. Later on, one can reuse that persisted data and create the same
 content outside of a CMS page. This is specially useful, if you must persist the page content
 in the project's version control system.
 

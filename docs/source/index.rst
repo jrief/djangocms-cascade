@@ -1,18 +1,17 @@
-.. _djangocms-cascade:
-
+============================================
 Welcome to DjangoCMS-Cascade's documentation
 ============================================
 
 Project's home
---------------
+==============
 
-Check for the latest release of this project on Github_.
+Check for the latest release of this project on GitHub_.
 
 Please report bugs or ask questions using the `Issue Tracker`_.
 
 
 Project's goals
----------------
+===============
 
 #. Create a modular system, which allows programmers to add simple widget code, without having to
    implement an extra djangoCMS_ plugins for each of them.
@@ -29,33 +28,32 @@ Project's goals
 
 
 Contents:
----------
+=========
 
 .. toctree::
+    :maxdepth: 2
+    :numbered:
 
-  impatient
-  introduction
-  installation
-  link-plugin
-  bootstrap3/grid
-  bootstrap3/gallery
-  bootstrap3/image-picture
-  bootstrap3/navbar
-  bootstrap3/other-components
-  icon-fonts
-  leaflet
-  client-side
-  section
-  segmentation
-  sharable-fields
-  customize-styles
-  render-template
-  hide-plugins
-  clipboard
-  strides
-  customized-plugins
-  generic-plugins
-  changelog
+    impatient
+    introduction
+    installation
+    link-plugin
+    bootstrap3/index
+    icon-fonts
+    leaflet
+    client-side
+    section
+    segmentation
+    sharable-fields
+    customize-styles
+    render-template
+    hide-plugins
+    clipboard
+    strides
+    sphinx
+    customized-plugins
+    generic-plugins
+    changelog
 
 
 Indices and tables

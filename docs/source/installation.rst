@@ -1,5 +1,3 @@
-.. _installation:
-
 ============
 Installation
 ============
@@ -95,7 +93,7 @@ complete node package.
 	npm init
 	npm install bootstrap@3 bootstrap-sass@3 jquery@3 leaflet@1 leaflet-easybutton@2.2 picturefill select2@4 --save
 
- If the Django project contains already a file named ``package.json``, then skip the ``npm init``
+If the Django project contains already a file named ``package.json``, then skip the ``npm init``
 in the above command.
 
 The node packages ``leaflet`` and ``leaflet-easybutton`` are only required if the Leaflet plugin

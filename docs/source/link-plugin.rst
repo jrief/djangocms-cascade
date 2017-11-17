@@ -1,5 +1,3 @@
-.. _link-plugin:
-
 ===========
 Link Plugin
 ===========

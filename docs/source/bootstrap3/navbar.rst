@@ -1,5 +1,3 @@
-.. _bootstrap3/navbar:
-
 ======================================
 Template tag for the Bootstrap3 Navbar
 ======================================

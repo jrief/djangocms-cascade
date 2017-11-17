@@ -1,5 +1,3 @@
-.. _segmentation:
-
 =======================
 Segmentation of the DOM
 =======================

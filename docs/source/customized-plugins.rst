@@ -1,5 +1,3 @@
-.. _customized-plugins:
-
 =================
 Extending Cascade
 =================
@@ -168,7 +166,7 @@ Javascript
 ----------
 
 In case your customized plugin requires some Javascript code to improve the editor's experience,
-please refer to the section :ref:`client-side`.
+please refer to the section :doc:`client-side`.
 
 
 Adding extra fields to the model

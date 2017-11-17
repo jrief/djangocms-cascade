@@ -1,5 +1,3 @@
-.. _section:
-
 =================
 Section Bookmarks
 =================

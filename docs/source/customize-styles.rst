@@ -1,5 +1,3 @@
-.. _customized-styles:
-
 =======================================
 Customize CSS classes and inline styles
 =======================================

@@ -1,5 +1,3 @@
-.. _clipboard:
-
 =================
 The CMS Clipboard
 =================

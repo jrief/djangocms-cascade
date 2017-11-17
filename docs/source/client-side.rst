@@ -1,5 +1,3 @@
-.. _client-side:
-
 ========================
 Handling the client side
 ========================
