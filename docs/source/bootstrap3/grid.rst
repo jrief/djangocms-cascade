@@ -286,13 +286,3 @@ breakpoints.
 	Hence instead of the inner width, the container's outer width is used as its maximum. For the
 	large media query (with a browser width of 1200 pixels or more), the maximum width is limited
 	to 1980 pixels.
-
-
-Other Bootstrap3 specific Plugins
-=================================
-
-.. toctree::
-
-  image-picture
-  navbar
-  other-components

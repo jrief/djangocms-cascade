@@ -1,5 +1,3 @@
-.. _bootstrap3/gallery:
-
 =======
 Gallery
 =======

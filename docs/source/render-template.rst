@@ -1,5 +1,3 @@
-.. _render-template:
-
 ========================================
 Choose an alternative rendering template
 ========================================

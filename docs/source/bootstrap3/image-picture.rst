@@ -1,5 +1,3 @@
-.. _bootstrap3/image-picture:
-
 ==========================================
 HTML5 <picture> and the new <img> elements
 ==========================================

@@ -1,5 +1,3 @@
-.. _sharable-fields:
-
 ============================
 Working with sharable fields
 ============================

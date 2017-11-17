@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import io
 import json
+import os
 
 from django import template
+from django.conf import settings
 from django.core.cache import caches
-from django.template.exceptions import TemplateSyntaxError
+from django.template.exceptions import TemplateDoesNotExist
 from django.contrib.staticfiles import finders
+from django.utils.safestring import mark_safe
 
 from classytags.arguments import Argument
 from classytags.core import Options, Tag
@@ -36,7 +40,7 @@ class StrideRenderer(Tag):
         if not jsonfile:
             raise IOError("Unable to find file: {}".format(datafile))
 
-        with open(jsonfile) as fp:
+        with io.open(jsonfile) as fp:
             tree_data = json.load(fp)
 
         content_renderer = StrideContentRenderer(context['request'])
@@ -75,3 +79,12 @@ class RenderPlugin(Tag):
         return content
 
 register.tag('render_plugin', RenderPlugin)
+
+
+@register.simple_tag
+def sphinx_docs_include(path):
+    filename = os.path.join(settings.SPHINX_DOCS_ROOT, path)
+    if not os.path.exists(filename):
+        raise TemplateDoesNotExist("'{path}' does not exist".format(path=path))
+    with io.open(filename) as fh:
+        return mark_safe(fh.read())

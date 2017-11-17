@@ -1,5 +1,3 @@
-.. _generic-plugins:
-
 ===============
 Generic Plugins
 ===============

@@ -1,5 +1,3 @@
-.. _hide-plugins:
-
 ==============================
 Conditionally hide some plugin
 ==============================

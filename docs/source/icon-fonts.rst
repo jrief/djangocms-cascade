@@ -1,5 +1,3 @@
-.. _icon-fonts:
-
 ======================
 Using Fonts with Icons
 ======================
@@ -103,7 +101,7 @@ By storing these attributes under a common name, one can reuse them across vario
 having to set them for each one, separately. Additionally, each of the shared styling attributes
 can be changed globally in Django's admin backend at
 ``Start › django CMS Cascade › Shared between Plugins``. For details please refer to the section
-about :ref:`sharable-fields`.
+about :doc:`sharable-fields`.
 
 
 Using the Icon Plugin in plain text

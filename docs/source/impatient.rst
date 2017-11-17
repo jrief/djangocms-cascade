@@ -1,5 +1,3 @@
-.. _impatient:
-
 =================
 For the Impatient
 =================
