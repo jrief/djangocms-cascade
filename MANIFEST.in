@@ -5,4 +5,6 @@ recursive-include cmsplugin_cascade/locale *
 recursive-include cmsplugin_cascade/static *
 recursive-include cmsplugin_cascade/templates *
 recursive-include cmsplugin_cascade *.py
+recursive-include cmsplugin_cascade/sphinx/static *
+recursive-include cmsplugin_cascade/sphinx/theme *
 recursive-exclude tests *
