@@ -22,7 +22,7 @@ class DocumentationSelect2Widget(Select2Widget):
 
 
 def get_documents_map():
-    docsmap_file = os.path.join(settings.DOCS_ROOT, 'docsmap.json')
+    docsmap_file = os.path.join(settings.SPHINX_DOCS_ROOT, 'docsmap.json')
     if not os.path.exists(docsmap_file):
         return ()
     with io.open(docsmap_file) as fh:

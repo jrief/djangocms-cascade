@@ -44,8 +44,12 @@ To the project's ``settings.py``, add these options to the configuration directi
 	    ...
 	]
 
+	SPHINX_DOCS_ROOT = '/path/to/docs/_build/fragments'
+
 Replace ``'path/to/documentation.html'`` with a filename pointing to your documentation
 root template (see below).
+
+Point ``SPHINX_DOCS_ROOT`` onto the directory, into which the HTML page fragments are generated.
 
 
 Configure Sphinx Builder
