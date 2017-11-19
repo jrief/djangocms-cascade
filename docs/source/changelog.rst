@@ -2,8 +2,8 @@
 Release History
 ===============
 
-0.15.1
-======
+0.15.1 and 0.15.2
+=================
 * Fixed one failing occurrence of ``settings.SPHINX_DOCS_ROOT``.
 
 0.15
