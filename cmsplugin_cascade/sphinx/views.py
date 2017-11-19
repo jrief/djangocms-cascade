@@ -20,7 +20,7 @@ class SphinxDocsView(TemplateView):
         page = kwargs.get('page', '')
         _, extension = os.path.splitext(page)
         if extension in ['.png', '.jpg', '.jpeg', '.gif']:
-            filename = os.path.join(settings.DOCS_ROOT, page)
+            filename = os.path.join(settings.SPHINX_DOCS_ROOT, page)
             content_type, _ = mimetypes.guess_type(filename)
             with io.open(filename, 'rb') as fd:
                 response = HttpResponse(content=fd.read(), content_type=content_type)
@@ -30,7 +30,7 @@ class SphinxDocsView(TemplateView):
 
     def get_context_data(self, page='index.html', **kwargs):
         context = super(SphinxDocsView, self).get_context_data(**kwargs)
-        filename = os.path.join(settings.DOCS_ROOT, page, 'index.html')
+        filename = os.path.join(settings.SPHINX_DOCS_ROOT, page, 'index.html')
         if not os.path.exists(filename):
             raise ViewDoesNotExist("{} does not exist".format(page))
         with io.open(filename, encoding='utf-8') as fd:
