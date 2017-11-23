@@ -12,7 +12,7 @@ djangocms-cascade
 # Why Use DjangoCMS-Cascade?
 
 **DjangoCMS-Cascade** is a collection of plugins for Django-CMS
-[placeholders](http://docs.django-cms.org/en/develop/getting_started/tutorial.html#creating-templates).
+[placeholders](http://docs.django-cms.org/en/latest/introduction/templates_placeholders.html#templates-placeholders).
 Instead of creating one database model for each CMS plugin, Cascade shares one database model for
 all of them. The payload then is stored inside a JSON field instead of declaring each attribute
 explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
