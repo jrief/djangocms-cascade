@@ -7,6 +7,8 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 
+from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+
 
 CASCADE_PLUGINS = ['buttons', 'carousel', 'accordion', 'container', 'image', 'picture',
                    'panel', 'tabs', 'gallery', 'jumbotron']
@@ -28,6 +30,15 @@ def set_defaults(config):
             raise ImproperlyConfigured(msg.format(tpl[0]))
 
     config['bootstrap3'].setdefault('gutter', 30)
+
+    config['plugins_with_extra_fields'].setdefault('BootstrapButtonPlugin', PluginExtraFieldsConfig())
+    config['plugins_with_extra_fields'].setdefault('BootstrapRowPlugin', PluginExtraFieldsConfig())
+    config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
+        inline_styles={
+            'extra_fields:Paddings': ['margin-top', 'margin-bottom', 'padding-top', 'padding-bottom'],
+            'extra_units:Paddings': 'px,em'
+        }
+    ))
 
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', (
         ('cascade/bootstrap3/secmenu-list-group.html', _("List Group")),

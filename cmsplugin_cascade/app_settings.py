@@ -40,14 +40,6 @@ class AppSettings(object):
             from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
             plugins_with_extra_fields = config['plugins_with_extra_fields']
-            plugins_with_extra_fields.setdefault('BootstrapButtonPlugin', PluginExtraFieldsConfig())
-            plugins_with_extra_fields.setdefault('BootstrapRowPlugin', PluginExtraFieldsConfig())
-            plugins_with_extra_fields.setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
-                inline_styles={
-                    'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
-                    'extra_units:Paddings': 'px,em'
-                }
-            ))
             plugins_with_extra_fields.setdefault('SimpleWrapperPlugin', PluginExtraFieldsConfig())
             plugins_with_extra_fields.setdefault('HeadingPlugin', PluginExtraFieldsConfig(
                 inline_styles={
