@@ -25,7 +25,7 @@ class AppSettings(object):
         from django.core.exceptions import ImproperlyConfigured
         from django.utils.translation import ugettext_lazy
         from cmsplugin_cascade.widgets import (NumberInputWidget, MultipleCascadingSizeWidget, ColorPickerWidget,
-                                               SelectOverflowWidget)
+                                               SelectTextAlignWidget, SelectOverflowWidget)
 
         if hasattr(self, '_config_CMSPLUGIN_CASCADE'):
             return self._config_CMSPLUGIN_CASCADE
@@ -92,6 +92,9 @@ class AppSettings(object):
         extra_inline_styles.setdefault(
             'Heights',
             (('min-height', 'height', 'max-height',), MultipleCascadingSizeWidget))
+        extra_inline_styles.setdefault(
+            'Text Alignement',
+            (('text-align',), SelectTextAlignWidget))
         extra_inline_styles.setdefault(
             'Font Size',
             (('font-size',), MultipleCascadingSizeWidget))

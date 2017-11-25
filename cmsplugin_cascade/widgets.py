@@ -201,8 +201,15 @@ class ColorPickerWidget(widgets.MultiWidget):
                 raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
 
 
+class SelectTextAlignWidget(widgets.Select):
+    CHOICES = [('left', 'left'), ('center', 'center'), ('right', 'right'), ('justify', 'justify')]
+
+    def __init__(self, attrs=None):
+        super(SelectTextAlignWidget, self).__init__(attrs, choices=self.CHOICES)
+
+
 class SelectOverflowWidget(widgets.Select):
-    CHOICES = (('auto', 'auto'), ('scroll', 'scroll'), ('hidden', 'hidden'),)
+    CHOICES = [('auto', 'auto'), ('scroll', 'scroll'), ('hidden', 'hidden')]
 
     def __init__(self, attrs=None):
         super(SelectOverflowWidget, self).__init__(attrs, choices=self.CHOICES)
