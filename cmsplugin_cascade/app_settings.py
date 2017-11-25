@@ -82,16 +82,16 @@ class AppSettings(object):
         extra_inline_styles = config['extra_inline_styles']
         extra_inline_styles.setdefault(
             'Margins',
-            (('margin-top', 'margin-right', 'margin-bottom', 'margin-left',), MultipleCascadingSizeWidget))
+            (['margin-top', 'margin-right', 'margin-bottom', 'margin-left'], MultipleCascadingSizeWidget))
         extra_inline_styles.setdefault(
             'Paddings',
-            (('padding-top', 'padding-right', 'padding-bottom', 'padding-left',), MultipleCascadingSizeWidget))
+            (['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], MultipleCascadingSizeWidget))
         extra_inline_styles.setdefault(
             'Widths',
-            (('min-width', 'width', 'max-width',), MultipleCascadingSizeWidget))
+            (['min-width', 'width', 'max-width'], MultipleCascadingSizeWidget))
         extra_inline_styles.setdefault(
             'Heights',
-            (('min-height', 'height', 'max-height',), MultipleCascadingSizeWidget))
+            (['min-height', 'height', 'max-height'], MultipleCascadingSizeWidget))
         extra_inline_styles.setdefault(
             'Text Alignement',
             (('text-align',), SelectTextAlignWidget))

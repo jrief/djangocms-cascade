@@ -36,10 +36,15 @@ class ClassNamesWidget(widgets.TextInput):
 
 
 class PluginExtraFieldsAdmin(admin.ModelAdmin):
-    list_display = ('name', 'module', 'site', 'allowed_classes_styles')
-    DISTANCE_UNITS = (('px,em,%', _("px, em and %")), ('px,em', _("px and em")),
-                      ('px,%', _("px and %")), ('px', _("px")), ('%', _("%")),)
-    classname_fields = ((
+    list_display = ['name', 'module', 'site', 'allowed_classes_styles']
+    DISTANCE_UNITS = [
+        ('px,em,%', _("px, em and %")),
+        ('px,em', _("px and em")),
+        ('px,%', _("px and %")),
+        ('px', _("px")),
+        ('%', _("%")),
+    ]
+    classname_fields = [(
         GlossaryField(
             ClassNamesWidget(),
             label=_("CSS class names"),
@@ -49,9 +54,9 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         GlossaryField(
             widgets.CheckboxInput(),
             label=_("Allow multiple"),
-            name='multiple'
+            name='multiple',
         ),
-    ),)
+    )]
 
     class Media:
         css = {'all': ('cascade/css/admin/partialfields.css',)}
