@@ -48,7 +48,7 @@ to the project's ``settings.py``, for instance:
 	    ...
 	}
 
-Here the class ``PluginExtraFieldsConfig`` can be used to fine-tune which extra fields can be
+Here the class ``PluginExtraFieldsConfig`` is used to fine-tune which extra fields can be
 set while editing the plugin. Assigning that class without arguments to a plugin, allows us to
 specify the extra fields using the Django administration backend at:
 
@@ -57,8 +57,9 @@ specify the extra fields using the Django administration backend at:
 Here the site administrator can specify for each concrete plugin, which extra CSS classes, ID tags
 and extra inline styles shall be used.
 
-If we use ``PluginExtraFieldsConfig(allow_override=False)``, then we can not override the
-configuration using the administration backend, but must specify all settings in it's constructor:
+If we use ``PluginExtraFieldsConfig(allow_override=False)``, then the site administrator can not
+override the configuration using the backend. Then every extra field must be specified by the
+configuration directive:
 
 .. autoclass:: cmsplugin_cascade.extra_fields.config.PluginExtraFieldsConfig
    :members:
