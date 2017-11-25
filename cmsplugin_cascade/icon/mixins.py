@@ -92,7 +92,7 @@ class IconPluginMixin(CascadePluginMixinBase):
         if not hasattr(instance, '_cached_icon_font'):
             try:
                 instance._cached_icon_font = IconFont.objects.get(id=instance.glossary['icon_font'])
-            except (IconFont.DoesNotExist, KeyError):
+            except (IconFont.DoesNotExist, KeyError, ValueError):
                 instance._cached_icon_font = None
         return instance._cached_icon_font
 
