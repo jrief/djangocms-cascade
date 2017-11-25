@@ -10,9 +10,13 @@ django.jQuery(function($) {
 		constructor: function() {
 			var self = this;
 			this.$super();
-			$glossary_icon_align.change(function(evt) {
-				self.toggleAlignIcon(evt.target.value);
-			});
+			if (django.cascade.hasOwnProperty('IconPlugin')) {
+				$glossary_icon_align.change(function(evt) {
+					self.toggleAlignIcon(evt.target.value);
+				});
+			} else {
+				$glossary_icon_align.prop('disabled', true);
+			}
 			this.refreshChangeForm();
 		},
 		toggleAlignIcon: function(iconAlign) {

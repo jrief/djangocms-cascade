@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 
+from django.conf import settings
 from django import VERSION as DJANGO_VERSION
 from django.forms import widgets
 from django.forms.fields import CharField
@@ -14,7 +15,10 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.link.forms import TextLinkFormMixin
-from cmsplugin_cascade.icon.mixins import IconPluginMixin
+if 'cmsplugin_cascade.icon' in settings.INSTALLED_APPS:
+    from cmsplugin_cascade.icon.mixins import IconPluginMixin
+else:
+    from cmsplugin_cascade.plugin_base import CascadePluginMixinBase as IconPluginMixin
 
 
 class ButtonTypeWidget(widgets.RadioSelect):
@@ -129,8 +133,11 @@ class BootstrapButtonMixin(IconPluginMixin):
 
     def render(self, context, instance, placeholder):
         context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
-        icon_font = self.get_icon_font(instance)
-        symbol = instance.glossary.get('symbol')
+        try:
+            icon_font = self.get_icon_font(instance)
+            symbol = instance.glossary.get('symbol')
+        except AttributeError:
+            icon_font, symbol = None, None
         if icon_font and symbol:
             context['stylesheet_url'] = icon_font.get_stylesheet_url()
             mini_template = '{0}<i class="icon-{1} {2}" aria-hidden="true"></i>{3}'
