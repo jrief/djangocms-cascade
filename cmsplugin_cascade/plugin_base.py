@@ -367,7 +367,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         labels = kwargs.pop('labels', {})
         glossary_fields = kwargs.pop('glossary_fields', self.glossary_fields)
         widgets.update(glossary=JSONMultiWidget(glossary_fields))
-        labels.update(glossary='')
+        labels.update(glossary='')  # remove label for glossary, since each subfields provides a label itself
         kwargs.update(widgets=widgets, labels=labels)
         form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
         # help_text can not be cleared using an empty string in modelform_factory
