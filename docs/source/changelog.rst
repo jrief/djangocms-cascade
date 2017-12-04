@@ -2,6 +2,11 @@
 Release History
 ===============
 
+0.15.3
+======
+* Bugfix: If more than one CheckboxInput in plugin only the first seem work correctly.
+* Bugfix: Cascade works properly if ``'cmsplugin_cascade.icon'`` is missing in ``INSTALLED_APPS``.
+
 0.15.1 and 0.15.2
 =================
 * Fixed one failing occurrence of ``settings.SPHINX_DOCS_ROOT``.
