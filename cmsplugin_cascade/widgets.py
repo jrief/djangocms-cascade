@@ -65,14 +65,14 @@ class JSONMultiWidget(widgets.MultiWidget):
 
     def render(self, name, value, attrs):
         values = self.decompress(value)
-        field_attrs = dict(**attrs)
         render_fieldsets = []
         for fieldset in self.glossary_fields:
             render_fields = []
             if not isinstance(fieldset, (list, tuple)):
                 fieldset = [fieldset]
             for field in fieldset:
-                field_attrs['id'] = '{id}_{0}'.format(field.name, **attrs)
+                field_attrs = dict(**attrs)
+                field_attrs.update(id='{id}_{0}'.format(field.name, **attrs))
                 field_value = values.get(field.name)
                 if isinstance(field_value, six.string_types):
                     field_value = self.html_parser.unescape(field_value)
