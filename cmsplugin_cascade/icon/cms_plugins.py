@@ -47,7 +47,7 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
     )
 
     color = GlossaryField(
-        widgets.TextInput(attrs={'style': 'width: 5em;', 'type': 'color'}),
+        ColorPickerWidget(),
         label=_("Icon color"),
     )
 
@@ -78,8 +78,8 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
         label=_("Border radius"),
     )
 
-    glossary_field_order = ('icon_font', 'symbol', 'text_align', 'font_size',
-                            'color', 'background_color', 'border', 'border_radius')
+    glossary_field_order = ['icon_font', 'symbol', 'text_align', 'font_size',
+                            'color', 'background_color', 'border', 'border_radius']
 
     class Media:
         js = ['cascade/js/admin/framediconplugin.js']
@@ -136,7 +136,7 @@ class TextIconPlugin(IconPluginMixin, CascadePluginBase):
         label=_("Select Symbol"),
     )
 
-    glossary_field_order = ('icon_font', 'symbol')
+    glossary_field_order = ['icon_font', 'symbol']
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):
