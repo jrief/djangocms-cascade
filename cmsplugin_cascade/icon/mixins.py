@@ -18,10 +18,10 @@ class IconModelMixin(object):
         attrs = []
         if icon_font and symbol:
             attrs.append(mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol)))
-        styles = {
-            'display': 'inline-block',
-            'color': self.glossary.get('color', '#000000'),
-        }
+        styles = {'display': 'inline-block'}
+        disabled, color = self.glossary.get('color', (True, '#000000'))
+        if not disabled:
+            styles['color'] = self.glossary.get('color', '#000000')
         disabled, background_color = self.glossary.get('background_color', (True, '#000000'))
         if not disabled:
             styles['background-color'] = background_color
