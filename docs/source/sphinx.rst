@@ -97,7 +97,12 @@ responsible for rendering the main content, add this template code:
 .. code-block:: django
 
 	{% extends "path/to/base.html" %}
-	{% load cascade_tags %}
+	{% load static cascade_tags %}
+	...
+	{% block head %}
+	{{ block.super }}
+	<link href="{% static 'cascade/sphinx/css/bootstrap-sphinx.css' %}" rel="stylesheet" type="text/css" />
+	{% endblock %}
 	...
 	{% block main-content %}
 	    {% if page_content %}
@@ -111,7 +116,11 @@ This Django template now includes the HTML fragments compiled by Sphinx. This al
 **django-CMS** and combine it with Sphinx. In the URL, the part behind the documentation's slug
 corresponds 1:1 to the name of the ReST document.
 
+In this example we add a stylesheet to adopt the output to the `Bootstrap theme`_ for Sphinx_.
+Depending on your template layout, the way you import this may vary.
+
 .. _Sphinx: http://www.sphinx-doc.org/
+.. _Bootstrap theme: http://ryan-roemer.github.io/sphinx-bootstrap-theme/README.html
 
 
 Linking onto Documentation Pages
