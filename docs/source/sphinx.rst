@@ -29,18 +29,9 @@ To the project's ``settings.py``, add these options to the configuration directi
 	    ...
 	]
 
-	CMSPLUGIN_CASCADE = {
-	    'link_plugin_classes': [
-	        'cmsplugin_cascade.sphinx.link_plugin.SphinxDocsLinkPlugin',
-	        'cmsplugin_cascade.link.plugin_base.LinkElementMixin',
-	        'cmsplugin_cascade.sphinx.link_plugin.SphinxDocsLinkForm',
-	    ],
-	    ...
-	}
-
 	CMS_TEMPLATES = [
 	    ...,
-	    ('path/to/documentation.html', _("Documentation Page")),
+	    ('path/to/documentation.html', "Documentation Page"),
 	    ...
 	]
 
@@ -74,39 +65,26 @@ Locate the file ``conf.py`` and add:
 	]
 
 By invoking ``make fragments``, Sphinx generates a HTML fragment for each page inside the
-documentation folder. These fragments then can be included by a normal Django view.
+documentation folder, typically into ``docs/_build/fragments``. Later we use these fragments
+and include them using a normal Django view.
 
 
 Integration with the CMS
 ========================
 
-In the project's ``url.py`` add a URL pattern, which is used as a common entry point for all
-documentation pages:
-
-.. code-block:: python
-
-	from django.conf.urls import url
-	from cmsplugin_cascade.sphinx.views import SphinxDocsView
-
-	urlpatterns = [
-	    ...
-	    url(r'^docs/(?P<page>\S+)/$',
-	        SphinxDocsView.as_view(template_name='path/to/documentation.html'),
-	        name='documentation',
-	    ),
-	    ...
-	]
-
 In Django's admin backend, add a page as the starting point for the documentation inside
-the CMS menu tree. Typically, one would name the page "*Documentation*" using ``docs`` as its
-slug. If another slug is desired, then change the ``urlpatterns`` from above to use that
-alternative pattern as well.
+the CMS menu tree. Typically, one would name that page "*Documentation*" using ``docs`` or
+``documentation`` as its slug.
 
 In the *Advanced Settings* tab, choose **Documentation Page** as the template. This settings
 has been configured using the directive ``CMS_TEMPLATES``, as shown above.
 
-Optionally select **Documentation Menu** as the *Attached menu*. It adds a submenu for each main
-chapter of the documentation. If omitted, only **Documentation** is added the the CMS menu tree.
+As *Application*, select **Sphinx Documentation** from the pull down menu. This attaches the
+complete documentation tree just below the chosen slug.
+
+Optionally select **Documentation Menu** from the pull down menu as the *Attached menu*. It adds
+a submenu for each main chapter of the documentation. If omitted, only **Documentation** is added
+the the CMS menu tree.
 
 
 The Documentation Template
@@ -130,7 +108,7 @@ responsible for rendering the main content, add this template code:
 	{% endblock %}
 
 This Django template now includes the HTML fragments compiled by Sphinx. This allows us to use
-**django-CMS** and combine it with Sphinx. In the URL, the part behind the ``docs/`` slug
+**django-CMS** and combine it with Sphinx. In the URL, the part behind the documentation's slug
 corresponds 1:1 to the name of the ReST document.
 
 .. _Sphinx: http://www.sphinx-doc.org/
@@ -140,7 +118,22 @@ Linking onto Documentation Pages
 --------------------------------
 
 By overriding the :doc:`link-plugin` with a special target named **Documentation**, we can
-even add links onto our documentation pages symbolically. This means, that when we open the
+even add links onto our documentation pages symbolically. This means, that whenever we open the
 **LinkPlugin** editor, an additional target is added. It offers a select box showing all
 pages from our documentation tree. This prevents us, having to hard code the URL pointing
 onto the documentation.
+
+This feature has to be configured in the project's ``settings.py``, by replacing the LinkPlugin
+with a modified version of itself:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'link_plugin_classes': [
+	        'cmsplugin_cascade.sphinx.link_plugin.SphinxDocsLinkPlugin',
+	        'cmsplugin_cascade.link.plugin_base.LinkElementMixin',
+	        'cmsplugin_cascade.sphinx.link_plugin.SphinxDocsLinkForm',
+	    ],
+	    ...
+	}

@@ -6,7 +6,7 @@ import json
 import os
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from cms.menu_bases import CMSAttachMenu
@@ -24,7 +24,7 @@ class DocumentationMenu(CMSAttachMenu):
         nodes = []
         docsmap_file = os.path.join(settings.SPHINX_DOCS_ROOT, 'docsmap.json')
         if not os.path.exists(docsmap_file):
-            return
+            return nodes
         with io.open(docsmap_file) as fh:
             docs_map = json.load(fh, encoding='utf-8')
 
@@ -34,7 +34,7 @@ class DocumentationMenu(CMSAttachMenu):
                 continue
             node = NavigationNode(
                 title=items[1],
-                url=reverse('documentation', args=(bits[0],)),
+                url=reverse_lazy('sphinx-documentation', args=(bits[0],)),
                 id=counter,
             )
             nodes.append(node)
