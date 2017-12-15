@@ -81,7 +81,7 @@ class IconFontTestCase(CascadeTestCase):
             self.assertIsInstance(container_plugin, BootstrapContainerPlugin)
 
             # add icon as child to this container
-            glossary = {"font_size": "10em", "color": "#88258e", "background_color": ["on","#c8ffcd"],
+            glossary = {"font_size": "10em", "color": ["","#88258e"], "background_color": ["on","#c8ffcd"],
                         "symbol": "emo-wink", "icon_font": icon_font.pk,
                         "border_radius":"50%","border":["","solid","#000000"]}
             icon_model = add_plugin(self.placeholder, FramedIconPlugin, 'en', target=container_model,

@@ -405,7 +405,10 @@
                       {
                         "glossary":{
                           "font_size":"10em",
-                          "color":"#ffffff",
+                          "color":[
+                            "",
+                            "#ffffff"
+                          ],
                           "background_color":[
                             "disabled",
                             "#ffffff"
@@ -532,7 +535,10 @@
                       {
                         "glossary":{
                           "font_size":"10em",
-                          "color":"#ffffff",
+                          "color":[
+                            "",
+                            "#ffffff"
+                          ],
                           "background_color":[
                             "disabled",
                             "#ffffff"
@@ -659,7 +665,10 @@
                       {
                         "glossary":{
                           "font_size":"10em",
-                          "color":"#ffffff",
+                          "color":[
+                            "",
+                            "#ffffff"
+                          ],
                           "background_color":[
                             "disabled",
                             "#ffffff"
