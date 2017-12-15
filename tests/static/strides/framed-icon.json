@@ -7,7 +7,10 @@
         "glossary":{
           "symbol":"umbrella",
           "border_radius":"",
-          "color":"#ffffff",
+          "color":[
+            "",
+            "#ffffff"
+          ],
           "text_align":"text-center",
           "hide_plugin":"",
           "icon_font":"1",
