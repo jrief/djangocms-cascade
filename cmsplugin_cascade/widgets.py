@@ -171,7 +171,8 @@ class ColorPickerWidget(widgets.MultiWidget):
 
     def decompress(self, values):
         if not isinstance(values, (list, tuple)) or len(values) != 2:
-            values = ('disabled', self.DEFAULT_COLOR,)
+            # Disabled on
+            values = ('on', self.DEFAULT_COLOR,)
         return values
 
     def value_from_datadict(self, data, files, name):
