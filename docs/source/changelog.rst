@@ -4,6 +4,7 @@ Release History
 
 0.15.4
 ======
+* Fix: Plugin Image should not have duplicate css_classes and inline_styles if there is a link.
 * Fix: In ``FramedIconPlugin``, use ``ColorWidget`` for glossary attribute ``color`` instead of
  using a text field. This allows to inherit the foreground color from the given CSS settings.
  This fix required to run migration ``0018_iconfont_color``.
