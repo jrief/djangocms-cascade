@@ -30,6 +30,7 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     default_css_class = 'img-responsive'
     default_css_attributes = ('image_shapes',)
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
+    html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
     fields = ['image_file'] + list(LinkPluginBase.fields)
     RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
                       ('subject_location', _("With subject location")),
