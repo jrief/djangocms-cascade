@@ -2,6 +2,10 @@
 Release History
 ===============
 
+UNRELEASED
+==========
+* Fix: Plugin Image should not have duplicate css_classes and inline_styles if there is a link.
+
 0.15.4
 ======
 * Fix: In ``FramedIconPlugin``, use ``ColorWidget`` for glossary attribute ``color`` instead of
