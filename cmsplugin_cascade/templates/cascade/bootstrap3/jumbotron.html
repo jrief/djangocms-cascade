@@ -1,5 +1,6 @@
-{% load cascade_tags thumbnail sekizai_tags %}
-{% addtoblock "css" %}
+{% load l10n cascade_tags thumbnail sekizai_tags %}
+
+{% addtoblock "css" %}{% localize off %}
 <style>
 #cascadeelement_id-{{ instance.pk }} {
 	{{ instance.background_color }}
@@ -22,11 +23,12 @@
 }
 {% endfor %}
 </style>
-{% endaddtoblock %}
-{% spaceless %}
+{% endlocalize %}{% endaddtoblock %}
+
+{% localize off %}{% spaceless %}
 <div id="cascadeelement_id-{{ instance.pk }}" class="{{ instance.css_classes }}">
-{% for plugin in instance.child_plugin_instances %}
-	{% render_plugin plugin %}
-{% endfor %}
+	{% for plugin in instance.child_plugin_instances %}
+		{% render_plugin plugin %}
+	{% endfor %}
 </div>
-{% endspaceless %}
+{% endspaceless %}{% endlocalize %}

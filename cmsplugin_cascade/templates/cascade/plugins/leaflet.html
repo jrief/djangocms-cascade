@@ -1,9 +1,9 @@
-{% load static sekizai_tags thumbnail l10n %}
+{% load l10n static sekizai_tags thumbnail %}
 
 {% addtoblock "css" %}<link href="{% static 'node_modules/leaflet/dist/leaflet.css' %}" rel="stylesheet" type="text/css" />{% endaddtoblock %}
 {% addtoblock "js" %}<script src="{% static 'node_modules/leaflet/dist/leaflet.js' %}" type="text/javascript"></script>{% endaddtoblock %}
 
-{% addtoblock "css" %}
+{% addtoblock "css" %}{% localize off %}
 <style>
 #cascadeelement_id-{{ instance.pk }} {
 	width: {{ instance.glossary.map_width }};
@@ -11,9 +11,9 @@
   {% if	instance.glossary.map_min_height %} min-height: {{ instance.glossary.map_min_height }}; {% endif %}
 }
 </style> 
-{% endaddtoblock %}
+{% endlocalize %}{% endaddtoblock %}
 
-{% addtoblock "js" %}
+{% addtoblock "js" %}{% localize off %}
 <script type="text/javascript">
 (function() {
 	var mapPosition = {{ instance.map_position }};
@@ -49,6 +49,6 @@
 	{% endfor %}
 })();
 </script>
-{% endaddtoblock %}
+{% endlocalize %}{% endaddtoblock %}
 
-<div id="cascadeelement_id-{{ instance.pk }}"></div>
+<div id="cascadeelement_id-{{ instance.pk|unlocalize }}"></div>

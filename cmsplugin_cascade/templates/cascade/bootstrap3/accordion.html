@@ -1,7 +1,7 @@
-{% load cascade_tags %}
+{% load l10n cascade_tags %}
 
-{% spaceless %}
-{% with inline_styles=instance.inline_styles plugin_id=instance.id %}
+{% localize off %}{% spaceless %}
+	{% with inline_styles=instance.inline_styles plugin_id=instance.id %}
 <div id="cmsplugin_{{ plugin_id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 	{% for panel in instance.child_plugin_instances %}
 		{% with panel_type=panel.glossary.panel_type heading_tag=panel.glossary.heading_size|default:"div" panel_title=panel.glossary.panel_title|safe %}
@@ -18,4 +18,5 @@
 		{% endwith %}
 	{% endfor %}
 </div>
-{% endwith %}{% endspaceless %}
+	{% endwith %}
+{% endspaceless %}{% endlocalize %}
