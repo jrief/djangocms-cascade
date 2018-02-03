@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django import VERSION as DJANGO_VERSION
 from django.contrib import admin
 from django.contrib.admin.templatetags.admin_static import static
 from django.forms import widgets
@@ -29,7 +30,10 @@ class JSONAdminWidget(widgets.Textarea):
     def render(self, name, value, attrs=None):
         if value is None:
             value = ''
-        final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
+        if DJANGO_VERSION < (1, 11):
+            final_attrs = self.build_attrs(attrs, name=name)
+        else:
+            final_attrs = self.build_attrs(self.attrs, extra_attrs=dict(attrs, name=name))
         id_data = attrs.get('id', 'id_data')
         clippy_url = static('cascade/admin/clippy.svg')
         return format_html('<textarea{0}>\r\n{1}</textarea> '
