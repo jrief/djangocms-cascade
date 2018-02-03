@@ -2,9 +2,13 @@
 Release History
 ===============
 
-UNRELEASED
-==========
-* Fix: Plugin Image should not have duplicate css_classes and inline_styles if there is a link.
+0.15.5
+======
+* Fix: ImagePlugin should not have duplicate css_classes and inline_styles if there is a link.
+* Fix regression: Cascade Clipboard did not work anymore with Django<=1.10.
+* Fix: If ``USE_THOUSAND_SEPARATOR`` was set to ```True``, some templates where not unlocalized
+  properly.
+
 
 0.15.4
 ======
