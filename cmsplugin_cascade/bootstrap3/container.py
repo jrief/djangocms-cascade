@@ -57,7 +57,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     require_parent = False
     form = BootstrapContainerForm
     glossary_variables = ['container_max_widths', 'media_queries']
-    glossary_field_order = ('breakpoints', 'fluid')
+    glossary_field_order = ('breakpoints', 'fluid', 'casconly')
 
     breakpoints = GlossaryField(
         ContainerBreakpointsWidget(choices=get_widget_choices()),
@@ -71,12 +71,21 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         label=_('Fluid Container'), initial=False,
         help_text=_("Changing your outermost '.container' to '.container-fluid'.")
     )
+    # suppress class="container" for this container
+    casconly = GlossaryField(
+        widgets.CheckboxInput(),
+        label=_('Cascade-only Container'), initial=False,
+        help_text=_("Changing your outermost '.container' to '.container-casconly'.")
+    )
 
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapContainerPlugin, cls).get_identifier(obj)
         breakpoints = obj.glossary.get('breakpoints')
-        content = obj.glossary.get('fluid') and '(fluid) ' or ''
+        if obj.glossary.get('casconly'):
+            content = '(casconly)'
+        else:
+            content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
             devices = ', '.join([force_text(BS3_BREAKPOINTS[bp][2]) for bp in breakpoints])
             content = _("{0}for {1}").format(content, devices)
@@ -85,10 +94,13 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = cls.super(BootstrapContainerPlugin, cls).get_css_classes(obj)
-        if obj.glossary.get('fluid'):
-            css_classes.append('container-fluid')
+        if not obj.glossary.get('casconly'):
+            if obj.glossary.get('fluid'):
+                css_classes.append('container-fluid')
+            else:
+                css_classes.append('container')
         else:
-            css_classes.append('container')
+            css_classes.append('container-casconly')
         return css_classes
 
     def save_model(self, request, obj, form, change):
