@@ -4,7 +4,9 @@ from __future__ import unicode_literals
 import io
 import json
 import os
+from distutils.version import LooseVersion
 
+from cms import __version__ as cms_version
 from cms.toolbar.utils import get_toolbar_from_request
 from django import template
 from django.conf import settings
@@ -17,6 +19,7 @@ from classytags.arguments import Argument
 from classytags.core import Options, Tag
 
 register = template.Library()
+CMS_LT_3_5 = LooseVersion(cms_version) < LooseVersion('3.5')
 
 
 class StrideRenderer(Tag):
@@ -71,14 +74,14 @@ class RenderPlugin(Tag):
         if not plugin:
             return ''
 
-        try:
+        if CMS_LT_3_5:
             content_renderer = context['cms_content_renderer']
             content = content_renderer.render_plugin(
                 instance=plugin,
                 context=context,
                 editable=content_renderer.user_is_on_edit_mode(),
             )
-        except KeyError:
+        else:
             toolbar = get_toolbar_from_request(context['request'])
             content_renderer = toolbar.content_renderer
             content = content_renderer.render_plugin(
