@@ -1,0 +1,5 @@
+{% spaceless %}{% with instance_link=instance.link %}
+{% block link_link %}
+        {% if instance_link %}<a href="{{ instance_link }}" {{ instance.html_tag_attributes }}>{% endif %}{% block link_content %}{{ instance.content }}{% endblock %}{% if instance_link %}</a>{% endif %}
+{% endblock %}
+{% endwith %}{% endspaceless %}

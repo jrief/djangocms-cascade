@@ -132,6 +132,7 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     default_css_class = 'img-responsive'
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)
+    html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     fields = ('image_file', 'glossary',)
     render_template = 'cascade/bootstrap3/carousel-slide.html'
     alien_child_classes = True

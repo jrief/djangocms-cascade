@@ -1,17 +1,17 @@
-{% load static sekizai_tags thumbnail l10n %}
+{% load l10n static sekizai_tags thumbnail %}
 
-{% addtoblock "css" %}
+{% addtoblock "css" %}{% localize off %}
 <style>
 #cascadeelement_id-{{ instance.pk }} {
 	width: {{ instance.glossary.map_width }};
 	height: {{ instance.glossary.map_height }};
 }
 </style>
-{% endaddtoblock %}
+{% endlocalize %}{% endaddtoblock %}
 
 {% addtoblock "js" %}<script async="async" defer="defer" src="https://maps.googleapis.com/maps/api/js?key={{ config.apiKey }}&callback=initMap"></script>{% endaddtoblock %}
 
-{% addtoblock "js" %}
+{% addtoblock "js" %}{% localize off %}
 <script type="text/javascript">
 function initMap() {
 	var mapPosition = {{ instance.map_position }};
@@ -43,6 +43,6 @@ function initMap() {
 	{% endfor %}
 }
 </script>
-{% endaddtoblock %}
+{% endlocalize %}{% endaddtoblock %}
 
-<div id="cascadeelement_id-{{ instance.pk }}"></div>
+<div id="cascadeelement_id-{{ instance.pk|unlocalize }}"></div>

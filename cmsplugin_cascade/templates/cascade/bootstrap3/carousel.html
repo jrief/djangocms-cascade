@@ -1,6 +1,6 @@
-{% load cascade_tags %}
-
-{% with bootstrap_element="carousel" inline_styles=instance.inline_styles plugin_id=instance.id %}
+{% load l10n cascade_tags %}
+{% localize off %}{% spaceless %}
+	{% with bootstrap_element="carousel" inline_styles=instance.inline_styles plugin_id=instance.id %}
 <div id="cmsplugin_{{ plugin_id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %} {{ instance.html_tag_attributes }}>
 	<ol class="carousel-indicators">
 	{% for slide in instance.child_plugin_instances %}
@@ -21,4 +21,5 @@
 		<span class="glyphicon glyphicon-chevron-right"></span>
 	</a>
 </div>
-{% endwith %}
+	{% endwith %}
+{% endspaceless %}{% endlocalize %}
