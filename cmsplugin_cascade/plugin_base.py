@@ -28,6 +28,8 @@ from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
 
+import json
+
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 fake_proxy_models = {}
@@ -381,8 +383,12 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         return form
 
     def save_model(self, request, new_obj, form, change):
+        if isinstance(new_obj.glossary, str):
+            new_obj.glossary=json.loads(new_obj.glossary)
         if change and self.glossary_variables:
             old_obj = super(CascadePluginBase, self).get_object(request, form.instance.id)
+            if isinstance(old_obj.glossary, str):
+                old_obj.glossary=json.loads(old_obj.glossary)
             for key in self.glossary_variables:
                 if key not in new_obj.glossary and key in old_obj.glossary:
                     # transfer listed glossary variable from the old to new object
