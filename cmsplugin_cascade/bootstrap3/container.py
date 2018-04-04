@@ -197,7 +197,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 choices = (('', _("Inherit from above")),) + \
                     tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
                 label = _("Column width for {}").format(devices)
-                help_text = chose_help_text(
+                help_text = choose_help_text(
                     _("Override column units for devices narrower than {} pixels."),
                     _("Override column units for devices wider than {} pixels."),
                     _("Override column units for all devices.")
@@ -220,7 +220,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 tuple(('col-{}-offset-{}'.format(bp, i), units[i])
                       for i in offset_range)
             label = _("Offset for {}").format(devices)
-            help_text = chose_help_text(
+            help_text = choose_help_text(
                 _("Number of offset units for devices narrower than {} pixels."),
                 _("Number of offset units for devices wider than {} pixels."),
                 _("Number of offset units for all devices.")
@@ -236,7 +236,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 tuple(('col-{}-push-{}'.format(bp, i), _("Push {}").format(units[i])) for i in range(0, 12)) + \
                 tuple(('col-{}-pull-{}'.format(bp, i), _("Pull {}").format(units[i])) for i in range(0, 12))
             label = _("Column ordering for {0}").format(devices)
-            help_text = chose_help_text(
+            help_text = choose_help_text(
                 _("Column ordering for devices narrower than {} pixels."),
                 _("Column ordering for devices wider than {} pixels."),
                 _("Column ordering for all devices.")
@@ -250,7 +250,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             # handle responsive utilies
             choices = (('', _("Default")), ('visible-{}'.format(bp), _("Visible")), ('hidden-{}'.format(bp), _("Hidden")),)
             label = _("Responsive utilities for {}").format(devices)
-            help_text = chose_help_text(
+            help_text = choose_help_text(
                 _("Utility classes for showing and hiding content by devices narrower than {} pixels."),
                 _("Utility classes for showing and hiding content by devices wider than {} pixels."),
                 _("Utility classes for showing and hiding content for all devices.")
