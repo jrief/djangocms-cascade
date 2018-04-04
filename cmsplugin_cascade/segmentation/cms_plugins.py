@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import html
+try:
+    from html.parser import HTMLParser  # py3
+except ImportError:
+    from HTMLParser import HTMLParser  # py2
 
 from django.core.exceptions import ValidationError
 from django.forms import widgets, ModelForm
@@ -12,6 +15,8 @@ from django.template import engines, TemplateSyntaxError, Template as DjangoTemp
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
+
+html_parser = HTMLParser()
 
 
 class Template(DjangoTemplate):
@@ -30,7 +35,7 @@ class SegmentForm(ModelForm):
             if not glossary.get('condition'):
                 raise ValidationError(_("The evaluation condition is missing or empty."))
             try:
-                condition = html.unescape(glossary['condition'])
+                condition = html_parser.unescape(glossary['condition'])
                 engines['django'].from_string(self.eval_template_string.format(condition))
             except TemplateSyntaxError as err:
                 raise ValidationError(_("Unable to evaluate condition: {}.").format(str(err)))
@@ -83,7 +88,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
-            condition = html.unescape(instance.glossary['condition'])
+            condition = html_parser.unescape(instance.glossary['condition'])
             evaluated_to = False
             template_error_message = None
             try:
@@ -150,7 +155,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
         list(self.glossary_fields)[0].widget.choices = choices
         if obj:
             # remove escape quotes, added by JSON serializer
-            condition = html.unescape(obj.glossary.get('condition', ''))
+            condition = html_parser.unescape(obj.glossary.get('condition', ''))
             obj.glossary.update(condition=condition)
         form = super(SegmentPlugin, self).get_form(request, obj, **kwargs)
         return form
