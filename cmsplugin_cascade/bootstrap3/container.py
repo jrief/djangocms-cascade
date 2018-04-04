@@ -153,7 +153,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     glossary_variables = ['container_max_widths']
 
     def get_form(self, request, obj=None, **kwargs):
-        def chose_help_text(*phrases):
+        def choose_help_text(*phrases):
             if next_bp:
                 return phrases[0].format(*BS3_BREAKPOINTS[next_bp])
             elif len(breakpoints) > 1:
@@ -182,7 +182,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 # first breakpoint
                 choices = tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
                 label = _("Column width for {}").format(devices)
-                help_text = chose_help_text(
+                help_text = choose_help_text(
                     _("Number of column units for devices narrower than {} pixels."),
                     _("Number of column units for devices wider than {} pixels."),
                     _("Number of column units for all devices.")
