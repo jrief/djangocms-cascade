@@ -422,29 +422,25 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
 
     def get_previous_instance(self, obj):
         """
-        Return the previous instance pair for the current node.
-        This differs from get_previous_sibling() which returns an instance of the same kind.
+        Return the previous plugin instance for the given object.
+        This differs from `obj.get_prev_sibling()` which returns an unsorted sibling.
         """
-        try:
-            if obj and obj.parent and obj.position > 0:
-                prev_inst = obj.parent.get_children().order_by('position')[obj.position - 1]
-                return prev_inst.get_plugin_instance()
-        except ObjectDoesNotExist:
-            pass
-        return None, None
+        ordered_siblings = obj.get_siblings().filter(placeholder=obj.placeholder).order_by('position')
+        pos = list(ordered_siblings).index(obj.cmsplugin_ptr)
+        if pos > 0:
+            prev_sibling = ordered_siblings[pos - 1]
+            return prev_sibling.get_bound_plugin()
 
     def get_next_instance(self, obj):
         """
-        Return the next instance pair for the current node.
-        This differs from get_previous_sibling() which returns an instance of the same kind.
+        Return the next plugin instance for the given object.
+        This differs from `obj.get_next_sibling()` which returns an unsorted sibling.
         """
-        try:
-            if obj and obj.parent:
-                next_inst = obj.parent.get_children().order_by('position')[obj.position + 1]
-                return next_inst.get_plugin_instance()
-        except (IndexError, ObjectDoesNotExist):
-            pass
-        return None, None
+        ordered_siblings = obj.get_siblings().filter(placeholder=obj.placeholder).order_by('position')
+        pos = list(ordered_siblings).index(obj.cmsplugin_ptr)
+        if pos < ordered_siblings.count() - 1:
+            next_sibling = ordered_siblings[pos + 1]
+            return next_sibling.get_bound_plugin()
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         ring_plugin_bases = dict((ring_plugin, ['django.cascade.{}'.format(b) for b in bases])
