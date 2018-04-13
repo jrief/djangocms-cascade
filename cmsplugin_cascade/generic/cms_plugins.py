@@ -12,6 +12,8 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 
+import json
+
 
 class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
     name = _("Simple Wrapper")
@@ -37,6 +39,8 @@ class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
         return identifier
 
     def get_render_template(self, context, instance, placeholder):
+        if isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)    
         if instance.glossary.get('tag_type') == 'naked':
             return 'cascade/generic/naked.html'
         return 'cascade/generic/wrapper.html'
