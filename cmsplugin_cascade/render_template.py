@@ -33,6 +33,8 @@ class RenderTemplateMixin(with_metaclass(MediaDefiningClass)):
 
     def get_render_template(self, context, instance, placeholder):
         try:
+            if isinstance(instance.glossary, str):
+                instance.glossary=json.loads(instance.glossary)
             template = instance.glossary.get('render_template', self.get_template_choices()[0][0])
             get_template(template)
         except (IndexError, TemplateDoesNotExist):
