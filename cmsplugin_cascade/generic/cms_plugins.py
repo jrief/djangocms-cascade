@@ -87,6 +87,8 @@ class HeadingPlugin(CascadePluginBase):
 
     def render(self, context, instance, placeholder):
         context = self.super(HeadingPlugin, self).render(context, instance, placeholder)
+        while isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)
         context.update({'content': mark_safe(instance.glossary.get('content', ''))})
         return context
 
