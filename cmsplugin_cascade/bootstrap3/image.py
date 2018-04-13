@@ -23,9 +23,9 @@ import json
 
 class ImageFormMixin(object):
     LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
-        tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
+        tuple(t for t in getattr(LinkForm, '') if t[0] != 'email')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):LINK_TYPE_CHOICES
         super(ImageFormMixin, self).__init__(*args, **kwargs)
         try:
             self.fields['image_file'].initial = kwargs['instance'].image.pk
@@ -134,6 +134,8 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
         return super(BootstrapImagePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
+        while isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)
         is_responsive = 'img-responsive' in instance.glossary.get('image_shapes', [])
         options = dict(instance.get_complete_glossary(), is_responsive=is_responsive)
         if isinstance(instance.glossary, str):
