@@ -82,6 +82,8 @@ class ImagePropertyMixin(object):
     @property
     def image(self):
         if not hasattr(self, '_image_model'):
+            while isinstance(self.glossary, str):
+                self.glossary=json.loads(self.glossary)
             try:
                 Model = apps.get_model(*self.glossary['image']['model'].split('.'))
                 self._image_model = Model.objects.get(pk=self.glossary['image']['pk'])
