@@ -29,6 +29,7 @@ Initialize the database, create a superuser and start the development server:
 
 	$ cd examples
 	$ npm install
+	$ mkdir workdir && sqlite3 db.sqlite3 ".database"
 	$ ./manage.py migrate
 	$ ./manage.py createsuperuser
 	$ ./manage.py runserver
