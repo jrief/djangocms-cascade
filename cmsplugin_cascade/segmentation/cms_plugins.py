@@ -160,6 +160,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
             choices.extend([('elif', _("elif")), ('else', _("else"))])
         list(self.glossary_fields)[0].widget.choices = choices
         if obj:
+            if isinstance(obj.glossary, str):
+                obj.glossary=json.loads(obj.glossary)
             # remove escape quotes, added by JSON serializer
             condition = html_parser.unescape(obj.glossary.get('condition', ''))
             obj.glossary.update(condition=condition)
