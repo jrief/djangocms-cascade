@@ -18,6 +18,8 @@ from cmsplugin_cascade.widgets import CascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from . import utils
 
+import json
+
 
 class ImageFormMixin(object):
     LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
@@ -134,6 +136,8 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     def render(self, context, instance, placeholder):
         is_responsive = 'img-responsive' in instance.glossary.get('image_shapes', [])
         options = dict(instance.get_complete_glossary(), is_responsive=is_responsive)
+        if isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)
         tags = utils.get_image_tags(context, instance, options)
         if tags:
             extra_styles = tags.pop('extra_styles')
