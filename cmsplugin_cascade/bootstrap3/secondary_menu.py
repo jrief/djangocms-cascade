@@ -62,7 +62,7 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapSecondaryMenuPlugin, self).render(context, instance, placeholder)
-     	if isinstance(instance.glossary, str):
+        if isinstance(instance.glossary, str):
              instance.glossary=json.loads(instance.glossary)
         context.update({
             'page_id': instance.glossary['page_id'],
