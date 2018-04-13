@@ -8,6 +8,8 @@ from cms.models.pagemodel import Page
 from cmsplugin_cascade.fields import GlossaryField
 from .plugin_base import BootstrapPluginBase
 
+import json
+
 
 class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     """
