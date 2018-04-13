@@ -18,6 +18,7 @@ from .utils import get_widget_choices, compute_media_queries, get_picture_elemen
 from .container import ContainerBreakpointsWidget
 from .picture import BootstrapPicturePlugin
 
+import json
 
 class ImageBackgroundMixin(object):
     @property
