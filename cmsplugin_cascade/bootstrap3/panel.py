@@ -92,10 +92,14 @@ class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapPanelPlugin, cls).get_identifier(obj)
+        while isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)     
         heading = cls.html_parser.unescape(obj.glossary.get('heading', ''))
         return format_html('{0}{1}', identifier, heading)
 
     def render(self, context, instance, placeholder):
+        while isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)
         heading = self.html_parser.unescape(instance.glossary.get('heading', ''))
         footer = self.html_parser.unescape(instance.glossary.get('footer', ''))
         context.update({
