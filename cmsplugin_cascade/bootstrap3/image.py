@@ -23,9 +23,9 @@ import json
 
 class ImageFormMixin(object):
     LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
-        tuple(t for t in getattr(LinkForm, '') if t[0] != 'email')
+        tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
 
-    def __init__(self, *args, **kwargs):LINK_TYPE_CHOICES
+    def __init__(self, *args, **kwargs):
         super(ImageFormMixin, self).__init__(*args, **kwargs)
         try:
             self.fields['image_file'].initial = kwargs['instance'].image.pk
