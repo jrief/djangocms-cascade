@@ -94,7 +94,7 @@ class IconPluginMixin(CascadePluginMixinBase):
         if not hasattr(instance, '_cached_icon_font'):
             try:
                 while isinstance(instance.glossary, str):
-	            instance.glossary=json.loads(instance.glossary)
+                    instance.glossary=json.loads(instance.glossary)
                 instance._cached_icon_font = IconFont.objects.get(id=instance.glossary['icon_font'])
             except (IconFont.DoesNotExist, KeyError, ValueError):
                 instance._cached_icon_font = None
