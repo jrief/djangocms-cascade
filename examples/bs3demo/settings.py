@@ -254,7 +254,8 @@ CMS_PLACEHOLDER_CONF = {
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
-    'skin': 'moono',
+   # Use deflaut skin in place (moono-lisa) for djangocms_text_ckeditor 3.5.3
+   # 'skin': 'moono',
     'toolbar': 'CMS',
     'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
 }
