@@ -46,6 +46,8 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapSecondaryMenuPlugin, cls).get_identifier(obj)
+        if isinstance(obj.glossary, str):
+             obj.glossary=json.loads(obj.glossary)
         content = obj.glossary.get('page_id', '')
         return format_html('{0}{1}', identifier, content)
 
@@ -60,6 +62,8 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapSecondaryMenuPlugin, self).render(context, instance, placeholder)
+     	if isinstance(instance.glossary, str):
+             instance.glossary=json.loads(instance.glossary)
         context.update({
             'page_id': instance.glossary['page_id'],
             'offset': instance.glossary.get('offset', 0),
