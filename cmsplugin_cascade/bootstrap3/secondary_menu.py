@@ -76,6 +76,8 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, instance):
         try:
+            if isinstance(instance.glossary, str):
+                instance.glossary=json.loads(instance.glossary)
             if int(instance.glossary['offset']) < 0 or int(instance.glossary['limit']) < 0:
                 raise ValueError()
         except (KeyError, ValueError):
