@@ -25,6 +25,7 @@ from .plugin_base import BootstrapPluginBase
 from .image import ImageForm, ImageAnnotationMixin
 from .picture import BootstrapPicturePlugin
 
+import json
 
 class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
