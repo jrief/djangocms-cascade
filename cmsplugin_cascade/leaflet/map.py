@@ -186,7 +186,7 @@ class LeafletForm(ModelForm):
 
     def __init__(self, data=None, *args, **kwargs):
         try:
-            if isinstance(kwargs['instance'].glossary, str):
+            while isinstance(kwargs['instance'].glossary, str):
                 kwargs['instance'].glossary=json.loads(kwargs['instance'].glossary)
             initial = dict(kwargs['instance'].glossary)
         except (KeyError, AttributeError):
