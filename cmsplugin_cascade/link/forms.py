@@ -64,7 +64,7 @@ class LinkForm(ModelForm):
         instance = kwargs.get('instance')
         default_link_type = {'type': self.LINK_TYPE_CHOICES[0][0]}
         if instance :
-            if isinstance(instance.glossary, str):
+            while isinstance(instance.glossary, str):
                instance.glossary=json.loads(instance.glossary)
         initial = dict(instance.glossary) if instance else {'link': default_link_type}
         initial.update(kwargs.pop('initial', {}))
