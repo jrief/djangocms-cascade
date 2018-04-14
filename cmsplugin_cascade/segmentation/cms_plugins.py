@@ -124,7 +124,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
 
         request = context['request']
         edit_mode = self.in_edit_mode(request, placeholder)
-        if isinstance(instance.glossary, str):
+        while isinstance(instance.glossary, str):
             instance.glossary=json.loads(instance.glossary)
         open_tag = instance.glossary.get('open_tag')
         if open_tag == 'if':
