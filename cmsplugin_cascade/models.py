@@ -21,6 +21,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models_base import CascadeModelBase
 from cmsplugin_cascade import app_settings
 
+import json
 
 @python_2_unicode_compatible
 class SharedGlossary(models.Model):
@@ -84,6 +85,8 @@ class SharableCascadeElement(CascadeElement):
         """
         attribute = object.__getattribute__(self, name)
         if name == 'glossary' and self.shared_glossary:
+            if isinstance( attribute ,str):
+                 attribute=json.loads(attribute)
             attribute.update(self.shared_glossary.glossary)
         return attribute
 
