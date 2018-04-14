@@ -9,6 +9,7 @@ from django.template.loader import get_template, TemplateDoesNotExist
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 
+import json
 
 class RenderTemplateMixin(with_metaclass(MediaDefiningClass)):
     """
