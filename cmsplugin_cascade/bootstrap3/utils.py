@@ -66,6 +66,8 @@ def compute_media_queries(element):
     parent_glossary = element.get_parent_glossary()
     # compute the max width and the required media queries for each chosen breakpoint
     element.glossary['container_max_widths'] = max_widths = {}
+    if isinstance(element.glossary, str):
+       element.glossary=json.loads(element.glossary)
     element.glossary['media_queries'] = media_queries = {}
     breakpoints = element.glossary.get('breakpoints', parent_glossary.get('breakpoints', []))
     last_index = len(breakpoints) - 1
