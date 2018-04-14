@@ -36,7 +36,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         super(JSONMultiWidget, self).__init__((field.widget for field in self.normalized_fields))
 
     def decompress(self, values):
-        if isinstance(values, str):
+        while isinstance(values, str):
             values=json.loads(values)    
         if not isinstance(values, dict):
             values = json.loads(values or '{}')
