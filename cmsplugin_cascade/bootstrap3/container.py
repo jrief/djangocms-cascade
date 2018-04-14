@@ -75,9 +75,9 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        if isinstance(obj.glossary, str):
-            obj.glossary=json.loads(obj.glossary)
         identifier = super(BootstrapContainerPlugin, cls).get_identifier(obj)
+        while isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         breakpoints = obj.glossary.get('breakpoints')
         content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
