@@ -188,7 +188,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
 
     @classmethod
     def sanitize_model(cls, obj):
-        if isinstance(obj.glossary, str):
+        while isinstance(obj.glossary, str):
             obj.glossary=json.loads(obj.glossary)
         # if the jumbotron is the root of the placeholder, we consider it as "fluid"
         obj.glossary['fluid'] = obj.parent is None
