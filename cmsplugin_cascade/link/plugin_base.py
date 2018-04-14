@@ -100,6 +100,6 @@ class LinkElementMixin(object):
 
     @property
     def content(self):        
-        if isinstance(self.glossary,str):
+        while isinstance(self.glossary,str):
             self.glossary=json.loads(self.glossary)
         return mark_safe(self.glossary.get('link_content', ''))
