@@ -84,7 +84,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         try:
-            if isinstance(obj.glossary, str):
+            while isinstance(obj.glossary, str):
                 obj.glossary=json.loads(obj.glossary)
             return mark_safe("<strong><em>{open_tag}</em></strong> {condition}".format(**obj.glossary))
         except KeyError:
