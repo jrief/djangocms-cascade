@@ -11,7 +11,7 @@ django-sekizai==0.10.0
 Django-Select2==5.11.1
 django-treebeard==4.1.2
 djangocms-bootstrap3==0.3.0
-djangocms-text-ckeditor==3.4.0
+djangocms-text-ckeditor==3.5.3
 easy-thumbnails==2.5.0
 html5lib==0.9999999
 jsonfield==1.0.3
