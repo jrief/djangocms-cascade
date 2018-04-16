@@ -107,10 +107,6 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
 plugin_pool.register_plugin(FramedIconPlugin)
 
 
-#class TextIconFormMixin(object):
-#    LINK_TYPE_CHOICES = (('none', _("No Link")),) + tuple(getattr(LinkForm, 'LINK_TYPE_CHOICES'))
-
-
 class TextIconModelMixin(object):
     @cached_property
     def icon_font_class(self):
