@@ -2,69 +2,18 @@
 from __future__ import unicode_literals
 
 from django.forms import widgets, ModelChoiceField
-from django.forms.models import ModelForm
-from django.db.models.fields.related import ManyToOneRel
-from django.contrib.admin.sites import site
 from django.utils.html import format_html
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
-from filer.fields.image import AdminFileWidget, FilerImageField
+
 from filer.models.imagemodels import Image
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
-from cmsplugin_cascade.mixins import ImagePropertyMixin
+from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from . import utils
-
-
-class ImageFormMixin(object):
-    LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
-        tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-
-    def __init__(self, *args, **kwargs):
-        super(ImageFormMixin, self).__init__(*args, **kwargs)
-        try:
-            self.fields['image_file'].initial = kwargs['instance'].image.pk
-        except (AttributeError, KeyError):
-            pass
-        self.fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-
-    def clean_glossary(self):
-        # TODO: remove this someday
-        assert isinstance(self.cleaned_data['glossary'], dict)
-        return self.cleaned_data['glossary']
-
-    def clean(self):
-        cleaned_data = super(ImageFormMixin, self).clean()
-        if self.is_valid() and cleaned_data['image_file']:
-            image_data = {'pk': cleaned_data['image_file'].pk, 'model': 'filer.Image'}
-            cleaned_data['glossary'].update(image=image_data)
-        self.cleaned_data.pop('image_file', None)
-        return cleaned_data
-
-
-class ImageForm(ImageFormMixin, ModelForm):
-    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-
-
-class ImageAnnotationMixin(CascadePluginMixinBase):
-    """
-    This mixin class prepends the glossary fields 'image_title' and 'alt_tag' in front of the
-    glossary fields provided by the class LinkPluginBase.
-    """
-    image_title = GlossaryField(
-        widgets.TextInput(),
-        label=_('Image Title'),
-        help_text=_("Caption text added to the 'title' attribute of the <img> element."),
-    )
-
-    alt_tag = GlossaryField(
-        widgets.TextInput(),
-        label=_('Alternative Description'),
-        help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
-    )
 
 
 class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
@@ -125,9 +74,11 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         utils.reduce_breakpoints(self, 'responsive_heights', request=request, obj=obj)
+        LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
+            tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
         Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-            {'LINK_TYPE_CHOICES': ImageFormMixin.LINK_TYPE_CHOICES, 'image_file': image_file})
+                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
         kwargs.update(form=Form)
         return super(BootstrapImagePlugin, self).get_form(request, obj, **kwargs)
 

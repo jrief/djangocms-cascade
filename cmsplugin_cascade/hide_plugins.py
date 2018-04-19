@@ -32,7 +32,7 @@ background-size: contain;
 
     def get_form(self, request, obj=None, **kwargs):
         glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
-        glossary_fields.insert(0, GlossaryField(
+        glossary_fields.append(GlossaryField(
             widgets.CheckboxInput(),
             label=_("Hide plugin"),
             name='hide_plugin',

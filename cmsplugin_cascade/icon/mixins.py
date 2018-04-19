@@ -33,7 +33,7 @@ class IconModelMixin(object):
                 styles['border-radius'] = radius
         attrs.append(format_html('style="{}"',
                                  format_html_join('', '{0}:{1};',
-                                                  [(k , v) for k, v in styles.items()])))
+                                                  [(k, v) for k, v in styles.items()])))
         return mark_safe(' '.join(attrs))
 
 

@@ -26,7 +26,7 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
-from cmsplugin_cascade.mixins import ImagePropertyMixin
+from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
 from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
 

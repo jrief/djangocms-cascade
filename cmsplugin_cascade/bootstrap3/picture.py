@@ -9,10 +9,9 @@ from django.utils.translation import ugettext_lazy as _
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.mixins import ImagePropertyMixin
+from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from .image import ImageFormMixin, ImageAnnotationMixin
 from .utils import BS3_BREAKPOINT_KEYS, reduce_breakpoints, get_picture_elements
 
 
@@ -62,9 +61,11 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         reduce_breakpoints(self, 'responsive_heights')
+        LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
+                            tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
         Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-            {'LINK_TYPE_CHOICES': ImageFormMixin.LINK_TYPE_CHOICES, 'image_file': image_file})
+                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
         kwargs.update(form=Form)
         return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
 
