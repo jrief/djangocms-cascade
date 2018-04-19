@@ -39,11 +39,11 @@ class IconModelMixin(object):
 
 class IconPluginMixin(CascadePluginMixinBase):
     change_form_template = 'cascade/admin/fonticon_plugin_change_form.html'
-    ring_plugin = 'IconPlugin'
+    ring_plugin = 'IconPluginMixin'
 
     class Media:
         css = {'all': ['cascade/css/admin/iconplugin.css']}
-        js = ['cascade/js/admin/iconplugin.js']
+        js = ['cascade/js/admin/iconpluginmixin.js']
 
     @classmethod
     def get_identifier(cls, instance):
