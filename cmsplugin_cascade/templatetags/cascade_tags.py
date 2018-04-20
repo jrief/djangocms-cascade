@@ -19,7 +19,7 @@ from classytags.arguments import Argument
 from classytags.core import Options, Tag
 
 register = template.Library()
-CMS_LT_3_5 = LooseVersion(cms_version) < LooseVersion('3.5')
+CMS_LT_3_4 = LooseVersion(cms_version) < LooseVersion('3.5')
 
 
 class StrideRenderer(Tag):
@@ -74,7 +74,7 @@ class RenderPlugin(Tag):
         if not plugin:
             return ''
 
-        if CMS_LT_3_5:
+        if CMS_LT_3_4:
             content_renderer = context['cms_content_renderer']
             content = content_renderer.render_plugin(
                 instance=plugin,

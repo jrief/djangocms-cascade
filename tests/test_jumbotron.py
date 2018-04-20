@@ -15,7 +15,7 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
         BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.jumbotron import BootstrapJumbotronPlugin, ImageBackgroundMixin
-from cmsplugin_cascade.mixins import ImagePropertyMixin
+from cmsplugin_cascade.image import ImagePropertyMixin
 from .test_base import CascadeTestCase
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])

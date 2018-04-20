@@ -1,11 +1,29 @@
 django.jQuery(function($) {
 	'use strict';
 	var $link_type = $("#id_link_type"), $cmspage_select = $("#id_cms_page");
+	var $link_target = $(".glossary-widget .glossary_target");
 
 	django.cascade.LinkPluginBase = ring.create({
+		LinkType: ring.create({
+			constructor: function(selector, addTarget) {
+				this.$element = $(selector);
+				this.addTarget = Boolean(addTarget);
+			},
+			show: function() {
+				this.$element.show();
+				if (this.addTarget) {
+					$link_target.show();
+				}
+			},
+			hide: function() {
+				this.$element.hide();
+			}
+		}),
 		constructor: function() {
 			var self = this;
 			this.$super();
+			this.linkTypes = {};
+			this.initializeLinkTypes();
 
 			// register event handlers on changing link_type and cms_page select boxes
 			$link_type.change(function(evt) {
@@ -16,37 +34,21 @@ django.jQuery(function($) {
 			});
 			this.refreshChangeForm();
 		},
-		toggleLinkTypes: function(linkType) {
-			var $field_cmspage = $(".form-row .field-box.field-cms_page, .form-row .field-box.field-section"),
-			    $field_exturl = $(".form-row .field-box.field-ext_url"),
-			    $field_mailto = $(".form-row .field-box.field-mail_to"),
-			    $link_target = $(".glossary-widget .glossary_target");
-
-			switch(linkType) {
-			case 'cmspage':
-				$field_cmspage.show();
-				$field_exturl.hide();
-				$field_mailto.hide();
-				$link_target.show();
-				break;
-			case 'exturl':
-				$field_cmspage.hide();
-				$field_exturl.show();
-				$field_mailto.hide();
-				$link_target.show();
-				break;
-			case 'email':
-				$field_cmspage.hide();
-				$field_exturl.hide();
-				$field_mailto.show();
+		initializeLinkTypes: function() {
+			this.linkTypes['cmspage'] = new this.LinkType('.form-row .field-box.field-cms_page, .form-row .field-box.field-section', true);
+			this.linkTypes['exturl'] = new this.LinkType('.form-row .field-box.field-ext_url', true);
+			this.linkTypes['email'] = new this.LinkType('.form-row .field-box.field-mail_to');
+		},
+		toggleLinkTypes: function(linkTypeName) {
+			$.each(this.linkTypes, function(name, linkType) {
+				if (name === linkTypeName) {
+					linkType.show();
+				} else {
+					linkType.hide();
+				}
+			});
+			if (!this.linkTypes[linkTypeName].addTarget) {
 				$link_target.hide();
-				break;
-			default:
-				$field_cmspage.hide();
-				$field_exturl.hide();
-				$field_mailto.hide();
-				$link_target.hide();
-				break;
 			}
 		},
 		toggleSharedGlossary: function($option) {

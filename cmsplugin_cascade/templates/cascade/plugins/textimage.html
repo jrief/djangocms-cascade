@@ -1,0 +1,10 @@
+{% load thumbnail %}
+{% spaceless %}
+{% with css_classes=instance.css_classes inline_styles=instance.inline_styles instance_link=instance.link %}
+{% if instance_link %}<a href="{{ instance_link }}" {{ instance.html_tag_attributes }}>{% endif %}
+<img {{ instance.html_tag_attributes }}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}
+	{% thumbnail instance.image src.size crop=src.crop upscale=src.upscale subject_location=src.subject_location as thumb %}
+	src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}"
+	{% if src.high_resolution %}{% thumbnail instance.image src.size2x crop=src.crop upscale=src.upscale subject_location=src.subject_location as thumb2 %}srcset="{{ thumb2.url }} 2x"{% endif %} />
+{% if instance_link %}</a>{% endif %}
+{% endwith %}{% endspaceless %}
