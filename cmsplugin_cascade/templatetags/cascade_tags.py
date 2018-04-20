@@ -83,7 +83,10 @@ class RenderPlugin(Tag):
             )
         else:
             toolbar = get_toolbar_from_request(context['request'])
-            content_renderer = toolbar.content_renderer
+            if  'cms_content_renderer' in context:
+               	content_renderer=context['cms_content_renderer']
+            else:
+                content_renderer = toolbar.content_renderer
             content = content_renderer.render_plugin(
                 instance=plugin,
                 context=context,

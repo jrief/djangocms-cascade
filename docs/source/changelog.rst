@@ -12,6 +12,7 @@ Release History
 * Move common image functionality into utility class ``cmsplugin_cascade/image.py``.
 * Optional checkbox to hide plugin is moved at the end of the editor window.
 
+
 0.15.5
 ======
 * Fix: ImagePlugin should not have duplicate css_classes and inline_styles if there is a link.

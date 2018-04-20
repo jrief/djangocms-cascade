@@ -9,6 +9,7 @@ from django.utils import six
 
 from cmsplugin_cascade.models import InlineCascadeElement, SortableInlineCascadeElement
 
+import json
 
 class CascadePluginMixin(object):
     """
@@ -21,6 +22,8 @@ class CascadePluginMixin(object):
         """
         Return the tag_type used to render this plugin.
         """
+        if isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)
         return instance.glossary.get('tag_type', getattr(self, 'tag_type', 'div'))
 
     @classmethod
