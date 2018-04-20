@@ -254,7 +254,7 @@ CMS_PLACEHOLDER_CONF = {
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
-    'skin': 'moono',
+    #'skin': 'moono',
     'toolbar': 'CMS',
     'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
 }
