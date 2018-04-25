@@ -15,6 +15,10 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
 
     def setUp(self):
         self.home_page = create_page(title='HOME', template='testing.html', language='en')
+        if not self.home_page.is_home:
+            # >= Django CMS v3.5.x
+            self.home_page.set_as_homepage()
+
         self.placeholder = self.home_page.placeholders.get(slot='Main Content')
 
         self.request = self.get_request(self.home_page, 'en')

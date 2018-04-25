@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     #'reversion',
+    'djangocms_history',
     'djangocms_text_ckeditor',
     'django_select2',
     'cmsplugin_cascade',

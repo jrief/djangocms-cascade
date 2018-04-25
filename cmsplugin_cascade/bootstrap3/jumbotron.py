@@ -2,18 +2,19 @@
 from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
-from django.forms import widgets
+from django.forms import widgets, ModelChoiceField
+from django.forms.models import ModelForm
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
+from filer.models.imagemodels import Image
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.mixins import ImagePropertyMixin
+from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget
 from .plugin_base import BootstrapPluginBase
-from .image import ImageForm
 from .utils import get_widget_choices, compute_media_queries, get_picture_elements, BS3_BREAKPOINT_KEYS
 from .container import ContainerBreakpointsWidget
 from .picture import BootstrapPicturePlugin
@@ -65,10 +66,12 @@ class ImageBackgroundMixin(object):
         return ''
 
 
-class JumbotronPluginForm(ImageForm):
+class JumbotronPluginForm(ImageFormMixin, ModelForm):
     """
     Form class to validate the JumbotronPlugin.
     """
+    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
+
     def clean_glossary(self):
         glossary = super(JumbotronPluginForm, self).clean_glossary()
         if glossary['background_size'] == 'width/height' and not glossary['background_width_height']['width']:

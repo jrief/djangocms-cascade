@@ -160,20 +160,14 @@ class StridePluginBase(CascadePluginMixin):
             for pos, sibling in enumerate(obj.parent.children_data):
                 if sibling[1].get('pk') == obj.pk and pos > 0:
                     prev_pt, prev_data, prev_cd = obj.parent.children_data[pos - 1]
-                    plugin = strides_plugin_map[prev_pt]()
-                    element_class = strides_element_map.get(prev_pt)
-                    return element_class(plugin, prev_data, prev_cd, parent=obj.parent), plugin
-        return None, None
+                    return strides_plugin_map[prev_pt]()
 
     def get_next_instance(self, obj):
         if obj and obj.parent:
             for pos, sibling in enumerate(obj.parent.children_data):
                 if sibling[1].get('pk') == obj.pk and pos < len(obj.parent.children_data):
                     next_pt, next_data, next_cd = obj.parent.children_data[pos + 1]
-                    plugin = strides_plugin_map[next_pt]()
-                    element_class = strides_element_map.get(next_pt)
-                    return element_class(plugin, next_data, next_cd, parent=obj.parent), plugin
-        return None, None
+                    return strides_plugin_map[next_pt]()
 
 
 class TextStridePlugin(StridePluginBase):
