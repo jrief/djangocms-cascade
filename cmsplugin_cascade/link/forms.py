@@ -14,6 +14,8 @@ from cms.models import Page
 from cmsplugin_cascade.models import CascadePage
 from cmsplugin_cascade.utils import validate_link
 
+import json
+
 if 'django_select2' in settings.INSTALLED_APPS:
     Select2Widget = import_string('django_select2.forms.Select2Widget')
 else:
@@ -61,6 +63,9 @@ class LinkForm(ModelForm):
     def __init__(self, data=None, *args, **kwargs):
         instance = kwargs.get('instance')
         default_link_type = {'type': self.LINK_TYPE_CHOICES[0][0]}
+        if instance :
+            while isinstance(instance.glossary, str):
+               instance.glossary=json.loads(instance.glossary)
         initial = dict(instance.glossary) if instance else {'link': default_link_type}
         initial.update(kwargs.pop('initial', {}))
         initial.setdefault('link', {'type': default_link_type})

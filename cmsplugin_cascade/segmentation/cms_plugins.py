@@ -16,6 +16,8 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 
+import json
+
 html_parser = HTMLParser()
 
 
@@ -82,6 +84,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         try:
+            while isinstance(obj.glossary, str):
+                obj.glossary=json.loads(obj.glossary)
             return mark_safe("<strong><em>{open_tag}</em></strong> {condition}".format(**obj.glossary))
         except KeyError:
             return ''
@@ -120,6 +124,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
 
         request = context['request']
         edit_mode = self.in_edit_mode(request, placeholder)
+        while isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)
         open_tag = instance.glossary.get('open_tag')
         if open_tag == 'if':
             template = conditionally_eval()
@@ -154,6 +160,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
             choices.extend([('elif', _("elif")), ('else', _("else"))])
         list(self.glossary_fields)[0].widget.choices = choices
         if obj:
+            if isinstance(obj.glossary, str):
+                obj.glossary=json.loads(obj.glossary)
             # remove escape quotes, added by JSON serializer
             condition = html_parser.unescape(obj.glossary.get('condition', ''))
             obj.glossary.update(condition=condition)

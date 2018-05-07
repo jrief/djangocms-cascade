@@ -8,6 +8,8 @@ from cms.models.pagemodel import Page
 from cmsplugin_cascade.fields import GlossaryField
 from .plugin_base import BootstrapPluginBase
 
+import json
+
 
 class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     """
@@ -46,6 +48,8 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapSecondaryMenuPlugin, cls).get_identifier(obj)
+        if isinstance(obj.glossary, str):
+             obj.glossary=json.loads(obj.glossary)
         content = obj.glossary.get('page_id', '')
         return format_html('{0}{1}', identifier, content)
 
@@ -60,6 +64,8 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapSecondaryMenuPlugin, self).render(context, instance, placeholder)
+        while isinstance(instance.glossary, str):
+             instance.glossary=json.loads(instance.glossary)
         context.update({
             'page_id': instance.glossary['page_id'],
             'offset': instance.glossary.get('offset', 0),
@@ -70,6 +76,8 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, instance):
         try:
+            if isinstance(instance.glossary, str):
+                instance.glossary=json.loads(instance.glossary)
             if int(instance.glossary['offset']) < 0 or int(instance.glossary['limit']) < 0:
                 raise ValueError()
         except (KeyError, ValueError):

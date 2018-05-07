@@ -33,7 +33,7 @@ background-size: contain;
 
     def get_form(self, request, obj=None, **kwargs):
         glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
-        glossary_fields.insert(0, GlossaryField(
+        glossary_fields.append(GlossaryField(
             widgets.CheckboxInput(),
             label=_("Hide plugin"),
             name='hide_plugin',
@@ -43,7 +43,7 @@ background-size: contain;
         return super(HidePluginMixin, self).get_form(request, obj, **kwargs)
 
     def get_render_template(self, context, instance, placeholder):
-        if isinstance(instance.glossary, str):
+        while isinstance(instance.glossary, str):
             instance.glossary=json.loads(instance.glossary)
         if instance.glossary.get('hide_plugin'):
             if self.in_edit_mode(context['request'], placeholder):

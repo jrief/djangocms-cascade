@@ -9,6 +9,8 @@ from django.utils.safestring import mark_safe
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
+import json
+
 
 class IconModelMixin(object):
     @property
@@ -33,17 +35,17 @@ class IconModelMixin(object):
                 styles['border-radius'] = radius
         attrs.append(format_html('style="{}"',
                                  format_html_join('', '{0}:{1};',
-                                                  [(k , v) for k, v in styles.items()])))
+                                                  [(k, v) for k, v in styles.items()])))
         return mark_safe(' '.join(attrs))
 
 
 class IconPluginMixin(CascadePluginMixinBase):
     change_form_template = 'cascade/admin/fonticon_plugin_change_form.html'
-    ring_plugin = 'IconPlugin'
+    ring_plugin = 'IconPluginMixin'
 
     class Media:
         css = {'all': ['cascade/css/admin/iconplugin.css']}
-        js = ['cascade/js/admin/iconplugin.js']
+        js = ['cascade/js/admin/iconpluginmixin.js']
 
     @classmethod
     def get_identifier(cls, instance):
@@ -91,6 +93,8 @@ class IconPluginMixin(CascadePluginMixinBase):
     def get_icon_font(self, instance):
         if not hasattr(instance, '_cached_icon_font'):
             try:
+                while isinstance(instance.glossary, str):
+                    instance.glossary=json.loads(instance.glossary)
                 instance._cached_icon_font = IconFont.objects.get(id=instance.glossary['icon_font'])
             except (IconFont.DoesNotExist, KeyError, ValueError):
                 instance._cached_icon_font = None

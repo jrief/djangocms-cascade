@@ -18,6 +18,8 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 
+import json
+
 from .plugin_base import BootstrapPluginBase
 from .panel import panel_heading_sizes, PanelTypeWidget
 
@@ -101,6 +103,8 @@ class BootstrapAccordionPanelPlugin(TransparentContainer, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapAccordionPanelPlugin, cls).get_identifier(obj)
+        if isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         panel_title = HTMLParser().unescape(obj.glossary.get('panel_title', ''))
         panel_title = Truncator(panel_title).words(3, truncate=' ...')
         return format_html('{0}{1}', identifier, panel_title)

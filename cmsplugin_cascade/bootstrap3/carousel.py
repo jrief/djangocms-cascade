@@ -7,24 +7,25 @@ try:
 except ImportError:
     from HTMLParser import HTMLParser  # py2
 
-from django.forms import widgets
+from django.forms import widgets, ModelChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
 
 from cms.plugin_pool import plugin_pool
+from filer.models.imagemodels import Image
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.mixins import ImagePropertyMixin
+from cmsplugin_cascade.image import ImageAnnotationMixin, ImagePropertyMixin, ImageFormMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from . import utils
 from .plugin_base import BootstrapPluginBase
-from .image import ImageForm, ImageAnnotationMixin
 from .picture import BootstrapPicturePlugin
 
+import json
 
 class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
@@ -125,10 +126,14 @@ class CarouselPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(CarouselPlugin)
 
 
+class CarouselSlideForm(ImageFormMixin, ModelForm):
+    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
+
+
 class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
-    form = ImageForm
+    form = CarouselSlideForm
     default_css_class = 'img-responsive'
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)
@@ -154,6 +159,8 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     def sanitize_model(cls, obj):
         sanitized = super(CarouselSlidePlugin, cls).sanitize_model(obj)
         resize_options = obj.get_parent_glossary().get('resize_options', [])
+        if isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         if obj.glossary.get('resize_options') != resize_options:
             obj.glossary.update(resize_options=resize_options)
             sanitized = True

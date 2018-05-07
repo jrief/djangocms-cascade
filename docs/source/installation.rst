@@ -25,28 +25,28 @@ djangocms-cascade-0.11.x
 ------------------------
 
 * Django_ >=1.8, <=1.9
-* DjangoCMS_ >=3.2, <=3.3
+* Django-CMS_ >=3.2, <=3.3
 * djangocms-text-ckeditor_ == 3.0
 
 djangocms-cascade-0.12.x
 ------------------------
 
 * Django_ >=1.9, <1.11
-* DjangoCMS_ >=3.4.3
+* Django-CMS_ >=3.4.3
 * djangocms-text-ckeditor_ >= 3.3
 
 djangocms-cascade-0.13.x
 ------------------------
 
 * Django_ >=1.9, <1.11
-* DjangoCMS_ >=3.4.3
+* Django-CMS_ >=3.4.3
 * djangocms-text-ckeditor_ >= 3.4
 
 djangocms-cascade-0.14.x
 ------------------------
 
 * Django_ >=1.9, <1.11
-* DjangoCMS_ >=3.4.4
+* Django-CMS_ >=3.4.4
 * djangocms-text-ckeditor_ >= 3.4
 * django-filer_ >= 1.2.8
 
@@ -259,7 +259,7 @@ Restrict plugins to a particular placeholder
 	    ...
 	}
 
-Unfortunately **djangoCMS** does not allow to declare dynamically which plugins are eligible to be
+Unfortunately **django-CMS** does not allow to declare dynamically which plugins are eligible to be
 added as children of other plugins. This is determined while bootstrapping the Django project and
 thus remains static. We therefore must somehow trick the CMS to behave as we want.
 
@@ -328,10 +328,11 @@ select box appears which allows to chose an alternative template for rendering.
 Template Customization
 ======================
 
-Make sure that the style sheets are referenced correctly by the used templates. DjangoCMS requires
-Django-Sekizai_ to organize these includes, so a strong recommendation is to use that Django app.
+Make sure that the style sheets are referenced correctly by the used templates. **Django-CMS**
+requires Django-Sekizai_ to organize these includes, so a strong recommendation is to use that
+Django app.
 
-The templates used for a DjangoCMS project shall include a header, footer, the menu bar and
+The templates used for a **django-CMS** project shall include a header, footer, the menu bar and
 optionally a breadcrumb, but should leave out an empty working area. When using HTML5, wrap this
 area into an ``<article>`` or ``<section>`` element or just use it unwrapped.
 
@@ -350,7 +351,7 @@ From now on, the page layout can be adopted inside this placeholder, without hav
 template coding anymore.
 
 .. _Django: http://djangoproject.com/
-.. _DjangoCMS: https://www.django-cms.org/
+.. _Django-CMS: https://www.django-cms.org/
 .. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/
 .. _pip: http://pypi.python.org/pypi/pip
 .. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/

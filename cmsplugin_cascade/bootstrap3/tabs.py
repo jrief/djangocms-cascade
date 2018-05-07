@@ -14,6 +14,7 @@ from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContain
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
 
+import json
 
 class TabForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
@@ -66,6 +67,8 @@ class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapTabPanePlugin, cls).get_identifier(obj)
+        if isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         content = obj.glossary.get('tab_title', '')
         if content:
             content = Truncator(content).words(3, truncate=' ...')
