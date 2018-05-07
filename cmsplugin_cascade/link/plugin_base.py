@@ -13,6 +13,7 @@ from cmsplugin_cascade.plugin_base import CascadePluginBase
 
 from .forms import LinkForm
 
+import json
 
 class LinkPluginBase(CascadePluginBase):
     allow_children = False
@@ -98,5 +99,7 @@ class LinkElementMixin(object):
         return self.plugin_class.get_link(self)
 
     @property
-    def content(self):
+    def content(self):        
+        while isinstance(self.glossary,str):
+            self.glossary=json.loads(self.glossary)
         return mark_safe(self.glossary.get('link_content', ''))

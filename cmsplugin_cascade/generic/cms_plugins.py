@@ -17,6 +17,8 @@ from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContaine
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 
+import json
+
 
 class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
     name = _("Simple Wrapper")
@@ -42,6 +44,8 @@ class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
         return identifier
 
     def get_render_template(self, context, instance, placeholder):
+        while isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)    
         if instance.glossary.get('tag_type') == 'naked':
             return 'cascade/generic/naked.html'
         return 'cascade/generic/wrapper.html'
@@ -88,6 +92,8 @@ class HeadingPlugin(CascadePluginBase):
 
     def render(self, context, instance, placeholder):
         context = self.super(HeadingPlugin, self).render(context, instance, placeholder)
+        while isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)
         context.update({'content': mark_safe(instance.glossary.get('content', ''))})
         return context
 

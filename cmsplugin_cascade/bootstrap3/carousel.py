@@ -25,6 +25,7 @@ from . import utils
 from .plugin_base import BootstrapPluginBase
 from .picture import BootstrapPicturePlugin
 
+import json
 
 class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
@@ -158,6 +159,8 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     def sanitize_model(cls, obj):
         sanitized = super(CarouselSlidePlugin, cls).sanitize_model(obj)
         resize_options = obj.get_parent_glossary().get('resize_options', [])
+        if isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         if obj.glossary.get('resize_options') != resize_options:
             obj.glossary.update(resize_options=resize_options)
             sanitized = True

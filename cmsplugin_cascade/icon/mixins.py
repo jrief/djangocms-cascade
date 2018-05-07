@@ -9,6 +9,8 @@ from django.utils.safestring import mark_safe
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
+import json
+
 
 class IconModelMixin(object):
     @property
@@ -91,6 +93,8 @@ class IconPluginMixin(CascadePluginMixinBase):
     def get_icon_font(self, instance):
         if not hasattr(instance, '_cached_icon_font'):
             try:
+                while isinstance(instance.glossary, str):
+                    instance.glossary=json.loads(instance.glossary)
                 instance._cached_icon_font = IconFont.objects.get(id=instance.glossary['icon_font'])
             except (IconFont.DoesNotExist, KeyError, ValueError):
                 instance._cached_icon_font = None

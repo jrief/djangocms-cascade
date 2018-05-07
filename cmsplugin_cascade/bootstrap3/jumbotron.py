@@ -19,6 +19,7 @@ from .utils import get_widget_choices, compute_media_queries, get_picture_elemen
 from .container import ContainerBreakpointsWidget
 from .picture import BootstrapPicturePlugin
 
+import json
 
 class ImageBackgroundMixin(object):
     @property
@@ -190,6 +191,8 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
 
     @classmethod
     def sanitize_model(cls, obj):
+        while isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         # if the jumbotron is the root of the placeholder, we consider it as "fluid"
         obj.glossary['fluid'] = obj.parent is None
         sanitized = super(BootstrapJumbotronPlugin, cls).sanitize_model(obj)

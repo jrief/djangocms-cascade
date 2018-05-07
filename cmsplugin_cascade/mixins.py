@@ -48,6 +48,8 @@ class CascadePluginMixin(object):
         Returns a dictionary of CSS attributes to be added as style="..." to the current HTML tag.
         """
         inline_styles = getattr(cls, 'default_inline_styles', {})
+        while isinstance(instance.glossary, str):
+            instance.glossary=json.loads(instance.glossary)
         css_style = instance.glossary.get('inline_styles')
         if css_style:
             inline_styles.update(css_style)

@@ -75,9 +75,9 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        if isinstance(obj.glossary, str):
-            obj.glossary=json.loads(obj.glossary)
         identifier = super(BootstrapContainerPlugin, cls).get_identifier(obj)
+        while isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         breakpoints = obj.glossary.get('breakpoints')
         content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
@@ -281,6 +281,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         sanitized = super(BootstrapColumnPlugin, cls).sanitize_model(obj)
         parent_glossary = obj.get_parent_glossary()
         column_units = 12
+        if isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         obj.glossary['container_max_widths'] = {}
         breakpoints = parent_glossary.get('breakpoints', [])
         for bp in BS3_BREAKPOINT_KEYS:

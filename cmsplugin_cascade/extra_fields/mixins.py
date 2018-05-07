@@ -119,7 +119,7 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
 
     @classmethod
     def get_identifier(cls, obj):
-        if isinstance(obj.glossary, str):
+        while isinstance(obj.glossary, str):
             obj.glossary=json.loads(obj.glossary)
         identifier = super(ExtraFieldsMixin, cls).get_identifier(obj)
         extra_element_id = obj.glossary and obj.glossary.get('extra_element_id')

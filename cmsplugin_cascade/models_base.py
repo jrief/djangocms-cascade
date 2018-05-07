@@ -76,7 +76,7 @@ class CascadeModelBase(CMSPlugin):
         This is done by starting from the root element down to the current element and enriching
         the glossary with each models's own glossary.
         """
-        if isinstance(self.glossary,str):
+        while isinstance(self.glossary,str):
             self.glossary=json.loads(self.glossary)
         if not hasattr(self, '_complete_glossary_cache'):
             self._complete_glossary_cache = self.get_parent_glossary().copy()
