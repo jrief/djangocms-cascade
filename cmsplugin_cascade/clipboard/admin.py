@@ -83,7 +83,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         if request.POST.get('restore_clipboard'):
             self._deserialize_to_clipboard(request, obj.data)
 
-    def _serialize_from_clipboard(self, language):
+    def _serialize_from_clipboard(self, request, language):
         """
         Create a serialized representation of all the plugins belonging to the clipboard.
         """
@@ -102,11 +102,9 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 populate_data(child, entry[2])
 
         data = {'plugins': []}
-        ref = PlaceholderReference.objects.last()
-        if ref:
-            clipboard = ref.placeholder_ref
-            plugin_qs = clipboard.cmsplugin_set.all()
-            populate_data(None, data['plugins'])
+        clipboard = request.toolbar.clipboard
+        plugin_qs = clipboard.cmsplugin_set.all()
+        populate_data(None, data['plugins'])
         return data
 
     def _deserialize_to_clipboard(self, request, data):
@@ -147,7 +145,6 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             root_plugin = add_plugin(clipboard, 'PlaceholderPlugin', language, name='clipboard')
         else:
             # remove old entries from the clipboard
-            root_plugin = ref_plugin.cms_placeholderreference
             inst = ref_plugin.get_plugin_instance()[0]
-            inst.placeholder_ref.get_plugins().delete()
+            inst.placeholder.get_plugins().delete()
         plugins_from_data(root_plugin.placeholder_ref, None, data['plugins'])
