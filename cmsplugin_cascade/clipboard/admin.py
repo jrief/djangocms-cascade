@@ -73,7 +73,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         language = get_language_from_request(request)
         if request.POST.get('save_clipboard'):
-            obj.data = self._serialize_from_clipboard(language)
+            obj.data = self._serialize_from_clipboard(request, language)
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
         if request.POST.get('restore_clipboard'):
