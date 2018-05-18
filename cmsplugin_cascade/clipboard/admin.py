@@ -73,7 +73,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         language = get_language_from_request(request)
         if request.POST.get('save_clipboard'):
-            obj.data = self._serialize_from_clipboard(language)
+            obj.data = self._serialize_from_clipboard(request, language)
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
         if request.POST.get('restore_clipboard'):
@@ -81,9 +81,13 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             request.POST['_continue'] = True
         super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
         if request.POST.get('restore_clipboard'):
-            self._deserialize_to_clipboard(request, obj.data)
+            if len(obj.data['plugins']) >= 2:
+                is_placeholder=True
+            else:
+                is_placeholder=None
+            self._deserialize_to_clipboard(request, obj.data, is_placeholder)
 
-    def _serialize_from_clipboard(self, language):
+    def _serialize_from_clipboard(self, request, language, clipboard=None):
         """
         Create a serialized representation of all the plugins belonging to the clipboard.
         """
@@ -105,11 +109,14 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         ref = PlaceholderReference.objects.last()
         if ref:
             clipboard = ref.placeholder_ref
+        elif request.toolbar.clipboard.cmsplugin_set.last():
+            clipboard = request.toolbar.clipboard
+        if clipboard is not None:
             plugin_qs = clipboard.cmsplugin_set.all()
             populate_data(None, data['plugins'])
         return data
 
-    def _deserialize_to_clipboard(self, request, data):
+    def _deserialize_to_clipboard(self, request, data, is_placeholder):
         """
         Restore clipboard by creating plugins from given data.
         """
@@ -142,12 +149,19 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
 
         clipboard = request.toolbar.clipboard
         ref_plugin = clipboard.cmsplugin_set.first()
-        if ref_plugin is None:
+        if ref_plugin is None and is_placeholder is True:
             # the clipboard is empty
             root_plugin = add_plugin(clipboard, 'PlaceholderPlugin', language, name='clipboard')
-        else:
+            root_plugin=root_plugin.placeholder_ref
+        elif is_placeholder is True:
             # remove old entries from the clipboard
             root_plugin = ref_plugin.cms_placeholderreference
             inst = ref_plugin.get_plugin_instance()[0]
             inst.placeholder_ref.get_plugins().delete()
-        plugins_from_data(root_plugin.placeholder_ref, None, data['plugins'])
+            root_plugin=root_plugin.placeholder_ref
+        elif is_placeholder is None:
+            root_plugin=clipboard
+            if ref_plugin:
+                inst = ref_plugin.get_plugin_instance()[0] 
+                inst.placeholder.get_plugins().delete()
+        plugins_from_data(root_plugin, None, data['plugins'])
