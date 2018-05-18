@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.contrib.admin.templatetags.admin_static import static
 from django.forms import widgets
 from django.forms.utils import flatatt
+from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -168,3 +169,13 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 inst = ref_plugin.get_plugin_instance()[0] 
                 inst.placeholder.get_plugins().delete()
         plugins_from_data(root_plugin, None, data['plugins'])
+
+    def response_change(self, request, obj):
+        #Little hack to reload the clipboard modified in Django administration and the sideframe Django-CMS.
+        #TODO find a better way to reload clipboard potentially with request Ajax
+        #js = static_with_version('cms/js/dist/bundle.admin.base.min.js')
+        if "restore_clipboard" in request.POST:
+            return HttpResponse(
+            format_html('<script type="text/javascript">window.parent.CMS.API.Helpers.reloadBrowser();</script>'))
+        return super().response_change(request, obj)
+
