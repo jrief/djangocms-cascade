@@ -60,6 +60,9 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         css = {'all': ('cascade/css/admin/clipboard.css',)}
         js = ('cascade/js/admin/clipboard.js',)
 
+    def get_changeform_initial_data(self, request):
+        return {'identifier': "Clipboard {}".format(CascadeClipboard.objects.all().count()+1)}
+
     def save_clipboard(self, obj):
         return format_html('<input type="submit" value="{}" class="default pull-left" name="save_clipboard" />',
                            _("Insert Data"))
