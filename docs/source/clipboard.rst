@@ -22,6 +22,10 @@ Since the content of the clipboard is overridden by every operation which cuts o
 plugins, **djangocms-cascade** offers some functionality to persist the clipboard's content. To do
 this, locate **Persited Clipboard Content** in Django's administration backend.
 
+It is also possible to copy plugins or a single plugin with children without reference to a
+placeholder, these can also be copied into a persistent clipboard. They will have to be placed in
+their proper locations with the djangocms-cascade logic that will tell you where they can be placed.
+
 |persist-clipboard|
 
 .. |persist-clipboard| image:: _static/persist-clipboard.png
