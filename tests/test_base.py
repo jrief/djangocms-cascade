@@ -20,7 +20,7 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
             self.home_page.set_as_homepage()
 
         self.placeholder = self.home_page.placeholders.get(slot='Main Content')
-
+        self.placeholder2 = self.home_page.placeholders.get(slot='Main Content2')
         self.request = self.get_request(self.home_page, 'en')
         self.admin_site = admin.sites.AdminSite()
 
