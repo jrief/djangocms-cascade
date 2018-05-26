@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
+from django.core.exceptions import ImproperlyConfigured
 from django.forms import MediaDefiningClass
 from django.utils import six
 from django.utils.functional import lazy
@@ -27,6 +27,8 @@ from .widgets import JSONMultiWidget
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
+
+import json
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
@@ -381,8 +383,12 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         return form
 
     def save_model(self, request, new_obj, form, change):
+        if isinstance(new_obj.glossary, str):
+            new_obj.glossary=json.loads(new_obj.glossary)
         if change and self.glossary_variables:
             old_obj = super(CascadePluginBase, self).get_object(request, form.instance.id)
+            if isinstance(old_obj.glossary, str):
+                old_obj.glossary=json.loads(old_obj.glossary)
             for key in self.glossary_variables:
                 if key not in new_obj.glossary and key in old_obj.glossary:
                     # transfer listed glossary variable from the old to new object
@@ -422,29 +428,25 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
 
     def get_previous_instance(self, obj):
         """
-        Return the previous instance pair for the current node.
-        This differs from get_previous_sibling() which returns an instance of the same kind.
+        Return the previous plugin instance for the given object.
+        This differs from `obj.get_prev_sibling()` which returns an unsorted sibling.
         """
-        try:
-            if obj and obj.parent and obj.position > 0:
-                prev_inst = obj.parent.get_children().order_by('position')[obj.position - 1]
-                return prev_inst.get_plugin_instance()
-        except ObjectDoesNotExist:
-            pass
-        return None, None
+        ordered_siblings = obj.get_siblings().filter(placeholder=obj.placeholder).order_by('position')
+        pos = list(ordered_siblings).index(obj.cmsplugin_ptr)
+        if pos > 0:
+            prev_sibling = ordered_siblings[pos - 1]
+            return prev_sibling.get_bound_plugin()
 
     def get_next_instance(self, obj):
         """
-        Return the next instance pair for the current node.
-        This differs from get_previous_sibling() which returns an instance of the same kind.
+        Return the next plugin instance for the given object.
+        This differs from `obj.get_next_sibling()` which returns an unsorted sibling.
         """
-        try:
-            if obj and obj.parent:
-                next_inst = obj.parent.get_children().order_by('position')[obj.position + 1]
-                return next_inst.get_plugin_instance()
-        except (IndexError, ObjectDoesNotExist):
-            pass
-        return None, None
+        ordered_siblings = obj.get_siblings().filter(placeholder=obj.placeholder).order_by('position')
+        pos = list(ordered_siblings).index(obj.cmsplugin_ptr)
+        if pos < ordered_siblings.count() - 1:
+            next_sibling = ordered_siblings[pos + 1]
+            return next_sibling.get_bound_plugin()
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         ring_plugin_bases = dict((ring_plugin, ['django.cascade.{}'.format(b) for b in bases])

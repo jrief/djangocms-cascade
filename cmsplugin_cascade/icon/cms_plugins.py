@@ -13,6 +13,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.models import IconFont
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 from .mixins import IconPluginMixin, IconModelMixin
 
@@ -116,13 +117,13 @@ class TextIconModelMixin(object):
         return ''
 
 
-class TextIconPlugin(IconPluginMixin, CascadePluginBase):
+class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     name = _("Icon in text")
     text_enabled = True
     render_template = 'cascade/plugins/texticon.html'
     ring_plugin = 'IconPlugin'
     parent_classes = ('TextPlugin',)
-    model_mixins = (TextIconModelMixin,)
+    model_mixins = (TextIconModelMixin, LinkElementMixin,)
     allow_children = False
     require_parent = False
 
@@ -138,9 +139,19 @@ class TextIconPlugin(IconPluginMixin, CascadePluginBase):
 
     glossary_field_order = ['icon_font', 'symbol']
 
+    class Media:
+        js = ['cascade/js/admin/iconplugin.js']
+
     @classmethod
     def requires_parent_plugin(cls, slot, page):
         return False
+
+    def get_form(self, request, obj=None, **kwargs):
+        LINK_TYPE_CHOICES = (('none', _("No Link")),) + tuple(getattr(LinkForm, 'LINK_TYPE_CHOICES'))
+        Form = type(str('TextIconForm'), (getattr(LinkForm, 'get_form_class')(),),
+                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES})
+        kwargs.update(form=Form)
+        return super(TextIconPlugin, self).get_form(request, obj, **kwargs)
 
     def get_plugin_urls(self):
         urls = [

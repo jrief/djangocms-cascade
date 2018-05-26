@@ -2,9 +2,24 @@
 Release History
 ===============
 
-UNRELEASED
-==========
-* Fix: Plugin Image should not have duplicate css_classes and inline_styles if there is a link.
+0.16
+====
+* Remove monkey patch required for django-CMS 3.4. This has been fixed by applying
+  this pull request: https://github.com/divio/django-cms/pull/5809
+* Icons inside the ``TextPlugin`` can have an optional link.
+* Simplify JavaScript plugins to extend alternative link types.
+* Added ``TextImagePlugin`` allowing to add simple images inside the CKEditor.
+* Move common image functionality into utility class ``cmsplugin_cascade/image.py``.
+* Optional checkbox to hide plugin is moved at the end of the editor window.
+
+
+0.15.5
+======
+* Fix: ImagePlugin should not have duplicate css_classes and inline_styles if there is a link.
+* Fix regression: Cascade Clipboard did not work anymore with Django<=1.10.
+* Fix: If ``USE_THOUSAND_SEPARATOR`` was set to ```True``, some templates where not unlocalized
+  properly.
+
 
 0.15.4
 ======

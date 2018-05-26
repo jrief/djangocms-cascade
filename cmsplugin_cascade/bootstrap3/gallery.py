@@ -17,7 +17,7 @@ from cms.utils.compat.dj import is_installed
 
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import SortableInlineCascadeElement
-from cmsplugin_cascade.mixins import ImagePropertyMixin
+from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from . import utils
