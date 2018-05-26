@@ -108,9 +108,9 @@ class SharableGlossaryMixin(with_metaclass(forms.MediaDefiningClass)):
         """
         Extend the form for the given plugin with the form SharableCascadeForm
         """
-        form = type(str('ExtSharableForm'), (SharableCascadeForm, kwargs.pop('form', self.form)), {})
-        form.base_fields['shared_glossary'].limit_choices_to = dict(plugin_type=self.__class__.__name__)
-        kwargs.update(form=form)
+        Form = type(str('ExtSharableForm'), (SharableCascadeForm, kwargs.pop('form', self.form)), {})
+        Form.base_fields['shared_glossary'].limit_choices_to = dict(plugin_type=self.__class__.__name__)
+        kwargs.update(form=Form)
         return super(SharableGlossaryMixin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):

@@ -13,6 +13,7 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 
+import json
 
 @python_2_unicode_compatible
 class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
@@ -118,6 +119,8 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
 
     @classmethod
     def get_identifier(cls, obj):
+        if isinstance(obj.glossary, str):
+            obj.glossary=json.loads(obj.glossary)
         identifier = super(ExtraFieldsMixin, cls).get_identifier(obj)
         extra_element_id = obj.glossary and obj.glossary.get('extra_element_id')
         if extra_element_id:
