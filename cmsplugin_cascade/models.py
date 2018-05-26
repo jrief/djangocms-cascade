@@ -149,7 +149,7 @@ class CascadeClipboard(models.Model):
     data = JSONField(null=True, blank=True, default={})
 
     class Meta:
-        verbose_name_plural = verbose_name = _("Persited Clipboard Content")
+        verbose_name_plural = verbose_name = _("Persisted Clipboard Content")
 
     def __str__(self):
         return self.identifier
