@@ -52,11 +52,15 @@ django.jQuery(function($) {
 				// disable fields marked as sharable, since they obtained their values from the shared glossary
 				$.each(django.cascade.sharable_fields, function(k, element_id) {
 					$('#' + element_id).prop('disabled', true);
+					$('#' + element_id).find('input[type="checkbox"]').prop('disabled', true);
+					$('#' + element_id).find('input[type="radio"]').prop('disabled', true);
 				});
 			} else {
 				$save_shared_glossary.show();
 				$.each(django.cascade.sharable_fields, function(k, element_id) {
 					$('#' + element_id).prop('disabled', false);
+					$('#' + element_id).find('input[type="checkbox"]').prop('disabled', false);
+					$('#' + element_id).find('input[type="radio"]').prop('disabled', false);
 				});
 			}
 			if (this.$super) {
