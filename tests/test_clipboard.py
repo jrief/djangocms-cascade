@@ -170,7 +170,7 @@ class ClipboardPluginTest(CascadeTestCase):
             response = self.client.get(change_clipboard_url, data)
             soup = BeautifulSoup(response.content)
             ul = soup.find('ul', class_='messagelist')
-            self.assertEqual(ul.li.text, 'The Persited Clipboard Content "Test saved clipboard" was added successfully. You may edit it again below.')
+            self.assertEqual(ul.li.text, 'The Persisted Clipboard Content "Test saved clipboard" was added successfully. You may edit it again below.')
             self.assertEqual(CascadeClipboard.objects.all().count(), 1)
 
             # now examine the serialized data in the clipboard
@@ -199,7 +199,7 @@ class ClipboardPluginTest(CascadeTestCase):
             self.assertEqual(response.status_code, 200)
             soup = BeautifulSoup(response.content, 'html.parser')
             ul = soup.find('ul', class_='messagelist')
-            self.assertEqual(ul.li.text, 'The Persited Clipboard Content "Test saved clipboard" was changed successfully. You may edit it again below.')
+            self.assertEqual(ul.li.text, 'The Persisted Clipboard Content "Test saved clipboard" was changed successfully. You may edit it again below.')
 
             # check if clipboard has been populated with plugins from serialized data
             ref_plugin = request.toolbar.clipboard.get_plugins().first()
