@@ -50,5 +50,5 @@ class SphinxDocsApp(CMSApp):
 
     def get_urls(self, page=None, language=None, **kwargs):
         return [
-            url(r'^(?P<slug>\S+)/?$', SphinxDocsView.as_view(), name='sphinx-documentation'),
+            url(r'^(?P<slug>\S+)/$', SphinxDocsView.as_view(), name='sphinx-documentation'),
         ]
