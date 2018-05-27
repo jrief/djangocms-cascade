@@ -2,6 +2,13 @@
 Release History
 ===============
 
+0.16.1
+======
+* Fix: Compute link of ``Page`` object holding documentation menu.
+* Fix regression in sharable glossary caused by upgrade to Django-1.11.
+* Adopt child plugin editing for django-CMS 3.5 to behave as earlier versions.
+
+
 0.16
 ====
 * Remove monkey patch required for django-CMS 3.4. This has been fixed by applying
