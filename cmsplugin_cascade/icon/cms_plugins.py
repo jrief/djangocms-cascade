@@ -137,7 +137,12 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         label=_("Select Symbol"),
     )
 
-    glossary_field_order = ['icon_font', 'symbol']
+    color = GlossaryField(
+        ColorPickerWidget(),
+        label=_("Icon color"),
+    )
+
+    glossary_field_order = ['icon_font', 'symbol', 'color']
 
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
@@ -166,5 +171,13 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         }
         javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
         return HttpResponse(javascript, content_type='application/javascript')
+
+    @classmethod
+    def get_inline_styles(cls, instance):
+        inline_styles = cls.super(TextIconPlugin, cls).get_inline_styles(instance)
+        color = instance.glossary.get('color')
+        if isinstance(color, list) and len(color) == 2 and color[0]:
+            inline_styles['color'] = color[1]
+        return inline_styles
 
 plugin_pool.register_plugin(TextIconPlugin)

@@ -7,6 +7,7 @@ Release History
 * Fix: Compute link of ``Page`` object holding documentation menu.
 * Fix regression in sharable glossary caused by upgrade to Django-1.11.
 * Adopt child plugin editing for django-CMS 3.5 to behave as earlier versions.
+* Icons in the Text field may have a foreground color.
 
 
 0.16
