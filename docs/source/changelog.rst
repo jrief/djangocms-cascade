@@ -12,6 +12,8 @@ Release History
 
 0.16
 ====
+* Drop support for **Django-CMS CKEditor** version 3.4 in favor of version 3.5 and later. In ``CKEDITOR_SETTINGS``
+  change the ``skin`` setting to ``moono-lisa``.
 * Remove monkey patch required for django-CMS 3.4. This has been fixed by applying
   this pull request: https://github.com/divio/django-cms/pull/5809
 * Icons inside the ``TextPlugin`` can have an optional link.
