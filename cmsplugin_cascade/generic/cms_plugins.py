@@ -14,7 +14,7 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
-from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
+from cmsplugin_cascade.utils import compute_aspect_ratio
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 
 
