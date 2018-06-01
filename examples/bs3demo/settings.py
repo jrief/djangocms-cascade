@@ -222,7 +222,7 @@ CMSPLUGIN_CASCADE = {
     'cache_strides': True,
 }
 
-CACSCADE_WORKAREA_GLOSSARY = {
+CASCADE_WORKAREA_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg'],
     'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
     'fluid': False,
@@ -240,7 +240,7 @@ CMS_PLACEHOLDER_CONF = {
     'Main Content': {
         'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
-        'glossary': CACSCADE_WORKAREA_GLOSSARY,
+        'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
     # this placeholder is used in templates/wrapped.html, it shows how to
     # add content to an existing Bootstrap column
@@ -248,13 +248,13 @@ CMS_PLACEHOLDER_CONF = {
         'plugins': ['BootstrapRowPlugin', 'TextPlugin', ],
         'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
-        'glossary': CACSCADE_WORKAREA_GLOSSARY,
+        'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
 }
 
 CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
-    'skin': 'moono',
+    'skin': 'moono-lisa',
     'toolbar': 'CMS',
     'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
 }

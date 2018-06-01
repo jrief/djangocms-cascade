@@ -22,7 +22,7 @@ class SelectSharedGlossary(forms.Select):
     option_inherits_attrs = True
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
-        assert DJANGO_VERSION >= 1, 11
+        assert DJANGO_VERSION >= (1, 11)
         if value:
             attrs = {'data-glossary': json.dumps(self._get_data_glossary(value))}
         else:
@@ -30,7 +30,7 @@ class SelectSharedGlossary(forms.Select):
         return super(SelectSharedGlossary, self).create_option(name, value, label, selected, index, subindex, attrs)
 
     def render_option(self, selected_choices, option_value, option_label):
-        assert DJANGO_VERSION < 1, 11
+        assert DJANGO_VERSION < (1, 11)
         if option_value:
             data = format_html(' data-glossary="{0}"', json.dumps(self._get_data_glossary(option_value)))
         else:
