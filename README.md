@@ -1,5 +1,4 @@
-djangocms-cascade
-==================================================================================================================================================
+# djangocms-cascade
 
 [![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
 [![Python versions](https://img.shields.io/pypi/pyversions/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
@@ -9,7 +8,7 @@ djangocms-cascade
 
 **DjangoCMS-Cascade** is the Swiss army knife for working with Django-CMS plugins.
 
-# Why Use DjangoCMS-Cascade?
+## Why Use DjangoCMS-Cascade?
 
 **DjangoCMS-Cascade** is a collection of plugins for Django-CMS
 [placeholders](http://docs.django-cms.org/en/latest/introduction/templates_placeholders.html#templates-placeholders).
