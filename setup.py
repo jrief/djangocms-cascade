@@ -44,6 +44,7 @@ setup(
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
     long_description=readfile('README.md'),
+    long_description_content_type='text/markdown',
     include_package_data=True,
     zip_safe=False,
 )

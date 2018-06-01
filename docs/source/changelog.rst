@@ -2,6 +2,12 @@
 Release History
 ===============
 
+
+0.16.2
+======
+* Fix Markdown while uploading to PyPI.
+
+
 0.16.1
 ======
 * Fix: Compute link of ``Page`` object holding documentation menu.
