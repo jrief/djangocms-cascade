@@ -6,7 +6,7 @@
 [![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/awesto/djangocms-cascade)
  [![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 
-for building Single Page Applications using the Django-CMS plugin system.
+for building **Single Page Applications** using the Django-CMS plugin system.
 
 ## Why Use DjangoCMS-Cascade?
 
