@@ -22,6 +22,7 @@ from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin
 
 from cmsplugin_cascade.models import CascadeElement, CascadeClipboard
 
+from .utils import (add_size_img_to_json, gen_img_if_pk_and_size_not_match)
 
 class JSONAdminWidget(widgets.Textarea):
     def __init__(self):
@@ -99,6 +100,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             for child in plugin_qs.filter(parent=parent).order_by('position'):
                 instance, plugin = child.get_plugin_instance(self.admin_site)
                 plugin_type = plugin.__class__.__name__
+                add_size_img_to_json(instance,plugin)
                 try:
                     entry = (plugin_type, plugin.get_data_representation(instance), [])
                 except AttributeError:
@@ -108,7 +110,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                         continue
                 data.append(entry)
                 populate_data(child, entry[2])
-
+    
         data = {'plugins': []}
         ref = PlaceholderReference.objects.last()
         if ref:
@@ -127,6 +129,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         def plugins_from_data(placeholder, parent, data):
             for plugin_type, data, children_data in data:
                 plugin_class = plugin_pool.get_plugin(plugin_type)
+                gen_img_if_pk_and_size_not_match(data)
                 kwargs = dict(data)
                 inlines = kwargs.pop('inlines', [])
                 shared_glossary = kwargs.pop('shared_glossary', None)
@@ -166,7 +169,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         elif is_placeholder is None:
             root_plugin=clipboard
             if ref_plugin:
-                inst = ref_plugin.get_plugin_instance()[0] 
+                inst = ref_plugin.get_plugin_instance()[0]
                 inst.placeholder.get_plugins().delete()
         plugins_from_data(root_plugin, None, data['plugins'])
 
