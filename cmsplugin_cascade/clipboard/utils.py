@@ -75,16 +75,17 @@ def add_size_img_to_json(instance, plugin):
         plugin_data['image'].update(size)
 
 def gen_img_if_pk_and_size_not_match(data):
-    if 'image' in data['glossary']:
-       pk = data['glossary']['image']['pk']
-       data_img_width = data['glossary']['image']['width']
-       data_img_height = data['glossary']['image']['height']
-       if Image.objects.filter(pk=pk).exists():
-           img = Image.objects.filter(pk=pk)[0]
-           if img.width == data['glossary']['image']['width'] and img.height == data['glossary']['image']['height']:
-               pass
-       else:
-           gen_name = 'img_{}x{}.jpg'.format(data_img_width, data_img_height)
-           img_gen_pk = gen_image(data_img_width,data_img_height, gen_name)
-           data['glossary']['image']['pk'] = img_gen_pk
-
+    if 'glossary' in data:
+        if 'image' in data['glossary']:
+           pk = data['glossary']['image']['pk']
+           if 'width' and 'height' in data['glossary']['image']:
+               data_img_width = data['glossary']['image']['width']
+               data_img_height = data['glossary']['image']['height']
+               if Image.objects.filter(pk=pk).exists():
+                   img = Image.objects.filter(pk=pk)[0]
+                   if img.width == data_img_width and img.height == data_img_height:
+                       pass
+               else:
+                   gen_name = 'img_{}x{}.jpg'.format(data_img_width, data_img_height)
+                   img_gen_pk = gen_image(data_img_width,data_img_height, gen_name)
+                   data['glossary']['image']['pk'] = img_gen_pk

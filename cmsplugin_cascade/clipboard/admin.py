@@ -85,12 +85,11 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
         super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
-        if request.POST.get('restore_clipboard'):
+        is_placeholder=None
+        if 'plugins' in obj.data:
             if len(obj.data['plugins']) >= 2:
                 is_placeholder=True
-            else:
-                is_placeholder=None
-            self._deserialize_to_clipboard(request, obj.data, is_placeholder)
+        self._deserialize_to_clipboard(request, obj.data, is_placeholder)
 
     def _serialize_from_clipboard(self, request, language, clipboard=None):
         """
@@ -100,9 +99,9 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             for child in plugin_qs.filter(parent=parent).order_by('position'):
                 instance, plugin = child.get_plugin_instance(self.admin_site)
                 plugin_type = plugin.__class__.__name__
-                add_size_img_to_json(instance,plugin)
                 try:
                     entry = (plugin_type, plugin.get_data_representation(instance), [])
+                    add_size_img_to_json(instance,plugin)
                 except AttributeError:
                     if isinstance(instance, Text):
                         entry = (plugin_type, {'body': instance.body, 'pk': instance.pk}, [])
@@ -137,6 +136,8 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 if isinstance(instance, CascadeElement):
                     instance.plugin_class.add_inline_elements(instance, inlines)
                     instance.plugin_class.add_shared_reference(instance, shared_glossary)
+                if not 'plugins' in data:
+                    data = {'plugins': []}
 
                 # for some unknown reasons add_plugin sets instance.numchild to 0,
                 # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
