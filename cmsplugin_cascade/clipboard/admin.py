@@ -85,6 +85,11 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         if request.POST.get('restore_clipboard'):
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
+            # Little hack to reload the clipboard modified in Django administration and the sideframe Django-CMS.
+            # TODO find a better way to reload clipboard
+            messages.add_message(request, messages.SUCCESS, format_html(
+               '<p>Reload for Clipboard</p> <script type="text/javascript">setTimeout(function(){},1);</script>',
+               '{window.parent.CMS.API.Helpers.reloadBrowser()}'))
         super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
         is_placeholder=None
         if 'plugins' in obj.data:
@@ -174,7 +179,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 inst = ref_plugin.get_plugin_instance()[0]
                 inst.placeholder.get_plugins().delete()
         plugins_from_data(root_plugin, None, data['plugins'])
-
+    """
     def response_change(self, request, obj):
         #Little hack to reload the clipboard modified in Django administration and the sideframe Django-CMS.
         #TODO find a better way to reload clipboard potentially with request Ajax
@@ -183,4 +188,4 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             return HttpResponse(
             format_html('<script type="text/javascript">window.parent.CMS.API.Helpers.reloadBrowser();</script>'))
         return super().response_change(request, obj)
-
+    """
