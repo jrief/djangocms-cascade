@@ -2,8 +2,24 @@
 Release History
 ===============
 
+
+0.16.2
+======
+* Fix Markdown while uploading to PyPI.
+
+
+0.16.1
+======
+* Fix: Compute link of ``Page`` object holding documentation menu.
+* Fix regression in sharable glossary caused by upgrade to Django-1.11.
+* Adopt child plugin editing for django-CMS 3.5 to behave as earlier versions.
+* Icons in the Text field may have a foreground color.
+
+
 0.16
 ====
+* Drop support for **Django-CMS CKEditor** version 3.4 in favor of version 3.5 and later. In ``CKEDITOR_SETTINGS``
+  change the ``skin`` setting to ``moono-lisa``.
 * Remove monkey patch required for django-CMS 3.4. This has been fixed by applying
   this pull request: https://github.com/divio/django-cms/pull/5809
 * Icons inside the ``TextPlugin`` can have an optional link.
