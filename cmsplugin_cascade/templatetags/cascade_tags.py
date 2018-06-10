@@ -11,7 +11,9 @@ from cms.toolbar.utils import get_toolbar_from_request
 from django import template
 from django.conf import settings
 from django.core.cache import caches
-from django.template.exceptions import TemplateDoesNotExist
+from django.utils.html import format_html
+from django.template.base import TextNode
+from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
 from django.contrib.staticfiles import finders
 from django.utils.safestring import mark_safe
 
@@ -97,6 +99,33 @@ class RenderPlugin(Tag):
         return content
 
 register.tag('render_plugin', RenderPlugin)
+
+
+class PlaceholderConfig(Tag):
+    name = 'placeholder_config'
+    options = Options(
+        'for',
+        Argument('placeholder_name', resolve=False),
+        blocks = [('end_placeholder_config', 'nodelist')],
+    )
+
+    def render_tag(self, context, placeholder_name, nodelist):
+        placeholder_config = {}
+        for node in nodelist:
+            if not isinstance(node, TextNode):
+                msg = "The content of templatetag 'cascade_config' may exclusively contain configuration objects"
+                raise TemplateSyntaxError(msg)
+            try:
+                placeholder_config.update(json.loads(node.token.contents))
+            except ValueError as error:
+                raise TemplateSyntaxError(error)
+        context['placeholder_config'] = context.get('placeholder_config', {})
+        context['placeholder_config'][placeholder_name] = placeholder_config
+        if settings.DEBUG:
+            return format_html("<!-- config for placeholder: '{}' -->", placeholder_name)
+        return ''
+
+register.tag(PlaceholderConfig)
 
 
 @register.simple_tag
