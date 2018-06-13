@@ -6,7 +6,7 @@ import json
 import os
 from distutils.version import LooseVersion
 
-from cms import __version__ as cms_version
+from cms import __version__ as CMS_VERSION
 from cms.toolbar.utils import get_toolbar_from_request
 from django import template
 from django.conf import settings
@@ -19,7 +19,6 @@ from classytags.arguments import Argument
 from classytags.core import Options, Tag
 
 register = template.Library()
-CMS_LT_3_4 = LooseVersion(cms_version) < LooseVersion('3.5')
 
 
 class StrideRenderer(Tag):
@@ -74,7 +73,7 @@ class RenderPlugin(Tag):
         if not plugin:
             return ''
 
-        if CMS_LT_3_4:
+        if LooseVersion(CMS_VERSION) < LooseVersion('3.5'):
             content_renderer = context['cms_content_renderer']
             content = content_renderer.render_plugin(
                 instance=plugin,
