@@ -167,71 +167,111 @@ class ColumnBreak(object):
         return "{}: fixed={}, flex={}, auto={}".format(self.breakpoint.name, self.fixed_units, self.flex_column, self.auto_column)
 
 
+class Bootstrap4Container(list):
+    """
+    Abstracts a Bootstrap-4 container element, such as ``<div class="container">...</div>``, so that the minimum and
+    maximum widths each each child row can be computed.
+    Each container object is a list of one to many ``Bootstrap4Row`` instances.
+    In order to model a "fluid" container, use ``fluid_bounds`` during construction.
+    """
+    def __init__(self, bounds=default_bounds):
+        self.bounds = bounds
+
+    def add_row(self, row):
+        if isinstance(row.parent, Bootstrap4Container):
+            # detach from previous container
+            pos = row.parent.index(row)
+            row.parent.pop(pos)
+        row.parent = self
+        row.bounds = dict(self.bounds)
+        self.append(row)
+
+
 class Bootstrap4Row(list):
     """
     Abstracts a Bootstrap-4 row element, such as ``<div class="row">...</div>``, so that the minimum and maximum widths
     each each child columns can be computed.
     Each row object is a list of 1 to many ``Bootstrap4Column`` instances.
     """
-    def __init__(self, bounds=default_bounds):
-        self.bounds = dict(bounds)
+    parent = None
+    bounds = None
 
     def add_column(self, column):
-        if isinstance(column.parent_row, Bootstrap4Row):
-            pos = column.parent_row.index(column)
-            column.parent_row.pop(pos)
-        column.parent_row = self
+        if isinstance(column.parent, Bootstrap4Row):
+            pos = column.parent.index(column)
+            column.parent.pop(pos)
+        column.parent = self
         self.append(column)
 
-    def get_bounds(self):
-        bounds = {}
-        for bp in Breakpoint.all():
+    def compute_column_bounds(self):
+        assert isinstance(self.bounds, dict)
+        for bp in [Breakpoint.xs, Breakpoint.sm, Breakpoint.md, Breakpoint.lg, Breakpoint.xl]:
+            print(bp)
             remaining_width = copy(self.bounds[bp])
-            fixed_bound, flex_bound, auto_bound = 3 * (None,)
 
             # first compute the bounds of columns with a fixed width
             for column in self:
-                if column[bp].fixed_units:
-                    fixed_bound = Bound(
-                        column[bp].fixed_units * self.bounds[bp].min / 12,
-                        column[bp].fixed_units * self.bounds[bp].max / 12,
+                if column.breaks[bp].fixed_units:
+                    assert column.breaks[bp].bound is None
+                    column.breaks[bp].bound = Bound(
+                        column.breaks[bp].fixed_units * self.bounds[bp].min / 12,
+                        column.breaks[bp].fixed_units * self.bounds[bp].max / 12,
                     )
-                    remaining_width -= fixed_bound
+                    remaining_width -= column.breaks[bp].bound
 
-            # next, use the remaining space and divide it through flex units
-            flex_columns = reduce(add, [col[bp].flex_columns for col in self], 0)
-            if flex_columns:
-                flex_bound = Bound(
-                    remaining_width.min / flex_columns,
-                    remaining_width.max / flex_columns,
-                )
+            flex_columns = reduce(add, [int(col.breaks[bp].flex_column) for col in self], 0)
+            auto_columns = reduce(add, [int(col.breaks[bp].auto_column) for col in self], 0)
+            if auto_columns:
+                # we use auto-columns, therefore estimate the min- and max values
+                for column in self:
+                    if column.breaks[bp].flex_column or column[bp].auto_column:
+                        assert column.breaks[bp].bound is None
+                        column.breaks[bp].bound = Bound(
+                            30,
+                            remaining_width.max - 30 * (flex_columns + auto_columns),
+                        )
+            else:
+                # we use flex-columns exclusively, therefore subdivide the remaining width
+                for column in self:
+                    if column.breaks[bp].flex_column:
+                        assert column.breaks[bp].bound is None
+                        column.breaks[bp].bound = Bound(
+                            remaining_width.min / flex_columns,
+                            remaining_width.max / flex_columns,
+                        )
+        print("End def")
 
-            # the width of auto units is unpredictable, and furthermore may reduce the width of flex columns
-
-        return bounds
-
-
-class Bootstrap4Column(dict):
+class Bootstrap4Column(object):
     """
-    Abstracts a Bootstrap-4 column element, such as ``<div class="col...">...</div>``, which shall be added to the above
-    Bootstrap4Row element.
+    Abstracts a Bootstrap-4 column element, such as ``<div class="col...">...</div>``, which shall be added to a
+    ``Bootstrap4Row`` element.
     Each column object is a dict of 5 ``ColumnWidth`` instances.
     """
-    parent_row = None
+    parent = None
 
     def __init__(self, classes=[]):
         if isinstance(classes, str):
             classes = classes.split()
-        self.classes = list(classes)
         narrower = None
+        self.breaks = {}
+        self.rows = []
         for bp in Breakpoint.all():
-            self[bp] = ColumnBreak(bp, classes, narrower)
-            narrower = self[bp]
+            self.breaks[bp] = ColumnBreak(bp, classes, narrower)
+            narrower = self.breaks[bp]
 
     def __str__(self):
-        return '\n'.join([str(self[bp]) for bp in Breakpoint.all()])
+        return '\n'.join([str(self.breaks[bp]) for bp in Breakpoint.all()])
 
     def __copy__(self):
         newone = type(self)()
         newone.__dict__.update(self.__dict__)
         return newone
+
+    def add_row(self, row):
+        if isinstance(row.parent, (Bootstrap4Container, Bootstrap4Column)):
+            # detach from previous container or column
+            pos = row.parent.index(row)
+            row.parent.pop(pos)
+        row.parent = self
+        row.bounds = dict(self.bounds)
+        self.append(row)
