@@ -43,6 +43,18 @@ class Breakpoint(Enum):
     def all(self):
         return [Breakpoint.xs, Breakpoint.sm, Breakpoint.md, Breakpoint.lg, Breakpoint.xl]
 
+    def __gt__(self, other):
+        return self.value > other.value
+
+    def __ge__(self, other):
+        return self.value >= other.value
+
+    def __lt__(self, other):
+        return self.value < other.value
+
+    def __le__(self, other):
+        return self.value <= other.value
+
 
 class Bound(object):
     def __init__(self, min, max):
@@ -51,6 +63,9 @@ class Bound(object):
 
     def __copy__(self):
         return type(self)(self.min, self.max)
+
+    def __eq__(self, other):
+        return self.min == other.min and self.max == other.max
 
     def __add__(self, other):
         return Bound(
@@ -63,6 +78,9 @@ class Bound(object):
             self.min - other.min,
             self.max - other.max,
         )
+
+    def __repr__(self):
+        return "<{}>({}...{})".format(self.__class__.__name__, self.min, self.max)
 
     def extend(self, other):
         self.min = min(self.min, other.min)
