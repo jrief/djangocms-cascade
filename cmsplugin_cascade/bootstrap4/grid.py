@@ -108,8 +108,8 @@ class ColumnBreak(object):
     def __init__(self, breakpoint, classes, narrower=None):
         self.breakpoint = breakpoint
         self.fixed_units = 0
-        self.flex_units = 0
-        self.auto_columns = 0
+        self.flex_column = False
+        self.auto_column = False
         self._normalize_col_classes(classes)
         if isinstance(narrower, ColumnBreak):
             self._inherit_from(narrower)
@@ -117,41 +117,54 @@ class ColumnBreak(object):
 
     def _normalize_col_classes(self, classes):
         if self.breakpoint == Breakpoint.xs:
-            flex_pat = re.compile(r'^col$')
             fixed_pat = re.compile(r'^col-(\d+)$')
+            flex_pat = re.compile(r'^col$')
             auto_pat = re.compile(r'^col-auto$')
         else:
-            flex_pat = re.compile(r'^col-{}$'.format(self.breakpoint.name))
             fixed_pat = re.compile(r'^col-{}-(\d+)$'.format(self.breakpoint.name))
+            flex_pat = re.compile(r'^col-{}$'.format(self.breakpoint.name))
             auto_pat = re.compile(r'^col-{}-auto$'.format(self.breakpoint.name))
         for col_class in classes:
+            # look for CSS classes matching fixed size columns
+            fixed = fixed_pat.match(col_class)
+            if fixed:
+                if self.fixed_units or self.flex_column or self.auto_column:
+                    raise BootstrapException("Can not mix fixed- with flex- or auto-column")
+                units = int(fixed.group(1))
+                if units < 1 or units > 12:
+                    raise BootstrapException("Column units value {} out of range".format(units))
+                self.fixed_units = units
+
+            # look for CSS classes matching flex columns
             flex = flex_pat.match(col_class)
             if flex:
-                self.flex_units = 1
-            else:
-                fixed = fixed_pat.match(col_class)
-                if fixed:
-                    if self.flex_units:
-                        raise BootstrapException("Can not mix flex- with fixed unit column")
-                    units = int(fixed.group(1))
-                    if units < 1 or units > 12:
-                        raise BootstrapException("Column units value {} out of range".format(units))
-                    self.fixed_units = units
-                else:
-                    auto = auto_pat.match(col_class)
-                    if auto:
-                        if self.flex_units or self.fixed_units:
-                            raise BootstrapException("Can not mix flex- or fixed units with auto column")
-                        self.auto_columns = 1
+                if self.fixed_units or self.flex_column or self.auto_column:
+                    raise BootstrapException("Can not mix flex- with fixed- or auto-column")
+                self.flex_column = True
+
+            # look for CSS classes matching auto columns
+            auto = auto_pat.match(col_class)
+            if auto:
+                if self.fixed_units or self.flex_column or self.auto_column:
+                    raise BootstrapException("Can not mix auto- with fixed- or flex-column")
+                self.auto_column = True
 
     def _inherit_from(self, narrower):
-        if self.flex_units == 0 and self.fixed_units == 0 and self.auto_columns == 0:
-            self.flex_units = narrower.flex_units
+        if self.breakpoint <= narrower.breakpoint:
+            raise BootstrapException("Can only inherit column bounds from narrower breakpoint")
+        if self.fixed_units == 0 and self.flex_column is False and self.auto_column is False:
             self.fixed_units = narrower.fixed_units
-            self.auto_columns = narrower.auto_columns
+            self.flex_column = narrower.flex_column
+            self.auto_column = narrower.auto_column
+
+    def __copy__(self):
+        newone = type(self)()
+        if self.bound:
+            newone.bound = dict(self.bound)
+        return newone
 
     def __str__(self):
-        return "{}: flex={}, fixed={}, auto={}".format(self.breakpoint.name, self.flex_units, self.fixed_units, self.auto_columns)
+        return "{}: fixed={}, flex={}, auto={}".format(self.breakpoint.name, self.fixed_units, self.flex_column, self.auto_column)
 
 
 class Bootstrap4Row(list):
