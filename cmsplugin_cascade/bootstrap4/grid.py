@@ -17,6 +17,9 @@ class BootstrapException(Exception):
 
 @unique
 class Breakpoint(Enum):
+    """
+    Enumerate the five breakpoints defined by the Bootstrap-4 CSS framework.
+    """
     xs = 0
     sm = 1
     md = 2
@@ -178,13 +181,14 @@ class Bootstrap4Container(list):
         self.bounds = bounds
 
     def add_row(self, row):
-        if isinstance(row.parent, Bootstrap4Container):
-            # detach from previous container
+        if isinstance(row.parent, (Bootstrap4Container, Bootstrap4Column)):
+            # detach from previous container or column
             pos = row.parent.index(row)
             row.parent.pop(pos)
         row.parent = self
         row.bounds = dict(self.bounds)
         self.append(row)
+        return row
 
 
 class Bootstrap4Row(list):
@@ -206,7 +210,6 @@ class Bootstrap4Row(list):
     def compute_column_bounds(self):
         assert isinstance(self.bounds, dict)
         for bp in [Breakpoint.xs, Breakpoint.sm, Breakpoint.md, Breakpoint.lg, Breakpoint.xl]:
-            print(bp)
             remaining_width = copy(self.bounds[bp])
 
             # first compute the bounds of columns with a fixed width
@@ -224,7 +227,7 @@ class Bootstrap4Row(list):
             if auto_columns:
                 # we use auto-columns, therefore estimate the min- and max values
                 for column in self:
-                    if column.breaks[bp].flex_column or column[bp].auto_column:
+                    if column.breaks[bp].flex_column or column.breaks[bp].auto_column:
                         assert column.breaks[bp].bound is None
                         column.breaks[bp].bound = Bound(
                             30,
@@ -239,13 +242,14 @@ class Bootstrap4Row(list):
                             remaining_width.min / flex_columns,
                             remaining_width.max / flex_columns,
                         )
-        print("End def")
 
-class Bootstrap4Column(object):
+
+class Bootstrap4Column(list):
     """
     Abstracts a Bootstrap-4 column element, such as ``<div class="col...">...</div>``, which shall be added to a
     ``Bootstrap4Row`` element.
-    Each column object is a dict of 5 ``ColumnWidth`` instances.
+    Each column may contain elements of type ``Bootstrap4Row``.
+    For each breakpoint, a columns knows its extensions.
     """
     parent = None
 
@@ -254,7 +258,6 @@ class Bootstrap4Column(object):
             classes = classes.split()
         narrower = None
         self.breaks = {}
-        self.rows = []
         for bp in Breakpoint.all():
             self.breaks[bp] = ColumnBreak(bp, classes, narrower)
             narrower = self.breaks[bp]
@@ -275,3 +278,9 @@ class Bootstrap4Column(object):
         row.parent = self
         row.bounds = dict(self.bounds)
         self.append(row)
+        return row
+
+    def get_bound(self, breakpoint):
+        if self.breaks[breakpoint].bound is None:
+            raise BootstrapException("Invoke `compute_column_bounds()` on wrapping row before calling `get_bounds()`")
+        return self.breaks[breakpoint].bound
