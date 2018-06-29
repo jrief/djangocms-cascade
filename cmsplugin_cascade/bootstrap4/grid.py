@@ -68,7 +68,7 @@ class Bound(object):
         return type(self)(self.min, self.max)
 
     def __eq__(self, other):
-        return self.min == other.min and self.max == other.max
+        return round(self.min, 1) == round(other.min, 1) and round(self.max, 1) == round(other.max, 1)
 
     def __add__(self, other):
         return Bound(
@@ -83,7 +83,7 @@ class Bound(object):
         )
 
     def __repr__(self):
-        return "<{}>({}...{})".format(self.__class__.__name__, self.min, self.max)
+        return "<{}>({}…{})".format(self.__class__.__name__, self.min, self.max)
 
     def extend(self, other):
         self.min = min(self.min, other.min)

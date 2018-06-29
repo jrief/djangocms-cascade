@@ -2,7 +2,6 @@ import pytest
 from cmsplugin_cascade.bootstrap4.grid import (Bootstrap4Container, Bootstrap4Row, Bootstrap4Column, BootstrapException,
                                                Breakpoint, Bound)
 
-
 def test_xs_cols():
     container = Bootstrap4Container()
     row = container.add_row(Bootstrap4Row())
@@ -93,3 +92,29 @@ def test_growing_columns():
     assert row[2].get_bound(Breakpoint.md) == Bound(720.0, 720.0)
     assert row[2].get_bound(Breakpoint.lg) == Bound(320.0, 320.0)
     assert row[2].get_bound(Breakpoint.xl) == Bound(380.0, 380.0)
+
+
+def test_nicolas():
+    container = Bootstrap4Container()
+    row = container.add_row(Bootstrap4Row())
+    row.add_column(Bootstrap4Column('col'))
+    row.add_column(Bootstrap4Column('col-auto'))
+    row.add_column(Bootstrap4Column('col-2'))
+    row.compute_column_bounds()
+    assert row[0].get_bound(Breakpoint.xs) == Bound(30.0, 416.7)
+    assert row[0].get_bound(Breakpoint.sm) == Bound(30.0, 390.0)
+    assert row[0].get_bound(Breakpoint.md) == Bound(30.0, 540.0)
+    assert row[0].get_bound(Breakpoint.lg) == Bound(30.0, 740.0)
+    assert row[0].get_bound(Breakpoint.xl) == Bound(30.0, 890.0)
+
+    assert row[1].get_bound(Breakpoint.xs) == Bound(30.0, 416.7)
+    assert row[1].get_bound(Breakpoint.sm) == Bound(30.0, 390.0)
+    assert row[1].get_bound(Breakpoint.md) == Bound(30.0, 540.0)
+    assert row[1].get_bound(Breakpoint.lg) == Bound(30.0, 740.0)
+    assert row[1].get_bound(Breakpoint.xl) == Bound(30.0, 890.0)
+
+    assert row[2].get_bound(Breakpoint.xs) == Bound(53.3, 95.3)
+    assert row[2].get_bound(Breakpoint.sm) == Bound(90.0, 90.0)
+    assert row[2].get_bound(Breakpoint.md) == Bound(120.0, 120.0)
+    assert row[2].get_bound(Breakpoint.lg) == Bound(160.0, 160.0)
+    assert row[2].get_bound(Breakpoint.xl) == Bound(190.0, 190.0)
