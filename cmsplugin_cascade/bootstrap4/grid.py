@@ -83,7 +83,7 @@ class Bound(object):
         )
 
     def __repr__(self):
-        return "<{}>({}…{})".format(self.__class__.__name__, self.min, self.max)
+        return "{}(min={}, max={})".format(self.__class__.__name__, self.min, self.max)
 
     def extend(self, other):
         self.min = min(self.min, other.min)
@@ -107,14 +107,14 @@ fluid_bounds = {
 }
 
 
-class ColumnBreak(object):
+class Break(object):
     def __init__(self, breakpoint, classes, narrower=None):
         self.breakpoint = breakpoint
         self.fixed_units = 0
         self.flex_column = False
         self.auto_column = False
         self._normalize_col_classes(classes)
-        if isinstance(narrower, ColumnBreak):
+        if isinstance(narrower, Break):
             self._inherit_from(narrower)
         self.bound = None
 
@@ -166,8 +166,9 @@ class ColumnBreak(object):
             newone.bound = dict(self.bound)
         return newone
 
-    def __str__(self):
-        return "{}: fixed={}, flex={}, auto={}".format(self.breakpoint.name, self.fixed_units, self.flex_column, self.auto_column)
+    def __repr__(self):
+        return "{}({}: fixed={}, flex={}, auto={})".format(
+            self.__class__.__name__, self.breakpoint.name, self.fixed_units, self.flex_column, self.auto_column)
 
 
 class Bootstrap4Container(list):
@@ -179,6 +180,9 @@ class Bootstrap4Container(list):
     """
     def __init__(self, bounds=default_bounds):
         self.bounds = bounds
+
+    def __repr__(self):
+        return "{}({})".format(self.__class__.__name__, ', '.join([repr(o) for o in self]))
 
     def add_row(self, row):
         if isinstance(row.parent, (Bootstrap4Container, Bootstrap4Column)):
@@ -199,6 +203,9 @@ class Bootstrap4Row(list):
     """
     parent = None
     bounds = None
+
+    def __repr__(self):
+        return "{}({})".format(self.__class__.__name__, ', '.join([repr(o) for o in self]))
 
     def add_column(self, column):
         if isinstance(column.parent, Bootstrap4Row):
@@ -259,11 +266,11 @@ class Bootstrap4Column(list):
         narrower = None
         self.breaks = {}
         for bp in Breakpoint.all():
-            self.breaks[bp] = ColumnBreak(bp, classes, narrower)
+            self.breaks[bp] = Break(bp, classes, narrower)
             narrower = self.breaks[bp]
 
-    def __str__(self):
-        return '\n'.join([str(self.breaks[bp]) for bp in Breakpoint.all()])
+    def __repr__(self):
+        return "{}({})".format(self.__class__.__name__, ', '.join([repr(self.breaks[bp]) for bp in Breakpoint.all()]))
 
     def __copy__(self):
         newone = type(self)()
@@ -282,5 +289,6 @@ class Bootstrap4Column(list):
 
     def get_bound(self, breakpoint):
         if self.breaks[breakpoint].bound is None:
-            raise BootstrapException("Invoke `compute_column_bounds()` on wrapping row before calling `get_bounds()`")
+            self.parent.compute_column_bounds()
+            assert self.breaks[breakpoint].bound
         return self.breaks[breakpoint].bound
