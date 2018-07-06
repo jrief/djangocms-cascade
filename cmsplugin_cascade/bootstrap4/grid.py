@@ -282,8 +282,9 @@ class Bootstrap4Column(list):
             # detach from previous container or column
             pos = row.parent.index(row)
             row.parent.pop(pos)
+            row.parent.bounds = None
         row.parent = self
-        row.bounds = dict(self.bounds)
+        row.bounds = dict((bp, self.get_bound(bp)) for bp in Breakpoint.all())
         self.append(row)
         return row
 

@@ -137,6 +137,27 @@ def test_haricot():
     assert row[2].get_bound(Breakpoint.xl) == Bound(190.0, 190.0)
 
 
+def test_nested_row():
+    container = Bootstrap4Container()
+    row = container.add_row(Bootstrap4Row())
+    row.add_column(Bootstrap4Column('col'))
+    row.add_column(Bootstrap4Column('col'))
+    nested_row = row[0].add_row(Bootstrap4Row())
+    nested_row.add_column(Bootstrap4Column('col-5'))
+    nested_row.add_column(Bootstrap4Column('col-7'))
+
+    assert nested_row[0].get_bound(Breakpoint.xs) == Bound(66.7, 119.2)
+    assert nested_row[1].get_bound(Breakpoint.xs) == Bound(93.3, 166.8)
+    assert nested_row[0].get_bound(Breakpoint.sm) == Bound(112.5, 112.5)
+    assert nested_row[1].get_bound(Breakpoint.sm) == Bound(157.5, 157.5)
+    assert nested_row[0].get_bound(Breakpoint.md) == Bound(150.0, 150.0)
+    assert nested_row[1].get_bound(Breakpoint.md) == Bound(210.0, 210.0)
+    assert nested_row[0].get_bound(Breakpoint.lg) == Bound(200.0, 200.0)
+    assert nested_row[1].get_bound(Breakpoint.lg) == Bound(280.0, 280.0)
+    assert nested_row[0].get_bound(Breakpoint.xl) == Bound(237.5, 237.5)
+    assert nested_row[1].get_bound(Breakpoint.xl) == Bound(332.5, 332.5)
+
+
 def test_repr():
     container = Bootstrap4Container()
     row = container.add_row(Bootstrap4Row())
