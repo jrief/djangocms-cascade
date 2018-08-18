@@ -130,7 +130,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
                 # this can happen, if one moved an `else`- or `elif`-segment in front of an `if`-segment
                 template = edit_mode and self.hiding_template or self.empty_template
             elif request._evaluated_segments.get(prev_instance.pk):
-                request._evaluated_segments[instance.pk] = True
+                request._evaluated_segments[instance.pk] = (open_tag == 'elif')
                 # in edit mode hidden plugins have to be rendered nevertheless
                 template = edit_mode and self.hiding_template or self.empty_template
             elif open_tag == 'elif':
