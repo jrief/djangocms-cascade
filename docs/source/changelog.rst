@@ -3,6 +3,11 @@ Release History
 ===============
 
 
+0.16.3
+======
+* Fix **CarouselPlugin**, if used with newer versions of the **angular-ui-bootstrap** NPM library.
+* Fix corner-case of dysfunctional **elif** evaluation in **SegmentPlugin**.
+
 0.16.2
 ======
 * Fix Markdown while uploading to PyPI.
