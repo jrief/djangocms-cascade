@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import itertools
+
 from django.forms import widgets
 from django.core.exceptions import ValidationError, ImproperlyConfigured
-from django.utils.html import format_html, format_html_join
+from django.utils.html import format_html
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.models import ModelForm
@@ -147,9 +149,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     parent_classes = ('BootstrapRowPlugin',)
     child_classes = ('BootstrapJumbotronPlugin',)
     alien_child_classes = True
-    #default_css_attributes = list(itertools.chain(*(('{}-column-width'.format(s),
-    #    '{}-column-offset'.format(s), '{}-column-ordering'.format(s), '{}-responsive-utils'.format(s),)
-    #    for s in BS3_BREAKPOINT_KEYS)))
+    default_css_attributes = [fmt.format(bp.name) for bp in Breakpoint
+        for fmt in ('{}-column-width', '{}-column-offset', '{}-column-ordering', '{}-responsive-utils')]
     glossary_variables = ['container_max_widths']
 
     def get_form(self, request, obj=None, **kwargs):
@@ -176,42 +177,48 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         for bp in breakpoints:
             try:
-                last = getattr(Breakpoint, breakpoints[breakpoints.index(bp) + 1])  # BS3_BREAKPOINT_KEYS.index(next_bp)
+                last = getattr(Breakpoint, breakpoints[breakpoints.index(bp) + 1])
             except IndexError:
                 last = None
             finally:
                 first = getattr(Breakpoint, bp)
                 devices = ', '.join([force_text(b.label) for b in Breakpoint.range(first, last)])
-            choices = [('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13)]
+
+            if bp == 'xs':
+                choices = [('col', _("Flex column"))]
+                choices.extend(('col-{}'.format(i), _("{} fixed column").format(units[i])) for i in range(1, 13))
+                choices.append(('col-auto', _("Auto column")))
+            else:
+                choices = [('col-{}'.format(bp), _("Flex column"))]
+                choices.extend(('col-{}-{}'.format(bp, i), _("{} fixed column").format(units[i])) for i in range(1, 13))
+                choices.append(('col-{}-auto'.format(bp), _("Auto column")))
             if breakpoints.index(bp) == 0:
                 # first breakpoint
-                label = _("Column width for {}").format(devices)
-                help_text = choose_help_text(
-                    _("Number of column units for devices narrower than {} pixels."),
-                    _("Number of column units for devices wider than {} pixels."),
-                    _("Number of column units for all devices.")
-                )
                 glossary_fields.append(GlossaryField(
                     widgets.Select(choices=choices),
-                    label=label,
+                    label=_("Column width for {}").format(devices),
                     name='{}-column-width'.format(bp),
                     initial='col-{}-12'.format(bp),
-                    help_text=help_text))
+                    help_text=choose_help_text(
+                        _("Column width for devices narrower than {:.0f} pixels."),
+                        _("Column width for devices wider than {:.0f} pixels."),
+                        _("Column width for all devices."),
+                    )
+                ))
             else:
                 # wider breakpoints may inherit from next narrower ones
                 choices.insert(0, ('', _("Inherit from above")))
-                label = _("Column width for {}").format(devices)
-                help_text = choose_help_text(
-                    _("Override column units for devices narrower than {} pixels."),
-                    _("Override column units for devices wider than {} pixels."),
-                    _("Override column units for all devices.")
-                )
                 glossary_fields.append(GlossaryField(
                     widgets.Select(choices=choices),
-                    label=label,
+                    label=_("Column width for {}").format(devices),
                     name='{}-column-width'.format(bp),
                     initial='',
-                    help_text=help_text))
+                    help_text=choose_help_text(
+                        _("Override column width for devices narrower than {:.0f} pixels."),
+                        _("Override column width for devices wider than {:.0f} pixels."),
+                        _("Override column width for all devices."),
+                    )
+                ))
 
             # handle offset
             if breakpoints.index(bp) == 0:
@@ -220,12 +227,15 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             else:
                 choices = [('', _("Inherit from above"))]
                 offset_range = range(0, 13)
-            choices.extend(('col-{}-offset-{}'.format(bp, i), units[i]) for i in offset_range)
+            if bp == 'xs':
+                choices.extend(('offset-{}'.format(i), units[i]) for i in offset_range)
+            else:
+                choices.extend(('offset-{}-{}'.format(bp, i), units[i]) for i in offset_range)
             label = _("Offset for {}").format(devices)
             help_text = choose_help_text(
-                _("Number of offset units for devices narrower than {} pixels."),
-                _("Number of offset units for devices wider than {} pixels."),
-                _("Number of offset units for all devices.")
+                _("Offset width for devices narrower than {:.0f} pixels."),
+                _("Offset width for devices wider than {:.0f} pixels."),
+                _("Offset width for all devices.")
             )
             glossary_fields.append(GlossaryField(
                 widgets.Select(choices=choices),
@@ -233,15 +243,17 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 name='{}-column-offset'.format(bp),
                 help_text=help_text))
 
-            # handle column ordering using push/pull settings
+            # handle column reordering
             choices = [('', _("No reordering"))]
-            choices.extend(('col-{}-push-{}'.format(bp, i), _("Push {}").format(units[i])) for i in range(0, 12))
-            choices.extend(('col-{}-pull-{}'.format(bp, i), _("Pull {}").format(units[i])) for i in range(0, 12))
-            label = _("Column ordering for {0}").format(devices)
+            if bp == 'xs':
+                choices.extend(('order-{}'.format(i), _("Reorder by {}").format(units[i])) for i in range(1, 13))
+            else:
+                choices.extend(('order-{}-{}'.format(bp, i), _("Reorder by {}").format(units[i])) for i in range(1, 13))
+            label = _("Reordering for {}").format(devices)
             help_text = choose_help_text(
-                _("Column ordering for devices narrower than {} pixels."),
-                _("Column ordering for devices wider than {} pixels."),
-                _("Column ordering for all devices.")
+                _("Reordering for devices narrower than {:.0f} pixels."),
+                _("Reordering for devices wider than {:.0f} pixels."),
+                _("Reordering for all devices.")
             )
             glossary_fields.append(GlossaryField(
                 widgets.Select(choices=choices),
@@ -249,12 +261,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 name='{}-column-ordering'.format(bp),
                 help_text=help_text))
 
-            # handle responsive utilies
-            choices = (('', _("Default")), ('visible-{}'.format(bp), _("Visible")), ('hidden-{}'.format(bp), _("Hidden")),)
+            # handle responsive utilities
+            choices = [('', _("Default")), ('visible-{}'.format(bp), _("Visible")), ('hidden-{}'.format(bp), _("Hidden"))]
             label = _("Responsive utilities for {}").format(devices)
             help_text = choose_help_text(
-                _("Utility classes for showing and hiding content by devices narrower than {} pixels."),
-                _("Utility classes for showing and hiding content by devices wider than {} pixels."),
+                _("Utility classes for showing and hiding content by devices narrower than {:.0f} pixels."),
+                _("Utility classes for showing and hiding content by devices wider than {:.0f} pixels."),
                 _("Utility classes for showing and hiding content for all devices.")
             )
             glossary_fields.append(GlossaryField(
@@ -293,7 +305,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         if len(widths) > 1:
             content = _('widths: {0} units').format(' / '.join(widths))
         elif len(widths) == 1:
-            width = int(widths[0])
+            width = widths[0]
             content = ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
         else:
             content = _('unknown width')
