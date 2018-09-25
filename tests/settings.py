@@ -90,20 +90,22 @@ USE_L10N = True
 
 USE_TZ = True
 
-LANGUAGES = (
+LANGUAGES = [
     ('en', 'English'),
-)
+]
 
 LANGUAGE_CODE = 'en'
 
-CMS_TEMPLATES = (
+CMS_TEMPLATES = [
     ('testing.html', 'Default Page'),
-)
+]
 
-CMSPLUGIN_CASCADE_PLUGINS = (
+CMSPLUGIN_CASCADE_PLUGINS = [
     'cmsplugin_cascade.link',
-    'cmsplugin_cascade.bootstrap3',
-)
+    #'cmsplugin_cascade.bootstrap3',
+    'cmsplugin_cascade.bootstrap4',
+]
+
 
 CMSPLUGIN_CASCADE = {
     'plugins_with_extra_fields': {
@@ -194,3 +196,5 @@ CKEDITOR_SETTINGS = {
     ],
     'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
 }
+
+SILENCED_SYSTEM_CHECKS = ['2_0.W001']

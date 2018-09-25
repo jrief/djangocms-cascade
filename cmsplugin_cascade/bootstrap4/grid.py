@@ -4,9 +4,11 @@ from __future__ import unicode_literals
 from copy import copy
 from enum import Enum, unique
 from functools import reduce
+import itertools
 from operator import add
 import re
 from django.utils.translation import ugettext_lazy as _
+# from cmsplugin_cascade import app_settings
 
 
 class BootstrapException(Exception):
@@ -26,25 +28,15 @@ class Breakpoint(Enum):
     lg = 3
     xl = 4
 
-    class Labels:
-        xs = _('Breakpoint.xs')
-        sm = _('Breakpoint.sm')
-        md = _('Breakpoint.md')
-        lg = _('Breakpoint.lg')
-        xl = _('Breakpoint.xl')
-
-    @staticmethod
-    def register_messages():
-        from django.utils.translation import ugettext_noop
-        ugettext_noop('Breakpoint.xs')
-        ugettext_noop('Breakpoint.sm')
-        ugettext_noop('Breakpoint.md')
-        ugettext_noop('Breakpoint.lg')
-        ugettext_noop('Breakpoint.xl')
+    @classmethod
+    def XXX_all(cls):
+        return [Breakpoint.xs, Breakpoint.sm, Breakpoint.md, Breakpoint.lg, Breakpoint.xl]
 
     @classmethod
-    def all(self):
-        return [Breakpoint.xs, Breakpoint.sm, Breakpoint.md, Breakpoint.lg, Breakpoint.xl]
+    def range(cls, first, last):
+        if first: first = first.value
+        if last: last = last.value
+        return itertools.islice(cls, first, last)
 
     def __gt__(self, other):
         return self.value > other.value
@@ -57,6 +49,10 @@ class Breakpoint(Enum):
 
     def __le__(self, other):
         return self.value <= other.value
+
+    @property
+    def label(self):
+        return [_("Portrait Phones"), _("Landscape Phones"), _("Tablets"), _("Laptops"), _("Large Desktops")][self.value]
 
 
 class Bound(object):
@@ -178,8 +174,9 @@ class Bootstrap4Container(list):
     Each container object is a list of one to many ``Bootstrap4Row`` instances.
     In order to model a "fluid" container, use ``fluid_bounds`` during construction.
     """
+    # def __init__(self, bounds=app_settings.CMSPLUGIN_CASCADE['bootstrap4']['default_bounds']):
     def __init__(self, bounds=default_bounds):
-        self.bounds = bounds
+            self.bounds = bounds
 
     def __repr__(self):
         return "{}({})".format(self.__class__.__name__, ', '.join([repr(o) for o in self]))
