@@ -8,7 +8,6 @@ import itertools
 from operator import add
 import re
 from django.utils.translation import ugettext_lazy as _
-# from cmsplugin_cascade import app_settings
 
 
 class BootstrapException(Exception):
@@ -27,10 +26,6 @@ class Breakpoint(Enum):
     md = 2
     lg = 3
     xl = 4
-
-    @classmethod
-    def XXX_all(cls):
-        return [Breakpoint.xs, Breakpoint.sm, Breakpoint.md, Breakpoint.lg, Breakpoint.xl]
 
     @classmethod
     def range(cls, first, last):
@@ -262,12 +257,12 @@ class Bootstrap4Column(list):
             classes = classes.split()
         narrower = None
         self.breaks = {}
-        for bp in Breakpoint.all():
+        for bp in Breakpoint:
             self.breaks[bp] = Break(bp, classes, narrower)
             narrower = self.breaks[bp]
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ', '.join([repr(self.breaks[bp]) for bp in Breakpoint.all()]))
+        return "{}({})".format(self.__class__.__name__, ', '.join([repr(self.breaks[bp]) for bp in Breakpoint]))
 
     def __copy__(self):
         newone = type(self)()
@@ -281,7 +276,7 @@ class Bootstrap4Column(list):
             row.parent.pop(pos)
             row.parent.bounds = None
         row.parent = self
-        row.bounds = dict((bp, self.get_bound(bp)) for bp in Breakpoint.all())
+        row.bounds = dict((bp, self.get_bound(bp)) for bp in Breakpoint)
         self.append(row)
         return row
 
@@ -290,3 +285,13 @@ class Bootstrap4Column(list):
             self.parent.compute_column_bounds()
             assert self.breaks[breakpoint].bound
         return self.breaks[breakpoint].bound
+
+    def get_min_max_bounds(self):
+        """
+        Return a dict of min- and max-values for the given column.
+        This is required to estimate the bounds of images.
+        """
+        bound = Bound(999999.0, 0.0)
+        for bp in Breakpoint:
+            bound.extend(self.get_bound(bp))
+        return {'min': bound.min, 'max': bound.max}

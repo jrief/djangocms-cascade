@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import itertools
-
+from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.forms import widgets
-from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.forms.fields import ChoiceField
+from django.forms.models import ModelForm
 from django.utils.html import format_html
 from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from django.forms.models import ModelForm
-from django.forms.fields import ChoiceField
 
 from cms.plugin_pool import plugin_pool
-
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField
 from .plugin_base import BootstrapPluginBase
-from .grid import Breakpoint
+from . import grid
 
 
 def get_widget_choices():
@@ -25,11 +23,11 @@ def get_widget_choices():
     widget_choices = []
     for index, (bp, bound) in enumerate(breakpoints.items()):
         if index == 0:
-            widget_choices.append((bp.name, "{} (<{}px)".format(bp.label, bound.max)))
+            widget_choices.append((bp.name, "{} (<{:0f}px)".format(bp.label, bound.max)))
         elif index == len(breakpoints) - 1:
-            widget_choices.append((bp.name, "{} (≥{}px)".format(bp.label, bound.min)))
+            widget_choices.append((bp.name, "{} (≥{:0f}px)".format(bp.label, bound.min)))
         else:
-            widget_choices.append((bp.name, "{} (≥{}px and <{}px)".format(bp.label, bound.min, bound.max)))
+            widget_choices.append((bp.name, "{} (≥{:0f}px and <{:0f}px)".format(bp.label, bound.min, bound.max)))
     return widget_choices
 
 
@@ -51,13 +49,28 @@ class BootstrapContainerForm(ModelForm):
         return self.cleaned_data['glossary']
 
 
+class ContainerGridMixin(object):
+    def get_grid_instance(self):
+        fluid = self.glossary.get('fluid', False)
+        try:
+            breakpoints = [getattr(grid.Breakpoint, bp) for bp in self.glossary['breakpoints']]
+        except KeyError:
+            breakpoints = [bp for bp in grid.Breakpoint]
+        if fluid:
+            bounds = dict((bp, grid.fluid_bounds[bp]) for bp in breakpoints)
+        else:
+            bounds = dict((bp, grid.default_bounds[bp]) for bp in breakpoints)
+        return grid.Bootstrap4Container(bounds=bounds)
+
+
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     parent_classes = None
     require_parent = False
     form = BootstrapContainerForm
     glossary_variables = ['container_max_widths', 'media_queries']
-    glossary_field_order = ('breakpoints', 'fluid')
+    glossary_field_order = ['breakpoints', 'fluid']
+    model_mixins = (ContainerGridMixin,)
 
     breakpoints = GlossaryField(
         ContainerBreakpointsWidget(choices=get_widget_choices()),
@@ -116,12 +129,22 @@ class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
         help_text=_('Number of columns to be created with this row.'))
 
 
+class RowGridMixin(object):
+    def get_grid_instance(self):
+        row = grid.Bootstrap4Row()
+        query = Q(plugin_type='BootstrapContainerPlugin') | Q(plugin_type='BootstrapColumnPlugin')
+        container = self.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin().get_grid_instance()
+        container.add_row(row)
+        return row
+
+
 class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
-    parent_classes = ('BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin')
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
     form = BootstrapRowForm
-    fields = ('num_children', 'glossary',)
+    fields = ['num_children', 'glossary']
+    model_mixins = (RowGridMixin,)
 
     @classmethod
     def get_identifier(cls, obj):
@@ -144,14 +167,35 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
 
+class ColumnGridMixin(object):
+    valid_keys = ['xs-column-width', 'sm-column-width', 'md-column-width', 'lg-column-width', 'xs-column-width',
+                  'xs-column-offset', 'sm-column-offset', 'md-column-offset', 'lg-column-offset', 'xs-column-offset']
+    def get_grid_instance(self):
+        column = None
+        query = Q(plugin_type='BootstrapRowPlugin')
+        row_obj = self.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin()
+        # column_siblings = row_obj.get_descendants().order_by('depth').filter(plugin_type='BootstrapColumnPlugin')
+        row = row_obj.get_grid_instance()
+        for column_sibling in self.get_siblings():
+            classes = [val for key, val in column_sibling.get_bound_plugin().glossary.items()
+                       if key in self.valid_keys and val]
+            if column_sibling.pk == self.pk:
+                column = grid.Bootstrap4Column(classes)
+                row.add_column(column)
+            else:
+                row.add_column(grid.Bootstrap4Column(classes))
+        return column
+
+
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ('BootstrapRowPlugin',)
     child_classes = ('BootstrapJumbotronPlugin',)
     alien_child_classes = True
-    default_css_attributes = [fmt.format(bp.name) for bp in Breakpoint
+    default_css_attributes = [fmt.format(bp.name) for bp in grid.Breakpoint
         for fmt in ('{}-column-width', '{}-column-offset', '{}-column-ordering', '{}-responsive-utils')]
     glossary_variables = ['container_max_widths']
+    model_mixins = (ColumnGridMixin,)
 
     def get_form(self, request, obj=None, **kwargs):
         def choose_help_text(*phrases):
@@ -164,25 +208,23 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             else:
                 return phrases[2]
 
-        container = self.get_parent_instance(request, obj)
-        while container is not None:
-            if not issubclass(container.plugin_class, BootstrapPluginBase):
-                raise ImproperlyConfigured("A BootstrapColumnPlugin requires a valid parent")
-            if issubclass(container.plugin_class, BootstrapContainerPlugin):
-                break
-            container = self.get_parent_instance(request, container)
+        try:
+            query = Q(plugin_type='BootstrapContainerPlugin')
+            container = obj.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin()
+        except AttributeError:
+            raise grid.BootstrapException("Can not add BootstrapColumnPlugin without BootstrapContainerPlugin")
         breakpoints = container.glossary['breakpoints']
 
         glossary_fields = []
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         for bp in breakpoints:
             try:
-                last = getattr(Breakpoint, breakpoints[breakpoints.index(bp) + 1])
+                last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp) + 1])
             except IndexError:
                 last = None
             finally:
-                first = getattr(Breakpoint, bp)
-                devices = ', '.join([force_text(b.label) for b in Breakpoint.range(first, last)])
+                first = getattr(grid.Breakpoint, bp)
+                devices = ', '.join([force_text(b.label) for b in grid.Breakpoint.range(first, last)])
 
             if bp == 'xs':
                 choices = [('col', _("Flex column"))]
