@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from .grid import Breakpoint, Bound
 
 
-CASCADE_PLUGINS = ['container']
+CASCADE_PLUGINS = ['accordion', 'carousel', 'container', 'image', 'jumbotron', 'panel', 'picture', 'tabs']
+if 'cms_bootstrap' in settings.INSTALLED_APPS:
+    CASCADE_PLUGINS.append('secondary_menu')
 
 
 def set_defaults(config):
