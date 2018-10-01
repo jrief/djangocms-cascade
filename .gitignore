@@ -8,6 +8,7 @@
 .DS_Store
 .sass-cache
 .cache
+.pytest_cache
 *.db
 *.egg-info
 .eggs
