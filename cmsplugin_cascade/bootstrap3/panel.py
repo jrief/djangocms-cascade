@@ -18,7 +18,7 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import TransparentContainer
 from .plugin_base import BootstrapPluginBase
 
-panel_heading_sizes = (('', _("normal")),) + tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
+panel_heading_sizes = [('', _("normal"))] + [('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7)]
 
 
 class PanelTypeWidget(widgets.RadioSelect):
