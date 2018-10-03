@@ -109,12 +109,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
         obj.sanitize_children()
 
-    @classmethod
-    def sanitize_model(cls, obj):
-        sanitized = super(BootstrapContainerPlugin, cls).sanitize_model(obj)
-        # compute_media_queries(obj)
-        return sanitized
-
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 

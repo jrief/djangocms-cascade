@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import logging
 from django.core.exceptions import ValidationError
 from django.forms import widgets, ModelChoiceField
 from django.forms.models import ModelForm
@@ -14,12 +15,12 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget
-from .plugin_base import BootstrapPluginBase
-#from .utils import get_widget_choices, compute_media_queries, get_picture_elements, BS3_BREAKPOINT_KEYS
-from .container import ContainerBreakpointsWidget
-#from .picture import BootstrapPicturePlugin
-from .container import get_widget_choices
-from .grid import Breakpoint
+from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.bootstrap4.container import ContainerBreakpointsWidget, ContainerGridMixin, get_widget_choices
+from cmsplugin_cascade.bootstrap4.picture import BootstrapPicturePlugin, get_picture_elements
+from cmsplugin_cascade.bootstrap4.grid import Breakpoint
+
+logger = logging.getLogger('cascade')
 
 
 class ImageBackgroundMixin(object):
@@ -83,16 +84,15 @@ class JumbotronPluginForm(ImageFormMixin, ModelForm):
 
 class BootstrapJumbotronPlugin(BootstrapPluginBase):
     name = _("Jumbotron")
-    model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
+    model_mixins = (ContainerGridMixin, ImagePropertyMixin, ImageBackgroundMixin)
     form = JumbotronPluginForm
-    default_css_class = 'jumbotron'
     require_parent = False
     parent_classes = ('BootstrapColumnPlugin',)
     allow_children = True
     alien_child_classes = True
     raw_id_fields = ('image_file',)
     fields = ('glossary', 'image_file',)
-    render_template = 'cascade/bootstrap3/jumbotron.html'
+    render_template = 'cascade/bootstrap4/jumbotron.html'
     ring_plugin = 'JumbotronPlugin'
     ATTACHMENT_CHOICES = ('scroll', 'fixed', 'local')
     VERTICAL_POSITION_CHOICES = ('top', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'bottom')
@@ -104,18 +104,18 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             ContainerBreakpointsWidget(choices=get_widget_choices()),
             label=_("Available Breakpoints"),
             name='breakpoints',
-            initial=app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds'].keys(),
+            initial=app_settings.CMSPLUGIN_CASCADE['bootstrap4']['default_bounds'].keys(),
             help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
         GlossaryField(
             MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['px', '%'], required=False),
             label=_("Adapt Picture Heights"),
             name='container_max_heights',
-            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%'},
+            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%', 'xl': '100%'},
             help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints.")
         ),
         GlossaryField(
-            widgets.CheckboxSelectMultiple(choices=[]),  # BootstrapPicturePlugin.RESIZE_OPTIONS),
+            widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
             label=_("Resize Options"),
             name='resize_options',
             initial=['crop', 'subject_location', 'high_resolution'],
@@ -182,20 +182,44 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
-        elements = []  # get_picture_elements(context, instance)
-        context.update({
-            'elements': [e for e in elements if 'media' in e] if elements else [],
-            'CSS_PREFIXES': app_settings.CSS_PREFIXES,
-        })
+        try:
+            elements = get_picture_elements(instance)
+        except Exception as exc:
+            logger.warning("Unable generate picture elements. Reason: {}".format(exc))
+        else:
+            context.update({
+                'elements': [e for e in elements if 'media' in e] if elements else [],
+                'CSS_PREFIXES': app_settings.CSS_PREFIXES,
+            })
         return self.super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):
+        sanitized = False
         # if the jumbotron is the root of the placeholder, we consider it as "fluid"
         obj.glossary['fluid'] = obj.parent is None
-        sanitized = super(BootstrapJumbotronPlugin, cls).sanitize_model(obj)
-        # compute_media_queries(obj)
+        super(BootstrapJumbotronPlugin, cls).sanitize_model(obj)
+        grid_container = obj.get_bound_plugin().get_grid_instance()
+        obj.glossary.setdefault('media_queries', {})
+        for bp, bound in grid_container.bounds.items():
+            obj.glossary['media_queries'].setdefault(bp.name, {})
+            width = round(bound.max)
+            if obj.glossary['media_queries'][bp.name].get('width') != width:
+                obj.glossary['media_queries'][bp.name]['width'] = width
+                sanitized = True
+            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
+                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
+                sanitized = True
         return sanitized
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(BootstrapJumbotronPlugin, cls).get_css_classes(obj)
+        if obj.glossary.get('fluid'):
+            css_classes.append('jumbotron-fluid')
+        else:
+            css_classes.append('jumbotron')
+        return css_classes
 
     @classmethod
     def get_identifier(cls, obj):
