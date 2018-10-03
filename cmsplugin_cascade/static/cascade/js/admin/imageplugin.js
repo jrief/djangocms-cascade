@@ -21,15 +21,18 @@ django.jQuery(function($) {
 		},
 		toggleResponsive: function(checked) {
 			var $image_width_responsive = $('#id_glossary_image_width_responsive').closest('.glossary-widget'),
-				$image_width_fixed = $('#id_glossary_image_width_fixed').closest('.glossary-widget');
+				$image_width_fixed = $('#id_glossary_image_width_fixed').closest('.glossary-widget'),
+				$image_alignment = $('#id_glossary_image_alignment').closest('.glossary-widget');
 
 			// if checkbox Image Shapes: Responsive is active, show adaptive width and heights
 			if (checked) {
 				$image_width_responsive.show();
 				$image_width_fixed.hide();
+				$image_alignment.hide();
 			} else {
 				$image_width_responsive.hide();
 				$image_width_fixed.show();
+				$image_alignment.show();
 			}
 		},
 		refreshChangeForm: function() {
