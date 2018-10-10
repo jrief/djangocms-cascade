@@ -3,10 +3,21 @@ Release History
 ===============
 
 
+0.17
+====
+* Add support for django-CMS 3.5.
+* Font Icons now must be chosen per page, rather than for each Icon plugin. This prevents the
+  problem of rendering unwanted symbols in case more than one Icon Font was selected on a given CMS
+  page. Therefore, after migrating to this version of **djangocms-cascade**, check all pages and
+  select the proper Icon Font using ``Page > Choose Icon Font…`` from the django-CMS toolbar (if
+  this is too much manual work for you, please contact me, or open an issue).
+
+
 0.16.3
 ======
 * Fix **CarouselPlugin**, if used with newer versions of the **angular-ui-bootstrap** NPM library.
 * Fix corner-case of dysfunctional **elif** evaluation in **SegmentPlugin**.
+
 
 0.16.2
 ======
