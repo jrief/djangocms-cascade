@@ -6,6 +6,7 @@ Release History
 0.17
 ====
 * Add support for django-CMS 3.5.
+* Drop support for Django-1.9.
 * Font Icons now must be chosen per page, rather than for each Icon plugin. This prevents the
   problem of rendering unwanted symbols in case more than one Icon Font was selected on a given CMS
   page. Therefore, after migrating to this version of **djangocms-cascade**, check all pages and
