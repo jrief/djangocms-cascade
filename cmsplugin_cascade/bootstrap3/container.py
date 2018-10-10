@@ -181,9 +181,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             finally:
                 first = BS3_BREAKPOINT_KEYS.index(bp)
                 devices = ', '.join([force_text(BS3_BREAKPOINTS[b][2]) for b in BS3_BREAKPOINT_KEYS[first:last]])
+            choices = [('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13)]
             if breakpoints.index(bp) == 0:
                 # first breakpoint
-                choices = tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
                 label = _("Column width for {}").format(devices)
                 help_text = choose_help_text(
                     _("Number of column units for devices narrower than {} pixels."),
@@ -197,8 +197,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     initial='col-{}-12'.format(bp),
                     help_text=help_text))
             else:
-                choices = (('', _("Inherit from above")),) + \
-                    tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
+                # wider breakpoints may inherit from next narrower ones
+                choices.insert(0, ('', _("Inherit from above")))
                 label = _("Column width for {}").format(devices)
                 help_text = choose_help_text(
                     _("Override column units for devices narrower than {} pixels."),
@@ -214,14 +214,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
             # handle offset
             if breakpoints.index(bp) == 0:
-                empty_offset_choice = _("No offset")
+                choices = [('', _("No offset"))]
                 offset_range = range(1, 13)
             else:
-                empty_offset_choice = _("Inherit from above")
+                choices = [('', _("Inherit from above"))]
                 offset_range = range(0, 13)
-            choices = (('', empty_offset_choice),) + \
-                tuple(('col-{}-offset-{}'.format(bp, i), units[i])
-                      for i in offset_range)
+            choices.extend([('col-{}-offset-{}'.format(bp, i), units[i]) for i in offset_range])
             label = _("Offset for {}").format(devices)
             help_text = choose_help_text(
                 _("Number of offset units for devices narrower than {} pixels."),
