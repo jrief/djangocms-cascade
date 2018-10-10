@@ -6,9 +6,9 @@ from distutils.version import LooseVersion
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _, ungettext
 from django.utils.encoding import force_text

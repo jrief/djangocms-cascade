@@ -74,6 +74,10 @@ class IconFontTestCase(CascadeTestCase):
             self.assertListEqual(icon_items[0].i.attrs['class'], ['icon-emo-happy'])
             self.assertListEqual(icon_items[33].i.attrs['class'], ['icon-marquee'])
 
+            # select icon font from toolbar
+            self.placeholder.page.cascadepage.icon_font = icon_font
+            self.placeholder.page.cascadepage.save()
+
             # create container
             container_model = add_plugin(self.placeholder, BootstrapContainerPlugin, 'en',
                                          glossary={'breakpoints': BS3_BREAKPOINT_KEYS})

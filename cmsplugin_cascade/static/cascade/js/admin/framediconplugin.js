@@ -30,7 +30,7 @@ django.jQuery(function($) {
 				}
 			});
 			this.toggleAlignIcon(value);
-			this.$super();
+			this.$super && this.$super();
 		}
 	});
 });
