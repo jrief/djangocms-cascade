@@ -7,7 +7,7 @@ from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from .grid import Breakpoint, Bound
 
 
-CASCADE_PLUGINS = ['accordion', 'carousel', 'container', 'image', 'jumbotron', 'panel', 'picture', 'tabs']
+CASCADE_PLUGINS = ['accordion', 'card', 'carousel', 'container', 'image', 'jumbotron', 'picture', 'tabs']
 if 'cms_bootstrap' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS.append('secondary_menu')
 

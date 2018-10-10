@@ -18,70 +18,74 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import TransparentContainer
 from .plugin_base import BootstrapPluginBase
 
-panel_heading_sizes = [('', _("normal"))] + [('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7)]
+card_heading_sizes = [('', _("normal"))] + [('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7)]
 
 
-class PanelTypeWidget(widgets.RadioSelect):
+class CardTypeWidget(widgets.RadioSelect):
     """
     Render sample buttons in different colors in the button's backend editor.
     """
-    PANEL_TYPES = OrderedDict((('panel-default', _("Default")), ('panel-primary', _("Primary")),
-        ('panel-success', _("Success")), ('panel-info', _("Info")), ('panel-warning', _("Warning")),
-        ('panel-danger', _("Danger")),))
-    template_name = 'cascade/forms/widgets/panel_types.html'
+    CARD_TYPES = OrderedDict([
+        ('card-primary', _("Primary")),
+        ('card-success', _("Success")),
+        ('card-info', _("Info")),
+        ('card-warning', _("Warning")),
+        ('card-danger', _("Danger"))
+    ])
+    template_name = 'cascade/forms/widgets/card_types.html'
 
     @classmethod
     def get_instance(cls):
-        choices = tuple((k, v) for k, v in cls.PANEL_TYPES.items())
+        choices = tuple((k, v) for k, v in cls.CARD_TYPES.items())
         return cls(choices=choices)
 
     def render(self, name, value, attrs=None, renderer=None):
         if DJANGO_VERSION >= (1, 11):
-            return super(PanelTypeWidget, self).render(name, value, attrs, renderer)
+            return super(CardTypeWidget, self).render(name, value, attrs, renderer)
 
         renderer = self.get_renderer(name, value, attrs)
         return format_html('<div class="form-row">{}</div>',
-            format_html_join('\n', '<div class="field-box"><div class="panel {1}">'
-                '<div class="panel-heading">{2}</div><div class="panel-body">{3}</div>'
+            format_html_join('\n', '<div class="field-box"><div class="card {1}">'
+                '<div class="card-heading">{2}</div><div class="card-body">{3}</div>'
                 '</div><div class="label">{0}</div></div>',
-                ((force_text(w), w.choice_value, force_text(self.PANEL_TYPES[w.choice_value]), _("Content"))
+                ((force_text(w), w.choice_value, force_text(self.CARD_TYPES[w.choice_value]), _("Content"))
                  for w in renderer)
             ))
 
 
-class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
+class BootstrapCardPlugin(TransparentContainer, BootstrapPluginBase):
     """
-    Use this plugin to display a panel with optional panel-header and panel-footer.
+    Use this plugin to display a card with optional card-header and card-footer.
     """
-    name = _("Panel")
-    default_css_class = 'panel'
+    name = _("Card")
+    default_css_class = 'card'
     require_parent = False
-    parent_classes = ('BootstrapColumnPlugin',)
+    parent_classes = ['BootstrapColumnPlugin']
     allow_children = True
     child_classes = None
-    render_template = 'cascade/bootstrap3/panel.html'
-    glossary_field_order = ('panel_type', 'heading_size', 'heading', 'footer')
+    render_template = 'cascade/bootstrap4/card.html'
+    glossary_field_order = ['card_type', 'heading_size', 'heading', 'footer']
 
-    panel_type = GlossaryField(
-        PanelTypeWidget.get_instance(),
-        label=_("Panel type"),
-        help_text=_("Display Panel using this style.")
+    card_type = GlossaryField(
+        CardTypeWidget.get_instance(),
+        label=_("Card type"),
+        help_text=_("Display Card using this style.")
     )
 
     heading_size = GlossaryField(
-        widgets.Select(choices=panel_heading_sizes),
+        widgets.Select(choices=card_heading_sizes),
         initial='',
         label=_("Heading Size")
     )
 
     heading = GlossaryField(
         widgets.TextInput(attrs={'size': 80}),
-        label=_("Panel Heading")
+        label=_("Card Heading")
     )
 
     footer = GlossaryField(
         widgets.TextInput(attrs={'size': 80}),
-        label=_("Panel Footer")
+        label=_("Card Footer")
     )
 
     html_parser = HTMLParser()
@@ -91,7 +95,7 @@ class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapPanelPlugin, cls).get_identifier(obj)
+        identifier = super(BootstrapCardPlugin, cls).get_identifier(obj)
         heading = cls.html_parser.unescape(obj.glossary.get('heading', ''))
         return format_html('{0}{1}', identifier, heading)
 
@@ -100,12 +104,12 @@ class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
         footer = self.html_parser.unescape(instance.glossary.get('footer', ''))
         context.update({
             'instance': instance,
-            'panel_type': instance.glossary.get('panel_type', 'panel-default'),
-            'panel_heading': heading,
+            'card_type': instance.glossary.get('card_type', 'card-default'),
+            'card_heading': heading,
             'heading_size': instance.glossary.get('heading_size', ''),
-            'panel_footer': footer,
+            'card_footer': footer,
             'placeholder': placeholder,
         })
-        return self.super(BootstrapPanelPlugin, self).render(context, instance, placeholder)
+        return self.super(BootstrapCardPlugin, self).render(context, instance, placeholder)
 
-plugin_pool.register_plugin(BootstrapPanelPlugin)
+plugin_pool.register_plugin(BootstrapCardPlugin)

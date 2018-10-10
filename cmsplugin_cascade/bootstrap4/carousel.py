@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import re
+import logging
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
@@ -16,15 +17,15 @@ from django.forms.models import ModelForm
 from cms.plugin_pool import plugin_pool
 from filer.models.imagemodels import Image
 
-from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImagePropertyMixin, ImageFormMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
-#from . import utils
 from .plugin_base import BootstrapPluginBase
-#from .picture import BootstrapPicturePlugin
+from .picture import BootstrapPicturePlugin, get_picture_elements
 from .grid import Breakpoint
+
+logger = logging.getLogger('cascade')
 
 
 class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
@@ -39,13 +40,13 @@ class CarouselPlugin(BootstrapPluginBase):
     name = _("Carousel")
     form = CarouselSlidesForm
     default_css_class = 'carousel'
-    default_css_attributes = ('options',)
-    parent_classes = ('BootstrapColumnPlugin',)
-    render_template = 'cascade/bootstrap3/{}/carousel.html'
+    default_css_attributes = ['options']
+    parent_classes = ['BootstrapColumnPlugin']
+    render_template = 'cascade/bootstrap4/{}/carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
-    fields = ('num_children', 'glossary',)
+    fields = ['num_children', 'glossary']
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
-    OPTION_CHOICES = (('slide', _("Animate")), ('pause', _("Pause")), ('wrap', _("Wrap")),)
+    OPTION_CHOICES = [('slide', _("Animate")), ('pause', _("Pause")), ('wrap', _("Wrap"))]
 
     interval = GlossaryField(
         NumberInputWidget(attrs={'size': '2', 'style': 'width: 4em;', 'min': '1'}),
@@ -64,20 +65,19 @@ class CarouselPlugin(BootstrapPluginBase):
     container_max_heights = GlossaryField(
         MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['px']),
         label=_("Carousel heights"),
-        #initial=dict((bp[0], '{}px'.format(100 + 50 * i))
-        #    for i, bp in enumerate(app_settings.CMSPLUGIN_CASCADE['bootstrap4']['breakpoints'])),
+        initial=dict((bp.name, '{}px'.format(100 + 30 * i)) for i, bp in enumerate(Breakpoint)),
         help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
     )
 
     resize_options = GlossaryField(
-        widgets.CheckboxSelectMultiple(choices=[]), #BootstrapPicturePlugin.RESIZE_OPTIONS),
+        widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
         label=_("Resize Options"),
         help_text=_("Options to use when resizing the image."),
         initial=['upscale', 'crop', 'subject_location', 'high_resolution'],
     )
 
     def get_form(self, request, obj=None, **kwargs):
-        utils.reduce_breakpoints(self, 'container_max_heights', request)
+        # utils.reduce_breakpoints(self, 'container_max_heights', request)
         return super(CarouselPlugin, self).get_form(request, obj, **kwargs)
 
     @classmethod
@@ -133,25 +133,29 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
     form = CarouselSlideForm
-    default_css_class = 'img-responsive'
+    default_css_class = 'img-fluid'
     parent_classes = ['CarouselPlugin']
     raw_id_fields = ('image_file',)
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
-    fields = ('image_file', 'glossary',)
-    render_template = 'cascade/bootstrap3/carousel-slide.html'
+    fields = ['image_file', 'glossary']
+    render_template = 'cascade/bootstrap4/carousel-slide.html'
     alien_child_classes = True
 
     def render(self, context, instance, placeholder):
         # slide image shall be rendered in a responsive context using the ``<picture>`` element
-        elements = []  # utils.get_picture_elements(context, instance)
-        fluid = instance.get_complete_glossary().get('fluid') == 'on'
-        context.update({
-            'is_responsive': True,
-            'instance': instance,
-            'is_fluid': fluid,
-            'placeholder': placeholder,
-            'elements': elements,
-        })
+        try:
+            parent_glossary = instance.parent.get_bound_plugin().glossary
+            instance.glossary.update(responsive_heights=parent_glossary['container_max_heights'])
+            elements = get_picture_elements(instance)
+        except Exception as exc:
+            logger.warning("Unable generate picture elements. Reason: {}".format(exc))
+        else:
+            context.update({
+                'instance': instance,
+                'is_fluid': False,
+                'placeholder': placeholder,
+                'elements': elements,
+            })
         return self.super(CarouselSlidePlugin, self).render(context, instance, placeholder)
 
     @classmethod
@@ -161,6 +165,23 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
         if obj.glossary.get('resize_options') != resize_options:
             obj.glossary.update(resize_options=resize_options)
             sanitized = True
+        parent = obj.parent
+        while parent.plugin_type != 'BootstrapColumnPlugin':
+            parent = parent.parent
+            if parent is None:
+                logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
+                return
+        grid_column = parent.get_bound_plugin().get_grid_instance()
+        obj.glossary.setdefault('media_queries', {})
+        for bp in Breakpoint:
+            obj.glossary['media_queries'].setdefault(bp.name, {})
+            width = round(grid_column.get_bound(bp).max)
+            if obj.glossary['media_queries'][bp.name].get('width') != width:
+                obj.glossary['media_queries'][bp.name]['width'] = width
+                sanitized = True
+            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
+                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
+                sanitized = True
         return sanitized
 
     @classmethod

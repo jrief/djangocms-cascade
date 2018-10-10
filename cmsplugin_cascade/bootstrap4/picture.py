@@ -82,7 +82,6 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
             logger.warning("Unable generate picture elements. Reason: {}".format(exc))
         else:
             context.update({
-                'is_responsive': True,
                 'instance': instance,
                 'is_fluid': True,
                 'placeholder': placeholder,

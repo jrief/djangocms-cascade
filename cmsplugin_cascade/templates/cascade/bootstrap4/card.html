@@ -1,0 +1,10 @@
+{% load cascade_tags %}{% spaceless %}
+{% with inline_styles=instance.inline_styles %}
+<div class="card {{ card_type }} {{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+{% if card_heading %}<div class="card-heading">{% if heading_size %}<{{ heading_size }} class="card-title">{% endif %}{{ card_heading|safe }}{% if heading_size %}</{{ heading_size }}>{% endif %}</div>{% endif %}
+<div class="card-body">
+{% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}
+</div>
+{% if card_footer %}<div class="card-footer">{{ card_footer|safe }}</div>{% endif %}
+</div>
+{% endwith %}{% endspaceless %}

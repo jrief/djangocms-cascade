@@ -1,0 +1,14 @@
+{% load cascade_tags %}{% spaceless %}
+{% with inline_styles=instance.inline_styles %}
+
+<uib-accordion close-others="{% if instance.glossary.close_others %}true{% else %}false{% endif %}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+	{% for panel in instance.child_plugin_instances %}
+		{% with panel_type=panel.glossary.panel_type panel_title=panel.glossary.panel_title|safe %}
+	<div{% if panel_type %} class="{{ panel_type }}"{% endif %} uib-accordion-group heading="{{ panel_title }}"{% if forloop.first and instance.glossary.first_is_open %} is-open="true"{% endif %}>
+		{% render_plugin panel %}
+	</div>
+		{% endwith %}
+	{% endfor %}
+</uib-accordion>
+
+{% endwith %}{% endspaceless %}
