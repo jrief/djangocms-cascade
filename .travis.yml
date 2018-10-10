@@ -2,13 +2,11 @@ language: python
       
 python:
   - 2.7
-  - 3.4
   - 3.5
   - 3.6
 
 env:
   matrix:
-  - DJANGO='django19' CMS='cms34'
   - DJANGO='django110' CMS='cms34'
   - DJANGO='django111' CMS='cms34'
   - DJANGO='django111' CMS='cms35'
