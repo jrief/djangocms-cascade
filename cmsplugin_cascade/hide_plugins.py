@@ -8,7 +8,6 @@ from django.template import engines
 
 from cmsplugin_cascade.fields import GlossaryField
 
-import json
 
 class HidePluginMixin(object):
     """
@@ -43,8 +42,6 @@ background-size: contain;
         return super(HidePluginMixin, self).get_form(request, obj, **kwargs)
 
     def get_render_template(self, context, instance, placeholder):
-        if isinstance(instance.glossary, str):
-            instance.glossary=json.loads(instance.glossary)
         if instance.glossary.get('hide_plugin'):
             if self.in_edit_mode(context['request'], placeholder):
                 # in edit mode we actually must render the children, otherwise they won't show

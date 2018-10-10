@@ -2,13 +2,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import io
 from setuptools import setup, find_packages
 from cmsplugin_cascade import __version__
 
-def readfile(filename):
-    with io.open(filename, encoding='utf-8') as fd:
-        return fd.read()
+with open('README.md', 'r') as fh:
+    long_description = fh.read()
 
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
@@ -36,15 +34,16 @@ setup(
     url='https://github.com/jrief/djangocms-cascade',
     packages=find_packages(exclude=['examples', 'docs', 'tests']),
     install_requires=[
+        'django>=1.9,<2.0',
+        'django-classy-tags>=0.8',
+        'django-cms>=3.4,<4',
+        'djangocms-text-ckeditor>=3.4',
         'jsonfield',
-        'django-classy-tags>=0.8.0',
-        'django-cms>=3.4.5',
-        'djangocms-text-ckeditor>=3.4.0',
     ],
     license='LICENSE-MIT',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
-    long_description=readfile('README.md'),
+    long_description=long_description,
     long_description_content_type='text/markdown',
     include_package_data=True,
     zip_safe=False,

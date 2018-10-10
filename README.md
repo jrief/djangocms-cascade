@@ -6,7 +6,7 @@
 [![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/awesto/djangocms-cascade)
  [![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 
-**DjangoCMS-Cascade** is the Swiss army knife for working with Django-CMS plugins.
+The Swiss army knife for working with Django-CMS plugins.
 
 ## Why Use DjangoCMS-Cascade?
 

@@ -12,7 +12,6 @@ from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cms.utils.placeholder import get_placeholder_conf
 
-import json
 
 @python_2_unicode_compatible
 class CascadeModelBase(CMSPlugin):
@@ -76,8 +75,6 @@ class CascadeModelBase(CMSPlugin):
         This is done by starting from the root element down to the current element and enriching
         the glossary with each models's own glossary.
         """
-        if isinstance(self.glossary,str):
-            self.glossary=json.loads(self.glossary)
         if not hasattr(self, '_complete_glossary_cache'):
             self._complete_glossary_cache = self.get_parent_glossary().copy()
             self._complete_glossary_cache.update(self.glossary or {})
