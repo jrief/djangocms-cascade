@@ -9,9 +9,9 @@ Release History
 * Drop support for Django-1.9.
 * Font Icons now must be chosen per page, rather than for each Icon plugin. This prevents the
   problem of rendering unwanted symbols in case more than one Icon Font was selected on a given CMS
-  page. Therefore, after migrating to this version of **djangocms-cascade**, check all pages and
-  select the proper Icon Font using ``Page > Choose Icon Font…`` from the django-CMS toolbar (if
-  this is too much manual work for you, please contact me, or open an issue).
+  page. Therefore, after migrating to this version of **djangocms-cascade**, check on all CMS
+  pages if the set icon font is the desired one. Use the django-CMS toolbar, and click onto
+  ``Page > Choose Icon Font…``.
 
 
 0.16.3

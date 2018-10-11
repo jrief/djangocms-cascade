@@ -4,6 +4,31 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
+from cmsplugin_cascade.models import CascadeElement, CascadePage, IconFont
+
+
+def forwards(apps, schema_editor):
+    for cascade_element in CascadeElement.objects.all():
+        if cascade_element.plugin_type not in ['FramedIconPlugin', 'TextIconPlugin']:
+            continue
+
+        icon_font = cascade_element.glossary.get('icon_font')
+        if icon_font:
+            try:
+                icon_font = IconFont.objects.get(pk=icon_font)
+            except IconFont.DoesNotExist:
+                pass
+            else:
+                # TODO: After implementing a backward migration, remove deprecated `icon_font` from glossary
+                # cascade_element.glossary.pop('icon_font')
+                # cascade_element.save()
+                CascadePage.assure_relation(cascade_element.page)
+                cascade_element.page.cascadepage.icon_font = icon_font
+                cascade_element.page.cascadepage.save(update_fields=['icon_font'])
+
+
+def backwards(apps, schema_editor):
+    print("Backward migration not implemented")
 
 
 class Migration(migrations.Migration):
@@ -18,4 +43,5 @@ class Migration(migrations.Migration):
             name='icon_font',
             field=models.ForeignKey(blank=True, help_text='Set Icon Font globally for this page', null=True, on_delete=django.db.models.deletion.CASCADE, to='cmsplugin_cascade.IconFont', verbose_name='Icon Font'),
         ),
+        migrations.RunPython(forwards, reverse_code=backwards),
     ]
