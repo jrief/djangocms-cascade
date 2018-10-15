@@ -5,27 +5,16 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.http import JsonResponse
 
+from cms.extensions import PageExtensionAdmin
 from cmsplugin_cascade.models import CascadePage
 
 
 @admin.register(CascadePage)
-class CascadePageAdmin(admin.ModelAdmin):
+class CascadePageAdmin(PageExtensionAdmin):
     change_form_template = 'cascade/admin/cascadepage_change_form.html'
 
     def get_fields(self, request, obj=None):
         return ['icon_font']
-
-    def get_model_perms(self, request):
-        """
-        Return empty perms dict to hide the model from admin index.
-        """
-        return {}
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
     def get_urls(self):
         urls = [

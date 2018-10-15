@@ -11,7 +11,6 @@ from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 
 from cms.models import Page
-from cmsplugin_cascade.models import CascadePage
 from cmsplugin_cascade.utils import validate_link
 
 if 'django_select2' in settings.INSTALLED_APPS:
@@ -96,7 +95,6 @@ class LinkForm(ModelForm):
         except (KeyError, ValueError, ObjectDoesNotExist):
             pass
         else:
-            CascadePage.assure_relation(cms_page)
             for key, val in cms_page.cascadepage.glossary.get('element_ids', {}).items():
                 choices.append((key, val))
 
