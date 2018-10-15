@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf.urls import url
+import warnings
 from django.contrib.admin.utils import unquote
-from django.http.response import JsonResponse, HttpResponseNotFound
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from cmsplugin_cascade.models import IconFont, CascadePage
+from cmsplugin_cascade.models import CascadePage
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
 
@@ -68,7 +67,9 @@ class IconPluginMixin(CascadePluginMixinBase):
     @classmethod
     def get_icon_font(self, instance):
         try:
-            return instance.cmsplugin_ptr.page.cascadepage.icon_font
+            with warnings.catch_warnings():
+                warnings.simplefilter('ignore')
+                return instance.cmsplugin_ptr.page.cascadepage.icon_font
         except (CascadePage.DoesNotExist, AttributeError):
             return
 
