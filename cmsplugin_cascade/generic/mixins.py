@@ -7,7 +7,6 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.models import CascadePage
 
 
 class SectionForm(models.ModelForm):
@@ -91,7 +90,6 @@ class SectionMixin(object):
         cms_page = obj.placeholder.page
         if cms_page:
             # storing the element_id on a placholder only makes sense, if it is non-static
-            CascadePage.assure_relation(cms_page)
             cms_page.cascadepage.glossary.setdefault('element_ids', {})
             cms_page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id
             cms_page.cascadepage.save()

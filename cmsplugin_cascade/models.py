@@ -303,20 +303,10 @@ class CascadePage(PageExtension):
 
     class Meta:
         db_table = 'cmsplugin_cascade_page'
-        verbose_name = _("Cascade Page Settings")
+        verbose_name = verbose_name_plural = _("Cascade Page Settings")
 
     def __str__(self):
         return self.get_page().get_title()
-
-    @classmethod
-    def assure_relation(cls, cms_page):
-        """
-        Assure that we have a foreign key relation, pointing from CascadePage onto CMSPage.
-        """
-        try:
-            cms_page.cascadepage
-        except cls.DoesNotExist:
-            cls.objects.create(extended_object=cms_page)
 
     @classmethod
     def delete_cascade_element(cls, instance=None, **kwargs):

@@ -19,12 +19,21 @@ def forwards(apps, schema_editor):
             except IconFont.DoesNotExist:
                 pass
             else:
+                cms_page = cascade_element.page.get_public_object()
+                defaults = {'icon_font': icon_font}
+                public_extension, _ = CascadePage.objects.update_or_create(
+                    extended_object=cms_page,
+                    public_extension=None,
+                    defaults=defaults,
+                )
+                CascadePage.objects.update_or_create(
+                    extended_object=cms_page.get_draft_object(),
+                    public_extension=public_extension,
+                    defaults=defaults,
+                )
                 # TODO: After implementing a backward migration, remove deprecated `icon_font` from glossary
                 # cascade_element.glossary.pop('icon_font')
                 # cascade_element.save()
-                CascadePage.assure_relation(cascade_element.page)
-                cascade_element.page.cascadepage.icon_font = icon_font
-                cascade_element.page.cascadepage.save(update_fields=['icon_font'])
 
 
 def backwards(apps, schema_editor):
