@@ -87,7 +87,8 @@ class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
     html_parser = HTMLParser()
 
     class Media:
-        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
+        css = {'all': ['cascade/css/admin/bootstrap3.min.css',
+                       'cascade/css/admin/bootstrap3-theme.min.css']}
 
     @classmethod
     def get_identifier(cls, obj):
