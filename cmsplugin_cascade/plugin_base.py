@@ -37,15 +37,20 @@ def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
+    from django.apps import apps
+
     class Meta:
         proxy = True
         app_label = 'cmsplugin_cascade'
 
     name = str(name + 'Model')
-    bases = model_mixins + (base_model,)
-    attrs = dict(attrs or {}, Meta=Meta, __module__=module)
-    Model = type(name, bases, attrs)
-    fake_proxy_models[name] = bases
+    try:
+        Model = apps.get_registered_model(Meta.app_label, name)
+    except LookupError:
+        bases = model_mixins + (base_model,)
+        attrs = dict(attrs or {}, Meta=Meta, __module__=module)
+        Model = type(name, bases, attrs)
+        fake_proxy_models[name] = bases
     return Model
 
 
