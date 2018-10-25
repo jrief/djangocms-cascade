@@ -93,14 +93,18 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
                 raise ImproperlyConfigured(msg)
             declared_glossary_fields = list(attrs['glossary_fields'])
 
-        if 'glossary_field_order' in attrs:
+        glossary_field_order = attrs.get('glossary_field_order')
+        if glossary_field_order:
             # if reordering is desired, reorder the glossary fields
             unordered_fields = dict((gf.name, gf) for gf in base_glossary_fields)
             for gf in declared_glossary_fields:
                 unordered_fields.update({gf.name: gf})
             unordered_fields.update(dict((gf.name, gf) for gf in declared_glossary_fields))
-            glossary_fields = OrderedDict((k, unordered_fields[k])
-                                          for k in attrs['glossary_field_order'] if k in unordered_fields)
+            glossary_fields = OrderedDict((k, unordered_fields[k]) for k in glossary_field_order
+                                                                       if k in unordered_fields)
+            # append fields not in glossary_field_order
+            glossary_fields.update(dict((k, v) for k, v in unordered_fields.items()
+                                                   if k not in glossary_field_order))
         else:
             # merge glossary fields from base classes with the declared ones, overwriting the former ones
             glossary_fields = OrderedDict((gf.name, gf) for gf in base_glossary_fields)
