@@ -36,7 +36,7 @@ class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
     )
 
 
-class CarouselPlugin(BootstrapPluginBase):
+class BootstrapCarouselPlugin(BootstrapPluginBase):
     name = _("Carousel")
     form = CarouselSlidesForm
     default_css_class = 'carousel'
@@ -78,25 +78,25 @@ class CarouselPlugin(BootstrapPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         # utils.reduce_breakpoints(self, 'container_max_heights', request)
-        return super(CarouselPlugin, self).get_form(request, obj, **kwargs)
+        return super(BootstrapCarouselPlugin, self).get_form(request, obj, **kwargs)
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(CarouselPlugin, cls).get_identifier(obj)
+        identifier = super(BootstrapCarouselPlugin, cls).get_identifier(obj)
         num_cols = obj.get_num_children()
         content = ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = cls.super(CarouselPlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(BootstrapCarouselPlugin, cls).get_css_classes(obj)
         if 'slide' in obj.glossary.get('options', []):
             css_classes.append('slide')
         return css_classes
 
     @classmethod
     def get_html_tag_attributes(cls, obj):
-        attributes = cls.super(CarouselPlugin, cls).get_html_tag_attributes(obj)
+        attributes = cls.super(BootstrapCarouselPlugin, cls).get_html_tag_attributes(obj)
         attributes.update(cls.DEFAULT_CAROUSEL_ATTRIBUTES)
         attributes['data-interval'] = 1000 * int(obj.glossary.get('interval', 5))
         options = obj.glossary.get('options', [])
@@ -106,13 +106,13 @@ class CarouselPlugin(BootstrapPluginBase):
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
-        super(CarouselPlugin, self).save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, CarouselSlidePlugin)
+        super(BootstrapCarouselPlugin, self).save_model(request, obj, form, change)
+        self.extend_children(obj, wanted_children, BootstrapCarouselSlidePlugin)
         obj.sanitize_children()
 
     @classmethod
     def sanitize_model(cls, obj):
-        sanitized = super(CarouselPlugin, cls).sanitize_model(obj)
+        sanitized = super(BootstrapCarouselPlugin, cls).sanitize_model(obj)
         complete_glossary = obj.get_complete_glossary()
         # fill all invalid heights for this container to a meaningful value
         max_height = max(obj.glossary['container_max_heights'].values())
@@ -122,19 +122,19 @@ class CarouselPlugin(BootstrapPluginBase):
                 obj.glossary['container_max_heights'][bp] = max_height
         return sanitized
 
-plugin_pool.register_plugin(CarouselPlugin)
+plugin_pool.register_plugin(BootstrapCarouselPlugin)
 
 
 class CarouselSlideForm(ImageFormMixin, ModelForm):
     image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
 
 
-class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
+class BootstrapCarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
     form = CarouselSlideForm
     default_css_class = 'img-fluid'
-    parent_classes = ['CarouselPlugin']
+    parent_classes = ['BootstrapCarouselPlugin']
     raw_id_fields = ('image_file',)
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     fields = ['image_file', 'glossary']
@@ -156,11 +156,11 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
                 'placeholder': placeholder,
                 'elements': elements,
             })
-        return self.super(CarouselSlidePlugin, self).render(context, instance, placeholder)
+        return self.super(BootstrapCarouselSlidePlugin, self).render(context, instance, placeholder)
 
     @classmethod
     def sanitize_model(cls, obj):
-        sanitized = super(CarouselSlidePlugin, cls).sanitize_model(obj)
+        sanitized = super(BootstrapCarouselSlidePlugin, cls).sanitize_model(obj)
         resize_options = obj.get_parent_glossary().get('resize_options', [])
         if obj.glossary.get('resize_options') != resize_options:
             obj.glossary.update(resize_options=resize_options)
@@ -186,11 +186,11 @@ class CarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(CarouselSlidePlugin, cls).get_identifier(obj)
+        identifier = super(BootstrapCarouselSlidePlugin, cls).get_identifier(obj)
         try:
             content = obj.image.name or obj.image.original_filename
         except AttributeError:
             content = _("Empty Slide")
         return format_html('{0}{1}', identifier, content)
 
-plugin_pool.register_plugin(CarouselSlidePlugin)
+plugin_pool.register_plugin(BootstrapCarouselSlidePlugin)
