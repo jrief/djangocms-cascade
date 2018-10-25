@@ -6,103 +6,105 @@ try:
 except ImportError:
     from HTMLParser import HTMLParser  # py2
 from django.forms import widgets
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from django.utils.text import Truncator
-from django.utils.html import format_html
 from django.forms.models import ModelForm
 from django.forms.fields import IntegerField
-
+from django.utils.functional import cached_property
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.text import Truncator, mark_safe
+from django.utils.html import format_html
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
-
 from .plugin_base import BootstrapPluginBase
-from .card import card_heading_sizes, CardTypeWidget
+from .card import BootstrapCardPlugin
+
+html_parser = HTMLParser()
 
 
 class AccordionForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
-        label=_("Panels"),
-        help_text=_("Number of panels for this panel group."))
+        label=_("Cards"),
+        help_text=_("Number of groups for this accordion."))
 
 
 class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     name = _("Accordion")
     form = AccordionForm
-    default_css_class = 'panel-group'
+    default_css_class = 'accordion'
     require_parent = True
-    parent_classes = ('BootstrapColumnPlugin',)
-    direct_child_classes = ('BootstrapAccordionPanelPlugin',)
+    parent_classes = ['BootstrapColumnPlugin']
+    direct_child_classes = ['BootstrapAccordionGroupPlugin']
     allow_children = True
-    render_template = 'cascade/bootstrap3/{}/accordion.html'
+    render_template = 'cascade/bootstrap4/{}/accordion.html'
     fields = ['num_children', 'glossary']
 
     close_others = GlossaryField(
          widgets.CheckboxInput(),
          label=_("Close others"),
          initial=True,
-         help_text=_("Open only one panel at a time.")
+         help_text=_("Open only one card at a time.")
     )
 
     first_is_open = GlossaryField(
          widgets.CheckboxInput(),
-         label=_("First panel open"),
+         label=_("First open"),
          initial=True,
-         help_text=_("Start with the first panel open.")
+         help_text=_("Start with the first card open.")
     )
 
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapAccordionPlugin, cls).get_identifier(obj)
-        num_cols = obj.get_num_children()
-        content = ungettext_lazy('with {0} panel', 'with {0} panels', num_cols).format(num_cols)
+        num_cards = obj.get_num_children()
+        content = ungettext_lazy('with {0} card', 'with {0} cards', num_cards).format(num_cards)
         return format_html('{0}{1}', identifier, content)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super(BootstrapAccordionPlugin, self).save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, BootstrapAccordionPanelPlugin)
+        self.extend_children(obj, wanted_children, BootstrapCardPlugin)
 
 plugin_pool.register_plugin(BootstrapAccordionPlugin)
 
 
-class BootstrapAccordionPanelPlugin(TransparentContainer, BootstrapPluginBase):
-    name = _("Accordion Panel")
-    default_css_class = 'panel-body'
-    direct_parent_classes = parent_classes = ('BootstrapAccordionPlugin',)
+class BootstrapAccordionGroupMixin(object):
+    @cached_property
+    def heading(self):
+        return mark_safe(html_parser.unescape(self.glossary.get('heading', '')))
+
+    @cached_property
+    def no_body_padding(self):
+        return not self.glossary.get('body_padding', True)
+
+
+class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
+    name = _("Accordion Group")
+    direct_parent_classes = parent_classes = ['BootstrapAccordionPlugin']
+    model_mixins = (BootstrapAccordionGroupMixin,)
     require_parent = True
     alien_child_classes = True
-    render_template = 'cascade/bootstrap3/{}/accordion-panel.html'
-    glossary_field_order = ['panel_title', 'heading_size', 'panel_type']
+    glossary_field_order = ['heading', 'body_padding']
 
-    panel_type = GlossaryField(
-        CardTypeWidget.get_instance(),
-        label=_("Card type"),
-        help_text=_("Display Panel using this style.")
-    )
-
-    heading_size = GlossaryField(
-        widgets.Select(choices=card_heading_sizes),
-        initial='',
-        label=_("Heading Size")
-    )
-
-    panel_title = GlossaryField(
+    heading = GlossaryField(
         widgets.TextInput(attrs={'size': 80}),
-        label=_("Panel Title")
+        label=_("Heading")
     )
 
-    class Media:
-        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
+    body_padding = GlossaryField(
+         widgets.CheckboxInput(),
+         label=_("Body with padding"),
+         initial=True,
+         help_text=_("Add standard padding to card body.")
+    )
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapAccordionPanelPlugin, cls).get_identifier(obj)
-        panel_title = HTMLParser().unescape(obj.glossary.get('panel_title', ''))
-        panel_title = Truncator(panel_title).words(3, truncate=' ...')
-        return format_html('{0}{1}', identifier, panel_title)
+        identifier = super(BootstrapAccordionGroupPlugin, cls).get_identifier(obj)
+        heading = HTMLParser().unescape(obj.glossary.get('heading', ''))
+        heading = Truncator(heading).words(3, truncate=' ...')
+        return format_html('{0}{1}', identifier, heading)
 
-plugin_pool.register_plugin(BootstrapAccordionPanelPlugin)
+plugin_pool.register_plugin(BootstrapAccordionGroupPlugin)

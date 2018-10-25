@@ -1,0 +1,24 @@
+{% load l10n cascade_tags %}
+
+{% localize off %}{% spaceless %}{% with inline_styles=instance.inline_styles plugin_id=instance.id %}
+<div id="cmsplugin_{{ plugin_id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+	{% for card in instance.child_plugin_instances %}
+	<div class="card">
+		<div class="card-header" id="heading_{{ card.id }}">
+			<h5 class="mb-0">
+				<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_{{ card.id }}" aria-expanded="true" aria-controls="collapse_{{ card.id }}">
+				{{ card.glossary.heading }}
+				</button>
+			</h5>
+		</div>
+		<div id="collapse_{{ card.id }}" class="collapse" aria-labelledby="heading_{{ card.id }}" data-parent="#cmsplugin_{{ plugin_id }}">
+			<div class="card-body">
+		{% for child in card.child_plugin_instances %}
+			{% render_plugin child %}
+		{% endfor %}
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endwith %}{% endspaceless %}{% endlocalize %}
