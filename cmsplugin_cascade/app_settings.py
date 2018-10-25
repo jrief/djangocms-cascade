@@ -60,6 +60,8 @@ class AppSettings(object):
                     msg = "CMSPLUGIN_CASCADE['plugins_with_extra_fields']['{}'] must instantiate a class of type PluginExtraFieldsConfig"
                     raise ImproperlyConfigured(msg.format(plugin))
 
+        config.setdefault('plugins_with_extra_mixins', {})
+
         config.setdefault('plugins_with_sharables', {})
         if 'cmsplugin_cascade.sharable' in INSTALLED_APPS:
             config['plugins_with_sharables'].setdefault(

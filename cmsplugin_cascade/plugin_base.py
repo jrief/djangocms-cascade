@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from collections import OrderedDict
-
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import MediaDefiningClass
 from django.utils import six
@@ -128,6 +127,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
     classes.
     """
     plugins_with_extra_fields = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
+    plugins_with_extra_mixins = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_mixins'])
     plugins_with_bookmark = list(app_settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
     plugins_with_sharables = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
     plugins_with_extra_render_templates = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys()
@@ -141,6 +141,8 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             bases = (HidePluginMixin,) + bases
         if name in cls.plugins_with_extra_fields:
             bases = (ExtraFieldsMixin,) + bases
+        if name in cls.plugins_with_extra_mixins:
+            bases = (cls.plugins_with_extra_mixins[name],) + bases
         if name in cls.plugins_with_bookmark:
             bases = (SectionMixin,) + bases
             model_mixins = (SectionModelMixin,) + model_mixins
@@ -271,7 +273,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         """
         Plugins inheriting from CascadePluginBaseMetaclass can have two different base classes,
         :class:`cmsplugin_cascade.plugin_base.CMSPluginBase` and :class:`cmsplugin_cascade.strides.StridePluginBase`.
-        Therefore in order to call a method from a inherited class, use this "super" wrapping method.
+        Therefore in order to call a method from an inherited class, use this "super" wrapping method.
         >>> cls.super(MyPlugin, self).a_method()
         """
         return super(klass, instance)
