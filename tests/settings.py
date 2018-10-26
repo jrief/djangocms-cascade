@@ -102,8 +102,7 @@ CMS_TEMPLATES = [
 
 CMSPLUGIN_CASCADE_PLUGINS = [
     'cmsplugin_cascade.link',
-    #'cmsplugin_cascade.bootstrap3',
-    'cmsplugin_cascade.bootstrap4',
+    'cmsplugin_cascade.bootstrap3',
 ]
 
 
