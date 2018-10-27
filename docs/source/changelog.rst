@@ -12,6 +12,7 @@ Release History
   page. Therefore, after migrating to this version of **djangocms-cascade**, check on all CMS
   pages if the set icon font is the desired one. Use the django-CMS toolbar, and click onto
   ``Page > Choose Icon Font…``.
+* Remove deprectated function ``cmsplugin_cascade.utils.resolve_dependencies``.
 * Replace function ``cmsplugin_cascade.utils.format_lazy`` by Django's internal function.
 
 

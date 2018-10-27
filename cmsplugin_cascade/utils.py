@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import warnings
-
 from django.core.exceptions import ValidationError
-from django.contrib.staticfiles.finders import get_finders
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -14,43 +11,6 @@ def remove_duplicates(lst):
     """
     dset = set()
     return [l for l in lst if l not in dset and not dset.add(l)]
-
-
-def resolve_dependencies(filenames):
-    """
-    Given a filename literal or a list of filenames and a mapping of dependencies (use
-    ``settings.CMSPLUGIN_CASCADE['dependencies']`` to check for details), return a list of other
-    files resolving the dependency. The returned list is ordered, so that files having no further
-    dependency come as first element and the passed in filenames come as the last element.
-    Use this function to automatically resolve dependencies of CSS and JavaScript files in the
-    ``Media`` subclasses.
-    """
-    from cmsplugin_cascade import settings
-
-    warnings.warn(
-        'resolve_dependencies() is deprecated and will be removed.',
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    def find_file(path):
-        for finder in get_finders():
-            result = finder.find(path)
-            if result:
-                return result
-
-    dependencies = []
-    if isinstance(filenames, (list, tuple, set)):
-        for filename in filenames:
-            dependencies.extend(resolve_dependencies(filename))
-    else:
-        filename = filenames
-        dependency_list = settings.CMSPLUGIN_CASCADE['dependencies'].get(filename)
-        if dependency_list:
-            dependencies.extend(resolve_dependencies(dependency_list))
-        if find_file(filename):
-            dependencies.append(filename)
-    return remove_duplicates(dependencies)
 
 
 def rectify_partial_form_field(base_field, partial_form_fields):
