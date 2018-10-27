@@ -57,8 +57,8 @@ Release History
 0.15.4
 ======
 * Fix: In ``FramedIconPlugin``, use ``ColorWidget`` for glossary attribute ``color`` instead of
- using a text field. This allows to inherit the foreground color from the given CSS settings.
- This fix required to run migration ``0018_iconfont_color``.
+  using a text field. This allows to inherit the foreground color from the given CSS settings.
+  This fix required to run migration ``0018_iconfont_color``.
 * Fix: A Bootstrap Row now can be the child of a Jumbotron Plugin.
 * Added a CMSAppHook named "Sphinx Documentation" which routes a documentaion tree directly onto
   the ``SphinxDocsView``. Therefore the documentation tree can be handled directly by the CMS and

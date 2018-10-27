@@ -1,20 +1,20 @@
-.. _bootstrap3/grid:
+.. _bootstrap4/grid:
 
-=======================
-Bootstrap 3 Grid system
-=======================
+==================
+Bootstrap 4 Layout
+==================
 In order to take full advantage of **djangocms-cascade**, you should be familiar with the
-concepts of the `Bootstrap Grid System`_, since all other Bootstrap components depend upon.
+concepts of the `Bootstrap Layout`_, since all other Bootstrap components depend upon.
 
-.. _Bootstrap Grid System: http://getbootstrap.com/css/#grid
+.. _Bootstrap Layout: https://getbootstrap.com/docs/4.1/layout/overview/
 
 Bootstrap Container
 ===================
 
 A **Container** is the outermost component the Bootstrap framework knows of. Here the designer can
-specify the breakpoints of a web page. By default, Bootstrap offers 4 breakpoints: “large”,
-“medium”, “small” and “tiny”. These determine for which kind of screen widths, the grid system may
-switch the layout.
+specify the breakpoints of a web page. By default, Bootstrap offers 5 breakpoints: "extra small",
+"small", "medium", "large" and "extra large". These determine for which kind of screen widths, the
+grid system may switch the layout.
 
 The editor window for a Container element offers the possibility to deactivate certain breakpoints.
 While this might make sense under certain conditions, it is safe to always keep all four breakpoints
@@ -22,27 +22,20 @@ active, since this gives the designer of the web page the maximum flexibility.
 
 |edit-container|
 
-.. |edit-container| image:: /_static/bootstrap3/edit-container.png
+.. |edit-container| image:: /_static/bootstrap4/edit-container.png
 
 
 Small devices exclusively
 -------------------------
 
-If the web page shall be optimized just for small but not for large devices, then disable the
-breakpoints for **Large** and/or **Medium**. In the project's style-sheets, the maximum width
-of the container element then must be reduced to that chosen breakpoint:
+If the web page shall be optimized just for small but not for large devices, then you may
+optionally disable the larger breakpoints. This doesn't have any effect on the layout, it just adds
+less options to the other editors of the Cascade plugins eco-system.
 
-.. code-block:: css
-
-	@media(min-width: 1200px) {
-	  .container {
-	    max-width: 970px;
-	  }
-	}
 
 or, if you prefers the SASS syntax:
 
-.. code-block:: guess
+.. code-block:: css
 
 	@media(min-width: $screen-lg) {
 	  .container {
@@ -103,7 +96,7 @@ from the context menu in structure view.
 
 |edit-row|
 
-.. |edit-row| image:: /_static/bootstrap3/edit-row.png
+.. |edit-row| image:: /_static/edit-row.png
 
 
 Horizontal Rule
@@ -130,7 +123,7 @@ the *column widths* and *column offsets* for tiny rather than for large displays
 
 |edit-column|
 
-.. |edit-column| image:: /_static/bootstrap3/edit-column.png
+.. |edit-column| image:: /_static/edit-column.png
 
 .. note:: If the current column is member of a container which disables some of its breakpoints
           (*large*, *medium*, *small* or *tiny*), then that column editor shows up only with the
