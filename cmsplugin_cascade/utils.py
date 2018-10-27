@@ -7,41 +7,6 @@ from django.core.exceptions import ValidationError
 from django.contrib.staticfiles.finders import get_finders
 from django.utils.translation import ugettext_lazy as _
 
-try:
-    from django.utils.functional import keep_lazy_text
-except ImportError:
-    # backported from Django-1.10
-    # TODO: remove when dropping support for Django-1.9
-    from django.utils import six
-    from django.utils.functional import lazy, wraps, Promise
-
-    def keep_lazy(*resultclasses):
-        if not resultclasses:
-            raise TypeError("You must pass at least one argument to keep_lazy().")
-
-        def decorator(func):
-            lazy_func = lazy(func, *resultclasses)
-
-            @wraps(func)
-            def wrapper(*args, **kwargs):
-                for arg in list(args) + list(six.itervalues(kwargs)):
-                    if isinstance(arg, Promise):
-                        break
-                else:
-                    return func(*args, **kwargs)
-                return lazy_func(*args, **kwargs)
-
-            return wrapper
-
-        return decorator
-
-    def keep_lazy_text(func):
-        return keep_lazy(six.text_type)(func)
-
-@keep_lazy_text
-def format_lazy(format_string, *args, **kwargs):
-    return format_string.format(*args, **kwargs)
-
 
 def remove_duplicates(lst):
     """
