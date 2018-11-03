@@ -18,7 +18,6 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
-from .card import BootstrapCardPlugin
 
 html_parser = HTMLParser()
 
@@ -26,7 +25,7 @@ html_parser = HTMLParser()
 class AccordionForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(min_value=1, initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
-        label=_("Cards"),
+        label=_("Groups"),
         help_text=_("Number of groups for this accordion."))
 
 
@@ -65,7 +64,7 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super(BootstrapAccordionPlugin, self).save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, BootstrapCardPlugin)
+        self.extend_children(obj, wanted_children, BootstrapAccordionGroupPlugin)
 
 plugin_pool.register_plugin(BootstrapAccordionPlugin)
 
@@ -83,6 +82,7 @@ class BootstrapAccordionGroupMixin(object):
 class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
     name = _("Accordion Group")
     direct_parent_classes = parent_classes = ['BootstrapAccordionPlugin']
+    render_template = 'cascade/generic/naked.html'
     model_mixins = (BootstrapAccordionGroupMixin,)
     require_parent = True
     alien_child_classes = True
@@ -97,7 +97,7 @@ class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
          widgets.CheckboxInput(),
          label=_("Body with padding"),
          initial=True,
-         help_text=_("Add standard padding to card body.")
+         help_text=_("Add standard padding to card body."),
     )
 
     @classmethod
