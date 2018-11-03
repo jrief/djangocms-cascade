@@ -75,8 +75,8 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     breakpoints = GlossaryField(
         ContainerBreakpointsWidget(choices=get_widget_choices()),
         label=_('Available Breakpoints'),
-        initial=app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds'].keys(),
-        help_text=_("Supported display widths for Bootstrap's grid system.")
+        initial=[bp.name for bp in app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds'].keys()],
+        help_text=_("Supported display widths for Bootstrap's grid system."),
     )
 
     fluid = GlossaryField(
