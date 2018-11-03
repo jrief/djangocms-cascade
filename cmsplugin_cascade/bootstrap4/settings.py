@@ -48,11 +48,14 @@ def set_defaults(config):
     config['plugins_with_extra_mixins'].setdefault('BootstrapCarouselPlugin', BootstrapUtilities(
         BootstrapUtilities.margins,
     ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapContainerPlugin', BootstrapUtilities(
+        BootstrapUtilities.margins,
+    ))
 
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
         inline_styles={
             'extra_fields:Paddings': ['margin-top', 'margin-bottom', 'padding-top', 'padding-bottom'],
-            'extra_units:Paddings': 'px,em'
+            'extra_units:Paddings': 'px,rem'
         }
     ))
 
