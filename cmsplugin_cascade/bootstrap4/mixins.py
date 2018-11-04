@@ -19,21 +19,6 @@ class BootstrapUtilitiesMixin(six.with_metaclass(MediaDefiningClass)):
     def __str__(self):
         return self.plugin_class.get_identifier(self)
 
-    def Xget_form(self, request, obj=None, **kwargs):
-        glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
-        choices = [(None, _("Select CSS"))]
-        choices.extend([(clsname, clsname) for clsname in ['a', 'b', 'c']])
-        widget = widgets.Select(choices=choices)
-        glossary_fields.append(GlossaryField(
-            widget,
-            label=_("Customized CSS Classes"),
-            name='extra_css_classes',
-            help_text=_("Customized CSS classes to be added to this element.")
-        ))
-
-        kwargs.update(glossary_fields=glossary_fields)
-        return super(BootstrapUtilitiesMixin, self).get_form(request, obj, **kwargs)
-
     @classmethod
     def get_css_classes(cls, obj):
         """Enrich list of CSS classes with customized ones"""
