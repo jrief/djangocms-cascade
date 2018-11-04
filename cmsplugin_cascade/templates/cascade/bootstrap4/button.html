@@ -1,0 +1,9 @@
+{% extends "cascade/link/link-base.html" %}
+{% load sekizai_tags %}
+
+{% block link_link %}{% with instance_link=instance.link|default:"#" %}
+{% if stylesheet_url %}{% addtoblock "css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}{% endif %}
+{{ block.super }}
+{% endwith %}{% endblock link_link %}
+
+{% block link_content %}{{ icon_left }}{{ block.super }}{{ icon_right }}{% endblock %}

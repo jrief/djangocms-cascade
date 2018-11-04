@@ -11,7 +11,7 @@ from .grid import Breakpoint, Bound
 assert DJANGO_VERSION >= (1, 11), "djangocms-cascade with Bootstrap-4 requires at at least Django-1.11"
 
 
-CASCADE_PLUGINS = ['accordion', 'card', 'carousel', 'container', 'image', 'jumbotron', 'picture', 'tabs']
+CASCADE_PLUGINS = ['accordion', 'buttons', 'card', 'carousel', 'container', 'image', 'jumbotron', 'picture', 'tabs']
 if 'cms_bootstrap' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS.append('secondary_menu')
 

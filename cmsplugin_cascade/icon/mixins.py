@@ -56,10 +56,13 @@ class IconPluginMixin(CascadePluginMixinBase):
         return identifier
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
-        if object_id:
-            icon_font = self.get_object(request, unquote(object_id)).cmsplugin_ptr.page.cascadepage.icon_font
-        else:
-            icon_font = self._cms_initial_attributes['placeholder'].page.cascadepage.icon_font
+        try:
+            if object_id:
+                icon_font = self.get_object(request, unquote(object_id)).cmsplugin_ptr.page.cascadepage.icon_font
+            else:
+                icon_font = self._cms_initial_attributes['placeholder'].page.cascadepage.icon_font
+        except CascadePage.DoesNotExist:
+            icon_font = None
         extra_context = dict(extra_context or {}, icon_font=icon_font)
         return super(IconPluginMixin, self).changeform_view(
              request, object_id=object_id, form_url=form_url, extra_context=extra_context)
