@@ -49,7 +49,7 @@ def set_defaults(config):
         BootstrapUtilities.margins,
     ))
     config['plugins_with_extra_mixins'].setdefault('BootstrapContainerPlugin', BootstrapUtilities(
-        BootstrapUtilities.margins,
+        BootstrapUtilities.paddings,
     ))
 
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
