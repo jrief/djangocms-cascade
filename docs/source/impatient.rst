@@ -43,7 +43,7 @@ Locate the plus sign right to the heading and click on it. From its context menu
 
 |add-container|
 
-.. |add-container| image:: _static/add-container.png
+.. |add-container| image:: _static/bootstrap3/add-container.png
 
 This brings you into the editor mode for a Bootstrap container. To this container you may add one or
 more Bootstrap **Rows**. Inside these rows you may organize the layout using some Bootstrap

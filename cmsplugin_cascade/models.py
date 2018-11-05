@@ -303,7 +303,7 @@ class CascadePage(PageExtension):
 
     class Meta:
         db_table = 'cmsplugin_cascade_page'
-        verbose_name = _("Cascade Page Settings")
+        verbose_name = verbose_name_plural = _("Cascade Page Settings")
 
     def __str__(self):
         return self.get_page().get_title()

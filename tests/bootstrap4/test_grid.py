@@ -1,9 +1,19 @@
 import pytest
+from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import (Bootstrap4Container, Bootstrap4Row, Bootstrap4Column, BootstrapException,
                                                Breakpoint, Bound, fluid_bounds)
 
 
 def test_xs_cols():
+    """
+    <div class="container">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+        </div>
+    </div>
+    """
     container = Bootstrap4Container()
     row = container.add_row(Bootstrap4Row())
     for _ in range(3):
@@ -18,6 +28,15 @@ def test_xs_cols():
 
 
 def test_fluid_xs_cols():
+    """
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+        </div>
+    </div>
+    """
     container = Bootstrap4Container(bounds=fluid_bounds)
     row = container.add_row(Bootstrap4Row())
     for _ in range(3):
@@ -32,6 +51,15 @@ def test_fluid_xs_cols():
 
 
 def test_xs_cols_with_flex():
+    """
+    <div class="container">
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+        </div>
+    </div>
+    """
     container = Bootstrap4Container()
     row = container.add_row(Bootstrap4Row())
     row.add_column(Bootstrap4Column('col-3'))
@@ -51,6 +79,15 @@ def test_xs_cols_with_flex():
 
 
 def test_xs_cols_with_auto_and_flex():
+    """
+    <div class="container">
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-auto"></div>
+            <div class="col"></div>
+        </div>
+    </div>
+    """
     container = Bootstrap4Container()
     row = container.add_row(Bootstrap4Row())
     row.add_column(Bootstrap4Column('col-3'))
@@ -94,6 +131,15 @@ def test_mix_fixed_with_auto():
 
 
 def test_growing_columns():
+    """
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-lg-4"></div>
+            <div class="col-12 col-sm-6 col-lg-4"></div>
+            <div class="col-12 col-sm-12 col-lg-4"></div>
+        </div>
+    </div>
+    """
     container = Bootstrap4Container()
     row = container.add_row(Bootstrap4Row())
     row.add_column(Bootstrap4Column('col-12 col-sm-6 col-lg-4'))
@@ -113,6 +159,15 @@ def test_growing_columns():
 
 
 def test_haricot():
+    """
+    <div class="container">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-auto"></div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+    """
     container = Bootstrap4Container()
     row = container.add_row(Bootstrap4Row())
     row.add_column(Bootstrap4Column('col'))
@@ -138,6 +193,19 @@ def test_haricot():
 
 
 def test_nested_row():
+    """
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col-5"></div>
+                    <div class="col-7"></div>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+    """
     container = Bootstrap4Container()
     row = container.add_row(Bootstrap4Row())
     row.add_column(Bootstrap4Column('col'))

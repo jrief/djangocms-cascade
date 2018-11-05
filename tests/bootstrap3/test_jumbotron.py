@@ -16,7 +16,7 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
         BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.jumbotron import BootstrapJumbotronPlugin, ImageBackgroundMixin
 from cmsplugin_cascade.image import ImagePropertyMixin
-from .test_base import CascadeTestCase
+from tests.test_base import CascadeTestCase
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
@@ -27,7 +27,7 @@ class JumbotronPluginTest(CascadeTestCase):
         self.image = self.upload_demo_image()
 
     def upload_demo_image(self):
-        demo_image = os.path.abspath(os.path.join(os.path.dirname(__file__), 'assets/demo_image.png'))
+        demo_image = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'assets/demo_image.png'))
         folder, dummy = Folder.objects.get_or_create(name='Samples', parent=None)
         file_obj = DjangoFile(open(demo_image, 'rb'), name='demo_image.png')
         image = Image.objects.create(owner=self.user, original_filename='Demo Image',

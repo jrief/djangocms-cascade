@@ -7,7 +7,7 @@ import sys
 from django.core.urlresolvers import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
-from cmsplugin_cascade.utils import format_lazy
+from django.utils.text import format_lazy
 
 DEBUG = True
 
