@@ -34,6 +34,15 @@ class ButtonTypeWidget(widgets.RadioSelect):
         ('btn-light', _("Light")),
         ('btn-dark', _("Dark")),
         ('btn-link', _("Link")),
+        ('btn-outline-primary', _("Primary")),
+        ('btn-outline-secondary', _("Secondary")),
+        ('btn-outline-success', _("Success")),
+        ('btn-outline-danger', _("Danger")),
+        ('btn-outline-warning', _("Warning")),
+        ('btn-outline-info', _("Info")),
+        ('btn-outline-light', _("Light")),
+        ('btn-outline-dark', _("Dark")),
+        ('btn-outline-link', _("Link")),
     ])
     template_name = 'cascade/forms/widgets/button_types.html'
 
@@ -47,9 +56,9 @@ class ButtonSizeWidget(widgets.RadioSelect):
     Render sample buttons in different sizes in the button's backend editor.
     """
     BUTTON_SIZES = OrderedDict([
-        ('btn-lg', _("Large")),
-        ('', _("Default")),
-        ('btn-sm', _("Small")),
+        ('btn-lg', _("Large button")),
+        ('', _("Default button")),
+        ('btn-sm', _("Small button")),
     ])
     template_name = 'cascade/forms/widgets/button_sizes.html'
 
@@ -147,8 +156,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     ring_plugin = 'ButtonPlugin'
 
     class Media:
-        css = {'all': ['cascade/css/admin/bootstrap4-buttons.css',
-                       'cascade/css/admin/iconplugin.css']}
+        css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
         js = ['cascade/js/admin/buttonplugin.js']
 
     @classmethod
