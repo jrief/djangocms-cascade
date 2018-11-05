@@ -10,8 +10,7 @@ from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, Bo
 from cmsplugin_cascade.bootstrap3.accordion import (BootstrapAccordionPlugin,
     BootstrapAccordionPanelPlugin)
 from cmsplugin_cascade import app_settings
-from .test_base import CascadeTestCase
-
+from tests.test_base import CascadeTestCase
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 

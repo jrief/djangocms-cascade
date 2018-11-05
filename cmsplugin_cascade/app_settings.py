@@ -60,6 +60,8 @@ class AppSettings(object):
                     msg = "CMSPLUGIN_CASCADE['plugins_with_extra_fields']['{}'] must instantiate a class of type PluginExtraFieldsConfig"
                     raise ImproperlyConfigured(msg.format(plugin))
 
+        config.setdefault('plugins_with_extra_mixins', {})
+
         config.setdefault('plugins_with_sharables', {})
         if 'cmsplugin_cascade.sharable' in INSTALLED_APPS:
             config['plugins_with_sharables'].setdefault(
@@ -146,6 +148,24 @@ class AppSettings(object):
         return {
             'image_set': ['-webkit-image-set', '-moz-image-set', '-o-image-set', '-ms-image-set', 'image-set'],
         }
+
+    @property
+    def RESPONSIVE_IMAGE_MAX_STEPS(self):
+        """
+        Responsive images are offered in a set of various widths. This number specifies the maximum number of
+        generated thumbnails for a specific ``srcset`` of an image.
+        """
+        return 12
+
+    @property
+    def RESPONSIVE_IMAGE_STEP_SIZE(self):
+        """
+        Responsive images are offered in a set of various widths. This number specifies the minimum step width
+        in pixels between the generated thumbnails for a specific ``srcset`` of an image. If the resulting number
+        of steps would exceed ``RESPONSIVE_IMAGE_MAX_STEPS``, then a higher step width is used.
+        """
+        return 50
+
 
 
 import sys  # noqa

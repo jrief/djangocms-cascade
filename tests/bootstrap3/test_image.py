@@ -17,7 +17,7 @@ from cmsplugin_cascade.models import SharableCascadeElement
 from cmsplugin_cascade.bootstrap3.container import (
     BootstrapContainerPlugin, BootstrapRowPlugin, BootstrapColumnPlugin)
 from cmsplugin_cascade.bootstrap3.image import BootstrapImagePlugin
-from .test_base import CascadeTestCase
+from tests.test_base import CascadeTestCase
 
 BS3_BREAKPOINT_KEYS = list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
 
@@ -26,7 +26,7 @@ class ImagePluginTest(CascadeTestCase):
     maxDiff = None
 
     def upload_demo_image(self):
-        demo_image = os.path.abspath(os.path.join(os.path.dirname(__file__), 'assets/demo_image.png'))
+        demo_image = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'assets/demo_image.png'))
         folder, dummy = Folder.objects.get_or_create(name='Samples', parent=None)
         file_obj = DjangoFile(open(demo_image, 'rb'), name='demo_image.png')
         image = Image.objects.create(owner=self.user, original_filename='Demo Image',

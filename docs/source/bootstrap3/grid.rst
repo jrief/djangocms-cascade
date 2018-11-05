@@ -22,7 +22,7 @@ active, since this gives the designer of the web page the maximum flexibility.
 
 |edit-container|
 
-.. |edit-container| image:: /_static/edit-container.png
+.. |edit-container| image:: /_static/bootstrap3/edit-container.png
 
 
 Small devices exclusively
@@ -103,7 +103,7 @@ from the context menu in structure view.
 
 |edit-row|
 
-.. |edit-row| image:: /_static/edit-row.png
+.. |edit-row| image:: /_static/bootstrap3/edit-row.png
 
 
 Horizontal Rule
@@ -130,7 +130,7 @@ the *column widths* and *column offsets* for tiny rather than for large displays
 
 |edit-column|
 
-.. |edit-column| image:: /_static/edit-column.png
+.. |edit-column| image:: /_static/bootstrap3/edit-column.png
 
 .. note:: If the current column is member of a container which disables some of its breakpoints
           (*large*, *medium*, *small* or *tiny*), then that column editor shows up only with the

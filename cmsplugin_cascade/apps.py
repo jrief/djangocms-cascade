@@ -4,9 +4,9 @@ from __future__ import unicode_literals
 from django.apps import AppConfig, apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
 from django.db.models.signals import pre_migrate, post_migrate
 from django.db.utils import DatabaseError
+from django.urls import reverse
 from django.utils.text import force_text
 from django.utils.translation import ugettext_lazy as _
 

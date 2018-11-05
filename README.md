@@ -45,11 +45,11 @@ Since the payload of plugins is already serialized, we can even copy them from o
 site supporting **djangocms-cascade**.
 
 
-### Additional features in version 0.16
+### Additional features in version 0.17
 
-* Simplifies to extend links onto models outside Cascade/CMS.
-* Icons inside the `TextPlugin` can have an optional link.
-* Added `TextImagePlugin` allowing to add simple images inside the CKEditor.
+* Support for Bootstrap-4.
+* Support for django-CMS-3.5 and later.
+* Icon fonts are handled per page rather than per plugin to avoid ambiguities.
 
 
 ## Documentation
@@ -127,8 +127,8 @@ displays.
   templates.
 * Since all the data is stored in JSON, no database migration is required if a field is added,
   modified or removed from the plugin.
-* Currently **Bootstrap-3.x** is supported, but other CSS frameworks can be easily added in a
-  pluggable manner.
+* Currently **Bootstrap-3** and **Bootstrap-4** is supported, but other CSS frameworks can be
+  easily added in a pluggable manner.
 * It follows the "batteries included" philosophy, but still remains very modular.
 
 In addition to easily implement any kind of plugin, **DjangoCMS-Cascade** makes it possible to add
@@ -146,7 +146,7 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
 
 ### Help needed
 
-If someone wants to start a subproject for a CSS framework, other than Bootstrap-3. 
+If someone wants to start a subproject for a CSS framework, other than Bootstrap-3/4.
 
 If you are a native English speaker, please check the documentation for spelling mistakes and
 grammar, since English not my mother tongue.

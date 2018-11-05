@@ -27,6 +27,7 @@ class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
 
     def render(self, name, value, attrs=None, renderer=None):
         if DJANGO_VERSION >= (1, 11):
+            attrs = dict(attrs, version=3)
             return super(ContainerBreakpointsWidget, self).render(name, value, attrs, renderer)
 
         renderer = self.get_renderer(name, value, attrs)
@@ -34,7 +35,7 @@ class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
             format_html_join('',
                 '<div class="field-box">'
                     '<div class="container-thumbnail">'
-                        '<img src="' + settings.STATIC_URL + 'cascade/admin/breakpoints/{1}.svg" style="height: 55px;" />'
+                        '<img src="' + settings.STATIC_URL + 'cascade/admin/bootstrap3/{1}.svg" style="height: 55px;" />'
                         '<div class="label">{0}</div>'
                     '</div>'
                 '</div>', ((force_text(w), w.choice_value) for w in renderer)
@@ -178,9 +179,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             finally:
                 first = BS3_BREAKPOINT_KEYS.index(bp)
                 devices = ', '.join([force_text(BS3_BREAKPOINTS[b][2]) for b in BS3_BREAKPOINT_KEYS[first:last]])
+            choices = [('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13)]
             if breakpoints.index(bp) == 0:
                 # first breakpoint
-                choices = tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
                 label = _("Column width for {}").format(devices)
                 help_text = choose_help_text(
                     _("Number of column units for devices narrower than {} pixels."),
@@ -194,8 +195,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     initial='col-{}-12'.format(bp),
                     help_text=help_text))
             else:
-                choices = (('', _("Inherit from above")),) + \
-                    tuple(('col-{}-{}'.format(bp, i), units[i]) for i in range(1, 13))
+                # wider breakpoints may inherit from next narrower ones
+                choices.insert(0, ('', _("Inherit from above")))
                 label = _("Column width for {}").format(devices)
                 help_text = choose_help_text(
                     _("Override column units for devices narrower than {} pixels."),
@@ -211,14 +212,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
             # handle offset
             if breakpoints.index(bp) == 0:
-                empty_offset_choice = _("No offset")
+                choices = [('', _("No offset"))]
                 offset_range = range(1, 13)
             else:
-                empty_offset_choice = _("Inherit from above")
+                choices = [('', _("Inherit from above"))]
                 offset_range = range(0, 13)
-            choices = (('', empty_offset_choice),) + \
-                tuple(('col-{}-offset-{}'.format(bp, i), units[i])
-                      for i in offset_range)
+            choices.extend([('col-{}-offset-{}'.format(bp, i), units[i]) for i in offset_range])
             label = _("Offset for {}").format(devices)
             help_text = choose_help_text(
                 _("Number of offset units for devices narrower than {} pixels."),

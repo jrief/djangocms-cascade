@@ -1,0 +1,7 @@
+{% include "cascade/bootstrap4/picture.html" %}
+{% load cascade_tags %}
+{% if instance.num_children %}
+<div class="carousel-caption">
+{% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}
+</div>
+{% endif %}

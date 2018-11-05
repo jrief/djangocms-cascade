@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os, shutil
+import json
+import os
+import shutil
 from collections import OrderedDict
 
 from django.conf import settings
@@ -200,49 +202,6 @@ class CascadeClipboard(models.Model):
         return self.identifier
 
 
-class CascadePage(PageExtension):
-    """
-    Keep arbitrary data tightly coupled to the CMS page.
-    """
-    settings = JSONField(
-        blank=True,
-        default={},
-        help_text=_("User editable settings for this page."),
-    )
-
-    glossary = JSONField(
-        blank=True,
-        default={},
-        help_text=_("Store for arbitrary page data."),
-    )
-
-    class Meta:
-        db_table = 'cmsplugin_cascade_page'
-        verbose_name = _("Cascade Page Settings")
-
-    @classmethod
-    def assure_relation(cls, cms_page):
-        """
-        Assure that we have a foreign key relation, pointing from CascadePage onto CMSPage.
-        """
-        try:
-            cms_page.cascadepage
-        except cls.DoesNotExist:
-            cls.objects.create(extended_object=cms_page)
-
-    @classmethod
-    def delete_cascade_element(cls, instance=None, **kwargs):
-        if isinstance(instance, CascadeModelBase):
-            try:
-                instance.placeholder.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
-                instance.placeholder.page.cascadepage.save()
-            except (AttributeError, KeyError):
-                pass
-
-extension_pool.register(CascadePage)
-models.signals.pre_delete.connect(CascadePage.delete_cascade_element, dispatch_uid='delete_cascade_element')
-
-
 class FilePathField(models.FilePathField):
     """
     Implementation of `models.FilePathField` which configures the `path` argument by default
@@ -301,6 +260,12 @@ class IconFont(models.Model):
         parts = (icon_font_url, self.font_folder, 'css/{}.css'.format(name))
         return urljoin(settings.MEDIA_URL, '/'.join(parts))
 
+    def config_data_as_json(self):
+        data = dict(self.config_data)
+        data.pop('glyphs', None)
+        data['families'] = self.get_icon_families()
+        return json.dumps(data)
+
     @classmethod
     def delete_icon_font(cls, instance=None, **kwargs):
         if isinstance(instance, cls):
@@ -310,3 +275,57 @@ class IconFont(models.Model):
             os.rmdir(temp_folder)
 
 models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')
+
+
+class CascadePage(PageExtension):
+    """
+    Keep arbitrary data tightly coupled to the CMS page.
+    """
+    settings = JSONField(
+        blank=True,
+        default={},
+        help_text=_("User editable settings for this page."),
+    )
+
+    glossary = JSONField(
+        blank=True,
+        default={},
+        help_text=_("Store for arbitrary page data."),
+    )
+
+    icon_font = models.ForeignKey(
+        IconFont,
+        null=True,
+        blank=True,
+        verbose_name=_("Icon Font"),
+        help_text=_("Set Icon Font globally for this page"),
+    )
+
+    class Meta:
+        db_table = 'cmsplugin_cascade_page'
+        verbose_name = verbose_name_plural = _("Cascade Page Settings")
+
+    def __str__(self):
+        return self.get_page().get_title()
+
+    @classmethod
+    def assure_relation(cls, cms_page):
+        """
+        Assure that we have a foreign key relation, pointing from CascadePage onto CMSPage.
+        """
+        try:
+            cms_page.cascadepage
+        except cls.DoesNotExist:
+            cls.objects.create(extended_object=cms_page)
+
+    @classmethod
+    def delete_cascade_element(cls, instance=None, **kwargs):
+        if isinstance(instance, CascadeModelBase):
+            try:
+                instance.placeholder.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
+                instance.placeholder.page.cascadepage.save()
+            except (AttributeError, KeyError):
+                pass
+
+extension_pool.register(CascadePage)
+models.signals.pre_delete.connect(CascadePage.delete_cascade_element, dispatch_uid='delete_cascade_element')

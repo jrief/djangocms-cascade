@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from collections import OrderedDict
-
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import MediaDefiningClass
 from django.utils import six
@@ -37,15 +36,20 @@ def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
     """
     Create a Django Proxy Model on the fly, to be used by any Cascade Plugin.
     """
+    from django.apps import apps
+
     class Meta:
         proxy = True
         app_label = 'cmsplugin_cascade'
 
     name = str(name + 'Model')
-    bases = model_mixins + (base_model,)
-    attrs = dict(attrs or {}, Meta=Meta, __module__=module)
-    Model = type(name, bases, attrs)
-    fake_proxy_models[name] = bases
+    try:
+        Model = apps.get_registered_model(Meta.app_label, name)
+    except LookupError:
+        bases = model_mixins + (base_model,)
+        attrs = dict(attrs or {}, Meta=Meta, __module__=module)
+        Model = type(name, bases, attrs)
+        fake_proxy_models[name] = bases
     return Model
 
 
@@ -88,14 +92,18 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
                 raise ImproperlyConfigured(msg)
             declared_glossary_fields = list(attrs['glossary_fields'])
 
-        if 'glossary_field_order' in attrs:
+        glossary_field_order = attrs.get('glossary_field_order')
+        if glossary_field_order:
             # if reordering is desired, reorder the glossary fields
             unordered_fields = dict((gf.name, gf) for gf in base_glossary_fields)
             for gf in declared_glossary_fields:
                 unordered_fields.update({gf.name: gf})
             unordered_fields.update(dict((gf.name, gf) for gf in declared_glossary_fields))
-            glossary_fields = OrderedDict((k, unordered_fields[k])
-                                          for k in attrs['glossary_field_order'] if k in unordered_fields)
+            glossary_fields = OrderedDict((k, unordered_fields[k]) for k in glossary_field_order
+                                                                       if k in unordered_fields)
+            # append fields not in glossary_field_order
+            glossary_fields.update(dict((k, v) for k, v in unordered_fields.items()
+                                                   if k not in glossary_field_order))
         else:
             # merge glossary fields from base classes with the declared ones, overwriting the former ones
             glossary_fields = OrderedDict((gf.name, gf) for gf in base_glossary_fields)
@@ -119,6 +127,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
     classes.
     """
     plugins_with_extra_fields = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'])
+    plugins_with_extra_mixins = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_mixins'])
     plugins_with_bookmark = list(app_settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
     plugins_with_sharables = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
     plugins_with_extra_render_templates = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys()
@@ -132,6 +141,8 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             bases = (HidePluginMixin,) + bases
         if name in cls.plugins_with_extra_fields:
             bases = (ExtraFieldsMixin,) + bases
+        if name in cls.plugins_with_extra_mixins:
+            bases = (cls.plugins_with_extra_mixins[name],) + bases
         if name in cls.plugins_with_bookmark:
             bases = (SectionMixin,) + bases
             model_mixins = (SectionModelMixin,) + model_mixins
@@ -262,7 +273,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         """
         Plugins inheriting from CascadePluginBaseMetaclass can have two different base classes,
         :class:`cmsplugin_cascade.plugin_base.CMSPluginBase` and :class:`cmsplugin_cascade.strides.StridePluginBase`.
-        Therefore in order to call a method from a inherited class, use this "super" wrapping method.
+        Therefore in order to call a method from an inherited class, use this "super" wrapping method.
         >>> cls.super(MyPlugin, self).a_method()
         """
         return super(klass, instance)

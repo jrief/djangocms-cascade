@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from cms.api import add_plugin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.bootstrap3.buttons import BootstrapButtonPlugin
-from .test_base import CascadeTestCase
+from tests.test_base import CascadeTestCase
 
 
 class ButtonWrapperPluginTest(CascadeTestCase):

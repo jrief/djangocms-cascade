@@ -59,6 +59,11 @@ class ImagePropertyMixin(object):
                 self._image_model = None
         return self._image_model
 
+    def post_copy(self, old_instance, new_old_ziplist):
+        # by saving this model after the full tree has been copied, ``BootstrapImagePlugin.sanitize_model()``
+        # is invoked a second time with the now complete information of all column siblings.
+        self.save(sanitize_only=True)
+
 
 class ImageAnnotationMixin(CascadePluginMixinBase):
     """
