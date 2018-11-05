@@ -150,12 +150,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
-        parent_glossary = obj.get_complete_glossary()
-        narrowest = parent_glossary['breakpoints'][0]
-        column_width = 12 // wanted_children
-        child_glossary = {
-            '{0}-column-width'.format(narrowest): 'col-{0}-{1}'.format(narrowest, column_width)
-        }
+        child_glossary = {'xs-column-width': 'col'}
         self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
