@@ -2,20 +2,17 @@
 Release History
 ===============
 
-drafts/bootstrap-4
-==================
-* Remove deprectated function ``cmsplugin_cascade.utils.resolve_dependencies``.
-* Replace function ``cmsplugin_cascade.utils.format_lazy`` by Django's internal function.
-
-
 0.17
 ====
 * Add support for django-CMS 3.5.
+* Add support for Bootstrap-4.
 * Drop support for Django-1.9.
+* Remove deprectated function ``cmsplugin_cascade.utils.resolve_dependencies``.
+* Replace function ``cmsplugin_cascade.utils.format_lazy`` by Django's internal function.
 * Font Icons now must be chosen per page, rather than for each Icon plugin. This prevents the
   problem of rendering unwanted symbols in case more than one Icon Font was selected on a given CMS
   page. Therefore, after migrating to this version of **djangocms-cascade**, check on all CMS
-  pages if the set icon font is the desired one. Use the django-CMS toolbar, and click onto
+  pages if the selected icon font is the desired one. Use the django-CMS toolbar, and click onto
   ``Page > Choose Icon Font…``.
 
 
