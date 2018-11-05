@@ -53,7 +53,8 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
                 if extra_fields.css_classes.get('multiple'):
                     widget = widgets.CheckboxSelectMultiple(choices=choices)
                 else:
-                    widget = widgets.Select(choices=((None, _("Select CSS")),) + tuple(choices))
+                    choices.insert(0, (None, _("Select CSS")))
+                    widget = widgets.Select(choices=choices)
                 glossary_fields.append(GlossaryField(
                     widget,
                     label=_("Customized CSS Classes"),

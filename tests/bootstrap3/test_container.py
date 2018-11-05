@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from bs4 import BeautifulSoup
 from django.http import QueryDict
-from cms.api import add_plugin, create_page
+from cms.api import add_plugin
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap3.container import (BootstrapContainerPlugin, BootstrapRowPlugin,
          BootstrapRowForm, BootstrapColumnPlugin, BS3_BREAKPOINT_KEYS)
-from .test_base import CascadeTestCase
+from tests.test_base import CascadeTestCase
 
 
 class ContainerPluginTest(CascadeTestCase):
@@ -23,10 +24,16 @@ class ContainerPluginTest(CascadeTestCase):
         post_data = QueryDict('', mutable=True)
         post_data.setlist('breakpoints', ['sm', 'md'])
         form = ModelForm(post_data, None, instance=container_model)
-        html = form.as_p()
-        self.assertInHTML('<input id="id_glossary_breakpoints_0" name="breakpoints" type="checkbox" value="xs" />', html)
-        self.assertInHTML('<input checked="checked" id="id_glossary_breakpoints_2" name="breakpoints" type="checkbox" value="md" />', html)
-        self.assertInHTML('<input id="id_glossary_fluid" name="fluid" type="checkbox" />', html)
+        soup = BeautifulSoup(form.as_p(), features='lxml')
+        input_element = soup.find(id="id_glossary_breakpoints_0")
+        self.assertDictContainsSubset({'type': 'checkbox', 'name': 'breakpoints', 'value': 'xs'},
+                                      input_element.attrs)
+        input_element = soup.find(id="id_glossary_breakpoints_2")
+        self.assertDictContainsSubset({'type': 'checkbox', 'name': 'breakpoints', 'value': 'md', 'checked': ''},
+                                      input_element.attrs)
+        input_element = soup.find(id="id_glossary_fluid")
+        self.assertDictContainsSubset({'type': 'checkbox', 'name': 'fluid'},
+                                      input_element.attrs)
         container_plugin.save_model(self.request, container_model, form, False)
         self.assertListEqual(container_model.glossary['breakpoints'], ['sm', 'md'])
         self.assertTrue('fluid' in container_model.glossary)

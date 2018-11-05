@@ -50,6 +50,13 @@ djangocms-cascade-0.14.x
 * djangocms-text-ckeditor_ >= 3.4
 * django-filer_ >= 1.2.8
 
+djangocms-cascade-0.17.x
+------------------------
+
+* Django_ >=1.10, <2.0
+* Django-CMS_ >=3.4.4, <=3.6
+* djangocms-text-ckeditor_ >= 3.4
+
 other combinations might work, but have not been tested.
 
 

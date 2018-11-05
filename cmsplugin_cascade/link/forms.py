@@ -89,13 +89,13 @@ class LinkForm(ModelForm):
         choices = [(None, _("Page root"))]
         try:
             if data:
-                cms_page = Page.objects.get(pk=data['cms_page'])
+                cascade_page = Page.objects.get(pk=data['cms_page']).cascadepage
             else:
-                cms_page = Page.objects.get(pk=initial['link']['pk'])
+                cascade_page = Page.objects.get(pk=initial['link']['pk']).cascadepage
         except (KeyError, ValueError, ObjectDoesNotExist):
             pass
         else:
-            for key, val in cms_page.cascadepage.glossary.get('element_ids', {}).items():
+            for key, val in cascade_page.glossary.get('element_ids', {}).items():
                 choices.append((key, val))
 
         self.base_fields['section'].initial = initial['link'].get('section')

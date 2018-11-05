@@ -24,8 +24,12 @@ class LinkPluginBase(CascadePluginBase):
         js = ['cascade/js/admin/linkplugin.js']
 
     target = GlossaryField(
-        widgets.RadioSelect(choices=(('', _("Same Window")), ('_blank', _("New Window")),
-                     ('_parent', _("Parent Window")), ('_top', _("Topmost Frame")),)),
+        widgets.RadioSelect(choices=[
+            ('', _("Same Window")),
+            ('_blank', _("New Window")),
+            ('_parent', _("Parent Window")),
+            ('_top', _("Topmost Frame")),
+        ]),
         initial='',
         label=_("Link Target"),
         help_text=_("Open Link in other target.")

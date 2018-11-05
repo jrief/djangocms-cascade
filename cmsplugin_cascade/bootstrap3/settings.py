@@ -12,7 +12,7 @@ from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
 CASCADE_PLUGINS = ['buttons', 'carousel', 'accordion', 'container', 'image', 'picture',
                    'panel', 'tabs', 'gallery', 'jumbotron']
-if 'cms_bootstrap3' in settings.INSTALLED_APPS:
+if 'cms_bootstrap' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS.append('secondary_menu')
 
 

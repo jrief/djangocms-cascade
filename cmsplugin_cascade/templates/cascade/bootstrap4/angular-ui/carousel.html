@@ -1,0 +1,11 @@
+{% load l10n cascade_tags %}{% spaceless %}
+
+{% with css_classes=instance.css_classes %}
+<div uib-carousel{% if css_classes %} class="{{ css_classes }}"{% endif %} interval="{{ instance.options.interval|default:5000|unlocalize }}" active="0" {# style="{{ instance.inline_styles }}" #}>
+	{% for slide in instance.child_plugin_instances %}
+	<div uib-slide index="{{ forloop.counter0 }}">{% render_plugin slide %}</div>
+	{% endfor %}
+</div>
+{% endwith %}
+
+{% endspaceless %}

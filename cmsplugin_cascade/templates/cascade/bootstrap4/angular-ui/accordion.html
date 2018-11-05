@@ -1,0 +1,26 @@
+{% load cascade_tags %}{% spaceless %}
+{% with inline_styles=instance.inline_styles %}
+
+<uib-accordion close-others="{% if instance.glossary.close_others %}true{% else %}false{% endif %}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+{% for card in instance.child_plugin_instances %}{% with css_classes=card.css_classes %}
+	<div uib-accordion-group heading="{{ card.heading }}"{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if forloop.first and instance.glossary.first_is_open %} is-open="true"{% endif %}{% if card.no_body_padding %} template-url="cascade/accordion-group-no-padding.html"{% endif %}>
+	{% render_plugin card %}
+	</div>
+{% endwith %}{% endfor %}
+</uib-accordion>
+{% endwith %}
+
+{% verbatim %}
+<script id="cascade/accordion-group-no-padding.html" type="text/ng-template">
+<div role="tab" id="{{::headingId}}" aria-selected="{{isOpen}}" class="card-header" ng-keypress="toggleOpen($event)">
+	<h5 class="mb-0">
+		<a role="button" data-toggle="collapse" href aria-expanded="{{isOpen}}" aria-controls="{{::cardId}}" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading" ng-disabled="isDisabled" uib-tabindex-toggle><span uib-accordion-header ng-class="{'text-muted': isDisabled}">{{heading}}</span></a>
+	</h5>
+</div>
+<div id="{{::cardId}}" aria-labelledby="{{::headingId}}" aria-hidden="{{!isOpen}}" role="tabcard" class="card-collapse collapse" uib-collapse="!isOpen">
+	<div class="card-body p-0" ng-transclude></div>
+</div>
+</script>
+{% endverbatim %}
+
+{% endspaceless %}
