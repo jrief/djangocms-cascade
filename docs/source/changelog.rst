@@ -14,6 +14,8 @@ Release History
   page. Therefore, after migrating to this version of **djangocms-cascade**, check on all CMS
   pages if the selected icon font is the desired one. Use the django-CMS toolbar, and click onto
   ``Page > Choose Icon Font…``.
+* Fix: Prevent double registration of proxy models.
+* Append fields to plugins, which are missing in list ``glossary_fields_order``.
 
 
 0.16.3
