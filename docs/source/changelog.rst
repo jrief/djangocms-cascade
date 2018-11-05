@@ -2,15 +2,17 @@
 Release History
 ===============
 
-
 0.17
 ====
 * Add support for django-CMS 3.5.
+* Add support for Bootstrap-4.
 * Drop support for Django-1.9.
+* Remove deprectated function ``cmsplugin_cascade.utils.resolve_dependencies``.
+* Replace function ``cmsplugin_cascade.utils.format_lazy`` by Django's internal function.
 * Font Icons now must be chosen per page, rather than for each Icon plugin. This prevents the
   problem of rendering unwanted symbols in case more than one Icon Font was selected on a given CMS
   page. Therefore, after migrating to this version of **djangocms-cascade**, check on all CMS
-  pages if the set icon font is the desired one. Use the django-CMS toolbar, and click onto
+  pages if the selected icon font is the desired one. Use the django-CMS toolbar, and click onto
   ``Page > Choose Icon Font…``.
 * Fix: Prevent double registration of proxy models.
 * Append fields to plugins, which are missing in list ``glossary_fields_order``.
@@ -59,8 +61,8 @@ Release History
 0.15.4
 ======
 * Fix: In ``FramedIconPlugin``, use ``ColorWidget`` for glossary attribute ``color`` instead of
- using a text field. This allows to inherit the foreground color from the given CSS settings.
- This fix required to run migration ``0018_iconfont_color``.
+  using a text field. This allows to inherit the foreground color from the given CSS settings.
+  This fix required to run migration ``0018_iconfont_color``.
 * Fix: A Bootstrap Row now can be the child of a Jumbotron Plugin.
 * Added a CMSAppHook named "Sphinx Documentation" which routes a documentaion tree directly onto
   the ``SphinxDocsView``. Therefore the documentation tree can be handled directly by the CMS and

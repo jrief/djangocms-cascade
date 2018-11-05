@@ -27,6 +27,7 @@ class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
 
     def render(self, name, value, attrs=None, renderer=None):
         if DJANGO_VERSION >= (1, 11):
+            attrs = dict(attrs, version=3)
             return super(ContainerBreakpointsWidget, self).render(name, value, attrs, renderer)
 
         renderer = self.get_renderer(name, value, attrs)
@@ -34,7 +35,7 @@ class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
             format_html_join('',
                 '<div class="field-box">'
                     '<div class="container-thumbnail">'
-                        '<img src="' + settings.STATIC_URL + 'cascade/admin/breakpoints/{1}.svg" style="height: 55px;" />'
+                        '<img src="' + settings.STATIC_URL + 'cascade/admin/bootstrap3/{1}.svg" style="height: 55px;" />'
                         '<div class="label">{0}</div>'
                     '</div>'
                 '</div>', ((force_text(w), w.choice_value) for w in renderer)
