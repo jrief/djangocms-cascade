@@ -196,12 +196,32 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[1].format(bs4_breakpoints[first].min)
             else:
                 return phrases[2]
-
-        try:
-            query = Q(plugin_type='BootstrapContainerPlugin')
-            container = obj.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin()
-        except AttributeError:
-            raise grid.BootstrapException("Can not add BootstrapColumnPlugin without BootstrapContainerPlugin")
+            
+        if 'parent' in self._cms_initial_attributes:
+            try:
+                query = Q(plugin_type='BootstrapContainerPlugin')
+                container = self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').filter(
+                    query).last().get_bound_plugin()
+            except AttributeError:
+                try:
+                    query = Q(plugin_type='BootstrapJumbotronPlugin')
+                    container = self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').filter(
+                        query).last().get_bound_plugin()
+                except AttributeError:
+                    raise grid.BootstrapException(
+                        "Can not add BootstrapColumnPlugin without BootstrapContainerPlugin or BootstrapJumbotronPlugin")
+        else:
+            try:
+                query = Q(plugin_type='BootstrapContainerPlugin')
+                container = obj.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin()
+            except AttributeError:
+                try:
+                    query = Q(plugin_type='BootstrapJumbotronPlugin')
+                    container = obj.get_ancestors().order_by('depth').filter(
+                       query).last().get_bound_plugin()
+                except AttributeError:
+                   raise grid.BootstrapException(
+                       "Can not add BootstrapColumnPlugin without BootstrapContainerPlugin or BootstrapJumbotronPlugin")
         breakpoints = container.glossary['breakpoints']
 
         glossary_fields = []
