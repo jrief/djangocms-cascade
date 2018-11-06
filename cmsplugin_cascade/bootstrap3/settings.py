@@ -39,6 +39,13 @@ def set_defaults(config):
             'extra_units:Paddings': 'px,em'
         }
     ))
+    config['plugins_with_extra_fields'].setdefault('HeadingPlugin', PluginExtraFieldsConfig(
+        inline_styles={
+            'extra_fields:Margins': ['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
+            'extra_units:Margins': 'px,em'
+        },
+        allow_override=False
+    ))
 
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', (
         ('cascade/bootstrap3/secmenu-list-group.html', _("List Group")),

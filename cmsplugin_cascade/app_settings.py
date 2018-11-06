@@ -41,13 +41,6 @@ class AppSettings(object):
 
             plugins_with_extra_fields = config['plugins_with_extra_fields']
             plugins_with_extra_fields.setdefault('SimpleWrapperPlugin', PluginExtraFieldsConfig())
-            plugins_with_extra_fields.setdefault('HeadingPlugin', PluginExtraFieldsConfig(
-                inline_styles={
-                    'extra_fields:Margins': ['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
-                    'extra_units:Margins': 'px,em'
-                },
-                allow_override=False
-            ))
             plugins_with_extra_fields.setdefault('HorizontalRulePlugin', PluginExtraFieldsConfig(
                 inline_styles={
                     'extra_fields:Paddings': ['margin-top', 'margin-bottom'],

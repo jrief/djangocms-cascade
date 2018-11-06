@@ -65,6 +65,7 @@ class HeadingPlugin(CascadePluginBase):
     parent_classes = None
     allow_children = False
     TAG_TYPES = tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
+    glossary_field_order = ['tag_type', 'content', 'element_id']
 
     tag_type = GlossaryField(widgets.Select(choices=TAG_TYPES))
 

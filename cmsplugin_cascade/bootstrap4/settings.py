@@ -51,6 +51,9 @@ def set_defaults(config):
     config['plugins_with_extra_mixins'].setdefault('BootstrapContainerPlugin', BootstrapUtilities(
         BootstrapUtilities.paddings,
     ))
+    config['plugins_with_extra_mixins'].setdefault('HeadingPlugin', BootstrapUtilities(
+        BootstrapUtilities.margins,
+    ))
 
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
         inline_styles={
