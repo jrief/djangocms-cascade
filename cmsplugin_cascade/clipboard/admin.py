@@ -149,7 +149,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             try:
                 root_plugin = ref_plugin.cms_placeholderreference
             except PlaceholderReference.DoesNotExist:
-                pass
+                root_plugin = add_plugin(clipboard, 'PlaceholderPlugin', language, name='clipboard')
             else:
                 inst = ref_plugin.get_plugin_instance()[0]
                 inst.placeholder_ref.get_plugins().delete()
