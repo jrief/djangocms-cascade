@@ -198,30 +198,14 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[2]
             
         if 'parent' in self._cms_initial_attributes:
-            try:
-                query = Q(plugin_type='BootstrapContainerPlugin')
-                container = self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').filter(
-                    query).last().get_bound_plugin()
-            except AttributeError:
-                try:
-                    query = Q(plugin_type='BootstrapJumbotronPlugin')
-                    container = self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').filter(
-                        query).last().get_bound_plugin()
-                except AttributeError:
-                    raise grid.BootstrapException(
-                        "Can not add BootstrapColumnPlugin without BootstrapContainerPlugin or BootstrapJumbotronPlugin")
+            container=self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').last().get_bound_plugin()
         else:
-            try:
-                query = Q(plugin_type='BootstrapContainerPlugin')
-                container = obj.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin()
-            except AttributeError:
-                try:
-                    query = Q(plugin_type='BootstrapJumbotronPlugin')
-                    container = obj.get_ancestors().order_by('depth').filter(
-                       query).last().get_bound_plugin()
-                except AttributeError:
-                   raise grid.BootstrapException(
-                       "Can not add BootstrapColumnPlugin without BootstrapContainerPlugin or BootstrapJumbotronPlugin")
+            containers=obj.get_ancestors().filter(plugin_type='BootstrapContainerPlugin')
+            if containers:
+                container=containers.order_by('depth').last().get_bound_plugin()
+            else:
+                jumbotrons=obj.get_ancestors().filter(plugin_type='BootstrapJumbotronPlugin')
+                container=jumbotrons.order_by('depth').last().get_bound_plugin()
         breakpoints = container.glossary['breakpoints']
 
         glossary_fields = []
