@@ -220,7 +220,7 @@ CMSPLUGIN_CASCADE = {
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
 }
-"""
+
 CASCADE_WORKAREA_GLOSSARY = {
     'breakpoints': ['xs', 'sm', 'md', 'lg','xl'],
     'container_max_widths': {'xs': 576,'sm': 768,'md': 992, 'lg': 1200, 'xl': 1980,},
@@ -233,14 +233,14 @@ CASCADE_WORKAREA_GLOSSARY = {
         'xl': ['(min-width: 1200px)'],
     },
 }
-"""
+
 CMS_PLACEHOLDER_CONF = {
     # this placeholder is used in templates/main.html, it shows how to
     # scaffold a djangoCMS page starting with an empty placeholder
     'Main Content': {
         'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
-   #     'glossary': CASCADE_WORKAREA_GLOSSARY,
+        'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
     # this placeholder is used in templates/wrapped.html, it shows how to
     # add content to an existing Bootstrap column
@@ -248,7 +248,7 @@ CMS_PLACEHOLDER_CONF = {
         'plugins': ['BootstrapRowPlugin', 'TextPlugin', ],
         'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
-    #    'glossary': CASCADE_WORKAREA_GLOSSARY,
+        'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
 }
 
