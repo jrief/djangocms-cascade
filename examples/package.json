@@ -1,9 +1,7 @@
-
 {
   "name": "djangocms-cascade",
   "version": "0.10.0",
   "description": "DjangoCMS-Cascade is the Swiss army knife for working with Django CMS plugins",
-, "config" : { "bs" : "4" }
   "directories": {
     "doc": "docs",
     "example": "examples",
@@ -22,8 +20,6 @@
     "popper.js": "^1.12.9",
     "select2": "^4.0.3"
   },
-  
-
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
