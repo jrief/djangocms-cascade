@@ -7,9 +7,9 @@
 
 {% block header %}
 	{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui' %}
-		{% include "bootstrap/includes/ng-nav-navbar.html" with navbar_classes="navbar-expand-lg navbar-light bg-light fixed-top" %}
+		{% include "bootstrap4/includes/ng-nav-navbar.html" with navbar_classes="navbar-expand-lg navbar-light bg-light fixed-top" %}
  	{% else %}
-		{% include "bootstrap/includes/nav-navbar.html" with navbar_classes="navbar-expand-lg navbar-light bg-light fixed-top" role="navigation" %}
+		{% include "bootstrap4/includes/nav-navbar.html" with navbar_classes="navbar-expand-lg navbar-light bg-light fixed-top" role="navigation" %}
 {% endif %}
 
 {% if cms_version >= "3.5.0" and request.toolbar %}

@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'cmsplugin_cascade.sharable',
     'cmsplugin_cascade.segmentation',
     'cms',
-    'cms_bootstrap3',
+    'cms_bootstrap',
     'adminsortable2',
     'menus',
     'treebeard',
