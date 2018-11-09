@@ -23,7 +23,7 @@ if not os.path.isdir(WORK_DIR):
 
 SITE_ID = 1
 
-ROOT_URLCONF = 'bs3demo.urls'
+ROOT_URLCONF = 'bs4demo.urls'
 
 SECRET_KEY = 'secret'
 
@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'sass_processor',
     'sekizai',
-    'bs3demo',
+    'bs4demo',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -125,7 +125,7 @@ TEMPLATES = [{
             'django.contrib.messages.context_processors.messages',
             'sekizai.context_processors.sekizai',
             'cms.context_processors.cms_settings',
-            'bs3demo.context_processors.cascade',
+            'bs4demo.context_processors.cascade',
         ),
     },
 }]
@@ -185,8 +185,8 @@ if sys.argv[1] == 'test':
     )
 else:
     CMS_TEMPLATES = (
-         ('bs3demo/main.html', "Main Content"),
-         ('bs3demo/wrapped.html', "Wrapped Bootstrap Column"),
+         ('bs4demo/main.html', "Main Content"),
+         ('bs4demo/wrapped.html', "Wrapped Bootstrap Column"),
     )
 
 CMS_SEO_FIELDS = True
@@ -202,8 +202,8 @@ CMSPLUGIN_CASCADE_PLUGINS = (
     'cmsplugin_cascade.generic',
     'cmsplugin_cascade.leaflet',
     'cmsplugin_cascade.link',
-    'cmsplugin_cascade.bootstrap3',
-    'bs3demo',
+    'cmsplugin_cascade.bootstrap4',
+    'bs4demo',
 )
 
 CMSPLUGIN_CASCADE = {
@@ -220,26 +220,27 @@ CMSPLUGIN_CASCADE = {
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
 }
-
+"""
 CASCADE_WORKAREA_GLOSSARY = {
-    'breakpoints': ['xs', 'sm', 'md', 'lg'],
-    'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
+    'breakpoints': ['xs', 'sm', 'md', 'lg','xl'],
+    'container_max_widths': {'xs': 576,'sm': 768,'md': 992, 'lg': 1200, 'xl': 1980,},
     'fluid': False,
     'media_queries': {
-        'xs': ['(max-width: 768px)'],
-        'sm': ['(min-width: 768px)', '(max-width: 992px)'],
-        'md': ['(min-width: 992px)', '(max-width: 1200px)'],
-        'lg': ['(min-width: 1200px)'],
+        'xs': ['(max-width: 576px)'],
+        'sm': ['(min-width: 576px)', '(max-width: 768px)'],
+        'md': ['(min-width: 768px)', '(max-width: 992px)'],
+        'lg': ['(min-width: 992px)', '(max-width: 1200px)'],
+        'xl': ['(min-width: 1200px)'],
     },
 }
-
+"""
 CMS_PLACEHOLDER_CONF = {
     # this placeholder is used in templates/main.html, it shows how to
     # scaffold a djangoCMS page starting with an empty placeholder
     'Main Content': {
         'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
-        'glossary': CASCADE_WORKAREA_GLOSSARY,
+   #     'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
     # this placeholder is used in templates/wrapped.html, it shows how to
     # add content to an existing Bootstrap column
@@ -247,7 +248,7 @@ CMS_PLACEHOLDER_CONF = {
         'plugins': ['BootstrapRowPlugin', 'TextPlugin', ],
         'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
-        'glossary': CASCADE_WORKAREA_GLOSSARY,
+    #    'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
 }
 

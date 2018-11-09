@@ -1,5 +1,4 @@
 {% load static cms_tags sekizai_tags %}
-
 <!doctype html>
 <html lang="de">
 
@@ -23,13 +22,13 @@
 	<footer id="footer">
 		<div class="container">
 			<div class="row">
-				<div class="col-xs-4">
+				<div class="col-4">
 					<h3>About</h3>
 					<p>Lorem Ipsum</p>
 					<p>Incididunt ut labore</p>
 					<p>Quis nostrud exercitat</p>
 				</div>
-				<div class="col-xs-4">
+				<div class="col-4">
 					<h3>Services</h3>
 					<p>Conse ctetur adipisicing</p>
 					<p>Elit sed do eiusmod tempor</p>
@@ -41,13 +40,17 @@
 	{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui' %}
 	<script src="{% static 'node_modules/angular/angular.min.js' %}" type="text/javascript"></script>
 	<script src="{% static 'node_modules/angular-animate/angular-animate.min.js' %}" type="text/javascript"></script>
-	<script src="{% static 'node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.min.js' %}" type="text/javascript"></script>
+	<script src="{% static 'node_modules/ui-bootstrap4/dist/ui-bootstrap-tpls.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
-	angular.module('cascadeDemo', ['ngAnimate', 'ui.bootstrap']);
+	angular.module('cascadeDemo', ['ngAnimate', 'ui.bootstrap'])
 	</script>
+	<style>
+	.nav, .pagination, .carousel, .card-title a { cursor: pointer; }
+	</style>
 	{% else %}
 	<script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}" type="text/javascript"></script>
-	<script src="{% static 'node_modules/bootstrap-sass/assets/javascripts/bootstrap.min.js' %}" type="text/javascript"></script>
+	<script src="{% static 'node_modules/popper.js/dist/umd/popper.js' %}" type="text/javascript"></script>
+	<script src="{% static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}" type="text/javascript"></script>
 	{% endif %}
 	{% render_block "js" %}
 </body>
