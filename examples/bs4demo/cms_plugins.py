@@ -17,7 +17,7 @@ class Badge(CascadePluginBase):
     name = _("Badge")
     require_parent = False
     allow_children = False
-    render_template = 'bs3demo/badge.html'
+    render_template = 'bs4demo/badge.html'
 
     content = GlossaryField(
         widgets.TextInput(),
