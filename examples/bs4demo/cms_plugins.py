@@ -12,12 +12,12 @@ from cmsplugin_cascade.plugin_base import CascadePluginBase
 class Badge(CascadePluginBase):
     """
     This is a simple example of a plugin suitable for the djangocms-cascade system.
-    It contains one single field: `content` rendered via the template `bs3demo/badge.html`.
+    It contains one single field: `content` rendered via the template `bs4demo/badge.html`.
     """
     name = _("Badge")
     require_parent = False
     allow_children = False
-    render_template = 'bs3demo/badge.html'
+    render_template = 'bs4demo/badge.html'
 
     content = GlossaryField(
         widgets.TextInput(),
