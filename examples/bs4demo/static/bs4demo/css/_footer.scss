@@ -7,16 +7,16 @@ html {
 }
 
 body {
-//	margin-bottom: $body-footer-height;
+	margin-bottom: $body-footer-height;
 }
 
 #footer {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-//	height: $body-footer-height;
-//	color: $body-footer-color;
-//	background: $body-footer-bg;
+	height: $body-footer-height;
+	color: $body-footer-color;
+	background: $body-footer-bg;
 	padding-top: 20px;
 	padding-bottom: 20px;
 }
