@@ -196,12 +196,16 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[1].format(bs4_breakpoints[first].min)
             else:
                 return phrases[2]
-
-        try:
-            query = Q(plugin_type='BootstrapContainerPlugin')
-            container = obj.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin()
-        except AttributeError:
-            raise grid.BootstrapException("Can not add BootstrapColumnPlugin without BootstrapContainerPlugin")
+            
+        if 'parent' in self._cms_initial_attributes:
+            container=self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').last().get_bound_plugin()
+        else:
+            containers=obj.get_ancestors().filter(plugin_type='BootstrapContainerPlugin')
+            if containers:
+                container=containers.order_by('depth').last().get_bound_plugin()
+            else:
+                jumbotrons=obj.get_ancestors().filter(plugin_type='BootstrapJumbotronPlugin')
+                container=jumbotrons.order_by('depth').last().get_bound_plugin()
         breakpoints = container.glossary['breakpoints']
 
         glossary_fields = []

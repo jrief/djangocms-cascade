@@ -1,0 +1,13 @@
+{% extends "bs4demo/main.html" %}
+{% load cascade_tags %}
+
+{% block main %}
+<div class="container">
+	<div class="row starter-template">
+		<div class="col-12">
+			<p>Content is rendered using the templatetag {% verbatim %}<code>{% render_cascade "bs4demo/cascades/strides.json" %}</code>{% endverbatim %}</p>
+		</div>
+	</div>
+</div>
+	{% render_cascade "bs4demo/cascades/strides.json" %}
+{% endblock main %}

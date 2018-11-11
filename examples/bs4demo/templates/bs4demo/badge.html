@@ -1,5 +1,5 @@
 {% load sekizai_tags sass_tags %}
-{% addtoblock "css" %}<link rel="stylesheet" href="{% sass_src 'bs3demo/css/badge.scss' %}" type="text/css" />{% endaddtoblock %}
+{% addtoblock "css" %}<link rel="stylesheet" href="{% sass_src 'bs4demo/css/badge.scss' %}" type="text/css" />{% endaddtoblock %}
 {% with inline_styles=instance.inline_styles %}
 <div class="badge-ribbon"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>{{ instance.glossary.content }}</div>
 {% endwith %}

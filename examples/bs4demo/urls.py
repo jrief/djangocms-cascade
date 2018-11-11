@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 
 class CascadeDemoView(TemplateView):
-    template_name = 'bs3demo/strides.html'
+    template_name = 'bs4demo/strides.html'
 
 
 admin.autodiscover()
