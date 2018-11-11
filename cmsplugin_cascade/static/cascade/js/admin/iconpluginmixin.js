@@ -30,10 +30,28 @@ django.jQuery(function($) {
 			$.each(config_data.families, function(key, icons) {
 				var lis = [];
 				$symbol.before('<h2>' + key + '</h2>');
+				$symbol.before('<label for="query">Search Icon:</label><input id="fonticon_search_query" type="text" name="query">');
 				$.each(icons, function(idx, icon) {
 					lis.push('<li title="' + icon + '"><i class="' + css_prefix_text + icon + '"></i></li>');
 				});
-				$symbol.before('<ul class="font-family">' + lis.join('') + '</ul>');
+				$symbol.before('<ul id="fonticon_symbols" class="font-family">' + lis.join('') + '</ul>');
+				$('#fonticon_search_query').bind('keyup paste', function(event) {
+					var fonticon_symbols = $('#fonticon_symbols').find('li'), re;
+					if (event.target.value) {
+						re = new RegExp(event.target.value, 'i');
+						fonticon_symbols.each(function() {
+							var cssClass = $(this).children('i').attr('class');
+							if (cssClass.substring(css_prefix_text.length).match(re)) {
+								$(this).show();
+							} else {
+								$(this).hide();
+							}
+						})
+					} else {
+						fonticon_symbols.show();
+					}
+
+				});
 			});
 
 			// mark selected icon
