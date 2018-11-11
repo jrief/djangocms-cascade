@@ -17,7 +17,7 @@ for module in app_settings.CASCADE_PLUGINS:
                 import_module('{}.{}'.format(module, p))
             except ImportError as err:
                 traceback = sys.exc_info()[2]
-                msg = "Plugin {} as specified in {}.settings.CMSPLUGIN_CASCADE_PLUGINS could not be loaded: {}"
+                msg = "Plugin {} as specified in {}.settings.CASCADE_PLUGINS could not be loaded: {}"
                 raise ImproperlyConfigured(msg.format(p, module, err.with_traceback(traceback)))
     except ImportError:
         try:
