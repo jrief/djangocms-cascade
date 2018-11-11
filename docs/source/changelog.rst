@@ -2,6 +2,17 @@
 Release History
 ===============
 
+0.17.1
+======
+* User margin classes for HeadingPlugin as provided by Bootstrap-4.
+* In SectionMixin, fix problem if no cascadepage is associated with CMS page.
+* Fix: Can add BootstrapColumn with interface +.
+* Fix: Add missing file carsousel template file.
+* Render a nicer warning box if plugin template not found.
+* Fix problem with missing placeholderreference.
+* Adopted examples to support Bootstrap-3 as well as Bootstrap-4.
+* Add filter function to find font-icon by name.
+
 0.17
 ====
 * Add support for django-CMS 3.5.
