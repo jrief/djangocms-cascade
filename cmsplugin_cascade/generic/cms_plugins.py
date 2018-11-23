@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.forms import widgets, ModelChoiceField
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -216,7 +216,12 @@ class TextImagePlugin(ImageAnnotationMixin, LinkPluginBase):
             'subject_location': subject_location,
             'high_resolution': high_resolution,
         }
-        context.update(dict(instance=instance, placeholder=placeholder, src=src))
+        link_attributes = LinkPluginBase.get_html_tag_attributes(instance)
+        link_html_tag_attributes = format_html_join(' ', '{0}="{1}"',
+            [(attr, val) for attr, val in link_attributes.items() if val]
+        )
+        context.update(dict(instance=instance, placeholder=placeholder, src=src,
+                            link_html_tag_attributes=link_html_tag_attributes))
         return context
 
 plugin_pool.register_plugin(TextImagePlugin)
