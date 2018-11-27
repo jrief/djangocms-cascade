@@ -16,8 +16,10 @@ class GlossaryField(object):
         self.name = name
         if not isinstance(widget, widgets.Widget):
             raise AttributeError('`widget` must inherit from django.forms.widgets.Widget')
+        if label is None:
+            label = name
         self.widget = widget
-        self.label = label or name
+        self.label = label
         self.initial = initial
         self.help_text = help_text
         self.error_class = error_class

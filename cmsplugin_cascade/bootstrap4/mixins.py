@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.forms import MediaDefiningClass, widgets
 from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
@@ -98,15 +99,14 @@ class BootstrapUtilities(type):
         sizes = list(range(0, 6)) + ['auto']
         for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
             if bp == Breakpoint.xs:
-                choices = [(c.format('', s), l.format('{}'.format(s))) for c, l in choices_format for s in sizes]
+                choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
                 choices.insert(0, ('', _("No Margins")))
             else:
-                choices = [(c.format(bp.name + '-', s), l.format('{}'.format(s)))
-                           for c, l in choices_format for s in sizes]
+                choices = [(c.format(bp.name + '-', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
                 choices.insert(0, ('', _("Inherit from above")))
             glossary_fields.append(GlossaryField(
                 widgets.Select(choices=choices),
-                label=_("Margins for {breakpoint}").format(breakpoint=bp.label),
+                label=format_lazy(_("Margins for {breakpoint}"), breakpoint=bp.label),
                 name='margins_{}'.format(bp.name),
                 initial=''
             ))
