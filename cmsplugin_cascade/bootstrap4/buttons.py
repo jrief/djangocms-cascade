@@ -6,7 +6,7 @@ from collections import OrderedDict
 from django.conf import settings
 from django.forms import widgets
 from django.forms.fields import CharField
-from django.utils.html import format_html, format_html_join
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
