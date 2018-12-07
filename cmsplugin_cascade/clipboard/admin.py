@@ -22,7 +22,7 @@ from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin
 
 from cmsplugin_cascade.models import CascadeElement, CascadeClipboard
 
-from .utils import (add_size_img_to_json, gen_img_if_pk_and_size_not_match)
+from .utils import (plugins_from_data, add_size_img_to_json, gen_img_if_pk_and_size_not_match)
 
 class JSONAdminWidget(widgets.Textarea):
     def __init__(self):
@@ -48,6 +48,8 @@ class JSONAdminWidget(widgets.Textarea):
             _("Copy to Clipboard"),
             _("Successfully pasted JSON data"),
             _("Successfully copied JSON data"))
+
+
 
 
 @admin.register(CascadeClipboard)
@@ -130,33 +132,8 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         """
         Restore clipboard by creating plugins from given data.
         """
-        def plugins_from_data(placeholder, parent, data):
-            for plugin_type, data, children_data in data:
-                plugin_class = plugin_pool.get_plugin(plugin_type)
-                gen_img_if_pk_and_size_not_match(data)
-                kwargs = dict(data)
-                inlines = kwargs.pop('inlines', [])
-                shared_glossary = kwargs.pop('shared_glossary', None)
-                instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
-                if isinstance(instance, CascadeElement):
-                    instance.plugin_class.add_inline_elements(instance, inlines)
-                    instance.plugin_class.add_shared_reference(instance, shared_glossary)
-                if not 'plugins' in data:
-                    data = {'plugins': []}
+        
 
-                # for some unknown reasons add_plugin sets instance.numchild to 0,
-                # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
-                plugins_from_data(placeholder, instance, children_data)
-
-                if isinstance(instance, Text):
-                    # we must convert the old plugin IDs into the new ones,
-                    # otherwise links are not displayed
-                    id_dict = dict(zip(
-                        plugin_tags_to_id_list(instance.body),
-                        (t[0] for t in instance.get_children().values_list('id'))
-                    ))
-                    instance.body = replace_plugin_tags(instance.body, id_dict)
-                    instance.save()
 
         language = get_language_from_request(request)
 
@@ -177,4 +154,4 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             if ref_plugin:
                 inst = ref_plugin.get_plugin_instance()[0]
                 inst.placeholder.get_plugins().delete()
-        plugins_from_data(root_plugin, None, data['plugins'])
+        plugins_from_data(root_plugin, None, data['plugins'],language)

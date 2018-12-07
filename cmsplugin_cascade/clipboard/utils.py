@@ -6,11 +6,48 @@ import random
 import colorsys
 
 from django.conf import settings
+
+from cms.api import add_plugin
+from cms.plugin_pool import plugin_pool
+from djangocms_text_ckeditor.models import Text
+from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin_tags
+from cmsplugin_cascade.models import CascadeElement
+
 from django.contrib.staticfiles import finders
 from django.core.files import File as DjangoFile
 from filer.utils.compatibility import PILImage, PILImageDraw
 from filer.models.foldermodels import Folder
 from filer.models.imagemodels import Image
+
+
+def plugins_from_data(placeholder, parent, data, language):
+    for plugin_type, data, children_data in data:
+        plugin_class = plugin_pool.get_plugin(plugin_type)
+        gen_img_if_pk_and_size_not_match(data)
+        kwargs = dict(data)
+        inlines = kwargs.pop('inlines', [])
+        shared_glossary = kwargs.pop('shared_glossary', None)
+        instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
+        if isinstance(instance, CascadeElement):
+            instance.plugin_class.add_inline_elements(instance, inlines)
+            instance.plugin_class.add_shared_reference(instance, shared_glossary)
+        if not 'plugins' in data:
+            data = {'plugins': []}
+
+        # for some unknown reasons add_plugin sets instance.numchild to 0,
+        # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
+        plugins_from_data(placeholder, instance, children_data,language)
+
+        if isinstance(instance, Text):
+            # we must convert the old plugin IDs into the new ones,
+            # otherwise links are not displayed
+            id_dict = dict(zip(
+                plugin_tags_to_id_list(instance.body),
+                (t[0] for t in instance.get_children().values_list('id'))
+            ))
+            instance.body = replace_plugin_tags(instance.body, id_dict)
+            instance.save()
+
 
 def create_folder_structure(depth, sibling, name, parent=None):
     """
@@ -42,7 +79,7 @@ def create_image(mode='RGB', size=(800, 600)):
     if hasattr(settings, 'CLIPBOARD_LOGO'):
         filename = settings.CLIPBOARD_LOGO
     else:
-        filename = finders.find('cascade/admin/djangocms_white_150x36.png')
+        filename = finders.find('cascade/admin/django-shop-logo.png')
     im = PILImage.open(filename)
     image.paste(im, (0,0), im)
     return image, size_desc
