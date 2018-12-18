@@ -21,8 +21,8 @@ django.jQuery(function($) {
 		}),
 		constructor: function() {
 			var self = this;
-			this.$super();
 			this.linkTypes = {};
+			this.$super();
 			this.initializeLinkTypes();
 
 			// register event handlers on changing link_type and cms_page select boxes
@@ -47,7 +47,7 @@ django.jQuery(function($) {
 					linkType.hide();
 				}
 			});
-			if (!this.linkTypes[linkTypeName].addTarget) {
+			if (!this.linkTypes[linkTypeName] || !this.linkTypes[linkTypeName].addTarget) {
 				$link_target.hide();
 			}
 		},

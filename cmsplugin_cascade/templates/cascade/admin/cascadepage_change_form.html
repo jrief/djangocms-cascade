@@ -1,0 +1,9 @@
+{% extends "admin/cms/extensions/change_form.html" %}
+{% load i18n %}
+
+{% block field_sets %}
+	{{ block.super }}
+	{% if original.icon_font %}
+<p>{% blocktrans %}<strong>Warning:</strong> Changing an Icon Font in use, may have unwanted effects on plugins containing an icon.{% endblocktrans %}</p>
+	{% endif %}
+{% endblock %}

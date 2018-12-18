@@ -50,6 +50,13 @@ djangocms-cascade-0.14.x
 * djangocms-text-ckeditor_ >= 3.4
 * django-filer_ >= 1.2.8
 
+djangocms-cascade-0.17.x
+------------------------
+
+* Django_ >=1.10, <2.0
+* Django-CMS_ >=3.4.4, <=3.6
+* djangocms-text-ckeditor_ >= 3.4
+
 other combinations might work, but have not been tested.
 
 
@@ -236,10 +243,13 @@ Since it is possible to add plugins from the Cascade ecosystem as children to th
 
 	CKEDITOR_SETTINGS = {
 	    'language': '{{ language }}',
-	    'skin': 'moono',
+	    'skin': 'moono-lisa',
 	    'toolbar': 'CMS',
 	    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
 	}
+
+.. note:: The skin ``moono-lisa`` has been introduced in Django CKEditor version 3.5, so if you upgrade from an earlier
+	version, please adopt this in your settings.
 
 
 Restrict plugins to a particular placeholder

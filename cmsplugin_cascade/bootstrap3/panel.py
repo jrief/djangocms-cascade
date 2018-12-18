@@ -18,7 +18,7 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import TransparentContainer
 from .plugin_base import BootstrapPluginBase
 
-panel_heading_sizes = (('', _("normal")),) + tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
+panel_heading_sizes = [('', _("normal"))] + [('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7)]
 
 
 class PanelTypeWidget(widgets.RadioSelect):
@@ -87,7 +87,8 @@ class BootstrapPanelPlugin(TransparentContainer, BootstrapPluginBase):
     html_parser = HTMLParser()
 
     class Media:
-        css = {'all': ('cascade/css/admin/bootstrap.min.css', 'cascade/css/admin/bootstrap-theme.min.css',)}
+        css = {'all': ['cascade/css/admin/bootstrap3.min.css',
+                       'cascade/css/admin/bootstrap3-theme.min.css']}
 
     @classmethod
     def get_identifier(cls, obj):

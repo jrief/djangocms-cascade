@@ -79,7 +79,7 @@ following fields in order to adapt an image to the current layout.
 
 |edit-image|
 
-.. |edit-image| image:: /_static/edit-image.png
+.. |edit-image| image:: /_static/bootstrap3/edit-image.png
 
 Image
 -----
@@ -160,7 +160,7 @@ images using `art direction`_. By double-clicking onto a picture, its editor pop
 
 |edit-picture|
 
-.. |edit-picture| image:: /_static/edit-picture.png
+.. |edit-picture| image:: /_static/bootstrap3/edit-picture.png
 
 The field **Image**, **Image Title**, **Alternative Description**, **Link type** and **Resize
 Options** behave exactly the same as for the **Image Plugin**.

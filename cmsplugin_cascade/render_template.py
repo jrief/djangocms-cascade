@@ -12,7 +12,7 @@ from cmsplugin_cascade.fields import GlossaryField
 
 class RenderTemplateMixin(with_metaclass(MediaDefiningClass)):
     """
-    If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_templates']``,
+    If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates']``,
     then this ``RenderTemplateMixin`` class is added automatically to its plugin class in order
     to add an additional select box used for choosing an alternative render template.
     """

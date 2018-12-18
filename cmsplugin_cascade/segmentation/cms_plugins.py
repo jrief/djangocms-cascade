@@ -55,7 +55,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
     hiding_template_string = '{% load cms_tags %}<div style="display: none;">{% for plugin in instance.child_plugin_instances %}{% render_plugin plugin %}{% endfor %}</div>'
     hiding_template = engines['django'].from_string(hiding_template_string)
     debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
-    empty_template = engines['django'].from_string('<!-- segment condition for plugin: {{ instance.id }} did not evaluate -->')
+    empty_template = engines['django'].from_string('{% load l10n %}<!-- segment condition for plugin: {{ instance.id|unlocalize }} did not evaluate -->')
     ring_plugin = 'SegmentPlugin'
     form = SegmentForm
     require_parent = False
@@ -99,10 +99,10 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
                 template_error_message = str(err)
             finally:
                 if evaluated_to:
-                    request._evaluated_instances[instance.pk] = True
+                    request._evaluated_segments[instance.pk] = True
                     template = self.default_template
                 else:
-                    request._evaluated_instances[instance.pk] = False
+                    request._evaluated_segments[instance.pk] = False
                     if edit_mode:
                         # In edit mode, hidden plugins have to be rendered nevertheless. Therefore
                         # we use `style="display: none"`, otherwise the plugin would be invisible
@@ -129,8 +129,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
             if prev_instance is None:
                 # this can happen, if one moved an `else`- or `elif`-segment in front of an `if`-segment
                 template = edit_mode and self.hiding_template or self.empty_template
-            elif request._evaluated_instances.get(prev_instance.pk):
-                request._evaluated_instances[instance.pk] = False
+            elif request._evaluated_segments.get(prev_instance.pk):
+                request._evaluated_segments[instance.pk] = (open_tag == 'elif')
                 # in edit mode hidden plugins have to be rendered nevertheless
                 template = edit_mode and self.hiding_template or self.empty_template
             elif open_tag == 'elif':
@@ -141,8 +141,8 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
 
     def render(self, context, instance, placeholder):
         request = context['request']
-        if not hasattr(request, '_evaluated_instances'):
-            request._evaluated_instances = {}
+        if not hasattr(request, '_evaluated_segments'):
+            request._evaluated_segments = {}
         context.update(instance.get_context_override(request))
         return self.super(SegmentPlugin, self).render(context, instance, placeholder)
 

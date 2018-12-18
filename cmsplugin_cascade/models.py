@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os, shutil
+import json
+import os
+import shutil
 from collections import OrderedDict
 
 from django.conf import settings
@@ -27,12 +29,23 @@ class SharedGlossary(models.Model):
     """
     A model class to hold glossary data shared among different plugins.
     """
-    plugin_type = models.CharField(_("Plugin Name"), max_length=50, db_index=True, editable=False)
-    identifier = models.CharField(_("Identifier"), max_length=50, unique=True)
+    plugin_type = models.CharField(
+        _("Plugin Name"),
+        max_length=50,
+        db_index=True,
+        editable=False,
+    )
+
+    identifier = models.CharField(
+        _("Identifier"),
+        max_length=50,
+        unique=True,
+    )
+
     glossary = JSONField(null=True, blank=True, default={})
 
     class Meta:
-        unique_together = ('plugin_type', 'identifier')
+        unique_together = ['plugin_type', 'identifier']
         verbose_name_plural = verbose_name = _("Shared between Plugins")
 
     def __str__(self):
@@ -58,6 +71,7 @@ class CascadeElement(CascadeModelBase):
     class Meta:
         db_table = 'cmsplugin_cascade_element'
         verbose_name = _("Element")
+        verbose_name_plural = _("Elements")
 
     def copy_relations(self, oldinstance):
         def init_element(inline_element):
@@ -89,7 +103,11 @@ class SharableCascadeElement(CascadeElement):
 
 
 class InlineCascadeElement(models.Model):
-    cascade_element = models.ForeignKey(CascadeElement, related_name='inline_elements')
+    cascade_element = models.ForeignKey(
+        CascadeElement,
+        related_name='inline_elements',
+    )
+
     glossary = JSONField(blank=True, default={})
 
     class Meta:
@@ -103,7 +121,7 @@ class SortableInlineCascadeElement(models.Model):
 
     class Meta:
         db_table = 'cmsplugin_cascade_sortinline'
-        ordering = ('order',)
+        ordering = ['order']
 
     def __str__(self):
         return ""
@@ -115,15 +133,34 @@ class PluginExtraFields(models.Model):
     Store a set of allowed extra CSS classes and inline styles to be used for Cascade plugins
     inheriting from `ExtraFieldsMixin`. Also store if individual ``id=""`` tags are allowed.
     """
-    plugin_type = models.CharField(_("Plugin Name"), max_length=50, db_index=True)
-    site = models.ForeignKey(Site, verbose_name=_("Site"))
+    plugin_type = models.CharField(
+        _("Plugin Name"),
+        max_length=50,
+        db_index=True,
+    )
+
+    site = models.ForeignKey(
+        Site,
+        verbose_name=_("Site"),
+    )
+
     allow_id_tag = models.BooleanField(default=False)
-    css_classes = JSONField(null=True, blank=True, default={})
-    inline_styles = JSONField(null=True, blank=True, default={})
+
+    css_classes = JSONField(
+        null=True,
+        blank=True,
+        default={},
+    )
+
+    inline_styles = JSONField(
+        null=True,
+        blank=True,
+        default={},
+    )
 
     class Meta:
         verbose_name = verbose_name_plural = _("Custom CSS classes and styles")
-        unique_together = ('plugin_type', 'site')
+        unique_together = ['plugin_type', 'site']
 
     def __str__(self):
         return force_text(self.name)
@@ -135,7 +172,7 @@ class PluginExtraFields(models.Model):
 
 class Segmentation(models.Model):
     class Meta:
-        verbose_name = verbose_name_plural = _("Segmentation")
+        verbose_name = _("Segmentation")
         managed = False  # it's a dummy model
         db_table = None
 
@@ -145,48 +182,24 @@ class CascadeClipboard(models.Model):
     """
     A model class to persist, export and re-import the clipboard's content.
     """
-    identifier = models.CharField(_("Identifier"), max_length=50, unique=True)
-    data = JSONField(null=True, blank=True, default={})
+    identifier = models.CharField(
+        _("Identifier"),
+        max_length=50,
+        unique=True,
+    )
+
+    data = JSONField(
+        null=True,
+        blank=True,
+        default={},
+    )
 
     class Meta:
-        verbose_name_plural = verbose_name = _("Persited Clipboard Content")
+        verbose_name = _("Persisted Clipboard Content")
+        verbose_name_plural = _("Persisted Clipboard Contents")
 
     def __str__(self):
         return self.identifier
-
-
-class CascadePage(PageExtension):
-    """
-    Keep arbitrary data tightly coupled to the CMS page.
-    """
-    settings = JSONField(blank=True, default={}, help_text=_("User editable settings for this page."))
-    glossary = JSONField(blank=True, default={}, help_text=_("Store for arbitrary page data."))
-
-    class Meta:
-        db_table = 'cmsplugin_cascade_page'
-        verbose_name = verbose_name_plural = _("Cascade Page Settings")
-
-    @classmethod
-    def assure_relation(cls, cms_page):
-        """
-        Assure that we have a foreign key relation, pointing from CascadePage onto CMSPage.
-        """
-        try:
-            cms_page.cascadepage
-        except cls.DoesNotExist:
-            cls.objects.create(extended_object=cms_page)
-
-    @classmethod
-    def delete_cascade_element(cls, instance=None, **kwargs):
-        if isinstance(instance, CascadeModelBase):
-            try:
-                instance.placeholder.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
-                instance.placeholder.page.cascadepage.save()
-            except (AttributeError, KeyError):
-                pass
-
-extension_pool.register(CascadePage)
-models.signals.pre_delete.connect(CascadePage.delete_cascade_element, dispatch_uid='delete_cascade_element')
 
 
 class FilePathField(models.FilePathField):
@@ -210,7 +223,9 @@ class IconFont(models.Model):
     Instances of uploaded icon fonts, such as FontAwesone, MaterialIcons, etc.
     """
     identifier = models.CharField(
-        _("Identifier"), max_length=50, unique=True,
+        _("Identifier"),
+        max_length=50,
+        unique=True,
         help_text=_("A unique identifier to distinguish this icon font.")
     )
     config_data = JSONField()
@@ -245,6 +260,12 @@ class IconFont(models.Model):
         parts = (icon_font_url, self.font_folder, 'css/{}.css'.format(name))
         return urljoin(settings.MEDIA_URL, '/'.join(parts))
 
+    def config_data_as_json(self):
+        data = dict(self.config_data)
+        data.pop('glyphs', None)
+        data['families'] = self.get_icon_families()
+        return json.dumps(data)
+
     @classmethod
     def delete_icon_font(cls, instance=None, **kwargs):
         if isinstance(instance, cls):
@@ -254,3 +275,57 @@ class IconFont(models.Model):
             os.rmdir(temp_folder)
 
 models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')
+
+
+class CascadePage(PageExtension):
+    """
+    Keep arbitrary data tightly coupled to the CMS page.
+    """
+    settings = JSONField(
+        blank=True,
+        default={},
+        help_text=_("User editable settings for this page."),
+    )
+
+    glossary = JSONField(
+        blank=True,
+        default={},
+        help_text=_("Store for arbitrary page data."),
+    )
+
+    icon_font = models.ForeignKey(
+        IconFont,
+        null=True,
+        blank=True,
+        verbose_name=_("Icon Font"),
+        help_text=_("Set Icon Font globally for this page"),
+    )
+
+    class Meta:
+        db_table = 'cmsplugin_cascade_page'
+        verbose_name = verbose_name_plural = _("Cascade Page Settings")
+
+    def __str__(self):
+        return self.get_page().get_title()
+
+    @classmethod
+    def assure_relation(cls, cms_page):
+        """
+        Assure that we have a foreign key relation, pointing from CascadePage onto CMSPage.
+        """
+        try:
+            cms_page.cascadepage
+        except cls.DoesNotExist:
+            cls.objects.create(extended_object=cms_page)
+
+    @classmethod
+    def delete_cascade_element(cls, instance=None, **kwargs):
+        if isinstance(instance, CascadeModelBase):
+            try:
+                instance.placeholder.page.cascadepage.glossary['element_ids'].pop(str(instance.pk))
+                instance.placeholder.page.cascadepage.save()
+            except (AttributeError, KeyError):
+                pass
+
+extension_pool.register(CascadePage)
+models.signals.pre_delete.connect(CascadePage.delete_cascade_element, dispatch_uid='delete_cascade_element')

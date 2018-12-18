@@ -6,6 +6,7 @@ from django.template.context import Context
 
 from cms.api import create_page
 from cms.test_utils.testcases import CMSTestCase
+from cmsplugin_cascade.models import CascadePage
 
 from djangocms_helper.base_test import BaseTestCase
 
@@ -18,6 +19,7 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
         if not self.home_page.is_home:
             # >= Django CMS v3.5.x
             self.home_page.set_as_homepage()
+        CascadePage.assure_relation(self.home_page)
 
         self.placeholder = self.home_page.placeholders.get(slot='Main Content')
 

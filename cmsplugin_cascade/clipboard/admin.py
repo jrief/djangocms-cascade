@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django import VERSION as DJANGO_VERSION
 from django.contrib import admin
+from django.contrib import messages
 from django.contrib.admin.templatetags.admin_static import static
 from django.forms import widgets
 from django.forms.utils import flatatt
@@ -30,10 +30,7 @@ class JSONAdminWidget(widgets.Textarea):
     def render(self, name, value, attrs=None):
         if value is None:
             value = ''
-        if DJANGO_VERSION < (1, 11):
-            final_attrs = self.build_attrs(attrs, name=name)
-        else:
-            final_attrs = self.build_attrs(self.attrs, extra_attrs=dict(attrs, name=name))
+        final_attrs = self.build_attrs(self.attrs, extra_attrs=dict(attrs, name=name))
         id_data = attrs.get('id', 'id_data')
         clippy_url = static('cascade/admin/clippy.svg')
         return format_html('<textarea{0}>\r\n{1}</textarea> '
@@ -76,9 +73,11 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             obj.data = self._serialize_from_clipboard(language)
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
+            messages.add_message(request, messages.INFO, _("The CMS clipboard has been persisted in the database."))
         if request.POST.get('restore_clipboard'):
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
+            messages.add_message(request, messages.INFO, _("Persisted content has been restored to CMS clipboard."))
         super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
         if request.POST.get('restore_clipboard'):
             self._deserialize_to_clipboard(request, obj.data)
@@ -147,7 +146,11 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             root_plugin = add_plugin(clipboard, 'PlaceholderPlugin', language, name='clipboard')
         else:
             # remove old entries from the clipboard
-            root_plugin = ref_plugin.cms_placeholderreference
-            inst = ref_plugin.get_plugin_instance()[0]
-            inst.placeholder_ref.get_plugins().delete()
+            try:
+                root_plugin = ref_plugin.cms_placeholderreference
+            except PlaceholderReference.DoesNotExist:
+                root_plugin = add_plugin(clipboard, 'PlaceholderPlugin', language, name='clipboard')
+            else:
+                inst = ref_plugin.get_plugin_instance()[0]
+                inst.placeholder_ref.get_plugins().delete()
         plugins_from_data(root_plugin.placeholder_ref, None, data['plugins'])

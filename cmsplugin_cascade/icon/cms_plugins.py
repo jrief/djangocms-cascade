@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
+
 from django.conf.urls import url
 from django.forms import widgets
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
+from django.utils.six.moves.urllib.parse import urlparse
 from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
+from cms.models.pluginmodel import CMSPlugin
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.models import IconFont
@@ -30,11 +34,6 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
     RADIUS_CHOICES = [(None, _("Square"))] + \
         [('{}px'.format(r), "{} px".format(r)) for r in (1, 2, 3, 5, 7, 10, 15, 20)] + \
         [('50%', _("Circle"))]
-
-    icon_font = GlossaryField(
-        widgets.Select(),
-        label=_("Font"),
-    )
 
     symbol = GlossaryField(
         widgets.HiddenInput(),
@@ -79,8 +78,7 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
         label=_("Border radius"),
     )
 
-    glossary_field_order = ['icon_font', 'symbol', 'text_align', 'font_size',
-                            'color', 'background_color', 'border', 'border_radius']
+    glossary_field_order = ['symbol', 'text_align', 'font_size', 'color', 'background_color', 'border', 'border_radius']
 
     class Media:
         js = ['cascade/js/admin/framediconplugin.js']
@@ -127,17 +125,17 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     allow_children = False
     require_parent = False
 
-    icon_font = GlossaryField(
-        widgets.Select(),
-        label=_("Font"),
-    )
-
     symbol = GlossaryField(
         widgets.HiddenInput(),
         label=_("Select Symbol"),
     )
 
-    glossary_field_order = ['icon_font', 'symbol']
+    color = GlossaryField(
+        ColorPickerWidget(),
+        label=_("Icon color"),
+    )
+
+    glossary_field_order = ['symbol', 'color']
 
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
@@ -147,7 +145,8 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         return False
 
     def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = (('none', _("No Link")),) + tuple(getattr(LinkForm, 'LINK_TYPE_CHOICES'))
+        LINK_TYPE_CHOICES = [('none', _("No Link"))]
+        LINK_TYPE_CHOICES.extend(getattr(LinkForm, 'LINK_TYPE_CHOICES'))
         Form = type(str('TextIconForm'), (getattr(LinkForm, 'get_form_class')(),),
                     {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES})
         kwargs.update(form=Form)
@@ -155,16 +154,30 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
 
     def get_plugin_urls(self):
         urls = [
-            url(r'^wysiwig-config.js$', self.render_wysiwig_config,
+            url(r'^wysiwig-config\.js$', self.render_wysiwig_config,
                 name='cascade_texticon_wysiwig_config'),
         ]
         return urls
 
     def render_wysiwig_config(self, request):
-        context = {
-            'icon_fonts': IconFont.objects.all()
-        }
+        """Find the icon font associated to the CMS page, from which this subrequest is originating."""
+        context = {}
+        # Since this request is originating from CKEditor, we have no other choice rather than using
+        # the referer, to determine the current CMS page.
+        referer = urlparse(request.META['HTTP_REFERER'])
+        matches = re.match(r'.+/edit-plugin/(\d+)/$', referer.path)
+        if matches:
+            cms_plugin = CMSPlugin.objects.get(id=matches.group(1))
+            context['icon_font'] = cms_plugin.page.cascadepage.icon_font
         javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
         return HttpResponse(javascript, content_type='application/javascript')
+
+    @classmethod
+    def get_inline_styles(cls, instance):
+        inline_styles = cls.super(TextIconPlugin, cls).get_inline_styles(instance)
+        color = instance.glossary.get('color')
+        if isinstance(color, list) and len(color) == 2 and not color[0]:
+            inline_styles['color'] = color[1]
+        return inline_styles
 
 plugin_pool.register_plugin(TextIconPlugin)

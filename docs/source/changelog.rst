@@ -2,8 +2,56 @@
 Release History
 ===============
 
+0.17.1
+======
+* User margin classes for HeadingPlugin as provided by Bootstrap-4.
+* In SectionMixin, fix problem if no cascadepage is associated with CMS page.
+* Fix: Can add BootstrapColumn with interface +.
+* Fix: Add missing file carsousel template file.
+* Render a nicer warning box if plugin template not found.
+* Fix problem with missing placeholderreference.
+* Adopted examples to support Bootstrap-3 as well as Bootstrap-4.
+* Add filter function to find font-icon by name.
+
+0.17
+====
+* Add support for django-CMS 3.5.
+* Add support for Bootstrap-4.
+* Drop support for Django-1.9.
+* Remove deprectated function ``cmsplugin_cascade.utils.resolve_dependencies``.
+* Replace function ``cmsplugin_cascade.utils.format_lazy`` by Django's internal function.
+* Font Icons now must be chosen per page, rather than for each Icon plugin. This prevents the
+  problem of rendering unwanted symbols in case more than one Icon Font was selected on a given CMS
+  page. Therefore, after migrating to this version of **djangocms-cascade**, check on all CMS
+  pages if the selected icon font is the desired one. Use the django-CMS toolbar, and click onto
+  ``Page > Choose Icon Font…``.
+* Fix: Prevent double registration of proxy models.
+* Append fields to plugins, which are missing in list ``glossary_fields_order``.
+
+
+0.16.3
+======
+* Fix **CarouselPlugin**, if used with newer versions of the **angular-ui-bootstrap** NPM library.
+* Fix corner-case of dysfunctional **elif** evaluation in **SegmentPlugin**.
+
+
+0.16.2
+======
+* Fix Markdown while uploading to PyPI.
+
+
+0.16.1
+======
+* Fix: Compute link of ``Page`` object holding documentation menu.
+* Fix regression in sharable glossary caused by upgrade to Django-1.11.
+* Adopt child plugin editing for django-CMS 3.5 to behave as earlier versions.
+* Icons in the Text field may have a foreground color.
+
+
 0.16
 ====
+* Drop support for **Django-CMS CKEditor** version 3.4 in favor of version 3.5 and later. In ``CKEDITOR_SETTINGS``
+  change the ``skin`` setting to ``moono-lisa``.
 * Remove monkey patch required for django-CMS 3.4. This has been fixed by applying
   this pull request: https://github.com/divio/django-cms/pull/5809
 * Icons inside the ``TextPlugin`` can have an optional link.
@@ -24,8 +72,8 @@ Release History
 0.15.4
 ======
 * Fix: In ``FramedIconPlugin``, use ``ColorWidget`` for glossary attribute ``color`` instead of
- using a text field. This allows to inherit the foreground color from the given CSS settings.
- This fix required to run migration ``0018_iconfont_color``.
+  using a text field. This allows to inherit the foreground color from the given CSS settings.
+  This fix required to run migration ``0018_iconfont_color``.
 * Fix: A Bootstrap Row now can be the child of a Jumbotron Plugin.
 * Added a CMSAppHook named "Sphinx Documentation" which routes a documentaion tree directly onto
   the ``SphinxDocsView``. Therefore the documentation tree can be handled directly by the CMS and

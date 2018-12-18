@@ -10,7 +10,7 @@ django.jQuery(function($) {
 		constructor: function() {
 			var self = this;
 			this.$super();
-			if (django.cascade.hasOwnProperty('IconPlugin')) {
+			if (django.cascade.hasOwnProperty('IconPluginMixin')) {
 				$glossary_icon_align.change(function(evt) {
 					self.toggleAlignIcon(evt.target.value);
 				});

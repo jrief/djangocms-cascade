@@ -12,7 +12,7 @@ from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
 CASCADE_PLUGINS = ['buttons', 'carousel', 'accordion', 'container', 'image', 'picture',
                    'panel', 'tabs', 'gallery', 'jumbotron']
-if 'cms_bootstrap3' in settings.INSTALLED_APPS:
+if 'cms_bootstrap' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS.append('secondary_menu')
 
 
@@ -38,6 +38,13 @@ def set_defaults(config):
             'extra_fields:Paddings': ['margin-top', 'margin-bottom', 'padding-top', 'padding-bottom'],
             'extra_units:Paddings': 'px,em'
         }
+    ))
+    config['plugins_with_extra_fields'].setdefault('HeadingPlugin', PluginExtraFieldsConfig(
+        inline_styles={
+            'extra_fields:Margins': ['margin-top', 'margin-right', 'margin-bottom', 'margin-left'],
+            'extra_units:Margins': 'px,em'
+        },
+        allow_override=False
     ))
 
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', (

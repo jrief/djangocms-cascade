@@ -6,11 +6,11 @@ import json
 import os
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.forms import fields
 from django.utils.translation import ugettext_lazy as _
 
 from django_select2.forms import Select2Widget
+from cms.models.pagemodel import Page
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 from cmsplugin_cascade.link.forms import LinkForm
 
@@ -81,6 +81,7 @@ class SphinxDocsLinkPlugin(LinkPluginBase):
     def get_link(cls, obj):
         link = obj.glossary.get('link', {})
         if link.get('type') == 'documentation':
-            return reverse('documentation', args=(link['value'],))
-        else:
-            return super(SphinxDocsLinkPlugin, cls).get_link(obj)
+            page = Page.objects.filter(navigation_extenders='DocumentationMenu', publisher_is_draft=False).first()
+            if page:
+                return page.get_public_url()
+        return super(SphinxDocsLinkPlugin, cls).get_link(obj)

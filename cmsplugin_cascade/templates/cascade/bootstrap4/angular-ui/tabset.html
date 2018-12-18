@@ -1,0 +1,10 @@
+{% load static cascade_tags %}
+{% spaceless %}{% with justified=instance.glossary.justified %}
+
+<uib-tabset{% if justified %} justified="true"{% endif %}>
+{% for pane in instance.child_plugin_instances %}
+	<uib-tab heading="{{ pane.glossary.tab_title|safe }}">{% render_plugin pane %}</uib-tab>
+{% endfor %}
+</uib-tabset>
+
+{% endwith %}{% endspaceless %}
