@@ -8,7 +8,7 @@ django.jQuery(function($) {
         if (data) {
             bools[data] = true;
             var $colordefault = data.val();
-            data.parent().append('<span id="thumb' + id_picker + '" style="background-color:' + data.val() + '; position: absolute; top: 5px;  left: 5px; width: 18px; height:18px;" ></span>');
+            data.parent().append('<span id="thumb' + id_picker + '" style="background-color:' + data.val() + '; position: absolute; top: 5px;  left: 5px; width: 18px; height:18px; border: 1px solid;" ></span>');
             data.on('click', function() {
                 if (bools[data]) {
                     data.parent().append('<div id="' + id_picker + '"  acp-color="' + data.val() + '"  acp-show-rgb="yes" acp-show-hsl="yes" acp-show-hex="yes" acp-show-alpha></div>');

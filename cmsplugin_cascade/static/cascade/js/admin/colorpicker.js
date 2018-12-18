@@ -8,8 +8,7 @@ django.jQuery(function($) {
             var $colordefault = data.val();
             if ($('#' + id_picker).length == '0') {
                 data.parent().append('<input id="' + id_picker + '" type="color" style="opacity:0;position:absolute;"/>');
-                data.parent().append('<span id="thumb' + id_picker + '" style="background-color:' + data.val() + '; position: absolute; top: 5px;  left: 5px; width: 18px; height:18px;" >' +
-                    '</span>');
+                data.parent().append('<span id="thumb' + id_picker + '" style="background-color:' + data.val() + '; position: absolute; top: 5px;  left: 5px; width: 18px; height:18px; border: 1px solid;" ></span>');
             }
             data.on('click', function() {
                 if (bools[data] = 'undefined') {
