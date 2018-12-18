@@ -165,7 +165,7 @@ class ColorPickerWidget(widgets.MultiWidget):
     if JS_COLOR_PICKER_WITH_ALPHA:
         class Media:
             js = ['cascade/js/admin/colorpickerext.js' ]
-    else
+    else:
         class Media:
             js = ['cascade/js/admin/colorpicker.js' ]
 
