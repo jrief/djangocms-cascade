@@ -156,9 +156,18 @@ class ColorPickerWidget(widgets.MultiWidget):
     The value passed to the GlossaryField is guaranteed to be in #rgb format.
     """
     DEFAULT_COLOR = '#ffffff'
-    DEFAULT_ATTRS = {'style': 'width: 5em;', 'type': 'color'}
-    validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
+    DEFAULT_ATTRS = {'style': 'width: 10em; height: 1em; padding-left: 26px;', 'type': 'text'}
+    validation_pattern = re.compile('(#(?:[0-9a-fA-F]{2}){2,4}|(#[0-9a-fA-F]{3})|(rgb|hsl)a?\((-?\d+%?[,\s]+){2,3}\s*[\d\.]+%?\))')
     invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
+    from django.conf import settings
+    JS_COLOR_PICKER_WITH_ALPHA= True if hasattr(settings, 'COLOR_PICKER_WITH_ALPHA') and settings.COLOR_PICKER_WITH_ALPHA == True else False
+
+    if JS_COLOR_PICKER_WITH_ALPHA:
+        class Media:
+            js = ['cascade/js/admin/colorpickerext.js' ]
+    else
+        class Media:
+            js = ['cascade/js/admin/colorpicker.js' ]
 
     def __init__(self, attrs=DEFAULT_ATTRS):
         attrs = dict(attrs)
@@ -187,12 +196,13 @@ class ColorPickerWidget(widgets.MultiWidget):
         elem_id = attrs['id']
         attrs = dict(attrs)
         html = '<div class="clearfix">'
+        html += '<div style="position: relative;">'
         key, attrs['id'] = '{0}_color'.format(name), '{0}_color'.format(elem_id)
         html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, color, attrs))
         key, attrs['id'] = '{0}_disabled'.format(name), '{0}_disabled'.format(elem_id)
         html += format_html('<div class="sibling-field"><label for="{0}">{1}{2}</label></div>',
                             key, self.widgets[1].render(key, disabled, attrs), _("Inherit"))
-        html += '</div>'
+        html += '</div></div>'
         return mark_safe(html)
 
     def validate(self, values, field_name):
