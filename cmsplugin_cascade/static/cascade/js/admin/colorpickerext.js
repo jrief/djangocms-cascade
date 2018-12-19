@@ -16,13 +16,13 @@ django.jQuery(function($) {
                     data.parent().append('<input id="undo_' + id_picker + '"  type="button" value="Undo">');
                     AColorPicker.from('#' + id_picker).on('change', (picker, color) => {
                         data.val(picker.color);
-                        $('#'+ id_picker ).css("background-color", data.val())
+                        $('#'+ thumb).css("background-color", data.val())
                     });
                     bools[id_picker] = false;
                     $('#undo_' + id_picker).on('click', function() {
                         data.val($colordefault);
                         $('#' + id_picker).detach();
-                        $('#thumb' + id_picker).css("background-color", data.val());
+                        $('#'+ thumb).css("background-color", data.val());
                         $('#undo_' + id_picker).detach();
                         bools[id_picker] = true;
                     });
