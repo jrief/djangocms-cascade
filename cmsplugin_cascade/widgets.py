@@ -100,7 +100,7 @@ class NumberInputWidget(widgets.NumberInput):
 
 
 class CascadingSizeWidgetMixin(object):
-    POSSIBLE_UNITS = ('px', 'em', '%')
+    POSSIBLE_UNITS = ('rem', 'px', 'em', '%')
     required_message = _("In '%(label)s': This field is required.")
     invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number, ending in %(endings)s.")
 
@@ -156,7 +156,7 @@ class ColorPickerWidget(widgets.MultiWidget):
     The value passed to the GlossaryField is guaranteed to be in #rgb format.
     """
     DEFAULT_COLOR = '#ffffff'
-    DEFAULT_ATTRS = {'style': 'width: 10em; height: 1em; padding-left: 26px;', 'type': 'text'}
+    DEFAULT_ATTRS = {'style': 'width: 11em; padding-left: 26px;', 'type': 'text'}
     validation_pattern = re.compile('(#(?:[0-9a-fA-F]{2}){2,4}|(#[0-9a-fA-F]{3})|(rgb|hsl)a?\((-?\d+%?[,\s]+){2,3}\s*[\d\.]+%?\))')
     invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
     from django.conf import settings
