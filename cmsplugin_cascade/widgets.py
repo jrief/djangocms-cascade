@@ -200,7 +200,7 @@ class ColorPickerWidget(widgets.MultiWidget):
         key, attrs['id'] = '{0}_color'.format(name), '{0}_color'.format(elem_id)
         html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, color, attrs))
         key, attrs['id'] = '{0}_disabled'.format(name), '{0}_disabled'.format(elem_id)
-        html += format_html('<div class="sibling-field"><label for="{0}">{1}{2}</label></div>',
+        html += format_html('<div class="sibling-field inherit"><label for="{0}">{1}{2}</label></div>',
                             key, self.widgets[1].render(key, disabled, attrs), _("Inherit"))
         html += '</div></div>'
         return mark_safe(html)
