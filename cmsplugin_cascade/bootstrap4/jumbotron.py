@@ -94,11 +94,11 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     fields = ('glossary', 'image_file',)
     render_template = 'cascade/bootstrap4/jumbotron.html'
     ring_plugin = 'JumbotronPlugin'
-    ATTACHMENT_CHOICES = ('scroll', 'fixed', 'local')
-    VERTICAL_POSITION_CHOICES = ('top', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'bottom')
-    HORIZONTAL_POSITION_CHOICES = ('left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right')
-    REPEAT_CHOICES = ('repeat', 'repeat-x', 'repeat-y', 'no-repeat')
-    SIZE_CHOICES = ('auto', 'width/height', 'cover', 'contain')
+    ATTACHMENT_CHOICES = ['scroll', 'fixed', 'local']
+    VERTICAL_POSITION_CHOICES = ['top', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'bottom']
+    HORIZONTAL_POSITION_CHOICES = ['left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right']
+    REPEAT_CHOICES = ['repeat', 'repeat-x', 'repeat-y', 'no-repeat']
+    SIZE_CHOICES = ['auto', 'width/height', 'cover', 'contain']
     container_glossary_fields = (
         GlossaryField(
             ContainerBreakpointsWidget(choices=get_widget_choices()),
