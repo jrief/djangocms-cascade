@@ -66,7 +66,12 @@ class CascadeElement(CascadeModelBase):
     """
     The concrete model class to store arbitrary data for plugins derived from CascadePluginBase.
     """
-    shared_glossary = models.ForeignKey(SharedGlossary, blank=True, null=True, on_delete=models.SET_NULL)
+    shared_glossary = models.ForeignKey(
+        SharedGlossary,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     class Meta:
         db_table = 'cmsplugin_cascade_element'
@@ -106,6 +111,7 @@ class InlineCascadeElement(models.Model):
     cascade_element = models.ForeignKey(
         CascadeElement,
         related_name='inline_elements',
+        on_delete=models.CASCADE,
     )
 
     glossary = JSONField(blank=True, default={})
@@ -115,9 +121,21 @@ class InlineCascadeElement(models.Model):
 
 
 class SortableInlineCascadeElement(models.Model):
-    cascade_element = models.ForeignKey(CascadeElement, related_name='sortinline_elements')
-    glossary = JSONField(blank=True, default={})
-    order = models.PositiveIntegerField(verbose_name=_("Sort by"), db_index=True)
+    cascade_element = models.ForeignKey(
+        CascadeElement,
+        related_name='sortinline_elements',
+        on_delete=models.CASCADE,
+    )
+
+    glossary = JSONField(
+        blank=True,
+        default={},
+    )
+
+    order = models.PositiveIntegerField(
+        verbose_name=_("Sort by"),
+        db_index=True,
+    )
 
     class Meta:
         db_table = 'cmsplugin_cascade_sortinline'
@@ -142,6 +160,7 @@ class PluginExtraFields(models.Model):
     site = models.ForeignKey(
         Site,
         verbose_name=_("Site"),
+        on_delete=models.CASCADE,
     )
 
     allow_id_tag = models.BooleanField(default=False)
@@ -228,10 +247,13 @@ class IconFont(models.Model):
         unique=True,
         help_text=_("A unique identifier to distinguish this icon font.")
     )
+
     config_data = JSONField()
+
     zip_file = FilerFileField(
         help_text=_('Upload a zip file created on <a href="http://fontello.com/" target="_blank">Fontello</a> containing fonts.')
     )
+
     font_folder = FilePathField(allow_files=False, allow_folders=True)
 
     class Meta:
@@ -297,6 +319,7 @@ class CascadePage(PageExtension):
         IconFont,
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
         verbose_name=_("Icon Font"),
         help_text=_("Set Icon Font globally for this page"),
     )
