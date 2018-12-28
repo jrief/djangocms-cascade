@@ -70,7 +70,7 @@ class HeadingPlugin(CascadePluginBase):
     tag_type = GlossaryField(widgets.Select(choices=TAG_TYPES))
 
     content = GlossaryField(
-        widgets.TextInput(attrs={'style': 'width: 350px; font-weight: bold; font-size: 125%;'}),
+        widgets.TextInput(attrs={'style': 'width: 100%; padding-right: 0; font-weight: bold; font-size: 125%;'}),
         label=_("Heading content"))
 
     render_template = 'cascade/generic/heading.html'
