@@ -127,15 +127,14 @@ class BootstrapUtilities(type):
         sizes = range(0, 6)
         for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
             if bp == Breakpoint.xs:
-                choices = [(c.format('', s), l.format('{}'.format(s))) for c, l in choices_format for s in sizes]
+                choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
                 choices.insert(0, ('', _("No Padding")))
             else:
-                choices = [(c.format(bp.name + '-', s), l.format('{}rem'.format(s)))
-                           for c, l in choices_format for s in sizes]
+                choices = [(c.format(bp.name + '-', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
                 choices.insert(0, ('', _("Inherit from above")))
             glossary_fields.append(GlossaryField(
                 widgets.Select(choices=choices),
-                label=_("Padding for {breakpoint}").format(breakpoint=bp.label),
+                label=format_lazy(_("Padding for {breakpoint}"), breakpoint=bp.label),
                 name='padding_{}'.format(bp.name),
                 initial=''
             ))
