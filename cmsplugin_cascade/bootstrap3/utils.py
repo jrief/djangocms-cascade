@@ -186,15 +186,25 @@ def get_picture_elements(context, instance):
     The purpose of this HTML entity is to display images with art directions. For normal images use
     the ``<img>`` element.
     """
-    if not instance.image:
+    if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
+        aspect_ratio = compute_aspect_ratio(instance.image)
+        global subject_location
+    elif instance.glossary['image']['width'] != None: 
+        aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
+        subject_location=None
+        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
+    else:
+        # if accessing the image file fails or fake image fails, abort here
+        logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
         return
+
     complete_glossary = instance.get_complete_glossary()
-    aspect_ratio = compute_aspect_ratio(instance.image)
     container_max_heights = complete_glossary.get('container_max_heights', {})
     resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    subject_location = instance.image.subject_location if 'subject_location' in resize_options else False
+    if subject_location is not None:
+        subject_location = instance.image.subject_location and 'subject_location' in resize_options
     max_width = 0
     max_zoom = 0
     elements = []
