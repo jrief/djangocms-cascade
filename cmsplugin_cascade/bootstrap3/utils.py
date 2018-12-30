@@ -7,7 +7,8 @@ from django.forms import widgets
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
+from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length,
+   compute_aspect_ratio_with_glossary, ramdon_color
 
 
 __all__ = ['reduce_breakpoints', 'compute_media_queries', 'get_image_tags', 'get_picture_elements',
@@ -93,16 +94,27 @@ def get_image_tags(context, instance, options):
     Create a context returning the tags to render an <img ...> element:
     ``sizes``, ``srcset``, a fallback ``src`` and if required inline styles.
     """
-    try:
+    if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
+        aspect_ratio = compute_aspect_ratio(instance.image)
         aspect_ratio = compute_aspect_ratio(instance.image)
     except Exception as e:
+        global subject_location
         # if accessing the image file fails, abort here
+    elif instance.glossary['image']['width'] != None: 
+        aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
+        subject_location=None
+        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
+    else:
+        # if accessing the image file fails or fake image fails, abort here
+        logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
+        logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
         return
     is_responsive = options.get('is_responsive', False)
     resize_options = options.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    subject_location = instance.image.subject_location if 'subject_location' in resize_options else False
+    if subject_location is not None:
+        subject_location = instance.image.subject_location and 'subject_location' in resize_options
     resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
     if is_responsive:
