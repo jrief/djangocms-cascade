@@ -7,8 +7,8 @@ from django.forms import widgets
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length,
-   compute_aspect_ratio_with_glossary, ramdon_color
+from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
+ compute_aspect_ratio_with_glossary, ramdon_color)
 
 
 __all__ = ['reduce_breakpoints', 'compute_media_queries', 'get_image_tags', 'get_picture_elements',
@@ -96,25 +96,22 @@ def get_image_tags(context, instance, options):
     """
     if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
         aspect_ratio = compute_aspect_ratio(instance.image)
-        aspect_ratio = compute_aspect_ratio(instance.image)
-    except Exception as e:
-        global subject_location
-        # if accessing the image file fails, abort here
-    elif instance.glossary['image']['width'] != None: 
+    elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
-        subject_location=None
         instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
     else:
         # if accessing the image file fails or fake image fails, abort here
         logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
-        logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
         return
+
     is_responsive = options.get('is_responsive', False)
     resize_options = options.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    if subject_location is not None:
+    if hasattr(instance.image, 'subject_location'):
         subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    else:
+        subject_location = None
     resolutions = (False, True) if 'high_resolution' in resize_options else (False,)
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
     if is_responsive:
@@ -188,10 +185,8 @@ def get_picture_elements(context, instance):
     """
     if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
         aspect_ratio = compute_aspect_ratio(instance.image)
-        global subject_location
-    elif instance.glossary['image']['width'] != None: 
+    elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
-        subject_location=None
         instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
     else:
         # if accessing the image file fails or fake image fails, abort here
@@ -203,8 +198,10 @@ def get_picture_elements(context, instance):
     resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    if subject_location is not None:
+    if hasattr(instance.image, 'subject_location'):
         subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    else:
+        subject_location = None
     max_width = 0
     max_zoom = 0
     elements = []
