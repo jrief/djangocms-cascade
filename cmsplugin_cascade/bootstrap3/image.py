@@ -12,7 +12,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm, 
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from . import utils
 
 
