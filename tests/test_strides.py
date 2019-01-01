@@ -32,7 +32,7 @@ class StridePluginTest(CascadeTestCase):
         template = Template('{% load cascade_tags sekizai_tags %}{% render_block "css" %}{% render_cascade "strides/bootstrap-jumbotron.json" %}')
         html = template.render(self.context)
         soup = BeautifulSoup(html, 'lxml')
-        self.assertEqual(soup.style.text, '\n#cascadeelement_id-1501 {\n\tbackground-color: #12308b;\n\tbackground-attachment: scroll;\n\tbackground-position: center center;\n\tbackground-repeat: no-repeat;\n\tbackground-size: cover;\n\tpadding-top: 500px;\n}\n\n')
+        self.assertEqual(soup.style.text.find('#cascadeelement_id-1501 {\n\tbackground-color: #12308b;\n\tbackground-attachment: scroll;\n\tbackground-position: center center;\n\tbackground-repeat: no-repeat;\n\tbackground-size: cover;\n\tpadding-top: 500px;'), 1 )
         element = soup.find(id='cascadeelement_id-1501')
         self.assertEqual(element.h1.text, "Manage your website")
         self.assertStyleEqual(element.h1.attrs['style'], {'text-align': 'center'})
