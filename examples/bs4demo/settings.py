@@ -7,6 +7,7 @@ import sys
 from django.core.urlresolvers import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade import __path__ as cmsplugin_cascade_path
 from django.utils.text import format_lazy
 
 DEBUG = True
@@ -284,6 +285,7 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
 }
 
 SASS_PROCESSOR_INCLUDE_DIRS = [
+    os.path.join(cmsplugin_cascade_path[0] , 'static', ),
     os.path.join(PROJECT_ROOT, 'node_modules'),
 ]
 
