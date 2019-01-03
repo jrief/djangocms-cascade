@@ -1,0 +1,20 @@
+//text ckeditor and bootstrap4
+.italique {
+	@extend .font-italic;
+}
+
+blockquote
+{
+	font-style: italic;
+	font-family: Georgia, Times, "Times New Roman", serif;
+	padding: 2px 0;
+	border-style: solid;
+	border-color: #ccc;
+	border-width: 0;
+}
+
+//use bootstrap4 blockquote
+//blockquote {
+//    @extend .blockquote;
+//}
+
