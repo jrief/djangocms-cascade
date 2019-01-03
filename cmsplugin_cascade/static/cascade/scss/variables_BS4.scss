@@ -3,14 +3,23 @@
 	@extend .font-italic;
 }
 
+blockquote p{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 blockquote
 {
 	font-style: italic;
 	font-family: Georgia, Times, "Times New Roman", serif;
-	padding: 2px 0;
+	padding: 2px 2px;
 	border-style: solid;
 	border-color: #ccc;
 	border-width: 0;
+	padding-left: 20px;
+	padding-right: 8px;
+	border-left-width: 5px;
+	margin: 0px !important;
 }
 
 //use bootstrap4 blockquote
