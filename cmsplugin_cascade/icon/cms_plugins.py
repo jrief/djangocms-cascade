@@ -85,7 +85,7 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
 
     @classmethod
     def get_tag_type(self, instance):
-        if instance.glossary.get('text_align'):
+        if instance.glossary.get('text_align') or instance.glossary.get('font_size'):
             return 'div'
 
     @classmethod
