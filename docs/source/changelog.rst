@@ -2,6 +2,14 @@
 Release History
 ===============
 
+0.17.2
+======
+* Fix  problem with lazy evaluation during initialization by lazy formating translated strings
+  in ``BootstrapUtilities``.
+* Fix font-size icon don't work without text_align.
+* In ``HeadingPlugin`` set width of content field to 100%.
+* Add nicer ColorPicker widget for fields containing a color.
+
 0.17.1
 ======
 * User margin classes for HeadingPlugin as provided by Bootstrap-4.
