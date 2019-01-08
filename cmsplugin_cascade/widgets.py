@@ -159,9 +159,8 @@ class ColorPickerWidget(widgets.MultiWidget):
     DEFAULT_ATTRS = {'style': 'width: 11em; padding-left: 26px;', 'type': 'text'}
     validation_pattern = re.compile('(#(?:[0-9a-fA-F]{2}){2,4}|(#[0-9a-fA-F]{3})|(rgb|hsl)a?\((-?\d+%?[,\s]+){2,3}\s*[\d\.]+%?\))')
     invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
-    from django.conf import settings
-    JS_COLOR_PICKER_WITH_ALPHA= True if hasattr(settings, 'COLOR_PICKER_WITH_ALPHA') and settings.COLOR_PICKER_WITH_ALPHA == True else False
-
+    JS_COLOR_PICKER_WITH_ALPHA= os.environ.get('JS_COLOR_PICKER_WITH_ALPHA', True)
+    
     if JS_COLOR_PICKER_WITH_ALPHA:
         class Media:
             js = ['cascade/js/admin/colorpickerext.js' ]
