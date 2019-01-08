@@ -8,7 +8,7 @@ from django.apps import apps
 from django.forms import fields
 from django.forms.models import ModelForm
 from django.utils.module_loading import import_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, get_language_from_request
 
 from cms.models import Page
 from cmsplugin_cascade.utils import validate_link
@@ -28,9 +28,33 @@ class SelectWidget(Select2Widget):
         return parent_media
 
 
+if 'django_select2' in settings.INSTALLED_APPS:
+    HeavySelect2Widget = import_string('django_select2.forms.HeavySelect2Widget')
+
+    class HeavySelectWidget(HeavySelect2Widget):
+        @property
+        def media(self):
+            parent_media = super(HeavySelectWidget, self).media
+            # prepend JS snippet to re-add 'jQuery' to the global namespace
+            parent_media._js.insert(0, 'cascade/js/admin/jquery.restore.js')
+            return parent_media
+
+        def render(self, name, value, attrs=None):
+            try:
+                page = Page.objects.get(pk=value)
+            except (Page.DoesNotExist, ValueError):
+                pass
+            else:
+                language = get_language_from_request(self.request)
+                self.choices.append((value, page.get_title(language)),)
+            html = super(HeavySelectWidget, self).render(name, value, attrs=attrs)
+            return html
+
+
 class LinkSearchField(fields.ChoiceField):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('widget', SelectWidget)
+        # kwargs.setdefault('widget', SelectWidget)
+        kwargs.setdefault('widget', HeavySelectWidget(data_view='admin:cms_page_get_published_pagelist'))
         super(LinkSearchField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -45,14 +69,35 @@ class LinkForm(ModelForm):
     Form class to add fake fields for rendering the ModelAdmin's form, which later are used to
     populate the glossary of the model.
     """
-    LINK_TYPE_CHOICES = (('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To")),)
-    link_type = fields.ChoiceField(label=_("Link"), help_text=_("Type of link"))
-    cms_page = LinkSearchField(required=False, label='',
-        help_text=_("An internal link onto CMS pages of this site"))
-    section = fields.ChoiceField(required=False, label='',
-        help_text=_("Page bookmark"))
-    ext_url = fields.URLField(required=False, label='', help_text=_("Link onto external page"))
-    mail_to = fields.EmailField(required=False, label='', help_text=_("Open Email program with this address"))
+    LINK_TYPE_CHOICES = [('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To"))]
+    link_type = fields.ChoiceField(
+        label=_("Link"),
+        help_text=_("Type of link"),
+    )
+
+    cms_page = LinkSearchField(
+        required=False,
+        label='',
+        help_text=_("An internal link any CMS page of this site"),
+    )
+
+    section = fields.ChoiceField(
+        required=False,
+        label='',
+        help_text=_("Page bookmark"),
+    )
+
+    ext_url = fields.URLField(
+        required=False,
+        label='',
+        help_text=_("Link onto external page"),
+    )
+
+    mail_to = fields.EmailField(
+        required=False,
+        label='',
+        help_text=_("Open Email program with this address"),
+    )
 
     class Meta:
         fields = ('glossary',)
@@ -72,13 +117,13 @@ class LinkForm(ModelForm):
         set_initial_linktype = getattr(self, 'set_initial_{}'.format(link_type), None)
 
         # populate Select field for choosing a CMS page
-        try:
-            site = instance.placeholder.page.site
-        except AttributeError:
-            site = Site.objects.get_current()
-        choices = [(p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
-                   for p in Page.objects.drafts().on_site(site)]
-        self.base_fields['cms_page'].choices = choices
+        #try:
+        #    site = instance.placeholder.page.site
+        #except AttributeError:
+        #    site = Site.objects.get_current()
+        # choices = [(p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
+        #            for p in Page.objects.drafts().on_site(site)]
+        # self.base_fields['cms_page'].choices = choices
 
         if callable(set_initial_linktype):
             set_initial_linktype(initial)
