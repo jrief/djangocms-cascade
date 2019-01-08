@@ -10,8 +10,14 @@ from django.utils.module_loading import import_string
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _, get_language
 from cms.models import Page
-from cms.utils import get_current_site
 from cmsplugin_cascade.utils import validate_link
+
+try:
+    from cms.utils import get_current_site
+except ImportError:
+    def get_current_site():
+        from django.contrib.sites.models import Site
+        return Site.objects.get_current()
 
 if 'django_select2' in settings.INSTALLED_APPS:
     Select2Widget = import_string('django_select2.forms.Select2Widget')
