@@ -23,11 +23,11 @@ def get_widget_choices():
     widget_choices = []
     for index, (bp, bound) in enumerate(breakpoints.items()):
         if index == 0:
-            widget_choices.append((bp.name, "{} (<{:0f}px)".format(bp.label, bound.max)))
+            widget_choices.append((bp.name, "{} (<{:.1f}px)".format(bp.label, bound.max)))
         elif index == len(breakpoints) - 1:
-            widget_choices.append((bp.name, "{} (≥{:0f}px)".format(bp.label, bound.min)))
+            widget_choices.append((bp.name, "{} (≥{:.1f}px)".format(bp.label, bound.min)))
         else:
-            widget_choices.append((bp.name, "{} (≥{:0f}px and <{:0f}px)".format(bp.label, bound.min, bound.max)))
+            widget_choices.append((bp.name, "{} (≥{:.1f}px and <{:.1f}px)".format(bp.label, bound.min, bound.max)))
     return widget_choices
 
 
@@ -235,8 +235,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     name='{}-column-width'.format(bp),
                     initial='col-{}-12'.format(bp),
                     help_text=choose_help_text(
-                        _("Column width for devices narrower than {:.0f} pixels."),
-                        _("Column width for devices wider than {:.0f} pixels."),
+                        _("Column width for devices narrower than {:.1f} pixels."),
+                        _("Column width for devices wider than {:.1f} pixels."),
                         _("Column width for all devices."),
                     )
                 ))
@@ -249,8 +249,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     name='{}-column-width'.format(bp),
                     initial='',
                     help_text=choose_help_text(
-                        _("Override column width for devices narrower than {:.0f} pixels."),
-                        _("Override column width for devices wider than {:.0f} pixels."),
+                        _("Override column width for devices narrower than {:.1f} pixels."),
+                        _("Override column width for devices wider than {:.1f} pixels."),
                         _("Override column width for all devices."),
                     )
                 ))
@@ -268,8 +268,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 choices.extend(('offset-{}-{}'.format(bp, i), units[i]) for i in offset_range)
             label = _("Offset for {}").format(devices)
             help_text = choose_help_text(
-                _("Offset width for devices narrower than {:.0f} pixels."),
-                _("Offset width for devices wider than {:.0f} pixels."),
+                _("Offset width for devices narrower than {:.1f} pixels."),
+                _("Offset width for devices wider than {:.1f} pixels."),
                 _("Offset width for all devices.")
             )
             glossary_fields.append(GlossaryField(
@@ -286,8 +286,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 choices.extend(('order-{}-{}'.format(bp, i), _("Reorder by {}").format(units[i])) for i in range(1, 13))
             label = _("Reordering for {}").format(devices)
             help_text = choose_help_text(
-                _("Reordering for devices narrower than {:.0f} pixels."),
-                _("Reordering for devices wider than {:.0f} pixels."),
+                _("Reordering for devices narrower than {:.1f} pixels."),
+                _("Reordering for devices wider than {:.1f} pixels."),
                 _("Reordering for all devices.")
             )
             glossary_fields.append(GlossaryField(
@@ -300,8 +300,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             choices = [('', _("Default")), ('visible-{}'.format(bp), _("Visible")), ('hidden-{}'.format(bp), _("Hidden"))]
             label = _("Responsive utilities for {}").format(devices)
             help_text = choose_help_text(
-                _("Utility classes for showing and hiding content by devices narrower than {:.0f} pixels."),
-                _("Utility classes for showing and hiding content by devices wider than {:.0f} pixels."),
+                _("Utility classes for showing and hiding content by devices narrower than {:.1f} pixels."),
+                _("Utility classes for showing and hiding content by devices wider than {:.1f} pixels."),
                 _("Utility classes for showing and hiding content for all devices.")
             )
             glossary_fields.append(GlossaryField(
