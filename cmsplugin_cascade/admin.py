@@ -52,7 +52,7 @@ class CascadePageAdmin(PageExtensionAdmin):
             | Q(title_set__path__icontains=query_term, title_set__language=language)
             | Q(title_set__menu_title__icontains=query_term, title_set__language=language)
             | Q(title_set__page_title__icontains=query_term, title_set__language=language)
-        ).distinct()
+        ).distinct().order_by('title_set__title').iterator()
 
         data = {'results': []}
         for page in matching_published_pages:
