@@ -7,7 +7,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.template import engines
 
-
 from cms.plugin_pool import plugin_pool
 from filer.models.imagemodels import Image
 
@@ -51,7 +50,6 @@ class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
         elif instance.glossary.get('tag_type') == 'naked':
             return 'cascade/generic/naked.html'
         return 'cascade/generic/wrapper.html'
-
 
 plugin_pool.register_plugin(SimpleWrapperPlugin)
 
