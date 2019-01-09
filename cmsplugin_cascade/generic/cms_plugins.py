@@ -5,6 +5,8 @@ from django.forms import widgets, ModelChoiceField
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.template import engines
+
 
 from cms.plugin_pool import plugin_pool
 from filer.models.imagemodels import Image
@@ -16,6 +18,7 @@ from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, Link
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.utils import compute_aspect_ratio
 from cmsplugin_cascade.widgets import CascadingSizeWidget
+from cmsplugin_cascade.hide_plugins import HidePluginMixin
 
 
 class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
@@ -42,9 +45,13 @@ class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
         return identifier
 
     def get_render_template(self, context, instance, placeholder):
-        if instance.glossary.get('tag_type') == 'naked':
+        if instance.glossary.get('hide_plugin'):
+            template_string = HidePluginMixin.hiding_template_string.format(plugin_id=instance.pk)
+            return engines['django'].from_string(template_string)
+        elif instance.glossary.get('tag_type') == 'naked':
             return 'cascade/generic/naked.html'
         return 'cascade/generic/wrapper.html'
+
 
 plugin_pool.register_plugin(SimpleWrapperPlugin)
 
