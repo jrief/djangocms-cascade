@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
 from django.forms import fields
 from django.forms.models import ModelForm
-from django.utils.module_loading import import_string
+from django.forms.widgets import Select as SelectWidget
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _, get_language
 from cms.models import Page
@@ -19,27 +19,13 @@ except ImportError:
         from django.contrib.sites.models import Site
         return Site.objects.get_current()
 
-if 'django_select2' in settings.INSTALLED_APPS:
-    Select2Widget = import_string('django_select2.forms.Select2Widget')
-else:
-    Select2Widget = import_string('django.forms.widgets.Select')
-
 
 def format_page_link(*args, **kwargs):
     return format_html("{} ({})", *args, **kwargs)
 
 
-class SelectWidget(Select2Widget):
-    @property
-    def media(self):
-        parent_media = super(SelectWidget, self).media
-        # prepend JS snippet to re-add 'jQuery' to the global namespace
-        parent_media._js.insert(0, 'cascade/js/admin/jquery.restore.js')
-        return parent_media
-
-
 if 'django_select2' in settings.INSTALLED_APPS:
-    HeavySelect2Widget = import_string('django_select2.forms.HeavySelect2Widget')
+    from django_select2.forms import HeavySelect2Widget
 
     class HeavySelectWidget(HeavySelect2Widget):
         @property
