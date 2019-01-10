@@ -8,6 +8,8 @@ Release History
 * For **ButtonPlugin**, make IconFont optional.
 * Fix: Limit number of decimal places in breakpoint selection to one.
 * Increase width of select2 widget to 400px.
+* Add feature: if a plugin use BootstrapImagePlugin or BootstrapPicturePlugin and that the
+  source of the media is missing, instead it uses a svg with old witdh and heigth who use srcset.
 
 0.17.2
 ======
