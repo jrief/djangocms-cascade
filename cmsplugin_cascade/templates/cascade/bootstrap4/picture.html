@@ -16,7 +16,8 @@
 </picture>
 {% else %}
 <div>
-<svg viewBox="0 0 {{ instance.glossary.image.width }} {{instance.glossary.image.height }}" style="background-color: {{ instance.glossary.ramdom_svg_color }};"  width="{{ instance.glossary.image.width }}px" height="{{ instance.glossary.image.height }}" >
+<svg viewBox="0 0 {{ instance.glossary.image.width }} {{instance.glossary.image.height }}" 
+     style="background-color: {{ instance.glossary.ramdom_svg_color }};"  width="100%" height="100%" }}" >
 </div>
 {% endif %}
 {% endspaceless %}{% endlocalize %}
