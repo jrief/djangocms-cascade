@@ -75,6 +75,7 @@ class BootstrapButtonMixin(IconPluginMixin):
     default_css_class = 'btn'
     default_css_attributes = ['button_type', 'button_size', 'button_options', 'quick_float']
     ring_plugin = 'ButtonMixin'
+    require_icon_font = False
 
     button_type = GlossaryField(
         ButtonTypeWidget.get_instance(),

@@ -39,6 +39,7 @@ class IconModelMixin(object):
 class IconPluginMixin(CascadePluginMixinBase):
     change_form_template = 'cascade/admin/fonticon_plugin_change_form.html'
     ring_plugin = 'IconPluginMixin'
+    require_icon_font = True  # if False, the icon_font is optional
 
     class Media:
         css = {'all': ['cascade/css/admin/iconplugin.css']}
@@ -63,7 +64,7 @@ class IconPluginMixin(CascadePluginMixinBase):
                 icon_font = self._cms_initial_attributes['placeholder'].page.cascadepage.icon_font
         except CascadePage.DoesNotExist:
             icon_font = None
-        extra_context = dict(extra_context or {}, icon_font=icon_font)
+        extra_context = dict(extra_context or {}, icon_font=icon_font, require_icon_font=self.require_icon_font)
         return super(IconPluginMixin, self).changeform_view(
              request, object_id=object_id, form_url=form_url, extra_context=extra_context)
 

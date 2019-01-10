@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block field_sets %}
-	{% if icon_font %}
+	{% if icon_font or not require_icon_font %}
 		{{ block.super }}
 	{% else %}
 <div class="module">
