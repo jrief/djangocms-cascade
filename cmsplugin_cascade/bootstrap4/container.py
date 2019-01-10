@@ -126,7 +126,8 @@ class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
 class RowGridMixin(object):
     def get_grid_instance(self):
         row = grid.Bootstrap4Row()
-        query = Q(plugin_type='BootstrapContainerPlugin') | Q(plugin_type='BootstrapColumnPlugin')
+        query = Q(plugin_type='BootstrapContainerPlugin') | Q(plugin_type='BootstrapColumnPlugin') \
+          | Q(plugin_type='BootstrapJumbotronPlugin')
         container = self.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin().get_grid_instance()
         container.add_row(row)
         return row
