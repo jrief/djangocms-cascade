@@ -4,6 +4,9 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
+import random
+import colorsys
+ 
 
 def remove_duplicates(lst):
     """
@@ -48,6 +51,14 @@ def compute_aspect_ratio(image):
         return float(image.height) / float(image.width)
 
 
+def compute_aspect_ratio_with_glossary(glossary):
+    if glossary['image']['exif_orientation'] > 4:
+        # image is rotated by 90 degrees, while keeping width and height
+        return float(glossary['image']['width']) / float(glossary['image']['height'])
+    else:
+        return float(glossary['image']['height']) / float(glossary['image']['width'])
+
+
 def get_image_size(width, image_height, aspect_ratio):
     if image_height[0]:
         # height was given in px
@@ -73,3 +84,13 @@ def parse_responsive_length(responsive_length):
     elif responsive_length.endswith('%'):
         return (None, float(responsive_length.rstrip('%')) / 100)
     return (None, None)
+
+
+def hsv_to_rgb(h, s, v):
+    return tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h, s, v))
+
+
+def ramdon_color():
+    intcolor = hsv_to_rgb(random.uniform(0.0, 1.0), 0.14, 0.80)
+    hsl_css = 'hsl({}, 14%, 80%)'.format( str(random.uniform(0.0, 1.0)))
+    return hsl_css

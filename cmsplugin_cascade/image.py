@@ -32,7 +32,11 @@ class ImageFormMixin(object):
     def clean(self):
         cleaned_data = super(ImageFormMixin, self).clean()
         if self.is_valid() and cleaned_data['image_file']:
-            image_data = {'pk': cleaned_data['image_file'].pk, 'model': 'filer.Image'}
+            width = cleaned_data['image_file']._width
+            height = cleaned_data['image_file']._height
+            exif_orientation = cleaned_data['image_file'].exif.get('Orientation', 1)
+            image_data = {'pk': cleaned_data['image_file'].pk, 'model': 'filer.Image',
+               'width': width ,  'height': height , 'exif_orientation' :exif_orientation }
             cleaned_data['glossary'].update(image=image_data)
         self.cleaned_data.pop('image_file', None)
         return cleaned_data
