@@ -10,7 +10,7 @@ django-sass-processor==0.6
 django-sekizai==0.10.0
 Django-Select2==5.11.1
 django-treebeard==4.3
-djangocms-bootstrap==1.0
+djangocms-bootstrap==1.0.1
 djangocms-text-ckeditor==3.5.3
 easy-thumbnails==2.5.0
 html5lib==0.9999999
