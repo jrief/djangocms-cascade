@@ -1,8 +1,4 @@
 //text ckeditor and bootstrap4
-.italique {
-	@extend .font-italic;
-}
-
 blockquote p{
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -21,9 +17,3 @@ blockquote
 	border-left-width: 5px;
 	margin: 0px !important;
 }
-
-//use bootstrap4 blockquote
-//blockquote {
-//    @extend .blockquote;
-//}
-
