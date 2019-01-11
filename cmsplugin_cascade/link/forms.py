@@ -2,35 +2,59 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
 from django.forms import fields
 from django.forms.models import ModelForm
-from django.utils.module_loading import import_string
-from django.utils.translation import ugettext_lazy as _
-
+from django.forms.widgets import Select as SelectWidget
+from django.utils.html import format_html
+from django.utils.translation import ugettext_lazy as _, get_language
 from cms.models import Page
 from cmsplugin_cascade.utils import validate_link
 
+try:
+    from cms.utils import get_current_site
+except ImportError:
+    def get_current_site():
+        from django.contrib.sites.models import Site
+        return Site.objects.get_current()
+
+
+def format_page_link(*args, **kwargs):
+    return format_html("{} ({})", *args, **kwargs)
+
+
 if 'django_select2' in settings.INSTALLED_APPS:
-    Select2Widget = import_string('django_select2.forms.Select2Widget')
-else:
-    Select2Widget = import_string('django.forms.widgets.Select')
+    from django_select2.forms import HeavySelect2Widget
 
+    class HeavySelectWidget(HeavySelect2Widget):
+        @property
+        def media(self):
+            parent_media = super(HeavySelectWidget, self).media
+            # prepend JS snippet to re-add 'jQuery' to the global namespace
+            parent_media._js.insert(0, 'cascade/js/admin/jquery.restore.js')
+            return parent_media
 
-class SelectWidget(Select2Widget):
-    @property
-    def media(self):
-        parent_media = super(SelectWidget, self).media
-        # prepend JS snippet to re-add 'jQuery' to the global namespace
-        parent_media._js.insert(0, 'cascade/js/admin/jquery.restore.js')
-        return parent_media
+        def render(self, name, value, attrs=None):
+            try:
+                page = Page.objects.get(pk=value)
+            except (Page.DoesNotExist, ValueError):
+                pass
+            else:
+                language = get_language()
+                text = format_page_link(page.get_title(language), page.get_absolute_url(language))
+                self.choices.append((value, text))
+            html = super(HeavySelectWidget, self).render(name, value, attrs=attrs)
+            return html
 
 
 class LinkSearchField(fields.ChoiceField):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('widget', SelectWidget)
+        if 'django_select2' in settings.INSTALLED_APPS:
+            widget = HeavySelectWidget(data_view='admin:get_published_pagelist')
+        else:
+            widget = SelectWidget
+        kwargs.setdefault('widget', widget)
         super(LinkSearchField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -45,14 +69,35 @@ class LinkForm(ModelForm):
     Form class to add fake fields for rendering the ModelAdmin's form, which later are used to
     populate the glossary of the model.
     """
-    LINK_TYPE_CHOICES = (('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To")),)
-    link_type = fields.ChoiceField(label=_("Link"), help_text=_("Type of link"))
-    cms_page = LinkSearchField(required=False, label='',
-        help_text=_("An internal link onto CMS pages of this site"))
-    section = fields.ChoiceField(required=False, label='',
-        help_text=_("Page bookmark"))
-    ext_url = fields.URLField(required=False, label='', help_text=_("Link onto external page"))
-    mail_to = fields.EmailField(required=False, label='', help_text=_("Open Email program with this address"))
+    LINK_TYPE_CHOICES = [('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To"))]
+    link_type = fields.ChoiceField(
+        label=_("Link"),
+        help_text=_("Type of link"),
+    )
+
+    cms_page = LinkSearchField(
+        required=False,
+        label='',
+        help_text=_("An internal link any CMS page of this site"),
+    )
+
+    section = fields.ChoiceField(
+        required=False,
+        label='',
+        help_text=_("Page bookmark"),
+    )
+
+    ext_url = fields.URLField(
+        required=False,
+        label='',
+        help_text=_("Link onto external page"),
+    )
+
+    mail_to = fields.EmailField(
+        required=False,
+        label='',
+        help_text=_("Open Email program with this address"),
+    )
 
     class Meta:
         fields = ('glossary',)
@@ -70,15 +115,12 @@ class LinkForm(ModelForm):
             # convert this into an optional field since it is disabled with ``shared_glossary`` set
             self.base_fields['link_type'].required = False
         set_initial_linktype = getattr(self, 'set_initial_{}'.format(link_type), None)
-
-        # populate Select field for choosing a CMS page
-        try:
-            site = instance.placeholder.page.site
-        except AttributeError:
-            site = Site.objects.get_current()
-        choices = [(p.pk, '{0} ({1})'.format(p.get_page_title(), p.get_absolute_url()))
-                   for p in Page.objects.drafts().on_site(site)]
-        self.base_fields['cms_page'].choices = choices
+        if 'django_select2' not in settings.INSTALLED_APPS:
+            # populate classic Select field for choosing a CMS page
+            site = get_current_site()
+            choices = [(p.pk, format_page_link(p.get_page_title(), p.get_absolute_url()))
+                       for p in Page.objects.drafts().on_site(site)]
+            self.base_fields['cms_page'].choices = choices
 
         if callable(set_initial_linktype):
             set_initial_linktype(initial)

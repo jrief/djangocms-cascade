@@ -17,7 +17,8 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
+from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
+   compute_aspect_ratio_with_glossary, ramdon_color)
 
 logger = logging.getLogger('cascade')
 
@@ -154,17 +155,24 @@ def get_image_tags(instance):
     Create a context returning the tags to render an <img ...> element with
     ``sizes``, ``srcset``, a fallback ``src`` and if required inline styles.
     """
-    try:
+    if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
         aspect_ratio = compute_aspect_ratio(instance.image)
-    except Exception as e:
-        # if accessing the image file fails, abort here
+    elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
+        aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
+        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
+    else:
+        # if accessing the image file fails or fake image fails, abort here
         logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
         return
+
     is_responsive = 'img-fluid' in instance.glossary.get('image_shapes', [])
     resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    if hasattr(instance.image, 'subject_location'):
+        subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    else:
+        subject_location = None
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
     if is_responsive:
         image_width = parse_responsive_length(instance.glossary.get('image_width_responsive') or '100%')

@@ -13,7 +13,8 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
+from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
+   compute_aspect_ratio_with_glossary, ramdon_color)
 
 logger = logging.getLogger('cascade')
 
@@ -139,12 +140,25 @@ def get_picture_elements(instance):
     The purpose of this HTML entity is to display images with art directions. For normal images use
     the ``<img>`` element.
     """
-    aspect_ratio = compute_aspect_ratio(instance.image)
+
+    if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
+        aspect_ratio = compute_aspect_ratio(instance.image)
+    elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
+        aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
+        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
+    else:
+        # if accessing the image file fails or fake image fails, abort here
+        logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
+        return
+
     container_max_heights = instance.glossary.get('container_max_heights', {})
     resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    if hasattr(instance.image, 'subject_location'):
+        subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    else:
+        subject_location = None
     max_width = 0
     max_zoom = 0
     elements = []
