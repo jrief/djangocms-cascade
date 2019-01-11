@@ -16,7 +16,7 @@ from cms.plugin_pool import plugin_pool
 from cms.models.pluginmodel import CMSPlugin
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.models import IconFont
+from cmsplugin_cascade.models import CascadePage
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 from .mixins import IconPluginMixin, IconModelMixin
@@ -168,7 +168,10 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         matches = re.match(r'.+/edit-plugin/(\d+)/$', referer.path)
         if matches:
             cms_plugin = CMSPlugin.objects.get(id=matches.group(1))
-            context['icon_font'] = cms_plugin.page.cascadepage.icon_font
+            try:
+                context['icon_font'] = cms_plugin.page.cascadepage.icon_font
+            except CascadePage.DoesNotExist:
+                pass
         javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
         return HttpResponse(javascript, content_type='application/javascript')
 
