@@ -2,6 +2,11 @@
 Release History
 ===============
 
+0.17.4
+======
+* Fix: TextIconPlugin does not raise an exception if no IconFont was selected for the current page.
+
+
 0.17.3
 ======
 * Use ``HeavySelect2Widget`` to choose the CMS page if **django-select2** is available.
