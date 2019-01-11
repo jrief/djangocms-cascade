@@ -65,10 +65,10 @@ before upgrading from an older version.
 ### It's pluggable
 
 **DjangoCMS-Cascade** is very modular, keeping its CMS modules in functional groups. These groups
-have to be activated independently in your ``settings.py``. It also is possible to activate only
-certain plugins out of a group. One such group is ``cmsplugin_cascade.bootstrap3``, but it could be
-replaced by a future **Bootstrap-4**, the **Foundation**, **Angular Material** or whatever other CSS
-framework you prefer.
+have to be activated independently in the project's `settings.py`. It also is possible to activate only
+certain plugins out of a group. Currently there are two such groups, `cmsplugin_cascade.bootstrap3` and
+`cmsplugin_cascade.bootstrap4`, but this list could be extended by say, **Foundation**,
+**Angular Material** or whatever other CSS framework you prefer.
 
 
 ### Configurable individually
