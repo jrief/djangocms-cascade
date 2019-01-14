@@ -2,6 +2,11 @@
 Release History
 ===============
 
+0.17.5
+======
+* Fix: Limit the number of results to 16 while searchung for a link.
+
+
 0.17.4
 ======
 * Fix: TextIconPlugin does not raise an exception if no IconFont was selected for the current page.
