@@ -62,6 +62,6 @@ class CascadePageAdmin(PageExtensionAdmin):
                 'id': page.pk,
                 'text': format_page_link(title, path),
             })
-            if len(data) > 15:
+            if len(data['results']) > 15:
                 break
         return JsonResponse(data)
