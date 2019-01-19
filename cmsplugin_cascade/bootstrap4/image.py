@@ -18,7 +18,7 @@ from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImageP
 from cmsplugin_cascade.widgets import CascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
-   compute_aspect_ratio_with_glossary, ramdon_color)
+   compute_aspect_ratio_with_glossary)
 
 logger = logging.getLogger('cascade')
 
@@ -101,11 +101,15 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
         except Exception as exc:
             logger.warning("Unable generate image tags. Reason: {}".format(exc))
         else:
-            extra_styles = tags.pop('extra_styles')
-            inline_styles = instance.glossary.get('inline_styles', {})
-            inline_styles.update(extra_styles)
-            instance.glossary['inline_styles'] = inline_styles
-            context.update(dict(instance=instance, placeholder=placeholder, **tags))
+            tags = tags if tags else {} 
+            if 'extra_styles' in tags:
+                extra_styles = tags.pop('extra_styles')
+                inline_styles = instance.glossary.get('inline_styles', {})
+                inline_styles.update(extra_styles)
+             instance.glossary['inline_styles'] = inline_styles
+             instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
+
+             context.update(dict(instance=instance, placeholder=placeholder, **tags))
         return context
 
     @classmethod
@@ -159,7 +163,6 @@ def get_image_tags(instance):
         aspect_ratio = compute_aspect_ratio(instance.image)
     elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
-        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
     else:
         # if accessing the image file fails or fake image fails, abort here
         logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
