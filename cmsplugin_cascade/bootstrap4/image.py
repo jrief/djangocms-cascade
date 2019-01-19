@@ -107,8 +107,6 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
                 inline_styles = instance.glossary.get('inline_styles', {})
                 inline_styles.update(extra_styles)
              instance.glossary['inline_styles'] = inline_styles
-             instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
-
              context.update(dict(instance=instance, placeholder=placeholder, **tags))
         return context
 
@@ -163,6 +161,7 @@ def get_image_tags(instance):
         aspect_ratio = compute_aspect_ratio(instance.image)
     elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
+        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
     else:
         # if accessing the image file fails or fake image fails, abort here
         logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
