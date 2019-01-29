@@ -106,7 +106,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
                 extra_styles = tags.pop('extra_styles')
                 inline_styles = instance.glossary.get('inline_styles', {})
                 inline_styles.update(extra_styles)
-             instance.glossary['inline_styles'] = inline_styles
+                instance.glossary['inline_styles'] = inline_styles
              context.update(dict(instance=instance, placeholder=placeholder, **tags))
         return context
 
