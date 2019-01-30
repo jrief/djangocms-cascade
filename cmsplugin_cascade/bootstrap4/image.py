@@ -97,13 +97,16 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
         return super(BootstrapImagePlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
-       tags = get_image_tags(instance)
-       tags = tags if tags else {}
-       if 'extra_styles' in tags:
-          extra_styles = tags.pop('extra_styles')
-          inline_styles = instance.glossary.get('inline_styles', {})
-          inline_styles.update(extra_styles)
-          instance.glossary['inline_styles'] = inline_styles
+        try:
+            tags = get_image_tags(instance)
+        except Exception as exc:
+            logger.warning("Unable generate image tags. Reason: {}".format(exc))
+        tags = tags if tags else {}
+        if 'extra_styles' in tags:
+            extra_styles = tags.pop('extra_styles')
+            inline_styles = instance.glossary.get('inline_styles', {})
+            inline_styles.update(extra_styles)
+            instance.glossary['inline_styles'] = inline_styles
         context.update(dict(instance=instance, placeholder=placeholder, **tags))
         return context
 
