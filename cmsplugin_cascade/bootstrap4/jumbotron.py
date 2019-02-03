@@ -187,6 +187,9 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         except Exception as exc:
             logger.warning("Unable generate picture elements. Reason: {}".format(exc))
         else:
+            if instance.child_plugin_instances and instance.child_plugin_instances[0].plugin_type == 'BootstrapRowPlugin':
+                padding='padding: {0}px {0}px;'.format(int( app_settings.CMSPLUGIN_CASCADE['bootstrap4']['gutter']/2))
+                context.update({'add_gutter_if_child_is_BootstrapRowPlugin': padding,})
             context.update({
                 'elements': [e for e in elements if 'media' in e] if elements else [],
                 'CSS_PREFIXES': app_settings.CSS_PREFIXES,
