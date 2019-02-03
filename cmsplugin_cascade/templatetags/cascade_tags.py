@@ -82,7 +82,9 @@ class RenderPlugin(Tag):
             )
         else:
             toolbar = get_toolbar_from_request(context['request'])
-            if 'cms_renderer' in context.dicts[1]:
+            if 'cms_content_renderer' in context and context['cms_content_renderer'].__module__=="cmsplugin_cascade.strides" :
+                content_renderer=context['cms_content_renderer']
+            elif 'cms_renderer' in context.dicts[1]:
                 content_renderer=context.dicts[1]['cms_renderer']
             elif  'cms_content_renderer' in context:
                 content_renderer=context['cms_content_renderer']

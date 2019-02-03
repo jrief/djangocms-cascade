@@ -1,0 +1,22 @@
+{% load l10n cascade_tags %}
+{% localize off %}{% spaceless %}
+	{% with inline_styles=instance.inline_styles css_classes=instance.css_classes %}
+<div id="cmsplugin_{{ instance.id }}"{% if css_classes %} class="{{ instance.css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+	<ul class="nav nav-tabs" role="tablist">
+	{% for pane in instance.child_plugin_instances %}
+		<li class="nav-item">
+			<a class="nav-link{% if forloop.first %} active{% endif %}" href="#cmsplugin_{{ pane.id }}" aria-controls="{{ pane.glossary.tab_title|lower }}" role="tab" data-toggle="tab">
+			{{ pane.glossary.tab_title|safe }}
+			</a>
+		</li>
+	{% endfor %}
+	</ul>
+
+	<div class="tab-content">
+	{% for pane in instance.child_plugin_instances %}
+		<div role="tabpanel" class="tab-pane{% if forloop.first %} active{% endif %}" id="cmsplugin_{{ pane.id }}">{% render_plugin pane %}</div>
+	{% endfor %}
+	</div>
+</div>
+	{% endwith %}
+{% endspaceless %}{% endlocalize %}

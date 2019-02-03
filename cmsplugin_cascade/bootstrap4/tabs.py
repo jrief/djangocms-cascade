@@ -25,11 +25,11 @@ class TabForm(ManageChildrenFormMixin, ModelForm):
 class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     name = _("Tab Set")
     form = TabForm
-    parent_classes = ('BootstrapColumnPlugin',)
-    direct_child_classes = ('BootstrapTabPanePlugin',)
+    parent_classes = ['BootstrapColumnPlugin']
+    direct_child_classes = ['BootstrapTabPanePlugin']
     require_parent = True
     allow_children = True
-    render_template = 'cascade/bootstrap3/{}/tabset.html'
+    render_template = 'cascade/bootstrap4/{}/tabset.html'
 
     justified = GlossaryField(
         widgets.CheckboxInput(),
@@ -53,7 +53,7 @@ plugin_pool.register_plugin(BootstrapTabSetPlugin)
 
 class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
     name = _("Tab Pane")
-    direct_parent_classes = parent_classes = ('BootstrapTabSetPlugin',)
+    direct_parent_classes = parent_classes = ['BootstrapTabSetPlugin']
     require_parent = True
     allow_children = True
     alien_child_classes = True
