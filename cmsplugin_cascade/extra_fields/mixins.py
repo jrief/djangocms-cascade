@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
+from distutils.version import LooseVersion
 from django.forms import MediaDefiningClass, widgets
 from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
@@ -10,7 +11,13 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.six.moves.urllib.parse import urlparse
 
-from cms.utils.page import get_page_from_request, get_page_from_path
+
+from cms import __version__ as CMS_VERSION
+if LooseVersion(CMS_VERSION) < LooseVersion('3.5'):
+    from cms.utils.page_resolver import get_page_from_request
+else:
+    from cms.utils.page import get_page_from_request 
+
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
