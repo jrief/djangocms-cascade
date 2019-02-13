@@ -85,20 +85,21 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
             # add input fields to let the user enter html tag attibutes information
             for html_tag_attrs, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_html_tag_attributes'].items():
                 html_tag_attributes = extra_fields.html_tag_attributes.get('extra_fields:{0}'.format(html_tag_attrs))
-                for data_set in html_tag_attributes:
-                    Widget = choices_tuples[1]
-                    Widget.full_html_tag_attributes = html_tag_attributes
-                    Widget.request_cms_path=urlparse(request.GET.dict()['cms_path']).path
-                    if isinstance(data_set, tuple):
-                        Widget.widget_name = data_set[0]
-                        Widget.attributes_extra = data_set[1]
-                        if 'widget_choices_cms_page' in str(Widget.attributes_extra.values()):
-                            cms_path = urlparse(request.GET.dict()['cms_path']).path
-                            page = get_page_from_request(request, use_path=cms_path, clean_path=True)
-                            Widget.current_page = page
-                    key = 'extra_html_tag_attributes:{0}'.format(Widget.widget_name)
-                    label = '{0}: {1}'.format(  html_tag_attrs , Widget.widget_name)
-                    glossary_fields.append(GlossaryField(Widget(), label=label, name=key))
+                if html_tag_attributes is not None:
+                    for data_set in html_tag_attributes:
+                        Widget = choices_tuples[1]
+                        Widget.full_html_tag_attributes = html_tag_attributes
+                        Widget.request_cms_path=urlparse(request.GET.dict()['cms_path']).path
+                        if isinstance(data_set, tuple):
+                            Widget.widget_name = data_set[0]
+                            Widget.attributes_extra = data_set[1]
+                            if 'widget_choices_cms_page' in str(Widget.attributes_extra.values()):
+                                cms_path = urlparse(request.GET.dict()['cms_path']).path
+                                page = get_page_from_request(request, use_path=cms_path, clean_path=True)
+                                Widget.current_page = page
+                        key = 'extra_html_tag_attributes:{0}'.format(Widget.widget_name)
+                        label = '{0}: {1}'.format(  html_tag_attrs , Widget.widget_name)
+                        glossary_fields.append(GlossaryField(Widget(), label=label, name=key))
 
         kwargs.update(glossary_fields=glossary_fields)
         return super(ExtraFieldsMixin, self).get_form(request, obj, **kwargs)
