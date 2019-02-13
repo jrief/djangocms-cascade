@@ -16,14 +16,11 @@ from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.six.moves.urllib.parse import urlparse
 
-from cms.utils.page import get_page_from_request, get_page_from_path
-
 from .fields import GlossaryField
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cms.models import Page
-from cms.utils.page import get_page_from_request
-from cms.utils import get_current_site
+
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
