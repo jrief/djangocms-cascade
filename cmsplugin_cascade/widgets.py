@@ -382,8 +382,8 @@ class HmltAttrsWidget(widgets.MultiWidget):
     Use this field to enter a html attributes value.
     The value passed to the GlossaryField is guaranteed to be validate text, int and color format.
     Class HmltAttrsWidget has pre-set widget which can be entered in the settings file: 
-    widget_choices_list, widget_choices_cms_page_anchors, widget_attrs : attribute of widget
-    widget_cascade_input_int, widget_cascade_input_text, widget_cascade_input_color.
+    widget_choices_cms_page_anchors, widget_choices_list, widget_choices_int, widget_choices_text,
+    widget_choices_color, widget_attrs.
     This class is made to work in conjunction with the Class ExtraFieldsMixin preferably.
     """
     DEFAULT_ATTRS = {'style': 'padding-left: 26px;'}
