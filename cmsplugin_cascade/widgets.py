@@ -444,7 +444,6 @@ class HmltAttrsWidget(widgets.MultiWidget):
             values = {}
             for attr_name in self.list_attrs_name:
                 values[attr_name] = ''
-
         return values
 
     def value_from_datadict(self, data, files, name):

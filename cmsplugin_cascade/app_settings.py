@@ -103,13 +103,11 @@ class AppSettings(object):
             'Overflow',
             (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget))
 
-
         config.setdefault('extra_html_tag_attributes', OrderedDict())
         extra_html_tag_attributes = config['extra_html_tag_attributes']
         extra_html_tag_attributes.setdefault(
             'HtmlAttrs',
             (('Multiples_attrs',), HmltAttrsWidget  ))
-           # (('Aos',), HmltAttrsWidget  ))
 
         if 'cmsplugin_cascade.segmentation' in INSTALLED_APPS:
             config.setdefault('segmentation_mixins', [
