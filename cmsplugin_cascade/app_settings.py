@@ -25,7 +25,7 @@ class AppSettings(object):
         from django.core.exceptions import ImproperlyConfigured
         from django.utils.translation import ugettext_lazy
         from cmsplugin_cascade.widgets import (NumberInputWidget, MultipleCascadingSizeWidget, ColorPickerWidget,
-                                               SelectTextAlignWidget, SelectOverflowWidget)
+                                               SelectTextAlignWidget, SelectOverflowWidget, HmltAttrsWidget )
 
         if hasattr(self, '_config_CMSPLUGIN_CASCADE'):
             return self._config_CMSPLUGIN_CASCADE
@@ -102,6 +102,14 @@ class AppSettings(object):
         extra_inline_styles.setdefault(
             'Overflow',
             (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget))
+
+
+        config.setdefault('extra_html_tag_attributes', OrderedDict())
+        extra_html_tag_attributes = config['extra_html_tag_attributes']
+        extra_html_tag_attributes.setdefault(
+            'HtmlAttrs',
+            (('Multiples_attrs',), HmltAttrsWidget  ))
+           # (('Aos',), HmltAttrsWidget  ))
 
         if 'cmsplugin_cascade.segmentation' in INSTALLED_APPS:
             config.setdefault('segmentation_mixins', [

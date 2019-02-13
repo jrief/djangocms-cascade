@@ -8,6 +8,9 @@ from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from django.utils.six.moves.urllib.parse import urlparse
+
+from cms.utils.page import get_page_from_request, get_page_from_path
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
@@ -79,6 +82,24 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
                         label = '{0}: {1}'.format(style, inline_style)
                         glossary_fields.append(GlossaryField(Widget(), label=label, name=key))
 
+            # add input fields to let the user enter html tag attibutes information
+            for html_tag_attrs, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_html_tag_attributes'].items():
+                html_tag_attributes = extra_fields.html_tag_attributes.get('extra_fields:{0}'.format(html_tag_attrs))
+                for data_set in html_tag_attributes:
+                    Widget = choices_tuples[1]
+                    Widget.full_html_tag_attributes = html_tag_attributes
+                    Widget.request_cms_path=urlparse(request.GET.dict()['cms_path']).path
+                    if isinstance(data_set, tuple):
+                        Widget.widget_name = data_set[0]
+                        Widget.attributes_extra = data_set[1]
+                        if 'widget_choices_cms_page' in str(Widget.attributes_extra.values()):
+                            cms_path = urlparse(request.GET.dict()['cms_path']).path
+                            page = get_page_from_request(request, use_path=cms_path, clean_path=True)
+                            Widget.current_page = page
+                    key = 'extra_html_tag_attributes:{0}'.format(Widget.widget_name)
+                    label = '{0}: {1}'.format(  html_tag_attrs , Widget.widget_name)
+                    glossary_fields.append(GlossaryField(Widget(), label=label, name=key))
+
         kwargs.update(glossary_fields=glossary_fields)
         return super(ExtraFieldsMixin, self).get_form(request, obj, **kwargs)
 
@@ -113,6 +134,17 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
     def get_html_tag_attributes(cls, obj):
         attributes = super(ExtraFieldsMixin, cls).get_html_tag_attributes(obj)
         extra_element_id = obj.glossary.get('extra_element_id')
+        extra_html_tag_attributes = obj.glossary.get('extra_html_tag_attributes')
+        for key, eis in obj.glossary.items():
+            if key.startswith('extra_html_tag_attributes:'):
+                if isinstance(eis, dict):
+                    attributes.update(dict((k, v) for k, v in eis.items() if v))
+                if isinstance(eis, (list, tuple)):
+                    attributes.update({key.split(':')[1]: eis[0]})
+                    attributes.update({key.split(':')[1]: eis[0]})
+                elif isinstance(eis, six.string_types):
+                    attributes.update({key.split(':')[1]: eis})
+                    attributes.update({key.split(':')[0]: eis})
         if extra_element_id:
             attributes.update(id=extra_element_id)
         return attributes

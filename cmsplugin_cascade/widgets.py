@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 import json
+import six
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
@@ -13,8 +14,16 @@ from django.utils import six
 from django.utils.safestring import mark_safe
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
-from .fields import GlossaryField
+from django.utils.six.moves.urllib.parse import urlparse
 
+from cms.utils.page import get_page_from_request, get_page_from_path
+
+from .fields import GlossaryField
+from cmsplugin_cascade import app_settings
+from cmsplugin_cascade.fields import GlossaryField
+from cms.models import Page
+from cms.utils.page import get_page_from_request
+from cms.utils import get_current_site
 
 class JSONMultiWidget(widgets.MultiWidget):
     """Base class for MultiWidgets using a JSON field in database"""
@@ -366,3 +375,123 @@ class SetBorderWidget(widgets.MultiWidget):
                 raise ValidationError(self.invalid_color_message, code='invalid', params={'value': color})
         else:
             raise KeyError("{} is not a valid border widget attribute.".format(key))
+
+
+class HmltAttrsWidget(widgets.MultiWidget):
+    """
+    Use this field to enter a html attributes value.
+    The value passed to the GlossaryField is guaranteed to be validate text, int and color format.
+    Class HmltAttrsWidget has pre-set widget which can be entered in the settings file: 
+    widget_choices_list, widget_choices_cms_page_anchors, widget_attrs : attribute of widget
+    widget_cascade_input_int, widget_cascade_input_text, widget_cascade_input_color.
+    This class is made to work in conjunction with the Class ExtraFieldsMixin preferably.
+    """
+    DEFAULT_ATTRS = {'style': 'padding-left: 26px;'}
+    invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid.")
+    validation_pattern = re.compile(r'^[A-Za-z0-9_-]+$')
+    int_validation_pattern = re.compile(r'^[-+]?[0-9]+$')
+    color_validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
+    all_extra_html_tag_attributes = {}
+
+    def __init__(self, attrs=DEFAULT_ATTRS):
+        attrs = dict(attrs)
+        cms_path = self.request_cms_path if hasattr(self, 'request_cms_path') else None
+        self.list_attrs_name = self.attributes_extra.keys() if hasattr(self, 'attributes_extra') else None
+     #   widget_name=self.widget_name
+     #   self.all_extra_html_tag_attributes[widget_name] = self.attributes_extra.items()  if hasattr(self, 'attributes_extra') else None
+        widget_list = []
+        for key, val in self.attributes_extra.items():
+            self.all_extra_html_tag_attributes[self.widget_name] = self.attributes_extra
+            choices = []
+            if 'widget_attrs' in val:
+                widgetattrs = val['widget_attrs']
+                widgetattrs.update(attrs)
+            if 'widget_choices_list' in val:
+                attrs_add = {'style': 'width: 10em;'}
+                widgetattrs.update(attrs_add)
+                choices = val['widget_choices_list']
+                widget_list.append(widgets.Select(attrs=widgetattrs, choices=[(s, s) for s in choices]))
+            if 'widget_choices_cms_page_anchors' in val :
+                attrs_add = {'style': 'width: 10em;'}
+                widgetattrs.update(attrs_add)
+                if  hasattr(Page.objects.get(pk=self.current_page.pk), 'cascadepage'):
+                     cascade_page = Page.objects.get(pk=self.current_page.pk).cascadepage
+                     for cascade_id, cascade_id_value in cascade_page.glossary.get('element_ids', {}).items():
+                         choices = [('inherit',_("Inherit")) , (cascade_id, cascade_id_value)]
+                else:
+                    choices = [('inherit',_("Inherit"))] 
+                widget_list.append(widgets.Select(attrs=widgetattrs, choices=[s for s in choices]))
+            if 'widget_choices_int' in val:
+                attrs_add = {'style': 'width: 9em;', 'type': 'text'}
+                widgetattrs.update(attrs_add)
+                widget_list.append(widgets.TextInput(attrs=widgetattrs))
+            elif 'widget_choices_text' in val:
+                attrs_add = {'style': 'width: 9em;', 'type': 'text'}
+                widgetattrs.update(attrs_add)
+                widget_list.append(widgets.TextInput(attrs=widgetattrs))
+            elif 'widget_choices_color' in val:
+                attrs_add = {'style': 'width: 10em;', 'type': 'color'}
+                widgetattrs.update(attrs_add)
+                widget_list.append(widgets.TextInput(attrs=widgetattrs))
+        super(HmltAttrsWidget, self).__init__(widget_list)
+
+    def __iter__(self):
+        for name in self.list_attrs_name:
+            yield name
+
+    def decompress(self, values):
+        if not isinstance(values, (list, tuple, dict)):
+            values = {}
+            for attr_name in self.list_attrs_name:
+                values[attr_name] = ''
+
+        return values
+
+    def value_from_datadict(self, data, files, name):
+        self.widgetname = name.split(':')[-1]
+        values = {}
+        for attr_name in self.list_attrs_name:
+            data_attr = escape(data.get('{0}_{1}'.format(name, attr_name),''))
+            if data_attr == 'inherit' or  data_attr == 'None':
+                data_attr = ""
+            values[attr_name] = data_attr
+        return values
+
+    def render(self, name, values, attrs):
+        values = values
+        attrs = dict(attrs)
+        html = '<div class="clearfix">'
+        html += '<div style="position: relative;">'
+        if isinstance(values, dict):
+            for index, attr_data_set in enumerate(values.items(), start=0):
+                attribute_name = attr_data_set[0]
+                attribute_values = attr_data_set[1]
+                subkey = '{0}_{1}'.format(name, attribute_name)
+                widget_attrs=[]
+                if 'widget_attrs' in attribute_values  and 'title' in attribute_values['widget_attrs']:
+                    widget_attrs = attribute_values['widget_attrs']
+                html += format_html('<div style="float: left; width: 12em;" ><label for="{0}"><p>{1}</p>{2}</label></div>',
+                           subkey, attribute_name , self.widgets[index].render(subkey, attribute_values, attrs ), widget_attrs)
+        html += '</div></div>'
+        return mark_safe(html)
+
+    def validate(self, values, key):
+        for index, v in enumerate(values.items(), start=0):
+            key_attibute_name = v[0]
+            value_attibute_value = v[1]
+            if value_attibute_value != '':
+                self.widgets[index].validate=True
+                values_extra_attr = self.all_extra_html_tag_attributes.get(self.widgetname, '').get( key_attibute_name, '')
+                if values_extra_attr:
+                    if 'widget_choices_int' in values_extra_attr:
+                        if not self.int_validation_pattern.match(value_attibute_value):
+                            self.widgets[index].validate( value_attibute_value)
+                            raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
+                    if 'widget_choices_color' in values_extra_attr:
+                        if not self.color_validation_pattern.match(value_attibute_value):
+                            self.widgets[index].validate( value_attibute_value)
+                            raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
+                    elif not self.validation_pattern.match(value_attibute_value):
+                        self.widgets[index].validate( value_attibute_value)
+                        raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
+

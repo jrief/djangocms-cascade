@@ -5,7 +5,7 @@ import os
 import sys
 
 from django.core.urlresolvers import reverse_lazy
-
+from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from django.utils.text import format_lazy
 
@@ -219,20 +219,70 @@ CMSPLUGIN_CASCADE = {
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
+    'plugins_with_extra_fields': {
+        'SimpleWrapperPlugin': PluginExtraFieldsConfig(
+            inline_styles={
+                'extra_fields:Colors': ['color', 'background-color'],
+                'extra_fields:Margins': ['margin-top', 'margin-right', 'margin-botton,', 'margin-left'],
+                'extra_units:Margins': 'px,em',
+            },
+            html_tag_attributes={
+                'extra_fields:HtmlAttrs': [
+                    ('Animate-on-scroll', {
+                        'data-aos': {
+                           'widget_choices_list': ["inherit", "fade", "fade-up", "fade-down", "fade-left", "fade-right", "fade-up-right", "fade-up-left", "fade-down-right", "fade-down-left", "flip-up", "flip-down", "flip-left", "flip-right", "slide-up", "slide-down", "slide-left", "slide-right", "zoom-in", "zoom-in-up", "zoom-in-down", "zoom-in-left", "zoom-in-right", "zoom-out", "zoom-out-up", "zoom-out-down", "zoom-out-left", "zoom-out-right"],
+                           'widget_attrs': {'title': 'Animation name'},
+                        },
+                        'data-aos-offset': {
+                           'widget_choices_list': ["inherit"] + [i for i in range(-500, 510, 10)],
+                           'widget_attrs': {'title': 'Optional: Change offset to trigger animations sooner or later (px)'},
+                        },
+                        'data-aos-duration': {
+                           'widget_choices_list': ["inherit"] + [i for i in range(0, 2100, 200)],
+                           'widget_attrs': {'title': 'Optional: Duration of animation (ms)', 'style': '', },
+                                           },
+                        'data-aos-easing': {
+                           'widget_choices_list': ["inherit", "linear", "ease", "ease-in", "ease-out", "ease-in-out", "ease-in-back", "ease-out-back", "ease-in-out-back", "ease-in-sine", "ease-out-sine", "ease-in-out-sine", "ease-in-quad", "ease-out-quad", "ease-in-out-quad", "ease-in-cubic", "ease-out-cubic", "ease-in-out-cubic", "ease-in-quart", "ease-out-quart", "ease-in-out-quart"],
+                           'widget_attrs': {'title': 'Optional: Choose timing function to ease elements in different ways'}
+                                         },
+                        'data-aos-delay': {
+                           'widget_choices_list': ["inherit"] + [i for i in range(0, 2100, 200)],
+                           'widget_attrs': {'title': 'Optional: Delay animation (ms)'}
+                                        },
+                        'data-aos-anchor': {
+                           'widget_choices_cms_page_anchors': [],
+                           'widget_attrs': {'title': 'Optional: Anchor element, whose offset will be counted to trigger animation instead of actual elements offset', },
+                                            },
+                        'data-aos-anchor-placement': {
+                           'widget_choices_list': ["inherit", "top-bottom", "top-center", "top-top", "center-bottom", "center-center", "center-top", "bottom-bottom", "bottom-center", "bottom-top"],
+                           'widget_attrs': {'title': 'Optional: Anchor placement - which one position of element on the screen should trigger animation'},
+                                                   },
+                        'data-aos-once': {
+                           'widget_choices_list': ['inherit', 'true', 'false'],
+                           'widget_attrs': {'title': 'Optional: Choose wheter animation should fire once, or every time you scroll up/down to element'},
+                                          },
+                     }
+                     ),
+                    ('Bootstrap-Scrollspy', {
+                        'data-spy': {
+                           'widget_choices_list': ["inherit", "scroll"],
+                           'widget_attrs': {'title': 'Automatically update Bootstrap navigation or list group components based on scroll position to indicate which link is currently active in the viewport.', 'style': '', },
+                        },
+                        'data-target': {
+                           'widget_choices_cms_page_anchors': [],
+                           'widget_attrs': {'title': 'Anchors', 'style': '', },
+                        },
+                        'data-offset': {
+                           'widget_choices_list': ["inherit"] + [i for i in range(-500, 510, 10)],
+                           'widget_attrs': {'title': 'offset', 'style': '', },
+                        },
+                    }),
+                ],
+            },
+        ),
+    }
 }
 
-CASCADE_WORKAREA_GLOSSARY = {
-    'breakpoints': ['xs', 'sm', 'md', 'lg','xl'],
-    'container_max_widths': {'xs': 576,'sm': 768,'md': 992, 'lg': 1200, 'xl': 1980,},
-    'fluid': False,
-    'media_queries': {
-        'xs': ['(max-width: 576px)'],
-        'sm': ['(min-width: 576px)', '(max-width: 768px)'],
-        'md': ['(min-width: 768px)', '(max-width: 992px)'],
-        'lg': ['(min-width: 992px)', '(max-width: 1200px)'],
-        'xl': ['(min-width: 1200px)'],
-    },
-}
 
 CMS_PLACEHOLDER_CONF = {
     # this placeholder is used in templates/main.html, it shows how to
@@ -240,7 +290,6 @@ CMS_PLACEHOLDER_CONF = {
     'Main Content': {
         'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
-        'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
     # this placeholder is used in templates/wrapped.html, it shows how to
     # add content to an existing Bootstrap column
@@ -248,7 +297,6 @@ CMS_PLACEHOLDER_CONF = {
         'plugins': ['BootstrapRowPlugin', 'TextPlugin', ],
         'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
-        'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
 }
 

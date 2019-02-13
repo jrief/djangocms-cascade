@@ -19,8 +19,9 @@ class PluginExtraFieldsConfig(object):
     :param allow_override: If ``True``, allows to override this configuration using the admin's
     backend interface.
     """
-    def __init__(self, allow_id_tag=False, css_classes=None, inline_styles=None, allow_override=True):
+    def __init__(self, allow_id_tag=False, css_classes=None, inline_styles=None, html_tag_attributes=None, allow_override=True):
         self.allow_id_tag = allow_id_tag
         self.css_classes = dict(multiple='', class_names='') if css_classes is None else dict(css_classes)
         self.inline_styles = {} if inline_styles is None else dict(inline_styles)
+        self.html_tag_attributes = {} if html_tag_attributes is None else dict(html_tag_attributes)
         self.allow_override = allow_override
