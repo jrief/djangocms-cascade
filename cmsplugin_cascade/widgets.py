@@ -411,6 +411,7 @@ class HmltAttrsWidget(widgets.MultiWidget):
                 if  hasattr(Page.objects.get(pk=self.current_page.pk), 'cascadepage'):
                      cascade_page = Page.objects.get(pk=self.current_page.pk).cascadepage
                      for cascade_id, cascade_id_value in cascade_page.glossary.get('element_ids', {}).items():
+                         cascade_id_value='#{}'.format(cascade_id_value)
                          choices = [('inherit',_("Inherit")) , (cascade_id, cascade_id_value)]
                 else:
                     choices = [('inherit',_("Inherit"))] 
@@ -482,9 +483,9 @@ class HmltAttrsWidget(widgets.MultiWidget):
                             raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
                     if 'widget_choices_color' in values_extra_attr:
                         if not self.color_validation_pattern.match(value_attibute_value):
-                            self.widgets[index].validate( value_attibute_value)
+                            self.widgets[index].validate(value_attibute_value)
                             raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
                     elif not self.validation_pattern.match(value_attibute_value):
-                        self.widgets[index].validate( value_attibute_value)
+                        self.widgets[index].validate(value_attibute_value)
                         raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
 
