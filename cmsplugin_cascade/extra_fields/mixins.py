@@ -16,7 +16,7 @@ from cms import __version__ as CMS_VERSION
 if LooseVersion(CMS_VERSION) < LooseVersion('3.5'):
     from cms.utils.page_resolver import get_page_from_request
 else:
-    from cms.utils.page import get_page_from_request 
+    from cms.utils.page import get_page_from_request
 
 
 from cmsplugin_cascade import app_settings
@@ -95,7 +95,6 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
                 if html_tag_attributes is not None:
                     for data_set in html_tag_attributes:
                         Widget = choices_tuples[1]
-                        Widget.full_html_tag_attributes = html_tag_attributes
                         Widget.request_cms_path=urlparse(request.GET.dict()['cms_path']).path
                         if isinstance(data_set, tuple):
                             Widget.widget_name = data_set[0]
