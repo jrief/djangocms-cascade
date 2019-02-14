@@ -392,7 +392,6 @@ class HmltAttrsWidget(widgets.MultiWidget):
 
     def __init__(self, attrs=DEFAULT_ATTRS):
         attrs = dict(attrs)
-        cms_path = self.request_cms_path if hasattr(self, 'request_cms_path') else None
         self.list_attrs_name = self.attributes_extra.keys() if hasattr(self, 'attributes_extra') else None
         widget_list = []
         for key, val in self.attributes_extra.items():

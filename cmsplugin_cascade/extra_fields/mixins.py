@@ -95,7 +95,6 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
                 if html_tag_attributes is not None:
                     for data_set in html_tag_attributes:
                         Widget = choices_tuples[1]
-                        Widget.request_cms_path=urlparse(request.GET.dict()['cms_path']).path
                         if isinstance(data_set, tuple):
                             Widget.widget_name = data_set[0]
                             Widget.attributes_extra = data_set[1]
