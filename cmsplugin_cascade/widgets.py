@@ -461,7 +461,7 @@ class HmltAttrsWidget(widgets.MultiWidget):
                 attribute_values = attr_data_set[1]
                 subkey = '{0}_{1}'.format(name, attribute_name)
                 widget_attrs=[]
-                if 'widget_attrs' in attribute_values  and 'title' in attribute_values['widget_attrs']:
+                if 'widget_attrs' in attribute_values:
                     widget_attrs = attribute_values['widget_attrs']
                 html += format_html('<div style="float: left; width: 12em;" ><label for="{0}"><p>{1}</p>{2}</label></div>',
                            subkey, attribute_name , self.widgets[index].render(subkey, attribute_values, attrs ), widget_attrs)
