@@ -73,7 +73,7 @@ class BootstrapButtonMixin(IconPluginMixin):
     render_template = 'cascade/bootstrap4/button.html'
     allow_children = False
     default_css_class = 'btn'
-    default_css_attributes = ['button_type', 'button_size', 'button_options', 'quick_float']
+    default_css_attributes = ['button_type', 'button_size', 'button_options', 'quick_float', 'stretched_link']
     ring_plugin = 'ButtonMixin'
     require_icon_font = False
 
@@ -126,6 +126,15 @@ class BootstrapButtonMixin(IconPluginMixin):
         label=_("Select Symbol"),
     )
 
+    stretched_link = GlossaryField(
+        widgets.RadioSelect(choices=[
+            ('', _("Do not stretched link")),
+            ('stretched-link', _("Stretched Link")),
+        ]),
+        label=_("Stretched link"),
+        help_text=_("Stretched-link utility to make any anchor the size of it’s nearest position: relative parent, perfect for entirely clickable cards!")
+    )
+
     class Media:
         js = ['cascade/js/admin/buttonmixin.js']
 
@@ -153,7 +162,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     fields = ['link_content'] + list(LinkPluginBase.fields)
     glossary_field_order = ['button_type', 'button_size', 'button_options', 'quick_float',
-                            'target', 'title', 'icon_align', 'icon_font', 'symbol']
+                            'target', 'title', 'icon_align', 'icon_font', 'symbol', 'stretched_link']
     ring_plugin = 'ButtonPlugin'
 
     class Media:
