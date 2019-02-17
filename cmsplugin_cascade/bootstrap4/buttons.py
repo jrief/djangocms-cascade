@@ -162,6 +162,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     glossary_field_order = ['button_type', 'button_size', 'button_options', 'quick_float',
                             'target', 'title', 'icon_align', 'icon_font', 'symbol', 'stretched_link']
     ring_plugin = 'ButtonPlugin'
+    DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 
     class Media:
         css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
@@ -195,5 +196,11 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         if obj.glossary.get('stretched_link'):
             css_classes.append('stretched_link')
         return css_classes
+
+    @classmethod
+    def get_html_tag_attributes(cls, obj):
+        attributes = cls.super(BootstrapButtonPlugin, cls).get_html_tag_attributes(obj)
+        attributes.update(cls.DEFAULT_BUTTON_ATTRIBUTES)
+        return attributes
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
