@@ -127,12 +127,10 @@ class BootstrapButtonMixin(IconPluginMixin):
     )
 
     stretched_link = GlossaryField(
-        widgets.RadioSelect(choices=[
-            ('', _("Do not stretched link")),
-            ('stretched-link', _("Stretched Link")),
-        ]),
+        widgets.CheckboxInput(),
         label=_("Stretched link"),
-        help_text=_("Stretched-link utility to make any anchor the size of it’s nearest position: relative parent, perfect for entirely clickable cards!")
+        help_text=_("Stretched-link utility to make any anchor the size of it’s nearest position:\
+         relative parent, perfect for entirely clickable cards!")
     )
 
     class Media:
@@ -190,5 +188,12 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
                     {'link_content': link_content})
         kwargs.update(form=Form)
         return super(BootstrapButtonPlugin, self).get_form(request, obj, **kwargs)
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(BootstrapButtonPlugin, cls).get_css_classes(obj)
+        if obj.glossary.get('stretched_link'):
+            css_classes.append('stretched_link')
+        return css_classes
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
