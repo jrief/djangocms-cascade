@@ -19,6 +19,7 @@ from cmsplugin_cascade.widgets import CascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
    compute_aspect_ratio_with_glossary)
+import random
 
 logger = logging.getLogger('cascade')
 
@@ -100,14 +101,13 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
             tags = get_image_tags(instance)
         except Exception as exc:
             logger.warning("Unable generate image tags. Reason: {}".format(exc))
-        else:
-            tags = tags if tags else {} 
-            if 'extra_styles' in tags:
-                extra_styles = tags.pop('extra_styles')
-                inline_styles = instance.glossary.get('inline_styles', {})
-                inline_styles.update(extra_styles)
-                instance.glossary['inline_styles'] = inline_styles
-            context.update(dict(instance=instance, placeholder=placeholder, **tags))
+        tags = tags if tags else {}
+        if 'extra_styles' in tags:
+            extra_styles = tags.pop('extra_styles')
+            inline_styles = instance.glossary.get('inline_styles', {})
+            inline_styles.update(extra_styles)
+            instance.glossary['inline_styles'] = inline_styles
+        context.update(dict(instance=instance, placeholder=placeholder, **tags))
         return context
 
     @classmethod
