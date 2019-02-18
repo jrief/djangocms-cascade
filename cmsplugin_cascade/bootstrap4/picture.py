@@ -111,22 +111,23 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     def sanitize_model(cls, obj):
         sanitized = False
         parent = obj.parent
-        while parent.plugin_type != 'BootstrapColumnPlugin':
-            parent = parent.parent
-            if parent is None:
-                logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
-                return
-        grid_column = parent.get_bound_plugin().get_grid_instance()
-        obj.glossary.setdefault('media_queries', {})
-        for bp in Breakpoint:
-            obj.glossary['media_queries'].setdefault(bp.name, {})
-            width = round(grid_column.get_bound(bp).max)
-            if obj.glossary['media_queries'][bp.name].get('width') != width:
-                obj.glossary['media_queries'][bp.name]['width'] = width
-                sanitized = True
-            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
-                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
-                sanitized = True
+        if parent:
+            while parent.plugin_type != 'BootstrapColumnPlugin':
+                parent = parent.parent
+            grid_column = parent.get_bound_plugin().get_grid_instance()
+            obj.glossary.setdefault('media_queries', {})
+            for bp in Breakpoint:
+                obj.glossary['media_queries'].setdefault(bp.name, {})
+                width = round(grid_column.get_bound(bp).max)
+                if obj.glossary['media_queries'][bp.name].get('width') != width:
+                    obj.glossary['media_queries'][bp.name]['width'] = width
+                    sanitized = True
+                if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
+                    obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
+                    sanitized = True
+        else:
+            logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
+            return 
         return sanitized
 
 plugin_pool.register_plugin(BootstrapPicturePlugin)

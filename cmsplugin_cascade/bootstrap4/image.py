@@ -131,22 +131,23 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     def sanitize_model(cls, obj):
         sanitized = False
         parent = obj.parent
-        while parent.plugin_type != 'BootstrapColumnPlugin':
-            parent = parent.parent
-            if parent is None:
-                logger.warning("ImagePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
-                return
-        grid_column = parent.get_bound_plugin().get_grid_instance()
-        min_max_bounds = grid_column.get_min_max_bounds()
-        if obj.glossary.get('column_bounds') != min_max_bounds:
-            obj.glossary['column_bounds'] = min_max_bounds
-            sanitized = True
-        obj.glossary.setdefault('media_queries', {})
-        for bp in Breakpoint:
-            media_query = '{} {:.2f}px'.format(bp.media_query, grid_column.get_bound(bp).max)
-            if obj.glossary['media_queries'].get(bp.name) != media_query:
-                obj.glossary['media_queries'][bp.name] = media_query
+        if parent:
+            while parent.plugin_type != 'BootstrapColumnPlugin':
+                parent = parent.parent
+            grid_column = parent.get_bound_plugin().get_grid_instance()
+            min_max_bounds = grid_column.get_min_max_bounds()
+            if obj.glossary.get('column_bounds') != min_max_bounds:
+                obj.glossary['column_bounds'] = min_max_bounds
                 sanitized = True
+            obj.glossary.setdefault('media_queries', {})
+            for bp in Breakpoint:
+                media_query = '{} {:.2f}px'.format(bp.media_query, grid_column.get_bound(bp).max)
+                if obj.glossary['media_queries'].get(bp.name) != media_query:
+                    obj.glossary['media_queries'][bp.name] = media_query
+                    sanitized = True
+        else:
+            logger.warning("ImagePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
+            return
         return sanitized
 
 plugin_pool.register_plugin(BootstrapImagePlugin)
