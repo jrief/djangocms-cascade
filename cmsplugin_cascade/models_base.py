@@ -109,7 +109,7 @@ class CascadeModelBase(CMSPlugin):
     def from_db(cls, db, field_names, values):
         instance = cls(*values)
         if isinstance(instance.glossary, str):
-           instance.glossary=json.loads(instance.glossary)
+           instance.glossary = json.loads(instance.glossary)
         return instance
                 
     def save(self, sanitize_only=False, *args, **kwargs):
