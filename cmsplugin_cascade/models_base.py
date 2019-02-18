@@ -6,6 +6,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import mark_safe, format_html_join
 from django.utils.functional import cached_property
 
+import json
 from jsonfield.fields import JSONField
 
 from cms.models import CMSPlugin
@@ -103,7 +104,14 @@ class CascadeModelBase(CMSPlugin):
             for child in children:
                 child.save(sanitize_only=True)
                 child.sanitize_children()
-
+                
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = cls(*values)
+        if isinstance(instance.glossary, str):
+           instance.glossary=json.loads(instance.glossary)
+        return instance
+                
     def save(self, sanitize_only=False, *args, **kwargs):
         """
         A hook which let the plugin instance sanitize the current object model while saving it.
