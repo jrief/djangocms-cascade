@@ -73,7 +73,7 @@ class BootstrapButtonMixin(IconPluginMixin):
     render_template = 'cascade/bootstrap4/button.html'
     allow_children = False
     default_css_class = 'btn'
-    default_css_attributes = ['button_type', 'button_size', 'button_options', 'quick_float']
+    default_css_attributes = ['button_type', 'button_size', 'button_options', 'quick_float', 'stretched_link']
     ring_plugin = 'ButtonMixin'
     require_icon_font = False
 
@@ -126,6 +126,13 @@ class BootstrapButtonMixin(IconPluginMixin):
         label=_("Select Symbol"),
     )
 
+    stretched_link = GlossaryField(
+        widgets.CheckboxInput(),
+        label=_("Stretched link"),
+        help_text=_("Stretched-link utility to make any anchor the size of it’s nearest position:\
+         relative parent, perfect for entirely clickable cards!")
+    )
+
     class Media:
         js = ['cascade/js/admin/buttonmixin.js']
 
@@ -153,8 +160,9 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     fields = ['link_content'] + list(LinkPluginBase.fields)
     glossary_field_order = ['button_type', 'button_size', 'button_options', 'quick_float',
-                            'target', 'title', 'icon_align', 'icon_font', 'symbol']
+                            'target', 'title', 'icon_align', 'icon_font', 'symbol', 'stretched_link']
     ring_plugin = 'ButtonPlugin'
+    DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 
     class Media:
         css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
@@ -181,5 +189,18 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
                     {'link_content': link_content})
         kwargs.update(form=Form)
         return super(BootstrapButtonPlugin, self).get_form(request, obj, **kwargs)
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(BootstrapButtonPlugin, cls).get_css_classes(obj)
+        if obj.glossary.get('stretched_link'):
+            css_classes.append('stretched_link')
+        return css_classes
+
+    @classmethod
+    def get_html_tag_attributes(cls, obj):
+        attributes = cls.super(BootstrapButtonPlugin, cls).get_html_tag_attributes(obj)
+        attributes.update(cls.DEFAULT_BUTTON_ATTRIBUTES)
+        return attributes
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)

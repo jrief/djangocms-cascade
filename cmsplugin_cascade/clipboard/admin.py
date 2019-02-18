@@ -82,6 +82,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         if request.POST.get('restore_clipboard'):
             self._deserialize_to_clipboard(request, obj.data)
 
+
     def _serialize_from_clipboard(self, language):
         """
         Create a serialized representation of all the plugins belonging to the clipboard.
@@ -114,11 +115,19 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         """
         def plugins_from_data(placeholder, parent, data):
             for plugin_type, data, children_data in data:
-                plugin_class = plugin_pool.get_plugin(plugin_type)
+                try:
+                    plugin_class = plugin_pool.get_plugin(plugin_type)
+                except Exception:
+                    messages.add_message(request, messages.ERROR, "Unable create plugin of type: {}".format(plugin_type))
+                    continue
                 kwargs = dict(data)
                 inlines = kwargs.pop('inlines', [])
                 shared_glossary = kwargs.pop('shared_glossary', None)
-                instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
+                try:
+                    instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
+                except Exception:
+                    messages.add_message(request, messages.ERROR, "Unable to create structure for plugin: {}".format(plugin_class.name))
+                    continue
                 if isinstance(instance, CascadeElement):
                     instance.plugin_class.add_inline_elements(instance, inlines)
                     instance.plugin_class.add_shared_reference(instance, shared_glossary)

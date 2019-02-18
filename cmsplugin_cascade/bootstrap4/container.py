@@ -126,7 +126,8 @@ class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
 class RowGridMixin(object):
     def get_grid_instance(self):
         row = grid.Bootstrap4Row()
-        query = Q(plugin_type='BootstrapContainerPlugin') | Q(plugin_type='BootstrapColumnPlugin')
+        query = Q(plugin_type='BootstrapContainerPlugin') | Q(plugin_type='BootstrapColumnPlugin') \
+          | Q(plugin_type='BootstrapJumbotronPlugin')
         container = self.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin().get_grid_instance()
         container.add_row(row)
         return row
@@ -188,7 +189,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         def choose_help_text(*phrases):
-            bounds = 'fluid_bounds' if container.glossary['fluid'] else 'default_bounds'
+            bounds = 'fluid_bounds' if container.glossary.get('fluid') else 'default_bounds'
             bs4_breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4'][bounds]
             if last:
                 return phrases[0].format(bs4_breakpoints[last].max)
