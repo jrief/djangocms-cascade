@@ -10,7 +10,8 @@ Release History
   whatever is parsable.
 * Add ``role="button"`` to the **ButtonPlugin**.
 * Optionally add CSS class ``stretched-link`` introduced in Bootstrap-4.3 to ``<a href="...">``.
-* Fix: We can't see the SVG, if image file has not been found.
+* Fix: We can not see the SVG file, if the image file existed and was not found, specifically 
+  when copying a Persisted clipboard.
 * Fix: If jsonfield is serialized as string, convert and reload as JSON.
 * Fix: **ImagePlugin** / **PicturePlugin** can't be copied by clipboard CMS.
 * Fix: Strides Plugin Element object has no attribute ``placeholder``.
