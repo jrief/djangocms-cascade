@@ -405,7 +405,7 @@ class HmltAttrsWidget(widgets.MultiWidget):
                 widgetattrs.update(attrs_add)
                 choices = val['widget_choices_list']
                 widget_list.append(widgets.Select(attrs=widgetattrs, choices=[(s, s) for s in choices]))
-            if 'widget_choices_cms_page_anchors' in val :
+            elif 'widget_choices_cms_page_anchors' in val :
                 attrs_add = {'style': 'width: 10em;'}
                 widgetattrs.update(attrs_add)
                 if  hasattr(Page.objects.get(pk=self.current_page.pk), 'cascadepage'):
@@ -416,7 +416,7 @@ class HmltAttrsWidget(widgets.MultiWidget):
                 else:
                     choices = [('inherit',_("Inherit"))] 
                 widget_list.append(widgets.Select(attrs=widgetattrs, choices=[s for s in choices]))
-            if 'widget_choices_int' in val:
+            elif 'widget_choices_int' in val:
                 attrs_add = {'style': 'width: 9em;', 'type': 'text'}
                 widgetattrs.update(attrs_add)
                 widget_list.append(widgets.TextInput(attrs=widgetattrs))
