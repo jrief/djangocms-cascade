@@ -2,6 +2,20 @@
 Release History
 ===============
 
+
+0.17.7
+======
+* Fix: Restore-to-Clipboard with data from differently configured instances of Cascade
+  may cause an Internal Server Error. Now such an import shows an error message importing
+  whatever is parsable.
+* Add ``role="button"`` to the **ButtonPlugin**.
+* Optionally add CSS class ``stretched-link`` introduced in Bootstrap-4.3 to ``<a href="...">``.
+* Fix: We can't see the SVG, if image file has not been found.
+* Fix: If jsonfield is serialized as string, convert and reload as JSON.
+* Fix: **ImagePlugin** / **PicturePlugin** can't be copied by clipboard CMS.
+* Fix: Strides Plugin Element object has no attribute ``placeholder``.
+
+
 0.17.6
 ======
 * Fix: Tabset support for Bootstrap-4 using jQuery.
