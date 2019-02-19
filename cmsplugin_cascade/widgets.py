@@ -481,7 +481,7 @@ class HmltAttrsWidget(widgets.MultiWidget):
                         if not self.int_validation_pattern.match(value_attibute_value):
                             self.widgets[index].validate( value_attibute_value)
                             raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
-                    if 'widget_choices_color' in values_extra_attr:
+                    elif 'widget_choices_color' in values_extra_attr:
                         if not self.color_validation_pattern.match(value_attibute_value):
                             self.widgets[index].validate(value_attibute_value)
                             raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
