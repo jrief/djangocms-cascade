@@ -92,7 +92,7 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
             except KeyError:
                 return False
             else:
-                assert issubclass(plugin, ExtraFieldsMixin)
+                assert issubclass(plugin, ExtraFieldsMixin), "Expected plugin to be of type `ExtraFieldsMixin`."
                 return config.allow_override
 
         cascade_plugins = set([p for p in plugin_pool.get_all_plugins() if show_in_backend(p)])

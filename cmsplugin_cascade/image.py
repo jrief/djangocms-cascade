@@ -26,7 +26,7 @@ class ImageFormMixin(object):
         self.fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
 
     def clean_glossary(self):
-        assert isinstance(self.cleaned_data['glossary'], dict)
+        assert isinstance(self.cleaned_data['glossary'], dict), "Expected `glossary` to be a dict."
         return self.cleaned_data['glossary']
 
     def clean(self):

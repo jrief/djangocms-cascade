@@ -124,7 +124,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
         if open_tag == 'if':
             template = conditionally_eval()
         else:
-            assert open_tag in ('elif', 'else')
+            assert open_tag in ('elif', 'else'), "Expected openening templatetag to be 'elif' or 'else'."
             prev_instance = self.get_previous_instance(instance)
             if prev_instance is None:
                 # this can happen, if one moved an `else`- or `elif`-segment in front of an `if`-segment

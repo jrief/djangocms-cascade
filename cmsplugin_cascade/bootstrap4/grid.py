@@ -223,14 +223,14 @@ class Bootstrap4Row(list):
         self.append(column)
 
     def compute_column_bounds(self):
-        assert isinstance(self.bounds, dict)
+        assert isinstance(self.bounds, dict), "Expected `bounds` to be a dict."
         for bp in [Breakpoint.xs, Breakpoint.sm, Breakpoint.md, Breakpoint.lg, Breakpoint.xl]:
             remaining_width = copy(self.bounds[bp])
 
             # first compute the bounds of columns with a fixed width
             for column in self:
                 if column.breaks[bp].fixed_units:
-                    assert column.breaks[bp].bound is None
+                    assert column.breaks[bp].bound is None, "Expected `column.breaks[bp].bound` to be None."
                     column.breaks[bp].bound = Bound(
                         column.breaks[bp].fixed_units * self.bounds[bp].min / 12,
                         column.breaks[bp].fixed_units * self.bounds[bp].max / 12,
@@ -243,7 +243,7 @@ class Bootstrap4Row(list):
                 # we use auto-columns, therefore estimate the min- and max values
                 for column in self:
                     if column.breaks[bp].flex_column or column.breaks[bp].auto_column:
-                        assert column.breaks[bp].bound is None
+                        assert column.breaks[bp].bound is None, "Expected `column.breaks[bp].bound` to be None."
                         column.breaks[bp].bound = Bound(
                             30,
                             remaining_width.max - 30 * (flex_columns + auto_columns),
@@ -252,7 +252,7 @@ class Bootstrap4Row(list):
                 # we use flex-columns exclusively, therefore subdivide the remaining width
                 for column in self:
                     if column.breaks[bp].flex_column:
-                        assert column.breaks[bp].bound is None
+                        assert column.breaks[bp].bound is None, "Expected `column.breaks[bp].bound` to be None."
                         column.breaks[bp].bound = Bound(
                             remaining_width.min / flex_columns,
                             remaining_width.max / flex_columns,
@@ -299,7 +299,7 @@ class Bootstrap4Column(list):
     def get_bound(self, breakpoint):
         if self.breaks[breakpoint].bound is None:
             self.parent.compute_column_bounds()
-            assert self.breaks[breakpoint].bound
+            assert self.breaks[breakpoint].bound, "Expected `column.breaks[bp].bound` not to be None."
         return self.breaks[breakpoint].bound
 
     def get_min_max_bounds(self):
