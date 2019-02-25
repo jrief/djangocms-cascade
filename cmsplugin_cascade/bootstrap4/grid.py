@@ -225,7 +225,8 @@ class Bootstrap4Row(list):
     def compute_column_bounds(self):
         assert isinstance(self.bounds, dict), "Expected `bounds` to be a dict."
         for bp in [Breakpoint.xs, Breakpoint.sm, Breakpoint.md, Breakpoint.lg, Breakpoint.xl]:
-            remaining_width = copy(self.bounds[bp])
+            if bp in self.bounds:
+                remaining_width = copy(self.bounds[bp])
 
             # first compute the bounds of columns with a fixed width
             for column in self:
