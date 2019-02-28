@@ -3,6 +3,11 @@ Release History
 ===============
 
 
+0.17.8
+======
+* For better reusability of ``IconFont``-s: Refactor method ``unzip_archive`` into external
+  utility function.
+
 0.17.7
 ======
 * Fix: Restore-to-Clipboard with data from differently configured instances of Cascade
