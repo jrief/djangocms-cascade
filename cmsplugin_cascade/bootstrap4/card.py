@@ -67,6 +67,10 @@ class BootstrapCardPlugin(TransparentContainer, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapCardPlugin, cls).get_identifier(obj)
-        return format_html('{0}{1}', identifier, obj.card_header or obj.card_footer)
+        try:
+            return format_html('{0}{1}', identifier, obj.card_header or obj.card_footer)
+        except AttributeError:
+            pass
+        return identifier
 
 plugin_pool.register_plugin(BootstrapCardPlugin)
