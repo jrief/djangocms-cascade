@@ -62,7 +62,7 @@ class IconPluginMixin(CascadePluginMixinBase):
                 icon_font = self.get_object(request, unquote(object_id)).cmsplugin_ptr.page.cascadepage.icon_font
             else:
                 icon_font = self._cms_initial_attributes['placeholder'].page.cascadepage.icon_font
-        except CascadePage.DoesNotExist:
+        except (AttributeError, CascadePage.DoesNotExist):
             icon_font = None
         extra_context = dict(extra_context or {}, icon_font=icon_font, require_icon_font=self.require_icon_font)
         return super(IconPluginMixin, self).changeform_view(

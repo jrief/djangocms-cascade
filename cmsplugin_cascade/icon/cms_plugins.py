@@ -170,7 +170,7 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
             cms_plugin = CMSPlugin.objects.get(id=matches.group(1))
             try:
                 context['icon_font'] = cms_plugin.page.cascadepage.icon_font
-            except CascadePage.DoesNotExist:
+            except (AttributeError, CascadePage.DoesNotExist):
                 pass
         javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
         return HttpResponse(javascript, content_type='application/javascript')
