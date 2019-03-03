@@ -2,6 +2,10 @@
 Release History
 ===============
 
+0.17.9
+======
+* Catch IconFont exceptions, if CKEditor is used outside of CMS pages.
+* Fix: Supress AttributeError in `BootstrapCardPlugin.get_identifier`.
 
 0.17.8
 ======
