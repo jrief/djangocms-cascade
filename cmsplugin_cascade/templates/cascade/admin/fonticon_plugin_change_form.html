@@ -17,9 +17,15 @@
 	{% else %}
 <div class="module">
 	<h2>{% trans "Missing Icon Font for this CMS page" %}</h2>
+		{% if request.META.HTTP_REFERER %}
 	<p>{% blocktrans %}
 	In the toolbar, navigate to <strong>Page &gt; Choose Icon Font</strong> and select a font.
 	{% endblocktrans %}</p>
+		{% else %}
+	<p>{% blocktrans %}
+	Check that your browser sends an HTTP-Referer, otherwise this editor can not find out which Icon Font has been selected for the current page.
+	{% endblocktrans %}</p>
+		{% endif %}
 </div>
 	{% endif %}
 {% endblock %}

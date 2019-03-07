@@ -164,8 +164,11 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         context = {}
         # Since this request is originating from CKEditor, we have no other choice rather than using
         # the referer, to determine the current CMS page.
-        referer = urlparse(request.META['HTTP_REFERER'])
-        matches = re.match(r'.+/edit-plugin/(\d+)/$', referer.path)
+        try:
+            referer = urlparse(request.META['HTTP_REFERER'])
+            matches = re.match(r'.+/edit-plugin/(\d+)/$', referer.path)
+        except (AttributeError, KeyError):
+            matches = None
         if matches:
             cms_plugin = CMSPlugin.objects.get(id=matches.group(1))
             try:
