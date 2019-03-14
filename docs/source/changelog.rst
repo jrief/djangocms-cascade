@@ -2,6 +2,11 @@
 Release History
 ===============
 
+0.17.10
+=======
+* Fix problem of missing referer, required to determine the current page when accessing an **IconFontPlugin**
+  from inside the CKEditor.
+
 0.17.9
 ======
 * Catch IconFont exceptions, if CKEditor is used outside of CMS pages.
