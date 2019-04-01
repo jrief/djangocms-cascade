@@ -5,13 +5,13 @@ from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-
-from .forms import LinkForm
+from cmsplugin_cascade.link.forms import LinkForm
+from filer.models.filemodels import File as FilerFileModel
 
 
 class LinkPluginBase(CascadePluginBase):
@@ -43,7 +43,7 @@ class LinkPluginBase(CascadePluginBase):
 
     html_tag_attributes = {'title': 'title', 'target': 'target'}
     # map field from glossary to these form fields
-    glossary_field_map = {'link': ('link_type', 'cms_page', 'section', 'ext_url', 'mail_to',)}
+    glossary_field_map = {'link': ('link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',)}
 
     @classmethod
     def get_link(cls, obj):
@@ -54,25 +54,18 @@ class LinkPluginBase(CascadePluginBase):
         if linktype == 'email':
             return 'mailto:{email}'.format(**link)
 
-        # otherwise try to resolve by model
-        if 'model' in link and 'pk' in link:
-            if not hasattr(obj, '_link_model'):
+        # otherwise resolve by model
+        if obj.link_model:
+            if linktype == 'download':
+                return obj.link_model.url if isinstance(obj.link_model, FilerFileModel) else None
+            href = obj.link_model.get_absolute_url()
+            if 'section' in link:
                 try:
-                    Model = apps.get_model(*link['model'].split('.'))
-                    obj._link_model = Model.objects.get(pk=link['pk'])
-                except LookupError:
-                    obj._link_model = None
-                except Model.DoesNotExist:
-                    obj._link_model = None
-            if obj._link_model:
-                href = obj._link_model.get_absolute_url()
-                if 'section' in link:
-                    try:
-                        element_ids = obj._link_model.cascadepage.glossary['element_ids']
-                        href = '{}#{}'.format(href, element_ids[link['section']])
-                    except (KeyError, ObjectDoesNotExist):
-                        pass
-                return href
+                    element_ids = obj.link_model.cascadepage.glossary['element_ids']
+                    href = '{}#{}'.format(href, element_ids[link['section']])
+                except (KeyError, ObjectDoesNotExist):
+                    pass
+            return href
 
     def get_form(self, request, obj=None, **kwargs):
         kwargs.setdefault('form', LinkForm.get_form_class())
@@ -83,7 +76,7 @@ class DefaultLinkPluginBase(LinkPluginBase):
     """
     The default `LinkPluginBase` class. It is injected by the class creator in link.config
     """
-    fields = (('link_type', 'cms_page', 'section', 'ext_url', 'mail_to',), 'glossary',)
+    fields = (('link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',), 'glossary',)
     ring_plugin = 'LinkPluginBase'
 
 
@@ -104,3 +97,20 @@ class LinkElementMixin(object):
     @property
     def content(self):
         return mark_safe(self.glossary.get('link_content', ''))
+
+    @cached_property
+    def link_model(self):
+        try:
+            link = self.glossary['link']
+            Model = apps.get_model(*link['model'].split('.'))
+            return Model.objects.get(pk=link['pk'])
+        except (KeyError, LookupError):
+            return
+        except Model.DoesNotExist:  # catch separately, 'Model' may be unassigned yet
+            return
+
+    @cached_property
+    def download_name(self):
+        link = self.glossary.get('link', {})
+        if link.get('type') == 'download' and isinstance(self.link_model, FilerFileModel):
+            return mark_safe(self.link_model.original_filename)

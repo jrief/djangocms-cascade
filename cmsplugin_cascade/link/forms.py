@@ -3,14 +3,18 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.admin.sites import site as admin_site
 from django.apps import apps
-from django.forms import fields
+from django.db.models.fields.related import ManyToOneRel
+from django.forms import fields, ModelChoiceField
 from django.forms.models import ModelForm
 from django.forms.widgets import Select as SelectWidget
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _, get_language
 from cms.models import Page
 from cmsplugin_cascade.utils import validate_link
+from filer.models.filemodels import File as FilerFileModel
+from filer.fields.file import AdminFileWidget, FilerFileField
 
 try:
     from cms.utils import get_current_site
@@ -69,7 +73,13 @@ class LinkForm(ModelForm):
     Form class to add fake fields for rendering the ModelAdmin's form, which later are used to
     populate the glossary of the model.
     """
-    LINK_TYPE_CHOICES = [('cmspage', _("CMS Page")), ('exturl', _("External URL")), ('email', _("Mail To"))]
+    LINK_TYPE_CHOICES = [
+        ('cmspage', _("CMS Page")),
+        ('download', _("Download File")),
+        ('exturl', _("External URL")),
+        ('email', _("Mail To")),
+    ]
+
     link_type = fields.ChoiceField(
         label=_("Link"),
         help_text=_("Type of link"),
@@ -85,6 +95,13 @@ class LinkForm(ModelForm):
         required=False,
         label='',
         help_text=_("Page bookmark"),
+    )
+
+    download_file = ModelChoiceField(
+        label='',
+        queryset=FilerFileModel.objects.all(),
+        required=False,
+        help_text=_("An internal link onto a file from filer"),
     )
 
     ext_url = fields.URLField(
@@ -180,6 +197,15 @@ class LinkForm(ModelForm):
             self.cleaned_data['link_data']['section'] = self.cleaned_data['section']
         return self.cleaned_data['section']
 
+    def clean_download_file(self):
+        if self.cleaned_data.get('link_type') == 'download' and self.cleaned_data['download_file']:
+            self.cleaned_data['link_data'] = {
+                'type': 'download',
+                'model': 'filer.File',
+                'pk': self.cleaned_data['download_file'].id,
+            }
+        return self.cleaned_data['download_file']
+
     def clean_ext_url(self):
         if self.cleaned_data.get('link_type') == 'exturl':
             self.cleaned_data['link_data'] = {'type': 'exturl', 'url': self.cleaned_data['ext_url']}
@@ -200,6 +226,15 @@ class LinkForm(ModelForm):
             initial['cms_page'] = Model.objects.get(pk=initial['link']['pk']).pk
         except (KeyError, ObjectDoesNotExist):
             pass
+
+    def set_initial_download(self, initial):
+        try:
+            # check if that page still exists, otherwise return nothing
+            Model = apps.get_model(*initial['link']['model'].split('.'))
+            initial['download_file'] = Model.objects.get(pk=initial['link']['pk']).pk
+        except (KeyError, ObjectDoesNotExist):
+            pass
+        self.base_fields['download_file'].widget = AdminFileWidget(ManyToOneRel(FilerFileField, FilerFileModel, 'id'), admin_site)
 
     def set_initial_exturl(self, initial):
         try:

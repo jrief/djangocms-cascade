@@ -36,6 +36,7 @@ django.jQuery(function($) {
 		},
 		initializeLinkTypes: function() {
 			this.linkTypes['cmspage'] = new this.LinkType('.form-row .field-box.field-cms_page, .form-row .field-box.field-section', true);
+			this.linkTypes['download'] = new this.LinkType('.form-row .field-box.field-download_file');
 			this.linkTypes['exturl'] = new this.LinkType('.form-row .field-box.field-ext_url', true);
 			this.linkTypes['email'] = new this.LinkType('.form-row .field-box.field-mail_to');
 		},
