@@ -18,12 +18,12 @@ from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
 class ImageFormMixin(object):
     def __init__(self, *args, **kwargs):
+        self.base_fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
         super(ImageFormMixin, self).__init__(*args, **kwargs)
         try:
             self.fields['image_file'].initial = kwargs['instance'].image.pk
         except (AttributeError, KeyError):
             pass
-        self.fields['image_file'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
 
     def clean_glossary(self):
         assert isinstance(self.cleaned_data['glossary'], dict), "Expected `glossary` to be a dict."
