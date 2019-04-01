@@ -19,6 +19,7 @@ class LinkPluginBase(CascadePluginBase):
     parent_classes = []
     require_parent = False
     ring_plugin = 'LinkPluginBase'
+    raw_id_fields = ['download_file']
 
     class Media:
         js = ['cascade/js/admin/linkplugin.js']

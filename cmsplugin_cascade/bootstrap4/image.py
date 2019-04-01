@@ -29,7 +29,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     require_parent = True
     allow_children = False
-    raw_id_fields = ['image_file']
+    raw_id_fields = LinkPluginBase.raw_id_fields + ['image_file']
     admin_preview = False
     ring_plugin = 'ImagePlugin'
     render_template = 'cascade/bootstrap4/linked-image.html'

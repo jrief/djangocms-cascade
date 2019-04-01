@@ -75,7 +75,7 @@ class GalleryImageForm(ModelForm):
 
 class GalleryPluginInline(SortableInlineAdminMixin, StackedInline):
     model = SortableInlineCascadeElement
-    raw_id_fields = ('image_file',)
+    raw_id_fields = ['image_file']
     form = GalleryImageForm
     extra = 1
     ordering = ('order',)
