@@ -73,7 +73,7 @@ class ImagePluginTest(CascadeTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, image_model]
         build_plugin_tree(plugin_list)
-        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()))
+        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()), features="lxml")
         self.assertEqual(soup.img['height'], '100')
         self.assertEqual(soup.img['width'], '300')
         self.assertTrue('demo_image.png__300x100_q85_subsampling-2' in str(soup.img))
@@ -83,7 +83,7 @@ class ImagePluginTest(CascadeTestCase):
         form = ModelForm(post_data, None, instance=image_model)
         self.assertTrue(form.is_valid())
         image_plugin.save_model(self.request, image_model, form, False)
-        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()))
+        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()), features="lxml")
         self.assertTrue('img-responsive' in soup.img['class'])
         sizes = [s.strip() for s in soup.img['sizes'].split(',')]
         self.assertTrue('(max-width: 768px) 720px' in sizes)

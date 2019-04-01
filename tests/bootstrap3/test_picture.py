@@ -78,7 +78,7 @@ class PicturePluginTest(CascadeTestCase):
         # render the plugins
         plugin_list = [container_model, row_model, column_model, picture_model]
         build_plugin_tree(plugin_list)
-        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()))
+        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()), features="lxml")
         self.assertEqual(soup.img['height'], '240')
         self.assertEqual(soup.img['width'], '720')
         self.assertTrue('demo_image.png__720x240_q85_crop_subsampling-2.jpg' in str(soup.img))
@@ -94,7 +94,7 @@ class PicturePluginTest(CascadeTestCase):
         form = ModelForm(post_data, None, instance=picture_model)
         self.assertTrue(form.is_valid())
         picture_plugin.save_model(self.request, picture_model, form, False)
-        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()))
+        soup = BeautifulSoup(self.get_html(container_model, self.get_request_context()), features="lxml")
         self.assertEqual(soup.img['height'], '240')
         self.assertEqual(soup.img['width'], '720')
         self.assertTrue('demo_image.png__720x240_q85_crop_subsampling-2.jpg' in soup.img['src'])
