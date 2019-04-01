@@ -142,6 +142,7 @@ class LinkForm(ModelForm):
         if callable(set_initial_linktype):
             set_initial_linktype(initial)
         self._preset_section(data, initial)
+        self.base_fields['download_file'].widget = AdminFileWidget(ManyToOneRel(FilerFileField, FilerFileModel, 'id'), admin_site)
         super(LinkForm, self).__init__(data, initial=initial, *args, **kwargs)
 
     def _preset_section(self, data, initial):
@@ -198,13 +199,14 @@ class LinkForm(ModelForm):
         return self.cleaned_data['section']
 
     def clean_download_file(self):
-        if self.cleaned_data.get('link_type') == 'download' and self.cleaned_data['download_file']:
+        if (self.cleaned_data.get('link_type') == 'download'
+            and isinstance(self.cleaned_data['download_file'], FilerFileModel)):
             self.cleaned_data['link_data'] = {
                 'type': 'download',
                 'model': 'filer.File',
                 'pk': self.cleaned_data['download_file'].id,
             }
-        return self.cleaned_data['download_file']
+            return self.cleaned_data['download_file']
 
     def clean_ext_url(self):
         if self.cleaned_data.get('link_type') == 'exturl':
@@ -234,7 +236,6 @@ class LinkForm(ModelForm):
             initial['download_file'] = Model.objects.get(pk=initial['link']['pk']).pk
         except (KeyError, ObjectDoesNotExist):
             pass
-        self.base_fields['download_file'].widget = AdminFileWidget(ManyToOneRel(FilerFileField, FilerFileModel, 'id'), admin_site)
 
     def set_initial_exturl(self, initial):
         try:
