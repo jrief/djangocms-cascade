@@ -40,7 +40,7 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def get_published_pagelist(self, request, *args, **kwargs):
         """
-        This view is used by the SearchLinkField as the user type to feed the autocomplete drop-down.
+        This view is used by the SearchLinkField as the user types to feed the autocomplete drop-down.
         """
         if not request.is_ajax():
             return HttpResponseForbidden()

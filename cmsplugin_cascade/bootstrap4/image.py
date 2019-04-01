@@ -7,9 +7,7 @@ from django.forms import widgets, ModelChoiceField
 from django.utils.html import format_html
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
-
 from filer.models.imagemodels import Image
-
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
