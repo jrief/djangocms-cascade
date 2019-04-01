@@ -135,7 +135,7 @@ class BootstrapCarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
     form = CarouselSlideForm
     default_css_class = 'img-fluid'
     parent_classes = ['BootstrapCarouselPlugin']
-    raw_id_fields = ('image_file',)
+    raw_id_fields = ['image_file']
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     fields = ['image_file', 'glossary']
     render_template = 'cascade/bootstrap4/carousel-slide.html'

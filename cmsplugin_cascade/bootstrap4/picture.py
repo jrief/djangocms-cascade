@@ -26,7 +26,7 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
     require_parent = True
     allow_children = False
-    raw_id_fields = ('image_file',)
+    raw_id_fields = ['image_file']
     admin_preview = False
     ring_plugin = 'PicturePlugin'
     render_template = 'cascade/bootstrap4/linked-picture.html'

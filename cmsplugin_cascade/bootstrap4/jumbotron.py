@@ -90,8 +90,8 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     parent_classes = ('BootstrapColumnPlugin',)
     allow_children = True
     alien_child_classes = True
-    raw_id_fields = ('image_file',)
-    fields = ('glossary', 'image_file',)
+    raw_id_fields = ['image_file']
+    fields = ['glossary', 'image_file']
     render_template = 'cascade/bootstrap4/jumbotron.html'
     ring_plugin = 'JumbotronPlugin'
     ATTACHMENT_CHOICES = ['scroll', 'fixed', 'local']
