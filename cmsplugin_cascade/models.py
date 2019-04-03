@@ -245,7 +245,7 @@ class IconFont(models.Model):
         _("Identifier"),
         max_length=50,
         unique=True,
-        help_text=_("A unique identifier to distinguish this icon font.")
+        help_text=_("A unique identifier to distinguish this icon font."),
     )
 
     config_data = JSONField()
@@ -255,6 +255,12 @@ class IconFont(models.Model):
     )
 
     font_folder = FilePathField(allow_files=False, allow_folders=True)
+
+    is_default = models.BooleanField(
+        _("Default Font"),
+        default=False,
+        help_text=_("Use this font as default, unless an icon font is set for the current page."),
+    )
 
     class Meta:
         verbose_name = _("Uploaded Icon Font")
