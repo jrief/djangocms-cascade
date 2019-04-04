@@ -2,34 +2,38 @@
 from __future__ import unicode_literals
 
 import re
-
 from django.conf.urls import url
 from django.forms import widgets
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.functional import cached_property
+from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.six.moves.urllib.parse import urlparse
 from django.utils.translation import ugettext_lazy as _
-
 from cms.plugin_pool import plugin_pool
 from cms.models.pluginmodel import CMSPlugin
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.plugin_base import CascadePluginBase
-from cmsplugin_cascade.models import CascadePage
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from cmsplugin_cascade.models import CascadePage, IconFont
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
-from .mixins import IconPluginMixin, IconModelMixin
+from .mixins import IconPluginMixin
 
 
-class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
+
+
+
+
+
+class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     name = _("Icon with frame")
     parent_classes = None
     require_parent = False
     allow_children = False
-    render_template = 'cascade/plugins/icon.html'
-    model_mixins = (IconModelMixin,)
+    render_template = 'cascade/plugins/framedicon.html'
+    model_mixins = (LinkElementMixin,)
     ring_plugin = 'FramedIconPlugin'
+    fields = list(LinkPluginBase.fields)
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
     RADIUS_CHOICES = [(None, _("Square"))] + \
         [('{}px'.format(r), "{} px".format(r)) for r in (1, 2, 3, 5, 7, 10, 15, 20)] + \
@@ -102,6 +106,36 @@ class FramedIconPlugin(IconPluginMixin, CascadePluginBase):
         inline_styles['font-size'] = instance.glossary.get('font_size', '1em')
         return inline_styles
 
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.update(form=VoluntaryLinkForm.get_form_class())
+        return super(FramedIconPlugin, self).get_form(request, obj, **kwargs)
+
+    def render(self, context, instance, placeholder):
+        context = super(FramedIconPlugin, self).render(context, instance, placeholder)
+        icon_font = self.get_icon_font(instance)
+        symbol = instance.glossary.get('symbol')
+        attrs = []
+        if icon_font and symbol:
+            attrs.append(mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol)))
+        styles = {'display': 'inline-block'}
+        disabled, color = instance.glossary.get('color', (True, '#000000'))
+        if not disabled:
+            styles['color'] = color
+        disabled, background_color = instance.glossary.get('background_color', (True, '#000000'))
+        if not disabled:
+            styles['background-color'] = background_color
+        border = instance.glossary.get('border')
+        if isinstance(border, list) and border[0] and border[1] != 'none':
+            styles.update(border='{0} {1} {2}'.format(*border))
+            radius = instance.glossary.get('border_radius')
+            if radius:
+                styles['border-radius'] = radius
+        attrs.append(format_html('style="{}"',
+                                 format_html_join('', '{0}:{1};',
+                                                  [(k, v) for k, v in styles.items()])))
+        context['icon_font_attrs'] = mark_safe(' '.join(attrs))
+        return context
+
 plugin_pool.register_plugin(FramedIconPlugin)
 
 
@@ -116,11 +150,14 @@ class TextIconModelMixin(object):
 
 
 class TextIconPlugin(IconPluginMixin, LinkPluginBase):
+    """
+    This plugin is intended to be used inside the django-CMS-CKEditor.
+    """
     name = _("Icon in text")
     text_enabled = True
     render_template = 'cascade/plugins/texticon.html'
     ring_plugin = 'IconPlugin'
-    parent_classes = ('TextPlugin',)
+    parent_classes = ['TextPlugin']
     model_mixins = (TextIconModelMixin, LinkElementMixin,)
     allow_children = False
     require_parent = False
@@ -145,11 +182,7 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         return False
 
     def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(getattr(LinkForm, 'LINK_TYPE_CHOICES'))
-        Form = type(str('TextIconForm'), (getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES})
-        kwargs.update(form=Form)
+        kwargs.update(form=VoluntaryLinkForm.get_form_class())
         return super(TextIconPlugin, self).get_form(request, obj, **kwargs)
 
     def get_plugin_urls(self):
@@ -161,7 +194,7 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
 
     def render_wysiwig_config(self, request):
         """Find the icon font associated to the CMS page, from which this subrequest is originating."""
-        context = {}
+        icon_font = None
         # Since this request is originating from CKEditor, we have no other choice rather than using
         # the referer, to determine the current CMS page.
         try:
@@ -172,10 +205,12 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         if matches:
             cms_plugin = CMSPlugin.objects.get(id=matches.group(1))
             try:
-                context['icon_font'] = cms_plugin.page.cascadepage.icon_font
+                icon_font = cms_plugin.page.cascadepage.icon_font
             except (AttributeError, CascadePage.DoesNotExist):
                 pass
-        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
+        if not icon_font:
+            icon_font = IconFont.objects.filter(is_default=True).first()
+        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', {'icon_font': icon_font})
         return HttpResponse(javascript, content_type='application/javascript')
 
     @classmethod

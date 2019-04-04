@@ -19,7 +19,7 @@ class UploadIconsForms(ModelForm):
         media = super(UploadIconsForms, self).media
         try:
             css_url = self.instance.get_stylesheet_url()
-            media.add_css({'all': ('cascade/css/admin/iconfont.css', css_url,)})
+            media.add_css({'all': ['cascade/css/admin/iconfont.css', css_url]})
         except AttributeError:
             pass
         return media
