@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.forms.models import ModelForm
 from django.utils.html import format_html, format_html_join
+from django.utils.text import format_lazy, mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.icon.utils import zipfile, unzip_archive
@@ -25,6 +26,7 @@ class UploadIconsForms(ModelForm):
         return media
 
     def clean(self):
+        fontello_url = 'http://fontello.com/'
         cleaned_data = super(UploadIconsForms, self).clean()
         if 'zip_file' in self.changed_data:
             try:
@@ -35,13 +37,28 @@ class UploadIconsForms(ModelForm):
                 raise ValidationError(_("Can not unzip uploaded archive {}: {}").format(label, exc))
             finally:
                 zip_ref.close()
+        try:
+            css_prefix_text = cleaned_data['config_data']['css_prefix_text']
+        except KeyError:
+            msg = format_lazy(_(
+                "File does not seem to originate from <a href=\"{url}\" target=\"_blank\">{url}</a>", url=fontello_url))
+            raise ValidationError(msg)
+        for icon_font in IconFont.objects.all():
+            if icon_font.config_data['css_prefix_text'] == css_prefix_text:
+                msg = format_lazy(_(
+                    "Icon Font '{icon_font}' already uses CSS prefix '{css_prefix}'.<br/>" \
+                    "Please reload the font from <a href=\"{url}\" target=\"_blank\">{url}</a> " \
+                    "using another CSS prefix."),
+                    icon_font=icon_font.identifier, css_prefix=css_prefix_text, url=fontello_url)
+                raise ValidationError(mark_safe(msg))
         return cleaned_data
 
 
 @admin.register(IconFont)
 class IconFontAdmin(admin.ModelAdmin):
     form = UploadIconsForms
-    list_display = ['identifier', 'is_default', 'num_icons']
+    list_display = ['identifier', 'is_default', 'num_icons', 'css_prefix']
+    readonly_fields = ['css_prefix']
 
     def save_model(self, request, obj, form, change):
         if 'font_folder' in form.cleaned_data and 'config_data' in form.cleaned_data:
@@ -73,6 +90,13 @@ class IconFontAdmin(admin.ModelAdmin):
     def num_icons(self, obj):
         try:
             return len(obj.config_data['glyphs'])
-        except KeyError:
+        except (KeyError, TypeError):
             return '–'
     num_icons.short_description = _("Number of Icons")
+
+    def css_prefix(self, obj):
+        try:
+            return obj.config_data['css_prefix_text']
+        except (KeyError, TypeError):
+            return '–'
+    css_prefix.short_description = _("CSS prefix")
