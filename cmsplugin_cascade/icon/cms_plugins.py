@@ -20,8 +20,40 @@ from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, Colo
 from .mixins import IconPluginMixin
 
 
+class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
+    name = _("Simple Icon")
+    parent_classes = None
+    require_parent = False
+    allow_children = False
+    render_template = 'cascade/plugins/simpleicon.html'
+    model_mixins = (LinkElementMixin,)
+    fields = list(LinkPluginBase.fields)
+    ring_plugin = 'IconPlugin'
 
+    symbol = GlossaryField(
+        widgets.HiddenInput(),
+        label=_("Select Symbol"),
+    )
 
+    class Media:
+        js = ['cascade/js/admin/iconplugin.js']
+
+    glossary_field_order = ['symbol']
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.update(form=VoluntaryLinkForm.get_form_class())
+        return super(SimpleIconPlugin, self).get_form(request, obj, **kwargs)
+
+    def render(self, context, instance, placeholder):
+        context = super(SimpleIconPlugin, self).render(context, instance, placeholder)
+        icon_font = self.get_icon_font(instance)
+        symbol = instance.glossary.get('symbol')
+        if icon_font and symbol:
+            font_attr = 'class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol)
+            context['icon_font_attrs'] = mark_safe(font_attr)
+        return context
+
+plugin_pool.register_plugin(SimpleIconPlugin)
 
 
 
