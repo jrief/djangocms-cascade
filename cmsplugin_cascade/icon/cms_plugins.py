@@ -143,7 +143,7 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
         return super(FramedIconPlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
-        context = super(FramedIconPlugin, self).render(context, instance, placeholder)
+        context = self.super(FramedIconPlugin, self).render(context, instance, placeholder)
         icon_font = self.get_icon_font(instance)
         symbol = instance.glossary.get('symbol')
         attrs = []
