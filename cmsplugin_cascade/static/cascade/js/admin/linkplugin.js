@@ -2,6 +2,7 @@ django.jQuery(function($) {
 	'use strict';
 	var $link_type = $("#id_link_type"), $cmspage_select = $("#id_cms_page");
 	var $link_target = $(".glossary-widget .glossary_target");
+	var $link_title = $(".glossary-widget .glossary_title");
 
 	django.cascade.LinkPluginBase = ring.create({
 		LinkType: ring.create({
@@ -14,6 +15,7 @@ django.jQuery(function($) {
 				if (this.addTarget) {
 					$link_target.show();
 				}
+				$link_title.show();
 			},
 			hide: function() {
 				this.$element.hide();
@@ -50,6 +52,9 @@ django.jQuery(function($) {
 			});
 			if (!this.linkTypes[linkTypeName] || !this.linkTypes[linkTypeName].addTarget) {
 				$link_target.hide();
+			}
+			if (!this.linkTypes[linkTypeName]) {
+				$link_title.hide();
 			}
 		},
 		toggleSharedGlossary: function($option) {
