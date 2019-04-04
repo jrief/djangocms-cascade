@@ -5,14 +5,12 @@ from django.forms import widgets, ModelChoiceField
 from django.utils.html import format_html
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
-
 from filer.models.imagemodels import Image
-
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
 from . import utils
 
 
@@ -31,11 +29,18 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
     fields = ['image_file'] + list(LinkPluginBase.fields)
-    SHAPE_CHOICES = (('img-responsive', _("Responsive")), ('img-rounded', _('Rounded')),
-                     ('img-circle', _('Circle')), ('img-thumbnail', _('Thumbnail')),)
-    RESIZE_OPTIONS = (('upscale', _("Upscale image")), ('crop', _("Crop image")),
-                      ('subject_location', _("With subject location")),
-                      ('high_resolution', _("Optimized for Retina")),)
+    SHAPE_CHOICES = [
+        ('img-responsive', _("Responsive")),
+        ('img-rounded', _('Rounded')),
+        ('img-circle', _('Circle')),
+        ('img-thumbnail', _('Thumbnail')),
+    ]
+    RESIZE_OPTIONS = [
+        ('upscale', _("Upscale image")),
+        ('crop', _("Crop image")),
+        ('subject_location', _("With subject location")),
+        ('high_resolution', _("Optimized for Retina")),
+    ]
 
     image_shapes = GlossaryField(
         widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
@@ -74,11 +79,9 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         utils.reduce_breakpoints(self, 'responsive_heights', request=request, obj=obj)
-        LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
-            tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
+        LinkForm = getattr(VoluntaryLinkForm, 'get_form_class')()
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
+        Form = type(str('ImageForm'), (ImageFormMixin, LinkForm,), {'image_file': image_file})
         kwargs.update(form=Form)
         return super(BootstrapImagePlugin, self).get_form(request, obj, **kwargs)
 

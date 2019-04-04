@@ -12,7 +12,7 @@ from filer.models.imagemodels import Image
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.utils import compute_aspect_ratio
 from cmsplugin_cascade.widgets import CascadingSizeWidget
@@ -124,16 +124,19 @@ class TextImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     text_enabled = True
     ring_plugin = 'TextImagePlugin'
     render_template = 'cascade/plugins/textimage.html'
-    parent_classes = ('TextPlugin',)
+    parent_classes = ['TextPlugin']
     model_mixins = (ImagePropertyMixin, LinkElementMixin)
     allow_children = False
     require_parent = False
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
     fields = ['image_file'] + list(LinkPluginBase.fields)
-    RESIZE_OPTIONS = [('upscale', _("Upscale image")), ('crop', _("Crop image")),
-                      ('subject_location', _("With subject location")),
-                      ('high_resolution', _("Optimized for Retina"))]
+    RESIZE_OPTIONS = [
+        ('upscale', _("Upscale image")),
+        ('crop', _("Crop image")),
+        ('subject_location', _("With subject location")),
+        ('high_resolution', _("Optimized for Retina")),
+    ]
 
     image_width = GlossaryField(
         CascadingSizeWidget(allowed_units=['px'], required=True),
@@ -164,11 +167,9 @@ class TextImagePlugin(ImageAnnotationMixin, LinkPluginBase):
         js = ['cascade/js/admin/textimageplugin.js']
 
     def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = (('none', _("No Link")),) + \
-            tuple(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
+        LinkForm = getattr(VoluntaryLinkForm, 'get_form_class')()
+        Form = type(str('ImageForm'), (ImageFormMixin, LinkForm), {'image_file': image_file})
         kwargs.update(form=Form)
         return super(TextImagePlugin, self).get_form(request, obj, **kwargs)
 

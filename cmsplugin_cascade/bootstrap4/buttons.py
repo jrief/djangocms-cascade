@@ -160,7 +160,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     fields = ['link_content'] + list(LinkPluginBase.fields)
     glossary_field_order = ['button_type', 'button_size', 'button_options', 'quick_float',
-                            'target', 'title', 'icon_align', 'icon_font', 'symbol', 'stretched_link']
+                            'target', 'title', 'icon_align', 'symbol', 'stretched_link']
     ring_plugin = 'ButtonPlugin'
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 

@@ -12,9 +12,8 @@ from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
-   compute_aspect_ratio_with_glossary, ramdon_color)
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
+from cmsplugin_cascade.utils import compute_aspect_ratio, parse_responsive_length, compute_aspect_ratio_with_glossary
 
 logger = logging.getLogger('cascade')
 
@@ -67,11 +66,9 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
         js = ['cascade/js/admin/pictureplugin.js']
 
     def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
+        LinkForm = getattr(VoluntaryLinkForm, 'get_form_class')()
+        Form = type(str('ImageForm'), (ImageFormMixin, LinkForm), {'image_file': image_file})
         kwargs.update(form=Form)
         return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
 

@@ -14,7 +14,7 @@ from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import CascadingSizeWidget
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
    compute_aspect_ratio_with_glossary)
 import random
@@ -37,12 +37,23 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
     fields = ['image_file'] + list(LinkPluginBase.fields)
-    SHAPE_CHOICES = [('img-fluid', _("Responsive")), ('rounded', _('Rounded')),
-                     ('rounded-circle', _('Circle')), ('img-thumbnail', _('Thumbnail'))]
-    RESIZE_OPTIONS = [('upscale', _("Upscale image")), ('crop', _("Crop image")),
-                      ('subject_location', _("With subject location")),
-                      ('high_resolution', _("Optimized for Retina"))]
-    ALIGNMENT_OPTIONS = [('float-left', _("Left")), ('float-right', _("Right")), ('mx-auto', _("Center"))]
+    SHAPE_CHOICES = [
+        ('img-fluid', _("Responsive")),
+        ('rounded', _('Rounded')),
+        ('rounded-circle', _('Circle')),
+        ('img-thumbnail', _('Thumbnail')),
+    ]
+    RESIZE_OPTIONS = [
+        ('upscale', _("Upscale image")),
+        ('crop', _("Crop image")),
+        ('subject_location', _("With subject location")),
+        ('high_resolution', _("Optimized for Retina")),
+    ]
+    ALIGNMENT_OPTIONS = [
+        ('float-left', _("Left")),
+        ('float-right', _("Right")),
+        ('mx-auto', _("Center")),
+    ]
 
     image_shapes = GlossaryField(
         widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
@@ -86,11 +97,9 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
         js = ['cascade/js/admin/imageplugin.js']
 
     def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
+        LinkForm = getattr(VoluntaryLinkForm, 'get_form_class')()
+        Form = type(str('ImageForm'), (ImageFormMixin, LinkForm), {'image_file': image_file})
         kwargs.update(form=Form)
         return super(BootstrapImagePlugin, self).get_form(request, obj, **kwargs)
 

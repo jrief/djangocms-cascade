@@ -5,11 +5,9 @@ from django.forms.fields import CharField
 from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-
 from cms.plugin_pool import plugin_pool
-
-from .config import LinkPluginBase, LinkElementMixin, LinkForm
-from .forms import TextLinkFormMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from cmsplugin_cascade.link.forms import TextLinkFormMixin
 
 
 class TextLinkPlugin(LinkPluginBase):
@@ -19,7 +17,7 @@ class TextLinkPlugin(LinkPluginBase):
     render_template = 'cascade/link/text-link.html'
     ring_plugin = 'TextLinkPlugin'
     fields = ['link_content'] + list(LinkPluginBase.fields)
-    parent_classes = ('TextPlugin',)
+    parent_classes = ['TextPlugin']
 
     class Media:
         js = ['cascade/js/admin/textlinkplugin.js']
@@ -32,8 +30,7 @@ class TextLinkPlugin(LinkPluginBase):
         link_content = CharField(required=True, label=_("Link Content"),
             # replace auto-generated id so that CKEditor automatically transfers the text into this input field
             widget=TextInput(attrs={'id': 'id_name'}), help_text=_("Content of Link"))
-        Form = type(str('TextLinkForm'), (TextLinkFormMixin, LinkForm.get_form_class(),),  # @UndefinedVariable
-            {'link_content': link_content})
+        Form = type(str('TextLinkForm'), (TextLinkFormMixin, LinkForm.get_form_class()), {'link_content': link_content})
         kwargs.update(form=Form)
         return super(TextLinkPlugin, self).get_form(request, obj, **kwargs)
 
