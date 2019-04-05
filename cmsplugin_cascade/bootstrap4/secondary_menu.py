@@ -16,8 +16,8 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     """
     name = _("Secondary Menu")
     default_css_class = 'list-group'
-    require_parent = True
-    parent_classes = ('BootstrapColumnPlugin',)
+    require_parent = False
+    parent_classes = None
     allow_children = False
     render_template = 'cascade/bootstrap4/secmenu-list-group.html'
 
