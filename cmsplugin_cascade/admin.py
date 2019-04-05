@@ -14,11 +14,6 @@ from cmsplugin_cascade.link.forms import format_page_link
 
 @admin.register(CascadePage)
 class CascadePageAdmin(PageExtensionAdmin):
-    change_form_template = 'cascade/admin/cascadepage_change_form.html'
-
-    def get_fields(self, request, obj=None):
-        return ['icon_font']
-
     def get_urls(self):
         urls = [
             url(r'^get_page_sections/$', lambda: None, name='get_page_sections'),  # just to reverse

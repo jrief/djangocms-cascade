@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import warnings
-from django.contrib.admin.utils import unquote
+from django.conf.urls import url
+from django.http.response import JsonResponse, HttpResponseNotFound
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from cmsplugin_cascade.models import CascadePage, IconFont
+from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
 
@@ -30,30 +30,43 @@ class IconPluginMixin(CascadePluginMixinBase):
         return identifier
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
-        try:  # to find the the CMS page in which this plugin is added, from there find the selected icon_font
-            if object_id:
-                icon_font = self.get_object(request, unquote(object_id)).cmsplugin_ptr.page.cascadepage.icon_font
-            else:
-                icon_font = self._cms_initial_attributes['placeholder'].page.cascadepage.icon_font
-        except (AttributeError, CascadePage.DoesNotExist):
-            icon_font = None
-        if not icon_font:
-            icon_font = IconFont.objects.filter(is_default=True).first()
-        extra_context = dict(extra_context or {}, icon_font=icon_font, require_icon_font=self.require_icon_font)
+        extra_context = dict(extra_context or {}, icon_fonts=IconFont.objects.all())
         return super(IconPluginMixin, self).changeform_view(
              request, object_id=object_id, form_url=form_url, extra_context=extra_context)
 
+    def get_form(self, request, obj=None, **kwargs):
+        icon_font_field = [gf for gf in self.glossary_fields if gf.name == 'icon_font'][0]
+        icon_font_field.widget.choices = IconFont.objects.values_list('id', 'identifier')
+        form = super(IconPluginMixin, self).get_form(request, obj=obj, **kwargs)
+        return form
+
+    def get_plugin_urls(self):
+        urlpatterns = [
+            url(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
+            url(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
+        ]
+        urlpatterns.extend(super(IconPluginMixin, self).get_plugin_urls())
+        return urlpatterns
+
+    def fetch_fonticons(self, request, iconfont_id=None):
+        try:
+            icon_font = IconFont.objects.get(id=iconfont_id)
+        except IconFont.DoesNotExist:
+            return HttpResponseNotFound("IconFont with id={} does not exist".format(iconfont_id))
+        else:
+            data = dict(icon_font.config_data)
+            data.pop('glyphs', None)
+            data['families'] = icon_font.get_icon_families()
+            return JsonResponse(data)
+
     @classmethod
     def get_icon_font(self, instance):
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter('ignore')
-                icon_font = instance.cmsplugin_ptr.page.cascadepage.icon_font
-        except (CascadePage.DoesNotExist, AttributeError):
-            icon_font = None
-        if not icon_font:
-            icon_font = IconFont.objects.filter(is_default=True).first()
-        return icon_font
+        if not hasattr(instance, '_cached_icon_font'):
+            try:
+                instance._cached_icon_font = IconFont.objects.get(id=instance.glossary['icon_font'])
+            except (IconFont.DoesNotExist, KeyError, ValueError):
+                instance._cached_icon_font = None
+        return instance._cached_icon_font
 
     def render(self, context, instance, placeholder):
         context['instance'] = instance

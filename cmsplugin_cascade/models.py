@@ -327,7 +327,7 @@ class CascadePage(PageExtension):
         blank=True,
         on_delete=models.SET_NULL,
         verbose_name=_("Icon Font"),
-        help_text=_("Set Icon Font globally for this page"),
+        help_text=_("Deprecated"),
     )
 
     class Meta:

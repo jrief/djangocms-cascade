@@ -121,16 +121,21 @@ class BootstrapButtonMixin(IconPluginMixin):
         help_text=_("Add an Icon before or after the button content.")
     )
 
-    symbol = GlossaryField(
-        widgets.HiddenInput(),
-        label=_("Select Symbol"),
-    )
-
     stretched_link = GlossaryField(
         widgets.CheckboxInput(),
         label=_("Stretched link"),
         help_text=_("Stretched-link utility to make any anchor the size of it’s nearest position:\
          relative parent, perfect for entirely clickable cards!")
+    )
+
+    icon_font = GlossaryField(
+        widgets.Select(),
+        label=_("Font"),
+    )
+
+    symbol = GlossaryField(
+        widgets.HiddenInput(),
+        label=_("Select Symbol"),
     )
 
     class Media:
@@ -160,7 +165,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     fields = ['link_content'] + list(LinkPluginBase.fields)
     glossary_field_order = ['button_type', 'button_size', 'button_options', 'quick_float',
-                            'target', 'title', 'icon_align', 'symbol', 'stretched_link']
+                            'target', 'title', 'stretched_link', 'icon_align', 'icon_font', 'symbol']
     ring_plugin = 'ButtonPlugin'
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 

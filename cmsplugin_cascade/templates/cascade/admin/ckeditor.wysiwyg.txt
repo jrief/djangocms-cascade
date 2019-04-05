@@ -1,6 +1,6 @@
 (function() {
 	CKEDITOR.dtd.$removeEmpty.i = 0;
-{% if icon_font %}
+{% for icon_font in icon_fonts %}
 	CMS.CKEditor.editor.addContentsCss('{{ icon_font.get_stylesheet_url }}');
-{% endif %}
+{% endfor %}
 })();

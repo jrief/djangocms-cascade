@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import re
 from django.conf.urls import url
 from django.forms import widgets
 from django.http.response import HttpResponse
@@ -9,12 +8,10 @@ from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from django.utils.six.moves.urllib.parse import urlparse
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cms.models.pluginmodel import CMSPlugin
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.models import CascadePage, IconFont
+from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 from .mixins import IconPluginMixin
@@ -30,6 +27,11 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     fields = list(LinkPluginBase.fields)
     ring_plugin = 'IconPlugin'
 
+    icon_font = GlossaryField(
+        widgets.Select(),
+        label=_("Font"),
+    )
+
     symbol = GlossaryField(
         widgets.HiddenInput(),
         label=_("Select Symbol"),
@@ -38,7 +40,7 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
 
-    glossary_field_order = ['symbol']
+    glossary_field_order = ['icon_font', 'symbol']
 
     def get_form(self, request, obj=None, **kwargs):
         kwargs.update(form=VoluntaryLinkForm.get_form_class())
@@ -70,6 +72,11 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     RADIUS_CHOICES = [(None, _("Square"))] + \
         [('{}px'.format(r), "{} px".format(r)) for r in (1, 2, 3, 5, 7, 10, 15, 20)] + \
         [('50%', _("Circle"))]
+
+    icon_font = GlossaryField(
+        widgets.Select(),
+        label=_("Font"),
+    )
 
     symbol = GlossaryField(
         widgets.HiddenInput(),
@@ -114,7 +121,8 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
         label=_("Border radius"),
     )
 
-    glossary_field_order = ['symbol', 'text_align', 'font_size', 'color', 'background_color', 'border', 'border_radius']
+    glossary_field_order = ['icon_font', 'symbol', 'text_align', 'font_size', 'color', 'background_color',
+                            'border', 'border_radius']
 
     class Media:
         js = ['cascade/js/admin/framediconplugin.js']
@@ -194,6 +202,11 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     allow_children = False
     require_parent = False
 
+    icon_font = GlossaryField(
+        widgets.Select(),
+        label=_("Font"),
+    )
+
     symbol = GlossaryField(
         widgets.HiddenInput(),
         label=_("Select Symbol"),
@@ -204,7 +217,7 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         label=_("Icon color"),
     )
 
-    glossary_field_order = ['symbol', 'color']
+    glossary_field_order = ['icon_font', 'symbol', 'color']
 
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
@@ -225,24 +238,10 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
         return urls
 
     def render_wysiwig_config(self, request):
-        """Find the icon font associated to the CMS page, from which this subrequest is originating."""
-        icon_font = None
-        # Since this request is originating from CKEditor, we have no other choice rather than using
-        # the referer, to determine the current CMS page.
-        try:
-            referer = urlparse(request.META['HTTP_REFERER'])
-            matches = re.match(r'.+/edit-plugin/(\d+)/$', referer.path)
-        except (AttributeError, KeyError):
-            matches = None
-        if matches:
-            cms_plugin = CMSPlugin.objects.get(id=matches.group(1))
-            try:
-                icon_font = cms_plugin.page.cascadepage.icon_font
-            except (AttributeError, CascadePage.DoesNotExist):
-                pass
-        if not icon_font:
-            icon_font = IconFont.objects.filter(is_default=True).first()
-        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', {'icon_font': icon_font})
+        context = {
+            'icon_fonts': IconFont.objects.all()
+        }
+        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
         return HttpResponse(javascript, content_type='application/javascript')
 
     @classmethod
