@@ -34,10 +34,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
+        migrations.AlterField(
             model_name='cascadepage',
             name='icon_font',
-            field=models.ForeignKey(blank=True, help_text='Use globall Icon Font from page for each IconPlugin', null=True, on_delete=django.db.models.deletion.CASCADE, to='cmsplugin_cascade.IconFont', verbose_name='Icon Font'),
+            field=models.ForeignKey(blank=True, help_text='Deprecated', null=True, on_delete=django.db.models.deletion.SET_NULL, to='cmsplugin_cascade.IconFont', verbose_name='Icon Font'),
         ),
         migrations.RunPython(forwards, reverse_code=backwards),
     ]
