@@ -139,3 +139,26 @@ class BootstrapUtilities(type):
                 initial=''
             ))
         return glossary_fields
+
+    @property
+    def floats(cls):
+        glossary_fields = []
+        choices_format = [
+            ('float-{}none', _("Do not float")),
+            ('float-{}left', _("Float left")),
+            ('float-{}right', _("Float right")),
+        ]
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+                choices = [(c.format(''), l) for c, l in choices_format]
+                choices.insert(0, ('', _("Unset")))
+            else:
+                choices = [(c.format(bp.name + '-'), l) for c, l in choices_format]
+                choices.insert(0, ('', _("Inherit from above")))
+            glossary_fields.append(GlossaryField(
+                widgets.Select(choices=choices),
+                label=format_lazy(_("Floats for {breakpoint}"), breakpoint=bp.label),
+                name='float_{}'.format(bp.name),
+                initial=''
+            ))
+        return glossary_fields
