@@ -36,14 +36,17 @@ class BootstrapUtilities(type):
     in different configurations. These configurations can be overridden through the project's
     settings using:
     ```
-    CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {'Bootstrap<ANY>Plugin': BootstrapUtilities(
-        BootstrapUtilities.background_and_color,
-        BootstrapUtilities.margins,
-        BootstrapUtilities.paddings,
+    CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {
+        'Bootstrap<ANY>Plugin': BootstrapUtilities(
+            BootstrapUtilities.background_and_color,
+            BootstrapUtilities.margins,
+            BootstrapUtilities.paddings,
+            …
+        ),
         …
-    )
+    }
     ```
-    or similar.
+
     The class ``BootstrapUtilities`` offers a bunch of property methods which return a list of
     input fields and/or select boxes. They then can be added to the plugin's editor. This is
     specially useful to add CSS classes from the utilities section of Bootstrap-4, such as

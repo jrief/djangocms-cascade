@@ -3,6 +3,7 @@
 ==================
 Bootstrap 4 Layout
 ==================
+
 In order to take full advantage of **djangocms-cascade**, you should be familiar with the
 concepts of the `Bootstrap Layout`_, since all other Bootstrap components depend upon.
 
