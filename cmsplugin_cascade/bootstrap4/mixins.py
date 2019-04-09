@@ -36,14 +36,17 @@ class BootstrapUtilities(type):
     in different configurations. These configurations can be overridden through the project's
     settings using:
     ```
-    CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {'Bootstrap<ANY>Plugin': BootstrapUtilities(
-        BootstrapUtilities.background_and_color,
-        BootstrapUtilities.margins,
-        BootstrapUtilities.paddings,
+    CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {
+        'Bootstrap<ANY>Plugin': BootstrapUtilities(
+            BootstrapUtilities.background_and_color,
+            BootstrapUtilities.margins,
+            BootstrapUtilities.paddings,
+            …
+        ),
         …
-    )
+    }
     ```
-    or similar.
+
     The class ``BootstrapUtilities`` offers a bunch of property methods which return a list of
     input fields and/or select boxes. They then can be added to the plugin's editor. This is
     specially useful to add CSS classes from the utilities section of Bootstrap-4, such as
@@ -136,6 +139,29 @@ class BootstrapUtilities(type):
                 widgets.Select(choices=choices),
                 label=format_lazy(_("Padding for {breakpoint}"), breakpoint=bp.label),
                 name='padding_{}'.format(bp.name),
+                initial=''
+            ))
+        return glossary_fields
+
+    @property
+    def floats(cls):
+        glossary_fields = []
+        choices_format = [
+            ('float-{}none', _("Do not float")),
+            ('float-{}left', _("Float left")),
+            ('float-{}right', _("Float right")),
+        ]
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+                choices = [(c.format(''), l) for c, l in choices_format]
+                choices.insert(0, ('', _("Unset")))
+            else:
+                choices = [(c.format(bp.name + '-'), l) for c, l in choices_format]
+                choices.insert(0, ('', _("Inherit from above")))
+            glossary_fields.append(GlossaryField(
+                widgets.Select(choices=choices),
+                label=format_lazy(_("Floats for {breakpoint}"), breakpoint=bp.label),
+                name='float_{}'.format(bp.name),
                 initial=''
             ))
         return glossary_fields

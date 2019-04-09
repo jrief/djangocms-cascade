@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.conf.urls import url
 from django.http.response import JsonResponse, HttpResponseNotFound
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
@@ -22,11 +21,10 @@ class IconPluginMixin(CascadePluginMixinBase):
     def get_identifier(cls, instance):
         identifier = super(IconPluginMixin, cls).get_identifier(instance)
         icon_font = cls.get_icon_font(instance)
-        if icon_font:
-            symbol = mark_safe('<i class="{}{}"></i>'.format(
-                icon_font.config_data.get('css_prefix_text', 'icon-'),
-                instance.glossary.get('symbol')))
-            return format_html('{0}{1}', identifier, symbol)
+        symbol = instance.glossary.get('symbol')
+        if icon_font and symbol:
+            prefix = icon_font.config_data['css_prefix_text']
+            return format_html('{0}{1}{2}', identifier, prefix, symbol)
         return identifier
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):

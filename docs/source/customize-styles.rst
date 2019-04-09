@@ -4,13 +4,17 @@ Customize CSS classes and inline styles
 
 Plugins shipped with **djangocms-cascade** offer a basic set of CSS classes as declared by the
 chosen CSS framework. These offered classes normally do not fulfill the requirements for real world
-sites.
+sites. This is specially true, if you extend your site with one of the many available
+`Bootstrap themes`_.
 
 While **djangocms-cascade** is easily expendable, it would be overkill to re-implement the available
 plugins, just to add an extra field for a customized CSS class or an extra inline style. For that
 purpose, one can add a set of potential CSS classes and potential CSS inline styles for Cascade
 plugins, enabled for this feature. Moreover, this feature can be adopted individually on a per-site
 base.
+
+.. _Bootstrap themes: https://themes.getbootstrap.com/
+
 
 .. extra-fields:
 
@@ -57,7 +61,7 @@ specify the extra fields using the Django administration backend at:
 Here the site administrator can specify for each concrete plugin, which extra CSS classes, ID tags
 and extra inline styles shall be used.
 
-If we use ``PluginExtraFieldsConfig(allow_override=False)``, then the site administrator can not
+If we use ``PluginExtraFieldsConfig(allow_override=False)``, then the site administrator *can not*
 override the configuration using the backend. Then every extra field must be specified by the
 configuration directive:
 
@@ -73,8 +77,9 @@ To enable this feature, in the administration backend navigate to
 *Home › django CMS Cascade › Custom CSS classes and styles*  and click onto the button named
 **Add Custom CSS classes styles**.
 
-From the field named “Plugin Name”, select one of the available plugins, for example
-**Bootstrap Simple Wrapper**. Then, from the field named “Site”, select the current site.
+From the field named "Plugin Name", select one of the available plugins, for example
+**Bootstrap Simple Wrapper**. Then, from the field named "Site", select the site where those extra
+styles shall be applied.
 
 |customize-styles|
 
@@ -84,16 +89,20 @@ From the field named “Plugin Name”, select one of the available plugins, for
 Allow ID
 --------
 
-With “Allow id tag” enabled, an extra field will appear on the named plugin editor. There a user
+With "Allow id tag" enabled, an extra field will appear on the named plugin editor. There a user
 can add any arbitrary name which will be rendered as ``id="any_name"`` for the corresponding plugin
 instance.
+
+Allowing ID's is specially useful for the **Heading Plugin**, so the Links can point directly to
+that ID (bookmark linking).
+
 
 CSS classes
 -----------
 
-In the field named “CSS class names”, the administrator may specify arbitrary CSS classes separated
+In the field named "CSS class names", the administrator may specify arbitrary CSS classes separated
 by commas. One of these CSS classes then can be added to the corresponding Cascade plugin. If
-more than one CSS class shall be addable concurrently, activate the checkbox named “Allow multiple”.
+more than one CSS class shall be addable concurrently, activate the checkbox named "Allow multiple".
 
 
 CSS inline styles
@@ -102,8 +111,8 @@ CSS inline styles
 The administrator may activate all kinds of CSS inline styles by clicking on the named checkbox. For
 settings describing distances, additionally specify the allowed units to be used.
 
-Now, if a user opens the corresponding plugin inside the **Structure View**, he will see an extra 
-select field to choose the CSS class and some input fields to enter say, extra margins, heights or
+If a user opens the corresponding plugin inside the **Structure View**, he will see an extra select
+field to choose the CSS class and some input fields to enter say, extra margins, heights or
 whatever has been activated.
 
 
