@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
@@ -38,20 +37,6 @@ class BootstrapCardFooterPlugin(TransparentContainer, CardChildBase):
 plugin_pool.register_plugin(BootstrapCardFooterPlugin)
 
 
-class BootstrapCardMixin(object):
-    @cached_property
-    def card_header(self):
-        return self.get_children().filter(plugin_type='BootstrapCardHeaderPlugin').first()
-
-    @cached_property
-    def card_body(self):
-        return self.get_children().filter(plugin_type='BootstrapCardBodyPlugin').first()
-
-    @cached_property
-    def card_footer(self):
-        return self.get_children().filter(plugin_type='BootstrapCardFooterPlugin').first()
-
-
 class BootstrapCardPlugin(TransparentWrapper, BootstrapPluginBase):
     """
     Use this plugin to display a card with optional card-header and card-footer.
@@ -60,7 +45,6 @@ class BootstrapCardPlugin(TransparentWrapper, BootstrapPluginBase):
     default_css_class = 'card'
     require_parent = False
     parent_classes = ['BootstrapColumnPlugin']
-    model_mixins = (BootstrapCardMixin,)
     allow_children = True
     render_template = 'cascade/bootstrap4/card.html'
     glossary_field_order = ['header', 'body_padding', 'footer']

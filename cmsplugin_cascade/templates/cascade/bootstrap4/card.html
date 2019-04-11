@@ -1,14 +1,8 @@
 {% load cascade_tags %}{% spaceless %}
 {% with inline_styles=instance.inline_styles %}
 <div class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
-{% if instance.card_header %}
-	{% render_plugin instance.card_header %}
-{% endif %}
-{% if instance.card_body %}
-	{% render_plugin instance.card_body %}
-{% endif %}
-{% if instance.card_footer %}
-	{% render_plugin instance.card_footer %}
-{% endif %}
+{% for child in instance.child_plugin_instances %}
+	{% render_plugin child %}
+{% endfor %}
 </div>
 {% endwith %}{% endspaceless %}
