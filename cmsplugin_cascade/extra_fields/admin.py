@@ -2,16 +2,21 @@
 from __future__ import unicode_literals
 
 import re
-from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.conf.urls import url
 from django.contrib import admin
+from django.core.exceptions import ValidationError
+from django.http.response import HttpResponse
+from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.forms import widgets
 from cms.plugin_pool import plugin_pool
+from djangocms_text_ckeditor.cms_plugins import TextPlugin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.models import PluginExtraFields
+from cmsplugin_cascade.models import PluginExtraFields, TextEditorConfigFields, IconFont
 from cmsplugin_cascade.extra_fields.mixins import ExtraFieldsMixin
 from cmsplugin_cascade.widgets import JSONMultiWidget, MultipleCascadingSizeWidget
 from cmsplugin_cascade.utils import rectify_partial_form_field
@@ -38,6 +43,7 @@ class ClassNamesWidget(widgets.TextInput):
 class PluginExtraFieldsAdmin(admin.ModelAdmin):
     list_display = ['name', 'module', 'site', 'allowed_classes_styles']
     DISTANCE_UNITS = [
+        ('px,em,rem,%', _("px, em and %")),
         ('px,em,%', _("px, em and %")),
         ('px,em', _("px and em")),
         ('px,%', _("px and %")),
@@ -131,3 +137,41 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     allowed_classes_styles.short_description = _("Allowed Classes and Styles")
 
 admin.site.register(PluginExtraFields, PluginExtraFieldsAdmin)
+
+
+class TextEditorConfigAdmin(admin.ModelAdmin):
+    list_display = ['name', 'element_type']
+
+    classname_fields = [(
+        GlossaryField(
+            ClassNamesWidget(),
+            label=_("CSS class names"),
+            name='class_names',
+            help_text=_("Freely selectable CSS classnames for this Plugin, separated by commas."),
+        ),
+    )]
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.update(widgets={
+            'css_classes': JSONMultiWidget(self.classname_fields),
+        })
+        form = super(TextEditorConfigAdmin, self).get_form(request, obj, **kwargs)
+        rectify_partial_form_field(form.base_fields['css_classes'], self.classname_fields)
+        return form
+
+    def get_urls(self):
+        return [
+            url(r'^wysiwig-config\.js$', self.render_texteditor_config,
+                name='cascade_texteditor_config'),
+        ] + super(TextEditorConfigAdmin, self).get_urls()
+
+    def render_texteditor_config(self, request):
+        context = {
+            'text_editor_configs': TextEditorConfigFields.objects.all(),
+        }
+        if 'cmsplugin_cascade.icon' in settings.INSTALLED_APPS:
+            context['icon_fonts'] = IconFont.objects.all()
+        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
+        return HttpResponse(javascript, content_type='application/javascript')
+
+admin.site.register(TextEditorConfigFields, TextEditorConfigAdmin)

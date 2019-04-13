@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf.urls import url
 from django.forms import widgets
-from django.http.response import HttpResponse
-from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 from .mixins import IconPluginMixin
@@ -229,20 +225,6 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     def get_form(self, request, obj=None, **kwargs):
         kwargs.update(form=VoluntaryLinkForm.get_form_class())
         return super(TextIconPlugin, self).get_form(request, obj, **kwargs)
-
-    def get_plugin_urls(self):
-        urls = [
-            url(r'^wysiwig-config\.js$', self.render_wysiwig_config,
-                name='cascade_texticon_wysiwig_config'),
-        ]
-        return urls
-
-    def render_wysiwig_config(self, request):
-        context = {
-            'icon_fonts': IconFont.objects.all()
-        }
-        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
-        return HttpResponse(javascript, content_type='application/javascript')
 
     @classmethod
     def get_inline_styles(cls, instance):

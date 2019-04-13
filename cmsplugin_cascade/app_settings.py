@@ -160,7 +160,6 @@ class AppSettings(object):
         return 50
 
 
-
 import sys  # noqa
 app_settings = AppSettings()
 app_settings.__name__ = __name__

@@ -189,6 +189,40 @@ class PluginExtraFields(models.Model):
         return plugin_pool.get_plugin(self.plugin_type).name
 
 
+class TextEditorConfigFields(models.Model):
+    ELEMENT_CHOICES = [(c, c) for c in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']]
+
+    name = models.CharField(
+        _("Name"),
+        max_length=50,
+    )
+
+    element_type = models.CharField(
+        _("Element Type"),
+        choices=ELEMENT_CHOICES,
+        max_length=12,
+    )
+
+    css_classes = JSONField(
+        null=True,
+        blank=True,
+        default={},
+    )
+
+    class Meta:
+        verbose_name = _("Text Editor Config")
+
+    def get_config(self):
+        classes = self.css_classes.get('class_names', '').split(',')
+        classes = ' '.join([c.strip() for c in classes])
+        config = {
+            'name': self.name,
+            'element': self.element_type,
+            'attributes': {'class': classes},
+        }
+        return json.dumps(config)
+
+
 class Segmentation(models.Model):
     class Meta:
         verbose_name = _("Segmentation")
@@ -321,6 +355,7 @@ class CascadePage(PageExtension):
         help_text=_("Store for arbitrary page data."),
     )
 
+    # deprecated field, will be removed in 0.19
     icon_font = models.ForeignKey(
         IconFont,
         null=True,

@@ -245,8 +245,11 @@ Since it is possible to add plugins from the Cascade ecosystem as children to th
 	    'language': '{{ language }}',
 	    'skin': 'moono-lisa',
 	    'toolbar': 'CMS',
-	    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
+	    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
 	}
+
+The last line in this configuration invokes a special function, which adds special configuration settings to the
+CKTextEditor plugin.
 
 .. note:: The skin ``moono-lisa`` has been introduced in Django CKEditor version 3.5, so if you upgrade from an earlier
 	version, please adopt this in your settings.
