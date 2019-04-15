@@ -5,7 +5,6 @@ import json
 import os
 import shutil
 from collections import OrderedDict
-
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import models
@@ -13,10 +12,8 @@ from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
 from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
-
 from jsonfield.fields import JSONField
 from filer.fields.file import FilerFileField
-
 from cms.extensions import PageExtension
 from cms.extensions.extension_pool import extension_pool
 from cms.plugin_pool import plugin_pool
@@ -190,7 +187,7 @@ class PluginExtraFields(models.Model):
 
 
 class TextEditorConfigFields(models.Model):
-    ELEMENT_CHOICES = [(c, c) for c in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']]
+    ELEMENT_CHOICES = [(c, c) for c in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'address', 'div']]
 
     name = models.CharField(
         _("Name"),
@@ -203,22 +200,20 @@ class TextEditorConfigFields(models.Model):
         max_length=12,
     )
 
-    css_classes = JSONField(
-        null=True,
-        blank=True,
-        default={},
+    css_classes = models.CharField(
+        _("CSS classes"),
+        max_length=250,
+        help_text=_("Freely selectable CSS classnames for this Text-Editor Style, separated by spaces."),
     )
 
     class Meta:
         verbose_name = _("Text Editor Config")
 
     def get_config(self):
-        classes = self.css_classes.get('class_names', '').split(',')
-        classes = ' '.join([c.strip() for c in classes])
         config = {
             'name': self.name,
             'element': self.element_type,
-            'attributes': {'class': classes},
+            'attributes': {'class': self.css_classes},
         }
         return json.dumps(config)
 

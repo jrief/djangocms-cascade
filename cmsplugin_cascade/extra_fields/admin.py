@@ -6,14 +6,14 @@ from django.conf import settings
 from django.conf.urls import url
 from django.contrib import admin
 from django.core.exceptions import ValidationError
+from django.forms import widgets
+from django.forms.models import ModelForm
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-from django.forms import widgets
 from cms.plugin_pool import plugin_pool
-from djangocms_text_ckeditor.cms_plugins import TextPlugin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import PluginExtraFields, TextEditorConfigFields, IconFont
@@ -139,25 +139,26 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
 admin.site.register(PluginExtraFields, PluginExtraFieldsAdmin)
 
 
+class TextEditorConfigForm(ModelForm):
+    validation_pattern = re.compile(r'^[A-Za-z0-9_-]+$')
+
+    class Meta:
+        fields = ['name', 'element_type', 'css_classes']
+
+    def clean_css_classes(self):
+        css_classes = []
+        for val in self.cleaned_data['css_classes'].split(' '):
+            if val:
+                if self.validation_pattern.match(val.strip()):
+                    css_classes.append(val)
+                else:
+                    raise ValidationError(_("'%s' is not a valid CSS class name.") % val)
+        return ' '.join(css_classes)
+
+
 class TextEditorConfigAdmin(admin.ModelAdmin):
     list_display = ['name', 'element_type']
-
-    classname_fields = [(
-        GlossaryField(
-            ClassNamesWidget(),
-            label=_("CSS class names"),
-            name='class_names',
-            help_text=_("Freely selectable CSS classnames for this Plugin, separated by commas."),
-        ),
-    )]
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.update(widgets={
-            'css_classes': JSONMultiWidget(self.classname_fields),
-        })
-        form = super(TextEditorConfigAdmin, self).get_form(request, obj, **kwargs)
-        rectify_partial_form_field(form.base_fields['css_classes'], self.classname_fields)
-        return form
+    form = TextEditorConfigForm
 
     def get_urls(self):
         return [

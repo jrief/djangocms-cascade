@@ -9,8 +9,16 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
+from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 from .mixins import IconPluginMixin
+
+
+def get_default_icon_font():
+    try:
+        return IconFont.objects.get(is_default=True).id
+    except IconFont.DoesNotExist:
+        return ''
 
 
 class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
@@ -26,6 +34,7 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     icon_font = GlossaryField(
         widgets.Select(),
         label=_("Font"),
+        initial=get_default_icon_font(),
     )
 
     symbol = GlossaryField(
@@ -54,7 +63,6 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
 plugin_pool.register_plugin(SimpleIconPlugin)
 
 
-
 class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     name = _("Icon with frame")
     parent_classes = None
@@ -72,6 +80,7 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     icon_font = GlossaryField(
         widgets.Select(),
         label=_("Font"),
+        initial=get_default_icon_font(),
     )
 
     symbol = GlossaryField(
@@ -201,6 +210,7 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     icon_font = GlossaryField(
         widgets.Select(),
         label=_("Font"),
+        initial=get_default_icon_font(),
     )
 
     symbol = GlossaryField(

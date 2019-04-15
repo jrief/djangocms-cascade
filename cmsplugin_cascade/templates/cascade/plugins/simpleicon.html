@@ -3,7 +3,9 @@
 {% spaceless %}
 {% with instance_link=instance.link tag_type=instance.tag_type css_classes=instance.css_classes inline_styles=instance.inline_styles %}
 {% if instance_link %}<a href="{{ instance_link }}" {{ link_html_tag_attributes }}>{% endif %}
-	<i {{ icon_font_attrs }}></i>
+	{% if css_classes or inline_styles %}<span class="{{ css_classes }}" style="{{ inline_styles }}">{% endif %}
+		<i {{ icon_font_attrs }}></i>
+	{% if css_classes or inline_styles %}</span>{% endif %}
 {% if instance_link %}</a>{% endif %}
 {% endwith %}
 {% endspaceless %}
