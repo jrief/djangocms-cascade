@@ -34,7 +34,7 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     icon_font = GlossaryField(
         widgets.Select(),
         label=_("Font"),
-        initial=get_default_icon_font(),
+        initial=get_default_icon_font,
     )
 
     symbol = GlossaryField(
@@ -80,7 +80,7 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     icon_font = GlossaryField(
         widgets.Select(),
         label=_("Font"),
-        initial=get_default_icon_font(),
+        initial=get_default_icon_font,
     )
 
     symbol = GlossaryField(
@@ -210,7 +210,7 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     icon_font = GlossaryField(
         widgets.Select(),
         label=_("Font"),
-        initial=get_default_icon_font(),
+        initial=get_default_icon_font,
     )
 
     symbol = GlossaryField(
