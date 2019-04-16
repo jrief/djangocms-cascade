@@ -5,8 +5,8 @@ Release History
 0.18
 ====
 * In Plugins using Icons, such as **TextIconPlugin**, **BootstrapButtonPlugin** and **FramedIconPlugin**, it now is
-  possible to select the Icon Font. This was the behaviour <0.17 and hass been dropped, because back then, icons using
-  two or more different fonts on he same page, lead to confision. By enforcing a specific CSS icon prefix, it now is
+  possible to select the Icon Font. This was the behaviour <0.17 and has been dropped, because back then, icons using
+  two or more different fonts on he same page, lead to confusion. By enforcing a specific CSS icon prefix, it now is
   possible to use as many different icon fonts, as you want, on the same page.
 * Add **SimpleIconPlugin**, which renders an icon without any frame.
 * Add a special link type to download arbitrary files. All plugins which can link, can now set a link onto a
@@ -18,7 +18,7 @@ Release History
 * Plugin **BootstrapSecondaryMenuPlugin** can be used outside of columns.
 * Add property ``floats`` to mixin ``BootstrapUtilities`` in order to handle Bootstrap's float utilities.
   Replace field ``quick_float`` in **BootstrapButton** against this mixin property.
-* Card plugin offers three distinct children for Header, Body and Footer. They can be extended individually.
+* Card plugin offers three distinct children for Header, Body and Footer. Themselves, they can be extended individually.
 
 0.17.10
 =======
