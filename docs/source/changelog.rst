@@ -22,8 +22,8 @@ Release History
 * Add property ``floats`` to mixin ``BootstrapUtilities`` in order to handle Bootstrap's float
   utilities.
   Replace field ``quick_float`` in **BootstrapButton** against this mixin property.
-* Card plugin offers three distinct children for Header, Body and Footer. They can be extended
-  individually.
+* Card plugin offers three distinct children for Header, Body and Footer. Themselves, they can be
+  extended individually.
 
 0.17.10
 =======
