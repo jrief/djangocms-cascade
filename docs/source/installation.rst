@@ -239,7 +239,7 @@ Since it is possible to add plugins from the Cascade ecosystem as children to th
 .. code-block:: python
 
 	from django.core.urlresolvers import reverse_lazy
-	from cmsplugin_cascade.utils import format_lazy
+	from django.utils.text import format_lazy
 
 	CKEDITOR_SETTINGS = {
 	    'language': '{{ language }}',

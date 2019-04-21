@@ -6,13 +6,17 @@ Introduction
 ============
 
 Sometime we want to enrich our web pages with vectorized symbols. A lot of them can be found in
-various font libraries, such as `Font Awesome`_, `Material Icons`_ and many more. A typical approach
-would be to upload the chosen SVG symbol, and use it as image. This process however is time
-consuming and error-prone to organize. Therefore, **djangocms-cascade** offers an optional submodule,
-so that we can work with externally packed icon fonts.
+various font libraries, such as `Font Awesome`_, `Material Icons`_, `Streamline Icons`_ and many
+more. A typical approach would be to upload the chosen SVG symbol, and use it as image. This
+process however is time consuming and error-prone to organize. Therefore, **djangocms-cascade**
+offers an optional submodule, so that we can work with externally packed icon fonts.
 
 In order to use such a font, currently we must use Fontello_, an external service for icon font
-generation. In the future, this service  might be integrated into **djangocms-cascade** itself.
+packaging. In the future, this service  might be integrated into **djangocms-cascade** itself.
+
+This submodule, if enabled adds three additional plugins: **Icon with frame**, **Simple icon** and
+**Icon in text**. Additionally it allows to decorate buttons with an icon on the left or right side
+of the main text.
 
 
 Configuration
@@ -51,7 +55,7 @@ this special setting to our configuration:
 
 	CKEDITOR_SETTINGS = {
 	    …
-	    'stylesSet': format_lazy(reverse_lazy('admin:cascade_texticon_wysiwig_config')),
+	    'stylesSet': format_lazy(reverse_lazy('admin:cascade_texteditor_config')),
 	}
 
 
@@ -127,4 +131,5 @@ type of plugin.
 
 .. _Font Awesome: http://fontawesome.io/
 .. _Material Icons: https://design.google.com/icons/
+.. _Streamline Icons: https://streamlineicons.com/
 .. _Fontello: http://fontello.com/
