@@ -10,7 +10,7 @@ from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
  compute_aspect_ratio_with_glossary)
 
-import ramdom
+import random
 
 __all__ = ['reduce_breakpoints', 'compute_media_queries', 'get_image_tags', 'get_picture_elements',
            'get_widget_choices']
