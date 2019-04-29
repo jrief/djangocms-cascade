@@ -41,13 +41,6 @@ class AppSettings(object):
 
             plugins_with_extra_fields = config['plugins_with_extra_fields']
             plugins_with_extra_fields.setdefault('SimpleWrapperPlugin', PluginExtraFieldsConfig())
-            plugins_with_extra_fields.setdefault('HorizontalRulePlugin', PluginExtraFieldsConfig(
-                inline_styles={
-                    'extra_fields:Paddings': ['margin-top', 'margin-bottom'],
-                    'extra_units:Paddings': 'px,em'
-                },
-                allow_override=False
-            ))
             for plugin, plugin_config in plugins_with_extra_fields.items():
                 if not isinstance(plugin_config, PluginExtraFieldsConfig):
                     msg = "CMSPLUGIN_CASCADE['plugins_with_extra_fields']['{}'] must instantiate a class of type PluginExtraFieldsConfig"
