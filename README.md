@@ -45,12 +45,12 @@ Since the payload of plugins is already serialized, we can even copy them from o
 site supporting **djangocms-cascade**.
 
 
-### Additional features in version 0.17
+### Additional features in version 0.18
 
-* Support for Bootstrap-4.
-* Support for django-CMS-3.5 and later.
-* Icon fonts are handled per page rather than per plugin to avoid ambiguities.
-
+* Can handle more than one Icon Font on the same page.
+* Plugin for YouTube videos.
+* Added link type to download arbitrary files.
+* Bootstrap-4's Card Plugin offers three distinct children for Header, Body and Footer.
 
 ## Documentation
 
