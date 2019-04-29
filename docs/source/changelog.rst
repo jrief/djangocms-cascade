@@ -2,12 +2,18 @@
 Release History
 ===============
 
+0.18.1
+======
+* Fix problem with PicturePlugin: subject_location not honored.
+* Use predefined margins for **HorizontalRulePlugin** in Bootstrap-4.
+* In Django admin: ``jquery.init.js`` must be the first dependency in admin media.
+
 0.18
 ====
 * In Plugins using Icons, such as **TextIconPlugin**, **BootstrapButtonPlugin** and
   **FramedIconPlugin**, it now is possible to select the Icon Font. This was the behaviour <0.17 and
   has been dropped, because back then, icons using two or more different fonts on he same page, lead
-  to confision. By enforcing a specific CSS icon prefix, it now is possible to use as many different
+  to confusion. By enforcing a specific CSS icon prefix, it now is possible to use as many different
   icon fonts, as you want, on the same page.
 * In your ``settings.py`` replace ``CKEDITOR_SETTINGS['stylesSet']`` by
   ``format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))``.
