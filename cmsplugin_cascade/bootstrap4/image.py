@@ -179,8 +179,8 @@ def get_image_tags(instance):
     resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    if hasattr(instance.image, 'subject_location'):
-        subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    if 'subject_location' in resize_options and hasattr(instance.image, 'subject_location'):
+        subject_location = instance.image.subject_location
     else:
         subject_location = None
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}

@@ -143,18 +143,17 @@ def get_picture_elements(instance):
         aspect_ratio = compute_aspect_ratio(instance.image)
     elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
-        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
     else:
         # if accessing the image file fails or fake image fails, abort here
         logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
         return
 
-    container_max_heights = instance.glossary.get('container_max_heights', {})
+    # container_max_heights = instance.glossary.get('container_max_heights', {})
     resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    if hasattr(instance.image, 'subject_location'):
-        subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    if 'subject_location' in resize_options and hasattr(instance.image, 'subject_location'):
+        subject_location = instance.image.subject_location
     else:
         subject_location = None
     max_width = 0
@@ -172,12 +171,6 @@ def get_picture_elements(instance):
             size = (int(width), image_height[0])
         elif image_height[1]:  # height was given in %
             size = (int(width), int(round(width * aspect_ratio * image_height[1])))
-        elif bp in container_max_heights:
-            container_height = parse_responsive_length(container_max_heights[bp])
-            if container_height[0]:
-                size = (int(width), container_height[0])
-            elif container_height[1]:
-                size = (int(width), int(round(width * aspect_ratio * container_height[1])))
         try:
             zoom = int(
                 instance.glossary['responsive_zoom'][bp].strip().rstrip('%')
@@ -194,7 +187,7 @@ def get_picture_elements(instance):
             elem['size2'] = (size[0] * 2, size[1] * 2)
         elements.append(elem)
 
-    # add a fallback image for old browsers which can't handle the <picture> element
+    # add a fallback image for old browsers which can't handle the <source> tags inside a <picture> element
     if image_height[1]:
         size = (int(max_width), int(round(max_width * aspect_ratio * image_height[1])))
     else:
