@@ -1,11 +1,5 @@
 {% load bootstrap_tags cms_tags %}
-
-	<div class="collapse navbar-collapse {{ instance.glossary.jus }}" id="navbarSupportedContent">
-	{% block navbar-collapse %}
-{% for child in instance.child_plugin_instances %}
-
-{% render_plugin child %}
- 
-{% endfor %}
-	{% endblock %}
-	</div>
+<div class="collapse navbar-collapse {{ instance.glossary.jus }}" id="navbarSupportedContent">
+{% block navbar-collapse %}{% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}
+{% endblock %}
+</div>

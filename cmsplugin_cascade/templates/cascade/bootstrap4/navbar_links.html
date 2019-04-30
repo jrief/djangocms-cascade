@@ -1,7 +1,4 @@
 {% load bootstrap_tags cms_tags %}
-
-	<div class="collapse navbar-collapse {{ instance.glossary.jus }}" id="navbarSupportedContent">
-	{% block navbar-nav %}
-		<ul class="navbar-nav {{ instance.glossary.mrml }}">{% main_menu "bootstrap4/menu/navbar.html" %}</ul>
-	{% endblock %}
-	</div>
+<div class="collapse navbar-collapse {{ instance.glossary.jus }}" id="navbarSupportedContent">
+{% block navbar-nav %}<ul class="navbar-nav {{ instance.glossary.mrml }}">{% main_menu "bootstrap4/menu/navbar.html" %}</ul>{% endblock %}
+</div>

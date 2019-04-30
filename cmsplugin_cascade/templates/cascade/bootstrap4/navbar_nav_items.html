@@ -1,8 +1,5 @@
 {% load cms_tags %}
-
-{% block navbar-nav-li %}<li class="navbar-item" href="/">{% for child in instance.child_plugin_instances %}
-{% render_plugin child %}
-{% endfor %}</li>
+{% block navbar-nav-li %}<li class="navbar-item" href="/">{% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}</li>
 {% endblock %}
 
 
