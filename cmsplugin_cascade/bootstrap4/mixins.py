@@ -149,13 +149,9 @@ class BootstrapUtilities(type):
             ('flex-{}column', _("Vertical")),
             ('flex-{}column-reverse', _("Vertical reverse")),
         ]
-      #  sizes = range(0, 6)
-       # direction = ['row', 'row-reverse', 'column', 'column-reverse']
         for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
             if bp == Breakpoint.xs:
-            #    choices = [(c.format('',  d), c.format('',  d)) for c, l in choices_format for d in direction]
                 choices = [(c.format(''),  l ) for c, l in choices_format]
-
                 choices.insert(0, ('', _("No Flex Directions")))
                 print(choices)
             else:
@@ -176,19 +172,14 @@ class BootstrapUtilities(type):
         choices_format = [
             ('d-{}{}', _("horizontal")),
         ]
-        notation = ['none', 'inline', 'inline-block', 'block', 'table', 'table-cell', 'table-row', 'flex', 'inline-flex' ]
-
-       # direction = ['row', 'row-reverse', 'column', 'column-reverse']
+        notation = ['none', 'inline', 'inline-block', 'block', 'table', 'table-cell', 'table-row', 'flex', 'inline-flex']
         for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
             if bp == Breakpoint.xs:
                 choices = [(c.format('',  n), c.format('',  n)) for c, l in choices_format for n in notation]
-            #    choices = [(c.format(''),  l ) for c, l in choices_format]
-
                 choices.insert(0, ('', _("No Flex Directions")))
-                print(choices)
             else:
-                choices = [(c.format(bp.name + '-',  n), c.format('',  n)) for c, l in choices_format for n in notation]
-                #choices = [(c.format(bp.name + '-'), l) for c, l in choices_format ]
+                choices = [(c.format(bp.name + '-',  n), 
+                   c.format('',  n)) for c, l in choices_format for n in notation]
                 choices.insert(0, ('', _("Inherit from above")))
                 print(choices)
             glossary_fields.append(GlossaryField(

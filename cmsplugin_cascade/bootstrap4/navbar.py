@@ -53,15 +53,7 @@ from . import grid
 import logging
 logger = logging.getLogger('cascade')
 
-
-class NavbarFormPlugin(ManageChildrenFormMixin, ModelForm):
-    num_children = IntegerField(min_value=1, initial=1,
-        #widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
-        widget=widgets.HiddenInput(),
-        #widget= NumberInputWidget(widget=	),
-        label=_('Menu'),
-        help_text=_('Number of slides for this carousel.'),
-    )
+ 
 
 class NavbarPluginForm(ImageFormMixin, ModelForm):
     """
@@ -94,10 +86,7 @@ class NavbarGridMixin(object):
 
 class NavbarPlugin(BootstrapPluginBase):
     name = _("Navbar")
-    
-    ##todo add doc: we need comma , to sure make this model_mixins as tuple 
     model_mixins = ( NavbarGridMixin,)
-    form = NavbarFormPlugin
     default_css_class = 'navbar'
     default_css_attributes = ('options',)
     require_parent = False
@@ -188,28 +177,6 @@ class NavbarPlugin(BootstrapPluginBase):
         self.extend_children(obj, wanted_children, NavbarLinksItemsPlugin)
         obj.sanitize_children()
 
-    """
-    @classmethod
-    def sanitize_model(cls, obj):
-
-        sanitized = False
-        # if the jumbotron is the root of the placeholder, we consider it as "fluid"
-        obj.glossary['fluid'] = obj.parent is None
-        super(NavbarPlugin, cls).sanitize_model(obj)
-        grid_container = obj.get_bound_plugin().get_grid_instance()
-        obj.glossary.setdefault('media_queries', {})
-        for bp, bound in grid_container.bounds.items():
-            obj.glossary['media_queries'].setdefault(bp.name, {})
-            width = round(bound.max)
-            if obj.glossary['media_queries'][bp.name].get('width') != width:
-                obj.glossary['media_queries'][bp.name]['width'] = width
-                sanitized = True
-            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
-                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
-                sanitized = True
-        return sanitized
-    """
-    
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request, obj) is None:
             # we only ask for breakpoints, if the jumbotron is the root of the placeholder
@@ -232,9 +199,6 @@ plugin_pool.register_plugin(NavbarPlugin)
 
 class  NavbarLinksItemsPlugin(BootstrapPluginBase):
     name = _("Nav Links Items")
-#    model_mixins = (ImagePropertyMixin,)
-#    model_mixins = (CssBackgroundMixin,)
-#    form = ImageForm  
     chojust=[ "inherit", "justify-content-start","justify-content-end", "justify-content-center", "justify-content-between", "justify-content-around" ] 
     chomrml=[ "inherit", "mr-auto", "ml-auto" ] 
     choflex=[ "flex-row", "flex-wrap"]
@@ -264,41 +228,16 @@ class  NavbarLinksItemsPlugin(BootstrapPluginBase):
         help_text=_("Adjust interval place UL"),
     )
 
-    """
-    
-    def get_render_template(self, context, instance, placeholder):
-        try:
-            render_template=instance.get_parent_glossary().get('render_choice_template')
-            return  render_template
-        except (KeyError, TemplateDoesNotExist):
-            return  render_template
-    """
+
 plugin_pool.register_plugin(NavbarLinksItemsPlugin)
 
 class  NavbarBrandPlugin(BootstrapPluginBase, LinkPluginBase,):
-#    fields = ('glossary', 'image_file',)
     name = _("Nav brand")
     parent_classes = ['NavbarPlugin'] 
-    #alien_child_classes = True
     model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_brand.html'
     
     fields =  list(LinkPluginBase.fields)
- #   fields = ('glossary')
-    
-    
-
-    """
-    def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(MenubrandPlugin, self).get_form(request, obj, **kwargs)
-    """
-
-
 
 plugin_pool.register_plugin(NavbarBrandPlugin)
 
@@ -311,27 +250,8 @@ class NavbarBrandImagePluginForm(ImageFormMixin, ModelForm):
 
     def clean_glossary(self):
         glossary = super(NavbarBrandImagePluginForm  , self).clean_glossary()
-     #   if glossary['background_size'] == 'width/height' and not glossary['background_width_height']['width']:
-      #      raise ValidationError(_("You must at least set a background width."))
         return glossary
- 
 
-
-"""
-print(BootstrapImagePlugin.__dict__)
-
-
-class  NavbarBrandImage2Plugin(BootstrapImagePlugin ,BootstrapPluginBase,   ):
-
-#order (MRO) for bases HidePluginMixin, BootstrapImagePlugin
-
-    name = _("Nav brand Image2")
-    def __init__(self, *args,**kwargs):
- 
-        return BootstrapImagePlugin.__init__(args,kwargs)
-
-plugin_pool.register_plugin(NavbarBrandImage2Plugin)
-"""
 
 class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
  #   BootstrapImagePlugin.__module__
@@ -350,21 +270,12 @@ class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
     raw_id_fields = ['image_file']
     fields = [  'glossary','image_file', ]
     render_template = 'cascade/bootstrap4/navbar_brand_image.html'
-    
-    #fields =  list(LinkPluginBase.fields)
-    
- #   fields = ('glossary')
-    
-    #""
- 
 
-    
     def get_form(self, request, obj=None, **kwargs):
         print('self.get_parent_instance(request, obj)' )
         print(self.get_parent_instance(request, obj) )
 
         if self.get_parent_instance(request, obj) is None:
-            print('cccccccccccccc')
             print(self.container_glossary_fields)
             # we only ask for breakpoints, if the jumbotron is the root of the placeholder
             kwargs.update(glossary_fields=list(self.container_glossary_fields))
@@ -392,66 +303,22 @@ class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
             context = super(NavbarBrandImagePlugin, self).render(context, instance, placeholder)
         return context
 
-    
-    """
-    def render(self, context, instance, placeholder):
-       print(dir(BootstrapImagePlugin))
-       print(BootstrapImagePlugin.__dict__)
-       
-       return BootstrapImagePlugin.render(self, context, instance, placeholder)
-       
-    """
-    """ 
-    def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(NavbarBrandImagePlugin, self).get_form(request, obj, **kwargs)
-    """
- 
-    """
-    @classmethod
-    def sanitize_model(cls, obj):
-        return BootstrapImagePlugin.sanitize_model(cls, obj)
-    """
 plugin_pool.register_plugin(NavbarBrandImagePlugin)
 
 class  NavbarCollapsePlugin(BootstrapPluginBase):
     name = _("Nav Collapse")
     parent_classes = ['NavbarPlugin'] 
-#    fields = ('glossary', 'image_file',)
     alien_child_classes = True
-    #model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_collapse.html'
     default_css_class = 'navbar-nav'
 
-
-
-   # fields =  list(LinkPluginBase.fields)
- #   fields = ('glossary')
-    
-    """
-    def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(MenubrandPlugin, self).get_form(request, obj, **kwargs)
-    """
-    
-    
 plugin_pool.register_plugin(NavbarCollapsePlugin)
 
 
 class  NavbarNavListPlugin(BootstrapPluginBase):
     name = _("Nav list")
     parent_classes = ['NavbarPlugin', 'NavbarCollapsePlugin' ] 
-#    fields = ('glossary', 'image_file',)
     alien_child_classes = True
-    #model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_nav_list.html'
     default_css_class = 'navbar-nav'
 
@@ -469,20 +336,6 @@ class  NavbarNavListPlugin(BootstrapPluginBase):
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
         identifier, css_classes_without_default )
         
-   # fields =  list(LinkPluginBase.fields)
- #   fields = ('glossary')
-    
-    """
-    def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(MenubrandPlugin, self).get_form(request, obj, **kwargs)
-    """
-    
-    
 plugin_pool.register_plugin(NavbarNavListPlugin)
 
 
@@ -495,70 +348,26 @@ class  NavbarNavItemsMainMemuPlugin(BootstrapPluginBase):
     #model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_nav_items_links.html'
     
-   # fields =  list(LinkPluginBase.fields)
- #   fields = ('glossary')
-    
-    """
-    def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(MenubrandPlugin, self).get_form(request, obj, **kwargs)
-    """
-    
-    
 plugin_pool.register_plugin(NavbarNavItemsMainMemuPlugin)
 
 class  NavbarNavItemsPlugin(BootstrapPluginBase):
-#    fields = ('glossary', 'image_file',)
+
     name = _("Nav item")
     parent_classes = ['NavbarNavListPlugin'] 
     alien_child_classes = True
-    #model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_nav_items.html'
-    
-   # fields =  list(LinkPluginBase.fields)
- #   fields = ('glossary')
-    
-    """
-    def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(MenubrandPlugin, self).get_form(request, obj, **kwargs)
-    """
-    
-    
+
 plugin_pool.register_plugin(NavbarNavItemsPlugin)
 
 
 
 class  NavbarNavLinkPlugin(BootstrapPluginBase):
-#    fields = ('glossary', 'image_file',)
+
     name = _("Nav Link")
     parent_classes = ['NavbarNavItemsPlugin'] 
     alien_child_classes = True
-    #model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_nav_link.html'
-    
-   # fields =  list(LinkPluginBase.fields)
- #   fields = ('glossary')
-    
-    """
-    def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(MenubrandPlugin, self).get_form(request, obj, **kwargs)
-    """
-    
-    
+
 plugin_pool.register_plugin(NavbarNavLinkPlugin)
 
 
@@ -567,10 +376,6 @@ plugin_pool.register_plugin(NavbarNavLinkPlugin)
 class  MenubrandPlugin(BootstrapPluginBase, ImageAnnotationMixin, LinkPluginBase):
 
     name = _("menu_Contenu_brand")
-#    model_mixins = (ImagePropertyMixin,)
-#    model_mixins = (CssBackgroundMixin,)
- #   model_mixins = (ContainerGridMixin, ImagePropertyMixin,LinkElementMixin )
-   # model_mixins = (ContainerGridMixin, ImagePropertyMixin,LinkElementMixin )
     model_mixins = (ImagePropertyMixin,)
     form = NavbarPluginForm
     default_css_class = ''
@@ -578,14 +383,7 @@ class  MenubrandPlugin(BootstrapPluginBase, ImageAnnotationMixin, LinkPluginBase
     parent_classes = ['NavbarPlugin'] 
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar_brand.html'
-    """
-    def get_render_template(self, context, instance, placeholder):
-        try:
-            render_template=instance.get_parent_glossary().get('render_choice_template')
-            return  render_template
-        except (KeyError, TemplateDoesNotExist):
-            return  render_template
-    """
+
     def get_form(self, request, obj=None, **kwargs):
         LINK_TYPE_CHOICES = [('none', _("No Link"))]
         LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
@@ -637,9 +435,6 @@ class  MenubrandPlugin(BootstrapPluginBase, ImageAnnotationMixin, LinkPluginBase
         parent = obj.parent
         while parent.plugin_type != 'BootstrapColumnPlugin':
             parent = parent.parent
-           # if parent is None:
-           #     logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
-           #      return
         grid_column = parent.get_bound_plugin().get_grid_instance()
         obj.glossary.setdefault('media_queries', {})
         for bp in Breakpoint:
@@ -664,15 +459,7 @@ class  NavbarToogler(BootstrapPluginBase):
     default_css_class = ''
     parent_classes = ['NavbarPlugin'] 
     render_template = 'cascade/bootstrap4/navbar_toogler.html'
-    """
-    def get_render_template(self, context, instance, placeholder):
-        try:
-            render_template=instance.get_parent_glossary().get('render_choice_template')
-            return  render_template
-        except (KeyError, TemplateDoesNotExist):
-            return  render_template
-    """
-    
+
 plugin_pool.register_plugin(NavbarToogler)
 
 

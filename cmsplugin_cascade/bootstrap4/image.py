@@ -139,7 +139,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     def sanitize_model(cls, obj):
         sanitized = False
         parent = obj.parent
-        try:
+        if parent:
             while parent.plugin_type != 'BootstrapColumnPlugin':
                 parent = parent.parent
             grid_column = parent.get_bound_plugin().get_grid_instance()
@@ -153,7 +153,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
                 if obj.glossary['media_queries'].get(bp.name) != media_query:
                     obj.glossary['media_queries'][bp.name] = media_query
                     sanitized = True
-        except AttributeError:
+        else:
             logger.warning("ImagePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
             return
         return sanitized
