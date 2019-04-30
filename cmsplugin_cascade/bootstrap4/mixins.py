@@ -139,3 +139,62 @@ class BootstrapUtilities(type):
                 initial=''
             ))
         return glossary_fields
+
+    @property
+    def flex_directions(cls):
+        glossary_fields = []
+        choices_format = [
+            ('flex-{}row', _("horizontal")),
+            ('flex-{}row-reverse', _("horizontal reverse")),
+            ('flex-{}column', _("Vertical")),
+            ('flex-{}column-reverse', _("Vertical reverse")),
+        ]
+      #  sizes = range(0, 6)
+       # direction = ['row', 'row-reverse', 'column', 'column-reverse']
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+            #    choices = [(c.format('',  d), c.format('',  d)) for c, l in choices_format for d in direction]
+                choices = [(c.format(''),  l ) for c, l in choices_format]
+
+                choices.insert(0, ('', _("No Flex Directions")))
+                print(choices)
+            else:
+                choices = [(c.format(bp.name + '-'), l) for c, l in choices_format ]
+                choices.insert(0, ('', _("Inherit from above")))
+                print(choices)  
+            glossary_fields.append(GlossaryField(
+                widgets.Select(choices=choices),
+                label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
+                name='Flex_{}'.format(bp.name),
+                initial=''
+            ))
+        return glossary_fields
+
+    @property
+    def display_propertys(cls):
+        glossary_fields = []
+        choices_format = [
+            ('d-{}{}', _("horizontal")),
+        ]
+        notation = ['none', 'inline', 'inline-block', 'block', 'table', 'table-cell', 'table-row', 'flex', 'inline-flex' ]
+
+       # direction = ['row', 'row-reverse', 'column', 'column-reverse']
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+                choices = [(c.format('',  n), c.format('',  n)) for c, l in choices_format for n in notation]
+            #    choices = [(c.format(''),  l ) for c, l in choices_format]
+
+                choices.insert(0, ('', _("No Flex Directions")))
+                print(choices)
+            else:
+                choices = [(c.format(bp.name + '-',  n), c.format('',  n)) for c, l in choices_format for n in notation]
+                #choices = [(c.format(bp.name + '-'), l) for c, l in choices_format ]
+                choices.insert(0, ('', _("Inherit from above")))
+                print(choices)
+            glossary_fields.append(GlossaryField(
+                widgets.Select(choices=choices),
+                label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
+                name='Flex_{}'.format(bp.name),
+                initial=''
+            ))
+        return glossary_fields

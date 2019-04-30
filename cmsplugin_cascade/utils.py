@@ -44,11 +44,15 @@ def validate_link(link_data):
 
 
 def compute_aspect_ratio(image):
-    if image.exif.get('Orientation', 1) > 4:
-        # image is rotated by 90 degrees, while keeping width and height
-        return float(image.width) / float(image.height)
+    if image.width !=0 or image.height:
+          
+        if image.exif.get('Orientation', 1) > 4:
+            # image is rotated by 90 degrees, while keeping width and height
+            return float(image.width) / float(image.height)
+        else:
+            return float(image.height) / float(image.width)
     else:
-        return float(image.height) / float(image.width)
+        return 10/15
 
 
 def compute_aspect_ratio_with_glossary(glossary):

@@ -46,6 +46,13 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
         kwargs.update(form=VoluntaryLinkForm.get_form_class())
         return super(SimpleIconPlugin, self).get_form(request, obj, **kwargs)
 
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(SimpleIconPlugin, cls).get_css_classes(obj)
+        if obj.parent.plugin_type == 'NavbarNavItemsPlugin':
+            css_classes.insert(0,'nav-link')
+        return css_classes
+
     def render(self, context, instance, placeholder):
         context = super(SimpleIconPlugin, self).render(context, instance, placeholder)
         icon_font = self.get_icon_font(instance)

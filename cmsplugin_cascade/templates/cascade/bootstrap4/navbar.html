@@ -1,0 +1,24 @@
+{% load bootstrap_tags cms_tags %}
+
+{% block extra-styles %}{% endblock %}
+{% block extra-scripts %}{% endblock %}
+{% with instance_css_classes=instance.css_classes instance_inline_styles=instance.inline_styles %}
+<nav {% if instance_css_classes %} class="{{ instance_css_classes }}"{% endif %}{% if instance_inline_styles %} style="{{ instance_inline_styles }}"{% endif %} role="navigation">
+{% endwith %}
+{% block navbar-toggler %}
+
+{% endblock navbar-toggler %}
+
+
+{% block navbar %}
+ 
+{% for child in instance.child_plugin_instances %}
+
+{% render_plugin child %}
+ 
+{% endfor %}
+
+
+{% endblock navbar %}
+</nav>
+

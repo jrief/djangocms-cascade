@@ -6,15 +6,16 @@
 {% endblock head %}
 
 {% block header %}
-{% static_placeholder 'Navbar Content' %}
+
+{% static_placeholder 'Header Content' %}
 {% if request.toolbar and request.toolbar.edit_mode_active %}
 {% addtoblock "js" %}
 <script> 
-//Move static_placeholder "Navbar Content" as first-child in structure ui
+//Move static_placeholder "Header Content" as first-child in structure ui
 //Todo : make this as templatetag  
 function static_placeholder_menu_gofirstchild(){
-if ($(".cms-structure-content").is(':empty') || $(".cms-dragbar-title[title='Navbar Content']") && !$(".cms-dragbar-title[title='Navbar Content']").parent().parent().is(':first-child') ) {
-$(".cms-dragbar-title[title='Navbar Content']").parent().parent().prependTo(".cms-structure-content");}
+if ($(".cms-structure-content").is(':empty') || $(".cms-dragbar-title[title='Header Content']") && !$(".cms-dragbar-title[title='Header Content']").parent().parent().is(':first-child') ) {
+$(".cms-dragbar-title[title='Header Content']").parent().parent().prependTo(".cms-structure-content");}
 }
 
 $(document).ready(function(){
@@ -27,7 +28,7 @@ observer.observe($('.cms-structure-content')[0], { childList: true});
 
 {% if cms_version >= "3.5.0" and request.toolbar %}
 	<style>
-	body { padding-top:46px; }
+	//body { padding-top:46px; }
 	.fixed-top {  top: 46px !important;}
 	</style>
 {% endif %}

@@ -1,0 +1,14 @@
+{% load l10n thumbnail %}
+{% localize off %}{% spaceless %}
+{{ instance.image  }} ddd {{ instance.image  }}  frr{{ instance.html_tag_attributes }}
+{% with css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+{% if instance.image %} <img {% else %} <div><svg viewBox="0 0 {{ instance.glossary.image.width }} {{instance.glossary.image.height }}" style="background-color: {{ instance.glossary.ramdom_svg_color }};"{% endif %} {{ instance.html_tag_attributes }}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}
+	{% if sizes %}sizes="{{ sizes|join:', ' }}"{% endif %}
+	srcset="{% for key, srcset in srcsets.items %}
+		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=instance.image.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
+	{% endfor %}"
+	{% thumbnail instance.image src.size crop=src.crop upscale=src.upscale subject_location=instance.image.subject_location as thumb %}
+	src="{{ thumb.url }}"{% if not sizes %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %} />{% if not instance.image %}</div>{% endif %}
+	{% endwith %}
+{% endspaceless %}{% endlocalize %}
+

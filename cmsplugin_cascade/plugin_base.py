@@ -43,6 +43,7 @@ def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
         app_label = 'cmsplugin_cascade'
 
     name = str(name + 'Model')
+    print(name)
     try:
         Model = apps.get_registered_model(Meta.app_label, name)
     except LookupError:
@@ -67,7 +68,7 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
             cls.ring_plugin_bases.setdefault(ring_plugin, [])
             cls.ring_plugin_bases[ring_plugin].extend(ring_plugin_bases)
             cls.ring_plugin_bases[ring_plugin] = remove_duplicates(cls.ring_plugin_bases[ring_plugin])
-
+        print(cls, name, bases, attrs)
         new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
 

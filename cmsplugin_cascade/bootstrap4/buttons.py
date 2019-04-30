@@ -69,7 +69,7 @@ class ButtonSizeWidget(widgets.RadioSelect):
 
 class BootstrapButtonMixin(IconPluginMixin):
     require_parent = True
-    parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin',)
+    parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin', 'NavbarNavItemsPlugin')
     render_template = 'cascade/bootstrap4/button.html'
     allow_children = False
     default_css_class = 'btn'
@@ -198,6 +198,8 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = cls.super(BootstrapButtonPlugin, cls).get_css_classes(obj)
+        if obj.parent.plugin_type == 'NavbarNavItemsPlugin':
+            css_classes.insert(0,'nav-link')
         if obj.glossary.get('stretched_link'):
             css_classes.append('stretched_link')
         return css_classes

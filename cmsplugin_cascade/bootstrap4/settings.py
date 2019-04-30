@@ -12,7 +12,7 @@ assert DJANGO_VERSION >= (1, 11), "djangocms-cascade with Bootstrap-4 requires a
 
 
 CASCADE_PLUGINS = ['accordion', 'buttons', 'card', 'carousel', 'container', 'embeds', 'image', 'jumbotron',
-                   'picture', 'tabs']
+                   'picture', 'tabs', 'navbar']
 if 'cms_bootstrap' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS.append('secondary_menu')
 
@@ -56,12 +56,22 @@ def set_defaults(config):
         BootstrapUtilities.margins,
     ))
 
+    config['plugins_with_extra_mixins'].setdefault('NavbarNavListPlugin', BootstrapUtilities(
+        BootstrapUtilities.flex_directions, BootstrapUtilities.margins, BootstrapUtilities.display_propertys
+    ))
+
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
         inline_styles={
             'extra_fields:Paddings': ['margin-top', 'margin-bottom', 'padding-top', 'padding-bottom'],
             'extra_units:Paddings': 'px,rem'
         }
     ))
+
+  #  config['plugins_with_extra_render_templates'].setdefault('NavbarPlugin', (
+  #        ('cascade/bootstrap4/navbar.html', "Custom menu-custom2"),
+  #        ('cascade/bootstrap4/menu_main.html', "Custom menu-custommenu_main.html"),
+  #        ))
+
 
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', [
         ('cascade/bootstrap4/secmenu-list-group.html', _("List Group")),
