@@ -254,12 +254,6 @@ class NavbarBrandImagePluginForm(ImageFormMixin, ModelForm):
 
 
 class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
- #   BootstrapImagePlugin.__module__
-    print('okok')
-    print(BootstrapImagePlugin.sharable_fields)
-    print(dir(BootstrapImagePlugin))
-    print(BootstrapImagePlugin)
-#    fields = ('glossary', 'image_file',)
     name = _("Nav brand Image")
     model_mixins = (ImagePropertyMixin, )
     form = NavbarBrandImagePluginForm
@@ -272,9 +266,6 @@ class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
     render_template = 'cascade/bootstrap4/navbar_brand_image.html'
 
     def get_form(self, request, obj=None, **kwargs):
-        print('self.get_parent_instance(request, obj)' )
-        print(self.get_parent_instance(request, obj) )
-
         if self.get_parent_instance(request, obj) is None:
             print(self.container_glossary_fields)
             # we only ask for breakpoints, if the jumbotron is the root of the placeholder
