@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import re
 try:
     from html.parser import HTMLParser  # py3
 except ImportError:
@@ -10,7 +9,6 @@ except ImportError:
 from django.forms import widgets, ModelChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
 
 from cms.plugin_pool import plugin_pool
@@ -18,42 +16,20 @@ from filer.models.imagemodels import Image
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
-
-from cmsplugin_cascade.forms import ManageChildrenFormMixin
-#from cmsplugin_cascade.mixins import ImagePropertyMixin , WithInlineElementsMixin
-from cmsplugin_cascade.mixins import WithInlineElementsMixin
-from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 
 from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
-#from cmsplugin_bs4forcascade.bootstrap4.image import ImageForm, ImageAnnotationMixin,ImageFormMixin
+
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImagePropertyMixin, ImageFormMixin
-from cmsplugin_cascade.bootstrap4.picture import BootstrapPicturePlugin
-
-from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
-from django.template.loader import get_template
-
-from cmsplugin_cascade.widgets import CascadingSizeWidget
-
-from django.forms import widgets, ModelChoiceField
- 
-from cmsplugin_cascade.widgets import  ColorPickerWidget 
-from cmsplugin_cascade.bootstrap4.container import ContainerBreakpointsWidget,ContainerGridMixin, get_widget_choices,  ColumnGridMixin
+from cmsplugin_cascade.bootstrap4.picture import BootstrapPicturePlugin, get_picture_elements
 
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from cmsplugin_cascade.bootstrap4.image import BootstrapImagePlugin
-
-from .picture import BootstrapPicturePlugin, get_picture_elements
-from .plugin_base import BootstrapPluginBase
-from .grid import Breakpoint
 from . import grid
 
 import logging
 logger = logging.getLogger('cascade')
 
- 
 
 class NavbarPluginForm(ImageFormMixin, ModelForm):
     """
@@ -63,9 +39,8 @@ class NavbarPluginForm(ImageFormMixin, ModelForm):
 
     def clean_glossary(self):
         glossary = super(NavbarPluginForm, self).clean_glossary()
-        #if glossary['background_size'] == 'width/height' and not glossary['background_width_height']['width']:
-        #    raise ValidationError(_("You must at least set a background width."))
         return glossary
+
 
 class NavbarGridMixin(object):
 
@@ -80,8 +55,6 @@ class NavbarGridMixin(object):
         else:
             bounds = dict((bp, grid.default_bounds[bp]) for bp in breakpoints)
         return grid.Bootstrap4Container(bounds=bounds)
-
-
 
 
 class NavbarPlugin(BootstrapPluginBase):
@@ -185,22 +158,22 @@ class NavbarPlugin(BootstrapPluginBase):
         form = super(NavbarPlugin, self).get_form(request, obj, **kwargs)
         return form
 
-        
+
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(NavbarPlugin, cls).get_identifier(obj)
         glossary = obj.get_complete_glossary()
         css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
-        identifier, css_classes_without_default )
+        identifier, css_classes_without_default)
 
 plugin_pool.register_plugin(NavbarPlugin)
-  
+
 
 class  NavbarLinksItemsPlugin(BootstrapPluginBase):
     name = _("Nav Links Items")
     chojust=[ "inherit", "justify-content-start","justify-content-end", "justify-content-center", "justify-content-between", "justify-content-around" ] 
-    chomrml=[ "inherit", "mr-auto", "ml-auto" ] 
+    chomrml=[ "inherit", "mr-auto", "ml-auto" ]
     choflex=[ "flex-row", "flex-wrap"]
     default_css_class = ''
     parent_classes = ['NavbarPlugin'] 
@@ -230,6 +203,7 @@ class  NavbarLinksItemsPlugin(BootstrapPluginBase):
 
 
 plugin_pool.register_plugin(NavbarLinksItemsPlugin)
+
 
 class  NavbarBrandPlugin(BootstrapPluginBase, LinkPluginBase,):
     name = _("Nav brand")
@@ -330,7 +304,6 @@ class  NavbarNavListPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(NavbarNavListPlugin)
 
 
-
 class  NavbarNavItemsMainMemuPlugin(BootstrapPluginBase):
 #    fields = ('glossary', 'image_file',)
     name = _("Nav items main menu")
@@ -340,6 +313,7 @@ class  NavbarNavItemsMainMemuPlugin(BootstrapPluginBase):
     render_template = 'cascade/bootstrap4/navbar_nav_items_links.html'
     
 plugin_pool.register_plugin(NavbarNavItemsMainMemuPlugin)
+
 
 class  NavbarNavItemsPlugin(BootstrapPluginBase):
 
@@ -351,7 +325,6 @@ class  NavbarNavItemsPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(NavbarNavItemsPlugin)
 
 
-
 class  NavbarNavLinkPlugin(BootstrapPluginBase):
 
     name = _("Nav Link")
@@ -360,8 +333,6 @@ class  NavbarNavLinkPlugin(BootstrapPluginBase):
     render_template = 'cascade/bootstrap4/navbar_nav_link.html'
 
 plugin_pool.register_plugin(NavbarNavLinkPlugin)
-
-
 
 
 class  MenubrandPlugin(BootstrapPluginBase, ImageAnnotationMixin, LinkPluginBase):
@@ -444,9 +415,6 @@ plugin_pool.register_plugin(MenubrandPlugin)
 
 class  NavbarToogler(BootstrapPluginBase):
     name = _("Nav toogler")
-#    model_mixins = (ImagePropertyMixin,)
-#    model_mixins = (CssBackgroundMixin,)
-#    form = ImageForm  
     default_css_class = ''
     parent_classes = ['NavbarPlugin'] 
     render_template = 'cascade/bootstrap4/navbar_toogler.html'

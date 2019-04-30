@@ -67,6 +67,7 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
             cls.ring_plugin_bases.setdefault(ring_plugin, [])
             cls.ring_plugin_bases[ring_plugin].extend(ring_plugin_bases)
             cls.ring_plugin_bases[ring_plugin] = remove_duplicates(cls.ring_plugin_bases[ring_plugin])
+
         new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
 

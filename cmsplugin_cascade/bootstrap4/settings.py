@@ -67,12 +67,6 @@ def set_defaults(config):
         }
     ))
 
-  #  config['plugins_with_extra_render_templates'].setdefault('NavbarPlugin', (
-  #        ('cascade/bootstrap4/navbar.html', "Custom menu-custom2"),
-  #        ('cascade/bootstrap4/menu_main.html', "Custom menu-custommenu_main.html"),
-  #        ))
-
-
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', [
         ('cascade/bootstrap4/secmenu-list-group.html', _("List Group")),
         ('cascade/bootstrap4/secmenu-unstyled-list.html', _("Unstyled List"))
