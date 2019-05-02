@@ -2,6 +2,12 @@
 Release History
 ===============
 
+0.18.2
+======
+* Fixed: CSS files, such as those extracted from an icon-font, served from the ``/media`` folder
+  can not be compressed by django-compressor. To prevent this, an alternative compressor for
+  Sekizai's templatetag ``{% render_block "css/js" ... %}`` has been added. Adopt your templates!
+
 0.18.1
 ======
 * Fix problem with PicturePlugin: subject_location not honored.
