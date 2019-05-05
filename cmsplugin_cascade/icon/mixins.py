@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf.urls import url
-from django.http.response import JsonResponse, HttpResponseNotFound
 from django.utils.html import format_html
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
 
 class IconPluginMixin(CascadePluginMixinBase):
-    change_form_template = 'cascade/admin/fonticon_plugin_change_form.html'
+    change_form_template = 'cascade/admin/fonticon_change_form.html'
     ring_plugin = 'IconPluginMixin'
     require_icon_font = True  # if False, the icon_font is optional
 
@@ -37,25 +35,6 @@ class IconPluginMixin(CascadePluginMixinBase):
         icon_font_field.widget.choices = IconFont.objects.values_list('id', 'identifier')
         form = super(IconPluginMixin, self).get_form(request, obj=obj, **kwargs)
         return form
-
-    def get_plugin_urls(self):
-        urlpatterns = [
-            url(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
-            url(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
-        ]
-        urlpatterns.extend(super(IconPluginMixin, self).get_plugin_urls())
-        return urlpatterns
-
-    def fetch_fonticons(self, request, iconfont_id=None):
-        try:
-            icon_font = IconFont.objects.get(id=iconfont_id)
-        except IconFont.DoesNotExist:
-            return HttpResponseNotFound("IconFont with id={} does not exist".format(iconfont_id))
-        else:
-            data = dict(icon_font.config_data)
-            data.pop('glyphs', None)
-            data['families'] = icon_font.get_icon_families()
-            return JsonResponse(data)
 
     @classmethod
     def get_icon_font(self, instance):
