@@ -350,14 +350,20 @@ class CascadePage(PageExtension):
         help_text=_("Store for arbitrary page data."),
     )
 
-    # deprecated field, will be removed in 0.19
     icon_font = models.ForeignKey(
         IconFont,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         verbose_name=_("Icon Font"),
-        help_text=_("Deprecated"),
+    )
+
+    menu_symbol = models.CharField(
+        _("Menu Symbol"),
+        blank=True,
+        null=True,
+        max_length=32,
+        help_text=_("Symbol to be used with the menu title for this page."),
     )
 
     class Meta:
