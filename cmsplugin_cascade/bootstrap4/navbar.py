@@ -21,7 +21,8 @@ from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
 
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImagePropertyMixin, ImageFormMixin
 from cmsplugin_cascade.bootstrap4.picture import BootstrapPicturePlugin, get_picture_elements
-
+from cmsplugin_cascade.bootstrap4.container import ContainerBreakpointsWidget, ContainerGridMixin, get_widget_choices
+from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
@@ -142,13 +143,6 @@ class NavbarPlugin(BootstrapPluginBase):
         if navbar_placement  != 'inherit':
             css_classes.append(navbar_placement )
         return css_classes
-
-    def save_model(self, request, obj, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
-
-        super(NavbarPlugin, self).save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, NavbarLinksItemsPlugin)
-        obj.sanitize_children()
 
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request, obj) is None:
