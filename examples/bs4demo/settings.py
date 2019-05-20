@@ -263,7 +263,7 @@ CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono-lisa',
     'toolbar': 'CMS',
-    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
+    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
 }
 
 SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'

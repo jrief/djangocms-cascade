@@ -189,7 +189,9 @@ class BootstrapUtilities(type):
                 widgets.Select(choices=choices),
                 label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
                 name='Flex_{}'.format(bp.name),
-              
+            ))
+        return glossary_fields
+
     def floats(cls):
         glossary_fields = []
         choices_format = [
