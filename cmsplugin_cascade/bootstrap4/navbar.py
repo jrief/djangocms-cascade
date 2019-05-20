@@ -20,9 +20,10 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
 
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImagePropertyMixin, ImageFormMixin
+from cmsplugin_cascade.bootstrap4.image import get_image_tags
 from cmsplugin_cascade.bootstrap4.picture import BootstrapPicturePlugin, get_picture_elements
 from cmsplugin_cascade.bootstrap4.container import ContainerBreakpointsWidget, ContainerGridMixin, get_widget_choices
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
+from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, CascadingSizeWidget
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
@@ -223,7 +224,7 @@ class NavbarBrandImagePluginForm(ImageFormMixin, ModelForm):
 
 class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
     name = _("Nav brand Image")
-    model_mixins = (ImagePropertyMixin, )
+    model_mixins = (ImagePropertyMixin,)
     form = NavbarBrandImagePluginForm
     parent_classes = ['NavbarBrandPlugin'] 
     allow_children = True
@@ -231,7 +232,34 @@ class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     raw_id_fields = ['image_file']
     fields = [  'glossary','image_file', ]
+    SIZE_CHOICES = ('auto', 'width/height', 'cover', 'contain')
+    
+    RESIZE_OPTIONS = [
+        ('upscale', _("Upscale image")),
+        ('crop', _("Crop image")),
+        ('subject_location', _("With subject location")),
+        ('high_resolution', _("Optimized for Retina")),
+]
     render_template = 'cascade/bootstrap4/navbar_brand_image.html'
+
+    image_width_fixed = GlossaryField(
+        CascadingSizeWidget(allowed_units=['px'], required=False),
+        label=_("Fixed Image Width"),
+        help_text=_("Set a fixed image width in pixels."),
+    )
+
+    image_height = GlossaryField(
+        CascadingSizeWidget(allowed_units=['px', '%'], required=False),
+        label=_("Adapt Image Height"),
+        help_text=_("Set a fixed height in pixels, or percent relative to the image width."),
+    )
+
+    resize_options = GlossaryField(
+        widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
+        label=_("Resize Options"),
+        help_text=_("Options to use when resizing the image."),
+        initial=['subject_location', 'high_resolution'],
+    )
 
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request, obj) is None:
@@ -243,23 +271,18 @@ class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
         return form
     
     def render(self, context, instance, placeholder):
-        # slide image shall be rendered in a responsive context using the ``<picture>`` element
+        tags = get_image_tags(instance)
         try:
-            elements = get_picture_elements(instance)
+            tags = get_image_tags(instance)
         except Exception as exc:
-
-            logger.warning("Unable generate picture elements. Reason: {}".format(exc))
-        else:
-            context.update({
-                'instance': instance,
-                'is_fluid': False,
-                'placeholder': placeholder,
-                'elements': elements,
-            })
-        return self.super(NavbarBrandImagePlugin, self).render(context, instance, placeholder)
- 
-        def render(self, context, instance, placeholder):
-            context = super(NavbarBrandImagePlugin, self).render(context, instance, placeholder)
+            logger.warning("Unable generate image tags. Reason: {}".format(exc))
+        tags = tags if tags else {}
+        if 'extra_styles' in tags:
+            extra_styles = tags.pop('extra_styles')
+            inline_styles = instance.glossary.get('inline_styles', {})
+            inline_styles.update(extra_styles)
+            instance.glossary['inline_styles'] = inline_styles
+        context.update(dict(instance=instance, placeholder=placeholder, **tags))
         return context
 
 plugin_pool.register_plugin(NavbarBrandImagePlugin)
