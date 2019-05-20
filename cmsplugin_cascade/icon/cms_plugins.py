@@ -11,7 +11,7 @@ from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
-from .mixins import IconPluginMixin
+from cmsplugin_cascade.icon.mixins import IconPluginMixin
 
 
 def get_default_icon_font():
