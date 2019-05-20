@@ -81,7 +81,8 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     fluid = GlossaryField(
         widgets.CheckboxInput(),
-        label=_('Fluid Container'), initial=False,
+        label=_('Fluid Container'),
+        initial=False,
         help_text=_("Changing your outermost '.container' to '.container-fluid'.")
     )
 

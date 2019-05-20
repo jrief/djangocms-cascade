@@ -34,23 +34,24 @@ class UploadIconsForms(ModelForm):
                 zip_ref = zipfile.ZipFile(cleaned_data['zip_file'].file.file, 'r')
                 cleaned_data.update(zip(['font_folder', 'config_data'], unzip_archive(label, zip_ref)))
             except Exception as exc:
-                raise ValidationError(_("Can not unzip uploaded archive {}: {}").format(label, exc))
+                raise ValidationError(format_lazy(_("Can not unzip uploaded archive {}: {}"), label, exc))
             finally:
                 zip_ref.close()
-        try:
-            css_prefix_text = cleaned_data['config_data']['css_prefix_text']
-        except KeyError:
-            msg = format_lazy(_(
-                "File does not seem to originate from <a href=\"{url}\" target=\"_blank\">{url}</a>", url=fontello_url))
-            raise ValidationError(msg)
-        for icon_font in IconFont.objects.all():
-            if icon_font.config_data['css_prefix_text'] == css_prefix_text:
-                msg = format_lazy(_(
-                    "Icon Font '{icon_font}' already uses CSS prefix '{css_prefix}'.<br/>" \
-                    "Please reload the font from <a href=\"{url}\" target=\"_blank\">{url}</a> " \
-                    "using another CSS prefix."),
-                    icon_font=icon_font.identifier, css_prefix=css_prefix_text, url=fontello_url)
-                raise ValidationError(mark_safe(msg))
+            try:
+                css_prefix_text = cleaned_data['config_data']['css_prefix_text']
+            except KeyError:
+                raise ValidationError(format_lazy(
+                    _("File does not seem to originate from <a href=\"{url}\" target=\"_blank\">{url}</a>"),
+                    url=fontello_url,
+                ))
+            for icon_font in IconFont.objects.all():
+                if icon_font.config_data['css_prefix_text'] == css_prefix_text:
+                    msg = format_lazy(_(
+                        "Icon Font '{icon_font}' already uses CSS prefix '{css_prefix}'.<br/>" \
+                        "Please reload the font from <a href=\"{url}\" target=\"_blank\">{url}</a> " \
+                        "using another CSS prefix."),
+                        icon_font=icon_font.identifier, css_prefix=css_prefix_text, url=fontello_url)
+                    raise ValidationError(mark_safe(msg))
         return cleaned_data
 
 

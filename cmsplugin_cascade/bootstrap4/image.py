@@ -139,7 +139,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     def sanitize_model(cls, obj):
         sanitized = False
         parent = obj.parent
-        if parent:
+        try:
             while parent.plugin_type != 'BootstrapColumnPlugin':
                 parent = parent.parent
             grid_column = parent.get_bound_plugin().get_grid_instance()
@@ -153,7 +153,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
                 if obj.glossary['media_queries'].get(bp.name) != media_query:
                     obj.glossary['media_queries'][bp.name] = media_query
                     sanitized = True
-        else:
+        except AttributeError:
             logger.warning("ImagePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
             return
         return sanitized
@@ -180,8 +180,8 @@ def get_image_tags(instance):
     resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
-    if hasattr(instance.image, 'subject_location'):
-        subject_location = instance.image.subject_location and 'subject_location' in resize_options
+    if 'subject_location' in resize_options and hasattr(instance.image, 'subject_location'):
+        subject_location = instance.image.subject_location
     else:
         subject_location = None
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}

@@ -239,14 +239,17 @@ Since it is possible to add plugins from the Cascade ecosystem as children to th
 .. code-block:: python
 
 	from django.core.urlresolvers import reverse_lazy
-	from cmsplugin_cascade.utils import format_lazy
+	from django.utils.text import format_lazy
 
 	CKEDITOR_SETTINGS = {
 	    'language': '{{ language }}',
 	    'skin': 'moono-lisa',
 	    'toolbar': 'CMS',
-	    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
+	    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
 	}
+
+The last line in this configuration invokes a special function, which adds special configuration settings to the
+CKTextEditor plugin.
 
 .. note:: The skin ``moono-lisa`` has been introduced in Django CKEditor version 3.5, so if you upgrade from an earlier
 	version, please adopt this in your settings.
@@ -339,7 +342,7 @@ Template Customization
 ======================
 
 Make sure that the style sheets are referenced correctly by the used templates. **Django-CMS**
-requires Django-Sekizai_ to organize these includes, so a strong recommendation is to use that
+requires django-sekizai_ to organize these includes, so a strong recommendation is to use that
 Django app.
 
 The templates used for a **django-CMS** project shall include a header, footer, the menu bar and
@@ -351,20 +354,36 @@ similar:
 
 .. code-block:: html
 
-	{% load cms_tags %}
+	{% load cms_tags sekizai_tags %}
+	<head>
+	    ...
+	    {% render_block "css" postprocessor "cmsplugin_cascade.sekizai_processors.compress" %}
+	</head>
 
-	<!-- wrapping element (optional) -->
-	    {% placeholder "Main Content" %}
-	<!-- /wrapping element -->
+	<body>
+	    ...
+	    <!-- wrapping element (optional) -->
+	        {% placeholder "Main Content" %}
+	    <!-- /wrapping element -->
+	    {% render_block "js" postprocessor "cmsplugin_cascade.sekizai_processors.compress" %}
+	</body>
 
 From now on, the page layout can be adopted inside this placeholder, without having to fiddle with
 template coding anymore.
+
+Note the two templatetags ``render_block``. The upper one collects all the CSS files referenced by
+``{% addtoblock "css" ... %}``. The lower one collects all the JS files referenced by
+``{% addtoblock "js" ... %}``. They then are rendered alltogether instead of beeing distributed all
+across the page. If django-compressor_ is installed and enabled, then add the special compressor
+``"cmsplugin_cascade.sekizai_processors.compress"`` to the templatetag. It can handle files outside
+the ``STATIC_ROOT``directory.
 
 .. _Django: http://djangoproject.com/
 .. _Django-CMS: https://www.django-cms.org/
 .. _Angular UI Bootstrap: http://angular-ui.github.io/bootstrap/
 .. _pip: http://pypi.python.org/pypi/pip
-.. _Django-Sekizai: http://django-sekizai.readthedocs.org/en/latest/
+.. _django-sekizai: http://django-sekizai.readthedocs.org/en/latest/
+.. _django-compressor: http://django-compressor.readthedocs.org/en/latest/
 .. _djangocms-link: https://github.com/divio/djangocms-link
 .. _djangocms-text-ckeditor: https://github.com/divio/djangocms-text-ckeditor
 .. _django-filer: https://github.com/divio/django-filer

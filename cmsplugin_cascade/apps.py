@@ -17,11 +17,10 @@ class CascadeConfig(AppConfig):
     default_permissions = ('add', 'change', 'delete')
 
     def ready(self):
-        if 'cmsplugin_cascade.icon' in settings.INSTALLED_APPS:
-            stylesSet = force_text(settings.CKEDITOR_SETTINGS.get('stylesSet'))
-            if stylesSet != 'default:{}'.format(reverse('admin:cascade_texticon_wysiwig_config')):
-                msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config'))`"
-                raise ImproperlyConfigured(msg)
+        stylesSet = force_text(settings.CKEDITOR_SETTINGS.get('stylesSet'))
+        if stylesSet != 'default:{}'.format(reverse('admin:cascade_texteditor_config')):
+            msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))`"
+            raise ImproperlyConfigured(msg)
 
         pre_migrate.connect(self.__class__.pre_migrate, sender=self)
         post_migrate.connect(self.__class__.post_migrate, sender=self)

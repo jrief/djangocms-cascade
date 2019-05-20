@@ -39,10 +39,11 @@ class JSONMultiWidget(widgets.MultiWidget):
         if not isinstance(values, dict):
             values = json.loads(values or '{}')
         for field in self.normalized_fields:
+            initial_value = field.initial() if callable(field.initial) else field.initial
             if isinstance(field.widget, widgets.MultiWidget):
-                values[field.name] = field.widget.decompress(values.get(field.name, field.initial))
+                values[field.name] = field.widget.decompress(values.get(field.name, initial_value))
             else:
-                values.setdefault(field.name, field.initial)
+                values.setdefault(field.name, initial_value)
         return values
 
     def value_from_datadict(self, data, files, name):

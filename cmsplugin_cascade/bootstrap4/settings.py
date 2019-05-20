@@ -55,6 +55,9 @@ def set_defaults(config):
     config['plugins_with_extra_mixins'].setdefault('HeadingPlugin', BootstrapUtilities(
         BootstrapUtilities.margins,
     ))
+    config['plugins_with_extra_mixins'].setdefault('HorizontalRulePlugin', BootstrapUtilities(
+        BootstrapUtilities.margins,
+    ))
 
     config['plugins_with_extra_mixins'].setdefault('NavbarNavListPlugin', BootstrapUtilities(
         BootstrapUtilities.flex_directions, BootstrapUtilities.margins, BootstrapUtilities.display_propertys

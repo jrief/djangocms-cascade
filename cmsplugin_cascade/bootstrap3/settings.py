@@ -46,6 +46,13 @@ def set_defaults(config):
         },
         allow_override=False
     ))
+    config['plugins_with_extra_fields'].setdefault('HorizontalRulePlugin', PluginExtraFieldsConfig(
+        inline_styles={
+            'extra_fields:Paddings': ['margin-top', 'margin-bottom'],
+            'extra_units:Paddings': 'px,em'
+        },
+        allow_override=False
+    ))
 
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', (
         ('cascade/bootstrap3/secmenu-list-group.html', _("List Group")),

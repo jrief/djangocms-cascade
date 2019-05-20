@@ -2,10 +2,45 @@
 Release History
 ===============
 
+0.18.2
+======
+* Fixed: CSS files, such as those extracted from an icon-font, served from the ``/media`` folder
+  can not be compressed by django-compressor. To prevent this, an alternative compressor for
+  Sekizai's templatetag ``{% render_block "css/js" ... %}`` has been added. Adopt your templates!
+
+0.18.1
+======
+* Fix problem with PicturePlugin: subject_location not honored.
+* Use predefined margins for **HorizontalRulePlugin** in Bootstrap-4.
+* In Django admin: ``jquery.init.js`` must be the first dependency in admin media.
+
+0.18
+====
+* In Plugins using Icons, such as **TextIconPlugin**, **BootstrapButtonPlugin** and
+  **FramedIconPlugin**, it now is possible to select the Icon Font. This was the behaviour <0.17 and
+  has been dropped, because back then, icons using two or more different fonts on he same page, lead
+  to confusion. By enforcing a specific CSS icon prefix, it now is possible to use as many different
+  icon fonts, as you want, on the same page.
+* In your ``settings.py`` replace ``CKEDITOR_SETTINGS['stylesSet']`` by
+  ``format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))``.
+* Add **SimpleIconPlugin**, which renders an icon without any frame.
+* Add a special link type to download arbitrary files. All plugins which can link, can now set a
+  link onto a downloadable file, managed by ``django.Filer``.
+* Add **BootstrapYoutubePlugin** which can be used to embed video available on YouTube.
+* When managing Icon Fonts, one entry can be set as the default font.
+* Fix: Hide link title, when no linking is desired.
+* In plugins with links, refactor the usage of ``get_form`` by using a new ``VoluntaryLinkForm``.
+* Plugin **BootstrapSecondaryMenuPlugin** can be used outside of columns.
+* Add property ``floats`` to mixin ``BootstrapUtilities`` in order to handle Bootstrap's float
+  utilities.
+  Replace field ``quick_float`` in **BootstrapButton** against this mixin property.
+* Card plugin offers three distinct children for Header, Body and Footer. Themselves, they can be
+  extended individually.
+
 0.17.10
 =======
-* Fix problem of missing referer, required to determine the current page when accessing an **IconFontPlugin**
-  from inside the CKEditor.
+* Fix problem of missing referer, required to determine the current page when accessing an
+  **IconFontPlugin** from inside the CKEditor.
 
 0.17.9
 ======

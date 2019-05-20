@@ -73,7 +73,7 @@ class BootstrapButtonMixin(IconPluginMixin):
     render_template = 'cascade/bootstrap4/button.html'
     allow_children = False
     default_css_class = 'btn'
-    default_css_attributes = ['button_type', 'button_size', 'button_options', 'quick_float', 'stretched_link']
+    default_css_attributes = ['button_type', 'button_size', 'button_options', 'stretched_link']
     ring_plugin = 'ButtonMixin'
     require_icon_font = False
 
@@ -97,17 +97,6 @@ class BootstrapButtonMixin(IconPluginMixin):
             ('disabled', _('Disabled')),
         ]),
         label=_("Button Options"),
-    )
-
-    quick_float = GlossaryField(
-        widgets.RadioSelect(choices=[
-            ('', _("Do not float")),
-            ('pull-left', _("Pull left")),
-            ('pull-right', _("Pull right")),
-        ]),
-        label=_("Quick Float"),
-        initial='',
-        help_text=_("Float the button to the left or right.")
     )
 
     icon_align = GlossaryField(
@@ -150,12 +139,13 @@ class BootstrapButtonMixin(IconPluginMixin):
             icon_font, symbol = None, None
         if icon_font and symbol:
             context['stylesheet_url'] = icon_font.get_stylesheet_url()
-            mini_template = '{0}<i class="icon-{1} {2}" aria-hidden="true"></i>{3}'
+            prefix = icon_font.config_data['css_prefix_text']
+            mini_template = '{0}<i class="{1}{2} {3}" aria-hidden="true"></i>{4}'
             icon_align = instance.glossary.get('icon_align')
             if icon_align == 'icon-left':
-                context['icon_left'] = format_html(mini_template, '', symbol, 'cascade-icon-left', ' ')
+                context['icon_left'] = format_html(mini_template, '', prefix, symbol, 'cascade-icon-left', ' ')
             elif icon_align == 'icon-right':
-                context['icon_right'] = format_html(mini_template, ' ', symbol, 'cascade-icon-right', '')
+                context['icon_right'] = format_html(mini_template, ' ', prefix, symbol, 'cascade-icon-right', '')
         return context
 
 
@@ -164,7 +154,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     name = _("Button")
     model_mixins = (LinkElementMixin,)
     fields = ['link_content'] + list(LinkPluginBase.fields)
-    glossary_field_order = ['button_type', 'button_size', 'button_options', 'quick_float',
+    glossary_field_order = ['button_type', 'button_size', 'button_options', 'floats',
                             'target', 'title', 'stretched_link', 'icon_align', 'icon_font', 'symbol']
     ring_plugin = 'ButtonPlugin'
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}

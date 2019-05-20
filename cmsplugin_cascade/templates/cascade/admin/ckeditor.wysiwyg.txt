@@ -1,6 +1,9 @@
 (function() {
 	CKEDITOR.dtd.$removeEmpty.i = 0;
-{% for icon_font in icon_fonts %}
-	CMS.CKEditor.editor.addContentsCss('{{ icon_font.get_stylesheet_url }}');
-{% endfor %}
+	CKEDITOR.stylesSet.add('default', [{% for text_editor_config in text_editor_configs %}
+		{{ text_editor_config.get_config|safe }}{% if not forloop.last %},{% endif %}{% spaceless %}
+{% endspaceless %}{% endfor %}
+	]);{% for icon_font in icon_fonts %}
+	CMS.CKEditor.editor.addContentsCss('{{ icon_font.get_stylesheet_url }}');{% spaceless %}
+{% endspaceless %}{% endfor %}
 })();
