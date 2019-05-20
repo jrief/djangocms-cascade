@@ -2,6 +2,16 @@
 Release History
 ===============
 
+0.19
+====
+* For each **django-CMS** page, **djangocms-cascade** optionally adds a one-to-one relation onto
+  a page extension named ``CascadePage``. This model has been extended to optionally point onto an
+  icon font and a font symbol. In **djangocms-bootstrap** version 1.1 this symbol now can be
+  rendered in front of the page title.
+
+  Remember to invoke ``./manage.py migrate cmsplugin_cascade``.
+
+
 0.18.2
 ======
 * Fixed: CSS files, such as those extracted from an icon-font, served from the ``/media`` folder
