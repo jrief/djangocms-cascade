@@ -26,6 +26,13 @@ class TextLinkPlugin(LinkPluginBase):
     def get_identifier(cls, obj):
         return mark_safe(obj.glossary.get('link_content', ''))
 
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(TextLinkPlugin, cls).get_css_classes(obj)
+        if obj.parent.plugin_type == 'TextPlugin' and obj.parent.parent.plugin_type == 'NavbarNavItemsPlugin' :
+            css_classes.insert(0,'nav-link navbar-text')
+        return css_classes
+
     def get_form(self, request, obj=None, **kwargs):
         link_content = CharField(required=True, label=_("Link Content"),
             # replace auto-generated id so that CKEditor automatically transfers the text into this input field

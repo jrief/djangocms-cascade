@@ -28,8 +28,10 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     allow_children = False
     render_template = 'cascade/plugins/simpleicon.html'
     model_mixins = (LinkElementMixin,)
-    fields = list(LinkPluginBase.fields)
+
     ring_plugin = 'IconPlugin'
+    raw_id_fields = LinkPluginBase.raw_id_fields 
+    fields = list(LinkPluginBase.fields)
 
     icon_font = GlossaryField(
         widgets.Select(),
@@ -55,16 +57,23 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     def get_css_classes(cls, obj):
         css_classes = cls.super(SimpleIconPlugin, cls).get_css_classes(obj)
         if obj.parent.plugin_type == 'NavbarNavItemsPlugin':
-            css_classes.insert(0,'nav-link')
+            css_classes.insert(0,'nav-link navbar-text')
         return css_classes
 
     def render(self, context, instance, placeholder):
+        print('ddlok')
+        print(instance.glossary)
+
         context = super(SimpleIconPlugin, self).render(context, instance, placeholder)
         icon_font = self.get_icon_font(instance)
         symbol = instance.glossary.get('symbol')
         if icon_font and symbol:
             font_attr = 'class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol)
             context['icon_font_attrs'] = mark_safe(font_attr)
+        link_attributes = LinkPluginBase.get_html_tag_attributes(instance)
+        link_html_tag_attributes = format_html_join(' ', '{0}="{1}"',
+            [(attr, val) for attr, val in link_attributes.items() if val])
+        context['link_html_tag_attributes'] = link_html_tag_attributes
         return context
 
 plugin_pool.register_plugin(SimpleIconPlugin)
@@ -186,6 +195,10 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
                                  format_html_join('', '{0}:{1};',
                                                   [(k, v) for k, v in styles.items()])))
         context['icon_font_attrs'] = mark_safe(' '.join(attrs))
+        link_attributes = LinkPluginBase.get_html_tag_attributes(instance)
+        link_html_tag_attributes = format_html_join(' ', '{0}="{1}"',
+            [(attr, val) for attr, val in link_attributes.items() if val])
+        context['link_html_tag_attributes'] = link_html_tag_attributes
         return context
 
 plugin_pool.register_plugin(FramedIconPlugin)

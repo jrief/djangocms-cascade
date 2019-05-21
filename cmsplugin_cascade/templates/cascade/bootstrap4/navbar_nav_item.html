@@ -1,0 +1,17 @@
+{% load static bootstrap_tags cms_tags sekizai_tags sass_tags %}
+{% with css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+{% block navbar-nav-li %}<li {{ instance.html_tag_attributes }}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %} >
+{% for child in instance.child_plugin_instances %}
+{% render_plugin child %}
+{% endfor %}
+</li>
+{% endblock %}
+{% endwith %}
+{% addtoblock "css" %}
+<style rel="stylesheet" type="text/css">
+.nav-item p {
+margin-bottom:0rem !important;
+}
+</style>
+{% endaddtoblock %}
+

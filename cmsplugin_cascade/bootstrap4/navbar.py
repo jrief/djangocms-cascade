@@ -287,6 +287,7 @@ class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
 
 plugin_pool.register_plugin(NavbarBrandImagePlugin)
 
+
 class  NavbarCollapsePlugin(BootstrapPluginBase):
     name = _("Nav Collapse")
     parent_classes = ['NavbarPlugin'] 
@@ -309,15 +310,18 @@ class  NavbarNavListPlugin(BootstrapPluginBase):
         css_classes = super(NavbarNavListPlugin, cls).get_css_classes(obj)
         return css_classes
 
-
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(NavbarNavListPlugin, cls).get_identifier(obj)
         glossary = obj.get_complete_glossary()
-        css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' )
+        if hasattr(cls,'default_css_class'):
+            css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
+            print(obj.css_classes.__dict__)
+        else:
+            css_classes_without_default = obj.css_classes
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
         identifier, css_classes_without_default )
-        
+
 plugin_pool.register_plugin(NavbarNavListPlugin)
 
 
@@ -333,11 +337,12 @@ plugin_pool.register_plugin(NavbarNavItemsMainMemuPlugin)
 
 
 class  NavbarNavItemsPlugin(BootstrapPluginBase):
-
+    default_css_class = 'nav-item'
     name = _("Nav item")
     parent_classes = ['NavbarNavListPlugin'] 
     alien_child_classes = True
-    render_template = 'cascade/bootstrap4/navbar_nav_items.html'
+    render_template = 'cascade/bootstrap4/navbar_nav_item.html'
+
 
 plugin_pool.register_plugin(NavbarNavItemsPlugin)
 
@@ -350,84 +355,6 @@ class  NavbarNavLinkPlugin(BootstrapPluginBase):
     render_template = 'cascade/bootstrap4/navbar_nav_link.html'
 
 plugin_pool.register_plugin(NavbarNavLinkPlugin)
-
-
-class  MenubrandPlugin(BootstrapPluginBase, ImageAnnotationMixin, LinkPluginBase):
-
-    name = _("menu_Contenu_brand")
-    model_mixins = (ImagePropertyMixin,)
-    form = NavbarPluginForm
-    default_css_class = ''
-    fields = ('glossary', 'image_file',)
-    parent_classes = ['NavbarPlugin'] 
-    alien_child_classes = True
-    render_template = 'cascade/bootstrap4/navbar_brand.html'
-
-    def get_form(self, request, obj=None, **kwargs):
-        LINK_TYPE_CHOICES = [('none', _("No Link"))]
-        LINK_TYPE_CHOICES.extend(t for t in getattr(LinkForm, 'LINK_TYPE_CHOICES') if t[0] != 'email')
-        image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-        Form = type(str('ImageForm'), (ImageFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'LINK_TYPE_CHOICES': LINK_TYPE_CHOICES, 'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(MenubrandPlugin, self).get_form(request, obj, **kwargs)
-
-    def render(self, context, instance, placeholder):
-        # image shall be rendered in a responsive context using the ``<picture>`` element
-        elements = get_picture_elements(instance)
-        context.update({
-            'elements': [e for e in elements if 'media' in e] if elements else [],
-            'CSS_PREFIXES': app_settings.CSS_PREFIXES,
-        })
-        return self.super(MenubrandPlugin, self).render(context, instance, placeholder)
-    """
-    @classmethod
-    def sanitize_model(cls, obj):
-        sanitized = super(MenubrandPlugin, cls).sanitize_model(obj)
-        complete_glossary = obj.get_complete_glossary()
-        # fill all invalid heights for this container to a meaningful value
-        max_height = max(obj.glossary['container_max_heights'].values())
-        pattern = re.compile(r'^(\d+)px$')
-        for bp in complete_glossary.get('breakpoints', ()):
-            if not pattern.match(obj.glossary['container_max_heights'].get(bp, '')):
-                obj.glossary['container_max_heights'][bp] = max_height
-
-        return sanitized
-    """
-      
-    @classmethod
-    def get_identifier(cls, obj):
-        identifier = super(MenubrandPlugin, cls).get_identifier(obj)
-        try:
-            content = obj.image.name or obj.image.original_filename
-        except AttributeError:
-            content = _("Without background image")
-        return format_html('{0}{1}', identifier, content)
-
-    @classmethod
-    def sanitize_model(cls, obj):
-        sanitized = super(MenubrandPlugin, cls).sanitize_model(obj)
-        resize_options = obj.get_parent_glossary().get('resize_options', [])
-        if obj.glossary.get('resize_options') != resize_options:
-            obj.glossary.update(resize_options=resize_options)
-            sanitized = True
-        parent = obj.parent
-        while parent.plugin_type != 'BootstrapColumnPlugin':
-            parent = parent.parent
-        grid_column = parent.get_bound_plugin().get_grid_instance()
-        obj.glossary.setdefault('media_queries', {})
-        for bp in Breakpoint:
-            obj.glossary['media_queries'].setdefault(bp.name, {})
-            width = round(grid_column.get_bound(bp).max)
-            if obj.glossary['media_queries'][bp.name].get('width') != width:
-                obj.glossary['media_queries'][bp.name]['width'] = width
-                sanitized = True
-            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
-                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
-                sanitized = True
-        return sanitized
-
-plugin_pool.register_plugin(MenubrandPlugin)
 
 
 class  NavbarToogler(BootstrapPluginBase):
