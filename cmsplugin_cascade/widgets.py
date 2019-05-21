@@ -3,7 +3,6 @@ import json
 from html.parser import HTMLParser
 from django.core.exceptions import ValidationError
 from django.forms import widgets
-from django.utils import six
 from django.utils.safestring import mark_safe
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext

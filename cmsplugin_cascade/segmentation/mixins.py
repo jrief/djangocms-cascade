@@ -117,7 +117,7 @@ class EmulateUserAdminMixin(object):
             display_as_link.short_description = user_model_admin.identifier.short_description
         except AttributeError:
             display_as_link.short_description = admin.utils.label_for_field(list_display_link, self.UserModel)
-        self.display_as_link = six.create_bound_method(display_as_link, self)
+        self.display_as_link = display_as_link
 
         ChangeList = self.get_changelist(request)
         cl = ChangeList(request, self.UserModel, list_display,
