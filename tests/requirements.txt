@@ -5,12 +5,12 @@ beautifulsoup4==4.7.1
 django-admin-sortable2==0.6.16
 django-classy-tags==0.8.0
 django-filer==1.5.0
-django-mptt==0.8.7
+django-mptt==0.10.0
 django-polymorphic==2.0.3
 django-sekizai==0.10.0
 django-treebeard==4.3
 djangocms-text-ckeditor==3.7.0
-easy-thumbnails==2.5
+easy-thumbnails==2.6
 html5lib==1.0.1
 jsonfield==1.0.3
 lxml==3.5.0
@@ -21,4 +21,4 @@ pytest-django==2.9.1
 six==1.10.0
 tox==2.2.1
 virtualenv==13.1.2
-django-reversion==1.10.2
+django-reversion==3.0.3
