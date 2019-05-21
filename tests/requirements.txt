@@ -2,7 +2,7 @@ Pillow==3.3.0
 Unidecode==0.4.18
 argparse==1.2.1
 beautifulsoup4==4.7.1
-django-admin-sortable2==0.6.16
+django-admin-sortable2==0.7.1
 django-classy-tags==0.8.0
 django-filer==1.5.0
 django-mptt==0.10.0
