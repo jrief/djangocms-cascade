@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse
 from django.template import RequestContext, Template
 from django.test import RequestFactory
 
