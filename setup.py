@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from setuptools import setup, find_packages
 from cmsplugin_cascade import __version__
 
@@ -16,11 +13,11 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-    'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Framework :: Django :: 1.11',
     'Framework :: Django :: 2.0',
+    'Framework :: Django :: 2.1',
 ]
 
 setup(
