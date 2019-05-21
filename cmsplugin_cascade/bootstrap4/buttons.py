@@ -189,7 +189,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     def get_css_classes(cls, obj):
         css_classes = cls.super(BootstrapButtonPlugin, cls).get_css_classes(obj)
         if obj.parent.plugin_type == 'NavbarNavItemsPlugin':
-            css_classes.insert(0,'nav-link')
+            css_classes.insert(0,'nav-link text-left')
         if obj.glossary.get('stretched_link'):
             css_classes.append('stretched_link')
         return css_classes

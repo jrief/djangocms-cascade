@@ -58,11 +58,12 @@ def set_defaults(config):
     config['plugins_with_extra_mixins'].setdefault('HorizontalRulePlugin', BootstrapUtilities(
         BootstrapUtilities.margins,
     ))
-
     config['plugins_with_extra_mixins'].setdefault('NavbarNavListPlugin', BootstrapUtilities(
         BootstrapUtilities.flex_directions, BootstrapUtilities.margins, BootstrapUtilities.display_propertys
     ))
-
+    config['plugins_with_extra_mixins'].setdefault('NavbarCollapsePlugin', BootstrapUtilities(
+        BootstrapUtilities.justify_content
+    ))
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
         inline_styles={
             'extra_fields:Paddings': ['margin-top', 'margin-bottom', 'padding-top', 'padding-bottom'],

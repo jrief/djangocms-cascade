@@ -156,11 +156,9 @@ class BootstrapUtilities(type):
             if bp == Breakpoint.xs:
                 choices = [(c.format(''),  l ) for c, l in choices_format]
                 choices.insert(0, ('', _("No Flex Directions")))
-                print(choices)
             else:
                 choices = [(c.format(bp.name + '-'), l) for c, l in choices_format ]
                 choices.insert(0, ('', _("Inherit from above")))
-                print(choices)  
             glossary_fields.append(GlossaryField(
                 widgets.Select(choices=choices),
                 label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
@@ -184,11 +182,34 @@ class BootstrapUtilities(type):
                 choices = [(c.format(bp.name + '-',  n), 
                    c.format('',  n)) for c, l in choices_format for n in notation]
                 choices.insert(0, ('', _("Inherit from above")))
-                print(choices)
             glossary_fields.append(GlossaryField(
                 widgets.Select(choices=choices),
                 label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
                 name='Flex_{}'.format(bp.name),
+            ))
+        return glossary_fields
+
+    @property
+    def justify_content(cls):
+        glossary_fields = []
+        choices_format = [
+            ('justify-content-{}{}', _("Justify Content")),
+        ]
+        notation = [ 'start', 'end', 'center', 'between', 'around']
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+                choices = [(c.format('',  n), c.format('',  n)) for c, l in choices_format for n in notation]
+                choices.insert(0, ('', _("No Justify content")))
+            else:
+                choices = [(c.format(bp.name + '-',  n), 
+                   c.format(bp.name + '-',  n)) for c, l in choices_format for n in notation]
+                choices.insert(0, ('', _("Inherit from above")))
+                print('fffffff')
+                print(choices)
+            glossary_fields.append(GlossaryField(
+                widgets.Select(choices=choices),
+                label=format_lazy(_("Justify Content for {breakpoint}"), breakpoint=bp.label),
+                name='Justify_content_{}'.format(bp.name),
             ))
         return glossary_fields
 

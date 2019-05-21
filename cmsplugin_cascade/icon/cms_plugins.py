@@ -28,10 +28,9 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     allow_children = False
     render_template = 'cascade/plugins/simpleicon.html'
     model_mixins = (LinkElementMixin,)
-
+    fields = list(LinkPluginBase.fields)
     ring_plugin = 'IconPlugin'
     raw_id_fields = LinkPluginBase.raw_id_fields 
-    fields = list(LinkPluginBase.fields)
 
     icon_font = GlossaryField(
         widgets.Select(),
@@ -61,9 +60,6 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
         return css_classes
 
     def render(self, context, instance, placeholder):
-        print('ddlok')
-        print(instance.glossary)
-
         context = super(SimpleIconPlugin, self).render(context, instance, placeholder)
         icon_font = self.get_icon_font(instance)
         symbol = instance.glossary.get('symbol')

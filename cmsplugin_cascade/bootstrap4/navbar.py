@@ -69,7 +69,7 @@ class NavbarPlugin(BootstrapPluginBase):
     render_template = 'cascade/bootstrap4/navbar.html'
     glossary_variables = ['container_max_widths', 'media_queries']
     ring_plugin = 'JumbotronPlugin'
-    OPTION_NAV_COLLAPSE = [(s, s) for s in [ "navbar-expand","navbar-expand-sm", "navbar-expand-md","navbar-expand-lg", "navbar-expand-xl"] ]
+    OPTION_NAV_COLLAPSE = [(s, s) for s in [ "inherit", "navbar-expand","navbar-expand-sm", "navbar-expand-md","navbar-expand-lg", "navbar-expand-xl"] ]
     OPTION_NAV_COLOR = [(s, s) for s in [ "navbar-light", "navbar-dark"]]
     OPTION_NAV_BG_COLOR = [ "bg-primary", "bg-secondary","bg-success", "bg-danger", "bg-warning", "bg-info" ,"bg-light", "bg-dark" , "bg-white", "bg-transparent"] 
     OPTION_NAV_BG_GRADIENT = [ "bg-gradient-primary", "bg-gradient-secondary", "bg-gradient-success", "bg-gradient-danger", "bg-gradient-warning", "bg-gradient-info", "bg-gradient-light", "bg-gradient-dark"]
@@ -196,7 +196,6 @@ class  NavbarLinksItemsPlugin(BootstrapPluginBase):
         help_text=_("Adjust interval place UL"),
     )
 
-
 plugin_pool.register_plugin(NavbarLinksItemsPlugin)
 
 
@@ -205,7 +204,6 @@ class  NavbarBrandPlugin(BootstrapPluginBase, LinkPluginBase,):
     parent_classes = ['NavbarPlugin'] 
     model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_brand.html'
-    
     fields =  list(LinkPluginBase.fields)
 
 plugin_pool.register_plugin(NavbarBrandPlugin)
@@ -269,7 +267,7 @@ class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
             kwargs['glossary_fields'].extend(self.glossary_fields)
         form = super(NavbarBrandImagePlugin, self).get_form(request, obj, **kwargs)
         return form
-    
+
     def render(self, context, instance, placeholder):
         tags = get_image_tags(instance)
         try:
@@ -293,7 +291,12 @@ class  NavbarCollapsePlugin(BootstrapPluginBase):
     parent_classes = ['NavbarPlugin'] 
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar_collapse.html'
-    default_css_class = 'navbar-nav'
+    default_css_class = 'collapse navbar-collapse'
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = super(NavbarCollapsePlugin, cls).get_css_classes(obj)
+        return css_classes
 
 plugin_pool.register_plugin(NavbarCollapsePlugin)
 
@@ -326,13 +329,11 @@ plugin_pool.register_plugin(NavbarNavListPlugin)
 
 
 class  NavbarNavItemsMainMemuPlugin(BootstrapPluginBase):
-#    fields = ('glossary', 'image_file',)
     name = _("Nav items main menu")
     parent_classes = ['NavbarNavListPlugin'] 
     alien_child_classes = True
-    #model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_nav_items_links.html'
-    
+
 plugin_pool.register_plugin(NavbarNavItemsMainMemuPlugin)
 
 
@@ -342,7 +343,6 @@ class  NavbarNavItemsPlugin(BootstrapPluginBase):
     parent_classes = ['NavbarNavListPlugin'] 
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar_nav_item.html'
-
 
 plugin_pool.register_plugin(NavbarNavItemsPlugin)
 
@@ -364,7 +364,3 @@ class  NavbarToogler(BootstrapPluginBase):
     render_template = 'cascade/bootstrap4/navbar_toogler.html'
 
 plugin_pool.register_plugin(NavbarToogler)
-
-
-
-
