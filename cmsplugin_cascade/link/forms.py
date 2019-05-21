@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.admin.sites import site as admin_site
 from django.apps import apps
 from django.db.models.fields.related import ManyToOneRel
-from django.forms import fields, ModelChoiceField
+from django.forms import fields, Media, ModelChoiceField
 from django.forms.models import ModelForm
 from django.forms.widgets import Select as SelectWidget
 from django.utils.html import format_html
@@ -33,8 +33,8 @@ if 'django_select2' in settings.INSTALLED_APPS:
         def media(self):
             parent_media = super(HeavySelectWidget, self).media
             # prepend JS snippet to re-add 'jQuery' to the global namespace
-            parent_media._js.insert(0, 'cascade/js/admin/jquery.restore.js')
-            return parent_media
+            js = ['cascade/js/admin/jquery.restore.js', *parent_media._js]
+            return Media(css=parent_media._css, js=js)
 
         def render(self, name, value, attrs=None, renderer=None):
             try:
