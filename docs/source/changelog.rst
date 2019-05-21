@@ -2,6 +2,12 @@
 Release History
 ===============
 
+1.0
+===
+* Add support for Django-2.0.
+* Drop support for Python-2.7.
+
+
 0.19
 ====
 * For each **django-CMS** page, **djangocms-cascade** optionally adds a one-to-one relation onto
