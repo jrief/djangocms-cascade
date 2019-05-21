@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ('allow_id_tag', models.BooleanField(default=False)),
                 ('css_classes', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
                 ('inline_styles', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('site', models.ForeignKey(verbose_name='Site', to='sites.Site')),
+                ('site', models.ForeignKey(verbose_name='Site', to='sites.Site', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Custom CSS classes and styles',
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SharableCascadeElement',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE)),
                 ('glossary', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
             ],
             options={

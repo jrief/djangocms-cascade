@@ -272,6 +272,7 @@ class IconFont(models.Model):
     config_data = JSONField()
 
     zip_file = FilerFileField(
+        on_delete=models.CASCADE,
         help_text=_('Upload a zip file created on <a href="http://fontello.com/" target="_blank">Fontello</a> containing fonts.')
     )
 
