@@ -37,10 +37,10 @@ django.jQuery(function($) {
 			this.refreshChangeForm();
 		},
 		initializeLinkTypes: function() {
-			this.linkTypes['cmspage'] = new this.LinkType('.form-row .field-box.field-cms_page, .form-row .field-box.field-section', true);
-			this.linkTypes['download'] = new this.LinkType('.form-row .field-box.field-download_file');
-			this.linkTypes['exturl'] = new this.LinkType('.form-row .field-box.field-ext_url', true);
-			this.linkTypes['email'] = new this.LinkType('.form-row .field-box.field-mail_to');
+			this.linkTypes['cmspage'] = new this.LinkType('.form-row .field-cms_page, .form-row .field-section', true);
+			this.linkTypes['download'] = new this.LinkType('.form-row .field-download_file');
+			this.linkTypes['exturl'] = new this.LinkType('.form-row .field-ext_url', true);
+			this.linkTypes['email'] = new this.LinkType('.form-row .field-mail_to');
 		},
 		toggleLinkTypes: function(linkTypeName) {
 			$.each(this.linkTypes, function(name, linkType) {
