@@ -18,8 +18,8 @@ explicitly. This furthermore prevents us to handle all kind of nasty database mi
 
 ## Breaking News
 
-The next version of **djangocms-cascade** will drop support for Python-2.7 and add support for Django-2.0/2.1.
-Please test the development branch for release 1.0 and share your experience.
+The next version of **djangocms-cascade** will drop support for Python-2.7 and add support for django-CMS-3.6
+and Django-2.0/2.1. Please test the development branch for release 1.0 and share your experience.
 
 https://github.com/jrief/djangocms-cascade/tree/releases/1.0.x
 
