@@ -3,12 +3,9 @@ from django.contrib.admin.sites import site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
 from django.db.models.fields.related import ManyToOneRel
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
-
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
 
@@ -39,7 +36,6 @@ class ImageFormMixin(object):
         return cleaned_data
 
 
-@python_2_unicode_compatible
 class ImagePropertyMixin(object):
     """
     A mixin class to convert a CascadeElement into a proxy model for rendering an image element.

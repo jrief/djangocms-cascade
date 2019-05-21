@@ -1,7 +1,6 @@
 import logging
 from django.forms import widgets, ModelChoiceField
 from django.utils.html import format_html
-from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
@@ -125,7 +124,7 @@ class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     def get_identifier(cls, obj):
         identifier = super(BootstrapImagePlugin, cls).get_identifier(obj)
         try:
-            content = force_text(obj.image)
+            content = str(obj.image)
         except AttributeError:
             content = _("No Image")
         return format_html('{0}{1}', identifier, content)

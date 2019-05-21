@@ -4,8 +4,6 @@ from django.forms import widgets
 from django.forms.fields import CharField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_text
-
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
@@ -165,7 +163,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         content = obj.glossary.get('link_content')
         if not content:
             try:
-                content = force_text(ButtonTypeWidget.BUTTON_TYPES[obj.glossary['button_type']])
+                content = str(ButtonTypeWidget.BUTTON_TYPES[obj.glossary['button_type']])
             except KeyError:
                 content = _("Empty")
         return format_html('{}{}', identifier, content)

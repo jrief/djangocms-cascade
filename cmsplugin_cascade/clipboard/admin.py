@@ -3,7 +3,6 @@ from django.contrib import messages
 from django.contrib.admin.templatetags.admin_static import static
 from django.forms import widgets
 from django.forms.utils import flatatt
-from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
@@ -36,7 +35,7 @@ class JSONAdminWidget(widgets.Textarea):
             '</button>\n'
             '<div class="status-line"><label></label><strong id="pasted_success">{5}</strong>'
             '<strong id="copied_success">{6}</strong></div>',
-            flatatt(final_attrs), force_text(value), id_data, clippy_url,
+            flatatt(final_attrs), str(value), id_data, clippy_url,
             _("Copy to Clipboard"),
             _("Successfully pasted JSON data"),
             _("Successfully copied JSON data"))

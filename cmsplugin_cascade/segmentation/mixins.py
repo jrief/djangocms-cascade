@@ -8,7 +8,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _, ungettext
-from django.utils.encoding import force_text
 from django.utils.html import format_html
 
 from cms import __version__ as cms_version
@@ -134,7 +133,7 @@ class EmulateUserAdminMixin(object):
             'All %(total_count)s selected', cl.result_count)
 
         context = {
-            'module_name': force_text(opts.verbose_name_plural),
+            'module_name': str(opts.verbose_name_plural),
             'selection_note': _('0 of %(cnt)s selected') % {'cnt': len(cl.result_list)},
             'selection_note_all': selection_note_all % {'total_count': cl.result_count},
             'title': _("Select %(user_model)s to emulate") % {'user_model': opts.verbose_name},

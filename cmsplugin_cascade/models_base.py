@@ -1,17 +1,13 @@
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import mark_safe, format_html_join
 from django.utils.functional import cached_property
-
 import json
 from jsonfield.fields import JSONField
-
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cms.utils.placeholder import get_placeholder_conf
 
 
-@python_2_unicode_compatible
 class CascadeModelBase(CMSPlugin):
     """
     The container to hold additional HTML element tags.

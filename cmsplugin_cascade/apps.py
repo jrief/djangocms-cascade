@@ -4,7 +4,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import pre_migrate, post_migrate
 from django.db.utils import DatabaseError
 from django.urls import reverse
-from django.utils.text import force_text
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -14,7 +13,7 @@ class CascadeConfig(AppConfig):
     default_permissions = ('add', 'change', 'delete')
 
     def ready(self):
-        stylesSet = force_text(settings.CKEDITOR_SETTINGS.get('stylesSet'))
+        stylesSet = str(settings.CKEDITOR_SETTINGS.get('stylesSet'))
         if stylesSet != 'default:{}'.format(reverse('admin:cascade_texteditor_config')):
             msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))`"
             raise ImproperlyConfigured(msg)

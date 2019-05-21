@@ -84,7 +84,7 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
         """Enrich list of CSS classes with customized ones"""
         css_classes = super(ExtraFieldsMixin, cls).get_css_classes(obj)
         extra_css_classes = obj.glossary.get('extra_css_classes')
-        if isinstance(extra_css_classes, six.string_types):
+        if isinstance(extra_css_classes, str):
             css_classes.append(extra_css_classes)
         elif isinstance(extra_css_classes, (list, tuple)):
             css_classes.extend(extra_css_classes)
@@ -102,7 +102,7 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
                     # the first entry of a sequence is used to disable an inline style
                     if eis[0] != 'on':
                         inline_styles.update({key.split(':')[1]: eis[1]})
-                elif isinstance(eis, six.string_types):
+                elif isinstance(eis, str):
                     inline_styles.update({key.split(':')[1]: eis})
         return inline_styles
 

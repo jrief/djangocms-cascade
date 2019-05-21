@@ -69,13 +69,13 @@ class JSONMultiWidget(widgets.MultiWidget):
                 field_attrs = dict(**attrs)
                 field_attrs.update(id='{id}_{0}'.format(field.name, **attrs))
                 field_value = values.get(field.name)
-                if isinstance(field_value, six.string_types):
+                if isinstance(field_value, str):
                     field_value = self.html_parser.unescape(field_value)
                 render_fields.append((
                     field.name,
-                    six.text_type(field.label),
+                    str(field.label),
                     field.widget.render(field.name, field_value, field_attrs),
-                    six.text_type(field.help_text),
+                    str(field.help_text),
                 ))
             html = format_html_join('',
                  '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',

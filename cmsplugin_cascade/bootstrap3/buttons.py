@@ -5,8 +5,6 @@ from django.forms import widgets
 from django.forms.fields import CharField
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_text
-
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
@@ -39,7 +37,7 @@ class ButtonTypeWidget(widgets.RadioSelect):
         return format_html('<div class="form-row">{}</div>',
             format_html_join('\n',
                 '<div class="field-box"><span class="btn {1}">{2}</span><div class="label">{0}</div></div>',
-                ((force_text(w), w.choice_value, force_text(self.BUTTON_TYPES[w.choice_value])) for w in renderer)))
+                ((str(w), w.choice_value, str(self.BUTTON_TYPES[w.choice_value])) for w in renderer)))
 
 
 class ButtonSizeWidget(widgets.RadioSelect):
@@ -67,7 +65,7 @@ class ButtonSizeWidget(widgets.RadioSelect):
                     '<span class="btn btn-default {1}">{2}</span></div>'
                     '<div class="label">{0}</div>'
                 '</div>',
-                ((force_text(w), w.choice_value, force_text(self.BUTTON_SIZES[w.choice_value])) for w in renderer)))
+                ((str(w), w.choice_value, str(self.BUTTON_SIZES[w.choice_value])) for w in renderer)))
 
 
 class BootstrapButtonMixin(IconPluginMixin):
@@ -166,7 +164,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         content = obj.glossary.get('link_content')
         if not content:
             try:
-                content = force_text(ButtonTypeWidget.BUTTON_TYPES[obj.glossary['button_type']])
+                content = str(ButtonTypeWidget.BUTTON_TYPES[obj.glossary['button_type']])
             except KeyError:
                 content = _("Empty")
         return format_html('{}{}', identifier, content)

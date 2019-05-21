@@ -89,7 +89,7 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     def get_identifier(cls, obj):
         identifier = super(BootstrapPicturePlugin, cls).get_identifier(obj)
         try:
-            content = force_text(obj.image)
+            content = str(obj.image)
         except AttributeError:
             content = _("No Picture")
         return format_html('{0}{1}', identifier, content)

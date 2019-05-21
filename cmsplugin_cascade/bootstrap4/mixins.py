@@ -1,14 +1,11 @@
 from django.forms import MediaDefiningClass, widgets
-from django.utils import six
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 
 
-@python_2_unicode_compatible
-class BootstrapUtilitiesMixin(six.with_metaclass(MediaDefiningClass)):
+class BootstrapUtilitiesMixin(metaclass=MediaDefiningClass):
     """
     If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_mixins']``,
     then this ``BootstrapUtilsMixin`` class is added automatically to its plugin class in order to

@@ -2,8 +2,6 @@ try:
     from django.contrib.sites.shortcuts import get_current_site
 except ImportError:
     from django.contrib.sites.models import get_current_site
-from django.utils import six
-
 from cmsplugin_cascade.models import InlineCascadeElement, SortableInlineCascadeElement
 
 
@@ -30,7 +28,7 @@ class CascadePluginMixin(object):
             css_classes.append(cls.default_css_class)
         for attr in getattr(cls, 'default_css_attributes', []):
             css_class = instance.glossary.get(attr)
-            if isinstance(css_class, six.string_types):
+            if isinstance(css_class, str):
                 css_classes.append(css_class)
             elif isinstance(css_class, list):
                 css_classes.extend(css_class)

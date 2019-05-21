@@ -7,7 +7,6 @@ from django.forms import widgets
 from django.forms.models import ModelForm
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
-from django.utils.encoding import force_text
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
@@ -99,7 +98,7 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
                 return config.allow_override
 
         cascade_plugins = set([p for p in plugin_pool.get_all_plugins() if show_in_backend(p)])
-        return [(p.__name__, '{}: {}'.format(p.module, force_text(p.name))) for p in cascade_plugins]
+        return [(p.__name__, '{}: {}'.format(p.module, str(p.name))) for p in cascade_plugins]
 
     def get_form(self, request, obj=None, **kwargs):
         """

@@ -10,14 +10,10 @@ from django.core.exceptions import ValidationError
 from django.utils.html import format_html, strip_tags, strip_spaces_between_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from django.utils import six
-
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
-
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.fields import HTMLFormField
-
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import InlineCascadeElement
@@ -136,7 +132,7 @@ class MarkerForm(ModelForm):
     def clean(self):
         try:
             position = self.cleaned_data['position']
-            if isinstance(position, six.string_types):
+            if isinstance(position, str):
                 position = json.loads(position)
             elif not isinstance(position, dict):
                 raise ValueError
@@ -193,7 +189,7 @@ class LeafletForm(ModelForm):
     def clean(self):
         try:
             map_position = self.cleaned_data['map_position']
-            if isinstance(map_position, six.string_types):
+            if isinstance(map_position, str):
                 self.cleaned_data['glossary'].update(map_position=json.loads(map_position))
             elif isinstance(map_position, dict):
                 self.cleaned_data['glossary'].update(map_position=map_position)
