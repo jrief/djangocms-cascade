@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.forms import widgets, ModelChoiceField, CharField
 from django.forms.models import ModelForm
 from django.db.models.fields.related import ManyToOneRel
@@ -8,13 +5,10 @@ from django.contrib.admin import StackedInline
 from django.contrib.admin.sites import site
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-
 from filer.fields.image import AdminFileWidget, FilerImageField
 from filer.models.imagemodels import Image
-
 from cms.plugin_pool import plugin_pool
 from cms.utils.compat.dj import is_installed
-
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import SortableInlineCascadeElement
 from cmsplugin_cascade.image import ImagePropertyMixin

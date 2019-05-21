@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.forms import MediaDefiningClass, widgets
 from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os, io, json, shutil
 from django.core.exceptions import SuspiciousFileOperation
 from cmsplugin_cascade import app_settings

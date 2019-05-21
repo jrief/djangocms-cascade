@@ -1,12 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from collections import OrderedDict
-try:
-    from html.parser import HTMLParser  # py3
-except ImportError:
-    from HTMLParser import HTMLParser  # py2
-
+from html.parser import HTMLParser
 from django import VERSION as DJANGO_VERSION
 from django.forms import widgets
 from django.utils.html import format_html, format_html_join

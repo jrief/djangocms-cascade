@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 try:
     from django.contrib.sites.shortcuts import get_current_site
 except ImportError:

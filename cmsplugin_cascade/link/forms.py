@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.admin.sites import site as admin_site

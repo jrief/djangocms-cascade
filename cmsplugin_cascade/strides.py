@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.core.cache import caches
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import get_template

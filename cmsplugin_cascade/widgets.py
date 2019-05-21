@@ -1,12 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import re
 import json
-try:
-    from html.parser import HTMLParser  # py3
-except ImportError:
-    from HTMLParser import HTMLParser  # py2
+from html.parser import HTMLParser
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils import six

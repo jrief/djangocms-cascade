@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from collections import OrderedDict
-
 from django.conf import settings
 from django import VERSION as DJANGO_VERSION
 from django.forms import widgets

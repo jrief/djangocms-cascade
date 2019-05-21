@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.forms import MediaDefiningClass
 from django.contrib import admin
 from django.utils.module_loading import import_string

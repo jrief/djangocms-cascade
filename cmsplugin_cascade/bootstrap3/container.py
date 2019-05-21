@@ -1,20 +1,13 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import itertools
-
 from django import VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.forms import widgets
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.utils.html import format_html, format_html_join
-from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.models import ModelForm
 from django.forms.fields import ChoiceField
-
 from cms.plugin_pool import plugin_pool
-
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField

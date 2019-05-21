@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from distutils.version import LooseVersion
 
 from django.conf.urls import url

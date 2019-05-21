@@ -1,23 +1,15 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-try:
-    from html.parser import HTMLParser  # py3
-except ImportError:
-    from HTMLParser import HTMLParser  # py2
+from html.parser import HTMLParser
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.text import Truncator
 from django.utils.html import format_html
 from django.forms.models import ModelForm
 from django.forms.fields import IntegerField
-
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
-
 from .plugin_base import BootstrapPluginBase
 from .panel import panel_heading_sizes, PanelTypeWidget
 

@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
-
 from django import VERSION as DJANGO_VERSION
 from django import forms
 from django.forms import fields

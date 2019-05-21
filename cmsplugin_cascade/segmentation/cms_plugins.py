@@ -1,17 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-try:
-    from html.parser import HTMLParser  # py3
-except ImportError:
-    from HTMLParser import HTMLParser  # py2
-
+from html.parser import HTMLParser
 from django.core.exceptions import ValidationError
 from django.forms import widgets, ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template import engines, TemplateSyntaxError, Template as DjangoTemplate, Context as TemplateContext
-
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer

@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
-
 from django.forms.fields import CharField, BooleanField, Field
 from django.forms.models import ModelForm, ModelChoiceField
 from django.forms.utils import ErrorList

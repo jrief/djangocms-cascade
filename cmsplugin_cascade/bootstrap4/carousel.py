@@ -1,22 +1,12 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import re
 import logging
-try:
-    from html.parser import HTMLParser  # py3
-except ImportError:
-    from HTMLParser import HTMLParser  # py2
-
 from django.forms import widgets, ModelChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.forms.fields import IntegerField
 from django.forms.models import ModelForm
-
 from cms.plugin_pool import plugin_pool
 from filer.models.imagemodels import Image
-
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.image import ImageAnnotationMixin, ImagePropertyMixin, ImageFormMixin

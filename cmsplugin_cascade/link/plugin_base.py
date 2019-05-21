@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets

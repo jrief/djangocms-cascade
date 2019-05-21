@@ -1,7 +1,4 @@
-from __future__ import unicode_literals
-
 import json, os
-
 from docutils import nodes
 from sphinx.builders.html import DirectoryHTMLBuilder
 from sphinx.environment.adapters.toctree import TocTree
