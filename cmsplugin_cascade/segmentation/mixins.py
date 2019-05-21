@@ -1,16 +1,11 @@
-from distutils.version import LooseVersion
-
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _, ungettext
 from django.utils.html import format_html
-
-from cms import __version__ as cms_version
 from cms.constants import REFRESH_PAGE
 
 
@@ -29,9 +24,6 @@ class SegmentPluginModelMixin(object):
         return {}
 
     def render_plugin(self, context=None, placeholder=None, admin=False, processors=None):
-        assert LooseVersion(cms_version) < LooseVersion('3.4'), \
-               "Since CMS-3.4, method `render_plugin` shall not be invoked by model instance"
-
         context.update(self.get_context_override(context['request']))
         content = super(SegmentPluginModelMixin, self).render_plugin(context, placeholder, admin, processors)
         context.pop()
