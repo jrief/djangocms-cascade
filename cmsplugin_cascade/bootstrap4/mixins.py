@@ -204,8 +204,6 @@ class BootstrapUtilities(type):
                 choices = [(c.format(bp.name + '-',  n), 
                    c.format(bp.name + '-',  n)) for c, l in choices_format for n in notation]
                 choices.insert(0, ('', _("Inherit from above")))
-                print('fffffff')
-                print(choices)
             glossary_fields.append(GlossaryField(
                 widgets.Select(choices=choices),
                 label=format_lazy(_("Justify Content for {breakpoint}"), breakpoint=bp.label),
