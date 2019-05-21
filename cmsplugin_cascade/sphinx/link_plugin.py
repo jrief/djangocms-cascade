@@ -11,8 +11,8 @@ from cmsplugin_cascade.link.forms import LinkForm
 
 
 class DocumentationSelect2Widget(Select2Widget):
-    def render(self, name, value, attrs=None):
-        html = super(DocumentationSelect2Widget, self).render(name, value, attrs=attrs)
+    def render(self, name, value, attrs=None, renderer=None):
+        html = super(DocumentationSelect2Widget, self).render(name, value, attrs=attrs, renderer=None)
         return html
 
 

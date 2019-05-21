@@ -58,7 +58,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             for field in self.normalized_fields
         )
 
-    def render(self, name, value, attrs):
+    def render(self, name, value, attrs=None, renderer=None):
         values = self.decompress(value)
         render_fieldsets = []
         for fieldset in self.glossary_fields:
@@ -186,17 +186,17 @@ class ColorPickerWidget(widgets.MultiWidget):
         )
         return values
 
-    def render(self, name, values, attrs):
+    def render(self, name, values, attrs=None, renderer=None):
         disabled, color = values
         elem_id = attrs['id']
         attrs = dict(attrs)
         html = '<div class="clearfix">'
         html += '<div style="position: relative;">'
         key, attrs['id'] = '{0}_color'.format(name), '{0}_color'.format(elem_id)
-        html += format_html('<div class="sibling-field color_picker">{0}</div>', self.widgets[0].render(key, color, attrs))
+        html += format_html('<div class="sibling-field color_picker">{0}</div>', self.widgets[0].render(key, color, attrs, renderer))
         key, attrs['id'] = '{0}_disabled'.format(name), '{0}_disabled'.format(elem_id)
         html += format_html('<div class="sibling-field inherit"><label for="{0}">{1}{2}</label></div>',
-                            key, self.widgets[1].render(key, disabled, attrs), _("Inherit"))
+                            key, self.widgets[1].render(key, disabled, attrs, renderer), _("Inherit"))
         html += '</div></div>'
         return mark_safe(html)
 
@@ -259,7 +259,7 @@ class MultipleTextInputWidget(widgets.MultiWidget):
             values[key] = escape(data.get('{0}-{1}'.format(name, key), ''))
         return values
 
-    def render(self, name, value, attrs):
+    def render(self, name, value, attrs=None, renderer=None):
         widgets = []
         values = value or {}
         elem_id = attrs['id']
@@ -267,7 +267,7 @@ class MultipleTextInputWidget(widgets.MultiWidget):
             label = '{0}-{1}'.format(name, key)
             attrs['id'] = '{0}_{1}'.format(elem_id, key)
             errors = key in self.validation_errors and 'errors' or ''
-            widgets.append((self.widgets[index].render(label, values.get(key), attrs), key, label, errors))
+            widgets.append((self.widgets[index].render(label, values.get(key), attrs, renderer), key, label, errors))
         return format_html('<div class="clearfix">{0}</div>',
                     format_html_join('\n', '<div class="sibling-field {3}"><label for="{2}">{1}</label>{0}</div>', widgets))
 
@@ -333,17 +333,17 @@ class SetBorderWidget(widgets.MultiWidget):
         )
         return values
 
-    def render(self, name, values, attrs):
+    def render(self, name, values, attrs=None, renderer=None):
         width, style, color = values
         elem_id = attrs['id']
         attrs = dict(attrs)
         html = '<div class="clearfix">'
         key, attrs['id'] = '{0}-width'.format(name), '{0}_width'.format(elem_id)
-        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, width, attrs))
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, width, attrs, renderer))
         key, attrs['id'] = '{0}-style'.format(name), '{0}_style'.format(elem_id)
-        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[1].render(key, style, attrs))
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[1].render(key, style, attrs, renderer))
         key, attrs['id'] = '{0}-color'.format(name), '{0}_color'.format(elem_id)
-        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[2].render(key, color, attrs))
+        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[2].render(key, color, attrs, renderer))
         html += '</div>'
         return mark_safe(html)
 

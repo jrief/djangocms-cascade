@@ -36,7 +36,7 @@ if 'django_select2' in settings.INSTALLED_APPS:
             parent_media._js.insert(0, 'cascade/js/admin/jquery.restore.js')
             return parent_media
 
-        def render(self, name, value, attrs=None):
+        def render(self, name, value, attrs=None, renderer=None):
             try:
                 page = Page.objects.get(pk=value)
             except (Page.DoesNotExist, ValueError):
@@ -45,7 +45,7 @@ if 'django_select2' in settings.INSTALLED_APPS:
                 language = get_language()
                 text = format_page_link(page.get_title(language), page.get_absolute_url(language))
                 self.choices.append((value, text))
-            html = super(HeavySelectWidget, self).render(name, value, attrs=attrs)
+            html = super(HeavySelectWidget, self).render(name, value, attrs, renderer)
             return html
 
 
