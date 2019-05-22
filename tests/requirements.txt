@@ -22,3 +22,4 @@ six==1.10.0
 tox==2.2.1
 virtualenv==13.1.2
 django-reversion==3.0.3
+djangocms-helper==1.2.0

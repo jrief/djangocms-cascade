@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from django.template.context import Context
-
 from cms.api import create_page
 from cms.test_utils.testcases import CMSTestCase
 from cmsplugin_cascade.models import CascadePage
