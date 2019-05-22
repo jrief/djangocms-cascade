@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.forms.models import ModelForm
 from django.utils.html import format_html, format_html_join
-from django.utils.text import format_lazy, mark_safe
+from django.utils.text import format_lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.icon.utils import zipfile, unzip_archive
