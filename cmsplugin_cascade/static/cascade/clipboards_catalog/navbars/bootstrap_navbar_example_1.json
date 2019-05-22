@@ -23,10 +23,6 @@
             "subject_location",
             "high_resolution"
           ],
-          "Justify_content_xs":"",
-          "Justify_content_sm":"",
-          "Justify_content_md":"justify-content-md-center",
-          "Justify_content_lg":"",
           "navbar_collapse":"navbar-expand-lg",
           "navbar_color":"navbar-dark",
           "navbar_bg_color":"bg-dark",
