@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import os
 from bs4 import BeautifulSoup
 import json
-
+from django import VERSION as DJANGO_VERSION
 from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.urls import reverse, resolve
@@ -59,7 +59,11 @@ class IconFontTestCase(CascadeTestCase):
             self.assertEqual(resolver_match.url_name, 'cmsplugin_cascade_iconfont_change')
 
             # check the content of the uploaded file
-            icon_font = IconFont.objects.get(pk=resolver_match.args[0])
+            if DJANGO_VERSION < (2,0):
+                object_id = resolver_match.args[0]
+            else:
+                object_id = resolver_match.kwargs['object_id']
+            icon_font = IconFont.objects.get(pk=object_id)
             self.assertEqual(icon_font.identifier, "Fontellico")
             self.assertEqual(icon_font.config_data['name'], 'fontelico')
             self.assertEqual(len(icon_font.config_data['glyphs']), 34)
@@ -67,7 +71,7 @@ class IconFontTestCase(CascadeTestCase):
             # check if the uploaded fonts are rendered inside Preview Icons
             response = self.client.get(response.url)
             self.assertEqual(response.status_code, 200)
-            soup = BeautifulSoup(response.content, 'lxml')
+            soup = BeautifulSoup(response.content, features='lxml')
             preview_iconfont = soup.find('div', class_="preview-iconfont")
             icon_items = preview_iconfont.ul.find_all('li')
             self.assertEqual(len(icon_items), 34)
@@ -97,7 +101,7 @@ class IconFontTestCase(CascadeTestCase):
             plugin_list = [container_model, icon_model]
             build_plugin_tree(plugin_list)
             html = self.get_html(container_model, self.get_request_context())
-            soup = BeautifulSoup(html, 'lxml')
+            soup = BeautifulSoup(html, features='lxml')
 
             # look for the icon symbol
             style = soup.find('span', class_='icon-emo-wink').attrs['style'].split(';')
@@ -107,7 +111,7 @@ class IconFontTestCase(CascadeTestCase):
             # look for the CSS file
             response = self.client.get(container_model.placeholder.page.get_absolute_url() + '?edit')
             self.assertEqual(response.status_code, 200)
-            soup = BeautifulSoup(response.content, 'lxml')
+            soup = BeautifulSoup(response.content, features='lxml')
             links = soup.head.find_all('link')
             for link in links:
                 if link.attrs['href'].endswith('fontelico.css'):

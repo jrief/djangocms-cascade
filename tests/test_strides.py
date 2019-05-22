@@ -31,7 +31,7 @@ class StridePluginTest(CascadeTestCase):
     def test_bootstrap_jumbotron(self):
         template = Template('{% load cascade_tags sekizai_tags %}{% render_block "css" %}{% render_cascade "strides/bootstrap-jumbotron.json" %}')
         html = template.render(self.context)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, features='lxml')
         self.assertEqual(soup.style.text.find('#cascadeelement_id-1501 {\n\tbackground-color: #12308b;\n\tbackground-attachment: scroll;\n\tbackground-position: center center;\n\tbackground-repeat: no-repeat;\n\tbackground-size: cover;\n\tpadding-top: 500px;'), 1 )
         element = soup.find(id='cascadeelement_id-1501')
         self.assertEqual(element.h1.text, "Manage your website")
@@ -40,26 +40,26 @@ class StridePluginTest(CascadeTestCase):
     def test_bootstrap_container(self):
         template = Template('{% load cascade_tags %}{% render_cascade "strides/bootstrap-container.json" %}')
         html = template.render(self.context)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, features='lxml')
         element = soup.find(class_='container')
         self.assertSetEqual(set(element.attrs['class']), {'foo', 'bar', 'container'})
 
     def test_bootstrap_row(self):
         template = Template('{% load cascade_tags %}{% render_cascade "strides/bootstrap-row.json" %}')
         html = template.render(self.context)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, features='lxml')
         self.assertEqual(str(soup.div), '<div class="row" style="margin-bottom: 20px;">\n</div>')
 
     def test_bootstrap_column(self):
         template = Template('{% load cascade_tags %}{% render_cascade "strides/bootstrap-column.json" %}')
         html = template.render(self.context)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, features='lxml')
         self.assertEqual(str(soup.div), '<div class="col-xs-12">\n</div>')
 
     def test_simple_wrapper(self):
         template = Template('{% load cascade_tags %}{% render_cascade "strides/simple-wrapper.json" %}')
         html = template.render(self.context)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, features='lxml')
         expected_styles = {
             'background-color': '#42c8c6',
             'color': '#ffffff',
@@ -101,7 +101,7 @@ class StridePluginTest(CascadeTestCase):
 
         template = Template('{% load cascade_tags sekizai_tags %}{% render_block "css" %}{% render_cascade "strides/framed-icon.json" %}')
         html = template.render(self.context)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, features='lxml')
         self.assertSetEqual(set(soup.div.attrs['class']), {'text-center'})
         self.assertStyleEqual(soup.div.attrs['style'], {'font-size': '10em'})
         expected_style = {
@@ -113,7 +113,7 @@ class StridePluginTest(CascadeTestCase):
     def test_text_plugin(self):
         template = Template('{% load cascade_tags %}{% render_cascade "strides/text-plugin.json" %}')
         html = template.render(self.context)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, features='lxml')
         self.assertEqual(soup.h2.text, "Customizable")
         self.assertStyleEqual(soup.h2.attrs['style'], {'text-align': 'center'})
         self.assertEqual(soup.p.text, "Lorem ipsum dolor")
@@ -121,7 +121,7 @@ class StridePluginTest(CascadeTestCase):
     def test_carousel_plugin(self):
         template = Template('{% load cascade_tags %}{% render_cascade "strides/carousel-plugin.json" %}')
         html = template.render(self.context)
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, features='lxml')
         print(soup.prettify())
         carousel = soup.find(class_='carousel')
         self.assertSetEqual(set(carousel.attrs['class']), {'carousel', 'slide', 'pause', 'wrap', 'slide'})

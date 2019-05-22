@@ -1,4 +1,4 @@
-from html.parser import HTMLParser
+from six.moves.html_parser import HTMLParser
 from django.forms import widgets
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.text import Truncator

@@ -1,4 +1,4 @@
-from html.parser import HTMLParser
+from six.moves.html_parser import HTMLParser
 from django.core.exceptions import ValidationError
 from django.forms import widgets, ModelForm
 from django.utils.translation import ugettext_lazy as _
