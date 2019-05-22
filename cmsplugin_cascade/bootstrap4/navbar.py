@@ -104,28 +104,24 @@ class NavbarPlugin(BootstrapPluginBase):
         widgets.Select(choices=OPTION_NAV_COLLAPSE),
         label=_('navbar collapse'),
         name='navbar_classes collapse',
-        help_text=_("Adjust interval for the  navbar_collapse."),
     )
 
     navbar_color = GlossaryField(
         widgets.Select(choices=OPTION_NAV_COLOR),
-        label=_('navbar bg color'),
-        name='navbar_bg_color',
-        help_text=_("Adjust interval for the  navbar color."),
+        label=_('navbar color'),
+        name='navbar_color',
     )
 
     navbar_bg_color= GlossaryField(
         widgets.Select(choices=[(s, s) for s in OPTION_NAV_BG_MIX ]),
         label=_('navbar-bg'),
         name='navbar_navbg',
-        help_text=_("Adjust interval for the  navbar background color."),
     )
 
     navbar_placement= GlossaryField(
         widgets.Select(choices= [(s, s) for s in OPTION_NAV_PLACEMENTS]),
         label=_('navbar-place'),
         name='navbar_place',
-        help_text=_("Adjust interval place s."),
     )
 
     @classmethod
@@ -261,7 +257,6 @@ class  NavbarBrandImagePlugin(ImageAnnotationMixin, BootstrapPluginBase,  ):
 
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request, obj) is None:
-            print(self.container_glossary_fields)
             # we only ask for breakpoints, if the jumbotron is the root of the placeholder
             kwargs.update(glossary_fields=list(self.container_glossary_fields))
             kwargs['glossary_fields'].extend(self.glossary_fields)
@@ -298,6 +293,14 @@ class  NavbarCollapsePlugin(BootstrapPluginBase):
         css_classes = super(NavbarCollapsePlugin, cls).get_css_classes(obj)
         return css_classes
 
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(NavbarCollapsePlugin, cls).get_identifier(obj)
+        glossary = obj.get_complete_glossary()
+        css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
+        return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
+        identifier, css_classes_without_default)
+
 plugin_pool.register_plugin(NavbarCollapsePlugin)
 
 
@@ -319,7 +322,6 @@ class  NavbarNavListPlugin(BootstrapPluginBase):
         glossary = obj.get_complete_glossary()
         if hasattr(cls,'default_css_class'):
             css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
-            print(obj.css_classes.__dict__)
         else:
             css_classes_without_default = obj.css_classes
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
