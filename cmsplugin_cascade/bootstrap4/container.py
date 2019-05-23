@@ -1,3 +1,4 @@
+from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import widgets
@@ -27,7 +28,7 @@ def get_widget_choices():
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
-    template_name = 'cascade/forms/widgets/container_breakpoints.html'
+    template_name = 'cascade/forms/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/forms/widgets/container_breakpoints.html'
 
     def render(self, name, value, attrs=None, renderer=None):
         attrs = dict(attrs, version=4)

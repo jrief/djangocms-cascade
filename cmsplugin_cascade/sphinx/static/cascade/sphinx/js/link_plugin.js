@@ -11,7 +11,8 @@ django.jQuery(function($) {
 		},
 		initializeLinkTypes: function() {
 			this.$super();
-			this.linkTypes['documentation'] = new this.LinkType('.form-row .field-box.field-documentation', true);
+			// after dropping support for django-1.11, remove the first jQuery-selector
+			this.linkTypes['documentation'] = new this.LinkType('.form-row .field-box.field-documentation, .form-row .fieldBox.field-documentation', true);
 		}
 	});
 });

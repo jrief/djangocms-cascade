@@ -19,7 +19,7 @@ class PanelTypeWidget(widgets.RadioSelect):
     PANEL_TYPES = OrderedDict((('panel-default', _("Default")), ('panel-primary', _("Primary")),
         ('panel-success', _("Success")), ('panel-info', _("Info")), ('panel-warning', _("Warning")),
         ('panel-danger', _("Danger")),))
-    template_name = 'cascade/forms/widgets/panel_types.html'
+    template_name = 'cascade/forms/legacy_widgets/panel_types.html' if DJANGO_VERSION < (2, 0) else 'cascade/forms/widgets/panel_types.html'
 
     @classmethod
     def get_instance(cls):

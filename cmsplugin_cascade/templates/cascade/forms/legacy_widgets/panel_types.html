@@ -1,9 +1,10 @@
-{% spaceless %}
+{% load i18n %}{% spaceless %}
 <div class="form-row">
 {% for group, options, index in widget.optgroups %}{% with widget=options.0 %}
-	<div class="fieldBox">
-		<div class="button-samples">
-			<span class="btn btn-primary {{ widget.value }}">{{ widget.label }}</span>
+	<div class="field-box">
+		<div class="panel {{ widget.value }}">
+			<div class="panel-heading">{{ widget.label }}</div>
+			<div class="panel-body">{% trans "Content" %}</div>
 		</div>
 		<div class="label">{% include widget.template_name %}</div>
 	</div>

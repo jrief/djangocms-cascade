@@ -6,7 +6,7 @@ form .glossary-widget h1 { clear: both; margin: 0 0 4px; font-size: 120%; }
 form .glossary-widget label { width: inherit; padding-left: 10px; }
 form .glossary-widget label.inline { height: 20px; }
 form .glossary-widget small { margin-left: 0; }
-form .glossary-widget .field-box.disabled { color: #aaa; }
+form .glossary-widget .disabled { color: #aaa; }
 form .glossary-widget ul { margin-left: 0; padding-left: 0; }
 form .glossary-widget ul li { list-style: none; float: left; min-width: 95px; }
 form .glossary-widget ul.errorlist li { float: none; }

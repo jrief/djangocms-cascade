@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from django import VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.forms import widgets
 from django.forms.fields import CharField
@@ -38,7 +39,8 @@ class ButtonTypeWidget(widgets.RadioSelect):
         ('btn-outline-dark', _("Dark")),
         ('btn-outline-link', _("Link")),
     ])
-    template_name = 'cascade/forms/widgets/button_types.html'
+
+    template_name = 'cascade/forms/legacy_widgets/button_types.html' if DJANGO_VERSION < (2, 0) else 'cascade/forms/widgets/button_types.html'
 
     @classmethod
     def get_instance(cls):
@@ -54,7 +56,7 @@ class ButtonSizeWidget(widgets.RadioSelect):
         ('', _("Default button")),
         ('btn-sm', _("Small button")),
     ])
-    template_name = 'cascade/forms/widgets/button_sizes.html'
+    template_name = 'cascade/forms/legacy_widgets/button_sizes.html' if DJANGO_VERSION < (2, 0) else 'cascade/forms/widgets/button_sizes.html'
 
     @classmethod
     def get_instance(cls):
