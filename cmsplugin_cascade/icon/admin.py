@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
+from django.forms import Media
 from django.forms.models import ModelForm
 from django.utils.html import format_html, format_html_join
 from django.utils.text import format_lazy
@@ -15,10 +16,10 @@ class UploadIconsForms(ModelForm):
 
     @property
     def media(self):
-        media = super(UploadIconsForms, self).media
+        media = super().media
         try:
             css_url = self.instance.get_stylesheet_url()
-            media.add_css({'all': ['cascade/css/admin/iconfont.css', css_url]})
+            media += Media(css={'all': ['cascade/css/admin/iconfont.css', css_url]})
         except AttributeError:
             pass
         return media

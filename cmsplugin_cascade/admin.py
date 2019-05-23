@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.contrib import admin
-from django.forms import widgets
+from django.forms import Media, widgets
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.utils.translation import get_language_from_request
@@ -17,9 +17,9 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     @property
     def media(self):
-        media = super(CascadePageAdmin, self).media
-        media.add_css({'all': ['cascade/css/admin/cascadepage.css']})
-        media.add_js(['cascade/js/admin/cascadepage.js'])
+        media = super().media
+        media += Media(css={'all': ['cascade/css/admin/cascadepage.css']},
+                       js=['cascade/js/admin/cascadepage.js'])
         return media
 
     def get_form(self, request, obj=None, **kwargs):
