@@ -1,12 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
-
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
-
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
 

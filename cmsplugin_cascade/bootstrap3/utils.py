@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import logging
 from collections import OrderedDict
 from django.forms import widgets
-
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,

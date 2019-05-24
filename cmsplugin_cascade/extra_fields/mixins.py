@@ -1,21 +1,14 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import MediaDefiningClass, widgets
-from django.utils import six
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 
 
-@python_2_unicode_compatible
-class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
+class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     """
     If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields']``,
     then this ``ExtraFieldsMixin`` class is added automatically to its plugin class in order to
@@ -87,7 +80,7 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
         """Enrich list of CSS classes with customized ones"""
         css_classes = super(ExtraFieldsMixin, cls).get_css_classes(obj)
         extra_css_classes = obj.glossary.get('extra_css_classes')
-        if isinstance(extra_css_classes, six.string_types):
+        if isinstance(extra_css_classes, str):
             css_classes.append(extra_css_classes)
         elif isinstance(extra_css_classes, (list, tuple)):
             css_classes.extend(extra_css_classes)
@@ -105,7 +98,7 @@ class ExtraFieldsMixin(six.with_metaclass(MediaDefiningClass)):
                     # the first entry of a sequence is used to disable an inline style
                     if eis[0] != 'on':
                         inline_styles.update({key.split(':')[1]: eis[1]})
-                elif isinstance(eis, six.string_types):
+                elif isinstance(eis, str):
                     inline_styles.update({key.split(':')[1]: eis})
         return inline_styles
 

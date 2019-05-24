@@ -13,5 +13,5 @@ class MissingMigrationTest(TestCase):
         out = StringIO()
 
         call_command('makemigrations', '--dry-run', 'cmsplugin_cascade',
-                     verbocity=3, interactive=False, stdout=out)
-        self.assertEquals(out.getvalue(), "No changes detected in app 'cmsplugin_cascade'\n")
+                     verbosity=3, interactive=False, stdout=out)
+        self.assertEqual(out.getvalue(), "No changes detected in app 'cmsplugin_cascade'\n")

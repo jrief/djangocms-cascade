@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from collections import OrderedDict
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import MediaDefiningClass
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.module_loading import import_string
-from django.utils.translation import string_concat
+from django.utils.text import format_lazy
 from django.utils.safestring import SafeText, mark_safe
-
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
-
 from . import app_settings
 from .fields import GlossaryField
 from .mixins import CascadePluginMixin
@@ -174,8 +169,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
                 reversion.revisions.register(base_model)
         # handle ambiguous plugin names by appending a symbol
         if 'name' in attrs and app_settings.CMSPLUGIN_CASCADE['plugin_prefix']:
-            attrs['name'] = mark_safe_lazy(string_concat(
-                app_settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
+            attrs['name'] = format_lazy('{}&nbsp;{}', app_settings.CMSPLUGIN_CASCADE['plugin_prefix'], attrs['name'])
 
         register_stride(name, bases, attrs, model_mixins)
         if name == 'CascadePluginBase':
@@ -458,7 +452,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
                                  for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items())
         context.update(
             ring_plugin_bases=ring_plugin_bases,
-            plugin_title=string_concat(self.module, " ", self.name, " Plugin"),
+            plugin_title=format_lazy("{} {} Plugin", self.module, self.name),
             plugin_intro=mark_safe(getattr(self, 'intro_html', '')),
             plugin_footnote=mark_safe(getattr(self, 'footnote_html', '')),
         )

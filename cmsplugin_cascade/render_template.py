@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.forms import widgets, MediaDefiningClass
 from django.utils.six import with_metaclass
 from django.utils.translation import ugettext_lazy as _

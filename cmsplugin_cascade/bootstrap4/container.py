@@ -1,15 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import widgets
 from django.forms.fields import ChoiceField
 from django.forms.models import ModelForm
 from django.utils.html import format_html
-from django.utils.encoding import force_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
@@ -93,7 +88,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
             breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
-            devices = ', '.join([force_text(bp.label) for bp in breakpoints])
+            devices = ', '.join([str(bp.label) for bp in breakpoints])
             content = _("{0}for {1}").format(content, devices)
         return format_html('{0}{1}', identifier, content)
 
@@ -219,7 +214,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 last = None
             finally:
                 first = getattr(grid.Breakpoint, bp)
-                devices = ', '.join([force_text(b.label) for b in grid.Breakpoint.range(first, last)])
+                devices = ', '.join([str(b.label) for b in grid.Breakpoint.range(first, last)])
 
             if bp == 'xs':
                 choices = [('col', _("Flex column"))]

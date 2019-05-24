@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.forms import widgets
 from django.forms.models import ModelForm
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _

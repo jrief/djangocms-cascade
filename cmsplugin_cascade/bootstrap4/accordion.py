@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-try:
-    from html.parser import HTMLParser  # py3
-except ImportError:
-    from HTMLParser import HTMLParser  # py2
+from html.parser import HTMLParser
 from django.forms import widgets
 from django.forms.models import ModelForm
 from django.forms.fields import IntegerField

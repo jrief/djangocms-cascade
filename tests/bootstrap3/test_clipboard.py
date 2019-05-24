@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import json
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import QueryDict
 
 from cms.api import add_plugin
@@ -199,7 +199,7 @@ class ClipboardPluginTest(CascadeTestCase):
             change_clipboard_url = response['location']
             response = self.client.get(change_clipboard_url, data)
             self.assertEqual(response.status_code, 200)
-            soup = BeautifulSoup(response.content, 'html.parser')
+            soup = BeautifulSoup(response.content, features='lxml')
             ul = soup.find('ul', class_='messagelist')
             self.assertEqual(ul.li.text, 'Persisted content has been restored to CMS clipboard.')
 

@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.utils.text import format_lazy
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
@@ -42,7 +42,7 @@ TEMPLATES = [{
     }
 }]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -54,7 +54,7 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
-)
+]
 
 INSTALLED_APPS = [
     'django.contrib.auth',

@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import io
 import mimetypes
 import os
-
 from django.conf import settings
 from django.conf.urls import url
 from django.core.exceptions import ViewDoesNotExist
@@ -13,7 +9,6 @@ from django.views.generic import TemplateView
 from django.utils.cache import patch_cache_control
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-
 from cms.app_base import CMSApp
 from cms.apphook_pool import apphook_pool
 

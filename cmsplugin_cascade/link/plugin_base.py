@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import widgets
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -81,7 +77,6 @@ class DefaultLinkPluginBase(LinkPluginBase):
     ring_plugin = 'LinkPluginBase'
 
 
-@python_2_unicode_compatible
 class LinkElementMixin(object):
     """
     A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
