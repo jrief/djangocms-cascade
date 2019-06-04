@@ -1,20 +1,52 @@
 import logging
-from django.forms import widgets, ModelChoiceField
+from django.forms import widgets, ModelChoiceField, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
-from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.image import ImageAnnotationMixin, ImageFormMixin, ImagePropertyMixin
+from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, parse_responsive_length, compute_aspect_ratio_with_glossary
+from .fields import MultipleSizeField
 
 logger = logging.getLogger('cascade')
 
 
-class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
+class BootstrapImageForm(ImageFormMixin):
+    RESIZE_OPTIONS = [
+        ('upscale', _("Upscale image")),
+        ('crop', _("Crop image")),
+        ('subject_location', _("With subject location")),
+        ('high_resolution', _("Optimized for Retina"))
+    ]
+
+    responsive_heights = MultipleSizeField(
+        label=_("Adapt Picture Heights"),
+        widget=MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['px', '%']),
+        required=False,
+        initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%', 'xl': '100%'},
+        help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
+    )
+
+    responsive_zoom = MultipleSizeField(
+        label=_("Adapt Picture Zoom"),
+        widget=MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['%']),
+        required=False,
+        initial={'xs': '0%', 'sm': '0%', 'md': '0%', 'lg': '0%', 'xl': '0%'},
+        help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),
+    )
+
+    resize_options = MultipleChoiceField(
+        label=_("Resize Options"),
+        choices=RESIZE_OPTIONS,
+        initial=['subject_location', 'high_resolution'],
+        help_text = _("Options to use when resizing the image."),
+    )
+
+
+class BootstrapPicturePlugin(LinkPluginBase):
     name = _("Picture")
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     module = 'Bootstrap'
@@ -29,47 +61,24 @@ class BootstrapPicturePlugin(ImageAnnotationMixin, LinkPluginBase):
     default_css_attributes = ('image_shapes',)
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
-    fields = ['image_file'] + list(LinkPluginBase.fields)
-    RESIZE_OPTIONS = [
-        ('upscale', _("Upscale image")),
-        ('crop', _("Crop image")),
-        ('subject_location', _("With subject location")),
-        ('high_resolution', _("Optimized for Retina"))
-    ]
-
-    responsive_heights = GlossaryField(
-        MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['px', '%'], required=False),
-        label=_("Adapt Picture Heights"),
-        initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%', 'xl': '100%'},
-        help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
-    )
-
-    responsive_zoom = GlossaryField(
-        MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['%'], required=False),
-        label=_("Adapt Picture Zoom"),
-        initial={'xs': '0%', 'sm': '0%', 'md': '0%', 'lg': '0%', 'xl': '0%'},
-        help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),
-    )
-
-    resize_options = GlossaryField(
-        widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
-        label=_("Resize Options"),
-        help_text=_("Options to use when resizing the image."),
-        initial=['subject_location', 'high_resolution']
-    )
-
+    # fields = ['image_file'] + list(LinkPluginBase.fields)
     class Media:
         js = ['cascade/js/admin/pictureplugin.js']
 
-    def get_form(self, request, obj=None, **kwargs):
+    def X_get_form(self, request, obj=None, **kwargs):
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
         LinkForm = getattr(VoluntaryLinkForm, 'get_form_class')()
         Form = type(str('ImageForm'), (ImageFormMixin, LinkForm), {'image_file': image_file})
         kwargs.update(form=Form)
         return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
 
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', BootstrapPictureForm)
+        return super().get_form(request, obj, **kwargs)
+
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element
+        context = super().render(context, instance, placeholder)
         try:
             elements = get_picture_elements(instance)
         except Exception as exc:

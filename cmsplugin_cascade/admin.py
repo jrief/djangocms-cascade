@@ -42,7 +42,8 @@ class CascadePageAdmin(PageExtensionAdmin):
     def get_page_sections(self, request, page_pk=None):
         choices = []
         try:
-            for key, val in self.model.objects.get(extended_object_id=page_pk).glossary['element_ids'].items():
+            extended_glossary = self.model.objects.get(extended_object_id=page_pk).glossary
+            for key, val in extended_glossary['element_ids'].items():
                 choices.append((key, val))
         except (self.model.DoesNotExist, KeyError):
             pass

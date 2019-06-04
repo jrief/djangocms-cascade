@@ -6,10 +6,12 @@ from django.core.exceptions import ValidationError
 
 class GlossaryField(object):
     """
+    Deprecated.
     Behave similar to django.forms.Field, encapsulating a partial dictionary, stored as
     JSONField in the database.
     """
     def __init__(self, widget, label=None, name=None, initial='', help_text='', error_class=ErrorList):
+        warnings.warn("GlossaryField is deprecated")
         self.name = name
         if not isinstance(widget, widgets.Widget):
             raise AttributeError('`widget` must inherit from django.forms.widgets.Widget')
@@ -55,13 +57,3 @@ class GlossaryField(object):
         else:
             ids = ['{0}_{1}'.format(prefix_id, self.name)]
         return ids
-
-
-class PartialFormField(GlossaryField):
-    """
-    Former way to declare a partial form field. Now deprecated
-    """
-    def __init__(self, name, widget, label=None, initial='', help_text='', error_class=ErrorList):
-        warnings.warn("PartialFormField is deprecated. Please use a GlossaryField instead")
-        super(PartialFormField, self).__init__(widget, label=None, name=name, initial='',
-                                               help_text='', error_class=ErrorList)

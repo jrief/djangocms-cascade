@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, VoluntaryLinkForm
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.widgets import CascadingSizeWidget, SetBorderWidget, ColorPickerWidget
 from cmsplugin_cascade.icon.mixins import IconPluginMixin
@@ -25,7 +25,7 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     allow_children = False
     render_template = 'cascade/plugins/simpleicon.html'
     model_mixins = (LinkElementMixin,)
-    fields = list(LinkPluginBase.fields)
+    # fields = list(LinkPluginBase.fields)
     ring_plugin = 'IconPlugin'
 
     icon_font = GlossaryField(
@@ -68,7 +68,7 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     render_template = 'cascade/plugins/framedicon.html'
     model_mixins = (LinkElementMixin,)
     ring_plugin = 'FramedIconPlugin'
-    fields = list(LinkPluginBase.fields)
+    # fields = list(LinkPluginBase.fields)
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
     RADIUS_CHOICES = [(None, _("Square"))] + \
         [('{}px'.format(r), "{} px".format(r)) for r in (1, 2, 3, 5, 7, 10, 15, 20)] + \

@@ -81,14 +81,14 @@ class MarkerForm(ModelForm):
     )
 
     marker_width = GlossaryFormField(
-        widget=CascadingSizeWidget(allowed_units=['px'], required=False),
+        widget=CascadingSizeWidget(allowed_units=['px']),
         label=_("Marker Width"),
         required=False,
         help_text=_("Width of the marker icon in pixels."),
     )
 
     marker_anchor = GlossaryFormField(
-        widget=MultipleCascadingSizeWidget(['left', 'top'], allowed_units=['px', '%'], required=False),
+        widget=MultipleCascadingSizeWidget(['left', 'top'], allowed_units=['px', '%']),
         required=False,
         label=_("Marker Anchor"),
         help_text=_("The coordinates of the icon's anchor (relative to its top left corner)."),

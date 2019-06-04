@@ -227,12 +227,10 @@ class MultipleTextInputWidget(widgets.MultiWidget):
     """
     required = False
 
-    def __init__(self, labels, required=None, attrs=None):
+    def __init__(self, labels, attrs=None):
         text_widgets = [widgets.TextInput({'placeholder': label}) for label in labels]
-        super(MultipleTextInputWidget, self).__init__(text_widgets, attrs)
+        super().__init__(text_widgets, attrs)
         self.labels = labels[:]
-        if required is not None:
-            self.required = required
         self.validation_errors = []
         # check if derived classes contain proper error messages
         if hasattr(self, 'validation_pattern') and not hasattr(self, 'invalid_message'):
@@ -287,12 +285,12 @@ class MultipleCascadingSizeWidget(CascadingSizeWidgetMixin, MultipleTextInputWid
     DEFAULT_ATTRS = {'style': 'width: 4em;'}
     invalid_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending in %(endings)s.")
 
-    def __init__(self, labels, allowed_units=None, attrs=None, required=True):
+    def __init__(self, labels, allowed_units=None, attrs=None):
         if attrs is None:
             attrs = self.DEFAULT_ATTRS
         self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
             units=allowed_units)
-        super(MultipleCascadingSizeWidget, self).__init__(labels, required=required, attrs=attrs)
+        super().__init__(labels, attrs=attrs)
 
 
 class SetBorderWidget(widgets.MultiWidget):

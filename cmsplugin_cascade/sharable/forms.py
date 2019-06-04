@@ -88,17 +88,18 @@ class SharableCascadeForm(forms.ModelForm):
             self.base_fields['shared_glossary'].initial = kwargs['instance'].shared_glossary.pk
         except (AttributeError, KeyError):
             self.base_fields['shared_glossary'].initial = ''
-        super(SharableCascadeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_save_as_identifier(self):
         identifier = self.cleaned_data['save_as_identifier']
         if SharedGlossary.objects.filter(identifier=identifier).exclude(pk=self.instance.pk).exists():
-            raise ValidationError(_("The identifier '{0}' has already been used, please choose another name.").format(identifier))
+            msg = _("The identifier '{}' has already been used, please choose another name.")
+            raise ValidationError(msg.format(identifier))
         return identifier
 
     def save(self, commit=False):
         self.instance.shared_glossary = self.cleaned_data['shared_glossary']
-        return super(SharableCascadeForm, self).save(commit)
+        return super().save(commit)
 
 
 class SharableGlossaryMixin(with_metaclass(forms.MediaDefiningClass)):
@@ -120,7 +121,12 @@ class SharableGlossaryMixin(with_metaclass(forms.MediaDefiningClass)):
         Form = type(str('ExtSharableForm'), (SharableCascadeForm, kwargs.pop('form', self.form)), {})
         Form.base_fields['shared_glossary'].limit_choices_to = dict(plugin_type=self.__class__.__name__)
         kwargs.update(form=Form)
-        return super(SharableGlossaryMixin, self).get_form(request, obj, **kwargs)
+        return super().get_form(request, obj, **kwargs)
+
+    def get_fields(self, request, obj=None, **kwargs):
+        # TODO: add fields for sharables
+        fields = super().get_fields(request, obj, **kwargs)
+        return fields
 
     def save_model(self, request, obj, form, change):
         super(SharableGlossaryMixin, self).save_model(request, obj, form, change)
@@ -132,7 +138,8 @@ class SharableGlossaryMixin(with_metaclass(forms.MediaDefiningClass)):
             # move data from form glossary to a SharedGlossary and refer to it
             shared_glossary, created = SharedGlossary.objects.get_or_create(
                 plugin_type=self.__class__.__name__, identifier=identifier)
-            assert created, "SharableCascadeForm.clean_save_as_identifier() erroneously validated identifier '%s' as unique".format(identifier)
+            assert created, "SharableCascadeForm.clean_save_as_identifier() erroneously validated identifier '{}' " \
+                            "as unique".format(identifier)
             glry = form.cleaned_data['glossary']
             shared_glossary.glossary = dict((key, glry[key]) for key in self.sharable_fields if key in glry)
             shared_glossary.save()

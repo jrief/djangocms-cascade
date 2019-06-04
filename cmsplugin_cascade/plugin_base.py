@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from django.core.exceptions import ImproperlyConfigured
-from django.forms import MediaDefiningClass
+from django.forms import MediaDefiningClass, ModelForm
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.module_loading import import_string
@@ -143,13 +143,13 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             model_mixins = (SectionModelMixin,) + model_mixins
         if name in cls.plugins_with_sharables:
             bases = (SharableGlossaryMixin,) + bases
-            attrs['fields'] = list(attrs.get('fields', ['glossary']))
-            attrs['fields'].extend([('save_shared_glossary', 'save_as_identifier'), 'shared_glossary'])
+            # attrs['fields'] = list(attrs.get('fields', ['glossary']))
+            # attrs['fields'].extend([('save_shared_glossary', 'save_as_identifier'), 'shared_glossary'])
             attrs['sharable_fields'] = cls.plugins_with_sharables[name]
             base_model = SharableCascadeElement
         else:
-            attrs['exclude'] = list(attrs.get('exclude', []))
-            attrs['exclude'].append('shared_glossary')
+            # attrs['exclude'] = list(attrs.get('exclude', []))
+            # attrs['exclude'].append('shared_glossary')
             base_model = CascadeElement
         if name in cls.plugins_with_extra_render_templates:
             bases = (RenderTemplateMixin,) + bases
@@ -364,7 +364,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
                 child.glossary.update(child_glossary)
             child.save()
 
-    def get_form(self, request, obj=None, **kwargs):
+    def Xget_form(self, request, obj=None, **kwargs):
         """
         Build the form used for changing the model.
         """
@@ -384,6 +384,14 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
                     form.base_fields['glossary'].validators.append(field.run_validators)
         form.glossary_fields = glossary_fields
         return form
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = kwargs.get('form', self.form)
+        if issubclass(form, ModelForm):
+            kwargs['form'] = form
+        else:
+            kwargs['form'] = type(form.__name__, (form, ModelForm), {})
+        return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, new_obj, form, change):
         if change and self.glossary_variables:
@@ -448,8 +456,8 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
             return next_sibling.get_bound_plugin()
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        ring_plugin_bases = dict((ring_plugin, ['django.cascade.{}'.format(b) for b in bases])
-                                 for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items())
+        ring_plugin_bases = {ring_plugin: ['django.cascade.{}'.format(b) for b in bases]
+                             for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items()}
         context.update(
             ring_plugin_bases=ring_plugin_bases,
             plugin_title=format_lazy("{} {} Plugin", self.module, self.name),
@@ -462,14 +470,14 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
             )
 
         # remove glossary field from rendered form
-        form = context['adminform'].form
-        try:
-            fields = list(form.fields)
-            fields.remove('glossary')
-            context['empty_form'] = len(fields) + len(form.glossary_fields) == 0
-        except KeyError:
-            pass
-        return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
+        # form = context['adminform'].form
+        # try:
+        #     fields = list(form.fields)
+        #     fields.remove('glossary')
+        #     context['empty_form'] = len(fields) + len(form.glossary_fields) == 0
+        # except KeyError:
+        #     pass
+        return super().render_change_form(request, context, add, change, form_url, obj)
 
     def in_edit_mode(self, request, placeholder):
         """

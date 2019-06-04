@@ -31,7 +31,7 @@ def validate_link(link_data):
     from django.apps import apps
 
     try:
-        Model = apps.get_model(*link_data['model'].split('.'))
+        Model = apps.get_model(link_data['model'])
         Model.objects.get(pk=link_data['pk'])
     except Model.DoesNotExist:
         raise ValidationError(_("Unable to link onto '{0}'.").format(Model.__name__))

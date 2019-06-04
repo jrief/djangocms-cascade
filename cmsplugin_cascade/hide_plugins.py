@@ -26,7 +26,7 @@ background-size: contain;
 </style>
 '''
 
-    def get_form(self, request, obj=None, **kwargs):
+    def Xget_form(self, request, obj=None, **kwargs):
         glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
         glossary_fields.append(GlossaryField(
             widgets.CheckboxInput(),

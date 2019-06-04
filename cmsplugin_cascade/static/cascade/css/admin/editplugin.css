@@ -7,17 +7,15 @@ form .form-row.field-link_type  label.inline,
 form .form-row.field-link_type input { margin-top: 0; }
 form .form-row.field-link_type .help { margin-left: 2em; padding-left: 0; }
 form .form-row.field-link_type .field-link_type .help { margin-left: 160px; }
+form .form-row.field-cms_page { float: left; }
+form .form-row.field-section > .help::after { content: "."; display: block; clear: both; visibility: hidden; height: 0; }
 form .field-download_file { width: 100%; }
 form  label.inline { text-align: right; }
 form .field-glossary { padding: 0 10px; }
 form .container-thumbnail { text-align: center; }
 form .container-thumbnail i[class^="icon"] { font-size: 70px; }
-form label[for=id_glossary_0] { float: none; }
 form label[for=id_cms_page], form label[for=id_section] { width: 0; }
-#id_section + p { margin-left: 0; }
-form .glossary_button-type { margin-right: 10px; }
-form .glossary_button-size .button-samples { min-height: 100px; max-width: 100px; }
-form .glossary_button-type .btn, .glossary_button-size .btn { margin-bottom: 5px; }
+#id_section + .help { margin-left: 0; }
 #id_ext_url, #id_mail_to { min-width: 350px !important;}
 .field-box > .select2-container, .fieldBox > .select2-container { min-width: 350px; }
 .field-box.field-link_type, .fieldBox.field-link_type { float: none; margin-bottom: 15px; }

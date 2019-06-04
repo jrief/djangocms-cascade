@@ -9,7 +9,7 @@ from cms.plugin_pool import plugin_pool
 from filer.models.imagemodels import Image
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.image import ImageAnnotationMixin, ImagePropertyMixin, ImageFormMixin
+from cmsplugin_cascade.image import ImagePropertyMixin, ImageFormMixin
 from cmsplugin_cascade.widgets import NumberInputWidget, MultipleCascadingSizeWidget
 from .plugin_base import BootstrapPluginBase
 from .picture import BootstrapPicturePlugin, get_picture_elements
@@ -59,12 +59,12 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
         help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
     )
 
-    resize_options = GlossaryField(
-        widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
-        label=_("Resize Options"),
-        help_text=_("Options to use when resizing the image."),
-        initial=['upscale', 'crop', 'subject_location', 'high_resolution'],
-    )
+    # resize_options = GlossaryField(
+    #     widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
+    #     label=_("Resize Options"),
+    #     help_text=_("Options to use when resizing the image."),
+    #     initial=['upscale', 'crop', 'subject_location', 'high_resolution'],
+    # )
 
     def get_form(self, request, obj=None, **kwargs):
         # utils.reduce_breakpoints(self, 'container_max_heights', request)
@@ -119,7 +119,7 @@ class CarouselSlideForm(ImageFormMixin, ModelForm):
     image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
 
 
-class BootstrapCarouselSlidePlugin(ImageAnnotationMixin, BootstrapPluginBase):
+class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
     name = _("Slide")
     model_mixins = (ImagePropertyMixin,)
     form = CarouselSlideForm

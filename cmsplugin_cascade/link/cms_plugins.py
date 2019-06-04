@@ -4,7 +4,21 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from cmsplugin_cascade.link.forms import TextLinkFormMixin
+
+
+class TextLinkForm(LinkForm):
+    link_content = CharField(
+        label=_("Link Content"),
+        widget=TextInput(attrs={'id': 'id_name'}),  # replace auto-generated id so that CKEditor automatically transfers the text into this input field
+        help_text=_("Content of Link"),
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['link_content', 'link_type', 'cms_page', 'section', 'download_file',
+                                         'ext_url', 'mail_to', 'link_target', 'link_title']}
+
+    field_order = ['link_content', 'link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',
+                   'link_target', 'link_title']
 
 
 class TextLinkPlugin(LinkPluginBase):
@@ -13,7 +27,6 @@ class TextLinkPlugin(LinkPluginBase):
     text_enabled = True
     render_template = 'cascade/link/text-link.html'
     ring_plugin = 'TextLinkPlugin'
-    fields = ['link_content'] + list(LinkPluginBase.fields)
     parent_classes = ['TextPlugin']
 
     class Media:
@@ -24,12 +37,8 @@ class TextLinkPlugin(LinkPluginBase):
         return mark_safe(obj.glossary.get('link_content', ''))
 
     def get_form(self, request, obj=None, **kwargs):
-        link_content = CharField(required=True, label=_("Link Content"),
-            # replace auto-generated id so that CKEditor automatically transfers the text into this input field
-            widget=TextInput(attrs={'id': 'id_name'}), help_text=_("Content of Link"))
-        Form = type(str('TextLinkForm'), (TextLinkFormMixin, LinkForm.get_form_class()), {'link_content': link_content})
-        kwargs.update(form=Form)
-        return super(TextLinkPlugin, self).get_form(request, obj, **kwargs)
+        kwargs.setdefault('form', TextLinkForm)
+        return super().get_form(request, obj, **kwargs)
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):

@@ -1,75 +1,79 @@
-from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.admin.sites import site as admin_site
 from django.apps import apps
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import fields, Media, ModelChoiceField
 from django.forms.models import ModelForm
-from django.forms.widgets import Select as SelectWidget
+from django.forms.widgets import Select as SelectWidget, RadioSelect
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _, get_language
+from django_select2.forms import HeavySelect2Widget
 from cms.models import Page
 from cmsplugin_cascade.utils import validate_link
+from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
-
-try:
-    from cms.utils import get_current_site
-except ImportError:
-    def get_current_site():
-        from django.contrib.sites.models import Site
-        return Site.objects.get_current()
+import requests
+from cms.utils import get_current_site
 
 
 def format_page_link(*args, **kwargs):
     return format_html("{} ({})", *args, **kwargs)
 
 
-if 'django_select2' in settings.INSTALLED_APPS:
-    from django_select2.forms import HeavySelect2Widget
+class HeavySelectWidget(HeavySelect2Widget):
+    @property
+    def media(self):
+        parent_media = super(HeavySelectWidget, self).media
+        # prepend JS snippet to re-add 'jQuery' to the global namespace
+        js = ['cascade/js/admin/jquery.restore.js', *parent_media._js]
+        return Media(css=parent_media._css, js=js)
 
-    class HeavySelectWidget(HeavySelect2Widget):
-        @property
-        def media(self):
-            parent_media = super(HeavySelectWidget, self).media
-            # prepend JS snippet to re-add 'jQuery' to the global namespace
-            js = ['cascade/js/admin/jquery.restore.js', *parent_media._js]
-            return Media(css=parent_media._css, js=js)
-
-        def render(self, name, value, attrs=None, renderer=None):
-            try:
-                page = Page.objects.get(pk=value)
-            except (Page.DoesNotExist, ValueError):
-                pass
-            else:
-                language = get_language()
-                text = format_page_link(page.get_title(language), page.get_absolute_url(language))
-                self.choices.append((value, text))
-            html = super(HeavySelectWidget, self).render(name, value, attrs, renderer)
-            return html
-
-
-class LinkSearchField(fields.ChoiceField):
-    def __init__(self, *args, **kwargs):
-        if 'django_select2' in settings.INSTALLED_APPS:
-            widget = HeavySelectWidget(data_view='admin:get_published_pagelist')
+    def Xrender(self, name, value, attrs=None, renderer=None):
+        try:
+            page = Page.objects.get(pk=value)
+        except (Page.DoesNotExist, ValueError):
+            pass
         else:
-            widget = SelectWidget
-        kwargs.setdefault('widget', widget)
+            language = get_language()
+            text = format_page_link(page.get_title(language), page.get_absolute_url(language))
+            self.choices.append((value, text))
+        html = super(HeavySelectWidget, self).render(name, value, attrs, renderer)
+        return html
+
+
+class LinkSearchField(ModelChoiceField):
+    widget = HeavySelectWidget(data_view='admin:get_published_pagelist')
+
+    def __init__(self, *args, **kwargs):
+        queryset = Page.objects.public().on_site(get_current_site())
+        kwargs.setdefault('queryset', queryset)
         super(LinkSearchField, self).__init__(*args, **kwargs)
 
-    def clean(self, value):
+    def Xclean(self, value):
+        value = super().clean(value)
+        return value
         try:
             return int(value)
         except (TypeError, ValueError):
             pass
 
 
-class LinkForm(ModelForm):
-    """
-    Form class to add fake fields for rendering the ModelAdmin's form, which later are used to
-    populate the glossary of the model.
-    """
+class SectionChoiceField(fields.ChoiceField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('choices', [('', _("Page Root"))])
+        super().__init__(*args, **kwargs)
+
+    def valid_value(self, value):
+        """
+        The optgroup is adjusted dynamically accroding to the selected cms_page, so always returns True
+        and let `LinkForm` validate this value.
+        """
+        return True
+
+
+class LinkForm(EntangledModelFormMixin):
     LINK_TYPE_CHOICES = [
         ('cmspage', _("CMS Page")),
         ('download', _("Download File")),
@@ -79,16 +83,18 @@ class LinkForm(ModelForm):
 
     link_type = fields.ChoiceField(
         label=_("Link"),
+        choices=LINK_TYPE_CHOICES,
+        initial=LINK_TYPE_CHOICES[0][0],
         help_text=_("Type of link"),
     )
 
     cms_page = LinkSearchField(
         required=False,
         label='',
-        help_text=_("An internal link any CMS page of this site"),
+        help_text=_("An internal link onto any CMS page of this site"),
     )
 
-    section = fields.ChoiceField(
+    section = SectionChoiceField(
         required=False,
         label='',
         help_text=_("Page bookmark"),
@@ -97,38 +103,63 @@ class LinkForm(ModelForm):
     download_file = ModelChoiceField(
         label='',
         queryset=FilerFileModel.objects.all(),
+        widget=AdminFileWidget(ManyToOneRel(FilerFileField, FilerFileModel, 'id'), admin_site),
         required=False,
         help_text=_("An internal link onto a file from filer"),
     )
 
     ext_url = fields.URLField(
         required=False,
-        label='',
+        label=_("URL"),
         help_text=_("Link onto external page"),
     )
 
     mail_to = fields.EmailField(
         required=False,
-        label='',
+        label=_("Email"),
         help_text=_("Open Email program with this address"),
     )
 
-    class Meta:
-        fields = ('glossary',)
+    link_target = fields.ChoiceField(
+        choices=[
+            ('', _("Same Window")),
+            ('_blank', _("New Window")),
+            ('_parent', _("Parent Window")),
+            ('_top', _("Topmost Frame")),
+        ],
+        label=_("Link Target"),
+        widget=RadioSelect,
+        required=False,
+        help_text=_("Open Link in other target."),
+    )
 
-    def __init__(self, data=None, *args, **kwargs):
+    link_title = fields.CharField(
+        label=_("Title"),
+        required=False,
+        help_text=_("Link's Title"),
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',
+            'link_target', 'link_title']}
+
+    def X__init__(self, data=None, *args, **kwargs):
         instance = kwargs.get('instance')
-        default_link_type = {'type': self.LINK_TYPE_CHOICES[0][0]}
-        initial = dict(instance.glossary) if instance else {'link': default_link_type}
-        initial.update(kwargs.pop('initial', {}))
-        initial.setdefault('link', {'type': default_link_type})
-        link_type = initial['link']['type']
-        self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
-        self.base_fields['link_type'].initial = link_type
+        initial = dict(instance.glossary) if instance else {}
+        # default_link_type = {'link_type': self.LINK_TYPE_CHOICES[0][0]}
+        # initial = dict(instance.glossary) if instance else default_link_type
+        # initial.update(kwargs.pop('initial', {}))
+        # initial.setdefault('link', {'type': default_link_type})
+        # link_type = initial['link']['type']
+        # self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
+        # self.base_fields['link_type'].initial = link_type
         if data and data.get('shared_glossary'):
             # convert this into an optional field since it is disabled with ``shared_glossary`` set
             self.base_fields['link_type'].required = False
-        set_initial_linktype = getattr(self, 'set_initial_{}'.format(link_type), None)
+        try:
+            set_initial_linktype = getattr(self, 'set_initial_{link_type}'.format(**initial))
+        except KeyError:
+            set_initial_linktype = None
         if 'django_select2' not in settings.INSTALLED_APPS:
             # populate classic Select field for choosing a CMS page
             site = get_current_site()
@@ -138,27 +169,51 @@ class LinkForm(ModelForm):
 
         if callable(set_initial_linktype):
             set_initial_linktype(initial)
-        self._preset_section(data, initial)
-        self.base_fields['download_file'].widget = AdminFileWidget(ManyToOneRel(FilerFileField, FilerFileModel, 'id'), admin_site)
-        super(LinkForm, self).__init__(data, initial=initial, *args, **kwargs)
+        #self._preset_section(data, initial)
+        # self.base_fields['download_file'].widget = AdminFileWidget(ManyToOneRel(FilerFileField, FilerFileModel, 'id'), admin_site)
+        super().__init__(data, initial=initial, *args, **kwargs)
 
-    def _preset_section(self, data, initial):
-        choices = [(None, _("Page root"))]
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        if instance and instance.glossary.get('link_type') == 'cmspage':
+            self._preset_section(instance)
+        super().__init__(*args, **kwargs)
+
+    def _preset_section(self, instance):
+        """
+        Field ``cms_page`` may refer onto any CMS page, which itself may contain bookmarks. This method
+        creates the list of bookmarks.
+        """
+        self.base_fields['section'].choices = self.base_fields['section'].choices[:1]
         try:
-            if data:
-                cascade_page = Page.objects.get(pk=data['cms_page']).cascadepage
-            else:
-                cascade_page = Page.objects.get(pk=initial['link']['pk']).cascadepage
-        except (KeyError, ValueError, ObjectDoesNotExist):
-            pass
-        else:
+            cascade_page = get_related_object(instance.glossary, 'cms_page').cascadepage
             for key, val in cascade_page.glossary.get('element_ids', {}).items():
-                choices.append((key, val))
+                self.base_fields['section'].choices.append((key, val))
+        except (AttributeError, ObjectDoesNotExist):
+            pass
 
-        self.base_fields['section'].initial = initial['link'].get('section')
-        self.base_fields['section'].choices = choices
+    def clean(self):
+        cleaned_data = super().clean()
+        link_type = cleaned_data['glossary'].get('link_type')
+        if link_type == 'cmspage':
+            if get_related_object(cleaned_data['glossary'], 'cms_page') is None:
+                raise ValidationError(_("CMS page to link to is missing."))
+        elif link_type == 'download':
+            if get_related_object(cleaned_data['glossary'], 'download_file') is None:
+                raise ValidationError(_("File for download is missing."))
+        elif link_type == 'exturl':
+            ext_url = cleaned_data['glossary'].get('ext_url')
+            if not ext_url:
+                raise ValidationError(_("No external URL provided."))
+            try:
+                response = requests.head(ext_url, allow_redirects=True)
+            except Exception as exc:
+                raise ValidationError(_("Failed to connect to {url}.").format(url=ext_url))
+            if response.status_code != 200:
+                raise ValidationError(_("No external page found on {url}.").format(url=ext_url))
+        return cleaned_data
 
-    def clean_glossary(self):
+    def Xclean_glossary(self):
         """
         This method rectifies the behavior of JSONFormFieldBase.clean which converts
         the value of empty fields to None, although it shall be an empty dict.
@@ -168,7 +223,7 @@ class LinkForm(ModelForm):
             glossary = {}
         return glossary
 
-    def clean(self):
+    def Xclean(self):
         cleaned_data = super(LinkForm, self).clean()
         if self.is_valid():
             if 'link_data' in cleaned_data:
@@ -180,26 +235,20 @@ class LinkForm(ModelForm):
                 cleaned_data['glossary'].update(link={'type': 'none'})
         return cleaned_data
 
-    def clean_cms_page(self):
+    def Xclean_cms_page(self):
         if self.cleaned_data.get('link_type') == 'cmspage':
-            self.cleaned_data['link_data'] = {
-                'type': 'cmspage',
-                'model': 'cms.Page',
-                'pk': self.cleaned_data['cms_page'],
-            }
-            validate_link(self.cleaned_data['link_data'])
+            validate_link(self.cleaned_data['cms_page'])
         return self.cleaned_data['cms_page']
 
-    def clean_section(self):
-        if self.cleaned_data.get('link_type') == 'cmspage':
-            self.cleaned_data['link_data']['section'] = self.cleaned_data['section']
+    def Xclean_section(self):
+        # if self.cleaned_data.get('link_type') == 'cmspage':
+        #     self.cleaned_data['cms_page']['section'] = self.cleaned_data['section']
         return self.cleaned_data['section']
 
-    def clean_download_file(self):
+    def Xclean_download_file(self):
         if (self.cleaned_data.get('link_type') == 'download'
             and isinstance(self.cleaned_data['download_file'], FilerFileModel)):
             self.cleaned_data['link_data'] = {
-                'type': 'download',
                 'model': 'filer.File',
                 'pk': self.cleaned_data['download_file'].id,
             }
@@ -221,8 +270,8 @@ class LinkForm(ModelForm):
     def set_initial_cmspage(self, initial):
         try:
             # check if that page still exists, otherwise return nothing
-            Model = apps.get_model(*initial['link']['model'].split('.'))
-            initial['cms_page'] = Model.objects.get(pk=initial['link']['pk']).pk
+            Model = apps.get_model(initial['cms_page']['model'])
+            initial['cms_page'] = Model.objects.get(pk=initial['cms_page']['pk']).pk
         except (KeyError, ObjectDoesNotExist):
             pass
 
@@ -265,12 +314,12 @@ class LinkForm(ModelForm):
             cls.base_fields['link_type'].required = False
 
 
-class TextLinkFormMixin(object):
+class X_TextLinkFormMixin(object):
     """
     To be used in combination with `LinkForm` for easily accessing the field `link_content`.
     """
     def clean(self):
-        cleaned_data = super(TextLinkFormMixin, self).clean()
+        cleaned_data = super().clean()
         if self.is_valid():
             cleaned_data['glossary'].update(link_content=cleaned_data['link_content'])
         return cleaned_data

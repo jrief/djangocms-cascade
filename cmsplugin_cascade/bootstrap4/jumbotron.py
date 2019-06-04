@@ -103,19 +103,19 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             help_text=_("Supported display widths for Bootstrap's grid system.")
         ),
         GlossaryField(
-            MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['px', '%'], required=False),
+            MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['px', '%']),
             label=_("Adapt Picture Heights"),
             name='container_max_heights',
             initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%', 'xl': '100%'},
             help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints.")
         ),
-        GlossaryField(
-            widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
-            label=_("Resize Options"),
-            name='resize_options',
-            initial=['crop', 'subject_location', 'high_resolution'],
-            help_text=_("Options to use when resizing the image.")
-        ),
+        # GlossaryField(
+        #     widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
+        #     label=_("Resize Options"),
+        #     name='resize_options',
+        #     initial=['crop', 'subject_location', 'high_resolution'],
+        #     help_text=_("Options to use when resizing the image.")
+        # ),
     )
 
     background_color = GlossaryField(
@@ -155,8 +155,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     )
 
     background_width_height = GlossaryField(
-        MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%'],
-                                    required=False),
+        MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%']),
         label=_("Background width and height"),
         help_text=_("This property specifies the width and height of a background image."),
     )
