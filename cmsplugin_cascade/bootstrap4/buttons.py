@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-from cmsplugin_cascade.link.forms import TextLinkFormMixin
 if 'cmsplugin_cascade.icon' in settings.INSTALLED_APPS:
     from cmsplugin_cascade.icon.mixins import IconPluginMixin
 else:
@@ -149,7 +148,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
     model_mixins = (LinkElementMixin,)
-    fields = ['link_content'] + list(LinkPluginBase.fields)
+    # fields = ['link_content'] + list(LinkPluginBase.fields)
     glossary_field_order = ['button_type', 'button_size', 'button_options', 'floats',
                             'target', 'title', 'stretched_link', 'icon_align', 'icon_font', 'symbol']
     ring_plugin = 'ButtonPlugin'

@@ -12,12 +12,8 @@ form  label.inline { text-align: right; }
 form .field-glossary { padding: 0 10px; }
 form .container-thumbnail { text-align: center; }
 form .container-thumbnail i[class^="icon"] { font-size: 70px; }
-form label[for=id_glossary_0] { float: none; }
-form label[for=id_cms_page], form label[for=id_section] { width: 0; }
-#id_section + p { margin-left: 0; }
-form .glossary_button-type { margin-right: 10px; }
-form .glossary_button-size .button-samples { min-height: 100px; max-width: 100px; }
-form .glossary_button-type .btn, .glossary_button-size .btn { margin-bottom: 5px; }
+form label[for=id_cms_page], form label[for=id_section], form label[for=id_ext_url], form label[for=id_mail_to] { width: 0; }
+#id_section + .help { margin-left: 0; }
 #id_ext_url, #id_mail_to { min-width: 350px !important;}
 .field-box > .select2-container, .fieldBox > .select2-container { min-width: 350px; }
 .field-box.field-link_type, .fieldBox.field-link_type { float: none; margin-bottom: 15px; }

@@ -143,13 +143,13 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             model_mixins = (SectionModelMixin,) + model_mixins
         if name in cls.plugins_with_sharables:
             bases = (SharableGlossaryMixin,) + bases
-            attrs['fields'] = list(attrs.get('fields', ['glossary']))
-            attrs['fields'].extend([('save_shared_glossary', 'save_as_identifier'), 'shared_glossary'])
+            # attrs['fields'] = list(attrs.get('fields', ['glossary']))
+            # attrs['fields'].extend([('save_shared_glossary', 'save_as_identifier'), 'shared_glossary'])
             attrs['sharable_fields'] = cls.plugins_with_sharables[name]
             base_model = SharableCascadeElement
         else:
-            attrs['exclude'] = list(attrs.get('exclude', []))
-            attrs['exclude'].append('shared_glossary')
+            # attrs['exclude'] = list(attrs.get('exclude', []))
+            # attrs['exclude'].append('shared_glossary')
             base_model = CascadeElement
         if name in cls.plugins_with_extra_render_templates:
             bases = (RenderTemplateMixin,) + bases

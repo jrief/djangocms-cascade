@@ -1,6 +1,8 @@
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.plugin_base import CascadePluginMixinBase
+from entangled.forms import get_related_object
 
 
 class IconPluginMixin(CascadePluginMixinBase):
@@ -47,4 +49,36 @@ class IconPluginMixin(CascadePluginMixinBase):
         icon_font = self.get_icon_font(instance)
         if icon_font:
             context['stylesheet_url'] = icon_font.get_stylesheet_url()
+        return context
+
+
+class IconPluginMixin2(CascadePluginMixinBase):
+    change_form_template = 'cascade/admin/fonticon_change_form.html'
+    ring_plugin = 'IconPluginMixin'
+    require_icon_font = True  # if False, the icon_font is optional
+
+    class Media:
+        css = {'all': ['cascade/css/admin/iconplugin.css']}
+        js = ['cascade/js/admin/iconpluginmixin.js']
+
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        extra_context = dict(extra_context or {}, icon_fonts=IconFont.objects.all())
+        return super().changeform_view(
+             request, object_id=object_id, form_url=form_url, extra_context=extra_context)
+
+    def get_form(self, request, obj=None, **kwargs):
+        from cmsplugin_cascade.icon.forms import IconFontForm
+
+        kwargs.setdefault('form', IconFontForm)
+        return super().get_form(request, obj=obj, **kwargs)
+
+    def render(self, context, instance, placeholder):
+        context = self.super(IconPluginMixin2, self).render(context, instance, placeholder)
+        icon_font = get_related_object(instance.glossary, 'icon_font')
+        if icon_font:
+            context['stylesheet_url'] = icon_font.get_stylesheet_url()
+            symbol = instance.glossary.get('symbol')
+            if symbol:
+                prefix = icon_font.config_data.get('css_prefix_text', 'icon-')
+                context['icon_font_attrs'] = mark_safe('class="{}{}"'.format(prefix, symbol))
         return context

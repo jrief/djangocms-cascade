@@ -1,3 +1,4 @@
+from django.forms import ChoiceField
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade import app_settings
@@ -14,3 +15,10 @@ class VoluntaryLinkForm(LinkForm):
     becomes optional.
     """
     LINK_TYPE_CHOICES = [('none', _("No Link"))] + getattr(LinkForm, 'LINK_TYPE_CHOICES')
+
+    link_type = ChoiceField(
+        label=_("Link"),
+        choices=LINK_TYPE_CHOICES,
+        initial=LINK_TYPE_CHOICES[0][0],
+        help_text=_("Type of link"),
+    )

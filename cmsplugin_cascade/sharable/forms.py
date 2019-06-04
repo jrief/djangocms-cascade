@@ -93,7 +93,8 @@ class SharableCascadeForm(forms.ModelForm):
     def clean_save_as_identifier(self):
         identifier = self.cleaned_data['save_as_identifier']
         if SharedGlossary.objects.filter(identifier=identifier).exclude(pk=self.instance.pk).exists():
-            raise ValidationError(_("The identifier '{0}' has already been used, please choose another name.").format(identifier))
+            msg = _("The identifier '{0}' has already been used, please choose another name.")
+            raise ValidationError(msg.format(identifier))
         return identifier
 
     def save(self, commit=False):
@@ -120,7 +121,12 @@ class SharableGlossaryMixin(with_metaclass(forms.MediaDefiningClass)):
         Form = type(str('ExtSharableForm'), (SharableCascadeForm, kwargs.pop('form', self.form)), {})
         Form.base_fields['shared_glossary'].limit_choices_to = dict(plugin_type=self.__class__.__name__)
         kwargs.update(form=Form)
-        return super(SharableGlossaryMixin, self).get_form(request, obj, **kwargs)
+        return super().get_form(request, obj, **kwargs)
+
+    def get_fields(self, request, obj=None, **kwargs):
+        # TODO: add fields for sharables
+        fields = super().get_fields(request, obj, **kwargs)
+        return fields
 
     def save_model(self, request, obj, form, change):
         super(SharableGlossaryMixin, self).save_model(request, obj, form, change)

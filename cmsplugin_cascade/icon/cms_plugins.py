@@ -25,7 +25,7 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     allow_children = False
     render_template = 'cascade/plugins/simpleicon.html'
     model_mixins = (LinkElementMixin,)
-    fields = list(LinkPluginBase.fields)
+    # fields = list(LinkPluginBase.fields)
     ring_plugin = 'IconPlugin'
 
     icon_font = GlossaryField(
@@ -68,7 +68,7 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     render_template = 'cascade/plugins/framedicon.html'
     model_mixins = (LinkElementMixin,)
     ring_plugin = 'FramedIconPlugin'
-    fields = list(LinkPluginBase.fields)
+    # fields = list(LinkPluginBase.fields)
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
     RADIUS_CHOICES = [(None, _("Square"))] + \
         [('{}px'.format(r), "{} px".format(r)) for r in (1, 2, 3, 5, 7, 10, 15, 20)] + \

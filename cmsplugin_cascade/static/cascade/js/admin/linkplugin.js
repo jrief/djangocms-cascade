@@ -37,10 +37,10 @@ django.jQuery(function($) {
 			this.refreshChangeForm();
 		},
 		initializeLinkTypes: function() {
-			this.linkTypes['cmspage'] = new this.LinkType('.form-row .field-cms_page, .form-row .field-section', true);
-			this.linkTypes['download'] = new this.LinkType('.form-row .field-download_file');
-			this.linkTypes['exturl'] = new this.LinkType('.form-row .field-ext_url', true);
-			this.linkTypes['email'] = new this.LinkType('.form-row .field-mail_to');
+			this.linkTypes['cmspage'] = new this.LinkType('.form-row.field-cms_page, .form-row.field-section', true);
+			this.linkTypes['download'] = new this.LinkType('.form-row.field-download_file');
+			this.linkTypes['exturl'] = new this.LinkType('.form-row.field-ext_url', true);
+			this.linkTypes['email'] = new this.LinkType('.form-row.field-mail_to');
 		},
 		toggleLinkTypes: function(linkTypeName) {
 			$.each(this.linkTypes, function(name, linkType) {
@@ -88,7 +88,8 @@ django.jQuery(function($) {
 			}
 		},
 		toggleCMSPage: function(page_id) {
-			var url = django.cascade.page_sections_url + page_id, $selSection = $('#id_section');
+			var url = django.cascade.page_sections_url + page_id,
+			    $selSection = $('#id_section');
 
 			$.get(url, function(response) {
 				var k, val;

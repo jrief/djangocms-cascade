@@ -1,5 +1,7 @@
 import logging
-from django.forms import widgets, ModelChoiceField
+from django.core.exceptions import ValidationError
+from django.db.models.fields.related import ManyToOneRel
+from django.forms import widgets, ModelChoiceField, ChoiceField, MultipleChoiceField, CharField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from filer.models.imagemodels import Image
@@ -13,90 +15,138 @@ from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, Volu
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
    compute_aspect_ratio_with_glossary)
 import random
+from filer.fields.image import AdminImageFormField, FilerImageField
+from filer.models.imagemodels import Image
+from entangled.forms import EntangledModelForm, get_related_object
 
 logger = logging.getLogger('cascade')
 
 
-class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
-    name = _("Image")
-    model_mixins = (ImagePropertyMixin, LinkElementMixin,)
-    module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin']
-    require_parent = True
-    allow_children = False
-    raw_id_fields = LinkPluginBase.raw_id_fields + ['image_file']
-    admin_preview = False
-    ring_plugin = 'ImagePlugin'
-    render_template = 'cascade/bootstrap4/linked-image.html'
-    default_css_attributes = ['image_shapes', 'image_alignment']
-    html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
-    html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
-    fields = ['image_file'] + list(LinkPluginBase.fields)
+class BootstrapImageForm(VoluntaryLinkForm):
     SHAPE_CHOICES = [
         ('img-fluid', _("Responsive")),
         ('rounded', _('Rounded')),
         ('rounded-circle', _('Circle')),
         ('img-thumbnail', _('Thumbnail')),
     ]
+
     RESIZE_OPTIONS = [
         ('upscale', _("Upscale image")),
         ('crop', _("Crop image")),
         ('subject_location', _("With subject location")),
         ('high_resolution', _("Optimized for Retina")),
     ]
+
     ALIGNMENT_OPTIONS = [
         ('float-left', _("Left")),
         ('float-right', _("Right")),
         ('mx-auto', _("Center")),
     ]
 
-    image_shapes = GlossaryField(
-        widgets.CheckboxSelectMultiple(choices=SHAPE_CHOICES),
+    image_file = AdminImageFormField(
+        ManyToOneRel(FilerImageField, Image, 'file_ptr'),
+        Image.objects.all(),
+        to_field_name='image_file',
+        label=_("Image"),
+    )
+
+    image_shapes = MultipleChoiceField(
         label=_("Image Shapes"),
+        choices=SHAPE_CHOICES,
+        widget=widgets.CheckboxSelectMultiple,
         initial=['img-fluid']
     )
 
-    image_width_responsive = GlossaryField(
-        CascadingSizeWidget(allowed_units=['%'], required=False),
+    image_width_responsive = CharField(
         label=_("Responsive Image Width"),
+        widget=CascadingSizeWidget(allowed_units=['%']),
         initial='100%',
+        required = False,
         help_text=_("Set the image width in percent relative to containing element."),
     )
 
-    image_width_fixed = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px'], required=False),
+    image_width_fixed = CharField(
         label=_("Fixed Image Width"),
+        widget=CascadingSizeWidget(allowed_units=['px']),
+        required = False,
         help_text=_("Set a fixed image width in pixels."),
     )
 
-    image_height = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px', '%'], required=False),
+    image_height = CharField(
         label=_("Adapt Image Height"),
+        widget=CascadingSizeWidget(allowed_units=['px', '%']),
+        required = False,
         help_text=_("Set a fixed height in pixels, or percent relative to the image width."),
     )
 
-    resize_options = GlossaryField(
-        widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
+    resize_options = MultipleChoiceField(
         label=_("Resize Options"),
+        choices=RESIZE_OPTIONS,
+        widget=widgets.CheckboxSelectMultiple,
         help_text=_("Options to use when resizing the image."),
         initial=['subject_location', 'high_resolution'],
     )
 
-    image_alignment = GlossaryField(
-        widgets.RadioSelect(choices=ALIGNMENT_OPTIONS),
+    image_alignment = ChoiceField(
         label=_("Image Alignment"),
+        choices=ALIGNMENT_OPTIONS,
+        widget=widgets.RadioSelect,
         help_text=_("How to align a non-responsive image."),
     )
+
+    class Meta:
+        entangled_fields = {'glossary': ['image_file', 'image_shapes', 'image_width_responsive', 'image_width_fixed',
+            'image_height', 'resize_options', 'image_alignment', 'link_type', 'cms_page', 'section', 'download_file',
+            'ext_url', 'mail_to']}
+
+    def clean(self):
+        cleaned_data = super().clean()
+        image_file = get_related_object(cleaned_data['glossary'], 'image_file')
+        if not image_file:
+            raise ValidationError(_("No image has been selected."))
+        cleaned_data['glossary']['_image_properties'] = {
+            'width': image_file._width,
+            'height': image_file._height,
+            'exif_orientation': image_file.exif.get('Orientation', 1),
+        }
+        return cleaned_data
+
+
+# class BootstrapImagePlugin(ImageAnnotationMixin, LinkPluginBase):
+class BootstrapImagePlugin(LinkPluginBase):
+    name = _("Image")
+    module = 'Bootstrap'
+    parent_classes = ['BootstrapColumnPlugin']
+    require_parent = True
+    allow_children = False
+    raw_id_fields = LinkPluginBase.raw_id_fields + ['image_file']
+    # model_mixins = (ImagePropertyMixin, LinkElementMixin,)
+    model_mixins = (LinkElementMixin,)
+    admin_preview = False
+    ring_plugin = 'ImagePlugin'
+    render_template = 'cascade/bootstrap4/linked-image.html'
+    default_css_attributes = ['image_shapes', 'image_alignment']
+    html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
+    html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
+    # fields = ['image_file'] + list(LinkPluginBase.fields)
 
     class Media:
         js = ['cascade/js/admin/imageplugin.js']
 
-    def get_form(self, request, obj=None, **kwargs):
+    def Xget_form(self, request, obj=None, **kwargs):
         image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
         LinkForm = getattr(VoluntaryLinkForm, 'get_form_class')()
         Form = type(str('ImageForm'), (ImageFormMixin, LinkForm), {'image_file': image_file})
         kwargs.update(form=Form)
         return super(BootstrapImagePlugin, self).get_form(request, obj, **kwargs)
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', BootstrapImageForm)
+        return super().get_form(request, obj, **kwargs)
+
+    def get_fields(self, request, obj=None, **kwargs):
+        fields = super().get_fields(request, obj, **kwargs)
+        return fields
 
     def render(self, context, instance, placeholder):
         try:
@@ -164,7 +214,7 @@ def get_image_tags(instance):
         aspect_ratio = compute_aspect_ratio(instance.image)
     elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
-        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 360)))
+        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format(str(random.randint(0, 360)))
     else:
         # if accessing the image file fails or fake image fails, abort here
         logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))

@@ -125,7 +125,7 @@ class TextImagePlugin(ImageAnnotationMixin, LinkPluginBase):
     require_parent = False
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
-    fields = ['image_file'] + list(LinkPluginBase.fields)
+    # fields = ['image_file'] + list(LinkPluginBase.fields)
     RESIZE_OPTIONS = [
         ('upscale', _("Upscale image")),
         ('crop', _("Crop image")),
