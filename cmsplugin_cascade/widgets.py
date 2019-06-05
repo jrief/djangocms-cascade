@@ -228,18 +228,11 @@ class MultipleTextInputWidget(widgets.MultiWidget):
     required = False
 
     def __init__(self, labels, attrs=None):
-        text_widgets = [widgets.TextInput({'placeholder': label}) for label in labels]
+        text_widgets = [widgets.TextInput()] * len(labels)
         super().__init__(text_widgets, attrs)
         self.labels = labels[:]
-        self.validation_errors = []
-        # check if derived classes contain proper error messages
-        if hasattr(self, 'validation_pattern') and not hasattr(self, 'invalid_message'):
-            raise AttributeError("Multiple...InputWidget class is missing element: 'invalid_message'")
-        if self.required and not hasattr(self, 'required_message'):
-            raise AttributeError("Multiple...InputWidget class is missing element: 'required_message'")
 
     def __iter__(self):
-        self.validation_errors = []
         for label in self.labels:
             yield label
 
@@ -251,37 +244,24 @@ class MultipleTextInputWidget(widgets.MultiWidget):
         return values
 
     def value_from_datadict(self, data, files, name):
-        values = {}
-        for key in self.labels:
-            values[key] = escape(data.get('{0}-{1}'.format(name, key), ''))
+        values = [escape(data.get('{0}-{1}'.format(name, label), '')) for label in self.labels]
         return values
 
     def render(self, name, value, attrs=None, renderer=None):
         widgets = []
-        values = value or {}
+        value = value[:] if isinstance(value, (list, tuple)) else []
+        value.extend([''] * max(len(self.labels) - len(value), 0))
         elem_id = attrs['id']
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
             attrs['id'] = '{0}_{1}'.format(elem_id, key)
-            errors = key in self.validation_errors and 'errors' or ''
-            widgets.append((self.widgets[index].render(label, values.get(key), attrs, renderer), key, label, errors))
+            widgets.append((self.widgets[index].render(label, value[index], attrs, renderer), key, label))
         return format_html('<div class="clearfix">{0}</div>',
-                    format_html_join('\n', '<div class="sibling-field {3}"><label for="{2}">{1}</label>{0}</div>', widgets))
-
-    def validate(self, value, field_name):
-        if hasattr(self, 'validation_pattern'):
-            val = value.get(field_name)
-            if not val:
-                if self.required:
-                    raise ValidationError(self.required_message, code='required', params={'field': field_name})
-                return
-            if val and not self.validation_pattern.match(val):
-                self.validation_errors.append(field_name)
-                params = {'value': val, 'field': field_name}
-                raise ValidationError(self.invalid_message, code='invalid', params=params)
+                    format_html_join('\n', '<div class="sibling-field"><label for="{2}">{1}</label>{0}</div>', widgets))
 
 
 class MultipleCascadingSizeWidget(CascadingSizeWidgetMixin, MultipleTextInputWidget):
+    """deprecated"""
     DEFAULT_ATTRS = {'style': 'width: 4em;'}
     invalid_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending in %(endings)s.")
 

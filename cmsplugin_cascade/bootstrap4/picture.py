@@ -14,7 +14,7 @@ from .fields import MultipleSizeField
 logger = logging.getLogger('cascade')
 
 
-class BootstrapImageForm(ImageFormMixin):
+class BootstrapPictureForm(ImageFormMixin):
     RESIZE_OPTIONS = [
         ('upscale', _("Upscale image")),
         ('crop', _("Crop image")),
@@ -24,26 +24,32 @@ class BootstrapImageForm(ImageFormMixin):
 
     responsive_heights = MultipleSizeField(
         label=_("Adapt Picture Heights"),
-        widget=MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['px', '%']),
         required=False,
-        initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%', 'xl': '100%'},
+        require_all_fields=False,
+        allowed_units=['px', '%'],
+        initial=['100%'] * len(Breakpoint),
         help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
     )
 
     responsive_zoom = MultipleSizeField(
         label=_("Adapt Picture Zoom"),
-        widget=MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['%']),
         required=False,
-        initial={'xs': '0%', 'sm': '0%', 'md': '0%', 'lg': '0%', 'xl': '0%'},
+        require_all_fields=False,
+        allowed_units=['%'],
+        initial=['0%'] * len(Breakpoint),
         help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),
     )
 
     resize_options = MultipleChoiceField(
         label=_("Resize Options"),
         choices=RESIZE_OPTIONS,
+        widget=widgets.CheckboxSelectMultiple,
         initial=['subject_location', 'high_resolution'],
         help_text = _("Options to use when resizing the image."),
     )
+
+    class Meta:
+        entangled_fields = {'glossary': ['responsive_heights', 'responsive_zoom', 'resize_options']}
 
 
 class BootstrapPicturePlugin(LinkPluginBase):
@@ -61,7 +67,8 @@ class BootstrapPicturePlugin(LinkPluginBase):
     default_css_attributes = ('image_shapes',)
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
-    # fields = ['image_file'] + list(LinkPluginBase.fields)
+    link_required = False
+
     class Media:
         js = ['cascade/js/admin/pictureplugin.js']
 

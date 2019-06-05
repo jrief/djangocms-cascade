@@ -1,7 +1,12 @@
+import re
 import warnings
 from django.forms import widgets
+from django.forms.fields import Field
 from django.forms.utils import ErrorList
 from django.core.exceptions import ValidationError
+from django.core.validators import ProhibitNullCharactersValidator
+from django.utils.deconstruct import deconstructible
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 
 class GlossaryField(object):
@@ -57,3 +62,56 @@ class GlossaryField(object):
         else:
             ids = ['{0}_{1}'.format(prefix_id, self.name)]
         return ids
+
+
+@deconstructible
+class SizeUnitValidator():
+    allowed_units = []
+    message = _(
+        "'%(value)s' is not a valid size unit. "
+        "Allowed units are: %(allowed_units)s."
+    )
+    code = 'invalid_size_unit'
+
+    def __init__(self, allowed_units=None):
+        possible_units = ['rem', 'px', 'em', '%']
+        if allowed_units is None:
+            self.allowed_units = possible_units
+        else:
+            self.allowed_units = [au for au in allowed_units if au in possible_units]
+        self.validation_pattern = re.compile(r'^(-?\d+)({})$'.format('|'.join(self.allowed_units)))
+
+    def __call__(self, value):
+        match = self.validation_pattern.match(value)
+        if not (match and match.group(1).isdigit()):
+            allowed_units = " {} ".format(ugettext("or")).join("'{}'".format(u) for u in self.allowed_units)
+            params = {'value': value, 'allowed_units': allowed_units}
+            raise ValidationError(self.message, code=self.code, params=params)
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, self.__class__) and
+            self.allowed_units == other.allowed_units and
+            self.message == other.message and
+            self.code == other.code
+        )
+
+
+class SizeField(Field):
+    """
+    Use this field for validating input containing a value ending in ``px``, ``em``, ``rem`` or ``%``.
+    Use it for values representing a size, margin, padding, width or height.
+    """
+    def __init__(self, *, allowed_units=None, **kwargs):
+        self.empty_value = ''
+        super().__init__(**kwargs)
+        self.validators.append(SizeUnitValidator(allowed_units))
+        self.validators.append(ProhibitNullCharactersValidator())
+
+    def to_python(self, value):
+        """Return a stripped string."""
+        if value not in self.empty_values:
+            value = str(value).strip()
+        if value in self.empty_values:
+            return self.empty_value
+        return value
