@@ -29,6 +29,7 @@ class AppSettings(object):
         INSTALLED_APPS = self._setting('INSTALLED_APPS')
         config = self._setting('CMSPLUGIN_CASCADE', {})
         config.setdefault('alien_plugins', ['TextPlugin'])
+        config.setdefault('color_picker_with_alpha', False)
         config.setdefault('plugin_prefix', None)
 
         config.setdefault('plugins_with_extra_fields', {})

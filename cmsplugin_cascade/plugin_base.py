@@ -8,7 +8,7 @@ from django.utils.text import format_lazy
 from django.utils.safestring import SafeText, mark_safe
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
-from . import app_settings
+from cmsplugin_cascade import app_settings
 from .fields import GlossaryField
 from .mixins import CascadePluginMixin
 from .models_base import CascadeModelBase

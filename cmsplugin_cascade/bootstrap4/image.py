@@ -1,13 +1,14 @@
 import logging
 from django.db.models.fields.related import ManyToOneRel
-from django.forms import widgets, ModelChoiceField, ChoiceField, MultipleChoiceField, CharField
+from django.forms import widgets, ChoiceField, MultipleChoiceField, CharField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
-from cmsplugin_cascade.widgets import CascadingSizeWidget
+from cmsplugin_cascade.fields import SizeField
+# from cmsplugin_cascade.widgets import CascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
    compute_aspect_ratio_with_glossary)
@@ -53,24 +54,24 @@ class BootstrapImageForm(ImageFormMixin):
         initial=['img-fluid']
     )
 
-    image_width_responsive = CharField(
+    image_width_responsive = SizeField(
         label=_("Responsive Image Width"),
-        widget=CascadingSizeWidget(allowed_units=['%']),
+        allowed_units=['%'],
         initial='100%',
         required = False,
         help_text=_("Set the image width in percent relative to containing element."),
     )
 
-    image_width_fixed = CharField(
+    image_width_fixed = SizeField(
         label=_("Fixed Image Width"),
-        widget=CascadingSizeWidget(allowed_units=['px']),
+        allowed_units=['px'],
         required = False,
         help_text=_("Set a fixed image width in pixels."),
     )
 
-    image_height = CharField(
+    image_height = SizeField(
         label=_("Adapt Image Height"),
-        widget=CascadingSizeWidget(allowed_units=['px', '%']),
+        allowed_units=['px', '%'],
         required = False,
         help_text=_("Set a fixed height in pixels, or percent relative to the image width."),
     )

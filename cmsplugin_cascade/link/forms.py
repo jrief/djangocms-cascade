@@ -195,22 +195,30 @@ class LinkForm(EntangledModelFormMixin):
     def clean(self):
         cleaned_data = super().clean()
         link_type = cleaned_data['glossary'].get('link_type')
+        error = None
         if link_type == 'cmspage':
             if get_related_object(cleaned_data['glossary'], 'cms_page') is None:
-                raise ValidationError(_("CMS page to link to is missing."))
+                error = ValidationError(_("CMS page to link to is missing."))
+                self.add_error('cms_page', error)
         elif link_type == 'download':
             if get_related_object(cleaned_data['glossary'], 'download_file') is None:
-                raise ValidationError(_("File for download is missing."))
+                error = ValidationError(_("File for download is missing."))
+                self.add_error('download_file', error)
         elif link_type == 'exturl':
             ext_url = cleaned_data['glossary'].get('ext_url')
-            if not ext_url:
-                raise ValidationError(_("No external URL provided."))
-            try:
-                response = requests.head(ext_url, allow_redirects=True)
-            except Exception as exc:
-                raise ValidationError(_("Failed to connect to {url}.").format(url=ext_url))
-            if response.status_code != 200:
-                raise ValidationError(_("No external page found on {url}.").format(url=ext_url))
+            if ext_url:
+                try:
+                    response = requests.head(ext_url, allow_redirects=True)
+                    if response.status_code != 200:
+                        error = ValidationError(_("No external page found on {url}.").format(url=ext_url))
+                except Exception as exc:
+                    error = ValidationError(_("Failed to connect to {url}.").format(url=ext_url))
+            else:
+                error = ValidationError(_("No external URL provided."))
+            if error:
+                self.add_error('ext_url', error)
+        if error:
+            raise error
         return cleaned_data
 
     def Xclean_glossary(self):

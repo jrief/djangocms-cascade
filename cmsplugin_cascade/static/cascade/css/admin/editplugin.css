@@ -7,8 +7,10 @@ form .form-row.field-link_type  label.inline,
 form .form-row.field-link_type input { margin-top: 0; }
 form .form-row.field-link_type .help { margin-left: 2em; padding-left: 0; }
 form .form-row.field-link_type .field-link_type .help { margin-left: 160px; }
-form .form-row.field-cms_page { float: left; }
-form .form-row.field-section > .help::after { content: "."; display: block; clear: both; visibility: hidden; height: 0; }
+form .form-row.field-cms_page { height: 60px; float: left; }
+form .form-row.field-section { height: 60px; }
+form .form-row.field-section > div { margin-top: 4px; }
+form .form-row.field-section::after { content: "."; display: block; clear: both; visibility: hidden; height: 0; }
 form .field-download_file { width: 100%; }
 form  label.inline { text-align: right; }
 form .field-glossary { padding: 0 10px; }
