@@ -1,4 +1,3 @@
-from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import TransparentContainer, TransparentWrapper
@@ -44,21 +43,22 @@ class BootstrapCardPlugin(TransparentWrapper, BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     allow_children = True
     render_template = 'cascade/bootstrap4/card.html'
-    glossary_field_order = ['header', 'body_padding', 'footer']
+
+    def get_form(self, request, obj=None, **kwargs):
+        return super().get_form(request, obj, **kwargs)
 
     @classmethod
-    def get_identifier(cls, obj):
-        identifier = super(BootstrapCardPlugin, cls).get_identifier(obj)
+    def get_identifier(cls, instance):
         try:
-            return format_html('{0}{1}', identifier, obj.card_header or obj.card_footer)
+            return instance.card_header or instance.card_footer
         except AttributeError:
             pass
-        return identifier
+        return super().get_identifier(instance)
 
     @classmethod
     def get_child_classes(cls, slot, page, instance=None):
         """Restrict child classes of Card to one of each: Header, Body and Footer"""
-        child_classes = super(BootstrapCardPlugin, cls).get_child_classes(slot, page, instance)
+        child_classes = super().get_child_classes(slot, page, instance)
         # allow only one child of type Header, Body, Footer
         for child in instance.get_children():
             if child.plugin_type in child_classes:

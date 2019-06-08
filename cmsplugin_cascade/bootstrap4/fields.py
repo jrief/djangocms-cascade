@@ -13,7 +13,12 @@ class MultipleSizeField(MultiValueField):
         fields = [SizeField(required=required, allowed_units=allowed_units)] * len(Breakpoint)
         super().__init__(fields=fields, *args, **kwargs)
 
+    def prepare_value(self, value):
+        """Transform dict from DB into list"""
+        if not isinstance(value, dict):
+            return []
+        return [value.get(bp.name) for bp in Breakpoint]
+
     def compress(self, data_list):
-        return data_list
-
-
+        """Transform list into dict for DB"""
+        return {bp.name: value for bp, value in zip(Breakpoint, data_list)}

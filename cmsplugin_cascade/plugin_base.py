@@ -6,6 +6,7 @@ from django.utils.functional import lazy
 from django.utils.module_loading import import_string
 from django.utils.text import format_lazy
 from django.utils.safestring import SafeText, mark_safe
+from entangled.forms import EntangledModelFormMixin
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
 from cmsplugin_cascade import app_settings
@@ -386,7 +387,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         return form
 
     def get_form(self, request, obj=None, **kwargs):
-        form = kwargs.get('form', self.form)
+        form = kwargs.get('form', EntangledModelFormMixin)
         if issubclass(form, ModelForm):
             kwargs['form'] = form
         else:

@@ -1,6 +1,5 @@
 import logging
-from django.db.models.fields.related import ManyToOneRel
-from django.forms import widgets, ChoiceField, MultipleChoiceField, CharField
+from django.forms import widgets, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
@@ -8,18 +7,15 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.fields import SizeField
-# from cmsplugin_cascade.widgets import CascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
    compute_aspect_ratio_with_glossary)
 import random
-from filer.fields.image import AdminImageFormField, FilerImageField
-from filer.models.imagemodels import Image
 
 logger = logging.getLogger('cascade')
 
 
-class BootstrapImageForm(ImageFormMixin):
+class BootstrapImageFormMixin(ImageFormMixin):
     SHAPE_CHOICES = [
         ('img-fluid', _("Responsive")),
         ('rounded', _('Rounded')),
@@ -39,13 +35,6 @@ class BootstrapImageForm(ImageFormMixin):
         ('float-right', _("Right")),
         ('mx-auto', _("Center")),
     ]
-
-    image_file = AdminImageFormField(
-        ManyToOneRel(FilerImageField, Image, 'file_ptr'),
-        Image.objects.all(),
-        to_field_name='image_file',
-        label=_("Image"),
-    )
 
     image_shapes = MultipleChoiceField(
         label=_("Image Shapes"),
@@ -118,7 +107,7 @@ class BootstrapImagePlugin(LinkPluginBase):
         js = ['cascade/js/admin/imageplugin.js']
 
     def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', BootstrapImageForm)
+        kwargs.setdefault('form', BootstrapImageFormMixin)
         return super().get_form(request, obj, **kwargs)
 
     def get_fields(self, request, obj=None, **kwargs):

@@ -71,9 +71,9 @@ class LinkPluginBase(CascadePluginBase):
         from cmsplugin_cascade.link.config import LinkForm as MandatoryLinkForm, VoluntaryLinkForm
 
         if getattr(self, 'link_required', True):
-            LinkForm = MandatoryLinkForm
+            LinkForm = MandatoryLinkForm  # the default
         else:
-            LinkForm = VoluntaryLinkForm
+            LinkForm = VoluntaryLinkForm  # link type can be "No Link"
         if 'form' in kwargs:
             kwargs['form'] = type(kwargs['form'].__name__, (LinkForm, kwargs['form']), {})
         else:

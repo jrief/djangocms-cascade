@@ -2,9 +2,7 @@
 <div class="form-row">
 {% for group, options, index in widget.optgroups %}{% with widget=options.0 %}
 	<div class="fieldBox">
-		<div class="button-samples">
-			<span class="btn btn-primary {{ widget.value }}">{{ widget.label }}</span>
-		</div>
+		<span class="btn btn-primary {{ widget.value }}">{{ widget.label }}</span>
 		<div class="label">{% include widget.template_name %}</div>
 	</div>
 {% endwith %}{% endfor %}</div>

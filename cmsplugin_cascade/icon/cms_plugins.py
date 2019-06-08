@@ -1,5 +1,4 @@
 from django.forms import ChoiceField
-from django.utils.functional import cached_property
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -7,7 +6,7 @@ from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import SizeField, ColorField, BorderChoiceField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.icon.mixins import IconPluginMixin2
-from entangled.forms import EntangledModelFormMixin, get_related_object
+from entangled.forms import EntangledModelFormMixin
 
 
 class SimpleIconPlugin(IconPluginMixin2, LinkPluginBase):
@@ -20,34 +19,8 @@ class SimpleIconPlugin(IconPluginMixin2, LinkPluginBase):
     ring_plugin = 'IconPlugin'
     link_required = False
 
-    # icon_font = GlossaryField(
-    #     widgets.Select(),
-    #     label=_("Font"),
-    #     initial=get_default_icon_font,
-    # )
-    #
-    # symbol = GlossaryField(
-    #     widgets.HiddenInput(),
-    #     label=_("Select Symbol"),
-    # )
-
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
-
-    # glossary_field_order = ['icon_font', 'symbol']
-
-    def Xget_form(self, request, obj=None, **kwargs):
-        kwargs.update(form=VoluntaryLinkForm.get_form_class())
-        return super(SimpleIconPlugin, self).get_form(request, obj, **kwargs)
-
-    def Xrender(self, context, instance, placeholder):
-        context = super().render(context, instance, placeholder)
-        icon_font = self.get_icon_font(instance)
-        symbol = instance.glossary.get('symbol')
-        if icon_font and symbol:
-            font_attr = 'class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol)
-            context['icon_font_attrs'] = mark_safe(font_attr)
-        return context
 
 plugin_pool.register_plugin(SimpleIconPlugin)
 
@@ -153,11 +126,6 @@ class FramedIconPlugin(IconPluginMixin2, LinkPluginBase):
 
     def render(self, context, instance, placeholder):
         context = self.super(FramedIconPlugin, self).render(context, instance, placeholder)
-        icon_font = get_related_object(instance.glossary, 'icon_font')
-        symbol = instance.glossary.get('symbol')
-        attrs = []
-        if icon_font and symbol:
-            attrs.append(mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol)))
         styles = {'display': 'inline-block'}
         inherit, color = instance.glossary.get('color', (True, '#000'))
         if not inherit:
@@ -171,21 +139,14 @@ class FramedIconPlugin(IconPluginMixin2, LinkPluginBase):
             radius = instance.glossary.get('border_radius')
             if radius:
                 styles['border-radius'] = radius
+        attrs = []
+        if 'icon_font_class' in context:
+            attrs.append(format_html('class="{}"', context['icon_font_class']))
         attrs.append(format_html('style="{}"', format_html_join('', '{0}:{1};', [(k, v) for k, v in styles.items()])))
         context['icon_font_attrs'] = mark_safe(' '.join(attrs))
         return context
 
 plugin_pool.register_plugin(FramedIconPlugin)
-
-
-class TextIconModelMixin(object):
-    @cached_property
-    def icon_font_class(self):
-        icon_font = self.plugin_class.get_icon_font(self)
-        symbol = self.glossary.get('symbol')
-        if icon_font and symbol:
-            return mark_safe('class="{}{}"'.format(icon_font.config_data.get('css_prefix_text', 'icon-'), symbol))
-        return ''
 
 
 class TextIconPlugin(IconPluginMixin2, LinkPluginBase):
@@ -197,27 +158,10 @@ class TextIconPlugin(IconPluginMixin2, LinkPluginBase):
     render_template = 'cascade/plugins/texticon.html'
     ring_plugin = 'IconPlugin'
     parent_classes = ['TextPlugin']
-    model_mixins = (TextIconModelMixin, LinkElementMixin,)
+    model_mixins = (LinkElementMixin,)
     allow_children = False
     require_parent = False
-
-    # icon_font = GlossaryField(
-    #     widgets.Select(),
-    #     label=_("Font"),
-    #     initial=get_default_icon_font,
-    # )
-    #
-    # symbol = GlossaryField(
-    #     widgets.HiddenInput(),
-    #     label=_("Select Symbol"),
-    # )
-
-    # color = GlossaryField(
-    #     ColorPickerWidget(),
-    #     label=_("Icon color"),
-    # )
-
-    glossary_field_order = ['icon_font', 'symbol', 'color']
+    link_required = False
 
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
@@ -225,17 +169,5 @@ class TextIconPlugin(IconPluginMixin2, LinkPluginBase):
     @classmethod
     def requires_parent_plugin(cls, slot, page):
         return False
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.update(form=VoluntaryLinkForm.get_form_class())
-        return super(TextIconPlugin, self).get_form(request, obj, **kwargs)
-
-    @classmethod
-    def get_inline_styles(cls, instance):
-        inline_styles = cls.super(TextIconPlugin, cls).get_inline_styles(instance)
-        color = instance.glossary.get('color')
-        if isinstance(color, list) and len(color) == 2 and not color[0]:
-            inline_styles['color'] = color[1]
-        return inline_styles
 
 plugin_pool.register_plugin(TextIconPlugin)

@@ -219,8 +219,8 @@ class MultipleTextInputWidget(widgets.MultiWidget):
             yield label
 
     def decompress(self, values):
-        assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
-        return list(values)
+        assert isinstance(values, dict), "Values to decompress are kept as dict in JSON"
+        return list(values.values())
 
     def value_from_datadict(self, data, files, name):
         values = [escape(data.get('{0}-{1}'.format(name, label), '')) for label in self.labels]

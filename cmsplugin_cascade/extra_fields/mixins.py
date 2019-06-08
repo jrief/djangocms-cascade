@@ -1,10 +1,11 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import MediaDefiningClass, widgets
+from django.forms.fields import CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 
 
@@ -22,7 +23,6 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
         from cmsplugin_cascade.models import PluginExtraFields
         from .config import PluginExtraFieldsConfig
 
-        glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
         clsname = self.__class__.__name__
         try:
             site = get_current_site(request)
@@ -31,48 +31,63 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
             extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
 
         if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
+            form_fields = {}
+
             # add a text input field to let the user name an ID tag for this HTML element
             if extra_fields.allow_id_tag:
-                glossary_fields.append(GlossaryField(
-                    widgets.TextInput(),
+                form_fields['extra_element_id'] = CharField(
                     label=_("Named Element ID"),
-                    name='extra_element_id'
-                ))
+                )
 
             # add a select box to let the user choose one or more CSS classes
-            class_names = extra_fields.css_classes.get('class_names', '').replace(' ', '')
-            if class_names:
-                choices = [(clsname, clsname) for clsname in class_names.split(',')]
+            class_names, choices = extra_fields.css_classes.get('class_names'), None
+            if isinstance(class_names, (list, tuple)):
+                choices = [(clsname, clsname) for clsname in class_names]
+            elif isinstance(class_names, str):
+                choices = [(clsname, clsname) for clsname in class_names.replace(' ', ',').split(',') if clsname]
+            if choices:
                 if extra_fields.css_classes.get('multiple'):
-                    widget = widgets.CheckboxSelectMultiple(choices=choices)
+                    form_fields['extra_css_classes'] = MultipleChoiceField(
+                        label=_("Customized CSS Classes"),
+                        choices=choices,
+                        widget=widgets.CheckboxSelectMultiple,
+                        help_text=_("Customized CSS classes to be added to this element."),
+                    )
                 else:
                     choices.insert(0, (None, _("Select CSS")))
-                    widget = widgets.Select(choices=choices)
-                glossary_fields.append(GlossaryField(
-                    widget,
-                    label=_("Customized CSS Classes"),
-                    name='extra_css_classes',
-                    help_text=_("Customized CSS classes to be added to this element.")
-                ))
+                    form_fields['extra_css_classes'] = ChoiceField(
+                        label=_("Customized CSS Class"),
+                        choices=choices,
+                        help_text=_("Customized CSS class to be added to this element."),
+                    )
 
             # add input fields to let the user enter styling information
-            for style, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
+            for style, choices_list in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
                 if not inline_styles:
                     continue
-                Widget = choices_tuples[1]
+                Widget = choices_list[1]
                 if issubclass(Widget, MultipleCascadingSizeWidget):
                     key = 'extra_inline_styles:{0}'.format(style)
                     allowed_units = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
                     widget = Widget(inline_styles, allowed_units=allowed_units, required=False)
-                    glossary_fields.append(GlossaryField(widget, label=style, name=key))
+                    form_fields[key] = CharField(
+                        label=style,
+                        widget=widget,
+                    )
                 else:
                     for inline_style in inline_styles:
                         key = 'extra_inline_styles:{0}'.format(inline_style)
                         label = '{0}: {1}'.format(style, inline_style)
-                        glossary_fields.append(GlossaryField(Widget(), label=label, name=key))
+                        form_fields[key] = CharField(label=label)
 
-        kwargs.update(glossary_fields=glossary_fields)
+            # extend the form with some extra fields
+            base_form = kwargs.pop('form', EntangledModelFormMixin)
+            class Meta:
+                entangled_fields = {'glossary': list(form_fields.keys())}
+            form_fields['Meta'] = Meta
+            kwargs['form'] = type(base_form.__name__, (base_form,), form_fields)
+
         return super(ExtraFieldsMixin, self).get_form(request, obj, **kwargs)
 
     @classmethod

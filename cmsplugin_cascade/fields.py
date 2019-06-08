@@ -95,8 +95,7 @@ class ColorValidator():
     code = 'invalid_color_code'
 
     def __init__(self, with_alpha):
-        self.with_alpha = with_alpha
-        if self.with_alpha:
+        if with_alpha:
             self.validation_pattern = re.compile(r'(#(?:[0-9a-fA-F]{2}){2,4}|(#[0-9a-fA-F]{3})|(rgb|hsl)a?\((-?\d+%?[,\s]+){2,3}\s*[\d\.]+%?\))')
         else:
             self.validation_pattern = re.compile(r'(#(?:[0-9a-fA-F]{2}){2,3}|(#[0-9a-fA-F]{3})|(rgb|hsl))')
@@ -111,7 +110,7 @@ class ColorValidator():
     def __eq__(self, other):
         return (
             isinstance(other, self.__class__) and
-            self.with_alpha == other.with_alpha and
+            self.validation_pattern == other.validation_pattern and
             self.message == other.message and
             self.code == other.code
         )
@@ -120,10 +119,7 @@ class ColorValidator():
 class ColorField(MultiValueField):
     DEFAULT_COLOR = '#ffffff'
 
-    def __init__(self, *args, **kwargs):
-        required = kwargs.pop('required', False)
-        inherit_color = kwargs.pop('inherit_color', False)
-        default_color = kwargs.pop('default_color', self.DEFAULT_COLOR)
+    def __init__(self, inherit_color=False, default_color=DEFAULT_COLOR, required=False, *args, **kwargs):
         with_alpha = kwargs.pop('with_alpha', app_settings.CMSPLUGIN_CASCADE['color_picker_with_alpha'])
         widget = kwargs.pop('widget', ColorPickerWidget(with_alpha))
         fields = [

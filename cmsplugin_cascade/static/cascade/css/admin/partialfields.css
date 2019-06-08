@@ -12,11 +12,11 @@ form .form-row ul { margin-left: 0; padding-left: 0; }
 form .form-row ul li { list-style: none; float: left; min-width: 95px; }
 form .form-row ul.errorlist li { float: none; }
 */
-form .form-row div.sibling-field { float: left;  margin-left: 20px; width: 9em; }
+form .form-row div.sibling-field { float: left;  margin-left: 20px; width: 8em; }
 form .form-row div.sibling-field:first-child { margin-left: 0; }
 form .form-row div.sibling-field label { padding-left: 5px; }
 /*form .form-row div.sibling-field.inherit { margin-left: 60px; }*/
-.form-row div.sibling-field input[type="text"], .form-row div.sibling-field input[type="color"] { display: block; width: 8em; margin: 0; }
+.form-row div.sibling-field input[type="text"], .form-row div.sibling-field input[type="color"] { display: block; width: 7.5em; margin: 0; }
 /*
 form .form-row h4 { margin-top: 10px !important; margin-bottom: 10px !important; }
 form .form-row input[type="radio"], form .form-row input[type="checkbox"] { margin: 0 4px 0 0; display: inline-block; width: 2em; }
