@@ -1,7 +1,7 @@
 from django.forms import widgets, CharField, ModelChoiceField
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.models import IconFont
-from entangled.forms import EntangledModelForm
+from entangled.forms import EntangledModelFormMixin
 
 
 def get_default_icon_font():
@@ -11,7 +11,7 @@ def get_default_icon_font():
         return ''
 
 
-class IconFontForm(EntangledModelForm):
+class IconFontFormMixin(EntangledModelFormMixin):
     icon_font = ModelChoiceField(
         IconFont.objects.all(),
         label=_("Font"),
@@ -25,4 +25,3 @@ class IconFontForm(EntangledModelForm):
 
     class Meta:
         entangled_fields = {'glossary': ['icon_font', 'symbol']}
-

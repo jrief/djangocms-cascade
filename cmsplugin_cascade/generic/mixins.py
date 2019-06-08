@@ -1,9 +1,10 @@
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.forms import widgets, models
+from django.forms import models
+from django.forms.fields import CharField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.models import CascadePage
 
 
@@ -44,31 +45,34 @@ class SectionModelMixin(object):
             pass
         else:
             self.placeholder.page.cascadepage.save()
-        super(SectionModelMixin, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
+
+
+class SectionFormMixin(EntangledModelFormMixin):
+    element_id = CharField(
+        label=_("Element ID"),
+        max_length=15,
+        help_text=_("A unique identifier for this element.")
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['element_id']}
 
 
 class SectionMixin(object):
     def get_form(self, request, obj=None, **kwargs):
-        glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
-        glossary_fields.append(GlossaryField(
-            widgets.TextInput(),
-            label=_("Element ID"),
-            name='element_id',
-            help_text=_("A unique identifier for this element.")
-        ))
-        kwargs.update(form=SectionForm, glossary_fields=glossary_fields)
-        return super(SectionMixin, self).get_form(request, obj, **kwargs)
+        kwargs['form'] = type(kwargs['form'].__name__, (SectionFormMixin, kwargs['form']), {})
+        return super().get_form(request, obj, **kwargs)
 
     @classmethod
     def get_identifier(cls, instance):
-        identifier = super(SectionMixin, cls).get_identifier(instance)
         element_id = instance.glossary.get('element_id')
         if element_id:
-            return format_html('<code>id="{0}"</code> {1}', element_id, identifier)
-        return identifier
+            return format_html('<code>id="{0}"</code>', element_id)
+        return super().get_identifier(instance)
 
     def save_model(self, request, obj, form, change):
-        super(SectionMixin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         element_id = obj.glossary['element_id']
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness

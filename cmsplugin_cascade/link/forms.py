@@ -194,18 +194,18 @@ class LinkForm(EntangledModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()
-        link_type = cleaned_data['glossary'].get('link_type')
+        link_type = cleaned_data.get('link_type')
         error = None
         if link_type == 'cmspage':
-            if get_related_object(cleaned_data['glossary'], 'cms_page') is None:
+            if cleaned_data['cms_page'] is None:
                 error = ValidationError(_("CMS page to link to is missing."))
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if get_related_object(cleaned_data['glossary'], 'download_file') is None:
+            if cleaned_data['download_file'] is None:
                 error = ValidationError(_("File for download is missing."))
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
-            ext_url = cleaned_data['glossary'].get('ext_url')
+            ext_url = cleaned_data['ext_url']
             if ext_url:
                 try:
                     response = requests.head(ext_url, allow_redirects=True)

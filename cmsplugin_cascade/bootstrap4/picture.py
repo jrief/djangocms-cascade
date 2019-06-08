@@ -1,12 +1,10 @@
 import logging
-from django.forms import widgets, ModelChoiceField, MultipleChoiceField
+from django.forms import widgets, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from filer.models.imagemodels import Image
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, parse_responsive_length, compute_aspect_ratio_with_glossary
 from .fields import MultipleSizeField
@@ -14,7 +12,7 @@ from .fields import MultipleSizeField
 logger = logging.getLogger('cascade')
 
 
-class BootstrapPictureForm(ImageFormMixin):
+class BootstrapPictureFormMixin(ImageFormMixin):
     RESIZE_OPTIONS = [
         ('upscale', _("Upscale image")),
         ('crop', _("Crop image")),
@@ -27,7 +25,7 @@ class BootstrapPictureForm(ImageFormMixin):
         required=False,
         require_all_fields=False,
         allowed_units=['px', '%'],
-        initial=['100%'] * len(Breakpoint),
+        initial={bp.name: '100%' for bp in Breakpoint},
         help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
     )
 
@@ -36,7 +34,7 @@ class BootstrapPictureForm(ImageFormMixin):
         required=False,
         require_all_fields=False,
         allowed_units=['%'],
-        initial=['0%'] * len(Breakpoint),
+        initial={bp.name: '0%' for bp in Breakpoint},
         help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),
     )
 
@@ -72,20 +70,13 @@ class BootstrapPicturePlugin(LinkPluginBase):
     class Media:
         js = ['cascade/js/admin/pictureplugin.js']
 
-    def X_get_form(self, request, obj=None, **kwargs):
-        image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-        LinkForm = getattr(VoluntaryLinkForm, 'get_form_class')()
-        Form = type(str('ImageForm'), (ImageFormMixin, LinkForm), {'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(BootstrapPicturePlugin, self).get_form(request, obj, **kwargs)
-
     def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', BootstrapPictureForm)
+        kwargs.setdefault('form', BootstrapPictureFormMixin)
         return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element
-        context = super().render(context, instance, placeholder)
+        context = self.super(BootstrapPicturePlugin, self).render(context, instance, placeholder)
         try:
             elements = get_picture_elements(instance)
         except Exception as exc:

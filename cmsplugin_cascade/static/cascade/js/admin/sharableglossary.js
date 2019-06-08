@@ -15,7 +15,7 @@ django.jQuery(function($) {
 			this.$super();
 
 			// move the select box for Shared Glossary just at the beginning of the form
-			$('.field-shared_glossary').detach().insertAfter($('label[for=id_glossary_0]'));
+			// $('.field-shared_glossary').detach().insertAfter($('label[for=id_glossary_0]'));
 
 			if ($sel_shared_glossary.children('option').length > 1) {
 				// add event handler to select box for 'Shared Settings'
@@ -35,10 +35,12 @@ django.jQuery(function($) {
 		},
 		toggleSharedGlossary: function($option) {
 			var glossary = $option.data('glossary'),
-				$save_shared_glossary = $('.form-row.field-save_shared_glossary');
+			    $save_shared_glossary = $('.form-row.field-save_shared_glossary'),
+			    $save_as_identifier = $('.form-row.field-save_as_identifier');
 
 			if (glossary) {
 				$save_shared_glossary.hide();
+				$save_as_identifier.hide();
 				// copy the values from the shared glossary back to the fields
 				$.each(glossary, function(name, value) {
 					if ($.isArray(value)) {
@@ -51,16 +53,17 @@ django.jQuery(function($) {
 				});
 				// disable fields marked as sharable, since they obtained their values from the shared glossary
 				$.each(django.cascade.sharable_fields, function(k, element_id) {
-					$('#' + element_id).prop('disabled', true);
-					$('#' + element_id).find('input[type="checkbox"]').prop('disabled', true);
-					$('#' + element_id).find('input[type="radio"]').prop('disabled', true);
+					$('#id_' + element_id).prop('disabled', true);
+					//$('#id_' + element_id).find('input[type="checkbox"]').prop('disabled', true);
+					//$('#id_' + element_id).find('input[type="radio"]').prop('disabled', true);
 				});
 			} else {
 				$save_shared_glossary.show();
+				$save_as_identifier.show();
 				$.each(django.cascade.sharable_fields, function(k, element_id) {
-					$('#' + element_id).prop('disabled', false);
-					$('#' + element_id).find('input[type="checkbox"]').prop('disabled', false);
-					$('#' + element_id).find('input[type="radio"]').prop('disabled', false);
+					$('#id_' + element_id).prop('disabled', false);
+					//$('#' + element_id).find('input[type="checkbox"]').prop('disabled', false);
+					//$('#' + element_id).find('input[type="radio"]').prop('disabled', false);
 				});
 			}
 			if (this.$super) {

@@ -183,24 +183,10 @@ class ColorPickerWidget(widgets.MultiWidget):
 
     def value_from_datadict(self, data, files, name):
         values = (
-            escape(data['{}_0'.format(name)]),
-            bool(data['{}_1'.format(name)]),
+            escape(data.get('{}_0'.format(name))),
+            bool(data.get('{}_1'.format(name))),
         )
         return values
-
-
-class SelectTextAlignWidget(widgets.Select):
-    CHOICES = [('left', 'left'), ('center', 'center'), ('right', 'right'), ('justify', 'justify')]
-
-    def __init__(self, attrs=None):
-        super(SelectTextAlignWidget, self).__init__(attrs, choices=self.CHOICES)
-
-
-class SelectOverflowWidget(widgets.Select):
-    CHOICES = [('auto', 'auto'), ('scroll', 'scroll'), ('hidden', 'hidden')]
-
-    def __init__(self, attrs=None):
-        super(SelectOverflowWidget, self).__init__(attrs, choices=self.CHOICES)
 
 
 class MultipleTextInputWidget(widgets.MultiWidget):
@@ -219,8 +205,8 @@ class MultipleTextInputWidget(widgets.MultiWidget):
             yield label
 
     def decompress(self, values):
-        assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
-        return list(values)
+        assert isinstance(values, dict), "Values to decompress are kept as dict in JSON"
+        return list(values.values())
 
     def value_from_datadict(self, data, files, name):
         values = [escape(data.get('{0}-{1}'.format(name, label), '')) for label in self.labels]

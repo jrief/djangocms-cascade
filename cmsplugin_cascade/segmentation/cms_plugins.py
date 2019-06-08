@@ -1,14 +1,12 @@
-from six.moves.html_parser import HTMLParser
 from django.core.exceptions import ValidationError
-from django.forms import widgets, ModelForm
+from django.forms.fields import CharField, ChoiceField
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
+from django.utils.text import unescape_entities
 from django.template import engines, TemplateSyntaxError, Template as DjangoTemplate, Context as TemplateContext
+from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
-
-html_parser = HTMLParser()
 
 
 class Template(DjangoTemplate):
@@ -18,22 +16,39 @@ class Template(DjangoTemplate):
         return super(Template, self).render(context)
 
 
-class SegmentForm(ModelForm):
+class SegmentFormMixin(EntangledModelFormMixin):
     eval_template_string = '{{% if {} %}}True{{% endif %}}'
 
-    def clean_glossary(self):
-        glossary = self.cleaned_data['glossary']
-        if glossary.get('open_tag') in ('if', 'elif'):
-            if not glossary.get('condition'):
+    open_tag = ChoiceField()  # redeclared in get_form
+
+    condition = CharField(
+        label=_("Condition evaluation"),
+        required=False,
+        # widget=widgets.TextInput(attrs={'width': '100%'}),
+        help_text=_("Evaluation as used in Django's template tags for conditions")
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['open_tag', 'condition']}
+
+    def __init__(self, *args, **kwargs):
+        if 'instance' in kwargs and kwargs['instance']:
+            pass
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data['open_tag'] in ('if', 'elif'):
+            if not cleaned_data['condition']:
                 raise ValidationError(_("The evaluation condition is missing or empty."))
             try:
-                condition = html_parser.unescape(glossary['condition'])
+                condition = unescape_entities(cleaned_data['condition'])
                 engines['django'].from_string(self.eval_template_string.format(condition))
             except TemplateSyntaxError as err:
-                raise ValidationError(_("Unable to evaluate condition: {}.").format(str(err)))
-        elif glossary.get('open_tag') == 'else':
-            glossary['condition'] = ''
-        return glossary
+                raise ValidationError(_("Unable to evaluate condition: {}").format(str(err)))
+        elif cleaned_data['open_tag'] == 'else':
+            cleaned_data['condition'] = ''  # empty condition for else-block
+        return cleaned_data
 
 
 class SegmentPlugin(TransparentContainer, CascadePluginBase):
@@ -49,24 +64,11 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
     debug_error_template = '<!-- segment condition "{condition}" for plugin: {instance_id} failed: "{message}" -->{template_string}'
     empty_template = engines['django'].from_string('{% load l10n %}<!-- segment condition for plugin: {{ instance.id|unlocalize }} did not evaluate -->')
     ring_plugin = 'SegmentPlugin'
-    form = SegmentForm
     require_parent = False
     direct_parent_classes = None
     allow_children = True
     child_classes = None
     cache = False
-
-    open_tag = GlossaryField(
-        widgets.Select(choices=()),
-        label=_('Condition tag'),
-        help_text=_("Django's condition tag")
-    )
-
-    condition = GlossaryField(
-        widgets.Input(),
-        label=_('Condition evaluation'),
-        help_text=_("Evaluation as used in Django's template tags for conditions")
-    )
 
     class Media:
         js = ['cascade/js/admin/segmentplugin.js']
@@ -74,17 +76,17 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         try:
-            return mark_safe("<strong><em>{open_tag}</em></strong> {condition}".format(**obj.glossary))
+            return format_html("<strong><em>{open_tag}</em></strong> {condition}", **obj.glossary)
         except KeyError:
             return ''
 
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
-            condition = html_parser.unescape(instance.glossary['condition'])
+            condition = unescape_entities(instance.glossary['condition'])
             evaluated_to = False
             template_error_message = None
             try:
-                template_string = self.form.eval_template_string.format(condition)
+                template_string = SegmentFormMixin.eval_template_string.format(condition)
                 eval_template = engines['django'].from_string(template_string)
                 evaluated_to = eval_template.render(context) == 'True'
             except TemplateSyntaxError as err:
@@ -144,13 +146,14 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
             # if obj is None, we are adding a SegmentPlugin, hence we must offer all conditional
             # tags, which however may be rectified during the save() operation
             choices.extend([('elif', _("elif")), ('else', _("else"))])
-        list(self.glossary_fields)[0].widget.choices = choices
-        if obj:
-            # remove escape quotes, added by JSON serializer
-            condition = html_parser.unescape(obj.glossary.get('condition', ''))
-            obj.glossary.update(condition=condition)
-        form = super(SegmentPlugin, self).get_form(request, obj, **kwargs)
-        return form
+        open_tag = ChoiceField(
+            label=_("Condition tag"),
+            choices=choices,
+            help_text=_("Django's condition tag")
+        )
+        form = type('SegmentForm', (SegmentFormMixin,), {'open_tag': open_tag})
+        kwargs.setdefault('form', form)
+        return super(SegmentPlugin, self).get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         super(SegmentPlugin, self).save_model(request, obj, form, change)

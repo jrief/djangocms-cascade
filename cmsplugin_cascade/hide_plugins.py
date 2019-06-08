@@ -1,8 +1,19 @@
 from django.core.exceptions import ImproperlyConfigured
-from django.forms import widgets
+from django.forms.fields import BooleanField
 from django.utils.translation import ugettext_lazy as _
 from django.template import engines
-from cmsplugin_cascade.fields import GlossaryField
+from entangled.forms import EntangledModelFormMixin
+
+
+class HidePluginFormMixin(EntangledModelFormMixin):
+    hide_plugin = BooleanField(
+        label=_("Hide plugin"),
+        required=False,
+        help_text=_("Hide this plugin and all of it's children.")
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['hide_plugin']}
 
 
 class HidePluginMixin(object):
@@ -26,16 +37,9 @@ background-size: contain;
 </style>
 '''
 
-    def Xget_form(self, request, obj=None, **kwargs):
-        glossary_fields = list(kwargs.pop('glossary_fields', self.glossary_fields))
-        glossary_fields.append(GlossaryField(
-            widgets.CheckboxInput(),
-            label=_("Hide plugin"),
-            name='hide_plugin',
-            help_text=_("Hide this plugin and all of it's children.")
-        ))
-        kwargs.update(glossary_fields=glossary_fields)
-        return super(HidePluginMixin, self).get_form(request, obj, **kwargs)
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs['form'] = type(kwargs['form'].__name__, (HidePluginFormMixin, kwargs['form']), {})
+        return super().get_form(request, obj, **kwargs)
 
     def get_render_template(self, context, instance, placeholder):
         if instance.glossary.get('hide_plugin'):

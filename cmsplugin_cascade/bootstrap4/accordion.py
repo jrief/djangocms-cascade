@@ -1,52 +1,52 @@
-from html.parser import HTMLParser
-from django.forms import widgets
-from django.forms.models import ModelForm
+from django.forms import widgets, BooleanField, CharField
 from django.forms.fields import IntegerField
-from django.utils.functional import cached_property
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.text import Truncator, mark_safe
-from django.utils.html import format_html
+from django.utils.html import escape, format_html
+from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
 
-html_parser = HTMLParser()
 
-
-class AccordionForm(ManageChildrenFormMixin, ModelForm):
-    num_children = IntegerField(min_value=1, initial=1,
+class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+    num_children = IntegerField(
+        min_value=1,
+        initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
         label=_("Groups"),
-        help_text=_("Number of groups for this accordion."))
+        help_text=_("Number of groups for this accordion."),
+    )
+
+    close_others = BooleanField(
+         label=_("Close others"),
+         initial=True,
+         required=False,
+         help_text=_("Open only one card at a time.")
+    )
+
+    first_is_open = BooleanField(
+         label=_("First open"),
+         initial=True,
+         required=False,
+         help_text=_("Start with the first card open.")
+    )
+
+    class Meta:
+        untangled_fields = ['num_children']
+        entangled_fields = {'glossary': ['close_others', 'first_is_open']}
 
 
 class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     name = _("Accordion")
-    form = AccordionForm
     default_css_class = 'accordion'
     require_parent = True
     parent_classes = ['BootstrapColumnPlugin']
     direct_child_classes = ['BootstrapAccordionGroupPlugin']
     allow_children = True
-    render_template = 'cascade/bootstrap4/{}/accordion.html'
-    fields = ['num_children', 'glossary']
-
-    close_others = GlossaryField(
-         widgets.CheckboxInput(),
-         label=_("Close others"),
-         initial=True,
-         help_text=_("Open only one card at a time.")
-    )
-
-    first_is_open = GlossaryField(
-         widgets.CheckboxInput(),
-         label=_("First open"),
-         initial=True,
-         help_text=_("Start with the first card open.")
-    )
+    render_template = 'cascade/bootstrap4/{}accordion.html'
 
     @classmethod
     def get_identifier(cls, obj):
@@ -55,50 +55,69 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
         content = ungettext_lazy('with {0} card', 'with {0} cards', num_cards).format(num_cards)
         return format_html('{0}{1}', identifier, content)
 
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', AccordionFormMixin)
+        return super().get_form(request, obj, **kwargs)
+
+    def render(self, context, instance, placeholder):
+        context = self.super(BootstrapAccordionPlugin, self).render(context, instance, placeholder)
+        context.update({
+            'close_others': instance.glossary.get('close_others', True),
+            'first_is_open': instance.glossary.get('first_is_open', True),
+        })
+        return context
+
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
-        super(BootstrapAccordionPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, BootstrapAccordionGroupPlugin)
 
 plugin_pool.register_plugin(BootstrapAccordionPlugin)
 
 
-class BootstrapAccordionGroupMixin(object):
-    @cached_property
-    def heading(self):
-        return mark_safe(html_parser.unescape(self.glossary.get('heading', '')))
+class AccordionGroupFormMixin(EntangledModelFormMixin):
+    heading = CharField(
+        label=_("Heading"),
+        widget=widgets.TextInput(attrs={'size': 80}),
+    )
 
-    @cached_property
-    def no_body_padding(self):
-        return not self.glossary.get('body_padding', True)
+    body_padding = BooleanField(
+         label=_("Body with padding"),
+         initial=True,
+         required=False,
+         help_text=_("Add standard padding to card body."),
+    )
+
+    class Meta:
+        entangled_fieds = {'glossary': ['heading', 'body_padding']}
+
+    def clean_heading(self):
+        return escape(self.cleaned_data['heading'])
 
 
 class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
     name = _("Accordion Group")
     direct_parent_classes = parent_classes = ['BootstrapAccordionPlugin']
     render_template = 'cascade/generic/naked.html'
-    model_mixins = (BootstrapAccordionGroupMixin,)
     require_parent = True
     alien_child_classes = True
-    glossary_field_order = ['heading', 'body_padding']
-
-    heading = GlossaryField(
-        widgets.TextInput(attrs={'size': 80}),
-        label=_("Heading")
-    )
-
-    body_padding = GlossaryField(
-         widgets.CheckboxInput(),
-         label=_("Body with padding"),
-         initial=True,
-         help_text=_("Add standard padding to card body."),
-    )
+    # glossary_field_order = ['heading', 'body_padding']
 
     @classmethod
-    def get_identifier(cls, obj):
-        identifier = super(BootstrapAccordionGroupPlugin, cls).get_identifier(obj)
-        heading = HTMLParser().unescape(obj.glossary.get('heading', ''))
-        heading = Truncator(heading).words(3, truncate=' ...')
-        return format_html('{0}{1}', identifier, heading)
+    def get_identifier(cls, instance):
+        heading = instance.glossary.get('heading', '')
+        return Truncator(heading).words(3, truncate=' ...')
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', AccordionGroupFormMixin)
+        return super().get_form(request, obj, **kwargs)
+
+    def Xrender(self, context, instance, placeholder):
+        context = self.super(BootstrapAccordionGroupPlugin, self).render(context, instance, placeholder)
+        context.update({
+            'heading': mark_safe(instance.glossary.get('heading', '')),
+            'no_body_padding': not instance.glossary.get('body_padding', True),
+        })
+        return context
 
 plugin_pool.register_plugin(BootstrapAccordionGroupPlugin)

@@ -20,24 +20,6 @@ class LinkPluginBase(CascadePluginBase):
     class Media:
         js = ['cascade/js/admin/linkplugin.js']
 
-    # target = GlossaryField(
-    #     widgets.RadioSelect(choices=[
-    #         ('', _("Same Window")),
-    #         ('_blank', _("New Window")),
-    #         ('_parent', _("Parent Window")),
-    #         ('_top', _("Topmost Frame")),
-    #     ]),
-    #     initial='',
-    #     label=_("Link Target"),
-    #     help_text=_("Open Link in other target.")
-    # )
-    #
-    # title = GlossaryField(
-    #     widgets.TextInput(),
-    #     label=_("Title"),
-    #     help_text=_("Link's Title")
-    # )
-
     html_tag_attributes = {'title': 'title', 'target': 'target'}
     # map field from glossary to these form fields
     # glossary_field_map = {'link': ('link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',)}
@@ -71,9 +53,9 @@ class LinkPluginBase(CascadePluginBase):
         from cmsplugin_cascade.link.config import LinkForm as MandatoryLinkForm, VoluntaryLinkForm
 
         if getattr(self, 'link_required', True):
-            LinkForm = MandatoryLinkForm
+            LinkForm = MandatoryLinkForm  # the default
         else:
-            LinkForm = VoluntaryLinkForm
+            LinkForm = VoluntaryLinkForm  # link type can be "No Link"
         if 'form' in kwargs:
             kwargs['form'] = type(kwargs['form'].__name__, (LinkForm, kwargs['form']), {})
         else:

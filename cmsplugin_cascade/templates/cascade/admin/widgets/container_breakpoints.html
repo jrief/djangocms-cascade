@@ -3,7 +3,7 @@
 {% for group, options, index in widget.optgroups %}{% with widget=options.0 %}
 	<div class="fieldBox">
 		<div class="container-thumbnail">
-			<img src="{% static 'cascade/admin/bootstrap' %}{{ widget.attrs.version }}/{{ widget.value }}.svg" style="height: 55px;" />
+			<img src="{% static 'cascade/admin/bootstrap4/' %}{{ widget.value }}.svg" style="height: 55px;" />
 			<div class="label">{% include widget.template_name %}</div>
 		</div>
 	</div>{% endwith %}{% endfor %}

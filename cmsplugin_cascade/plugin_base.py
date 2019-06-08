@@ -1,11 +1,11 @@
 from collections import OrderedDict
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import MediaDefiningClass, ModelForm
-from django.utils import six
 from django.utils.functional import lazy
 from django.utils.module_loading import import_string
 from django.utils.text import format_lazy
 from django.utils.safestring import SafeText, mark_safe
+from entangled.forms import EntangledModelFormMixin
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
 from cmsplugin_cascade import app_settings
@@ -22,7 +22,7 @@ from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
 
-mark_safe_lazy = lazy(mark_safe, six.text_type)
+mark_safe_lazy = lazy(mark_safe, str)
 
 fake_proxy_models = {}
 
@@ -109,7 +109,7 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
             attrs['glossary_fields'] = glossary_fields.values()
 
 
-class CascadePluginMixinBase(six.with_metaclass(CascadePluginMixinMetaclass)):
+class CascadePluginMixinBase(metaclass=CascadePluginMixinMetaclass):
     """
     Use this as a base for mixin classes used by other CascadePlugins
     """
@@ -241,7 +241,7 @@ class TransparentContainer(TransparentWrapper):
             return _leaf_transparent_plugins
 
 
-class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
+class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     change_form_template = 'cascade/admin/change_form.html'
     glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
@@ -386,7 +386,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         return form
 
     def get_form(self, request, obj=None, **kwargs):
-        form = kwargs.get('form', self.form)
+        form = kwargs.get('form', EntangledModelFormMixin)
         if issubclass(form, ModelForm):
             kwargs['form'] = form
         else:
@@ -484,7 +484,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         Returns True, if the plugin is in "edit mode".
         """
         toolbar = getattr(request, 'toolbar', None)
-        edit_mode = getattr(toolbar, 'edit_mode', False) and getattr(placeholder, 'is_editable', True)
+        edit_mode = getattr(toolbar, 'edit_mode_active', False) and getattr(placeholder, 'is_editable', True)
         if edit_mode:
             edit_mode = placeholder.has_change_permission(request.user)
         return edit_mode

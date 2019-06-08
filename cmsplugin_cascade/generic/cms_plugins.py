@@ -1,16 +1,30 @@
-from django.forms import widgets, ModelChoiceField
+from django.forms import widgets, CharField, ChoiceField, ModelChoiceField, MultipleChoiceField
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
+from entangled.forms import EntangledModelFormMixin
 from filer.models.imagemodels import Image
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.fields import GlossaryField
+from cmsplugin_cascade.fields import GlossaryField, SizeField
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.utils import compute_aspect_ratio
-from cmsplugin_cascade.widgets import CascadingSizeWidget
+
+
+class SimpleWrapperFormMixin(EntangledModelFormMixin):
+    TAG_CHOICES = [(cls, _("<{}> – Element").format(cls)) for cls in ['div', 'span', 'section', 'article']] + \
+                  [('naked', _("Naked Wrapper"))]
+
+    tag_type = ChoiceField(
+        choices=TAG_CHOICES,
+        label=_("HTML element tag"),
+        help_text=_('Choose a tag type for this HTML element.')
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['tag_type']}
 
 
 class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
@@ -19,22 +33,18 @@ class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
     require_parent = False
     allow_children = True
     alien_child_classes = True
-    TAG_CHOICES = tuple((cls, _("<{}> – Element").format(cls))
-        for cls in ('div', 'span', 'section', 'article',)) + (('naked', _("Naked Wrapper")),)
-
-    tag_type = GlossaryField(
-        widgets.Select(choices=TAG_CHOICES),
-        label=_("HTML element tag"),
-        help_text=_('Choose a tag type for this HTML element.')
-    )
 
     @classmethod
     def get_identifier(cls, instance):
-        identifier = super(SimpleWrapperPlugin, cls).get_identifier(instance)
-        tag_name = dict(cls.TAG_CHOICES).get(instance.glossary.get('tag_type'))
+        identifier = super().get_identifier(instance)
+        tag_name = dict(SimpleWrapperFormMixin.TAG_CHOICES).get(instance.glossary.get('tag_type'))
         if tag_name:
             return format_html('{0} {1}', tag_name, identifier)
         return identifier
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', SimpleWrapperFormMixin)
+        return super().get_form(request, obj, **kwargs)
 
     def get_render_template(self, context, instance, placeholder):
         if instance.glossary.get('tag_type') == 'naked':
@@ -55,32 +65,41 @@ class HorizontalRulePlugin(CascadePluginBase):
 plugin_pool.register_plugin(HorizontalRulePlugin)
 
 
+class HeadingFormMixin(EntangledModelFormMixin):
+    TAG_TYPES = [('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7)]
+
+    tag_type = ChoiceField(
+        choices=TAG_TYPES,
+        label=_("HTML element tag"),
+        help_text=_('Choose a tag type for this HTML element.')
+    )
+
+    content = CharField(
+        label=_("Heading content"),
+        widget=widgets.TextInput(attrs={'style': 'width: 100%; padding-right: 0; font-weight: bold; font-size: 125%;'}),
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['tag_type', 'content']}
+
+
 class HeadingPlugin(CascadePluginBase):
     name = _("Heading")
     parent_classes = None
     allow_children = False
-    TAG_TYPES = tuple(('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7))
-    glossary_field_order = ['tag_type', 'content', 'element_id']
-
-    tag_type = GlossaryField(widgets.Select(choices=TAG_TYPES))
-
-    content = GlossaryField(
-        widgets.TextInput(attrs={'style': 'width: 100%; padding-right: 0; font-weight: bold; font-size: 125%;'}),
-        label=_("Heading content"))
-
     render_template = 'cascade/generic/heading.html'
-
-    class Media:
-        css = {'all': ('cascade/css/admin/partialfields.css',)}
 
     @classmethod
     def get_identifier(cls, instance):
-        identifier = super(HeadingPlugin, cls).get_identifier(instance)
         tag_type = instance.glossary.get('tag_type')
         content = mark_safe(instance.glossary.get('content', ''))
         if tag_type:
-            return format_html('<code>{0}</code>: {1} {2}', tag_type, content, identifier)
+            return format_html('<code>{0}</code>: {1}', tag_type, content)
         return content
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', HeadingFormMixin)
+        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         context = self.super(HeadingPlugin, self).render(context, instance, placeholder)
@@ -114,6 +133,49 @@ if CustomSnippetPlugin.render_template_choices:
     plugin_pool.register_plugin(CustomSnippetPlugin)
 
 
+class TextImageFormMixin(ImageFormMixin):
+    RESIZE_OPTIONS = [
+        ('upscale', _("Upscale image")),
+        ('crop', _("Crop image")),
+        ('subject_location', _("With subject location")),
+        ('high_resolution', _("Optimized for Retina")),
+    ]
+
+    image_width = SizeField(
+        label=_("Image Width"),
+        allowed_units=['px'],
+        required=True,
+        help_text=_("Set the image width in pixels."),
+    )
+
+    image_height = SizeField(
+        label=_("Image Height"),
+        allowed_units=['px'],
+        required=False,
+        help_text=_("Set the image height in pixels."),
+    )
+
+    resize_options = MultipleChoiceField(
+        label=_("Resize Options"),
+        choices = RESIZE_OPTIONS,
+        required=False,
+        widget=widgets.CheckboxSelectMultiple,
+        help_text=_("Options to use when resizing the image."),
+        initial=['subject_location', 'high_resolution']
+    )
+
+    alignement = ChoiceField(
+        label=_("Alignement"),
+        choices=[('', _("Not aligned")), ('left', _("Left")), ('right', _("Right"))],
+        required=False,
+        widget=widgets.RadioSelect,
+        initial='',
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['image_width', 'image_height', 'resize_options', 'alignement']}
+
+
 class TextImagePlugin(LinkPluginBase):
     name = _("Image in text")
     text_enabled = True
@@ -125,48 +187,10 @@ class TextImagePlugin(LinkPluginBase):
     require_parent = False
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
-    # fields = ['image_file'] + list(LinkPluginBase.fields)
-    RESIZE_OPTIONS = [
-        ('upscale', _("Upscale image")),
-        ('crop', _("Crop image")),
-        ('subject_location', _("With subject location")),
-        ('high_resolution', _("Optimized for Retina")),
-    ]
-
-    image_width = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px'], required=True),
-        label=_("Image Width"),
-        help_text=_("Set the image width in pixels."),
-    )
-
-    image_height = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px'], required=False),
-        label=_("Image Height"),
-        help_text=_("Set the image height in pixels."),
-    )
-
-    resize_options = GlossaryField(
-        widgets.CheckboxSelectMultiple(choices=RESIZE_OPTIONS),
-        label=_("Resize Options"),
-        help_text=_("Options to use when resizing the image."),
-        initial=['subject_location', 'high_resolution']
-    )
-
-    alignement = GlossaryField(
-        widgets.RadioSelect(choices=[('', _("Not aligned")), ('left', _("Left")), ('right', _("Right"))]),
-        initial='',
-        label=_("Alignement"),
-    )
+    link_required = False
 
     class Media:
         js = ['cascade/js/admin/textimageplugin.js']
-
-    def get_form(self, request, obj=None, **kwargs):
-        image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-        LinkForm = getattr(LinkForm, 'get_form_class')()
-        Form = type(str('ImageForm'), (ImageFormMixin, LinkForm), {'image_file': image_file})
-        kwargs.update(form=Form)
-        return super(TextImagePlugin, self).get_form(request, obj, **kwargs)
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):
@@ -184,7 +208,12 @@ class TextImagePlugin(LinkPluginBase):
             inline_styles['float'] = alignement
         return inline_styles
 
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', TextImageFormMixin)
+        return super().get_form(request, obj, **kwargs)
+
     def render(self, context, instance, placeholder):
+        context = self.super(TextImagePlugin, self).render(context, instance, placeholder)
         try:
             aspect_ratio = compute_aspect_ratio(instance.image)
         except Exception:
@@ -204,7 +233,7 @@ class TextImagePlugin(LinkPluginBase):
             image_height = int(image_height.rstrip('px'))
         else:
             image_height = int(round(image_width * aspect_ratio))
-        src = {
+        context['src'] = {
             'size': (image_width, image_height),
             'size2x': (image_width * 2, image_height * 2),
             'crop': crop,
@@ -213,11 +242,9 @@ class TextImagePlugin(LinkPluginBase):
             'high_resolution': high_resolution,
         }
         link_attributes = LinkPluginBase.get_html_tag_attributes(instance)
-        link_html_tag_attributes = format_html_join(' ', '{0}="{1}"',
+        context['link_html_tag_attributes'] = format_html_join(' ', '{0}="{1}"',
             [(attr, val) for attr, val in link_attributes.items() if val]
         )
-        context.update(dict(instance=instance, placeholder=placeholder, src=src,
-                            link_html_tag_attributes=link_html_tag_attributes))
         return context
 
 plugin_pool.register_plugin(TextImagePlugin)

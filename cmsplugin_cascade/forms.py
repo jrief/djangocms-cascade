@@ -3,19 +3,17 @@ from cmsplugin_cascade.models import CascadeElement
 
 class ManageChildrenFormMixin(object):
     """
-    Classes derived from ``CascadePluginBase`` may optionally declare a class derived from
-    ``forms.models.ModelForm`` offering one or more temporary input fields in their plugin
-    editor, which are not managed by the plugin's model.
-    This FormMixin handles one such a field, namely the number of child plugins.
+    Classes derived from ``CascadePluginBase`` can optionally add this mixin class to their form,
+    offering the input field ``num_children`` in their plugin editor. The content of this field is
+    not persisted in the plugin's model.
     It allows the client to modify the number of children attached to this plugin.
     """
     class Meta:
-        model = CascadeElement
-        fields = ('glossary',)
+        fields = ['num_children']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
         if instance:
             initial = {'num_children': instance.get_num_children()}
             kwargs.update(initial=initial)
-        super(ManageChildrenFormMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)

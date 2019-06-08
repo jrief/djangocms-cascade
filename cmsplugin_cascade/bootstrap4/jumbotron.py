@@ -118,47 +118,48 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         # ),
     )
 
-    background_color = GlossaryField(
-        ColorPickerWidget(),
-        label=_("Background color"),
-    )
+    # background_color = GlossaryField(
+    #     ColorPickerWidget(),
+    #     label=_("Background color"),
+    # )
+    #
+    # background_repeat = GlossaryField(
+    #     widgets.RadioSelect(choices=[(c, c) for c in REPEAT_CHOICES]),
+    #     initial='no-repeat',
+    #     label=_("This property specifies how an image repeates."),
+    # )
+    #
+    # background_attachment = GlossaryField(
+    #     widgets.RadioSelect(choices=[(c, c) for c in ATTACHMENT_CHOICES]),
+    #     initial='local',
+    #     label=_("This property specifies how to move the background relative to the viewport."),
+    # )
+    #
+    # background_vertical_position = GlossaryField(
+    #     widgets.Select(choices=[(c, c) for c in VERTICAL_POSITION_CHOICES]),
+    #     initial='center',
+    #     label=_("This property moves a background image vertically within its container."),
+    # )
+    #
+    # background_horizontal_position = GlossaryField(
+    #     widgets.Select(choices=[(c, c) for c in HORIZONTAL_POSITION_CHOICES]),
+    #     initial='center',
+    #     label=_("This property moves a background image horizontally within its container."),
+    # )
+    #
+    # background_size = GlossaryField(
+    #     widgets.RadioSelect(choices=[(c, c) for c in SIZE_CHOICES]),
+    #     initial='auto',
+    #     label=_("Background size"),
+    #     help_text=_("This property specifies how an image is sized."),
+    # )
+    #
+    # background_width_height = GlossaryField(
+    #     MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%']),
+    #     label=_("Background width and height"),
+    #     help_text=_("This property specifies the width and height of a background image."),
+    # )
 
-    background_repeat = GlossaryField(
-        widgets.RadioSelect(choices=[(c, c) for c in REPEAT_CHOICES]),
-        initial='no-repeat',
-        label=_("This property specifies how an image repeates."),
-    )
-
-    background_attachment = GlossaryField(
-        widgets.RadioSelect(choices=[(c, c) for c in ATTACHMENT_CHOICES]),
-        initial='local',
-        label=_("This property specifies how to move the background relative to the viewport."),
-    )
-
-    background_vertical_position = GlossaryField(
-        widgets.Select(choices=[(c, c) for c in VERTICAL_POSITION_CHOICES]),
-        initial='center',
-        label=_("This property moves a background image vertically within its container."),
-    )
-
-    background_horizontal_position = GlossaryField(
-        widgets.Select(choices=[(c, c) for c in HORIZONTAL_POSITION_CHOICES]),
-        initial='center',
-        label=_("This property moves a background image horizontally within its container."),
-    )
-
-    background_size = GlossaryField(
-        widgets.RadioSelect(choices=[(c, c) for c in SIZE_CHOICES]),
-        initial='auto',
-        label=_("Background size"),
-        help_text=_("This property specifies how an image is sized."),
-    )
-
-    background_width_height = GlossaryField(
-        MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%']),
-        label=_("Background width and height"),
-        help_text=_("This property specifies the width and height of a background image."),
-    )
     footnote_html = """
 <p>For more information about the Jumbotron please read </p>
     """

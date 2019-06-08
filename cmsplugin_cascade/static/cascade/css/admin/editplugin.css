@@ -1,4 +1,3 @@
-form input, form textarea { padding: 3px 5px; }
 form input:disabled, form textarea:disabled, form select:disabled { color: #888; border-style: dashed; }
 form .form-row.field-link_type { min-height: 30px; padding-left: 0; padding-right: 0; }
 form .form-row.field-link_type  label { font-size: 120%; }
@@ -7,19 +6,34 @@ form .form-row.field-link_type  label.inline,
 form .form-row.field-link_type input { margin-top: 0; }
 form .form-row.field-link_type .help { margin-left: 2em; padding-left: 0; }
 form .form-row.field-link_type .field-link_type .help { margin-left: 160px; }
-form .form-row.field-cms_page { height: 60px; float: left; }
-form .form-row.field-section { height: 60px; }
+form .form-row.field-cms_page { height: 75px; float: left; }
+form .form-row.field-section { height: 75px; }
 form .form-row.field-section > div { margin-top: 4px; }
 form .form-row.field-section::after { content: "."; display: block; clear: both; visibility: hidden; height: 0; }
 form .field-download_file { width: 100%; }
 form  label.inline { text-align: right; }
 form .field-glossary { padding: 0 10px; }
-form .container-thumbnail { text-align: center; }
-form .container-thumbnail i[class^="icon"] { font-size: 70px; }
+
+form .container-thumbnail img,
+	form .field-button_type span.btn,
+	form .field-button_size span.btn { display: inline-block; }
+form .container-thumbnail .label,
+	form .field-button_type .label,
+	form .field-button_size .label { display: inline; }
+
+form .form-row.field-save_shared_glossary { height: 40px; float: left; }
+form .form-row.field-save_as_identifier { height: 40px; }
+
+
+/* form .container-thumbnail i[class^="icon"] { font-size: 70px; }*/
+
 form label[for=id_cms_page], form label[for=id_section] { width: 0; }
 #id_section + .help { margin-left: 0; }
 #id_ext_url, #id_mail_to { min-width: 350px !important;}
 .field-box > .select2-container, .fieldBox > .select2-container { min-width: 350px; }
 .field-box.field-link_type, .fieldBox.field-link_type { float: none; margin-bottom: 15px; }
+
+#id_condition { width: 100%; }
+
 form .form-row .select2-selection { height: 36px; }
-.form-row .django-select2 { min-width: 400px !important; }
+form .form-row .django-select2 { min-width: 400px !important; }

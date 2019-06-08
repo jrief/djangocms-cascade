@@ -4,7 +4,7 @@ from django.db.models.fields.related import ManyToOneRel
 from django.utils.translation import ugettext_lazy as _
 from filer.fields.image import FilerImageField, AdminImageFormField
 from filer.models.imagemodels import Image
-from entangled.forms import EntangledModelFormMixin, get_related_object
+from entangled.forms import EntangledModelFormMixin, EntangledField, get_related_object
 
 
 class ImageFormMixin(EntangledModelFormMixin):
@@ -27,15 +27,18 @@ class ImageFormMixin(EntangledModelFormMixin):
         help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
     )
 
+    _image_properties = EntangledField()
+
     class Meta:
-        entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag']}
+        entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', '_image_properties']}
 
     def clean(self):
         cleaned_data = super().clean()
-        image_file = get_related_object(cleaned_data['glossary'], 'image_file')
+        image_file = cleaned_data.get('image_file')
         if not image_file:
             raise ValidationError(_("No image has been selected."))
-        cleaned_data['glossary']['_image_properties'] = {
+        # _image_properties are just a cached representation, maybe useless
+        cleaned_data['_image_properties'] = {
             'width': image_file._width,
             'height': image_file._height,
             'exif_orientation': image_file.exif.get('Orientation', 1),

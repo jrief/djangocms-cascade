@@ -59,8 +59,14 @@ def set_defaults(config):
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
         inline_styles={
             'extra_fields:Paddings': ['margin-top', 'margin-bottom', 'padding-top', 'padding-bottom'],
-            'extra_units:Paddings': 'px,rem'
+            'extra_units:Paddings': 'px,rem',
         }
+    ))
+    config['plugins_with_extra_fields'].setdefault('BootstrapTabSetPlugin', PluginExtraFieldsConfig(
+        css_classes={
+            'multiple': True,
+            'class_names': ['nav-tabs', 'nav-pills', 'nav-fill', 'nav-justified'],
+        },
     ))
 
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', [
