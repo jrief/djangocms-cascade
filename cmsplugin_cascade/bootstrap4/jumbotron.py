@@ -1,19 +1,15 @@
 import logging
 from django.core.exceptions import ValidationError
-from django.forms import widgets, ModelChoiceField
-from django.forms.models import ModelForm
+from django.forms import widgets, ChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from filer.models.imagemodels import Image
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
-from cmsplugin_cascade.widgets import MultipleCascadingSizeWidget, ColorPickerWidget
+from cmsplugin_cascade.fields import ColorField, MultiSizeField
+from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.bootstrap4.container import ContainerBreakpointsWidget, ContainerGridMixin, get_widget_choices
-from cmsplugin_cascade.bootstrap4.picture import BootstrapPicturePlugin, get_picture_elements
-from cmsplugin_cascade.bootstrap4.grid import Breakpoint
+from cmsplugin_cascade.bootstrap4.container import ContainerFormMixin, ContainerGridMixin
+from cmsplugin_cascade.bootstrap4.picture import BootstrapPictureFormMixin, get_picture_elements
 
 logger = logging.getLogger('cascade')
 
@@ -64,102 +60,94 @@ class ImageBackgroundMixin(object):
         return ''
 
 
-class JumbotronPluginForm(ImageFormMixin, ModelForm):
+class JumbotronFormMixin(BootstrapPictureFormMixin):
     """
     Form class to validate the JumbotronPlugin.
     """
-    image_file = ModelChoiceField(queryset=Image.objects.all(), required=False, label=_("Image"))
-
-    def clean_glossary(self):
-        glossary = super(JumbotronPluginForm, self).clean_glossary()
-        if glossary['background_size'] == 'width/height' and not glossary['background_width_height']['width']:
-            raise ValidationError(_("You must at least set a background width."))
-        return glossary
-
-
-class BootstrapJumbotronPlugin(BootstrapPluginBase):
-    name = _("Jumbotron")
-    model_mixins = (ContainerGridMixin, ImagePropertyMixin, ImageBackgroundMixin)
-    form = JumbotronPluginForm
-    require_parent = False
-    parent_classes = ('BootstrapColumnPlugin',)
-    allow_children = True
-    alien_child_classes = True
-    raw_id_fields = ['image_file']
-    fields = ['glossary', 'image_file']
-    render_template = 'cascade/bootstrap4/jumbotron.html'
-    ring_plugin = 'JumbotronPlugin'
     ATTACHMENT_CHOICES = ['scroll', 'fixed', 'local']
     VERTICAL_POSITION_CHOICES = ['top', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'bottom']
     HORIZONTAL_POSITION_CHOICES = ['left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right']
     REPEAT_CHOICES = ['repeat', 'repeat-x', 'repeat-y', 'no-repeat']
     SIZE_CHOICES = ['auto', 'width/height', 'cover', 'contain']
-    container_glossary_fields = (
-        GlossaryField(
-            ContainerBreakpointsWidget(choices=get_widget_choices()),
-            label=_("Available Breakpoints"),
-            name='breakpoints',
-            initial=app_settings.CMSPLUGIN_CASCADE['bootstrap4']['default_bounds'].keys(),
-            help_text=_("Supported display widths for Bootstrap's grid system.")
-        ),
-        GlossaryField(
-            MultipleCascadingSizeWidget([bp.name for bp in Breakpoint], allowed_units=['px', '%']),
-            label=_("Adapt Picture Heights"),
-            name='container_max_heights',
-            initial={'xs': '100%', 'sm': '100%', 'md': '100%', 'lg': '100%', 'xl': '100%'},
-            help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints.")
-        ),
-        # GlossaryField(
-        #     widgets.CheckboxSelectMultiple(choices=BootstrapPicturePlugin.RESIZE_OPTIONS),
-        #     label=_("Resize Options"),
-        #     name='resize_options',
-        #     initial=['crop', 'subject_location', 'high_resolution'],
-        #     help_text=_("Options to use when resizing the image.")
-        # ),
+
+    background_color = ColorField(
+        label=_("Background color"),
     )
 
-    # background_color = GlossaryField(
-    #     ColorPickerWidget(),
-    #     label=_("Background color"),
-    # )
-    #
-    # background_repeat = GlossaryField(
-    #     widgets.RadioSelect(choices=[(c, c) for c in REPEAT_CHOICES]),
-    #     initial='no-repeat',
-    #     label=_("This property specifies how an image repeates."),
-    # )
-    #
-    # background_attachment = GlossaryField(
-    #     widgets.RadioSelect(choices=[(c, c) for c in ATTACHMENT_CHOICES]),
-    #     initial='local',
-    #     label=_("This property specifies how to move the background relative to the viewport."),
-    # )
-    #
-    # background_vertical_position = GlossaryField(
-    #     widgets.Select(choices=[(c, c) for c in VERTICAL_POSITION_CHOICES]),
-    #     initial='center',
-    #     label=_("This property moves a background image vertically within its container."),
-    # )
-    #
-    # background_horizontal_position = GlossaryField(
-    #     widgets.Select(choices=[(c, c) for c in HORIZONTAL_POSITION_CHOICES]),
-    #     initial='center',
-    #     label=_("This property moves a background image horizontally within its container."),
-    # )
-    #
-    # background_size = GlossaryField(
-    #     widgets.RadioSelect(choices=[(c, c) for c in SIZE_CHOICES]),
-    #     initial='auto',
-    #     label=_("Background size"),
-    #     help_text=_("This property specifies how an image is sized."),
-    # )
-    #
-    # background_width_height = GlossaryField(
-    #     MultipleCascadingSizeWidget(['width', 'height'], allowed_units=['px', '%']),
-    #     label=_("Background width and height"),
-    #     help_text=_("This property specifies the width and height of a background image."),
-    # )
+    background_repeat = ChoiceField(
+        label=_("Background repeat"),
+        choices=[(c, c) for c in REPEAT_CHOICES],
+        widget=widgets.RadioSelect,
+        initial='no-repeat',
+        help_text=_("This property specifies how an image repeates."),
+    )
 
+    background_attachment = ChoiceField(
+        label=_("Background attachment"),
+        choices=[(c, c) for c in ATTACHMENT_CHOICES],
+        widget=widgets.RadioSelect,
+        initial='local',
+        help_text=_("This property specifies how to move the background relative to the viewport."),
+    )
+
+    background_vertical_position = ChoiceField(
+        label=_("Background vertical position"),
+        choices=[(c, c) for c in VERTICAL_POSITION_CHOICES],
+        initial='center',
+        help_text=_("This property moves a background image vertically within its container."),
+    )
+
+    background_horizontal_position = ChoiceField(
+        label=_("Background horizontal position"),
+        choices=[(c, c) for c in HORIZONTAL_POSITION_CHOICES],
+        initial='center',
+        help_text=_("This property moves a background image horizontally within its container."),
+    )
+
+    background_size = ChoiceField(
+        label=_("Background size"),
+        choices=[(c, c) for c in SIZE_CHOICES],
+        widget=widgets.RadioSelect,
+        initial='auto',
+        help_text=_("This property specifies how an image is sized."),
+    )
+
+    background_width_height = MultiSizeField(
+        ['width', 'height'],
+        label=_("Background width/height"),
+        allowed_units=['px', '%'],
+        required=False,
+        help_text=_("This property specifies the width and height of a background image in px or %."),
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['background_color', 'background_repeat', 'background_attachment',
+                                         'background_vertical_position', 'background_horizontal_position',
+                                         'background_size', 'background_width_height']}
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data['background_size'] == 'width/height':
+            try:
+                cleaned_data['background_width_height']['width']
+            except KeyError:
+                msg = _("You must at least set a background width.")
+                self.add_error('background_width_height', msg)
+                raise ValidationError(msg)
+        return cleaned_data
+
+
+class BootstrapJumbotronPlugin(BootstrapPluginBase):
+    name = _("Jumbotron")
+    model_mixins = (ContainerGridMixin, ImagePropertyMixin, ImageBackgroundMixin)
+    # form = JumbotronPluginForm
+    require_parent = False
+    parent_classes = ('BootstrapColumnPlugin',)
+    allow_children = True
+    alien_child_classes = True
+    raw_id_fields = ['image_file']
+    render_template = 'cascade/bootstrap4/jumbotron.html'
+    ring_plugin = 'JumbotronPlugin'
     footnote_html = """
 <p>For more information about the Jumbotron please read </p>
     """
@@ -170,10 +158,10 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request, obj) is None:
             # we only ask for breakpoints, if the jumbotron is the root of the placeholder
-            kwargs.update(glossary_fields=list(self.container_glossary_fields))
-            kwargs['glossary_fields'].extend(self.glossary_fields)
-        form = super(BootstrapJumbotronPlugin, self).get_form(request, obj, **kwargs)
-        return form
+            kwargs['form'] = type('JumbotronForm', (ContainerFormMixin, JumbotronFormMixin), {})
+        else:
+            kwargs['form'] = JumbotronFormMixin
+        return super(BootstrapJumbotronPlugin, self).get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element

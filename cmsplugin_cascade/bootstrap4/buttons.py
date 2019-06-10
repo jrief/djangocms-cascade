@@ -8,7 +8,7 @@ from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
 if 'cmsplugin_cascade.icon' in settings.INSTALLED_APPS:
-    from cmsplugin_cascade.icon.mixins import IconPluginMixin2 as IconPluginMixin
+    from cmsplugin_cascade.icon.mixins import IconPluginMixin
 else:
     from cmsplugin_cascade.plugin_base import CascadePluginMixinBase as IconPluginMixin
 

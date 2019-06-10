@@ -57,36 +57,6 @@ django.jQuery(function($) {
 				$link_title.hide();
 			}
 		},
-		toggleSharedGlossary: function($option) {
-			var glossary = $option.data('glossary');
-			try {
-				$link_type.val(glossary['link']['type']);
-				try {
-					$cmspage_select.select2("data", {id: glossary['link']['pk'], text: glossary['link']['identifier']});
-					$cmspage_select.prop('disabled', true);
-				} catch(err) {
-					if (!(err instanceof TypeError))
-						throw err;
-					$cmspage_select.val(glossary['link']['pk']);
-				}
-				$('#id_ext_url').val(glossary['link']['url']);
-				$('#id_mail_to').val(glossary['link']['email']);
-			} catch (err) {
-				try {
-					if (!(err instanceof TypeError))
-						throw err;
-					$cmspage_select.prop('disabled', false);
-				} catch (err) {
-					if (!(err instanceof TypeError))
-						console.error(err);
-				}
-			}
-			if (this.$super) {
-				this.$super($option);
-			} else {
-				this.refreshChangeForm();
-			}
-		},
 		toggleCMSPage: function(page_id) {
 			var url = django.cascade.page_sections_url + page_id,
 			    $selSection = $('#id_section');

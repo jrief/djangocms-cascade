@@ -8,7 +8,7 @@ from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.image import ImagePropertyMixin, ImageFormMixin
-from .fields import MultipleSizeField
+from .fields import BootstrapMultiSizeField
 from .plugin_base import BootstrapPluginBase
 from .picture import BootstrapPictureFormMixin, get_picture_elements
 from .grid import Breakpoint
@@ -38,7 +38,7 @@ class CarouselSlidesFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         help_text=_("Adjust interval for the carousel."),
     )
 
-    container_max_heights = MultipleSizeField(
+    container_max_heights = BootstrapMultiSizeField(
         label=_("Carousel heights"),
         allowed_units=['rem', 'px'],
         initial=dict((bp.name, '{}rem'.format(6 + 3 * i)) for i, bp in enumerate(Breakpoint)),

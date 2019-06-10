@@ -2,7 +2,6 @@ import re
 import json
 from django.core.exceptions import ValidationError
 from django.forms import Media, widgets
-from django.utils.safestring import mark_safe
 from django.utils.html import escape, format_html, format_html_join
 from six.moves.html_parser import HTMLParser
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -94,57 +93,6 @@ class NumberInputWidget(widgets.NumberInput):
             raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
 
 
-class CascadingSizeWidgetMixin(object):
-    POSSIBLE_UNITS = ('rem', 'px', 'em', '%')
-    required_message = _("In '%(label)s': This field is required.")
-    invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number, ending in %(endings)s.")
-
-    def compile_validation_pattern(self, units=None):
-        """
-        Assure that passed in units are valid size units, or if missing, use all possible units.
-        Return a tuple with a regular expression to be used for validating and an error message
-        in case this validation failed.
-        """
-        if units is None:
-            units = list(self.POSSIBLE_UNITS)
-        else:
-            for u in units:
-                if u not in self.POSSIBLE_UNITS:
-                    raise ValidationError('{} is not a valid unit for a size field'.format(u))
-        regex = re.compile(r'^(-?\d+)({})$'.format('|'.join(units)))
-        endings = (' %s ' % ugettext("or")).join("'%s'" % u.replace('%', '%%') for u in units)
-        params = {'label': '%(label)s', 'value': '%(value)s', 'field': '%(field)s', 'endings': endings}
-        return regex, self.invalid_message % params
-
-
-class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
-    """
-    Use this field for validating Input Fields containing a value ending in ``px``, ``em`` or ``%``.
-    Use it for values representing a margin, padding, width or height.
-    """
-    DEFAULT_ATTRS = {'style': 'width: 5em;'}
-
-    def __init__(self, allowed_units=None, attrs=None, required=None):
-        self.required = True if required is None else required
-        if attrs is None:
-            attrs = self.DEFAULT_ATTRS
-        self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
-            units=allowed_units)
-        super(CascadingSizeWidget, self).__init__(attrs=attrs)
-
-    def validate(self, value):
-        if not value:
-            if self.required:
-                raise ValidationError(self.required_message, code='required', params={})
-            return
-        if value == '0':
-            return
-        match = self.validation_pattern.match(value)
-        if not (match and match.group(1).isdigit()):
-            params = {'value': value}
-            raise ValidationError(self.invalid_message, code='invalid', params=params)
-
-
 class InheritCheckboxWidget(widgets.CheckboxInput):
     template_name = 'cascade/admin/widgets/inherit_color.html'
 
@@ -154,6 +102,7 @@ class ColorPickerWidget(widgets.MultiWidget):
     Use this field to enter a color value. Clicking onto this widget will pop up a color picker.
     The value passed to the GlossaryField is guaranteed to be in #rgb format.
     """
+    template_name = 'cascade/admin/widgets/colorpicker.html'
     DEFAULT_ATTRS = {'type': 'color'}
 
     def __init__(self, with_alpha, attrs=DEFAULT_ATTRS):
@@ -172,10 +121,6 @@ class ColorPickerWidget(widgets.MultiWidget):
         else:
             js = ['cascade/js/admin/colorpicker.js' ]
         return Media(js=js)
-
-    def __iter__(self):
-        yield 'color'
-        yield 'disabled'
 
     def decompress(self, values):
         assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
@@ -200,10 +145,6 @@ class MultipleTextInputWidget(widgets.MultiWidget):
         super().__init__(text_widgets, attrs)
         self.labels = labels[:]
 
-    def __iter__(self):
-        for label in self.labels:
-            yield label
-
     def decompress(self, values):
         assert isinstance(values, dict), "Values to decompress are kept as dict in JSON"
         return list(values.values())
@@ -227,19 +168,6 @@ class MultipleTextInputWidget(widgets.MultiWidget):
                                             widgets))
 
 
-class MultipleCascadingSizeWidget(CascadingSizeWidgetMixin, MultipleTextInputWidget):
-    """deprecated"""
-    DEFAULT_ATTRS = {'style': 'width: 4em;'}
-    invalid_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending in %(endings)s.")
-
-    def __init__(self, labels, allowed_units=None, attrs=None):
-        if attrs is None:
-            attrs = self.DEFAULT_ATTRS
-        self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
-            units=allowed_units)
-        super().__init__(labels, attrs=attrs)
-
-
 class BorderChoiceWidget(widgets.MultiWidget):
     """
     Use this field to enter the three values of a border: width style color.
@@ -257,11 +185,14 @@ class BorderChoiceWidget(widgets.MultiWidget):
         return list(values)
 
     def value_from_datadict(self, data, files, name):
-        values = (
-            escape(data['{0}-width'.format(name)]),
-            escape(data['{0}-style'.format(name)]),
-            escape(data['{0}-color'.format(name)]),
-        )
+        try:
+            values = (
+                escape(data['{0}-width'.format(name)]),
+                escape(data['{0}-style'.format(name)]),
+                escape(data['{0}-color'.format(name)]),
+            )
+        except KeyError:
+            values = ('0px', 'none', 'inherit')
         return values
 
     def render(self, name, value, attrs=None, renderer=None):

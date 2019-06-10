@@ -5,11 +5,11 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import SizeField, ColorField, BorderChoiceField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
-from cmsplugin_cascade.icon.mixins import IconPluginMixin2
+from cmsplugin_cascade.icon.mixins import IconPluginMixin
 from entangled.forms import EntangledModelFormMixin
 
 
-class SimpleIconPlugin(IconPluginMixin2, LinkPluginBase):
+class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     name = _("Simple Icon")
     parent_classes = None
     require_parent = False
@@ -21,6 +21,10 @@ class SimpleIconPlugin(IconPluginMixin2, LinkPluginBase):
 
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', EntangledModelFormMixin)
+        return super().get_form(request, obj, **kwargs)
 
 plugin_pool.register_plugin(SimpleIconPlugin)
 
@@ -74,7 +78,7 @@ class FramedIconFormMixin(EntangledModelFormMixin):
         entangled_fields = {'glossary': ['font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius']}
 
 
-class FramedIconPlugin(IconPluginMixin2, LinkPluginBase):
+class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     name = _("Icon with frame")
     parent_classes = None
     require_parent = False
@@ -83,20 +87,6 @@ class FramedIconPlugin(IconPluginMixin2, LinkPluginBase):
     model_mixins = (LinkElementMixin,)
     ring_plugin = 'FramedIconPlugin'
     link_required = False
-
-    # icon_font = GlossaryField(
-    #     widgets.Select(),
-    #     label=_("Font"),
-    #     initial=get_default_icon_font,
-    # )
-    #
-    # symbol = GlossaryField(
-    #     widgets.HiddenInput(),
-    #     label=_("Select Symbol"),
-    # )
-
-    #glossary_field_order = ['icon_font', 'symbol', 'text_align', 'font_size', 'color', 'background_color',
-    #                        'border', 'border_radius']
 
     class Media:
         js = ['cascade/js/admin/framediconplugin.js']
@@ -149,7 +139,7 @@ class FramedIconPlugin(IconPluginMixin2, LinkPluginBase):
 plugin_pool.register_plugin(FramedIconPlugin)
 
 
-class TextIconPlugin(IconPluginMixin2, LinkPluginBase):
+class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     """
     This plugin is intended to be used inside the django-CMS-CKEditor.
     """

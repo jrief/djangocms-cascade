@@ -89,7 +89,7 @@ class AccordionGroupFormMixin(EntangledModelFormMixin):
     )
 
     class Meta:
-        entangled_fieds = {'glossary': ['heading', 'body_padding']}
+        entangled_fields = {'glossary': ['heading', 'body_padding']}
 
     def clean_heading(self):
         return escape(self.cleaned_data['heading'])
@@ -101,7 +101,6 @@ class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
     render_template = 'cascade/generic/naked.html'
     require_parent = True
     alien_child_classes = True
-    # glossary_field_order = ['heading', 'body_padding']
 
     @classmethod
     def get_identifier(cls, instance):
@@ -112,7 +111,7 @@ class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
         kwargs.setdefault('form', AccordionGroupFormMixin)
         return super().get_form(request, obj, **kwargs)
 
-    def Xrender(self, context, instance, placeholder):
+    def render(self, context, instance, placeholder):
         context = self.super(BootstrapAccordionGroupPlugin, self).render(context, instance, placeholder)
         context.update({
             'heading': mark_safe(instance.glossary.get('heading', '')),

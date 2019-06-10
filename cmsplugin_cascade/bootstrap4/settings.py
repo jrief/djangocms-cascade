@@ -58,7 +58,9 @@ def set_defaults(config):
 
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
         inline_styles={
-            'extra_fields:Paddings': ['margin-top', 'margin-bottom', 'padding-top', 'padding-bottom'],
+            'extra_fields:Margins': ['margin-top', 'margin-bottom'],
+            'extra_units:Margins': 'px,rem',
+            'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
             'extra_units:Paddings': 'px,rem',
         }
     ))

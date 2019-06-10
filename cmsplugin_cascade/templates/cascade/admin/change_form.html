@@ -18,7 +18,6 @@
 	{{ block.super }}
 	<script type="text/javascript">
 	django.cascade = django.cascade || {};
-	django.cascade.sharable_fields = {{ sharable_fields|default:"[]" }};
 	django.cascade.page_sections_url = "{% url 'admin:get_page_sections' %}";
 	django.cascade.ring_plugin_bases = {{% for key, bases in ring_plugin_bases.items %}
 		{{ key }}: "[{{ bases|join:", " }}]"{% if not forloop.last %},{% endif %}{% endfor %}

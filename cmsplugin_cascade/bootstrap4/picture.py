@@ -7,7 +7,7 @@ from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, parse_responsive_length, compute_aspect_ratio_with_glossary
-from .fields import MultipleSizeField
+from .fields import BootstrapMultiSizeField
 
 logger = logging.getLogger('cascade')
 
@@ -20,7 +20,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
         ('high_resolution', _("Optimized for Retina"))
     ]
 
-    responsive_heights = MultipleSizeField(
+    responsive_heights = BootstrapMultiSizeField(
         label=_("Adapt Picture Heights"),
         required=False,
         require_all_fields=False,
@@ -29,7 +29,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
         help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
     )
 
-    responsive_zoom = MultipleSizeField(
+    responsive_zoom = BootstrapMultiSizeField(
         label=_("Adapt Picture Zoom"),
         required=False,
         require_all_fields=False,

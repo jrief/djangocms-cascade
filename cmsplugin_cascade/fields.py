@@ -1,4 +1,5 @@
 import re
+import json
 import warnings
 from django.forms import widgets
 from django.forms.fields import Field, CharField, ChoiceField, BooleanField, MultiValueField
@@ -8,7 +9,7 @@ from django.core.validators import ProhibitNullCharactersValidator
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _, ugettext
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.widgets import ColorPickerWidget, BorderChoiceWidget
+from cmsplugin_cascade.widgets import ColorPickerWidget, BorderChoiceWidget, MultipleTextInputWidget
 
 
 class GlossaryField(object):
@@ -117,7 +118,7 @@ class ColorValidator():
     def __call__(self, value):
         inherit, color = value
         match = self.validation_pattern.match(color)
-        if not (isinstance(inherit, bool) and match):
+        if not match:
             params = {'color': color}
             raise ValidationError(self.message, code=self.code, params=params)
 
@@ -131,7 +132,7 @@ class ColorValidator():
 
 
 class ColorField(MultiValueField):
-    DEFAULT_COLOR = '#ff77ff'
+    DEFAULT_COLOR = '#808080'
 
     def __init__(self, inherit_color=False, default_color=DEFAULT_COLOR, required=False, *args, **kwargs):
         with_alpha = kwargs.pop('with_alpha', app_settings.CMSPLUGIN_CASCADE['color_picker_with_alpha'])
@@ -144,6 +145,14 @@ class ColorField(MultiValueField):
         super().__init__(fields=fields, widget=widget, *args, **kwargs)
         self.validators.append(ColorValidator(with_alpha))
         self.validators.append(ProhibitNullCharactersValidator())
+
+    def clean(self, value):
+        inherit, color = value
+        if inherit:
+            color = self.DEFAULT_COLOR
+        else:
+            self.run_validators(value)
+        return inherit, color
 
     def prepare_value(self, value):
         """
@@ -165,13 +174,16 @@ class SizeUnitValidator():
     message = _("'%(value)s' is not a valid size unit. Allowed units are: %(allowed_units)s.")
     code = 'invalid_size_unit'
 
-    def __init__(self, allowed_units=None):
+    def __init__(self, allowed_units=None, allow_negative=True):
         possible_units = ['rem', 'px', 'em', '%']
         if allowed_units is None:
             self.allowed_units = possible_units
         else:
             self.allowed_units = [au for au in allowed_units if au in possible_units]
-        self.validation_pattern = re.compile(r'^(-?\d+)({})$'.format('|'.join(self.allowed_units)))
+        if allow_negative:
+            self.validation_pattern = re.compile(r'^-?(\d+)({})$'.format('|'.join(self.allowed_units)))
+        else:
+            self.validation_pattern = re.compile(r'^(\d+)({})$'.format('|'.join(self.allowed_units)))
 
     def __call__(self, value):
         match = self.validation_pattern.match(value)
@@ -207,3 +219,44 @@ class SizeField(Field):
         if value in self.empty_values:
             return self.empty_value
         return value
+
+
+class MultiSizeField(MultiValueField):
+    """
+    Some size input fields must be specified per Bootstrap breakpoint. Use this multiple
+    input field to handle this.
+    """
+    def __init__(self, properties, *args, **kwargs):
+        required = kwargs.pop('required', False)
+        require_all_fields = kwargs.pop('require_all_fields', required)
+        allowed_units = kwargs.pop('allowed_units', None)
+        fields = [SizeField(required=required, allowed_units=allowed_units)] * len(properties)
+        widget = MultipleTextInputWidget(properties)
+        super().__init__(fields=fields, widget=widget, required=required, require_all_fields=require_all_fields, *args, **kwargs)
+        self.properties = list(properties)
+
+    def prepare_value(self, value):
+        """Transform dict from DB into list"""
+        if isinstance(value, dict):
+            return [value.get(prop) for prop in self.properties]
+        return value
+
+    def compress(self, data_list):
+        """Transform list into dict for DB"""
+        return {prop: value for prop, value in zip(self.properties, data_list)}
+
+
+class HiddenDictField(Field):
+    widget = widgets.HiddenInput
+
+    def prepare_value(self, value):
+        """Transform dict from DB into list"""
+        if isinstance(value, dict):
+            return json.dumps(value)
+        return value
+
+    def clean(self, value):
+        try:
+            return json.loads(value)
+        except:
+            raise ValidationError("Invalid Field Value")
