@@ -165,13 +165,16 @@ class SizeUnitValidator():
     message = _("'%(value)s' is not a valid size unit. Allowed units are: %(allowed_units)s.")
     code = 'invalid_size_unit'
 
-    def __init__(self, allowed_units=None):
+    def __init__(self, allowed_units=None, allow_negative=True):
         possible_units = ['rem', 'px', 'em', '%']
         if allowed_units is None:
             self.allowed_units = possible_units
         else:
             self.allowed_units = [au for au in allowed_units if au in possible_units]
-        self.validation_pattern = re.compile(r'^(-?\d+)({})$'.format('|'.join(self.allowed_units)))
+        if allow_negative:
+            self.validation_pattern = re.compile(r'^-?(\d+)({})$'.format('|'.join(self.allowed_units)))
+        else:
+            self.validation_pattern = re.compile(r'^(\d+)({})$'.format('|'.join(self.allowed_units)))
 
     def __call__(self, value):
         match = self.validation_pattern.match(value)

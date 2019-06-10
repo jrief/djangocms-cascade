@@ -174,7 +174,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         register_stride(name, bases, attrs, model_mixins)
         if name == 'CascadePluginBase':
             bases += (CascadePluginMixin, CMSPluginBase,)
-        return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
+        return super().__new__(cls, name, bases, attrs)
 
 
 class TransparentWrapper(object):

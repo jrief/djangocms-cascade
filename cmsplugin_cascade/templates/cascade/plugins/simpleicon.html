@@ -7,7 +7,7 @@
 {% elif css_classes or inline_styles %}
 <span {% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 {% endif %}
-	<i {{ icon_font_attrs }}></i>
+	<i class="{{ icon_font_class }}"></i>
 {% if instance_link %}</a>{% elif css_classes or inline_styles %}</span>{% endif %}
 {% endwith %}
 {% endspaceless %}

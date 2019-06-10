@@ -14,9 +14,6 @@ django.jQuery(function($) {
 			var self = this;
 			this.$super();
 
-			// be more intuitive, reorganize layout by moving 'Link Target'
-			$('.field-glossary').before($('.field-image_file'));
-
 			// install event handlers
 			$fileIdInputSelector.on('change', function() {
 				window.setTimeout(self.fileIdInputChanged);

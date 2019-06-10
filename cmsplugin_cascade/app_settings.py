@@ -49,7 +49,7 @@ class AppSettings(object):
         if 'cmsplugin_cascade.sharable' in INSTALLED_APPS:
             config['plugins_with_sharables'].setdefault(
                 'FramedIconPlugin',
-                ('font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius',))
+                ['font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius'])
 
         config['exclude_hiding_plugin'] = list(config.get('exclude_hiding_plugin', []))
         config['exclude_hiding_plugin'].append('SegmentPlugin')

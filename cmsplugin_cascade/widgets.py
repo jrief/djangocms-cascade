@@ -2,7 +2,6 @@ import re
 import json
 from django.core.exceptions import ValidationError
 from django.forms import Media, widgets
-from django.utils.safestring import mark_safe
 from django.utils.html import escape, format_html, format_html_join
 from six.moves.html_parser import HTMLParser
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -257,11 +256,14 @@ class BorderChoiceWidget(widgets.MultiWidget):
         return list(values)
 
     def value_from_datadict(self, data, files, name):
-        values = (
-            escape(data['{0}-width'.format(name)]),
-            escape(data['{0}-style'.format(name)]),
-            escape(data['{0}-color'.format(name)]),
-        )
+        try:
+            values = (
+                escape(data['{0}-width'.format(name)]),
+                escape(data['{0}-style'.format(name)]),
+                escape(data['{0}-color'.format(name)]),
+            )
+        except KeyError:
+            values = ('0px', 'none', 'inherit')
         return values
 
     def render(self, name, value, attrs=None, renderer=None):
