@@ -5,6 +5,7 @@ from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.forms.models import ModelForm
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
@@ -79,8 +80,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     parent_classes = None
     require_parent = False
-    # glossary_variables = ['container_max_widths', 'media_queries']
-    # glossary_field_order = ['breakpoints', 'fluid']
     model_mixins = (ContainerGridMixin,)
 
     @classmethod
@@ -337,26 +336,24 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     @classmethod
     def sanitize_model(cls, obj):
-        sanitized = super(BootstrapColumnPlugin, cls).sanitize_model(obj)
+        sanitized = super().sanitize_model(obj)
         return sanitized
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapColumnPlugin, cls).get_identifier(obj)
         glossary = obj.get_complete_glossary()
         widths = []
         for bp in glossary.get('breakpoints', []):
             width = obj.glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
-
             if width:
                 widths.append(width)
         if len(widths) > 1:
-            content = _('widths: {0} units').format(' / '.join(widths))
+            content = _("widths: {0} units").format(' / '.join(widths))
         elif len(widths) == 1:
             width = widths[0]
-            content = ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
+            content = ungettext_lazy("default width: {0} unit", "default width: {0} units", width).format(width)
         else:
-            content = _('unknown width')
-        return format_html('{0}{1}', identifier, content)
+            content = _("unknown width")
+        return mark_safe(content)
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)

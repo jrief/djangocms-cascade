@@ -164,7 +164,6 @@ class LeafletPlugin(CascadePluginBase):
     admin_preview = False
     render_template = 'cascade/plugins/leaflet.html'
     inlines = (MarkerInline,)
-    # glossary_field_order = ('map_width', 'map_height', 'map_min_height')
     model_mixins = (LeafletModelMixin,)
     settings = mark_safe(json.dumps(app_settings.CMSPLUGIN_CASCADE['leaflet']))
 

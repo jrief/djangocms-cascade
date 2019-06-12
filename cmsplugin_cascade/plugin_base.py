@@ -52,7 +52,6 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
     ring_plugin_bases = {}
 
     def __new__(cls, name, bases, attrs):
-        cls.build_glossary_fields(bases, attrs)
         ring_plugin = attrs.get('ring_plugin')
         if ring_plugin:
             ring_plugin_bases = [b.ring_plugin for b in bases
@@ -65,48 +64,6 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
 
         new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
-
-    @classmethod
-    def build_glossary_fields(cls, bases, attrs):
-        # collect glossary fields from all base classes
-        base_glossary_fields = []
-        for base_class in bases:
-            base_glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
-
-        # collect declared glossary fields from current class
-        declared_glossary_fields = []
-        for field_name in list(attrs.keys()):
-            if isinstance(attrs[field_name], GlossaryField):
-                field = attrs.pop(field_name)
-                field.name = field_name
-                declared_glossary_fields.append(field)
-
-        if 'glossary_fields' in attrs:
-            if declared_glossary_fields:
-                msg = "Can not mix 'glossary_fields' with declared atributes of type 'GlossaryField'"
-                raise ImproperlyConfigured(msg)
-            declared_glossary_fields = list(attrs['glossary_fields'])
-
-        glossary_field_order = attrs.get('glossary_field_order')
-        if glossary_field_order:
-            # if reordering is desired, reorder the glossary fields
-            unordered_fields = dict((gf.name, gf) for gf in base_glossary_fields)
-            for gf in declared_glossary_fields:
-                unordered_fields.update({gf.name: gf})
-            unordered_fields.update(dict((gf.name, gf) for gf in declared_glossary_fields))
-            glossary_fields = OrderedDict((k, unordered_fields[k]) for k in glossary_field_order
-                                                                       if k in unordered_fields)
-            # append fields not in glossary_field_order
-            glossary_fields.update(dict((k, v) for k, v in unordered_fields.items()
-                                                   if k not in glossary_field_order))
-        else:
-            # merge glossary fields from base classes with the declared ones, overwriting the former ones
-            glossary_fields = OrderedDict((gf.name, gf) for gf in base_glossary_fields)
-            for gf in declared_glossary_fields:
-                glossary_fields.update({gf.name: gf})
-
-        if glossary_fields:
-            attrs['glossary_fields'] = glossary_fields.values()
 
 
 class CascadePluginMixinBase(metaclass=CascadePluginMixinMetaclass):
@@ -239,7 +196,6 @@ class TransparentContainer(TransparentWrapper):
 
 class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     change_form_template = 'cascade/admin/change_form.html'
-    glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
     parent_classes = None
     alien_child_classes = False
@@ -249,6 +205,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         js = ['admin/js/jquery.init.js', 'cascade/js/underscore.js', 'cascade/js/ring.js']
 
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
+        assert glossary_fields is None, "glossary_fields is deprecated"
         super(CascadePluginBase, self).__init__(model, admin_site)
         if isinstance(glossary_fields, (list, tuple)):
             self.glossary_fields = list(glossary_fields)
@@ -389,15 +346,6 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             kwargs['form'] = type(form.__name__, (form, ModelForm), {})
         return super().get_form(request, obj, **kwargs)
 
-    def save_model(self, request, new_obj, form, change):
-        if change and self.glossary_variables:
-            old_obj = super(CascadePluginBase, self).get_object(request, form.instance.id)
-            for key in self.glossary_variables:
-                if key not in new_obj.glossary and key in old_obj.glossary:
-                    # transfer listed glossary variable from the old to new object
-                    new_obj.glossary[key] = old_obj.glossary[key]
-        super(CascadePluginBase, self).save_model(request, new_obj, form, change)
-
     def get_parent_instance(self, request=None, obj=None):
         """
         Get the parent model instance corresponding to this plugin. When adding a new plugin, the
@@ -464,15 +412,6 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             context.update(
                 ring_plugin=self.ring_plugin,
             )
-
-        # remove glossary field from rendered form
-        # form = context['adminform'].form
-        # try:
-        #     fields = list(form.fields)
-        #     fields.remove('glossary')
-        #     context['empty_form'] = len(fields) + len(form.glossary_fields) == 0
-        # except KeyError:
-        #     pass
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def in_edit_mode(self, request, placeholder):

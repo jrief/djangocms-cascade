@@ -1,8 +1,7 @@
-from django.forms import widgets
 from django.forms.fields import ChoiceField, IntegerField
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _, get_language_from_request
-from entangled.forms import EntangledModelFormMixin, get_related_object
+from django.utils.translation import ugettext_lazy as _
+from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cms.models.pagemodel import Page
 from .plugin_base import BootstrapPluginBase
@@ -43,42 +42,11 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     allow_children = False
     render_template = 'cascade/bootstrap4/secmenu-list-group.html'
 
-    # page_id = GlossaryField(
-    #     widgets.Select(choices=()),
-    #     label=_("CMS Page Id"),
-    #     help_text=_("Select a CMS page with a given unique Id (in advanced settings).")
-    # )
-    #
-    # offset = GlossaryField(
-    #     widgets.NumberInput(),
-    #     label=_("Offset"),
-    #     initial=0,
-    #     help_text=_("Starting from which child menu."),
-    # )
-    #
-    # limit = GlossaryField(
-    #     widgets.NumberInput(),
-    #     label=_("Limit"),
-    #     initial=100,
-    #     help_text=_("Number of child menus."),
-    # )
-    #
-    # glossary_field_order = ['page_id', 'offset', 'limit']
-
     @classmethod
     def get_identifier(cls, obj):
         return mark_safe(obj.glossary.get('page_id', ''))
 
     def get_form(self, request, obj=None, **kwargs):
-        lang = get_language_from_request(request)
-        # choices = {}
-        # for page in Page.objects.filter(reverse_id__isnull=False).order_by('publisher_is_draft'):
-        #     if page.reverse_id not in choices:
-        #         choices[page.reverse_id] = page.get_title(lang)
-        # next(iter(self.glossary_fields)).widget.choices = list(choices.items())
-        # form = type('SecondaryMenuFormMixin', (SecondaryMenuFormMixin,), {})
-        # for choice in form.base_fields['page_id'].choices:
-        #     print(choice)
         kwargs.setdefault('form', SecondaryMenuFormMixin)
         return super().get_form(request, obj, **kwargs)
 

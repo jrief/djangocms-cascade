@@ -114,9 +114,9 @@ class CascadeModelBase(CMSPlugin):
         sanitized = self.plugin_class.sanitize_model(self)
         if sanitize_only:
             if sanitized:
-                super(CascadeModelBase, self).save(no_signals=True)
+                super().save(no_signals=True)
         else:
-            super(CascadeModelBase, self).save(*args, **kwargs)
+            super().save(*args, **kwargs)
 
     @classmethod
     def _get_cascade_elements(cls):

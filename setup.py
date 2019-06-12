@@ -31,8 +31,10 @@ setup(
     install_requires=[
         'django>=1.11,<2.2',
         'django-classy-tags>=0.8',
-        'django-cms>=3.4,<3.7',
-        'djangocms-text-ckeditor>=3.4',
+        'django-cms>=3.5,<3.7',
+        'django-entangled',
+        'django-select2>7.0',
+        'djangocms-text-ckeditor>=3.7',
         'jsonfield',
     ],
     license='MIT',

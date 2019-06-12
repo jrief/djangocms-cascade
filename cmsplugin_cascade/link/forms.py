@@ -1,13 +1,11 @@
 from django.apps import apps
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import fields, Media, ModelChoiceField
-from django.forms.models import ModelForm
-from django.forms.widgets import Select as SelectWidget, RadioSelect
+from django.forms.widgets import RadioSelect
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _, get_language
+from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import HeavySelect2Widget
 from cms.models import Page
 from cmsplugin_cascade.utils import validate_link
@@ -30,18 +28,6 @@ class HeavySelectWidget(HeavySelect2Widget):
         js = ['cascade/js/admin/jquery.restore.js', *parent_media._js]
         return Media(css=parent_media._css, js=js)
 
-    def Xrender(self, name, value, attrs=None, renderer=None):
-        try:
-            page = Page.objects.get(pk=value)
-        except (Page.DoesNotExist, ValueError):
-            pass
-        else:
-            language = get_language()
-            text = format_page_link(page.get_title(language), page.get_absolute_url(language))
-            self.choices.append((value, text))
-        html = super(HeavySelectWidget, self).render(name, value, attrs, renderer)
-        return html
-
 
 class LinkSearchField(ModelChoiceField):
     widget = HeavySelectWidget(data_view='admin:get_published_pagelist')
@@ -50,14 +36,6 @@ class LinkSearchField(ModelChoiceField):
         queryset = Page.objects.public().on_site(get_current_site())
         kwargs.setdefault('queryset', queryset)
         super(LinkSearchField, self).__init__(*args, **kwargs)
-
-    def Xclean(self, value):
-        value = super().clean(value)
-        return value
-        try:
-            return int(value)
-        except (TypeError, ValueError):
-            pass
 
 
 class SectionChoiceField(fields.ChoiceField):
@@ -141,37 +119,7 @@ class LinkForm(EntangledModelFormMixin):
 
     class Meta:
         entangled_fields = {'glossary': ['link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',
-            'link_target', 'link_title']}
-
-    def X__init__(self, data=None, *args, **kwargs):
-        instance = kwargs.get('instance')
-        initial = dict(instance.glossary) if instance else {}
-        # default_link_type = {'link_type': self.LINK_TYPE_CHOICES[0][0]}
-        # initial = dict(instance.glossary) if instance else default_link_type
-        # initial.update(kwargs.pop('initial', {}))
-        # initial.setdefault('link', {'type': default_link_type})
-        # link_type = initial['link']['type']
-        # self.base_fields['link_type'].choices = self.LINK_TYPE_CHOICES
-        # self.base_fields['link_type'].initial = link_type
-        if data and data.get('shared_glossary'):
-            # convert this into an optional field since it is disabled with ``shared_glossary`` set
-            self.base_fields['link_type'].required = False
-        try:
-            set_initial_linktype = getattr(self, 'set_initial_{link_type}'.format(**initial))
-        except KeyError:
-            set_initial_linktype = None
-        if 'django_select2' not in settings.INSTALLED_APPS:
-            # populate classic Select field for choosing a CMS page
-            site = get_current_site()
-            choices = [(p.pk, format_page_link(p.get_page_title(), p.get_absolute_url()))
-                       for p in Page.objects.drafts().on_site(site)]
-            self.base_fields['cms_page'].choices = choices
-
-        if callable(set_initial_linktype):
-            set_initial_linktype(initial)
-        #self._preset_section(data, initial)
-        # self.base_fields['download_file'].widget = AdminFileWidget(ManyToOneRel(FilerFileField, FilerFileModel, 'id'), admin_site)
-        super().__init__(data, initial=initial, *args, **kwargs)
+                                         'link_target', 'link_title']}
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
@@ -221,88 +169,6 @@ class LinkForm(EntangledModelFormMixin):
             raise error
         return cleaned_data
 
-    def Xclean_glossary(self):
-        """
-        This method rectifies the behavior of JSONFormFieldBase.clean which converts
-        the value of empty fields to None, although it shall be an empty dict.
-        """
-        glossary = self.cleaned_data['glossary']
-        if glossary is None:
-            glossary = {}
-        return glossary
-
-    def Xclean(self):
-        cleaned_data = super(LinkForm, self).clean()
-        if self.is_valid():
-            if 'link_data' in cleaned_data:
-                cleaned_data['glossary'].update(link=cleaned_data['link_data'])
-                del self.cleaned_data['link_data']
-            elif 'link_type' in cleaned_data:
-                cleaned_data['glossary'].update(link={'type': cleaned_data['link_type']})
-            else:
-                cleaned_data['glossary'].update(link={'type': 'none'})
-        return cleaned_data
-
-    def Xclean_cms_page(self):
-        if self.cleaned_data.get('link_type') == 'cmspage':
-            validate_link(self.cleaned_data['cms_page'])
-        return self.cleaned_data['cms_page']
-
-    def Xclean_section(self):
-        # if self.cleaned_data.get('link_type') == 'cmspage':
-        #     self.cleaned_data['cms_page']['section'] = self.cleaned_data['section']
-        return self.cleaned_data['section']
-
-    def Xclean_download_file(self):
-        if (self.cleaned_data.get('link_type') == 'download'
-            and isinstance(self.cleaned_data['download_file'], FilerFileModel)):
-            self.cleaned_data['link_data'] = {
-                'model': 'filer.File',
-                'pk': self.cleaned_data['download_file'].id,
-            }
-            return self.cleaned_data['download_file']
-
-    def clean_ext_url(self):
-        if self.cleaned_data.get('link_type') == 'exturl':
-            self.cleaned_data['link_data'] = {'type': 'exturl', 'url': self.cleaned_data['ext_url']}
-        return self.cleaned_data['ext_url']
-
-    def clean_mail_to(self):
-        if self.cleaned_data.get('link_type') == 'email':
-            self.cleaned_data['link_data'] = {'type': 'email', 'email': self.cleaned_data['mail_to']}
-        return self.cleaned_data['mail_to']
-
-    def set_initial_none(self, initial):
-        pass
-
-    def set_initial_cmspage(self, initial):
-        try:
-            # check if that page still exists, otherwise return nothing
-            Model = apps.get_model(initial['cms_page']['model'])
-            initial['cms_page'] = Model.objects.get(pk=initial['cms_page']['pk']).pk
-        except (KeyError, ObjectDoesNotExist):
-            pass
-
-    def set_initial_download(self, initial):
-        try:
-            # check if that page still exists, otherwise return nothing
-            Model = apps.get_model(*initial['link']['model'].split('.'))
-            initial['download_file'] = Model.objects.get(pk=initial['link']['pk']).pk
-        except (KeyError, ObjectDoesNotExist):
-            pass
-
-    def set_initial_exturl(self, initial):
-        try:
-            initial['ext_url'] = initial['link']['url']
-        except KeyError:
-            pass
-
-    def set_initial_email(self, initial):
-        try:
-            initial['mail_to'] = initial['link']['email']
-        except KeyError:
-            pass
-
     @classmethod
     def get_form_class(cls):
         """
@@ -320,14 +186,3 @@ class LinkForm(EntangledModelFormMixin):
             cls.base_fields['link_content'].required = False
         if 'link_type' in cls.base_fields and 'link' not in sharable_fields:
             cls.base_fields['link_type'].required = False
-
-
-class X_TextLinkFormMixin(object):
-    """
-    To be used in combination with `LinkForm` for easily accessing the field `link_content`.
-    """
-    def clean(self):
-        cleaned_data = super().clean()
-        if self.is_valid():
-            cleaned_data['glossary'].update(link_content=cleaned_data['link_content'])
-        return cleaned_data

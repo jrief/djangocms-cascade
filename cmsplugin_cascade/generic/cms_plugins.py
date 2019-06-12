@@ -60,7 +60,6 @@ class HorizontalRulePlugin(CascadePluginBase):
     allow_children = False
     tag_type = 'hr'
     render_template = 'cascade/generic/single.html'
-    glossary_fields = ()
 
 plugin_pool.register_plugin(HorizontalRulePlugin)
 
