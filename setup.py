@@ -36,6 +36,7 @@ setup(
         'django-select2>7.0',
         'djangocms-text-ckeditor>=3.7',
         'jsonfield',
+        'requests',
     ],
     license='MIT',
     platforms=['OS Independent'],
