@@ -10,7 +10,6 @@ from .plugin_base import BootstrapPluginBase
 class SecondaryMenuFormMixin(EntangledModelFormMixin):
     page_id = ChoiceField(
         label=_("CMS Page Id"),
-        choices=[(p.reverse_id, str(p)) for p in Page.objects.filter(reverse_id__isnull=False, publisher_is_draft=False)],
         help_text = _("Select a CMS page with a given unique Id (in advanced settings)."),
     )
 
@@ -28,6 +27,11 @@ class SecondaryMenuFormMixin(EntangledModelFormMixin):
 
     class Meta:
         entangled_fields = {'glossary': ['page_id', 'offset', 'limit']}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        choices = [(p.reverse_id, str(p)) for p in Page.objects.filter(reverse_id__isnull=False, publisher_is_draft=False)]
+        self.base_fields['page_id'].choices = choices
 
 
 class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
