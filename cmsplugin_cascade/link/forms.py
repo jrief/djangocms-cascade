@@ -8,7 +8,6 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import HeavySelect2Widget
 from cms.models import Page
-from cmsplugin_cascade.utils import validate_link
 from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
@@ -33,9 +32,13 @@ class LinkSearchField(ModelChoiceField):
     widget = HeavySelectWidget(data_view='admin:get_published_pagelist')
 
     def __init__(self, *args, **kwargs):
-        queryset = Page.objects.public().on_site(get_current_site())
+        queryset = Page.objects.public()
+        try:
+            queryset = queryset.on_site(get_current_site())
+        except:
+            pass  # can happen if database is not ready yet
         kwargs.setdefault('queryset', queryset)
-        super(LinkSearchField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SectionChoiceField(fields.ChoiceField):
