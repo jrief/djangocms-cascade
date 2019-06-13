@@ -31,10 +31,6 @@ def get_widget_choices():
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
     template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
 
-    def Xrender(self, name, value, attrs=None, renderer=None):
-        attrs = dict(attrs, version=4)
-        return super(ContainerBreakpointsWidget, self).render(name, value, attrs, renderer)
-
 
 class ContainerFormMixin(EntangledModelFormMixin):
     breakpoints = MultipleChoiceField(
@@ -113,15 +109,19 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
-class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
+class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
     """
     Form class to add non-materialized field to count the number of children.
     """
     ROW_NUM_COLUMNS = [1, 2, 3, 4, 6, 12]
     num_children = ChoiceField(
+        label=_('Columns'),
         choices=[(i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS],
-        initial=3, label=_('Columns'),
+        initial=3,
         help_text=_('Number of columns to be created with this row.'))
+
+    class Meta:
+        untangled_fields = ['num_children']
 
 
 class RowGridMixin(object):
@@ -138,7 +138,6 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
-    form = BootstrapRowForm
     model_mixins = (RowGridMixin,)
 
     @classmethod
@@ -147,6 +146,10 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         num_cols = obj.get_num_children()
         content = ungettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
         return format_html('{0}{1}', identifier, content)
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs.setdefault('form', BootstrapRowFormMixin)
+        return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
