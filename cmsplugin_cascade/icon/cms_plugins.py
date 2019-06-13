@@ -117,10 +117,10 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     def render(self, context, instance, placeholder):
         context = self.super(FramedIconPlugin, self).render(context, instance, placeholder)
         styles = {'display': 'inline-block'}
-        inherit, color = instance.glossary.get('color', (True, '#000'))
+        color, inherit = instance.glossary.get('color', (ColorField.DEFAULT_COLOR, True))
         if not inherit:
             styles['color'] = color
-        inherit, background_color = instance.glossary.get('background_color', (True, '#fff'))
+        background_color, inherit = instance.glossary.get('background_color', (ColorField.DEFAULT_COLOR, True))
         if not inherit:
             styles['background-color'] = background_color
         border = instance.glossary.get('border')

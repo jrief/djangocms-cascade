@@ -116,7 +116,7 @@ class ColorValidator():
             self.validation_pattern = re.compile(r'(#(?:[0-9a-fA-F]{2}){2,3}|(#[0-9a-fA-F]{3})|(rgb|hsl))')
 
     def __call__(self, value):
-        inherit, color = value
+        color, inherit = value
         match = self.validation_pattern.match(color)
         if not match:
             params = {'color': color}
@@ -147,25 +147,13 @@ class ColorField(MultiValueField):
         self.validators.append(ProhibitNullCharactersValidator())
 
     def clean(self, value):
-        inherit, color = value
-        if inherit:
-            color = self.DEFAULT_COLOR
-        else:
+        color, inherit = value
+        if not inherit:
             self.run_validators(value)
-        return inherit, color
-
-    def prepare_value(self, value):
-        """
-        Swap 'color' and 'inherit' for backward compatibility
-        """
-        inherit, color = value
-        return color, inherit
+        return value
 
     def compress(self, data_list):
-        """
-        Swap 'color' and 'inherit' for backward compatibility
-        """
-        return data_list[1], data_list[0]
+        return data_list
 
 
 @deconstructible
