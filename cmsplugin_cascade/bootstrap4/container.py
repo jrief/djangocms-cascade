@@ -103,7 +103,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
-        super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         obj.sanitize_children()
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
@@ -153,7 +153,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
-        super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         child_glossary = {'xs-column-width': 'col'}
         self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
 
@@ -334,7 +334,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
-        super(BootstrapColumnPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         obj.sanitize_children()
 
     @classmethod

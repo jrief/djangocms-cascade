@@ -185,11 +185,11 @@ class LeafletPlugin(CascadePluginBase):
 
     def add_view(self, request, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, settings=self.settings)
-        return super(LeafletPlugin, self).add_view(request, form_url, extra_context)
+        return super().add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, settings=self.settings)
-        return super(LeafletPlugin, self).change_view(request, object_id, form_url, extra_context)
+        return super().change_view(request, object_id, form_url, extra_context)
 
     def render(self, context, instance, placeholder):
         marker_instances = []

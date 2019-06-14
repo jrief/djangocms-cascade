@@ -70,7 +70,7 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
             ring_plugin_bases=dict((ring_plugin, ['django.cascade.{}'.format(b) for b in bases if b != 'SharableGlossaryMixin'])
                                    for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items())
         )
-        return super(SharedGlossaryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
+        return super().render_change_form(request, context, add, change, form_url, obj)
 
     def plugin_name(self, obj):
         plugin_instance = plugin_pool.get_plugin(obj.plugin_type)

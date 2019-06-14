@@ -13,7 +13,7 @@ class Template(DjangoTemplate):
     def render(self, context):
         if isinstance(context, dict):
             context = TemplateContext(context)
-        return super(Template, self).render(context)
+        return super().render(context)
 
 
 class SegmentFormMixin(EntangledModelFormMixin):
@@ -153,10 +153,10 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
         )
         form = type('SegmentForm', (SegmentFormMixin,), {'open_tag': open_tag})
         kwargs.setdefault('form', form)
-        return super(SegmentPlugin, self).get_form(request, obj, **kwargs)
+        return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
-        super(SegmentPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         if obj.glossary['open_tag'] != 'if' and self._get_previous_open_tag(obj) not in ('if', 'elif'):
            # rectify to an `if`-segment, when plugin is not saved next to an `if`- or `elif`-segment
            obj.glossary['open_tag'] = 'if'

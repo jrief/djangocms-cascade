@@ -60,7 +60,7 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
             cls.ring_plugin_bases[ring_plugin].extend(ring_plugin_bases)
             cls.ring_plugin_bases[ring_plugin] = remove_duplicates(cls.ring_plugin_bases[ring_plugin])
 
-        new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
+        new_class = super().__new__(cls, name, bases, attrs)
         return new_class
 
 
@@ -145,11 +145,11 @@ class TransparentWrapper(object):
     def get_child_classes(cls, slot, page, instance=None):
         if hasattr(cls, 'direct_child_classes'):
             return cls.direct_child_classes
-        child_classes = set(super(TransparentWrapper, cls).get_child_classes(slot, page, instance))
+        child_classes = set(super().get_child_classes(slot, page, instance))
         while True:
             instance = instance.get_parent_instance() if instance and instance.parent else None
             if instance is None:
-                child_classes.update(super(TransparentWrapper, cls).get_child_classes(slot, page, instance))
+                child_classes.update(super().get_child_classes(slot, page, instance))
                 return list(child_classes)
             if not issubclass(instance.plugin_class, TransparentWrapper):
                 child_classes.update(instance.plugin_class.get_child_classes(slot, page, instance))
@@ -159,7 +159,7 @@ class TransparentWrapper(object):
     def get_parent_classes(cls, slot, page, instance=None):
         if hasattr(cls, 'direct_parent_classes'):
             return cls.direct_parent_classes
-        parent_classes = set(super(TransparentWrapper, cls).get_parent_classes(slot, page, instance) or [])
+        parent_classes = set(super().get_parent_classes(slot, page, instance) or [])
         if isinstance(instance, CascadeElement):
             instance = instance.get_parent_instance() if instance and instance.parent else None
             if instance is not None:
@@ -228,7 +228,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         """
         Return all parent classes including those marked as "transparent".
         """
-        parent_classes = super(CascadePluginBase, cls).get_parent_classes(slot, page, instance)
+        parent_classes = super().get_parent_classes(slot, page, instance)
         if parent_classes is None:
             if cls.get_require_parent(slot, page) is False:
                 return

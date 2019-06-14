@@ -25,7 +25,7 @@ class SegmentPluginModelMixin(object):
 
     def render_plugin(self, context=None, placeholder=None, admin=False, processors=None):
         context.update(self.get_context_override(context['request']))
-        content = super(SegmentPluginModelMixin, self).render_plugin(context, placeholder, admin, processors)
+        content = super().render_plugin(context, placeholder, admin, processors)
         context.pop()
         return content
 
@@ -37,7 +37,7 @@ class EmulateUserModelMixin(SegmentPluginModelMixin):
         """
         Override the request object with an emulated user.
         """
-        context_override = super(EmulateUserModelMixin, self).get_context_override(request)
+        context_override = super().get_context_override(request)
         try:
             if request.user.is_staff:
                 user = self.UserModel.objects.get(pk=request.session['emulate_user_id'])
@@ -64,7 +64,7 @@ class EmulateUserAdminMixin(object):
             url(r'^emulate_users/$', self.admin_site.admin_view(self.emulate_users), name='emulate-users'),
             url(r'^emulate_user/(?P<user_id>\d+)/$', self.admin_site.admin_view(self.emulate_user), name='emulate-user'),
             url(r'^clear_emulations/$', self.admin_site.admin_view(self.clear_emulations), name='clear-emulations'),
-        ] + super(EmulateUserAdminMixin, self).get_urls()
+        ] + super().get_urls()
 
     def emulate_user(self, request, user_id):
         try:

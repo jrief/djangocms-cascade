@@ -115,7 +115,7 @@ class BootstrapImagePlugin(LinkPluginBase):
         return fields
 
     def render(self, context, instance, placeholder):
-        context = super().render(context, instance, placeholder)
+        context = self.super(BootstrapImagePlugin, self).render(context, instance, placeholder)
         try:
             image_tags = get_image_tags(instance)
         except Exception as exc:

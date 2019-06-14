@@ -24,7 +24,7 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         options = dict(kwargs, widgets={'menu_symbol': widgets.HiddenInput})
-        ModelForm = super(CascadePageAdmin, self).get_form(request, obj, **options)
+        ModelForm = super().get_form(request, obj, **options)
         return ModelForm
 
     def get_urls(self):
@@ -36,7 +36,7 @@ class CascadePageAdmin(PageExtensionAdmin):
             url(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
             url(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
         ]
-        urls.extend(super(CascadePageAdmin, self).get_urls())
+        urls.extend(super().get_urls())
         return urls
 
     def get_page_sections(self, request, page_pk=None):
@@ -90,5 +90,5 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, icon_fonts=IconFont.objects.all())
-        return super(CascadePageAdmin, self).changeform_view(
+        return super().changeform_view(
              request, object_id=object_id, form_url=form_url, extra_context=extra_context)

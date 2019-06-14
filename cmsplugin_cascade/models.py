@@ -51,7 +51,7 @@ class SharedGlossary(models.Model):
         glossary = dict((key, value) for key, value in self.glossary.items()
                         if key in plugin_instance.sharable_fields)
         self.glossary = glossary
-        super(SharedGlossary, self).save(force_insert, force_update, using, update_fields)
+        super().save(force_insert, force_update, using, update_fields)
 
 
 class CascadeElement(CascadeModelBase):
@@ -250,10 +250,10 @@ class FilePathField(models.FilePathField):
     """
     def __init__(self, **kwargs):
         kwargs.setdefault('path', app_settings.CMSPLUGIN_CASCADE['icon_font_root'])
-        super(FilePathField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(FilePathField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         del kwargs['path']
         return name, path, args, kwargs
 

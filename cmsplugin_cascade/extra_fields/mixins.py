@@ -84,12 +84,12 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                 entangled_fields = {'glossary': list(form_fields.keys())}
             form_fields['Meta'] = Meta
             kwargs['form'] = type(base_form.__name__, (base_form,), form_fields)
-        return super(ExtraFieldsMixin, self).get_form(request, obj, **kwargs)
+        return super().get_form(request, obj, **kwargs)
 
     @classmethod
     def get_css_classes(cls, obj):
         """Enrich list of CSS classes with customized ones"""
-        css_classes = super(ExtraFieldsMixin, cls).get_css_classes(obj)
+        css_classes = super().get_css_classes(obj)
         extra_css_classes = obj.glossary.get('extra_css_classes')
         if isinstance(extra_css_classes, str):
             css_classes.append(extra_css_classes)
@@ -100,7 +100,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     @classmethod
     def get_inline_styles(cls, obj):
         """Enrich inline CSS styles with customized ones"""
-        inline_styles = super(ExtraFieldsMixin, cls).get_inline_styles(obj)
+        inline_styles = super().get_inline_styles(obj)
         for key, eis in obj.glossary.items():
             if key.startswith('extra_inline_styles:'):
                 if isinstance(eis, dict):
@@ -115,7 +115,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
 
     @classmethod
     def get_html_tag_attributes(cls, obj):
-        attributes = super(ExtraFieldsMixin, cls).get_html_tag_attributes(obj)
+        attributes = super().get_html_tag_attributes(obj)
         extra_element_id = obj.glossary.get('extra_element_id')
         if extra_element_id:
             attributes.update(id=extra_element_id)
@@ -123,7 +123,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(ExtraFieldsMixin, cls).get_identifier(obj)
+        identifier = super().get_identifier(obj)
         extra_element_id = obj.glossary and obj.glossary.get('extra_element_id')
         if extra_element_id:
             return format_html('{0}<em>{1}:</em> ', identifier, extra_element_id)

@@ -96,7 +96,7 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
-        super(BootstrapCarouselPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, BootstrapCarouselSlidePlugin)
         obj.sanitize_children()
 
@@ -130,7 +130,7 @@ class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
         return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
-        context = super().render(context, instance, placeholder)
+        context = self.super(BootstrapCarouselSlidePlugin, self).render(context, instance, placeholder)
         # slide image shall be rendered in a responsive context using the ``<picture>`` element
         try:
             parent_glossary = instance.parent.get_bound_plugin().glossary
@@ -143,11 +143,11 @@ class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
                 'is_fluid': False,
                 'elements': elements,
             })
-        return self.super(BootstrapCarouselSlidePlugin, self).render(context, instance, placeholder)
+        return context
 
     @classmethod
     def sanitize_model(cls, obj):
-        sanitized = super(BootstrapCarouselSlidePlugin, cls).sanitize_model(obj)
+        sanitized = super().sanitize_model(obj)
         resize_options = obj.get_parent_glossary().get('resize_options', [])
         if obj.glossary.get('resize_options') != resize_options:
             obj.glossary.update(resize_options=resize_options)

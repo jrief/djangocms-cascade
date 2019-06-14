@@ -64,7 +64,7 @@ class WithInlineElementsMixin(object):
     """
     @classmethod
     def get_data_representation(cls, instance):
-        data = super(WithInlineElementsMixin, cls).get_data_representation(instance)
+        data = super().get_data_representation(instance)
         data.update(inlines=[ie.glossary for ie in instance.inline_elements.all()])
         return data
 
@@ -82,7 +82,7 @@ class WithSortableInlineElementsMixin(object):
     """
     @classmethod
     def get_data_representation(cls, instance):
-        data = super(WithSortableInlineElementsMixin, cls).get_data_representation(instance)
+        data = super().get_data_representation(instance)
         data.update(inlines=[ie.glossary for ie in instance.sortinline_elements.all()])
         return data
 
