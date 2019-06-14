@@ -152,7 +152,7 @@ class TextEditorConfigAdmin(admin.ModelAdmin):
         return [
             url(r'^wysiwig-config\.js$', self.render_texteditor_config,
                 name='cascade_texteditor_config'),
-        ] + super(TextEditorConfigAdmin, self).get_urls()
+        ] + super().get_urls()
 
     def render_texteditor_config(self, request):
         context = {

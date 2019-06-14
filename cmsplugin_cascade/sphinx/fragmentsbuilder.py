@@ -8,7 +8,7 @@ class FragmentsBuilder(DirectoryHTMLBuilder):
     name = 'fragments'
 
     def __init__(self, app):
-        super(FragmentsBuilder, self).__init__(app)
+        super().__init__(app)
         self.config.html_theme = 'bootstrap-fragments'
         self.config.html_theme_path.append(os.path.abspath(os.path.join(__file__, os.pardir, 'theme')))
         self.config.html_sidebars = {
@@ -22,7 +22,7 @@ class FragmentsBuilder(DirectoryHTMLBuilder):
             self.docs_map = {}
 
     def prepare_writing(self, docnames):
-        super(FragmentsBuilder, self).prepare_writing(docnames)
+        super().prepare_writing(docnames)
         for docname in docnames:
             doctree = self.env.get_doctree(docname)
             idx = doctree.first_child_matching_class(nodes.section)
@@ -47,7 +47,7 @@ class FragmentsBuilder(DirectoryHTMLBuilder):
         return self.render_partial(partials)['fragment']
 
     def finish(self):
-        super(FragmentsBuilder, self).finish()
+        super().finish()
         with open(self.docsmap_file, 'w') as fh:
             json.dump(self.docs_map, fh)
 

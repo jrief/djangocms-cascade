@@ -1,12 +1,10 @@
 import json
-from django.forms.fields import CharField, BooleanField, Field
-from django.forms.models import ModelForm, ModelChoiceField
+from django.forms.fields import CharField, BooleanField
 from django.forms import widgets
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin import StackedInline
-from django.contrib.admin.sites import site
 from django.core.exceptions import ValidationError
-from django.utils.html import format_html, strip_tags, strip_spaces_between_tags
+from django.utils.html import strip_tags, strip_spaces_between_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin, EntangledModelForm
@@ -239,14 +237,13 @@ class LeafletPlugin(CascadePluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(LeafletPlugin, cls).get_identifier(obj)
         num_elems = obj.inline_elements.count()
         content = ungettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
-        return format_html('{0}{1}', identifier, content)
+        return mark_safe(content)
 
     @classmethod
     def get_data_representation(cls, instance):
-        data = super(LeafletPlugin, cls).get_data_representation(instance)
+        data = super().get_data_representation(instance)
         data.update(inlines=[ie.glossary for ie in instance.inline_elements.all()])
         return data
 

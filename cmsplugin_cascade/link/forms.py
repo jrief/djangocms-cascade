@@ -21,7 +21,7 @@ def format_page_link(*args, **kwargs):
 class HeavySelectWidget(HeavySelect2Widget):
     @property
     def media(self):
-        parent_media = super(HeavySelectWidget, self).media
+        parent_media = super().media
         # prepend JS snippet to re-add 'jQuery' to the global namespace
         js = ['cascade/js/admin/jquery.restore.js', *parent_media._js]
         return Media(css=parent_media._css, js=js)

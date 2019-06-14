@@ -8,7 +8,7 @@ from cmsplugin_cascade.models import Segmentation
 class SegmentationAdminMetaclass(MediaDefiningClass):
     def __new__(cls, name, bases, attrs):
         bases = tuple(import_string(sgm[1]) for sgm in app_settings.CMSPLUGIN_CASCADE['segmentation_mixins']) + bases
-        new_class = super(SegmentationAdminMetaclass, cls).__new__(cls, name, bases, attrs)
+        new_class = super().__new__(cls, name, bases, attrs)
         return new_class
 
 

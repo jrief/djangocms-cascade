@@ -16,7 +16,7 @@ class LinkSearchField(AutoModelSelect2Field):
             self.search_fields = kwargs.pop('search_fields')
         except KeyError:
             pass
-        super(LinkSearchField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def security_check(self, request, *args, **kwargs):
         user = request.user
@@ -27,4 +27,4 @@ class LinkSearchField(AutoModelSelect2Field):
     def prepare_value(self, value):
         if not value:
             return None
-        return super(LinkSearchField, self).prepare_value(value)
+        return super().prepare_value(value)

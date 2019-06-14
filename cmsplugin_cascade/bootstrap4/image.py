@@ -1,6 +1,6 @@
 import logging
 from django.forms import widgets, ChoiceField, MultipleChoiceField
-from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
@@ -132,12 +132,11 @@ class BootstrapImagePlugin(LinkPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapImagePlugin, cls).get_identifier(obj)
         try:
             content = str(obj.image)
         except AttributeError:
             content = _("No Image")
-        return format_html('{0}{1}', identifier, content)
+        return mark_safe(content)
 
     @classmethod
     def sanitize_model(cls, obj):

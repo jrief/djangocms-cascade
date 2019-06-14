@@ -26,7 +26,7 @@ class UploadIconsForms(ModelForm):
 
     def clean(self):
         fontello_url = 'http://fontello.com/'
-        cleaned_data = super(UploadIconsForms, self).clean()
+        cleaned_data = super().clean()
         if 'zip_file' in self.changed_data:
             try:
                 label = cleaned_data['zip_file'].label
@@ -67,13 +67,13 @@ class IconFontAdmin(admin.ModelAdmin):
         # at least one icon font must be set as default
         if self.model.objects.filter(is_default=True).count() < 1:
             obj.is_default = True
-        super(IconFontAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         if obj.is_default is True and 'is_default' in form.changed_data:
             # maximum one icon font can be set as default
             self.model.objects.exclude(id=obj.id).update(is_default=False)
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = list(super(IconFontAdmin, self).get_readonly_fields(request, obj=obj))
+        readonly_fields = list(super().get_readonly_fields(request, obj=obj))
         if obj:
             readonly_fields.append('preview_icons')
         return readonly_fields

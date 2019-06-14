@@ -19,7 +19,7 @@ class SelectSharedGlossary(forms.Select):
             attrs = {'data-glossary': json.dumps(self._get_data_glossary(value))}
         else:
             attrs = {}
-        return super(SelectSharedGlossary, self).create_option(name, value, label, selected, index, subindex, attrs)
+        return super().create_option(name, value, label, selected, index, subindex, attrs)
 
     def _get_data_glossary(self, option_value):
         shared_instance = self.choices.queryset.get(pk=option_value)

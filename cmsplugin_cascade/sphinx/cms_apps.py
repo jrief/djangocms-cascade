@@ -24,13 +24,13 @@ class SphinxDocsView(TemplateView):
                 response = HttpResponse(content=fd.read(), content_type=content_type)
                 patch_cache_control(response, cache_control='max-age=86400')
                 return response
-        return super(SphinxDocsView, self).get(request, page=slug, *args, **kwargs)
+        return super().get(request, page=slug, *args, **kwargs)
 
     def get_template_names(self):
         return [self.request.current_page.get_template()]
 
     def get_context_data(self, page='index.html', **kwargs):
-        context = super(SphinxDocsView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         filename = os.path.join(settings.SPHINX_DOCS_ROOT, page, 'index.html')
         if not os.path.exists(filename):
             raise ViewDoesNotExist("{} does not exist".format(page))

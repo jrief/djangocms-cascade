@@ -74,7 +74,7 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
             messages.add_message(request, messages.INFO, _("Persisted content has been restored to CMS clipboard."))
-        super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         if request.POST.get('restore_clipboard'):
             self._deserialize_to_clipboard(request, obj.data)
 

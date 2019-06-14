@@ -140,7 +140,6 @@ class JumbotronFormMixin(BootstrapPictureFormMixin):
 class BootstrapJumbotronPlugin(BootstrapPluginBase):
     name = _("Jumbotron")
     model_mixins = (ContainerGridMixin, ImagePropertyMixin, ImageBackgroundMixin)
-    # form = JumbotronPluginForm
     require_parent = False
     parent_classes = ('BootstrapColumnPlugin',)
     allow_children = True
@@ -161,7 +160,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
             kwargs['form'] = type('JumbotronForm', (ContainerFormMixin, JumbotronFormMixin), {})
         else:
             kwargs['form'] = JumbotronFormMixin
-        return super(BootstrapJumbotronPlugin, self).get_form(request, obj, **kwargs)
+        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
@@ -184,7 +183,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         sanitized = False
         # if the jumbotron is the root of the placeholder, we consider it as "fluid"
         obj.glossary['fluid'] = obj.parent is None
-        super(BootstrapJumbotronPlugin, cls).sanitize_model(obj)
+        super().sanitize_model(obj)
         grid_container = obj.get_bound_plugin().get_grid_instance()
         obj.glossary.setdefault('media_queries', {})
         for bp, bound in grid_container.bounds.items():
@@ -209,7 +208,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapJumbotronPlugin, cls).get_identifier(obj)
+        identifier = super().get_identifier(obj)
         try:
             content = obj.image.name or obj.image.original_filename
         except AttributeError:
