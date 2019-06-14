@@ -7,7 +7,7 @@ from entangled.forms import get_related_object
 
 
 class IconPluginMixin(CascadePluginMixinBase):
-    change_form_template = 'cascade/admin/fonticon_change_form.html'
+    change_form_template = 'cascade/admin/change_form.html'
     ring_plugin = 'IconPluginMixin'
     require_icon_font = True  # if False, the icon_font is optional
 

@@ -22,10 +22,15 @@
 	django.cascade.ring_plugin_bases = {{% for key, bases in ring_plugin_bases.items %}
 		{{ key }}: "[{{ bases|join:", " }}]"{% if not forloop.last %},{% endif %}{% endfor %}
 	};
-{% if ring_plugin %}
+	{% if ring_plugin %}
 	django.jQuery(function($) {
 		new django.cascade.{{ ring_plugin }}();
 	});
-{% endif %}
+	{% endif %}{% if icon_fonts %}
+	django.cascade.iconfont_stylesheet_urls = {{% for icof in icon_fonts %}
+		'{{ icof.id }}': '{{ icof.get_stylesheet_url }}'{% if not forloop.last %},{% endif %}{% endfor %}
+	};
+	django.cascade.fetch_fonticons_url = "{% url 'admin:fetch_fonticons' %}";
+	{% endif %}
 	</script>
 {% endblock %}

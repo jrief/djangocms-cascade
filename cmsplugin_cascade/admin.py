@@ -12,7 +12,7 @@ from cmsplugin_cascade.link.forms import format_page_link
 
 @admin.register(CascadePage)
 class CascadePageAdmin(PageExtensionAdmin):
-    add_form_template = change_form_template = 'cascade/admin/fonticon_change_form.html'
+    add_form_template = change_form_template = 'cascade/admin/change_form.html'
     fields = ['icon_font', 'menu_symbol']
 
     @property
