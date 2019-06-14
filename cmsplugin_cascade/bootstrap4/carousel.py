@@ -65,11 +65,8 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     render_template = 'cascade/bootstrap4/{}carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
+    form = CarouselSlidesFormMixin
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', CarouselSlidesFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     @classmethod
     def get_identifier(cls, obj):
@@ -102,7 +99,7 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
 
     @classmethod
     def sanitize_model(cls, obj):
-        sanitized = super(BootstrapCarouselPlugin, cls).sanitize_model(obj)
+        sanitized = super().sanitize_model(obj)
         complete_glossary = obj.get_complete_glossary()
         # fill all invalid heights for this container to a meaningful value
         max_height = max(obj.glossary['container_max_heights'].values())
@@ -123,11 +120,8 @@ class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
     raw_id_fields = ['image_file']
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     render_template = 'cascade/bootstrap4/carousel-slide.html'
+    form = ImageFormMixin
     alien_child_classes = True
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', ImageFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapCarouselSlidePlugin, self).render(context, instance, placeholder)

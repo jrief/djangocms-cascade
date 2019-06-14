@@ -61,7 +61,9 @@ class SectionFormMixin(EntangledModelFormMixin):
 
 class SectionMixin(object):
     def get_form(self, request, obj=None, **kwargs):
-        kwargs['form'] = type(kwargs['form'].__name__, (SectionFormMixin, kwargs['form']), {})
+        form = kwargs.get('form', self.form)
+        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
+        kwargs['form'] = type(form.__name__, (SectionFormMixin, form), {})
         return super().get_form(request, obj, **kwargs)
 
     @classmethod

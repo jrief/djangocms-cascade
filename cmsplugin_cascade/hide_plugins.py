@@ -38,7 +38,9 @@ background-size: contain;
 '''
 
     def get_form(self, request, obj=None, **kwargs):
-        kwargs['form'] = type(kwargs['form'].__name__, (HidePluginFormMixin, kwargs['form']), {})
+        form = kwargs.get('form', self.form)
+        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
+        kwargs['form'] = type(form.__name__, (HidePluginFormMixin, form), {})
         return super().get_form(request, obj, **kwargs)
 
     def get_render_template(self, context, instance, placeholder):

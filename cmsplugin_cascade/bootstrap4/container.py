@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
-from django.forms.models import ModelForm
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -77,17 +76,17 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     parent_classes = None
     require_parent = False
     model_mixins = (ContainerGridMixin,)
+    form = ContainerFormMixin
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapContainerPlugin, cls).get_identifier(obj)
         breakpoints = obj.glossary.get('breakpoints')
         content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
             breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
             devices = ', '.join([str(bp.label) for bp in breakpoints])
             content = _("{0}for {1}").format(content, devices)
-        return format_html('{0}{1}', identifier, content)
+        return mark_safe(content)
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -97,10 +96,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         else:
             css_classes.append('container')
         return css_classes
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', ContainerFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
@@ -139,17 +134,13 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
     model_mixins = (RowGridMixin,)
+    form = BootstrapRowFormMixin
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapRowPlugin, cls).get_identifier(obj)
         num_cols = obj.get_num_children()
         content = ungettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
-        return format_html('{0}{1}', identifier, content)
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', BootstrapRowFormMixin)
-        return super().get_form(request, obj, **kwargs)
+        return mark_safe(content)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))

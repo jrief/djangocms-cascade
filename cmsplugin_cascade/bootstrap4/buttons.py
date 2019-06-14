@@ -119,14 +119,11 @@ class BootstrapButtonMixin(IconPluginMixin):
     default_css_class = 'btn'
     default_css_attributes = ['button_type', 'button_size', 'button_options', 'stretched_link']
     ring_plugin = 'ButtonMixin'
+    form = ButtonFormMixin
     require_icon = False
 
     class Media:
         js = ['cascade/js/admin/buttonmixin.js']
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', ButtonFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapButtonMixin, self).render(context, instance, placeholder)

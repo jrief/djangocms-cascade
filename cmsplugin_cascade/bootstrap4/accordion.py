@@ -46,18 +46,14 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     direct_child_classes = ['BootstrapAccordionGroupPlugin']
     allow_children = True
+    form = AccordionFormMixin
     render_template = 'cascade/bootstrap4/{}accordion.html'
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapAccordionPlugin, cls).get_identifier(obj)
         num_cards = obj.get_num_children()
         content = ungettext_lazy('with {0} card', 'with {0} cards', num_cards).format(num_cards)
-        return format_html('{0}{1}', identifier, content)
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', AccordionFormMixin)
-        return super().get_form(request, obj, **kwargs)
+        return mark_safe(content)
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapAccordionPlugin, self).render(context, instance, placeholder)
@@ -100,16 +96,13 @@ class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
     direct_parent_classes = parent_classes = ['BootstrapAccordionPlugin']
     render_template = 'cascade/generic/naked.html'
     require_parent = True
+    form = AccordionGroupFormMixin
     alien_child_classes = True
 
     @classmethod
     def get_identifier(cls, instance):
         heading = instance.glossary.get('heading', '')
         return Truncator(heading).words(3, truncate=' ...')
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', AccordionGroupFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapAccordionGroupPlugin, self).render(context, instance, placeholder)

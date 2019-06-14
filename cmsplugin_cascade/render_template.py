@@ -28,7 +28,9 @@ class RenderTemplateMixin(with_metaclass(MediaDefiningClass)):
         return app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'][cls.__name__]
 
     def get_form(self, request, obj=None, **kwargs):
-        kwargs['form'] = type(kwargs['form'].__name__, (RenderTemplateFormMixin, kwargs['form']), {})
+        form = kwargs.get('form', self.form)
+        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
+        kwargs['form'] = type(form.__name__, (RenderTemplateFormMixin, form), {})
         kwargs['form'].base_fields['render_template'].choices = self.get_template_choices()
         return super().get_form(request, obj, **kwargs)
 

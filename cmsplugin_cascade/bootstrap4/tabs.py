@@ -37,6 +37,7 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     direct_child_classes = ['BootstrapTabPanePlugin']
     require_parent = True
     allow_children = True
+    form = TabSetFormMixin
     render_template = 'cascade/bootstrap4/{}tabset.html'
 
     @classmethod
@@ -44,10 +45,6 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
         num_cols = instance.get_num_children()
         content = ungettext_lazy('with {} tab', 'with {} tabs', num_cols).format(num_cols)
         return mark_safe(content)
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', TabSetFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
@@ -73,10 +70,7 @@ class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
     require_parent = True
     allow_children = True
     alien_child_classes = True
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', TabPaneFormMixin)
-        return super().get_form(request, obj, **kwargs)
+    form = TabPaneFormMixin
 
     @classmethod
     def get_identifier(cls, obj):

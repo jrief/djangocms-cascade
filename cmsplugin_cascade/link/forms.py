@@ -1,4 +1,3 @@
-from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel

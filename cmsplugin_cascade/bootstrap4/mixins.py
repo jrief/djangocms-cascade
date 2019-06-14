@@ -16,10 +16,9 @@ class BootstrapUtilitiesMixin(metaclass=MediaDefiningClass):
         return self.plugin_class.get_identifier(self)
 
     def get_form(self, request, obj=None, **kwargs):
-        if 'form' in kwargs:
-            kwargs['form'] = type(kwargs['form'].__name__, (self.utility_form_mixin, kwargs['form']), {})
-        else:
-            kwargs['form'] = self.utility_form_mixin
+        form = kwargs.get('form', self.form)
+        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
+        kwargs['form'] = type(form.__name__, (self.utility_form_mixin, form), {})
         return super().get_form(request, obj, **kwargs)
 
     @classmethod

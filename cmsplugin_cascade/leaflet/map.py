@@ -161,6 +161,7 @@ class LeafletPlugin(CascadePluginBase):
     allow_children = False
     change_form_template = 'cascade/admin/leaflet_plugin_change_form.html'
     ring_plugin = 'LeafletPlugin'
+    form = LeafletFormMixin
     admin_preview = False
     render_template = 'cascade/plugins/leaflet.html'
     inlines = (MarkerInline,)
@@ -178,10 +179,6 @@ class LeafletPlugin(CascadePluginBase):
             'node_modules/leaflet-easybutton/src/easy-button.js',
             'cascade/js/admin/leafletplugin.js',
         ]
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', LeafletFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def add_view(self, request, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, settings=self.settings)

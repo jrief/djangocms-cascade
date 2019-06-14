@@ -22,10 +22,6 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
 
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', EntangledModelFormMixin)
-        return super().get_form(request, obj, **kwargs)
-
 plugin_pool.register_plugin(SimpleIconPlugin)
 
 

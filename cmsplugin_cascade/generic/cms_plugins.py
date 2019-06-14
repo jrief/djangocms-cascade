@@ -30,6 +30,7 @@ class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
     name = _("Simple Wrapper")
     parent_classes = None
     require_parent = False
+    form = SimpleWrapperFormMixin
     allow_children = True
     alien_child_classes = True
 
@@ -40,10 +41,6 @@ class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
         if tag_name:
             return format_html('{0} {1}', tag_name, identifier)
         return identifier
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', SimpleWrapperFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def get_render_template(self, context, instance, placeholder):
         if instance.glossary.get('tag_type') == 'naked':
@@ -85,6 +82,7 @@ class HeadingPlugin(CascadePluginBase):
     name = _("Heading")
     parent_classes = None
     allow_children = False
+    form = HeadingFormMixin
     render_template = 'cascade/generic/heading.html'
 
     @classmethod
@@ -94,10 +92,6 @@ class HeadingPlugin(CascadePluginBase):
         if tag_type:
             return format_html('<code>{0}</code>: {1}', tag_type, content)
         return content
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', HeadingFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         context = self.super(HeadingPlugin, self).render(context, instance, placeholder)
@@ -183,6 +177,7 @@ class TextImagePlugin(LinkPluginBase):
     model_mixins = (ImagePropertyMixin, LinkElementMixin)
     allow_children = False
     require_parent = False
+    form = TextImageFormMixin
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
     link_required = False
@@ -205,10 +200,6 @@ class TextImagePlugin(LinkPluginBase):
         if alignement:
             inline_styles['float'] = alignement
         return inline_styles
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', TextImageFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         context = self.super(TextImagePlugin, self).render(context, instance, placeholder)

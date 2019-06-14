@@ -60,6 +60,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
     raw_id_fields = LinkPluginBase.raw_id_fields + ['image_file']
     admin_preview = False
     ring_plugin = 'PicturePlugin'
+    form = BootstrapPictureFormMixin
     render_template = 'cascade/bootstrap4/linked-picture.html'
     default_css_class = 'img-fluid'
     default_css_attributes = ('image_shapes',)
@@ -69,10 +70,6 @@ class BootstrapPicturePlugin(LinkPluginBase):
 
     class Media:
         js = ['cascade/js/admin/pictureplugin.js']
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', BootstrapPictureFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element

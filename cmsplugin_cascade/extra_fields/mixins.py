@@ -79,7 +79,8 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                     form_fields[key] = Field(**field_kwargs)
 
             # extend the form with some extra fields
-            base_form = kwargs.pop('form', EntangledModelFormMixin)
+            base_form = kwargs.pop('form', self.form)
+            assert issubclass(base_form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
             class Meta:
                 entangled_fields = {'glossary': list(form_fields.keys())}
             form_fields['Meta'] = Meta

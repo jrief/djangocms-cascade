@@ -44,15 +44,12 @@ class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
     require_parent = False
     parent_classes = None
     allow_children = False
+    form = SecondaryMenuFormMixin
     render_template = 'cascade/bootstrap4/secmenu-list-group.html'
 
     @classmethod
     def get_identifier(cls, obj):
         return mark_safe(obj.glossary.get('page_id', ''))
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', SecondaryMenuFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapSecondaryMenuPlugin, self).render(context, instance, placeholder)

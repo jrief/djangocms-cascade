@@ -44,9 +44,6 @@ class BootstrapCardPlugin(TransparentWrapper, BootstrapPluginBase):
     allow_children = True
     render_template = 'cascade/bootstrap4/card.html'
 
-    def get_form(self, request, obj=None, **kwargs):
-        return super().get_form(request, obj, **kwargs)
-
     @classmethod
     def get_identifier(cls, instance):
         try:

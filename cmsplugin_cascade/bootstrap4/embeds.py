@@ -97,10 +97,7 @@ class BootstrapYoutubePlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapColumnPlugin']
     child_classes = None
     render_template = 'cascade/bootstrap4/youtube.html'
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', YoutubeFormMixin)
-        return super().get_form(request, obj, **kwargs)
+    form = YoutubeFormMixin
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapYoutubePlugin, self).render(context, instance, placeholder)

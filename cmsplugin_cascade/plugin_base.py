@@ -197,6 +197,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     model_mixins = ()  # model mixins added to the final Django model
     parent_classes = None
     alien_child_classes = False
+    form = EntangledModelFormMixin
 
     class Media:
         css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
@@ -316,7 +317,8 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             child.save()
 
     def get_form(self, request, obj=None, **kwargs):
-        form = kwargs.get('form', EntangledModelFormMixin)
+        form = kwargs.get('form', self.form)
+        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
         if issubclass(form, ModelForm):
             kwargs['form'] = form
         else:

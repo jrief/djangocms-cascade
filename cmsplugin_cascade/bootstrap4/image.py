@@ -97,6 +97,7 @@ class BootstrapImagePlugin(LinkPluginBase):
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     admin_preview = False
     ring_plugin = 'ImagePlugin'
+    form = BootstrapImageFormMixin
     render_template = 'cascade/bootstrap4/linked-image.html'
     default_css_attributes = ['image_shapes', 'image_alignment']
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
@@ -105,14 +106,6 @@ class BootstrapImagePlugin(LinkPluginBase):
 
     class Media:
         js = ['cascade/js/admin/imageplugin.js']
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', BootstrapImageFormMixin)
-        return super().get_form(request, obj, **kwargs)
-
-    def get_fields(self, request, obj=None, **kwargs):
-        fields = super().get_fields(request, obj, **kwargs)
-        return fields
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapImagePlugin, self).render(context, instance, placeholder)
