@@ -26,7 +26,7 @@ class JSONMultiWidget(widgets.MultiWidget):
         unique_keys = set([field.name for field in self.normalized_fields])
         if len(self.normalized_fields) > len(unique_keys):
             raise ValueError('List of glossary_fields may contain only unique keys')
-        super(JSONMultiWidget, self).__init__((field.widget for field in self.normalized_fields))
+        super().__init__((field.widget for field in self.normalized_fields))
 
     def decompress(self, values):
         if not isinstance(values, dict):
@@ -112,7 +112,7 @@ class ColorPickerWidget(widgets.MultiWidget):
             widgets.TextInput(attrs=attrs),
             InheritCheckboxWidget(),
         ]
-        super(ColorPickerWidget, self).__init__(widget_list)
+        super().__init__(widget_list)
 
     @property
     def media(self):

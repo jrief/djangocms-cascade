@@ -1,13 +1,14 @@
 import json
+from copy import deepcopy
 from django import forms
-from django.forms import fields
-from django.apps import apps
+from django.contrib.admin.helpers import AdminForm
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.apps import apps
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.models import SharedGlossary
+from cmsplugin_cascade.models import SharedGlossary, CascadeElement
+from .fields import SharedSettingsField
 
 
 class SelectSharedGlossary(forms.Select):
@@ -41,46 +42,40 @@ class SelectSharedGlossary(forms.Select):
             pass
 
 
-class SharableFormMixin(EntangledModelFormMixin):
+class SharedFormMixin(EntangledModelFormMixin):
     """
     The change editor of plugins marked as sharable, are enriched by three fields:
         - a select box named 'shared_glossary',
-        - a checkbox named 'save_shared_glossary'
-        - a text input field 'save_as_identifier'
+        - a checkbox and a text input field
     these additional form fields are added during runtime.
     """
     shared_glossary = forms.ModelChoiceField(
         label=_("Shared Settings"),
         required=False,
         queryset=SharedGlossary.objects.all(),
-        # widget=SelectSharedGlossary(),
         empty_label=_("Use individual settings"),
         help_text=_("Use settings shared with other plugins of this type"),
     )
 
-    save_shared_glossary = fields.BooleanField(
-        label=_("Remember these settings as:"),
-        required=False,
-    )
+    class Meta:
+        untangled_fields = ['shared_glossary']
 
-    save_as_identifier = fields.CharField(
-        label='',
-        required=False,
+
+class SharableFormMixin(SharedFormMixin):
+    save_settings_as = SharedSettingsField(
+        label=_("Remember these settings as"),
     )
 
     class Meta:
-        untangled_fields = ['save_shared_glossary', 'save_as_identifier', 'shared_glossary']
+        untangled_fields = ['save_settings_as']
 
-    def clean(self):
-        cleaned_data = super().clean()
-        identifier = cleaned_data['save_as_identifier']
-        if cleaned_data['save_shared_glossary'] and not identifier:
-            msg = _("An identifier is required to remember these settings.")
-            raise ValidationError(msg)
+    def clean_save_settings_as(self):
+        identifier = self.cleaned_data['save_settings_as']
         if SharedGlossary.objects.filter(identifier=identifier).exclude(pk=self.instance.pk).exists():
             msg = _("The identifier '{}' has already been used, please choose another name.")
             raise ValidationError(msg.format(identifier))
-        return cleaned_data
+        return identifier
+
 
 
 class SharableGlossaryMixin(metaclass=forms.MediaDefiningClass):
@@ -95,10 +90,54 @@ class SharableGlossaryMixin(metaclass=forms.MediaDefiningClass):
     class Media:
         js = ['cascade/js/admin/sharableglossary.js']
 
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        if request.method == 'GET' and request.GET.get('glossary'):
+            # Reached after the user changed the shared settings select field.
+            # This recreates a form for the given plugin using the selected shared fields
+            # as values for a faked object.
+            extra_context = dict(extra_context or {})
+            sharable_fields = {}
+            try:
+                shared_glossary = SharedGlossary.objects.get(id=request.GET.get('glossary'))
+            except (ValueError, SharedGlossary.DoesNotExist):
+                pass
+            else:
+                for field_name in self.sharable_fields:
+                    shared_val = shared_glossary.glossary.get(field_name)
+                    if shared_val:
+                        sharable_fields[field_name] = shared_val
+
+            if object_id:
+                obj = self.get_object(request, object_id)
+                glossary = deepcopy(obj.glossary)
+                glossary.update(sharable_fields)
+                # create fake object using values from shared fields to mimic the expected behaviour
+                fake_obj = CascadeElement(glossary=glossary)
+                ModelForm = self.get_form(request, fake_obj)
+                form = ModelForm(instance=fake_obj)
+            else:
+                ModelForm = self.get_form(request)
+                initial = self.get_changeform_initial_data(request)
+                initial.update(sharable_fields)
+                form = ModelForm(initial=initial)
+
+            extra_context['adminform'] = AdminForm(
+                form,
+                list(self.get_fieldsets(request, obj)),
+                {},
+                [],
+                model_admin=self)
+
+        return super().changeform_view(request, object_id, form_url, extra_context)
+
     def get_form(self, request, obj=None, **kwargs):
         base_form = kwargs.pop('form', self.form)
         assert issubclass(base_form, EntangledModelFormMixin), "The Form class must inherit from EntangledModelFormMixin"
-        kwargs['form'] = type(base_form.__name__, (SharableFormMixin, base_form), {})
+        if request.method == 'GET' and 'glossary' in request.GET:
+            FormMixin = SharedFormMixin if request.GET['glossary'] else SharableFormMixin
+        else:
+            FormMixin = SharedFormMixin if obj and obj.shared_glossary else SharableFormMixin
+        kwargs['form'] = type(base_form.__name__, (FormMixin, base_form), {})
         kwargs['form'].base_fields['shared_glossary'].limit_choices_to = dict(plugin_type=self.__class__.__name__)
         try:
             shared_glossary = SharedGlossary.objects.get(id=request.GET.get('glossary'))
@@ -107,23 +146,22 @@ class SharableGlossaryMixin(metaclass=forms.MediaDefiningClass):
         except SharedGlossary.DoesNotExist:
             shared_glossary = obj.shared_glossary if obj else None
         for field_name in self.sharable_fields:
-            if obj and shared_glossary:
-                obj.glossary[field_name] = shared_glossary.glossary.get(field_name, '')
             kwargs['form'].base_fields[field_name].disabled = bool(shared_glossary)
         return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
-        # in case checkbox for `save_shared_glossary` is checked and an identifier for a shared
-        # glossary is set, then we create a new entry in `models.SharedGlossary` transferring
-        # the fields declared as sharable for this plugin
-        identifier = form.cleaned_data['save_as_identifier']
-        if form.cleaned_data['save_shared_glossary'] and identifier:
+        # in case checkbox for `save_settings_as` is checked, then we create a new entry in `models.SharedGlossary`
+        # transferring the fields declared as sharable from this this plugin to that newly created object
+        save_settings_as = form.cleaned_data.get('save_settings_as')
+        if save_settings_as:
             # move data from form glossary to a SharedGlossary and refer to it
             shared_glossary, created = SharedGlossary.objects.get_or_create(
-                plugin_type=self.__class__.__name__, identifier=identifier)
-            assert created, "SharableCascadeForm.clean_save_as_identifier() erroneously validated identifier '{}' " \
-                            "as unique".format(identifier)
+                plugin_type=self.__class__.__name__,
+                identifier=save_settings_as,
+            )
+            assert created, "SharableCascadeForm.clean_save_settings_as() erroneously validated identifier '{}' " \
+                            "as unique".format(save_settings_as)
             glry = form.cleaned_data['glossary']
             shared_glossary.glossary = dict((key, glry[key]) for key in self.sharable_fields if key in glry)
             shared_glossary.save()
