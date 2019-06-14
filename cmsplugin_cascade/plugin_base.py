@@ -9,7 +9,6 @@ from entangled.forms import EntangledModelFormMixin
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
 from cmsplugin_cascade import app_settings
-from .fields import GlossaryField
 from .mixins import CascadePluginMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
@@ -17,7 +16,6 @@ from .generic.mixins import SectionMixin, SectionModelMixin
 from .sharable.forms import SharableGlossaryMixin
 from .strides import register_stride
 from .extra_fields.mixins import ExtraFieldsMixin
-from .widgets import JSONMultiWidget
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
@@ -316,27 +314,6 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             if isinstance(child_glossary, dict):
                 child.glossary.update(child_glossary)
             child.save()
-
-    def Xget_form(self, request, obj=None, **kwargs):
-        """
-        Build the form used for changing the model.
-        """
-        widgets = kwargs.pop('widgets', {})
-        labels = kwargs.pop('labels', {})
-        glossary_fields = kwargs.pop('glossary_fields', self.glossary_fields)
-        widgets.update(glossary=JSONMultiWidget(glossary_fields))
-        labels.update(glossary='')  # remove label for glossary, since each subfields provides a label itself
-        kwargs.update(widgets=widgets, labels=labels)
-        form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
-        # help_text can not be cleared using an empty string in modelform_factory
-        form.base_fields['glossary'].help_text = ''
-        if request.method == 'POST':
-            is_shared = bool(request.POST.get('shared_glossary'))
-            for field in glossary_fields:
-                if not (is_shared and field.name in self.sharable_fields):
-                    form.base_fields['glossary'].validators.append(field.run_validators)
-        form.glossary_fields = glossary_fields
-        return form
 
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', EntangledModelFormMixin)

@@ -1,10 +1,7 @@
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
-from django.forms.fields import ChoiceField
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from filer.models.filemodels import File as FilerFileModel
 from entangled.forms import get_related_object
@@ -16,13 +13,10 @@ class LinkPluginBase(CascadePluginBase):
     require_parent = False
     ring_plugin = 'LinkPluginBase'
     raw_id_fields = ['download_file']
+    html_tag_attributes = {'title': 'title', 'target': 'target'}
 
     class Media:
         js = ['cascade/js/admin/linkplugin.js']
-
-    html_tag_attributes = {'title': 'title', 'target': 'target'}
-    # map field from glossary to these form fields
-    # glossary_field_map = {'link': ('link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',)}
 
     @classmethod
     def get_link(cls, obj):
@@ -86,18 +80,6 @@ class LinkElementMixin(object):
     @property
     def content(self):
         return mark_safe(self.glossary.get('link_content', ''))
-
-    @cached_property
-    def Xlink_model(self):
-        """deprecated"""
-        try:
-            link = self.glossary['link']
-            Model = apps.get_model(*link['model'].split('.'))
-            return Model.objects.get(pk=link['pk'])
-        except (KeyError, LookupError):
-            return
-        except Model.DoesNotExist:  # catch separately, 'Model' may be unassigned yet
-            return
 
     @cached_property
     def download_name(self):

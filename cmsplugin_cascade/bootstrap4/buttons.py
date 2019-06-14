@@ -19,20 +19,12 @@ class ButtonTypeWidget(widgets.RadioSelect):
     """
     template_name = 'cascade/admin/legacy_widgets/button_types.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/button_types.html'
 
-    # @classmethod
-    # def get_instance(cls):
-    #     return cls(choices=[(k, v) for k, v in cls.BUTTON_TYPES.items()])
-
 
 class ButtonSizeWidget(widgets.RadioSelect):
     """
     Render sample buttons in different sizes in the button's backend editor.
     """
     template_name = 'cascade/admin/legacy_widgets/button_sizes.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/button_sizes.html'
-
-    # @classmethod
-    # def get_instance(cls):
-    #     return cls(choices=[(k, v) for k, v in cls.BUTTON_SIZES.items()])
 
 
 class ButtonFormMixin(EntangledModelFormMixin):
@@ -170,17 +162,6 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
             except KeyError:
                 content = _("Empty")
         return content
-
-    def Xget_form(self, request, obj=None, **kwargs):
-        link_content = CharField(
-            required=False,
-            label=_("Button Content"),
-            widget=widgets.TextInput(attrs={'size': 50}),
-        )
-        Form = type(str('ButtonForm'), (TextLinkFormMixin, getattr(LinkForm, 'get_form_class')(),),
-                    {'link_content': link_content})
-        kwargs.update(form=Form)
-        return super(BootstrapButtonPlugin, self).get_form(request, obj, **kwargs)
 
     @classmethod
     def get_css_classes(cls, obj):
