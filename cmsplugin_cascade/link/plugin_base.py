@@ -1,10 +1,7 @@
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
-from django.forms.fields import ChoiceField
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from cmsplugin_cascade.fields import GlossaryField
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from filer.models.filemodels import File as FilerFileModel
 from entangled.forms import get_related_object

@@ -1,5 +1,6 @@
 import re
 import json
+import warnings
 from django.core.exceptions import ValidationError
 from django.forms import Media, widgets
 from django.utils.html import escape, format_html, format_html_join
@@ -13,6 +14,7 @@ class JSONMultiWidget(widgets.MultiWidget):
 
     def __init__(self, glossary_fields):
         from cmsplugin_cascade.fields import GlossaryField
+        warnings.warn("JSONMultiWidget is deprecated")
 
         self.glossary_fields = list(glossary_fields)
         self.normalized_fields = []
@@ -100,7 +102,7 @@ class InheritCheckboxWidget(widgets.CheckboxInput):
 class ColorPickerWidget(widgets.MultiWidget):
     """
     Use this field to enter a color value. Clicking onto this widget will pop up a color picker.
-    The value passed to the GlossaryField is guaranteed to be in #rgb format.
+    The value passed to the consumer is a tuple of a Boolean and a string guaranteed to be in #rgb format.
     """
     template_name = 'cascade/admin/widgets/colorpicker.html'
     DEFAULT_ATTRS = {'type': 'color'}

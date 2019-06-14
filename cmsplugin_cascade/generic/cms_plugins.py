@@ -1,12 +1,11 @@
-from django.forms import widgets, CharField, ChoiceField, ModelChoiceField, MultipleChoiceField
+from django.forms import widgets, CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
-from filer.models.imagemodels import Image
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.fields import GlossaryField, SizeField
+from cmsplugin_cascade.fields import SizeField
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
