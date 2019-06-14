@@ -15,14 +15,14 @@ django.jQuery(function($) {
 			});
 			cp.trigger('click');
 		});
-	};
+	}
 	$('.color_picker input').each(function() {
 		color_selector($(this));
 	});
 
 	function colorWidgetChanged(checkboxInput) {
 		var $colorInput = $(checkboxInput).siblings('input[type="color"]');
-		$colorInput.prop('disabled', checkboxInput.checked);
+		$colorInput.prop('disabled', checkboxInput.checked || checkboxInput.disabled);
 	}
 
 	$checkboxElem.on('change', function(evt) {

@@ -134,12 +134,13 @@ class ColorValidator():
 class ColorField(MultiValueField):
     DEFAULT_COLOR = '#808080'
 
-    def __init__(self, inherit_color=False, default_color=DEFAULT_COLOR, required=False, *args, **kwargs):
+    def __init__(self, inherit_color=False, default_color=DEFAULT_COLOR, *args, **kwargs):
+        kwargs.pop('required', None)
         with_alpha = kwargs.pop('with_alpha', app_settings.CMSPLUGIN_CASCADE['color_picker_with_alpha'])
         widget = kwargs.pop('widget', ColorPickerWidget(with_alpha))
         fields = [
             CharField(initial=default_color),
-            BooleanField(initial=inherit_color),
+            BooleanField(initial=inherit_color, required=False),
         ]
         kwargs['initial'] = [default_color, inherit_color]
         super().__init__(fields=fields, widget=widget, *args, **kwargs)
