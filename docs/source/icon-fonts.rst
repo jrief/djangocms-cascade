@@ -63,7 +63,8 @@ Uploading the Font
 ==================
 
 In order to start with an external font icon, choose one or more icons and/or whole font families
-from the Fontello_ website and download the generated webfont file to a local folder.
+from the Fontello_ website and download the generated webfont zip-file to a local folder on your
+computer.
 
 In Django's admin backend, change into ``Start › django CMS Cascade › Uploaded Icon Fonts`` and
 add an Icon Font object. Choose an appropriate name and upload the just downloaded webfont file,
@@ -78,6 +79,11 @@ font family name. They now are ready for being used by the Icon plugin.
 	set under Fontello's settings, located left of the **Download webfont** button.
 
 Attempting to upload an icon fonts with a CSS prefix, which is already used, will be rejected.
+
+.. warning::
+	Depending on your settings, Safari auto-unzips that file and hence makes it unusable for
+	re-upload. Either change your settings in Safari (Preferences > General > Open "safe" files),
+	or use another browser.
 
 .. note::
 	During the 0.17-series of **djangocms-cascade**, an icon font had to be selected per page,
