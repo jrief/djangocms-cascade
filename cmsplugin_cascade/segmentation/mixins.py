@@ -1,3 +1,4 @@
+from django import VERSION as DJANGO_VERSION
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import get_user_model
@@ -77,7 +78,7 @@ class EmulateUserAdminMixin(object):
         """
         The list view
         """
-        def display_as_link(self, obj):
+        def display_as_link(obj):
             try:
                 identifier = getattr(user_model_admin, list_display_link)(obj)
             except AttributeError:
@@ -112,14 +113,25 @@ class EmulateUserAdminMixin(object):
         self.display_as_link = display_as_link
 
         ChangeList = self.get_changelist(request)
-        cl = ChangeList(request, self.UserModel, list_display,
-            (None,),  # disable list_display_links in ChangeList, instead override that field
-            user_model_admin.list_filter,
-            user_model_admin.date_hierarchy, user_model_admin.search_fields,
-            user_model_admin.list_select_related, user_model_admin.list_per_page,
-            user_model_admin.list_max_show_all,
-            (),  # disable list_editable
-            self)
+        if DJANGO_VERSION < (2, 1):
+            cl = ChangeList(request, self.UserModel, list_display,
+                (None,),  # disable list_display_links in ChangeList, instead override that field
+                user_model_admin.list_filter,
+                user_model_admin.date_hierarchy, user_model_admin.search_fields,
+                user_model_admin.list_select_related, user_model_admin.list_per_page,
+                user_model_admin.list_max_show_all,
+                (),  # disable list_editable
+                self)
+        else:
+            cl = ChangeList(request, self.UserModel, list_display,
+                (None,),  # disable list_display_links in ChangeList, instead override that field
+                user_model_admin.list_filter,
+                user_model_admin.date_hierarchy, user_model_admin.search_fields,
+                user_model_admin.list_select_related, user_model_admin.list_per_page,
+                user_model_admin.list_max_show_all,
+                (),  # disable list_editable
+                self,
+                None)
         cl.formset = None
         selection_note_all = ungettext('%(total_count)s selected',
             'All %(total_count)s selected', cl.result_count)
