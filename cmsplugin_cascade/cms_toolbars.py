@@ -5,9 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from cms.extensions.toolbar import ExtensionToolbar
 from cms.toolbar_pool import toolbar_pool
 from cms.toolbar.items import Break
-from cms.cms_toolbars import PAGE_MENU_SECOND_BREAK
+from cms.cms_toolbars import PAGE_MENU_SECOND_BREAK, ADMIN_MENU_IDENTIFIER, CLIPBOARD_BREAK 
 from cmsplugin_cascade.models import CascadePage
-
 
 @toolbar_pool.register
 class CascadePageToolbar(ExtensionToolbar):
@@ -22,3 +21,8 @@ class CascadePageToolbar(ExtensionToolbar):
                 position = current_page_menu.find_first(Break, identifier=PAGE_MENU_SECOND_BREAK)
                 disabled = not self.toolbar.edit_mode_active
                 current_page_menu.add_modal_item(_("Extra Page Fields"), position=position, url=url, disabled=disabled)
+                
+                
+        admin_menu = self.toolbar.get_or_create_menu(ADMIN_MENU_IDENTIFIER, _('Site'))
+        position = admin_menu.find_first(Break, identifier=CLIPBOARD_BREAK )
+        admin_menu.add_link_item(_('Clips Libraries'), url='#', extra_classes=('cms-show-clips-lib',), position=position )
