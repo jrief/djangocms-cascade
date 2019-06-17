@@ -25,4 +25,4 @@ class CascadePageToolbar(ExtensionToolbar):
                 
         admin_menu = self.toolbar.get_or_create_menu(ADMIN_MENU_IDENTIFIER, _('Site'))
         position = admin_menu.find_first(Break, identifier=CLIPBOARD_BREAK )
-        admin_menu.add_link_item(_('Clips Libraries'), url='#', extra_classes=('cms-show-clips-lib',), position=position )
+        admin_menu.add_link_item(_('Clips Libraries'), url='#', extra_classes=('cms-show-clipslib',), position=position )
