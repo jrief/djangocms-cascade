@@ -14,7 +14,37 @@ from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin
 
+
+from cmsplugin_cascade import app_settings
+from cmsplugin_cascade.mixins import CascadePluginMixin
+from djangocms_transfer.forms import  PluginImportForm ,ExportImportForm, _object_version_data_hook
+from djangocms_transfer.importer import  import_plugins
+import json
+from cms.models import CMSPlugin, Placeholder
+from cms.models.placeholderpluginmodel import PlaceholderReference
+
 __all__ = ['register_stride', 'StrideContentRenderer']
+
+
+
+def last_inner_append(x, y):
+    try:
+        if isinstance(x[-1], list):
+            last_inner_append(x[-1], y)
+            return x
+    except IndexError:
+        pass
+    x.append(y)
+    return x
+
+def _get_parsed_data(file_obj, for_page=False):
+#    raw = file_obj.read().decode('utf-8')
+    raw = file_obj
+    #print(str(raw))
+    
+   # print(json.loads(str(raw), object_hook=_object_version_data_hook))
+    return json.loads(raw, object_hook=_object_version_data_hook)
+
 
 
 class EmulateQuerySet(object):
@@ -180,6 +210,7 @@ class TextStridePlugin(StridePluginBase):
         return context
 
 
+
 class StrideContentRenderer(object):
     def __init__(self, request):
         self.request = request
@@ -188,14 +219,73 @@ class StrideContentRenderer(object):
 
     def render_cascade(self, context, tree_data):
         contents = []
-        for plugin_type, data, children_data in tree_data.get('plugins', []):
-            plugin_class = strides_plugin_map.get(plugin_type)
-            element_class = strides_element_map.get(plugin_type)
-            plugin_instance = element_class(plugin_class(), data, children_data)
-            # create a temporary object to store the plugins cache status
-            cms_cachable_plugins = type(str('CachablePlugins'), (object,), {'value': True})
-            with context.push(cms_cachable_plugins=cms_cachable_plugins):
-                contents.append(self.render_plugin(plugin_instance, context))
+        #format treedata djangocms-cascade <0.9
+        if 'plugins' in  tree_data:
+            for plugin_type, data, children_data in tree_data.get('plugins', []):
+                plugin_class = strides_plugin_map.get(plugin_type)
+                element_class = strides_element_map.get(plugin_type)
+
+                plugin_instance = element_class(plugin_class(), data, children_data)
+                # create a temporary object to store the plugins cache status
+                cms_cachable_plugins = type(str('CachablePlugins'), (object,), {'value': True})
+                with context.push(cms_cachable_plugins=cms_cachable_plugins):
+                    contents.append(self.render_plugin(plugin_instance, context))
+        #format treedata djangocms-transfer
+        elif tree_data:
+            placeholder=Placeholder.objects.first()
+        #   placeholder=self.request.toolbar.clipboard
+            root_plugin=None
+            source_map = {}
+            new_plugins = []
+            pkf =  tree_data[0]['pk']
+            glossary = tree_data[0]['data']['glossary']
+            glossary = json.loads(glossary)
+            tree_data[0]['data']['glossary'] = glossary
+            new_form = ExportImportForm(self.request.GET or None)
+            if tree_data[0]['parent_id']:
+                root_plugin_id = tree_data[0]['parent_id']
+                source_map[root_plugin_id] = tree_data[0]['plugin_type']
+            else :
+                root_plugin=None
+            tree_list = []
+            sac={}
+            child_all =[]
+            child_all_dict = {}
+            for data in tree_data:
+                if isinstance(data['data']['glossary'], str):
+                    data['data']['glossary'] = json.loads(data['data']['glossary'])
+                if data['parent_id']:
+                    root_plugin_id = data['parent_id']
+                    source_map[root_plugin_id] = data['plugin_type']
+                else :
+                    root_plugin=None
+                    sac.update(data['data'])
+                    sac.update({  'pk': data['pk'] })
+                    rootplug=[ data['plugin_type'] , sac  ]
+                archived_plugin=data
+                if archived_plugin['parent_id']:
+                    parent = source_map[ archived_plugin['parent_id']]
+                else:
+                    parent = None
+                if parent and parent != CMSPlugin :
+                    child_plug = {}
+                    child_plug.update(data['data'])
+                    child_plug.update({  'pk': data['pk'] })
+                    child_plug_ing= [[ data['plugin_type'] , child_plug ]]
+                    if child_all == []:
+                        fr=last_inner_append(child_all, child_plug_ing[0])
+                    else:
+                        fr=last_inner_append(child_all, child_plug_ing)
+            rootplug.append( child_all)
+            tree_data={ "plugins": [rootplug] }
+            for plugin_type, data, children_data in tree_data.get('plugins', []):
+                plugin_class = strides_plugin_map.get(plugin_type)
+                element_class = strides_element_map.get(plugin_type)
+                plugin_instance = element_class(plugin_class(), data, children_data)
+                # create a temporary object to store the plugins cache status
+                cms_cachable_plugins = type(str('CachablePlugins'), (object,), {'value': True})
+                with context.push(cms_cachable_plugins=cms_cachable_plugins):
+                    contents.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(contents))
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
@@ -228,6 +318,7 @@ class StrideContentRenderer(object):
         if not template in self._cached_templates:
             self._cached_templates[template] = get_template(template)
         return self._cached_templates[template]
+
 
 
 def register_stride(name, bases, attrs, model_mixins):
