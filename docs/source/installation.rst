@@ -50,12 +50,19 @@ djangocms-cascade-0.14.x
 * djangocms-text-ckeditor_ >= 3.4
 * django-filer_ >= 1.2.8
 
-djangocms-cascade-0.17.x
-------------------------
+djangocms-cascade-0.17.x - 0.19.x
+---------------------------------
 
 * Django_ >=1.10, <2.0
 * Django-CMS_ >=3.4.4, <=3.6
 * djangocms-text-ckeditor_ >= 3.4
+
+djangocms-cascade-1.0.x
+-----------------------
+
+* Django_ >=1.11, <=2.1
+* Django-CMS_ >=3.5.3, <=3.6.x
+* djangocms-text-ckeditor_ >= 3.7
 
 other combinations might work, but have not been tested.
 
@@ -122,7 +129,7 @@ we must add them explicitly to our lookup path, using ``STATICFILES_DIRS`` in ``
 
 	STATICFILES_DIRS = [
 	    ...
-	    os.path.abspath(os.path.join(MY_PROJECT_DIR, 'node_modules')),
+	    ('node_modules', os.path.join(MY_PROJECT_DIR, 'node_modules')),
 	]
 
 
