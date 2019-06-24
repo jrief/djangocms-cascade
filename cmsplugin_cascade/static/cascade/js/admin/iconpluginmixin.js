@@ -48,7 +48,7 @@ django.jQuery(function($) {
 		},
 		renderIcons: function(response) {
 			var css_prefix_text = response.css_prefix_text;
-			$box.find('label[for="query"], h2, ul').remove();
+			$box.find('label[for="query"], h2, ul:not(.errorlist)').remove();
 			$('#fonticon_search_query').remove();
 			$.each(response.families, function(key, icons) {
 				var lis = [];

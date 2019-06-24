@@ -51,6 +51,7 @@ class FramedIconFormMixin(EntangledModelFormMixin):
 
     background_color = ColorField(
         label=_("Background color"),
+        inherit_color=True,
     )
 
     text_align = ChoiceField(

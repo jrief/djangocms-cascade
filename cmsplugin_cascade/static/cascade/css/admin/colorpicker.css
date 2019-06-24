@@ -1,0 +1,13 @@
+.cascade-color-picker em {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.cascade-color-picker .a-color-picker {
+  position: fixed;
+  margin-top: -20px;
+  margin-left: -60px;
+}
+.cascade-color-picker .a-color-picker label {
+  width: initial;
+}
