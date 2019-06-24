@@ -206,10 +206,10 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
         assert glossary_fields is None, "glossary_fields is deprecated"
         super().__init__(model, admin_site)
-        if isinstance(glossary_fields, (list, tuple)):
-            self.glossary_fields = list(glossary_fields)
-        elif not hasattr(self, 'glossary_fields'):
-            self.glossary_fields = []
+        # if isinstance(glossary_fields, (list, tuple)):
+        #     self.glossary_fields = list(glossary_fields)
+        # elif not hasattr(self, 'glossary_fields'):
+        #     self.glossary_fields = []
 
     def __repr__(self):
         return "<class '{}'>".format(self.__class__.__name__)
