@@ -39,6 +39,14 @@ class AppSettings(object):
 
             plugins_with_extra_fields = config['plugins_with_extra_fields']
             plugins_with_extra_fields.setdefault('SimpleWrapperPlugin', PluginExtraFieldsConfig())
+            plugins_with_extra_fields.setdefault('HorizontalRulePlugin', PluginExtraFieldsConfig(
+                inline_styles={
+                    'extra_fields:Border': ['border-top'],
+                    'extra_fields:Border Radius': ['border-radius'],
+                    'extra_units:Border Radius': 'px,rem',
+                },
+                allow_override=False,
+            ))
             for plugin, plugin_config in plugins_with_extra_fields.items():
                 if not isinstance(plugin_config, PluginExtraFieldsConfig):
                     msg = "CMSPLUGIN_CASCADE['plugins_with_extra_fields']['{}'] must instantiate a class of type PluginExtraFieldsConfig"
@@ -92,7 +100,7 @@ class AppSettings(object):
             (['color', 'background-color'], ColorField))
         extra_inline_styles.setdefault(
             'Border',
-            (['border'], BorderChoiceField))
+            (['border', 'border-top', 'border-right', 'border-bottom', 'border-left'], BorderChoiceField))
         extra_inline_styles.setdefault(
             'Border Radius',
             (['border-radius'], SizeField))
