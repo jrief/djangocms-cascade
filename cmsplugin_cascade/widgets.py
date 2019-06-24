@@ -2,10 +2,11 @@ import re
 import json
 import warnings
 from django.core.exceptions import ValidationError
+from django.contrib.staticfiles.finders import find
 from django.forms import Media, widgets
 from django.utils.html import escape, format_html, format_html_join
 from six.moves.html_parser import HTMLParser
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _
 
 
 class JSONMultiWidget(widgets.MultiWidget):
@@ -95,11 +96,35 @@ class NumberInputWidget(widgets.NumberInput):
             raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
 
 
-class InheritCheckboxWidget(widgets.CheckboxInput):
-    template_name = 'cascade/admin/widgets/inherit_color.html'
+class AColorPickerMixin(object):
+    acolorpicker_js = 'node_modules/a-color-picker/dist/acolorpicker.js'
+
+    def __init__(self, with_alpha, *args, **kwargs):
+        self.with_acolorpicker = bool(find(self.acolorpicker_js))
+        if with_alpha and not self.with_acolorpicker:
+            msg = "Node package 'a-color-picker' not found in 'node_modules'.\n" \
+                  "Please install it from npm into your project directory and add " \
+                  "('node_modules', 'project_directory/node_modules') to your STATICFILES_DIRS."
+            raise FileNotFoundError(msg)
+        super().__init__(*args, **kwargs)
+
+    @property
+    def media(self):
+        if self.with_acolorpicker:
+            js = [self.acolorpicker_js, 'cascade/js/admin/colorpicker.js']
+        else:
+            js = ['cascade/js/admin/colorpicker.js']
+        return Media(css={'all': ['cascade/css/admin/colorpicker.css']}, js=js)
+
+    @classmethod
+    def rgb2hex(cls, val):
+        match = re.search('rgb[a]?\((\d+),\s*(\d+),\s*(\d+)[^)]*\)', val)
+        if match:
+            val = "#{:02x}{:02x}{:02x}".format(*[int(m) for m in match.groups()])
+        return val
 
 
-class ColorPickerWidget(widgets.MultiWidget):
+class ColorPickerWidget(AColorPickerMixin, widgets.MultiWidget):
     """
     Use this field to enter a color value. Clicking onto this widget will pop up a color picker.
     The value passed to the consumer is a tuple of a Boolean and a string guaranteed to be in #rgb format.
@@ -108,32 +133,40 @@ class ColorPickerWidget(widgets.MultiWidget):
     DEFAULT_ATTRS = {'type': 'color'}
 
     def __init__(self, with_alpha, attrs=DEFAULT_ATTRS):
-        self.with_alpha = with_alpha
         attrs = dict(attrs)
         widget_list = [
             widgets.TextInput(attrs=attrs),
-            InheritCheckboxWidget(),
+            widgets.CheckboxInput(),
+            widgets.HiddenInput(attrs={'data-with_alpha': str(with_alpha).lower()}),
         ]
-        super().__init__(widget_list)
-
-    @property
-    def media(self):
-        if self.with_alpha:
-            js = ['cascade/js/admin/colorpickerext.js' ]
-        else:
-            js = ['cascade/js/admin/colorpicker.js' ]
-        return Media(js=js)
+        super().__init__(with_alpha, widget_list)
 
     def decompress(self, values):
         assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
-        return list(values)
+        values = list(values)
+        return values
 
     def value_from_datadict(self, data, files, name):
-        values = (
-            escape(data.get('{}_0'.format(name))),
+        if self.with_acolorpicker:
+            color = data.get('{}_2'.format(name))
+        else:
+            color = data.get('{}_0'.format(name))
+        values = [
+            escape(color),
             bool(data.get('{}_1'.format(name))),
-        )
+        ]
         return values
+
+    def get_context(self, name, value, attrs):
+        if not isinstance(value, list):
+            values = self.decompress(value)
+        else:
+            values = list(value)
+        assert len(values) == 2
+        values.append(values[0])
+        values[0] = self.rgb2hex(values[0])
+        context = super().get_context(name, values, attrs)
+        return context
 
 
 class MultipleTextInputWidget(widgets.MultiWidget):
@@ -170,17 +203,20 @@ class MultipleTextInputWidget(widgets.MultiWidget):
                                             widgets))
 
 
-class BorderChoiceWidget(widgets.MultiWidget):
+class BorderChoiceWidget(AColorPickerMixin, widgets.MultiWidget):
     """
     Use this field to enter the three values of a border: width style color.
     """
-    def __init__(self, choices):
+    template_name = 'cascade/admin/widgets/borderchoice.html'
+
+    def __init__(self, choices, with_alpha):
         widget_list = [
-            widgets.TextInput,
+            widgets.TextInput(attrs={'size': 5}),
             widgets.Select(choices=choices),
-            widgets.TextInput(attrs={'type': 'color'})
+            widgets.TextInput(attrs={'type': 'color'}),
+            widgets.HiddenInput(attrs={'data-with_alpha': str(with_alpha).lower()}),
         ]
-        super().__init__(widget_list)
+        super().__init__(with_alpha, widget_list)
 
     def decompress(self, values):
         assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
@@ -188,21 +224,26 @@ class BorderChoiceWidget(widgets.MultiWidget):
 
     def value_from_datadict(self, data, files, name):
         try:
-            values = (
-                escape(data['{0}-width'.format(name)]),
-                escape(data['{0}-style'.format(name)]),
-                escape(data['{0}-color'.format(name)]),
-            )
+            if self.with_acolorpicker:
+                color = data.get('{}_3'.format(name))
+            else:
+                color = data.get('{}_2'.format(name))
+            values = [
+                escape(data['{}_0'.format(name)]),
+                escape(data['{}_1'.format(name)]),
+                escape(color),
+            ]
         except KeyError:
-            values = ('0px', 'none', 'inherit')
+            values = ['0px', 'none', 'none']
         return values
 
-    def render(self, name, value, attrs=None, renderer=None):
-        elem_id = attrs['id']
-        attrs = dict(attrs)
-        parts = []
-        for key, val, widget in zip(['width', 'style', 'color'], value, self.widgets):
-            prop = '{0}-{1}'.format(name, key)
-            attrs['id'] = '{0}_{1}'.format(elem_id, key)
-            parts.append([widget.render(prop, val, attrs, renderer)])
-        return format_html('<div>{0}</div>', format_html_join('', '<div class="sibling-field">{0}</div>', parts))
+    def get_context(self, name, value, attrs):
+        if not isinstance(value, list):
+            values = self.decompress(value)
+        else:
+            values = list(value)
+        assert len(values) == 3
+        values.append(values[2])
+        values[2] = self.rgb2hex(values[2])
+        context = super().get_context(name, values, attrs)
+        return context

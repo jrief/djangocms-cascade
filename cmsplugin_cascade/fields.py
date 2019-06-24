@@ -74,7 +74,8 @@ class BorderChoiceField(MultiValueField):
 
     def __init__(self, *args, **kwargs):
         choices = [(s, s) for s in self.BORDER_STYLES]
-        widget = kwargs.pop('widget', BorderChoiceWidget(choices))
+        with_alpha = kwargs.pop('with_alpha', app_settings.CMSPLUGIN_CASCADE['color_picker_with_alpha'])
+        widget = kwargs.pop('widget', BorderChoiceWidget(choices, with_alpha))
         fields = [
             SizeField(),
             ChoiceField(choices=choices),
@@ -118,7 +119,7 @@ class ColorValidator():
     def __call__(self, value):
         color, inherit = value
         match = self.validation_pattern.match(color)
-        if not match:
+        if not (inherit or match):
             params = {'color': color}
             raise ValidationError(self.message, code=self.code, params=params)
 
@@ -147,13 +148,8 @@ class ColorField(MultiValueField):
         self.validators.append(ColorValidator(with_alpha))
         self.validators.append(ProhibitNullCharactersValidator())
 
-    def clean(self, value):
-        color, inherit = value
-        if not inherit:
-            self.run_validators(value)
-        return value
-
     def compress(self, data_list):
+        self.run_validators(data_list)
         return data_list
 
 
