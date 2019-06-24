@@ -67,7 +67,6 @@ class GlossaryField(object):
         return ids
 
 
-
 class BorderChoiceField(MultiValueField):
     BORDER_STYLES = ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'hidden',
                      'inset', 'outset', 'ridge']
@@ -89,6 +88,10 @@ class BorderChoiceField(MultiValueField):
 
     def compress(self, data_list):
         return data_list
+
+    @classmethod
+    def css_value(self, values):
+        return ' '.join(values)
 
 
 class SelectTextAlignField(ChoiceField):
@@ -151,6 +154,10 @@ class ColorField(MultiValueField):
     def compress(self, data_list):
         self.run_validators(data_list)
         return data_list
+
+    @classmethod
+    def css_value(self, values):
+        return values[0]
 
 
 @deconstructible

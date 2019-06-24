@@ -102,16 +102,21 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     def get_inline_styles(cls, obj):
         """Enrich inline CSS styles with customized ones"""
         inline_styles = super().get_inline_styles(obj)
+        extra_inline_styles = app_settings.CMSPLUGIN_CASCADE['extra_inline_styles']
         for key, eis in obj.glossary.items():
             if key.startswith('extra_inline_styles:'):
+                _, prop = key.split(':')
                 if isinstance(eis, dict):
+                    # a multi value field, storing values as dict
                     inline_styles.update(dict((k, v) for k, v in eis.items() if v))
-                if isinstance(eis, (list, tuple)):
-                    # the first entry of a sequence is used to disable an inline style
-                    if eis[0] != 'on':
-                        inline_styles.update({key.split(':')[1]: eis[1]})
+                elif isinstance(eis, (list, tuple)):
+                    # a multi value field, storing values as list
+                    for props, field_class in extra_inline_styles.values():
+                        if prop in props:
+                            inline_styles.update({prop: field_class.css_value(eis)})
+                            break
                 elif isinstance(eis, str):
-                    inline_styles.update({key.split(':')[1]: eis})
+                    inline_styles.update({prop: eis})
         return inline_styles
 
     @classmethod

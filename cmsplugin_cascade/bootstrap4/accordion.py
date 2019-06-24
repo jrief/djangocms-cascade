@@ -2,7 +2,7 @@ from django.forms import widgets, BooleanField, CharField
 from django.forms.fields import IntegerField
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.text import Truncator, mark_safe
-from django.utils.html import escape, format_html
+from django.utils.html import escape
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin

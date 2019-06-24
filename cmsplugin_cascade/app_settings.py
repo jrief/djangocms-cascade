@@ -18,10 +18,11 @@ class AppSettings(object):
         import os
         from collections import OrderedDict
         from importlib import import_module
-        from django.forms.fields import ChoiceField, NumberInput
+        from django.forms.fields import NumberInput
         from django.core.exceptions import ImproperlyConfigured
         from django.utils.translation import ugettext_lazy
-        from cmsplugin_cascade.fields import ColorField, SelectTextAlignField, SelectOverflowField, SizeField
+        from cmsplugin_cascade.fields import (ColorField, SelectTextAlignField, SelectOverflowField, SizeField,
+                                              BorderChoiceField)
 
         if hasattr(self, '_config_CMSPLUGIN_CASCADE'):
             return self._config_CMSPLUGIN_CASCADE
@@ -89,6 +90,12 @@ class AppSettings(object):
         extra_inline_styles.setdefault(
             'Colors',
             (['color', 'background-color'], ColorField))
+        extra_inline_styles.setdefault(
+            'Border',
+            (['border'], BorderChoiceField))
+        extra_inline_styles.setdefault(
+            'Border Radius',
+            (['border-radius'], SizeField))
         extra_inline_styles.setdefault(
             'Overflow',
             (['overflow', 'overflow-x', 'overflow-y'], SelectOverflowField))
