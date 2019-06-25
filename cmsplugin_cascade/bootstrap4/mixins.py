@@ -1,35 +1,9 @@
-from django.forms import MediaDefiningClass
 from django.forms.fields import ChoiceField
 from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
+from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
-
-
-class BootstrapUtilitiesMixin(metaclass=MediaDefiningClass):
-    """
-    If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_mixins']``,
-    then this ``BootstrapUtilsMixin`` class is added automatically to its plugin class in order to
-    enrich it with utility classes offered by Bootstrap-4.
-    """
-    def __str__(self):
-        return self.plugin_class.get_identifier(self)
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = kwargs.get('form', self.form)
-        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
-        kwargs['form'] = type(form.__name__, (self.utility_form_mixin, form), {})
-        return super().get_form(request, obj, **kwargs)
-
-    @classmethod
-    def get_css_classes(cls, obj):
-        """Enrich list of CSS classes with customized ones"""
-        css_classes = super(BootstrapUtilitiesMixin, cls).get_css_classes(obj)
-        for utility_field_name in cls.utility_form_mixin.base_fields.keys():
-            css_class = obj.glossary.get(utility_field_name)
-            if css_class:
-                css_classes.append(css_class)
-        return css_classes
 
 
 class BootstrapUtilities(type):
@@ -65,7 +39,7 @@ class BootstrapUtilities(type):
             entangled_fields = {'glossary': list(form_fields.keys())}
 
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta))
-        return type('BootstrapUtilitiesMixin', (BootstrapUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})
+        return type('BootstrapUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})
 
     @classmethod
     def build_form_mixin(cls, form_name, attrs):

@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
+from django.forms import MediaDefiningClass
 from django.utils.translation import ugettext_lazy as _
+from entangled.forms import EntangledModelFormMixin
 
 
 def remove_duplicates(lst):
@@ -78,3 +80,29 @@ def parse_responsive_length(responsive_length):
     elif responsive_length.endswith('%'):
         return (None, float(responsive_length.rstrip('%')) / 100)
     return (None, None)
+
+
+class CascadeUtilitiesMixin(metaclass=MediaDefiningClass):
+    """
+    If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_mixins']``,
+    then this ``BootstrapUtilsMixin`` class is added automatically to its plugin class in order to
+    enrich it with utility classes, such as :class:`cmsplugin_cascade.bootstrap4.mixins.BootstrapUtilities`.
+    """
+    def __str__(self):
+        return self.plugin_class.get_identifier(self)
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = kwargs.get('form', self.form)
+        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
+        kwargs['form'] = type(form.__name__, (self.utility_form_mixin, form), {})
+        return super().get_form(request, obj, **kwargs)
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        """Enrich list of CSS classes with customized ones"""
+        css_classes = super().get_css_classes(obj)
+        for utility_field_name in cls.utility_form_mixin.base_fields.keys():
+            css_class = obj.glossary.get(utility_field_name)
+            if css_class:
+                css_classes.append(css_class)
+        return css_classes
