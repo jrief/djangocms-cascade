@@ -114,7 +114,7 @@ class AColorPickerMixin(object):
             js = [self.acolorpicker_js, 'cascade/js/admin/colorpicker.js']
         else:
             js = ['cascade/js/admin/colorpicker.js']
-        return Media(css={'all': ['cascade/css/admin/colorpicker.css']}, js=js)
+        return Media(js=js)
 
     @classmethod
     def rgb2hex(cls, val):
@@ -130,16 +130,18 @@ class ColorPickerWidget(AColorPickerMixin, widgets.MultiWidget):
     The value passed to the consumer is a tuple of a Boolean and a string guaranteed to be in #rgb format.
     """
     template_name = 'cascade/admin/widgets/colorpicker.html'
-    DEFAULT_ATTRS = {'type': 'color'}
 
-    def __init__(self, with_alpha, attrs=DEFAULT_ATTRS):
-        attrs = dict(attrs)
+    def __init__(self, with_alpha):
         widget_list = [
-            widgets.TextInput(attrs=attrs),
+            widgets.TextInput(attrs={'data-with_alpha': str(with_alpha).lower(), 'class': 'cascade-rgba'}),
+            widgets.TextInput(attrs={'type': 'color'}),
             widgets.CheckboxInput(),
-            widgets.HiddenInput(attrs={'data-with_alpha': str(with_alpha).lower()}),
         ]
         super().__init__(with_alpha, widget_list)
+
+    @property
+    def media(self):
+        return super().media + Media(css={'all': ['cascade/css/admin/colorpicker.css']})
 
     def decompress(self, values):
         assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
@@ -148,12 +150,12 @@ class ColorPickerWidget(AColorPickerMixin, widgets.MultiWidget):
 
     def value_from_datadict(self, data, files, name):
         if self.with_acolorpicker:
-            color = data.get('{}_2'.format(name))
-        else:
             color = data.get('{}_0'.format(name))
+        else:
+            color = data.get('{}_1'.format(name))
         values = [
             escape(color),
-            bool(data.get('{}_1'.format(name))),
+            bool(data.get('{}_2'.format(name))),
         ]
         return values
 
@@ -163,8 +165,8 @@ class ColorPickerWidget(AColorPickerMixin, widgets.MultiWidget):
         else:
             values = list(value)
         assert len(values) == 2
-        values.append(values[0])
-        values[0] = self.rgb2hex(values[0])
+        values.insert(0, values[0])
+        values[1] = self.rgb2hex(values[0])
         context = super().get_context(name, values, attrs)
         return context
 
@@ -213,10 +215,15 @@ class BorderChoiceWidget(AColorPickerMixin, widgets.MultiWidget):
         widget_list = [
             widgets.TextInput(attrs={'size': 5}),
             widgets.Select(choices=choices),
+            widgets.TextInput(attrs={'data-with_alpha': str(with_alpha).lower(), 'class': 'cascade-rgba'}),
             widgets.TextInput(attrs={'type': 'color'}),
-            widgets.HiddenInput(attrs={'data-with_alpha': str(with_alpha).lower()}),
         ]
         super().__init__(with_alpha, widget_list)
+
+    @property
+    def media(self):
+        return super().media + Media(css={'all': ['cascade/css/admin/colorpicker.css',
+                                                  'cascade/css/admin/borderchoice.css']})
 
     def decompress(self, values):
         assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
@@ -225,9 +232,9 @@ class BorderChoiceWidget(AColorPickerMixin, widgets.MultiWidget):
     def value_from_datadict(self, data, files, name):
         try:
             if self.with_acolorpicker:
-                color = data.get('{}_3'.format(name))
-            else:
                 color = data.get('{}_2'.format(name))
+            else:
+                color = data.get('{}_3'.format(name))
             values = [
                 escape(data['{}_0'.format(name)]),
                 escape(data['{}_1'.format(name)]),
@@ -243,7 +250,7 @@ class BorderChoiceWidget(AColorPickerMixin, widgets.MultiWidget):
         else:
             values = list(value)
         assert len(values) == 3
-        values.append(values[2])
-        values[2] = self.rgb2hex(values[2])
+        values.insert(2, values[2])
+        values[3] = self.rgb2hex(values[2])
         context = super().get_context(name, values, attrs)
         return context

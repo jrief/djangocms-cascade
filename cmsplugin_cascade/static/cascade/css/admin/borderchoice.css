@@ -1,0 +1,8 @@
+.cascade-border-choice em {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.cascade-border-choice .a-color-picker {
+  position: absolute;
+  margin-top: -20px;
+}
