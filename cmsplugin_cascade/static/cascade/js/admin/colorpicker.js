@@ -21,6 +21,7 @@ django.jQuery(function($) {
 			var options = {color: $this.val(), showAlpha: $this.data('with_alpha')};
 			if (picker) {
 				picker.destroy();
+				picker = null;
 			}
 			if ($this.hasClass('disabled')) {
 				$this.blur();
