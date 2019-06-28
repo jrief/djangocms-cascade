@@ -6,17 +6,9 @@
         "pk":1512,
         "glossary":{
           "tag_type":"div",
-          "extra_inline_styles:background-color":[
-            "",
-            "#42c8c6"
-          ],
           "extra_inline_styles:line-height":"",
           "extra_css_classes":[],
           "hide_plugin":"",
-          "extra_inline_styles:color":[
-            "",
-            "#ffffff"
-          ],
           "element_id":"",
           "extra_inline_styles:Paddings":{
             "padding-left":"50px",
