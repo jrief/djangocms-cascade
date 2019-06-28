@@ -22,7 +22,7 @@ if current_django < "2.0.0":
         'cms.middleware.toolbar.ToolbarMiddleware',
         'cms.middleware.language.LanguageCookieMiddleware',
     ]
-]
+
 
 if current_django >= "2.0.0":
     from django.urls import reverse_lazy
