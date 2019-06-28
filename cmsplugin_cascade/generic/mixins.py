@@ -80,6 +80,10 @@ class SectionMixin(object):
             # when adding a new element, `element_id` can not be validated for uniqueness
             postfix = 0
             while True:
+                if not callable(getattr(form, "check_unique_element_id", None)):
+                    form_=SectionForm                   
+                else:
+                    form_=form
                 try:
                     form.check_unique_element_id(obj, element_id)
                 except ValidationError:
