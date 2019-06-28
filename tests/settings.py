@@ -1,8 +1,47 @@
 from __future__ import unicode_literals
 
-from django.urls import reverse_lazy
+import django
+current_django=django.get_version()
+
 from django.utils.text import format_lazy
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+
+if current_django < "2.0.0":
+    from django.urls import reverse
+    
+    MIDDLEWARE = [
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'cms.middleware.user.CurrentUserMiddleware',
+        'cms.middleware.page.CurrentPageMiddleware',
+        'cms.middleware.toolbar.ToolbarMiddleware',
+        'cms.middleware.language.LanguageCookieMiddleware',
+    ]
+]
+
+if current_django >= "2.0.0":
+    from django.urls import reverse_lazy
+    
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
+        'django.middleware.gzip.GZipMiddleware',
+        'cms.middleware.page.CurrentPageMiddleware',
+        'cms.middleware.user.CurrentUserMiddleware',
+        'cms.middleware.toolbar.ToolbarMiddleware',
+        'cms.middleware.language.LanguageCookieMiddleware',
+    ]
 
 ROOT_URLCONF = 'tests.urls'
 
@@ -42,19 +81,6 @@ TEMPLATES = [{
     }
 }]
 
-MIDDLEWARE = [
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'cms.middleware.user.CurrentUserMiddleware',
-    'cms.middleware.page.CurrentPageMiddleware',
-    'cms.middleware.toolbar.ToolbarMiddleware',
-    'cms.middleware.language.LanguageCookieMiddleware',
-]
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -74,6 +100,7 @@ INSTALLED_APPS = [
     'cms',
     'adminsortable2',
     'djangocms_text_ckeditor',
+    'django_select2',
     'cmsplugin_cascade',
     'cmsplugin_cascade.clipboard',
     'cmsplugin_cascade.extra_fields',
@@ -82,6 +109,7 @@ INSTALLED_APPS = [
     'cmsplugin_cascade.segmentation',
     'tests',
 ]
+
 
 USE_I18N = True
 
@@ -101,7 +129,7 @@ CMS_TEMPLATES = [
 
 CMSPLUGIN_CASCADE_PLUGINS = [
     'cmsplugin_cascade.link',
-    'cmsplugin_cascade.bootstrap3',
+    'cmsplugin_cascade.bootstrap4',
 ]
 
 
@@ -128,34 +156,15 @@ CMSPLUGIN_CASCADE = {
             'image_size',
             'resize_options',
         ),
-        'BootstrapButtonPlugin': ('link',),
-        'TextLinkPlugin': ('link', 'target',),
     },
 }
 
 CMS_PLACEHOLDER_CONF = {
     'Main Content': {
         'plugins': ['BootstrapContainerPlugin'],
-    },
-    'Bootstrap Column': {
-        'plugins': ['BootstrapRowPlugin', 'TextPlugin'],
-        'parent_classes': {'BootstrapRowPlugin': []},
-        'require_parent': False,
-        'glossary': {
-            'breakpoints': ['xs', 'sm', 'md', 'lg'],
-            'container_max_widths': {
-                'xs': 750,
-                'sm': 750,
-                'md': 970,
-                'lg': 1170
-            },
-            'fluid': False,
-            'media_queries': {
-                'xs': ['(max-width: 768px)'],
-                'sm': ['(min-width: 768px)', '(max-width: 992px)'],
-                'md': ['(min-width: 992px)', '(max-width: 1200px)'],
-                'lg': ['(min-width: 1200px)'],
-            },
+        'parent_classes': {
+            'BootstrapContainerPlugin': None,
+            'TextLinkPlugin': ['TextPlugin'],
         },
     },
 }
@@ -192,7 +201,7 @@ CKEDITOR_SETTINGS = {
         ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Table'],
         ['Source']
     ],
-    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
+    'stylesSet': format_lazy('default:{}', "/admin/cmsplugin_cascade/texteditorconfigfields/wysiwig-config.js"),
 }
 
 SILENCED_SYSTEM_CHECKS = ['2_0.W001']
