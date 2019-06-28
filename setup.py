@@ -33,7 +33,6 @@ setup(
         'django-classy-tags>=0.8',
         'django-cms>=3.5,<3.7',
         'django-entangled',
-        'django-select2>7.0',
         'djangocms-text-ckeditor>=3.7',
         'jsonfield',
         'requests',
