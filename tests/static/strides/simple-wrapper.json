@@ -14,8 +14,8 @@
           "extra_css_classes":[],
           "hide_plugin":"",
           "extra_inline_styles:color":[
-            ""
             "#ffffff",
+            ""
           ],
           "element_id":"",
           "extra_inline_styles:Paddings":{
