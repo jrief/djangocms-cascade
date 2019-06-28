@@ -41,7 +41,7 @@ class IconPluginMixin(CascadePluginMixinBase):
     def render(self, context, instance, placeholder):
         if pkg_resources.get_distribution('django').version >= "2.0.0":
             context = self.super(IconPluginMixin, self).render(context, instance, placeholder)
-        elif pkg_resources.get_distribution('django').version < "2.0.0"
+        elif pkg_resources.get_distribution('django').version < "2.0.0":
             context = super(IconPluginMixin, self).render(context, instance, placeholder)
         icon_font = get_related_object(instance.glossary, 'icon_font')
         symbol = instance.glossary.get('symbol')
