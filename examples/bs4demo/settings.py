@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 import os
 import sys
 
-from django.core.urlresolvers import reverse_lazy
-
+#from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from django.utils.text import format_lazy
 
@@ -64,19 +64,25 @@ INSTALLED_APPS = [
     'bs4demo',
 ]
 
-MIDDLEWARE_CLASSES = [
+
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
 ]
+
+
 
 # silence false-positive warning 1_6.W001
 # https://docs.djangoproject.com/en/1.8/ref/checks/#backwards-compatibility
@@ -213,25 +219,11 @@ CMSPLUGIN_CASCADE = {
                                  'image_height', 'resize_options',),
         'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
         'BootstrapButtonPlugin': ('button_type', 'button_size', 'button_options', 'icon_font',),
-        'TextLinkPlugin': ('link', 'target',),
     },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
-}
-
-CASCADE_WORKAREA_GLOSSARY = {
-    'breakpoints': ['xs', 'sm', 'md', 'lg','xl'],
-    'container_max_widths': {'xs': 576,'sm': 768,'md': 992, 'lg': 1200, 'xl': 1980,},
-    'fluid': False,
-    'media_queries': {
-        'xs': ['(max-width: 576px)'],
-        'sm': ['(min-width: 576px)', '(max-width: 768px)'],
-        'md': ['(min-width: 768px)', '(max-width: 992px)'],
-        'lg': ['(min-width: 992px)', '(max-width: 1200px)'],
-        'xl': ['(min-width: 1200px)'],
-    },
 }
 
 CMS_PLACEHOLDER_CONF = {
@@ -240,7 +232,6 @@ CMS_PLACEHOLDER_CONF = {
     'Main Content': {
         'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
-        'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
     # this placeholder is used in templates/wrapped.html, it shows how to
     # add content to an existing Bootstrap column
@@ -248,7 +239,6 @@ CMS_PLACEHOLDER_CONF = {
         'plugins': ['BootstrapRowPlugin', 'TextPlugin', ],
         'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
-        'glossary': CASCADE_WORKAREA_GLOSSARY,
     },
 }
 
@@ -256,7 +246,9 @@ CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono-lisa',
     'toolbar': 'CMS',
-    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
+  #django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet
+  #  'stylesSet': format_lazy('default:{}', reverse('admin:cascade_texteditor_config')),
+  'stylesSet': format_lazy('default:{}', "/admin/cmsplugin_cascade/texteditorconfigfields/wysiwig-config.js"),
 }
 
 SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'
@@ -296,3 +288,4 @@ try:
     from .private_settings import *
 except ImportError:
     pass
+
