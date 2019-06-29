@@ -4,8 +4,7 @@ from __future__ import unicode_literals
 import os
 from bs4 import BeautifulSoup
 import json
-
-import django
+from django import VERSION as DJANGO_VERSION
 from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.urls import reverse, resolve
@@ -22,7 +21,6 @@ from cmsplugin_cascade.bootstrap4.container import BootstrapContainerPlugin
 from cmsplugin_cascade.icon.cms_plugins import FramedIconPlugin
 from .test_base import CascadeTestCase
 
-current_django=django.get_version()
 
 BS4_BREAKPOINT_KEYS=['xs', 'sm', 'md', 'lg','xl']
 
@@ -61,9 +59,9 @@ class IconFontTestCase(CascadeTestCase):
             self.assertEqual(resolver_match.url_name, 'cmsplugin_cascade_iconfont_change')
 
             # check the content of the uploaded file
-            if current_django >= "2.0.0":
+            if DJANGO_VERSION >= (2, 0):
                 icon_font = IconFont.objects.get(pk=resolver_match.kwargs['object_id'])
-            elif current_django < "2.0.0":
+            elif DJANGO_VERSION < (2, 0):
                 icon_font = IconFont.objects.get(pk=resolver_match.args[0])                
             self.assertEqual(icon_font.identifier, "Fontellico")
             self.assertEqual(icon_font.config_data['name'], 'fontelico')
