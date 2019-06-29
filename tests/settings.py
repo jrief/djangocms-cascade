@@ -20,7 +20,7 @@ if DJANGO_VERSION < (2, 0):
         'cms.middleware.toolbar.ToolbarMiddleware',
         'cms.middleware.language.LanguageCookieMiddleware',
     ]
-]
+
 
 if DJANGO_VERSION >= (2, 0):
     from django.urls import reverse_lazy
