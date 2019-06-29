@@ -1,13 +1,12 @@
 from __future__ import unicode_literals
-
-        if DJANGO_VERSION >= (2, 0):
+     
 from django.utils.text import format_lazy
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
-
+from django import VERSION as DJANGO_VERSION
 
 if DJANGO_VERSION < (2, 0):
     from django.core.urlresolvers import reverse_lazy
-
+    
     MIDDLEWARE = [
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
@@ -21,7 +20,7 @@ if DJANGO_VERSION < (2, 0):
         'cms.middleware.toolbar.ToolbarMiddleware',
         'cms.middleware.language.LanguageCookieMiddleware',
     ]
-
+]
 
 if DJANGO_VERSION >= (2, 0):
     from django.urls import reverse_lazy
