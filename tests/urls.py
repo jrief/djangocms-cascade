@@ -1,8 +1,8 @@
-import django
+from django import VERSION as DJANGO_VERSION
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 
-if django.get_version() < "2.0.0":    
+if DJANGO_VERSION < (2, 0):
     from django.conf.urls import url, include
 
     urlpatterns = i18n_patterns(
@@ -10,7 +10,7 @@ if django.get_version() < "2.0.0":
         url(r'^', include('cms.urls')),
     )
 
-if django.get_version() >= "2.0.0":    
+if DJANGO_VERSION >= (2, 0):
     from django.urls import path, include
 
     urlpatterns = i18n_patterns(
