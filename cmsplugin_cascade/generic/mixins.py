@@ -79,7 +79,7 @@ class SectionMixin(object):
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness
             postfix = 0
-            # fix stride render if icons plugins use django >= 2 
+            # check if form simplewarpper has function check_unique_element_id
             if 'check_unique_element_id' in dir(form):
                 form_ = SectionForm                   
             else:
