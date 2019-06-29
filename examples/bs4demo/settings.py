@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import os
 import sys
 
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from django.utils.text import format_lazy
