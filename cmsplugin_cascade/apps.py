@@ -14,8 +14,7 @@ class CascadeConfig(AppConfig):
 
     def ready(self):
         stylesSet = str(settings.CKEDITOR_SETTINGS.get('stylesSet'))
-        if stylesSet != 'default:{}'.format('/admin/cmsplugin_cascade/texteditorconfigfields/wysiwig-config.js',):
-        #if stylesSet != 'default:{}'.format(reverse('admin:cascade_texteditor_config')):
+        if stylesSet != 'default:{}'.format(reverse('admin:cascade_texteditor_config')):
             msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))`"
             raise ImproperlyConfigured(msg)
 

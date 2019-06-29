@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 import os
 import sys
 
-#from django.core.urlresolvers import reverse_lazy
-from django.urls import reverse
+from django.core.urlresolvers import reverse_lazy
+
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from django.utils.text import format_lazy
 
@@ -246,9 +246,7 @@ CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono-lisa',
     'toolbar': 'CMS',
-  #django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet
-  #  'stylesSet': format_lazy('default:{}', reverse('admin:cascade_texteditor_config')),
-  'stylesSet': format_lazy('default:{}', "/admin/cmsplugin_cascade/texteditorconfigfields/wysiwig-config.js"),
+    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
 }
 
 SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'

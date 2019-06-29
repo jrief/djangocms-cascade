@@ -1,14 +1,13 @@
 from __future__ import unicode_literals
 
-import django
-current_django=django.get_version()
-
+        if DJANGO_VERSION >= (2, 0):
 from django.utils.text import format_lazy
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
-if current_django < "2.0.0":
-    from django.urls import reverse
-    
+
+if DJANGO_VERSION < (2, 0):
+    from django.core.urlresolvers import reverse_lazy
+
     MIDDLEWARE = [
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
@@ -24,7 +23,7 @@ if current_django < "2.0.0":
     ]
 
 
-if current_django >= "2.0.0":
+if DJANGO_VERSION >= (2, 0):
     from django.urls import reverse_lazy
     
     MIDDLEWARE = [
@@ -201,7 +200,7 @@ CKEDITOR_SETTINGS = {
         ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Table'],
         ['Source']
     ],
-    'stylesSet': format_lazy('default:{}', "/admin/cmsplugin_cascade/texteditorconfigfields/wysiwig-config.js"),
+    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
 }
 
 SILENCED_SYSTEM_CHECKS = ['2_0.W001']
