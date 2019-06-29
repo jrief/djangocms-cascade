@@ -79,13 +79,13 @@ class SectionMixin(object):
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness
             postfix = 0
+            if not callable(getattr(form, "check_unique_element_id", True)):
+                form_=SectionForm                   
+            else:
+                form_=form
             while True:
-                if not callable(getattr(form, "check_unique_element_id", None)):
-                    form_=SectionForm                   
-                else:
-                    form_=form
                 try:
-                    form.check_unique_element_id(obj, element_id)
+                    form_.check_unique_element_id(obj, element_id)
                 except ValidationError:
                     postfix += 1
                     element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
