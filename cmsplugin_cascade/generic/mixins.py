@@ -79,10 +79,11 @@ class SectionMixin(object):
         if not change:
             # when adding a new element, `element_id` can not be validated for uniqueness
             postfix = 0
-            if not callable(getattr(form, "check_unique_element_id", True)):
-                form_=SectionForm                   
+            # fix stride render if icons plugins use django >= 2 
+            if 'check_unique_element_id' in dir(form):
+                form_ = SectionForm                   
             else:
-                form_=form
+                form_ = form
             while True:
                 try:
                     form_.check_unique_element_id(obj, element_id)
