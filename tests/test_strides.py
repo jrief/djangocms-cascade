@@ -61,7 +61,13 @@ class StridePluginTest(CascadeTestCase):
         template = Template('{% load cascade_tags %}{% render_cascade "strides/simple-wrapper.json" %}')
         html = template.render(self.context)
         soup = BeautifulSoup(html, features='lxml')
-        expected_styles = { 'background-color':'#42c8c6','color':'#ffffff','height':'360px','padding-left':'50px','padding-right':'50px',}
+        expected_styles = {
+            'background-color':'#42c8c6',
+            'color':'#ffffff',
+            'height':'360px',
+            'padding-left':'50px',
+            'padding-right':'50px',
+        }
         self.assertStyleEqual(soup.div.attrs['style'], expected_styles)
 
     def upload_icon_font(self):
