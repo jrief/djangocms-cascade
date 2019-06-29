@@ -61,7 +61,7 @@ class IconFontTestCase(CascadeTestCase):
             # check the content of the uploaded file
             if DJANGO_VERSION >= (2, 0):
                 icon_font = IconFont.objects.get(pk=resolver_match.kwargs['object_id'])
-            elif DJANGO_VERSION < (2, 0):
+            else:
                 icon_font = IconFont.objects.get(pk=resolver_match.args[0])                
             self.assertEqual(icon_font.identifier, "Fontellico")
             self.assertEqual(icon_font.config_data['name'], 'fontelico')
