@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 
-
 class CascadeDemoView(TemplateView):
     template_name = 'bs4demo/strides.html'
 
@@ -14,7 +13,7 @@ admin.autodiscover()
 
 urlpatterns = [
     path('admin/select2/', include('django_select2.urls')),
-    path('admin/', admin.site.urls  ),
+    path('admin/', admin.site.urls),
     path('cascade/', CascadeDemoView.as_view()),
     path('', include('cms.urls')),
 ]
