@@ -13,10 +13,6 @@ from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin
-
-
-from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.mixins import CascadePluginMixin
 from djangocms_transfer.forms import  PluginImportForm ,ExportImportForm, _object_version_data_hook
 from djangocms_transfer.importer import  import_plugins
 import json
