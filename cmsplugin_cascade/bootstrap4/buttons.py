@@ -126,7 +126,7 @@ class BootstrapButtonMixin(IconPluginMixin):
         js = ['cascade/js/admin/buttonmixin.js']
 
     def render(self, context, instance, placeholder):
-        context = self.super(BootstrapButtonMixin, self).render(context, instance, placeholder)
+        context = super(BootstrapButtonMixin, self).render(context, instance, placeholder)
         if 'icon_font_class' in context:
             mini_template = '{0}<i class="{1} {2}" aria-hidden="true"></i>{3}'
             icon_align = instance.glossary.get('icon_align')
