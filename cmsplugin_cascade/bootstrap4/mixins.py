@@ -41,14 +41,6 @@ class BootstrapUtilities(type):
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta))
         return type('BootstrapUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})
 
-    @classmethod
-    def build_form_mixin(cls, form_name, attrs):
-        class Meta:
-            entangled_fields = {'glossary': list(attrs.keys())}
-
-        attrs['Meta'] = Meta
-        return type(form_name + 'FormMixin', (object,), attrs)
-
     @property
     def background_and_color(cls):
         choices = [
