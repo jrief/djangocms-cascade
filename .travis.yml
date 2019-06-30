@@ -15,9 +15,11 @@ env:
 install:
   - pip install tox
 
+services:
+  - xvfb
+
 before_script:
   - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then export PYVER=py35; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then export PYVER=py36; fi"
 

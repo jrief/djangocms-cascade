@@ -5,7 +5,9 @@ from django.forms import widgets
 from django.forms.fields import Field, CharField, ChoiceField, BooleanField, MultiValueField
 from django.forms.utils import ErrorList
 from django.core.exceptions import ValidationError
-from django.core.validators import ProhibitNullCharactersValidator
+from django import VERSION as DJANGO_VERSION
+if DJANGO_VERSION >= (2, 0):
+   from django.core.validators import ProhibitNullCharactersValidator
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _, ugettext
 from cmsplugin_cascade import app_settings
@@ -149,7 +151,8 @@ class ColorField(MultiValueField):
         kwargs['initial'] = [default_color, inherit_color]
         super().__init__(fields=fields, widget=widget, *args, **kwargs)
         self.validators.append(ColorValidator(with_alpha))
-        self.validators.append(ProhibitNullCharactersValidator())
+        if DJANGO_VERSION >= (2, 0):
+            self.validators.append(ProhibitNullCharactersValidator())
 
     def compress(self, data_list):
         self.run_validators(data_list)
@@ -202,7 +205,8 @@ class SizeField(Field):
         self.empty_value = ''
         super().__init__(**kwargs)
         self.validators.append(SizeUnitValidator(allowed_units))
-        self.validators.append(ProhibitNullCharactersValidator())
+        if DJANGO_VERSION >= (2, 0):
+            self.validators.append(ProhibitNullCharactersValidator())
 
     def to_python(self, value):
         """Return a stripped string."""
