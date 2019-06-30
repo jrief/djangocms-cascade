@@ -8,16 +8,16 @@
           "symbol":"umbrella",
           "border_radius":"",
           "color":[
-            "",
-            "#ffffff"
+            "#ffffff",
+             ""
           ],
           "text_align":"text-center",
           "hide_plugin":"",
           "icon_font":"1",
           "font_size":"10em",
           "background_color":[
-            "disabled",
-            "#ffffff"
+            "#ffffff",
+             "true"
           ],
           "border":[
             "0px",

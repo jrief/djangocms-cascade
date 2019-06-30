@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import json
+import django
 import os
 
 from bs4 import BeautifulSoup
@@ -61,11 +62,11 @@ class StridePluginTest(CascadeTestCase):
         html = template.render(self.context)
         soup = BeautifulSoup(html, features='lxml')
         expected_styles = {
-            'background-color': '#42c8c6',
-            'color': '#ffffff',
-            'height': '360px',
-            'padding-left': '50px',
-            'padding-right': '50px',
+            'background-color':'#42c8c6',
+            'color':'#ffffff',
+            'height':'360px',
+            'padding-left':'50px',
+            'padding-right':'50px',
         }
         self.assertStyleEqual(soup.div.attrs['style'], expected_styles)
 
@@ -128,4 +129,4 @@ class StridePluginTest(CascadeTestCase):
         self.assertListEqual(carousel.ol.attrs['class'], ['carousel-indicators'])
         self.assertListEqual(carousel.ol.li.attrs['class'], ['active'])
         slide = carousel.find(class_='carousel-inner')
-        self.assertSetEqual(set(slide.div.attrs['class']), {'item', 'active'})
+        self.assertSetEqual(set(slide.div.attrs['class']), {'carousel-item', 'active'})
