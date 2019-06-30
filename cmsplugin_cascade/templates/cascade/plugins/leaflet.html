@@ -7,8 +7,8 @@
 <style>
 #cascadeelement_id-{{ instance.pk }} {
 	width: {{ instance.glossary.map_width }};
-	height: {{ instance.glossary.map_height }};
-  {% if	instance.glossary.map_min_height %} min-height: {{ instance.glossary.map_min_height }}; {% endif %}
+	height: {{ instance.glossary.map_height }};{% with map_min_height=instance.glossary.map_min_height %}{% if map_min_height %}
+	min-height: {{ map_min_height }};{% endif %}{% endwith %}
 }
 </style> 
 {% endlocalize %}{% endaddtoblock %}

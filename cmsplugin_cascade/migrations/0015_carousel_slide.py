@@ -4,10 +4,7 @@ from __future__ import unicode_literals
 
 import re
 import warnings
-try:
-    from html.parser import HTMLParser  # py3
-except ImportError:
-    from HTMLParser import HTMLParser  # py2
+from html.parser import HTMLParser
 from django.db import migrations
 from cms.api import add_plugin
 from cms.models.pluginmodel import CMSPlugin

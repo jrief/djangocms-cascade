@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import io
 import json
 import os
-
 from django.conf import settings
 from django.forms import fields
 from django.utils.translation import ugettext_lazy as _
-
 from django_select2.forms import Select2Widget
 from cms.models.pagemodel import Page
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase
@@ -16,8 +11,8 @@ from cmsplugin_cascade.link.forms import LinkForm
 
 
 class DocumentationSelect2Widget(Select2Widget):
-    def render(self, name, value, attrs=None):
-        html = super(DocumentationSelect2Widget, self).render(name, value, attrs=attrs)
+    def render(self, name, value, attrs=None, renderer=None):
+        html = super().render(name, value, attrs=attrs, renderer=None)
         return html
 
 
@@ -84,4 +79,4 @@ class SphinxDocsLinkPlugin(LinkPluginBase):
             page = Page.objects.filter(navigation_extenders='DocumentationMenu', publisher_is_draft=False).first()
             if page:
                 return page.get_public_url()
-        return super(SphinxDocsLinkPlugin, cls).get_link(obj)
+        return super().get_link(obj)

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django import VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -61,9 +58,17 @@ def set_defaults(config):
 
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
         inline_styles={
-            'extra_fields:Paddings': ['margin-top', 'margin-bottom', 'padding-top', 'padding-bottom'],
-            'extra_units:Paddings': 'px,rem'
+            'extra_fields:Margins': ['margin-top', 'margin-bottom'],
+            'extra_units:Margins': 'px,rem',
+            'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
+            'extra_units:Paddings': 'px,rem',
         }
+    ))
+    config['plugins_with_extra_fields'].setdefault('BootstrapTabSetPlugin', PluginExtraFieldsConfig(
+        css_classes={
+            'multiple': True,
+            'class_names': ['nav-tabs', 'nav-pills', 'nav-fill', 'nav-justified'],
+        },
     ))
 
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', [

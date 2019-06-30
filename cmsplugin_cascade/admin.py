@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.conf.urls import url
 from django.contrib import admin
-from django.forms import widgets
+from django.forms import Media, widgets
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.utils.translation import get_language_from_request
@@ -15,19 +12,19 @@ from cmsplugin_cascade.link.forms import format_page_link
 
 @admin.register(CascadePage)
 class CascadePageAdmin(PageExtensionAdmin):
-    add_form_template = change_form_template = 'cascade/admin/fonticon_change_form.html'
+    add_form_template = change_form_template = 'cascade/admin/change_form.html'
     fields = ['icon_font', 'menu_symbol']
 
     @property
     def media(self):
-        media = super(CascadePageAdmin, self).media
-        media.add_css({'all': ['cascade/css/admin/cascadepage.css']})
-        media.add_js(['cascade/js/admin/cascadepage.js'])
+        media = super().media
+        media += Media(css={'all': ['cascade/css/admin/cascadepage.css']},
+                       js=['cascade/js/admin/cascadepage.js'])
         return media
 
     def get_form(self, request, obj=None, **kwargs):
         options = dict(kwargs, widgets={'menu_symbol': widgets.HiddenInput})
-        ModelForm = super(CascadePageAdmin, self).get_form(request, obj, **options)
+        ModelForm = super().get_form(request, obj, **options)
         return ModelForm
 
     def get_urls(self):
@@ -39,13 +36,14 @@ class CascadePageAdmin(PageExtensionAdmin):
             url(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
             url(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
         ]
-        urls.extend(super(CascadePageAdmin, self).get_urls())
+        urls.extend(super().get_urls())
         return urls
 
     def get_page_sections(self, request, page_pk=None):
         choices = []
         try:
-            for key, val in self.model.objects.get(extended_object_id=page_pk).glossary['element_ids'].items():
+            extended_glossary = self.model.objects.get(extended_object_id=page_pk).glossary
+            for key, val in extended_glossary['element_ids'].items():
                 choices.append((key, val))
         except (self.model.DoesNotExist, KeyError):
             pass
@@ -92,5 +90,5 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, icon_fonts=IconFont.objects.all())
-        return super(CascadePageAdmin, self).changeform_view(
+        return super().changeform_view(
              request, object_id=object_id, form_url=form_url, extra_context=extra_context)

@@ -1,21 +1,63 @@
 django.jQuery(function($) {
-    'use strict';
+	'use strict';
+	var picker = null, AColorPicker = window.AColorPicker;
 
-    function color_selector(id_glossary) {
-                var parent = id_glossary.parent();
-                parent.append('<input class="color_picker" type="color" style="display:none;opacity:0;position:absolute;"/>');
-                parent.append('<span class="thumb_color_picker" style="background-color:' + id_glossary.val() + '; position: absolute; top: 5px;  left: 5px; width: 18px; height:18px; border: 1px solid;" ></span>');
-            id_glossary.add(".thumb_color_picker").on('click', function() {
-                var cp =  parent.find('.color_picker');
-                var thumb_cp = parent.find('.thumb_color_picker');
-                cp.on('change', function() {
-                thumb_cp.css('background-color', cp.val());
-                id_glossary.val(cp.val());
-                });
-               cp.trigger('click');
-            });
-    };
-    $('.color_picker input').each(function() {
-        color_selector($(this));
-    });
+	function checkboxChanged(checkboxInput) {
+		var $rgbaInput = $(checkboxInput).siblings('input.cascade-rgba');
+		var $colorInput = $(checkboxInput).siblings('input[type="color"]');
+		if (checkboxInput.checked || checkboxInput.disabled) {
+			$rgbaInput.addClass('disabled');
+			$colorInput.addClass('disabled');
+		} else {
+			$rgbaInput.removeClass('disabled');
+			$colorInput.removeClass('disabled');
+		}
+	}
+
+	if (AColorPicker) {
+		$('.cascade-colorpicker > input.cascade-rgba').on('click', function(evt) {
+			var $this = $(this);
+			var $colorInput = $this.siblings('input[type="color"]');
+			var options = {color: $this.val(), showAlpha: $this.data('with_alpha')};
+			if (picker) {
+				picker.destroy();
+			}
+			if ($this.hasClass('disabled')) {
+				$this.blur();
+			} else {
+				picker = AColorPicker.createPicker($this.parent(), options);
+				picker.on('change', function(picker, color) {
+					$colorInput.val(AColorPicker.parseColor(color, 'hex'));
+					$this.val(color);
+				});
+			}
+			evt.preventDefault();
+		});
+	} else {
+		$('.cascade-colorpicker > input.cascade-rgba').on('focus', function(evt) {
+			var $this = $(this);
+			$this.blur();
+			if (!$this.hasClass('disabled')) {
+				$this.siblings('input[type="color"]').trigger('click');
+			}
+		});
+		$('.cascade-colorpicker > input[type="color"]').on('change', function(evt) {
+			var $rgbaInput = $(this).siblings('input.cascade-rgba');
+			$rgbaInput.val($(this).val());
+		});
+	}
+
+	$(document).on('click', function(evt) {
+		if (picker && $(evt.target).closest('.cascade-colorpicker').length === 0) {
+			picker.destroy();
+			picker = null;
+		}
+	});
+
+	$('.cascade-colorpicker > input[type="checkbox"]').on('change', function(evt) {
+		checkboxChanged(evt.target);
+	});
+	$.each($('.cascade-colorpicker > input[type="checkbox"]'), function() {
+		checkboxChanged(this);
+	});
 });

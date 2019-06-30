@@ -1,66 +1,23 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
-
-from django.forms.fields import CharField, BooleanField, Field
-from django.forms.models import ModelForm, ModelChoiceField
-from django.forms.utils import ErrorList
+from django.forms.fields import CharField, BooleanField
 from django.forms import widgets
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin import StackedInline
-from django.contrib.admin.sites import site
 from django.core.exceptions import ValidationError
-from django.utils.html import format_html, strip_tags, strip_spaces_between_tags
+from django.utils.html import strip_tags, strip_spaces_between_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from django.utils import six
-
-from filer.fields.image import AdminFileWidget, FilerImageField
+from entangled.forms import EntangledModelFormMixin, EntangledModelForm
+from filer.fields.image import FilerImageField, AdminImageFormField
 from filer.models.imagemodels import Image
-
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.fields import HTMLFormField
-
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.fields import GlossaryField
+from cmsplugin_cascade.fields import HiddenDictField, SizeField, MultiSizeField
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
 from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
-from cmsplugin_cascade.widgets import CascadingSizeWidget, MultipleCascadingSizeWidget
-
-
-class GlossaryFormField(Field):
-    error_class = ErrorList
-
-    def __init__(self, widget=None, **kwargs):
-        if widget:
-            kwargs['required'] = widget.required
-        super(GlossaryFormField, self).__init__(widget=widget, **kwargs)
-
-    def run_validators(self, value):
-        if not callable(getattr(self.widget, 'validate', None)):
-            return
-        errors = []
-        if callable(getattr(self.widget, '__iter__', None)):
-            for field_name in self.widget:
-                try:
-                    self.widget.validate(value, field_name)
-                except ValidationError as e:
-                    if isinstance(getattr(e, 'params', None), dict):
-                        e.params.update(label=self.label)
-                    messages = self.error_class([m for m in e.messages])
-                    errors.extend(messages)
-        else:
-            try:
-                self.widget.validate(value)
-            except ValidationError as e:
-                if isinstance(getattr(e, 'params', None), dict):
-                    e.params.update(label=self.label)
-                errors = self.error_class([m for m in e.messages])
-        if errors:
-            raise ValidationError(errors)
 
 
 class MarkerModelMixin(object):
@@ -69,7 +26,7 @@ class MarkerModelMixin(object):
         return mark_safe(json.dumps(self.glossary))
 
 
-class MarkerForm(ModelForm):
+class MarkerForm(EntangledModelForm):
     title = CharField(
         label=_("Marker Title"),
         widget=widgets.TextInput(attrs={'size': 60}),
@@ -82,23 +39,26 @@ class MarkerForm(ModelForm):
         required=False,
     )
 
-    marker_image = ModelChoiceField(
-        queryset=Image.objects.all(),
+    marker_image = AdminImageFormField(
+        ManyToOneRel(FilerImageField, Image, 'file_ptr'),
+        Image.objects.all(),
         label=_("Marker Image"),
         required=False,
+        to_field_name='image_file',
     )
 
-    marker_width = GlossaryFormField(
-        widget=CascadingSizeWidget(allowed_units=['px'], required=False),
+    marker_width = SizeField(
         label=_("Marker Width"),
+        allowed_units=['px'],
         required=False,
         help_text=_("Width of the marker icon in pixels."),
     )
 
-    marker_anchor = GlossaryFormField(
-        widget=MultipleCascadingSizeWidget(['left', 'top'], allowed_units=['px', '%'], required=False),
-        required=False,
+    marker_anchor = MultiSizeField(
+        ['left', 'top'],
         label=_("Marker Anchor"),
+        allowed_units=['px', '%'],
+        required=False,
         help_text=_("The coordinates of the icon's anchor (relative to its top left corner)."),
     )
 
@@ -107,40 +67,17 @@ class MarkerForm(ModelForm):
         help_text=_("Optional rich text to display in popup."),
     )
 
-    position = Field(widget=widgets.HiddenInput)
-
-    glossary_field_order = ['title', 'marker_width', 'marker_anchor', 'popup_text']
+    position = HiddenDictField()
 
     class Meta:
-        exclude = ['glossary']
-
-    def __init__(self, *args, **kwargs):
-        try:
-            initial = dict(kwargs['instance'].glossary)
-            has_original = True
-        except (KeyError, AttributeError):
-            initial = {}
-            has_original = False
-        initial.update(kwargs.pop('initial', {}))
-        self.base_fields['position'].initial = json.dumps(initial.pop('position', {}))
-        for key in self.glossary_field_order:
-            self.base_fields[key].initial = initial.get(key)
-        try:
-            self.base_fields['marker_image'].initial = initial['image']['pk']
-        except KeyError:
-            self.base_fields['marker_image'].initial = None
-            self.base_fields['use_icon'].initial = False
-        else:
-            self.base_fields['use_icon'].initial = True
-        self.base_fields['marker_image'].widget = AdminFileWidget(ManyToOneRel(FilerImageField, Image, 'file_ptr'), site)
-        super(MarkerForm, self).__init__(*args, **kwargs)
-        if has_original:
-            self.fields['title'].help_text = None
+        entangled_fields = {'glossary': ['title', 'use_icon', 'marker_image', 'marker_width', 'marker_anchor',
+                                         'popup_text', 'position']}
 
     def clean(self):
+        cleaned_data = super().clean()
         try:
-            position = self.cleaned_data['position']
-            if isinstance(position, six.string_types):
+            position = cleaned_data['position']
+            if isinstance(position, str):
                 position = json.loads(position)
             elif not isinstance(position, dict):
                 raise ValueError
@@ -151,22 +88,12 @@ class MarkerForm(ModelForm):
                 # place the marker in the center of the current map
                 position = {k: v for k, v in self.instance.cascade_element.glossary['map_position'].items()
                             if k in ['lat', 'lng']}
-            self.instance.glossary.update(position=position)
+                cleaned_data['position'] = position
 
-        marker_image = self.cleaned_data.pop('marker_image', None)
-        if marker_image:
-            image_data = {'pk': marker_image.pk, 'model': 'filer.Image'}
-            self.instance.glossary.update(image=image_data)
-        else:
-            self.instance.glossary.pop('image', None)
-
-        popup_text = self.cleaned_data.pop('popup_text', None)
+        popup_text = cleaned_data.pop('popup_text', '')
         if strip_tags(popup_text):
-            popup_text = strip_spaces_between_tags(popup_text)
-            self.cleaned_data.update(popup_text=popup_text)
-
-        for key in self.glossary_field_order:
-            self.instance.glossary.update({key: self.cleaned_data.get(key)})
+            cleaned_data['popup_text'] = strip_spaces_between_tags(popup_text)
+        return cleaned_data
 
 
 class MarkerInline(StackedInline):
@@ -178,33 +105,45 @@ class MarkerInline(StackedInline):
     extra = 0
 
 
-class LeafletForm(ModelForm):
-    map_position = Field(widget=widgets.HiddenInput)
+class LeafletFormMixin(EntangledModelFormMixin):
+    map_width = SizeField(
+        label=_("Map Width"),
+        allowed_units=['px', '%'],
+        initial='100%',
+        help_text=_("Set the map width in percent relative to containing element."),
+    )
+
+    map_height = SizeField(
+        label=_("Adapt Map Height"),
+        allowed_units=['px', '%'],
+        initial='400px',
+        help_text=_("Set a fixed height in pixels, or percent relative to the map width."),
+    )
+
+    map_min_height = SizeField(
+        label=_("Adapt Map Minimum Height"),
+        allowed_units=['px'],
+        required=False,
+        help_text=_("Optional, set a minimum height in pixels."),
+    )
+
+    map_position = HiddenDictField(
+        initial=app_settings.CMSPLUGIN_CASCADE['leaflet']['default_position'],
+    )
 
     class Meta:
-        fields = ['glossary']
-
-    def __init__(self, data=None, *args, **kwargs):
-        try:
-            initial = dict(kwargs['instance'].glossary)
-        except (KeyError, AttributeError):
-            initial = {}
-        initial.update(kwargs.pop('initial', {}))
-        map_position = initial.pop('map_position', app_settings.CMSPLUGIN_CASCADE['leaflet']['default_position'])
-        initial['map_position'] = json.dumps(map_position)
-        super(LeafletForm, self).__init__(data, initial=initial, *args, **kwargs)
+        entangled_fields = {'glossary': ['map_width', 'map_height', 'map_position']}
 
     def clean(self):
+        cleaned_data = super().clean()
         try:
-            map_position = self.cleaned_data['map_position']
-            if isinstance(map_position, six.string_types):
-                self.cleaned_data['glossary'].update(map_position=json.loads(map_position))
-            elif isinstance(map_position, dict):
-                self.cleaned_data['glossary'].update(map_position=map_position)
-            else:
+            if isinstance(cleaned_data['map_position'], str):
+                cleaned_data['map_position'] = json.loads(cleaned_data['map_position'])
+            elif not isinstance(cleaned_data['map_position'], dict):
                 raise ValueError
         except (ValueError, KeyError):
             raise ValidationError("Invalid internal position data. Check your Javascript imports.")
+        return cleaned_data
 
 
 class LeafletModelMixin(object):
@@ -220,33 +159,12 @@ class LeafletPlugin(CascadePluginBase):
     allow_children = False
     change_form_template = 'cascade/admin/leaflet_plugin_change_form.html'
     ring_plugin = 'LeafletPlugin'
+    form = LeafletFormMixin
     admin_preview = False
     render_template = 'cascade/plugins/leaflet.html'
     inlines = (MarkerInline,)
-    glossary_field_order = ('map_width', 'map_height', 'map_min_height')
     model_mixins = (LeafletModelMixin,)
-    form = LeafletForm
     settings = mark_safe(json.dumps(app_settings.CMSPLUGIN_CASCADE['leaflet']))
-
-    map_width = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px', '%'], required=True),
-        label=_("Map Width"),
-        initial='100%',
-        help_text=_("Set the map width in percent relative to containing element."),
-    )
-
-    map_height = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px', '%'], required=True),
-        label=_("Adapt Map Height"),
-        initial='400px',
-        help_text=_("Set a fixed height in pixels, or percent relative to the map width."),
-    )
-
-    map_min_height = GlossaryField(
-        CascadingSizeWidget(allowed_units=['px'], required=False),
-        label=_("Adapt Map Minimum Height"),
-        help_text=_("Optional, set a minimum height in pixels."),
-    )
 
     class Media:
         css = {'all': [
@@ -262,11 +180,11 @@ class LeafletPlugin(CascadePluginBase):
 
     def add_view(self, request, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, settings=self.settings)
-        return super(LeafletPlugin, self).add_view(request, form_url, extra_context)
+        return super().add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, settings=self.settings)
-        return super(LeafletPlugin, self).change_view(request, object_id, form_url, extra_context)
+        return super().change_view(request, object_id, form_url, extra_context)
 
     def render(self, context, instance, placeholder):
         marker_instances = []
@@ -319,14 +237,13 @@ class LeafletPlugin(CascadePluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(LeafletPlugin, cls).get_identifier(obj)
         num_elems = obj.inline_elements.count()
         content = ungettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
-        return format_html('{0}{1}', identifier, content)
+        return mark_safe(content)
 
     @classmethod
     def get_data_representation(cls, instance):
-        data = super(LeafletPlugin, cls).get_data_representation(instance)
+        data = super().get_data_representation(instance)
         data.update(inlines=[ie.glossary for ie in instance.inline_elements.all()])
         return data
 

@@ -1,19 +1,15 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
+from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import widgets
-from django.forms.fields import ChoiceField
-from django.forms.models import ModelForm
+from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
-from django.utils.encoding import force_text
+from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-
 from cms.plugin_pool import plugin_pool
+from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.fields import GlossaryField
 from .plugin_base import BootstrapPluginBase
 from . import grid
 
@@ -32,18 +28,30 @@ def get_widget_choices():
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
-    template_name = 'cascade/forms/widgets/container_breakpoints.html'
-
-    def render(self, name, value, attrs=None, renderer=None):
-        attrs = dict(attrs, version=4)
-        return super(ContainerBreakpointsWidget, self).render(name, value, attrs, renderer)
+    template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
 
 
-class BootstrapContainerForm(ModelForm):
-    """
-    Form class to validate the container.
-    """
-    def clean_glossary(self):
+class ContainerFormMixin(EntangledModelFormMixin):
+    breakpoints = MultipleChoiceField(
+        label=_('Available Breakpoints'),
+        choices=get_widget_choices(),
+        widget=ContainerBreakpointsWidget(choices=get_widget_choices()),
+        initial=[bp.name for bp in app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds'].keys()],
+        help_text=_("Supported display widths for Bootstrap's grid system."),
+    )
+
+    fluid = BooleanField(
+        label=_('Fluid Container'),
+        initial=False,
+        required=False,
+        help_text=_("Changing your outermost '.container' to '.container-fluid'.")
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['breakpoints', 'fluid']}
+
+    def clean_breapoints(self):
+        # TODO: check this
         if len(self.cleaned_data['glossary']['breakpoints']) == 0:
             raise ValidationError(_("At least one breakpoint must be selected."))
         return self.cleaned_data['glossary']
@@ -67,35 +75,18 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     parent_classes = None
     require_parent = False
-    form = BootstrapContainerForm
-    glossary_variables = ['container_max_widths', 'media_queries']
-    glossary_field_order = ['breakpoints', 'fluid']
     model_mixins = (ContainerGridMixin,)
-
-    breakpoints = GlossaryField(
-        ContainerBreakpointsWidget(choices=get_widget_choices()),
-        label=_('Available Breakpoints'),
-        initial=[bp.name for bp in app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds'].keys()],
-        help_text=_("Supported display widths for Bootstrap's grid system."),
-    )
-
-    fluid = GlossaryField(
-        widgets.CheckboxInput(),
-        label=_('Fluid Container'),
-        initial=False,
-        help_text=_("Changing your outermost '.container' to '.container-fluid'.")
-    )
+    form = ContainerFormMixin
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapContainerPlugin, cls).get_identifier(obj)
         breakpoints = obj.glossary.get('breakpoints')
         content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
             breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
-            devices = ', '.join([force_text(bp.label) for bp in breakpoints])
+            devices = ', '.join([str(bp.label) for bp in breakpoints])
             content = _("{0}for {1}").format(content, devices)
-        return format_html('{0}{1}', identifier, content)
+        return mark_safe(content)
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -107,21 +98,25 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         return css_classes
 
     def save_model(self, request, obj, form, change):
-        super(BootstrapContainerPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         obj.sanitize_children()
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
-class BootstrapRowForm(ManageChildrenFormMixin, ModelForm):
+class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
     """
     Form class to add non-materialized field to count the number of children.
     """
     ROW_NUM_COLUMNS = [1, 2, 3, 4, 6, 12]
     num_children = ChoiceField(
+        label=_('Columns'),
         choices=[(i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS],
-        initial=3, label=_('Columns'),
+        initial=3,
         help_text=_('Number of columns to be created with this row.'))
+
+    class Meta:
+        untangled_fields = ['num_children']
 
 
 class RowGridMixin(object):
@@ -138,20 +133,18 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
-    form = BootstrapRowForm
-    fields = ['num_children', 'glossary']
     model_mixins = (RowGridMixin,)
+    form = BootstrapRowFormMixin
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapRowPlugin, cls).get_identifier(obj)
         num_cols = obj.get_num_children()
         content = ungettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
-        return format_html('{0}{1}', identifier, content)
+        return mark_safe(content)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
-        super(BootstrapRowPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         child_glossary = {'xs-column-width': 'col'}
         self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
 
@@ -180,12 +173,11 @@ class ColumnGridMixin(object):
 
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
-    parent_classes = ('BootstrapRowPlugin',)
-    child_classes = ('BootstrapJumbotronPlugin',)
+    parent_classes = ['BootstrapRowPlugin']
+    child_classes = ['BootstrapJumbotronPlugin']
     alien_child_classes = True
     default_css_attributes = [fmt.format(bp.name) for bp in grid.Breakpoint
         for fmt in ('{}-column-width', '{}-column-offset', '{}-column-ordering', '{}-responsive-utils')]
-    glossary_variables = ['container_max_widths']
     model_mixins = (ColumnGridMixin,)
 
     def get_form(self, request, obj=None, **kwargs):
@@ -210,7 +202,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 container=jumbotrons.order_by('depth').last().get_bound_plugin()
         breakpoints = container.glossary['breakpoints']
 
-        glossary_fields = []
+        width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         for bp in breakpoints:
             try:
@@ -219,7 +211,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 last = None
             finally:
                 first = getattr(grid.Breakpoint, bp)
-                devices = ', '.join([force_text(b.label) for b in grid.Breakpoint.range(first, last)])
+                devices = ', '.join([str(b.label) for b in grid.Breakpoint.range(first, last)])
 
             if bp == 'xs':
                 choices = [('col', _("Flex column"))]
@@ -231,31 +223,32 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 choices.append(('col-{}-auto'.format(bp), _("Auto column")))
             if breakpoints.index(bp) == 0:
                 # first breakpoint
-                glossary_fields.append(GlossaryField(
-                    widgets.Select(choices=choices),
+                field_name = '{}-column-width'.format(bp)
+                width_fields[field_name] = ChoiceField(
+                    choices=choices,
                     label=_("Column width for {}").format(devices),
-                    name='{}-column-width'.format(bp),
                     initial='col-{}-12'.format(bp),
                     help_text=choose_help_text(
                         _("Column width for devices narrower than {:.1f} pixels."),
                         _("Column width for devices wider than {:.1f} pixels."),
                         _("Column width for all devices."),
                     )
-                ))
+                )
             else:
                 # wider breakpoints may inherit from next narrower ones
                 choices.insert(0, ('', _("Inherit from above")))
-                glossary_fields.append(GlossaryField(
-                    widgets.Select(choices=choices),
+                field_name = '{}-column-width'.format(bp)
+                width_fields[field_name] = ChoiceField(
+                    choices=choices,
                     label=_("Column width for {}").format(devices),
-                    name='{}-column-width'.format(bp),
                     initial='',
+                    required=False,
                     help_text=choose_help_text(
                         _("Override column width for devices narrower than {:.1f} pixels."),
                         _("Override column width for devices wider than {:.1f} pixels."),
                         _("Override column width for all devices."),
                     )
-                ))
+                )
 
             # handle offset
             if breakpoints.index(bp) == 0:
@@ -274,11 +267,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 _("Offset width for devices wider than {:.1f} pixels."),
                 _("Offset width for all devices.")
             )
-            glossary_fields.append(GlossaryField(
-                widgets.Select(choices=choices),
+            field_name = '{}-column-offset'.format(bp)
+            offset_fields[field_name] = ChoiceField(
+                choices=choices,
                 label=label,
-                name='{}-column-offset'.format(bp),
-                help_text=help_text))
+                required=False,
+                help_text=help_text,
+            )
 
             # handle column reordering
             choices = [('', _("No reordering"))]
@@ -292,11 +287,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 _("Reordering for devices wider than {:.1f} pixels."),
                 _("Reordering for all devices.")
             )
-            glossary_fields.append(GlossaryField(
-                widgets.Select(choices=choices),
+            field_name = '{}-column-ordering'.format(bp)
+            reorder_fields[field_name] = ChoiceField(
+                choices=choices,
                 label=label,
-                name='{}-column-ordering'.format(bp),
-                help_text=help_text))
+                required=False,
+                help_text=help_text,
+            )
 
             # handle responsive utilities
             choices = [('', _("Default")), ('visible-{}'.format(bp), _("Visible")), ('hidden-{}'.format(bp), _("Hidden"))]
@@ -306,46 +303,51 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 _("Utility classes for showing and hiding content by devices wider than {:.1f} pixels."),
                 _("Utility classes for showing and hiding content for all devices.")
             )
-            glossary_fields.append(GlossaryField(
-                widgets.RadioSelect(choices=choices),
+            field_name = '{}-responsive-utils'.format(bp)
+            responsive_fields[field_name] = ChoiceField(
+                choices=choices,
                 label=label,
-                name='{}-responsive-utils'.format(bp),
                 initial='',
-                help_text=help_text))
-        glossary_fields = [
-            glossary_fields[i + len(glossary_fields) // len(breakpoints) * j]
-            for i in range(0, len(glossary_fields) // len(breakpoints))
-            for j in range(0, len(breakpoints))
-        ]
-        kwargs.update(glossary_fields=glossary_fields)
-        return super(BootstrapColumnPlugin, self).get_form(request, obj, **kwargs)
+                widget=widgets.RadioSelect,
+                required=False,
+                help_text=help_text,
+            )
+        glossary_fields = list(width_fields.keys())
+        glossary_fields.extend(offset_fields.keys())
+        glossary_fields.extend(reorder_fields.keys())
+        glossary_fields.extend(responsive_fields.keys())
+
+        class Meta:
+            entangled_fields = {'glossary': glossary_fields}
+
+        attrs = dict(width_fields, **offset_fields, **reorder_fields, **responsive_fields, Meta=Meta)
+        kwargs['form'] = type('ColumnForm', (EntangledModelFormMixin,), attrs)
+        return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
-        super(BootstrapColumnPlugin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         obj.sanitize_children()
 
     @classmethod
     def sanitize_model(cls, obj):
-        sanitized = super(BootstrapColumnPlugin, cls).sanitize_model(obj)
+        sanitized = super().sanitize_model(obj)
         return sanitized
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super(BootstrapColumnPlugin, cls).get_identifier(obj)
         glossary = obj.get_complete_glossary()
         widths = []
         for bp in glossary.get('breakpoints', []):
             width = obj.glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
-
             if width:
                 widths.append(width)
         if len(widths) > 1:
-            content = _('widths: {0} units').format(' / '.join(widths))
+            content = _("widths: {0} units").format(' / '.join(widths))
         elif len(widths) == 1:
             width = widths[0]
-            content = ungettext_lazy('default width: {0} unit', 'default width: {0} units', width).format(width)
+            content = ungettext_lazy("default width: {0} unit", "default width: {0} units", width).format(width)
         else:
-            content = _('unknown width')
-        return format_html('{0}{1}', identifier, content)
+            content = _("unknown width")
+        return mark_safe(content)
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)

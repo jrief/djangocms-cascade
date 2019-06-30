@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import io
 import json
 import os
 from distutils.version import LooseVersion
-
 from cms import __version__ as CMS_VERSION
 from cms.toolbar.utils import get_toolbar_from_request
 from django import template
@@ -14,7 +10,6 @@ from django.core.cache import caches
 from django.template.exceptions import TemplateDoesNotExist
 from django.contrib.staticfiles import finders
 from django.utils.safestring import mark_safe
-
 from classytags.arguments import Argument
 from classytags.core import Options, Tag
 

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
 import os
 import shutil
@@ -8,7 +5,6 @@ from collections import OrderedDict
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
 from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
@@ -21,7 +17,6 @@ from cmsplugin_cascade.models_base import CascadeModelBase
 from cmsplugin_cascade import app_settings
 
 
-@python_2_unicode_compatible
 class SharedGlossary(models.Model):
     """
     A model class to hold glossary data shared among different plugins.
@@ -56,7 +51,7 @@ class SharedGlossary(models.Model):
         glossary = dict((key, value) for key, value in self.glossary.items()
                         if key in plugin_instance.sharable_fields)
         self.glossary = glossary
-        super(SharedGlossary, self).save(force_insert, force_update, using, update_fields)
+        super().save(force_insert, force_update, using, update_fields)
 
 
 class CascadeElement(CascadeModelBase):
@@ -142,7 +137,6 @@ class SortableInlineCascadeElement(models.Model):
         return ""
 
 
-@python_2_unicode_compatible
 class PluginExtraFields(models.Model):
     """
     Store a set of allowed extra CSS classes and inline styles to be used for Cascade plugins
@@ -179,7 +173,7 @@ class PluginExtraFields(models.Model):
         unique_together = ['plugin_type', 'site']
 
     def __str__(self):
-        return force_text(self.name)
+        return str(self.name)
 
     @cached_property
     def name(self):
@@ -225,7 +219,6 @@ class Segmentation(models.Model):
         db_table = None
 
 
-@python_2_unicode_compatible
 class CascadeClipboard(models.Model):
     """
     A model class to persist, export and re-import the clipboard's content.
@@ -257,15 +250,14 @@ class FilePathField(models.FilePathField):
     """
     def __init__(self, **kwargs):
         kwargs.setdefault('path', app_settings.CMSPLUGIN_CASCADE['icon_font_root'])
-        super(FilePathField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(FilePathField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         del kwargs['path']
         return name, path, args, kwargs
 
 
-@python_2_unicode_compatible
 class IconFont(models.Model):
     """
     Instances of uploaded icon fonts, such as FontAwesone, MaterialIcons, etc.
@@ -280,6 +272,7 @@ class IconFont(models.Model):
     config_data = JSONField()
 
     zip_file = FilerFileField(
+        on_delete=models.CASCADE,
         help_text=_('Upload a zip file created on <a href="http://fontello.com/" target="_blank">Fontello</a> containing fonts.')
     )
 

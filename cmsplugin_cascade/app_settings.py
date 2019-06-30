@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 
 class AppSettings(object):
 
@@ -22,10 +18,11 @@ class AppSettings(object):
         import os
         from collections import OrderedDict
         from importlib import import_module
+        from django.forms.fields import NumberInput
         from django.core.exceptions import ImproperlyConfigured
         from django.utils.translation import ugettext_lazy
-        from cmsplugin_cascade.widgets import (NumberInputWidget, MultipleCascadingSizeWidget, ColorPickerWidget,
-                                               SelectTextAlignWidget, SelectOverflowWidget)
+        from cmsplugin_cascade.fields import (ColorField, SelectTextAlignField, SelectOverflowField, SizeField,
+                                              BorderChoiceField)
 
         if hasattr(self, '_config_CMSPLUGIN_CASCADE'):
             return self._config_CMSPLUGIN_CASCADE
@@ -33,6 +30,7 @@ class AppSettings(object):
         INSTALLED_APPS = self._setting('INSTALLED_APPS')
         config = self._setting('CMSPLUGIN_CASCADE', {})
         config.setdefault('alien_plugins', ['TextPlugin'])
+        config.setdefault('color_picker_with_alpha', False)
         config.setdefault('plugin_prefix', None)
 
         config.setdefault('plugins_with_extra_fields', {})
@@ -41,6 +39,14 @@ class AppSettings(object):
 
             plugins_with_extra_fields = config['plugins_with_extra_fields']
             plugins_with_extra_fields.setdefault('SimpleWrapperPlugin', PluginExtraFieldsConfig())
+            plugins_with_extra_fields.setdefault('HorizontalRulePlugin', PluginExtraFieldsConfig(
+                inline_styles={
+                    'extra_fields:Border': ['border-top'],
+                    'extra_fields:Border Radius': ['border-radius'],
+                    'extra_units:Border Radius': 'px,rem',
+                },
+                allow_override=False,
+            ))
             for plugin, plugin_config in plugins_with_extra_fields.items():
                 if not isinstance(plugin_config, PluginExtraFieldsConfig):
                     msg = "CMSPLUGIN_CASCADE['plugins_with_extra_fields']['{}'] must instantiate a class of type PluginExtraFieldsConfig"
@@ -52,7 +58,7 @@ class AppSettings(object):
         if 'cmsplugin_cascade.sharable' in INSTALLED_APPS:
             config['plugins_with_sharables'].setdefault(
                 'FramedIconPlugin',
-                ('font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius',))
+                ['font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius'])
 
         config['exclude_hiding_plugin'] = list(config.get('exclude_hiding_plugin', []))
         config['exclude_hiding_plugin'].append('SegmentPlugin')
@@ -70,31 +76,37 @@ class AppSettings(object):
         extra_inline_styles = config['extra_inline_styles']
         extra_inline_styles.setdefault(
             'Margins',
-            (['margin-top', 'margin-right', 'margin-bottom', 'margin-left'], MultipleCascadingSizeWidget))
+            (['margin-top', 'margin-right', 'margin-bottom', 'margin-left'], SizeField))
         extra_inline_styles.setdefault(
             'Paddings',
-            (['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], MultipleCascadingSizeWidget))
+            (['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], SizeField))
         extra_inline_styles.setdefault(
             'Widths',
-            (['min-width', 'width', 'max-width'], MultipleCascadingSizeWidget))
+            (['min-width', 'width', 'max-width'], SizeField))
         extra_inline_styles.setdefault(
             'Heights',
-            (['min-height', 'height', 'max-height'], MultipleCascadingSizeWidget))
+            (['min-height', 'height', 'max-height'], SizeField))
         extra_inline_styles.setdefault(
             'Text Alignement',
-            (('text-align',), SelectTextAlignWidget))
+            (['text-align'], SelectTextAlignField))
         extra_inline_styles.setdefault(
             'Font Size',
-            (('font-size',), MultipleCascadingSizeWidget))
+            (['font-size'], SizeField))
         extra_inline_styles.setdefault(
             'Line Height',
-            (('line-height',), NumberInputWidget))
+            (['line-height'], NumberInput))
         extra_inline_styles.setdefault(
             'Colors',
-            (('color', 'background-color',), ColorPickerWidget))
+            (['color', 'background-color'], ColorField))
+        extra_inline_styles.setdefault(
+            'Border',
+            (['border', 'border-top', 'border-right', 'border-bottom', 'border-left'], BorderChoiceField))
+        extra_inline_styles.setdefault(
+            'Border Radius',
+            (['border-radius'], SizeField))
         extra_inline_styles.setdefault(
             'Overflow',
-            (('overflow', 'overflow-x', 'overflow-y',), SelectOverflowWidget))
+            (['overflow', 'overflow-x', 'overflow-y'], SelectOverflowField))
 
         if 'cmsplugin_cascade.segmentation' in INSTALLED_APPS:
             config.setdefault('segmentation_mixins', [
@@ -173,6 +185,7 @@ class AppSettings(object):
                   clips_.append( str(pathlib.Path(relative_path_clipboard_Libary).joinpath(p.relative_to(path))))
                data.update({ str(n):{'folder_name':i ,'list_json_files': clips_, 'timestamp' : timestamp }})
         return self._setting('CASCADE_CLIPBOARD_LIBRARY', (data, ))
+
 
 import sys  # noqa
 app_settings = AppSettings()

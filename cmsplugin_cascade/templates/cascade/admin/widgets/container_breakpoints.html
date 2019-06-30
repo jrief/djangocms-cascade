@@ -1,0 +1,10 @@
+{% load static %}{% spaceless %}
+<div class="form-row">
+{% for group, options, index in widget.optgroups %}{% with widget=options.0 %}
+	<div class="fieldBox">
+		<div class="container-thumbnail">
+			<img src="{% static 'cascade/admin/bootstrap4/' %}{{ widget.value }}.svg" style="height: 55px;" />
+			<div class="label">{% include widget.template_name %}</div>
+		</div>
+	</div>{% endwith %}{% endfor %}
+</div>{% endspaceless %}

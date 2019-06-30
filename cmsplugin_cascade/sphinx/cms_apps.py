@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import io
 import mimetypes
 import os
-
 from django.conf import settings
 from django.conf.urls import url
 from django.core.exceptions import ViewDoesNotExist
@@ -13,7 +9,6 @@ from django.views.generic import TemplateView
 from django.utils.cache import patch_cache_control
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-
 from cms.app_base import CMSApp
 from cms.apphook_pool import apphook_pool
 
@@ -29,13 +24,13 @@ class SphinxDocsView(TemplateView):
                 response = HttpResponse(content=fd.read(), content_type=content_type)
                 patch_cache_control(response, cache_control='max-age=86400')
                 return response
-        return super(SphinxDocsView, self).get(request, page=slug, *args, **kwargs)
+        return super().get(request, page=slug, *args, **kwargs)
 
     def get_template_names(self):
         return [self.request.current_page.get_template()]
 
     def get_context_data(self, page='index.html', **kwargs):
-        context = super(SphinxDocsView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         filename = os.path.join(settings.SPHINX_DOCS_ROOT, page, 'index.html')
         if not os.path.exists(filename):
             raise ViewDoesNotExist("{} does not exist".format(page))

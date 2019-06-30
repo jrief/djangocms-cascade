@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.forms import MediaDefiningClass
 from django.contrib import admin
 from django.utils.module_loading import import_string
-from django.utils.six import with_metaclass
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.models import Segmentation
 
@@ -11,11 +8,11 @@ from cmsplugin_cascade.models import Segmentation
 class SegmentationAdminMetaclass(MediaDefiningClass):
     def __new__(cls, name, bases, attrs):
         bases = tuple(import_string(sgm[1]) for sgm in app_settings.CMSPLUGIN_CASCADE['segmentation_mixins']) + bases
-        new_class = super(SegmentationAdminMetaclass, cls).__new__(cls, name, bases, attrs)
+        new_class = super().__new__(cls, name, bases, attrs)
         return new_class
 
 
-class SegmentationAdmin(with_metaclass(SegmentationAdminMetaclass, admin.ModelAdmin)):
+class SegmentationAdmin(admin.ModelAdmin, metaclass=SegmentationAdminMetaclass):
     class Media:
         js = ('cascade/js/admin/segmentation.js',)
 

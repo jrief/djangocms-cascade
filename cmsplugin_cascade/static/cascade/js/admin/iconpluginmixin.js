@@ -2,9 +2,9 @@ django.jQuery(function($) {
 	'use strict';
 
 	// create class handling the client-side part of plugins inheriting from IconPluginMixin
-	var $selectIconFont = $('#id_glossary_icon_font'),
-	    $symbol = $('#id_glossary_symbol'),
-	    $box = $symbol.closest('.glossary-box');
+	var $selectIconFont = $('#id_icon_font'),
+	    $symbol = $('#id_symbol'),
+	    $box = $symbol.closest('.form-row.field-symbol');
 
 	django.cascade.IconPluginMixin = ring.create(eval(django.cascade.ring_plugin_bases.IconPluginMixin), {
 		constructor: function() {
@@ -17,6 +17,7 @@ django.jQuery(function($) {
 			$selectIconFont.on('change', function() {
 				self.fontChanged();
 			});
+			$box.removeClass('hidden');
 			$box.on('click', 'ul.font-family li', this.selectIcon);
 
 			// set defaults
@@ -47,7 +48,7 @@ django.jQuery(function($) {
 		},
 		renderIcons: function(response) {
 			var css_prefix_text = response.css_prefix_text;
-			$box.find('label[for="query"], h2, ul').remove();
+			$box.find('label[for="query"], h2, ul:not(.errorlist)').remove();
 			$('#fonticon_search_query').remove();
 			$.each(response.families, function(key, icons) {
 				var lis = [];

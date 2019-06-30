@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.contrib import admin
 from django.core.exceptions import ValidationError
+from django.forms import Media
 from django.forms.models import ModelForm
 from django.utils.html import format_html, format_html_join
-from django.utils.text import format_lazy, mark_safe
+from django.utils.text import format_lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.icon.utils import zipfile, unzip_archive
@@ -17,17 +16,17 @@ class UploadIconsForms(ModelForm):
 
     @property
     def media(self):
-        media = super(UploadIconsForms, self).media
+        media = super().media
         try:
             css_url = self.instance.get_stylesheet_url()
-            media.add_css({'all': ['cascade/css/admin/iconfont.css', css_url]})
+            media += Media(css={'all': ['cascade/css/admin/iconfont.css', css_url]})
         except AttributeError:
             pass
         return media
 
     def clean(self):
         fontello_url = 'http://fontello.com/'
-        cleaned_data = super(UploadIconsForms, self).clean()
+        cleaned_data = super().clean()
         if 'zip_file' in self.changed_data:
             try:
                 label = cleaned_data['zip_file'].label
@@ -68,13 +67,13 @@ class IconFontAdmin(admin.ModelAdmin):
         # at least one icon font must be set as default
         if self.model.objects.filter(is_default=True).count() < 1:
             obj.is_default = True
-        super(IconFontAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         if obj.is_default is True and 'is_default' in form.changed_data:
             # maximum one icon font can be set as default
             self.model.objects.exclude(id=obj.id).update(is_default=False)
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = list(super(IconFontAdmin, self).get_readonly_fields(request, obj=obj))
+        readonly_fields = list(super().get_readonly_fields(request, obj=obj))
         if obj:
             readonly_fields.append('preview_icons')
         return readonly_fields
