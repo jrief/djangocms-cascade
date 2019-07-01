@@ -26,33 +26,31 @@ def _get_parsed_data_cascade(file_obj, for_page=False):
         return json.load(raw, object_hook=_object_version_data_hook_cascade)
 
 
-def _deserialize_to_clipboard(request, data):
+def deserialize_to_clipboard(request, data):
     """
     Restore clipboard by creating plugins from given data.
     """
     #parent = None
 
     def plugins_from_data(placeholder, parent, data):
-        language = 'en'
+        #language = 'en'
         for plugin_type, data, children_data in data:
-
-            plugin_class = plugin_pool.get_plugin(plugin_type)
-
+            try:
+                plugin_class = plugin_pool.get_plugin(plugin_type)
+            except Exception:
+                messages.add_message(request, messages.ERROR, "Unable create plugin of type: {}".format(plugin_type))
+                continue
             kwargs = dict(data)
-
             inlines = kwargs.pop('inlines', [])
             shared_glossary = kwargs.pop('shared_glossary', None)
-            instance = add_plugin(
-                placeholder,
-                plugin_class,
-                language,
-                target=parent,
-                **kwargs)
-
+            try:
+                instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
+            except Exception:
+                messages.add_message(request, messages.ERROR, "Unable to create structure for plugin: {}".format(plugin_class.name))
+                continue
             if isinstance(instance, CascadeElement):
-                instance.plugin_class.add_inline_elements(instance, inlines)
-                instance.plugin_class.add_shared_reference(
-                    instance, shared_glossary)
+                    instance.plugin_class.add_inline_elements(instance, inlines)
+                    instance.plugin_class.add_shared_reference(instance, shared_glossary)
 
             plugins_from_data(placeholder, instance, children_data)
 

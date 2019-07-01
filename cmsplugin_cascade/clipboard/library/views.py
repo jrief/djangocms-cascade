@@ -10,7 +10,7 @@ if getattr(settings, 'CASCADE_CLIPS_LIBRARY', None):
     from cmsplugin_cascade import app_settings
     from cms.models import Placeholder
     from cms.utils import get_language_from_request
-    from cmsplugin_cascade.clipboard.library.utils import _deserialize_to_clipboard, _get_parsed_data_cascade
+    from cmsplugin_cascade.clipboard.library.utils import deserialize_to_clipboard, _get_parsed_data_cascade
     from django.contrib.auth.decorators import login_required
 
     from cmsplugin_cascade.cms_toolbars import CascadeToolbar
@@ -35,7 +35,7 @@ if getattr(settings, 'CASCADE_CLIPS_LIBRARY', None):
             language = get_language_from_request(request)
             if 'plugins' in data:
                 if 'plugins' == next(iter(data)):
-                    _deserialize_to_clipboard(request, data)
+                    deserialize_to_clipboard(request, data)
 
                 # Placeholder plugins import
                 placeholder = request.toolbar.clipboard
