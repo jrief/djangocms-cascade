@@ -129,3 +129,4 @@ class CascadeToolbar(CMSToolbar, ):
                     'z-index': '140'})
 
             admin_menu.add_item(item, position)
+        pass
