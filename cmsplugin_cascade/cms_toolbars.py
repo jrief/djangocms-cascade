@@ -91,7 +91,7 @@ class AjaxCustomLogicItem(AjaxItem):
 
 
 @toolbar_pool.register
-class CascadeToolbar(CMSToolbar, ):
+class CascadeToolbar(CMSToolbar):
     clips_title = _("Clipboard Library")
 
     def populate(self):
@@ -129,4 +129,3 @@ class CascadeToolbar(CMSToolbar, ):
                     'z-index': '140'})
 
             admin_menu.add_item(item, position)
-        pass

@@ -83,7 +83,7 @@ if getattr(settings, 'CASCADE_CLIPS_LIBRARY', None):
         if not pk:
             pk = 1
         context = {'folder_id': str(pk), 'folder_name': app_settings.CASCADE_CLIPBOARD_LIBRARY[0][str(
-            pk)]['folder_name'], 'title_clips': CascadeToolbar.clips_title}
+            pk)]['folder_name'], 'title_clips': "Clipboard Library"}
         context.update({'clips': app_settings.CASCADE_CLIPBOARD_LIBRARY[0]})
         return HttpResponse(
             render(
