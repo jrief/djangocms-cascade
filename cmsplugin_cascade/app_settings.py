@@ -1,5 +1,3 @@
-from django.utils.lru_cache import lru_cache
-
 class AppSettings(object):
 
     def _setting(self, name, default=None):
@@ -165,8 +163,6 @@ class AppSettings(object):
         """
         return 50
 
-    # @property
-   # @lru_cache()
     @property
     def CASCADE_CLIPBOARD_LIBRARY(self):
         if self._setting('CASCADE_CLIPS_LIBRARY'):

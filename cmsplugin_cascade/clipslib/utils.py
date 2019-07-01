@@ -7,12 +7,6 @@ from djangocms_transfer.datastructures import ArchivedPlaceholder, ArchivedPlugi
 def _object_version_data_hook_cascade(data, for_page=False):
     if not data:
         return data
-    if 'pluginfs' in data:
-        return ArchivedPlaceholder(
-            slot=data['placeholder'],
-            plugins=data['plugins'],
-        )
-
     if 'plugin_type' in data:
         return ArchivedPlugin(**data)
     return data

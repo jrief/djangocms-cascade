@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 class CascadeConfig(AppConfig):
     name = 'cmsplugin_cascade'
     verbose_name = _("django CMS Cascade")
-    default_permissions = ('add', 'change', 'delete') 
+    default_permissions = ('add', 'change', 'delete')
 
     def ready(self):
         stylesSet = str(settings.CKEDITOR_SETTINGS.get('stylesSet'))
@@ -103,4 +103,3 @@ class CascadeConfig(AppConfig):
         cascade_element = apps.get_model(self.label, 'cascadeelement')
         element_ctype = ContentType.objects.get_for_model(cascade_element)
         Permission.objects.filter(content_type=element_ctype, codename__in=codenames).delete()
-        

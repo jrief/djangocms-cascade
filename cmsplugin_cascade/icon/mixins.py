@@ -39,6 +39,7 @@ class IconPluginMixin(CascadePluginMixinBase):
         return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
+
         context = super(IconPluginMixin, self).render(context, instance, placeholder)
         icon_font = get_related_object(instance.glossary, 'icon_font')
         symbol = instance.glossary.get('symbol')
