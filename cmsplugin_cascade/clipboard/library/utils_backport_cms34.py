@@ -1,4 +1,23 @@
+import json
 from cms.utils.plugins import get_plugin_class
+from django.utils.translation import override as force_language, ugettext
+from django.utils.encoding import force_text
+from cms.toolbar.utils import get_toolbar_from_request
+
+
+def get_plugin_toolbar_info(plugin, children=None, parents=None):
+    data = plugin.get_plugin_info(children=children, parents=parents)
+    help_text = ugettext(
+        'Add plugin to %(plugin_name)s'
+    ) % {'plugin_name': data['plugin_name']}
+
+    data['onClose'] = False
+    data['addPluginHelpTitle'] = force_text(help_text)
+    data['plugin_order'] = ''
+    data['plugin_restriction'] = children or []
+    data['plugin_parent_restriction'] = parents or []
+    return data
+
 
 def get_plugin_restrictions(plugin, page=None, restrictions_cache=None):
     if restrictions_cache is None:
@@ -82,4 +101,5 @@ def get_plugin_tree_as_json(request, plugins):
             }
             tree_structure.append(template.render(context))
     tree_data.reverse()
-    return json.dumps({'html': '\n'.join(tree_structure), 'plugins': tree_data})
+    return json.dumps(
+        {'html': '\n'.join(tree_structure), 'plugins': tree_data})

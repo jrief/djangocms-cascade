@@ -1,8 +1,13 @@
 from cms.api import add_plugin
 from cms.utils import get_language_from_request
 from cms.models.placeholderpluginmodel import PlaceholderReference
-from djangocms_transfer.datastructures import ArchivedPlaceholder, ArchivedPlugin
+from cms.plugin_pool import plugin_pool
+from djangocms_transfer.datastructures import ArchivedPlugin
 #from djangocms_transfer.forms import  _get_parsed_data
+from djangocms_text_ckeditor.models import Text
+from cmsplugin_cascade.models import CascadeElement
+from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin_tags
+
 
 def _object_version_data_hook_cascade(data, for_page=False):
     if not data:
@@ -25,7 +30,7 @@ def _deserialize_to_clipboard(request, data):
     """
     Restore clipboard by creating plugins from given data.
     """
-    parent = None
+    #parent = None
 
     def plugins_from_data(placeholder, parent, data):
         language = 'en'
@@ -92,4 +97,3 @@ def _deserialize_to_clipboard(request, data):
         if 'plugins' in data:
             data = data['plugins']
         plugins_from_data(root_plugin.placeholder_ref, None, data)
-
