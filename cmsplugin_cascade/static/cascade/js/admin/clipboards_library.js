@@ -99,3 +99,4 @@ function ajaxCopyToClipboard(event, that, url, paramater) {
             $('#modal_dialog').modal('show');
         }
     });
+}
