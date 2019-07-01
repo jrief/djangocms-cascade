@@ -1,3 +1,5 @@
+from pkg_resources import get_distribution
+from django.conf import settings
 from django.core.cache import caches
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import get_template
@@ -10,11 +12,16 @@ from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin
-from djangocms_transfer.forms import  PluginImportForm ,ExportImportForm, _object_version_data_hook
-from djangocms_transfer.importer import  import_plugins
+
 import json
 from cms.models import CMSPlugin, Placeholder
 from cms.models.placeholderpluginmodel import PlaceholderReference
+
+
+
+from djangocms_transfer.forms import  PluginImportForm ,ExportImportForm, _object_version_data_hook
+from djangocms_transfer.importer import  import_plugins
+
 
 __all__ = ['register_stride', 'StrideContentRenderer']
 

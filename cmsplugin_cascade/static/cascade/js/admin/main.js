@@ -20,10 +20,10 @@ var storage_logic = data_post.storage_logic;
 var csrf = data_post.csrfmiddlewaretoken;
 
 if (storage_logic === 'true' && sessionStorage.getItem('folder_current_id')) {
-  url = url + sessionStorage.getItem('folder_current_id');
+  url = url + sessionStorage.getItem('folder_current_id') +'/';
 }
  else {
-  url = url + 1;
+  url = url + 1 + '/';
 };
 
 ajax_cascade_main( url, data_style, csrf);

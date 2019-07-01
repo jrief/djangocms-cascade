@@ -1,19 +1,17 @@
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+from django.utils.encoding import force_text
 from cms.extensions.toolbar import ExtensionToolbar
 from cms.toolbar_pool import toolbar_pool
 from cms.toolbar.items import Break
 from cms.cms_toolbars import PAGE_MENU_SECOND_BREAK, ADMIN_MENU_IDENTIFIER, CLIPBOARD_BREAK 
 from cmsplugin_cascade.models import CascadePage
 from cms.toolbar_base import CMSToolbar
-import six
-from abc import ABCMeta
-from cmsplugin_cascade import views
-from cms.toolbar.items import BaseButton , BaseItem, ButtonList,  ModalButton,  ModalItem , BaseItem , LinkItem,  ToolbarAPIMixin, AjaxItem
-     #   url(r'^libclipsd/([0-9])$', views.LibClipsFrame),  ##  lib view
-from django.utils.encoding import force_text
+from cmsplugin_cascade.clipslib import views
+from cms.toolbar.items import AjaxItem
+from cms.utils.urlutils import admin_reverse
 import json
 
-        
 @toolbar_pool.register
 class CascadePageToolbar(ExtensionToolbar):
     model = CascadePage
@@ -27,6 +25,7 @@ class CascadePageToolbar(ExtensionToolbar):
                 position = current_page_menu.find_first(Break, identifier=PAGE_MENU_SECOND_BREAK)
                 disabled = not self.toolbar.edit_mode_active
                 current_page_menu.add_modal_item(_("Extra Page Fields"), position=position, url=url, disabled=disabled)
+
 
 class AjaxCustomLogicItem(AjaxItem):
     template = "cascade/admin/library_clips/item_ajax_cascade.html"
@@ -50,8 +49,6 @@ class AjaxCustomLogicItem(AjaxItem):
         self.identifier= identifier
         self.data_modal_style = data_modal_style
         self.name_func_js_filter = name_func_js_filter
-
-
 
     def __repr__(self):
         return '<AjaxItem:%s>' % force_text(self.name)
@@ -82,28 +79,25 @@ class CascadeToolbar(  CMSToolbar, ):
     clips_title = _("Clipboard Library")
 
     def populate(self):
+        if getattr( settings, 'CASCADE_CLIPS_LIBRARY', None):
+            admin_menu = self.toolbar.get_or_create_menu(ADMIN_MENU_IDENTIFIER, _('Site'))
+            self.admin_menu = self.toolbar.get_or_create_menu(ADMIN_MENU_IDENTIFIER, _('Site'))
+            position = admin_menu.find_first(Break, identifier=CLIPBOARD_BREAK )
 
-        admin_menu = self.toolbar.get_or_create_menu(ADMIN_MENU_IDENTIFIER, _('Site'))
-        self.admin_menu = self.toolbar.get_or_create_menu(ADMIN_MENU_IDENTIFIER, _('Site'))
-        position = admin_menu.find_first(Break, identifier=CLIPBOARD_BREAK )
+            #admin_menu.add_link_item(_('Library Clips'), url='/cascade_libclips/1/', extra_classes=('cms-show-clipslib',), position=position )
 
-        #admin_menu.add_link_item(_('Library Clips'), url='/cascade_libclips/1', extra_classes=('cms-show-clipslib',), position=position )
+            anon_can_access = True
+            cliptree_navbars= False
+            csrf_token=self.toolbar.csrf_token
+            
+            item = AjaxCustomLogicItem(identifier="clips",
+              extra_classes=["extra_wrapper_classes"],
+              name=self.clips_title, action="/cascade_clips/",
+              name_func_js_filter="ClipsStorageLogic" , 
+              method='POST', 
+              csrf_token=csrf_token,
+              data={ 'storage_logic': 'false'  },
+              data_modal_style={ 'minWidth': '325px', 'minHeight': '100', 'height':'95%', 'width': '40%', 'left': '0px',  'top': '48px', 'margin': '0', 'z-index': '140' }
+              )
 
-        anon_can_access = True
-        cliptree_navbars= False
-        on_success = self.toolbar.REFRESH_PAGE if anon_can_access else '/'
-        csrf_token=self.toolbar.csrf_token
-        
-        item = AjaxCustomLogicItem(identifier="clips",
-          extra_classes=["extra_wrapper_classes"],
-          name=self.clips_title, action="/cascade_clips/",
-          name_func_js_filter="ClipsStorageLogic" , 
-          method='POST', 
-          csrf_token=csrf_token,
-          data={ 'storage_logic': 'false'  },
-          data_modal_style={ 'minWidth': '325px', 'minHeight': '100', 'height':'95%', 'width': '40%', 'left': '0px',  'top': '48px', 'margin': '0', 'z-index': '140' }
-          )
-
-        admin_menu.add_item(item, position) 
-
-
+            admin_menu.add_item(item, position) 

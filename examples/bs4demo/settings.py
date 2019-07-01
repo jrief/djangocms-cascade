@@ -52,7 +52,9 @@ INSTALLED_APPS = [
     'cmsplugin_cascade.icon',
     'cmsplugin_cascade.sharable',
     'cmsplugin_cascade.segmentation',
+    'djangocms_history',
     'cms',
+    'django_extensions',
     'cms_bootstrap',
     'adminsortable2',
     'menus',
@@ -218,7 +220,6 @@ CMSPLUGIN_CASCADE = {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
         'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
-        'BootstrapButtonPlugin': ('button_type', 'button_size', 'button_options', 'icon_font',),
     },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
     'allow_plugin_hiding': True,
@@ -248,6 +249,8 @@ CKEDITOR_SETTINGS = {
     'toolbar': 'CMS',
     'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
 }
+
+CASCADE_CLIPS_LIBRARY = True
 
 SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'
 SELECT2_JS = 'node_modules/select2/dist/js/select2.min.js'

@@ -10,14 +10,13 @@ from django.utils.translation import ugettext_lazy as _
 class CascadeConfig(AppConfig):
     name = 'cmsplugin_cascade'
     verbose_name = _("django CMS Cascade")
-    default_permissions = ('add', 'change', 'delete')
+    default_permissions = ('add', 'change', 'delete') 
 
     def ready(self):
         stylesSet = str(settings.CKEDITOR_SETTINGS.get('stylesSet'))
         if stylesSet != 'default:{}'.format(reverse('admin:cascade_texteditor_config')):
             msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))`"
             raise ImproperlyConfigured(msg)
-
         pre_migrate.connect(self.__class__.pre_migrate, sender=self)
         post_migrate.connect(self.__class__.post_migrate, sender=self)
 
@@ -104,3 +103,4 @@ class CascadeConfig(AppConfig):
         cascade_element = apps.get_model(self.label, 'cascadeelement')
         element_ctype = ContentType.objects.get_for_model(cascade_element)
         Permission.objects.filter(content_type=element_ctype, codename__in=codenames).delete()
+        

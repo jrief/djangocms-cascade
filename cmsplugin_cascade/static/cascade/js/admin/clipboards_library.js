@@ -21,7 +21,7 @@ var paramater;
 $(".btn").removeClass("active");
 $(this).addClass("active");
 
-var id_folder=url.substring(url.lastIndexOf('/') + 1);
+ var id_folder=url.substring(url.lastIndexOf('/') + 1);
 var timestamp_storage_folder = 'timestamp_storage_'+ id_folder ; 
 timestamp_storage = sessionStorage.getItem(timestamp_storage_folder);
 sessionStorage.setItem('folder_current_id', id_folder );
@@ -46,7 +46,7 @@ var data = {
 
 $.ajax({
     type: 'POST',
-    url: '/cascade_libclips_folder/'+id_folder ,
+    url: '/cascade_libclips_folder/'+id_folder+'/' ,
     post: postd,
     data: data,
     success: function(response) {
