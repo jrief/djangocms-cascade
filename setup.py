@@ -34,7 +34,7 @@ setup(
         'django-cms>=3.5,<3.7',
         'django-entangled',
         'djangocms-text-ckeditor>=3.7',
-        'jsonfield',
+        'jsonfield2',
         'requests',
     ],
     license='MIT',
