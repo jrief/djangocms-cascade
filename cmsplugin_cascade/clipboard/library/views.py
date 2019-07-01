@@ -1,23 +1,25 @@
-import json
-from django.http import JsonResponse, HttpResponse
 from django.conf import settings
-from django.contrib.staticfiles import finders
-from django.views import View
-from djangocms_transfer.importer import import_plugins
-from django.shortcuts import render
-from cmsplugin_cascade import app_settings
-from cms.models import Placeholder
-from cms.utils import get_language_from_request
-from cmsplugin_cascade.cms_toolbars import CascadeToolbar
-from cmsplugin_cascade.clipboard.library.utils import _deserialize_to_clipboard, _get_parsed_data_cascade
-from django.contrib.auth.decorators import login_required
-
-try:
-    from cms.toolbar.utils import get_plugin_tree_as_json
-except BaseException:
-    from cmsplugin_cascade.clipslib.utils_backport_cms34 import get_plugin_tree_as_json
 
 if getattr(settings, 'CASCADE_CLIPS_LIBRARY', None):
+    import json
+    from django.http import JsonResponse, HttpResponse
+    from django.contrib.staticfiles import finders
+    from django.views import View
+    from djangocms_transfer.importer import import_plugins
+    from django.shortcuts import render
+    from cmsplugin_cascade import app_settings
+    from cms.models import Placeholder
+    from cms.utils import get_language_from_request
+    from cmsplugin_cascade.clipboard.library.utils import _deserialize_to_clipboard, _get_parsed_data_cascade
+    from django.contrib.auth.decorators import login_required
+
+    from cmsplugin_cascade.cms_toolbars import CascadeToolbar
+
+    try:
+        from cms.toolbar.utils import get_plugin_tree_as_json
+    except BaseException:
+        from cmsplugin_cascade.clipslib.utils_backport_cms34 import get_plugin_tree_as_json
+
     class CascadeCopyToClipboard(View):
         template_name = "cascade/admin/library_clips/clipboard_cascade.html"
 
