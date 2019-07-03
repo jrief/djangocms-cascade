@@ -169,7 +169,6 @@ class AppSettings(object):
             import os
             import pathlib
             from django.contrib.staticfiles import finders
-            from datetime import datetime
             relative_path_clipboard_Libary='cascade/admin/library_clips/'
             path = finders.find(relative_path_clipboard_Libary)
             data={}
@@ -181,7 +180,6 @@ class AppSettings(object):
                    files_path=list(pathlib.Path(list_subfolder_path).glob('**/*.json'))
                    for p in files_path:
                       timestamp=int(os.path.getctime(list_subfolder_path))
-                      truce=(relative_path_clipboard_Libary)
                       clips_.append( str(pathlib.Path(relative_path_clipboard_Libary).joinpath(p.relative_to(path))))
                    data.update({ str(n):{'folder_name':i ,'list_json_files': clips_, 'timestamp' : timestamp }})
             return self._setting('CASCADE_CLIPBOARD_LIBRARY', (data, ))
