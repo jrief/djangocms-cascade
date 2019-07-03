@@ -174,3 +174,4 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         return attributes
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
+
