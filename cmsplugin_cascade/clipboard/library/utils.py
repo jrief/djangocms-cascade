@@ -7,7 +7,7 @@ from djangocms_transfer.datastructures import ArchivedPlugin
 from djangocms_text_ckeditor.models import Text
 from cmsplugin_cascade.models import CascadeElement
 from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin_tags
-
+from django.contrib import messages
 
 def _object_version_data_hook_cascade(data, for_page=False):
     if not data:
@@ -23,14 +23,14 @@ def _get_parsed_data_cascade(file_obj, for_page=False):
 
     with io.open(file_obj, encoding='utf-8-sig') as json_data:
         raw = json_data
-        return json.load(raw, object_hook=_object_version_data_hook_cascade)
+        json_to_dict = json.load(raw, object_hook=_object_version_data_hook_cascade)
+        return json_to_dict
 
 
 def deserialize_to_clipboard(request, data):
     """
     Restore clipboard by creating plugins from given data.
     """
-    #parent = None
 
     def plugins_from_data(placeholder, parent, data):
         #language = 'en'

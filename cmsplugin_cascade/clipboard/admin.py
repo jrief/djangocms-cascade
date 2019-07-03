@@ -6,16 +6,14 @@ from django.forms.utils import flatatt
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
-from cms.api import add_plugin
 from cms.models.placeholderpluginmodel import PlaceholderReference
-from cms.plugin_pool import plugin_pool
 from cms.utils import get_language_from_request
 
 from jsonfield.fields import JSONField
 from djangocms_text_ckeditor.models import Text
-from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin_tags
 
-from cmsplugin_cascade.models import CascadeElement, CascadeClipboard
+
+from cmsplugin_cascade.models import CascadeClipboard
 from cmsplugin_cascade.clipboard.library.utils import deserialize_to_clipboard
 
 class JSONAdminWidget(widgets.Textarea):

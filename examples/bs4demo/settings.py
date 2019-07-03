@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'djangocms_text_ckeditor',
     'django_select2',
+    'djangocms_transfer',
     'cmsplugin_cascade',
     'cmsplugin_cascade.clipboard',
     'cmsplugin_cascade.extra_fields',

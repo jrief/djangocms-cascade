@@ -7,9 +7,7 @@ from cms.toolbar.items import Break
 from cms.cms_toolbars import PAGE_MENU_SECOND_BREAK, ADMIN_MENU_IDENTIFIER, CLIPBOARD_BREAK
 from cmsplugin_cascade.models import CascadePage
 from cms.toolbar_base import CMSToolbar
-from cmsplugin_cascade.clipboard.library import views
 from cms.toolbar.items import AjaxItem
-from cms.utils.urlutils import admin_reverse
 import json
 
 
@@ -102,22 +100,19 @@ class CascadeToolbar(CMSToolbar):
                 ADMIN_MENU_IDENTIFIER, _('Site'))
             position = admin_menu.find_first(Break, identifier=CLIPBOARD_BREAK)
 
-            #admin_menu.add_link_item(_('Library Clips'), url='/cascade_libclips/1/', extra_classes=('cms-show-clipslib',), position=position )
-
-            anon_can_access = True
-            cliptree_navbars = False
             csrf_token = self.toolbar.csrf_token
 
             item = AjaxCustomLogicItem(
                 identifier="clips",
                 extra_classes=["extra_wrapper_classes"],
                 name=self.clips_title,
+                #reverse not used here because js add /cascade_clips/id
                 action="/cascade_clips/",
                 name_func_js_filter="ClipsStorageLogic",
                 method='POST',
                 csrf_token=csrf_token,
                 data={
-                    'storage_logic': 'false'},
+                    'storage_logic': 'true'},
                 data_modal_style={
                     'minWidth': '325px',
                     'minHeight': '100',

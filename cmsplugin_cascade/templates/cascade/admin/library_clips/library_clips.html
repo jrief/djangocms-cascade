@@ -22,7 +22,7 @@
 <div class="text-center p-2" >
 {%if folder_id %}
 <title> {{ folder_name }} Clips</title>
-     <a  class="btn btn-light" href="/cascade_clips/{{ folder_id }}" target="_blank" ><b>{{ clips_title }}</b></a>
+     <a  class="btn btn-light" href="/cascade_clips/{{ folder_id }}" target="_blank" ><b>Clipboard Library</b></a>
 {% endif %}
 {% for c , v in clips.items %}
   {% with clip_id=c|stringformat:"i" %}
