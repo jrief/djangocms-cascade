@@ -30,7 +30,7 @@ django.jQuery(function($) {
 				$this.blur();
 			} else {
 				picker = AColorPicker.createPicker($this.parent(), options);
-			 	$('input[type="number"]').css("cssText", "padding: 2px 0 !important;");
+			 	$('.a-color-picker input[type="number"]').css("cssText", "padding: 2px 0 !important;");
 				picker.on('change', function(picker, color) {
 					$colorInput.val(AColorPicker.parseColor(color, 'hex'));
 					$this.val(color);
