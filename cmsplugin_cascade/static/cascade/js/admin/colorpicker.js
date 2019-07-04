@@ -22,7 +22,7 @@ django.jQuery(function($) {
 		$('.cascade-colorpicker > input.cascade-rgba').on('click', function(evt) {
 			var $this = $(this);
 			var $colorInput = $this.siblings('input[type="color"]');
-			var options = {color: $this.val(), showAlpha: $this.data('with_alpha')};
+			var options = {color: $this.val(), showAlpha: true};
 			if (picker) {
 				picker.destroy();
 			}
