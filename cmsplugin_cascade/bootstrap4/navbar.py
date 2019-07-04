@@ -149,18 +149,6 @@ class BootstrapNavBrandImagePlugin(BootstrapPluginBase):
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapNavBrandImagePlugin, self).render(context, instance, placeholder)
-        print(instance.parent.__dict__)
-        print("instance.parent.parent.__dict__")
-        print(instance.parent.parent.__dict__)
-        print(dir(instance.parent))
-        print( instance.parent.parent.get_bound_plugin().glossary)
-        parent_glossary = instance.parent.get_bound_plugin().glossary
-        query = Q(plugin_type='BootstrapContainerPlugin') | Q(plugin_type='BootstrapColumnPlugin') \
-         | Q(plugin_type='BootstrapJumbotronPlugin') | Q(plugin_type='BootstrapNavbarPlugin')
-        print("instance.get_ancestors().order_by('depth').filter(query).last()")
-        print(instance.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin().get_grid_instance())
-        parent_glossary = instance.get_ancestors().order_by('depth').filter(query)
-
         try:
             parent_glossary = instance.parent.get_bound_plugin().glossary
             instance.glossary.update(responsive_heights=parent_glossary['container_max_heights'])
