@@ -13,6 +13,7 @@ class ImageFormMixin(EntangledModelFormMixin):
         Image.objects.all(),
         to_field_name='image_file',
         label=_("Image"),
+        required=True #necessary if plugin is Navbar because it override form required to false
     )
 
     image_title = CharField(
@@ -32,17 +33,17 @@ class ImageFormMixin(EntangledModelFormMixin):
     class Meta:
         entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', '_image_properties']}
 
-    def clean(self):
+    def clean(self,):
         cleaned_data = super().clean()
         image_file = cleaned_data.get('image_file')
-        if not image_file:
+        if not image_file and self.fields['image_file'].required is not False:
             raise ValidationError(_("No image has been selected."))
-        # _image_properties are just a cached representation, maybe useless
-        cleaned_data['_image_properties'] = {
-            'width': image_file._width,
-            'height': image_file._height,
-            'exif_orientation': image_file.exif.get('Orientation', 1),
-        }
+            # _image_properties are just a cached representation, maybe useless
+            cleaned_data['_image_properties'] = {
+                'width': image_file._width,
+                'height': image_file._height,
+                'exif_orientation': image_file.exif.get('Orientation', 1),
+            }
         return cleaned_data
 
 
