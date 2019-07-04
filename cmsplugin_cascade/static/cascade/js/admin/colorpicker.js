@@ -7,10 +7,14 @@ django.jQuery(function($) {
 		var $colorInput = $(checkboxInput).siblings('input[type="color"]');
 		if (checkboxInput.checked || checkboxInput.disabled) {
 			$rgbaInput.addClass('disabled');
-			$colorInput.addClass('disabled');
+			if (!AColorPicker) {
+				$colorInput.addClass('disabled');
+				}
 		} else {
 			$rgbaInput.removeClass('disabled');
-			$colorInput.removeClass('disabled');
+			if (!AColorPicker) {
+				$colorInput.removeClass('disabled');
+				}
 		}
 	}
 
@@ -21,17 +25,20 @@ django.jQuery(function($) {
 			var options = {color: $this.val(), showAlpha: $this.data('with_alpha')};
 			if (picker) {
 				picker.destroy();
-				picker = null;
 			}
 			if ($this.hasClass('disabled')) {
 				$this.blur();
 			} else {
 				picker = AColorPicker.createPicker($this.parent(), options);
+			 	$('.a-color-picker input[type="number"]').css("cssText", "padding: 2px 0 !important;");
 				picker.on('change', function(picker, color) {
 					$colorInput.val(AColorPicker.parseColor(color, 'hex'));
 					$this.val(color);
 				});
 			}
+			evt.preventDefault();
+		});
+		$('.cascade-colorpicker > input[type="color"]').on('click', function(evt) {
 			evt.preventDefault();
 		});
 	} else {
