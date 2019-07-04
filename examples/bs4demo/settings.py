@@ -218,6 +218,8 @@ CMSPLUGIN_CASCADE = {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
         'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
+
+        
         'BootstrapButtonPlugin': ('button_type', 'button_size', 'button_options', 'icon_font',),
     },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
@@ -227,6 +229,11 @@ CMSPLUGIN_CASCADE = {
 }
 
 CMS_PLACEHOLDER_CONF = {
+
+    'Header Content': {
+        'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin','BootstrapNavbarPlugin'],
+    },
+
     # this placeholder is used in templates/main.html, it shows how to
     # scaffold a djangoCMS page starting with an empty placeholder
     'Main Content': {
