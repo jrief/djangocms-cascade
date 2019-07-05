@@ -39,6 +39,7 @@ class ImageFormMixin(EntangledModelFormMixin):
         if not image_file and self.fields['image_file'].required is not False:
             raise ValidationError(_("No image has been selected."))
             # _image_properties are just a cached representation, maybe useless
+        if hasattr(image_file,'_width' ):
             cleaned_data['_image_properties'] = {
                 'width': image_file._width,
                 'height': image_file._height,
