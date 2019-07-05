@@ -30,6 +30,15 @@ class TextLinkPlugin(LinkPluginBase):
     class Media:
         js = ['cascade/js/admin/textlinkplugin.js']
 
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(TextLinkPlugin, cls).get_css_classes(obj)
+        if obj.parent.plugin_type == 'TextPlugin' and obj.parent.parent.plugin_type == 'BootstrapNavItemsPlugin' :
+            css_classes.insert(0,'nav-link navbar-text')
+        return css_classes
+
+
     @classmethod
     def get_identifier(cls, obj):
         return mark_safe(obj.glossary.get('link_content', ''))
