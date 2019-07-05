@@ -1,25 +1,90 @@
-from django.db.models import Q
+ 
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-
-
+ 
 from .plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap4.jumbotron import ImageBackgroundMixin, JumbotronFormMixin
-from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.container import ContainerFormMixin, ContainerGridMixin
 from cmsplugin_cascade.bootstrap4.picture import get_picture_elements
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 
+from cmsplugin_cascade.bootstrap4.container import get_widget_choices, ContainerBreakpointsWidget
+
 from .grid import Breakpoint
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
 
+from django.forms.fields import BooleanField, ChoiceField
+
+from django.utils.translation import ugettext_lazy as _
+from cms.plugin_pool import plugin_pool
+from entangled.forms import EntangledModelFormMixin
 
 import logging
 logger = logging.getLogger('cascade')
 
 
-class BootstrapNavbarFormMixin(JumbotronFormMixin):
+class NavFormMixin(EntangledModelFormMixin):
+    OPTION_NAV_COLLAPSE = [(c, c) for c in [ "inherit", "navbar-expand","navbar-expand-sm", "navbar-expand-md","navbar-expand-lg", "navbar-expand-xl"] ]
+    OPTION_NAV_COLOR = [(c, c) for c in [ "navbar-light", "navbar-dark"]]
+    OPTION_NAV_BG_COLOR = [ "bg-primary", "bg-secondary","bg-success", "bg-danger", "bg-warning", "bg-info" ,"bg-light", "bg-dark" , "bg-white", "bg-transparent"] 
+    OPTION_NAV_BG_GRADIENT = [ "bg-gradient-primary", "bg-gradient-secondary", "bg-gradient-success", "bg-gradient-danger", "bg-gradient-warning", "bg-gradient-info", "bg-gradient-light", "bg-gradient-dark"]
+    OPTION_NAV_BG_MIX = OPTION_NAV_BG_COLOR + OPTION_NAV_BG_GRADIENT
+    OPTION_NAV_PLACEMENTS=["inherit", "fixed-top" , "fixed-bottom" , "sticky-top"]
+
+    navbar_collapse = ChoiceField(
+        label=_('navbar collapse'),
+        choices=OPTION_NAV_COLLAPSE,
+        help_text=_("Adjust interval for the  navbar_collapse.")
+    )
+
+    navbar_color = ChoiceField(
+        label=_('navbar bg color'),
+        choices=OPTION_NAV_COLOR,
+        help_text=_("Adjust interval for the  navbar color."),
+    )
+
+    navbar_bg_color = ChoiceField(
+        label=_('navbar-bg'),
+        choices=[(c, c) for c in OPTION_NAV_BG_MIX ],
+        help_text=_("Adjust interval for the  navbar background color."),
+    )
+
+    navbar_placement = ChoiceField(
+        label=_('navbar-place'),
+        choices=[(c, c) for c in OPTION_NAV_PLACEMENTS],
+        help_text=_("Adjust interval placement."),
+    )
+
+    breakpoints = ChoiceField(
+        label=_('Available Breakpoints'),
+        choices=get_widget_choices(),
+        widget=ContainerBreakpointsWidget(choices=get_widget_choices()),
+        initial=[bp.name for bp in app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds'].keys()],
+        help_text=_("Supported display widths for Bootstrap's grid system."),
+    )
+
+    fluid = BooleanField(
+        label=_('Fluid Container'),
+        initial=False,
+        required=False,
+        help_text=_("Changing your outermost '.container' to '.container-fluid'.")
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['navbar_collapse', 'navbar_color', 'navbar_bg_color', 'navbar_placement', 'breakpoints', 'fluid' ]}
+
+    """
+    def clean_breapoints(self):
+        # TODO: check this
+        if len(self.cleaned_data['glossary']['breakpoints']) == 0:
+            raise ValidationError(_("At least one breakpoint must be selected."))
+        return self.cleaned_data['glossary']
+    """
+
+
+
+class BootstrapNavbarFormMixin(NavFormMixin, JumbotronFormMixin):
     pass
 
 
@@ -35,12 +100,7 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
     #glossary_variables = ['container_max_widths', 'media_queries']
     raw_id_fields = ['image_file']
     ring_plugin = 'BootstrapNavbarPlugin'
-    OPTION_NAV_COLLAPSE = [(c, c) for c in [ "inherit", "navbar-expand","navbar-expand-sm", "navbar-expand-md","navbar-expand-lg", "navbar-expand-xl"] ]
-    OPTION_NAV_COLOR = [(c, c) for c in [ "navbar-light", "navbar-dark"]]
-    OPTION_NAV_BG_COLOR = [ "bg-primary", "bg-secondary","bg-success", "bg-danger", "bg-warning", "bg-info" ,"bg-light", "bg-dark" , "bg-white", "bg-transparent"] 
-    OPTION_NAV_BG_GRADIENT = [ "bg-gradient-primary", "bg-gradient-secondary", "bg-gradient-success", "bg-gradient-danger", "bg-gradient-warning", "bg-gradient-info", "bg-gradient-light", "bg-gradient-dark"]
-    OPTION_NAV_BG_MIX = OPTION_NAV_BG_COLOR + OPTION_NAV_BG_GRADIENT
-    OPTION_NAV_PLACEMENTS=["inherit", "fixed-top" , "fixed-bottom" , "sticky-top"]
+
 
     class Media:
         js = ['cascade/js/admin/navbarplugin.js']
@@ -54,7 +114,7 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
             kwargs['form'] = BootstrapNavbarFormMixin
             kwargs['form'].declared_fields['image_file'].required=False
         return super().get_form(request, obj, **kwargs)
-
+    """
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
         try:
@@ -73,7 +133,7 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
             except Exception as exc:
                 logger.warning("Unable generate picture elements. Reason: {}".format(exc))        
         return self.super(BootstrapNavbarPlugin, self).render(context, instance, placeholder)
-
+    """
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = False
@@ -116,12 +176,16 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        identifier = super().get_identifier(obj)
         try:
             content = obj.image.name or obj.image.original_filename
         except AttributeError:
             content = _("Without background image")
-        return format_html('{0}{1}', identifier, content)
+        identifier = super(BootstrapNavbarPlugin, cls).get_identifier(obj)
+        css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
+        return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1} {2}</div>',
+identifier, css_classes_without_default, content)
+
+
 
 
 @plugin_pool.register_plugin
@@ -263,5 +327,5 @@ class BootstrapNavbarNavLinkPlugin(BootstrapPluginBase):
 class BootstrapNavbarToogler(BootstrapPluginBase):
     name = _("Nav toogler")
     default_css_class = ''
-    parent_classes = [' BootstrapNavbarPlugin'] 
+    parent_classes = ['BootstrapNavbarPlugin'] 
     render_template = 'cascade/bootstrap4/navbar_toogler.html'
