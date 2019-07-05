@@ -155,10 +155,10 @@ class BootstrapUtilities(type):
         ]
         for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
             if bp == Breakpoint.xs:
-                choices = [(c.format(''),  l ) for c, l in choices_format]
+                choices = [ (c.format(''),  l ) for c, l in choices_format]
                 choices.insert(0, ('', _("No Flex Directions")))
             else:
-                choices = [(c.format(bp.name + '-'), l) for c, l in choices_format ]
+                choices = [(c.format(bp.name + '-'), l) for c, l in choices_format]
                 choices.insert(0, ('', _("Inherit from above")))
             form_fields['Flex_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
@@ -178,10 +178,10 @@ class BootstrapUtilities(type):
         for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
             if bp == Breakpoint.xs:
                 choices = [(c.format('',  n), c.format('',  n)) for c, l in choices_format for n in notation]
-                choices.insert(0, ('', _("No Flex Directions")))
+                choices.insert(0, ('', _("No Display Propertys")))
             else:
-                choices = [(c.format(bp.name + '-',  n), 
-                   c.format('',  n)) for c, l in choices_format for n in notation]
+                choices = [(c.format(bp.name + '-',  n), c.format(bp.name + '-',  n)) for c, l in choices_format for n in notation]
+                choices.insert(0, ('', _("Inherit from above")))
             form_fields['Flex_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,
