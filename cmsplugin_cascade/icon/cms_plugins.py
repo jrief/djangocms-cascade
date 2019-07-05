@@ -22,6 +22,14 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
 
+
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(SimpleIconPlugin, cls).get_css_classes(obj)
+        if obj.parent.plugin_type == 'BootstrapNavItemsPlugin':
+            css_classes.insert(0,'nav-link navbar-text')
+        return css_classes
+
 plugin_pool.register_plugin(SimpleIconPlugin)
 
 
