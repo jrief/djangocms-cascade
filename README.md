@@ -16,6 +16,20 @@ Instead of creating one database model for each CMS plugin, Cascade shares one d
 all of them. The payload then is stored inside a JSON field instead of declaring each attribute
 explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
 
+## Breaking News
+
+The next version of **djangocms-cascade** will be 1.0. This is a major release with a much simpler way of
+writing your own plugins. There you can use Django forms to create editors for your plugin models, still
+keeping all its data in a JSON field.
+
+In addition, version 1.0 drops support for Python-2.7 and adds support for django-CMS-3.6
+and Django-2.0/2.1.
+
+Please test the development branch for release 1.0 and share your experience.
+
+https://github.com/jrief/djangocms-cascade/tree/releases/1.0.x
+
+
 ### Perfect for nested grid systems
 
 Since **Cascade** keeps track on the widths of all columns, ``<img>`` and ``<picture>`` elements can
