@@ -83,8 +83,8 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         breakpoints = obj.glossary.get('breakpoints')
         content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
-            breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
-            devices = ', '.join([str(bp.label) for bp in breakpoints])
+            BREAKPOINTS = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
+            devices = ', '.join([str(bp.label) for bp in BREAKPOINTS if bp.name in breakpoints])
             content = _("{0}for {1}").format(content, devices)
         return mark_safe(content)
 
@@ -113,7 +113,8 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         label=_('Columns'),
         choices=[(i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS],
         initial=3,
-        help_text=_('Number of columns to be created with this row.'))
+        help_text=_('Number of columns to be created with this row.'),
+    )
 
     class Meta:
         untangled_fields = ['num_children']
