@@ -2,7 +2,7 @@ from django import VERSION as DJANGO_VERSION
 if DJANGO_VERSION < (2, 0):
     from django.utils.text import mark_safe
 else:
-from django.utils.safestring import mark_safe
+    from django.utils.safestring import mark_safe
 
 CASCADE_PLUGINS = ['map']
 
