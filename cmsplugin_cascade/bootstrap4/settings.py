@@ -63,6 +63,8 @@ def set_defaults(config):
             'extra_units:Margins': 'px,rem',
             'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
             'extra_units:Paddings': 'px,rem',
+            'extra_fields:Zoom': ['zoom'],
+            'extra_units:Zoom': '%',
         }
     ))
     config['plugins_with_extra_fields'].setdefault('BootstrapTabSetPlugin', PluginExtraFieldsConfig(
