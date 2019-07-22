@@ -87,6 +87,7 @@ class StrideElementBase(object):
         joined = format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
         if joined:
             return mark_safe(' ' + joined)
+        return ''
 
 
 class TextStrideElement(object):

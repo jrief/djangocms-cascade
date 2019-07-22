@@ -1,7 +1,7 @@
 {% load l10n thumbnail %}
 {% localize off %}{% spaceless %}
 {% if instance.image %} 
-<picture {{ instance.html_tag_attributes }}>
+<picture{{ instance.html_tag_attributes }}>
 	{% for elem in elements %}
 		{% thumbnail instance.image elem.size zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
 		{% if elem.size2 %}
