@@ -34,21 +34,27 @@ class StrideRenderer(Tag):
         from sekizai.helpers import get_varname as get_sekizai_context_key
         from cmsplugin_cascade.strides import StrideContentRenderer
 
-        jsonfile = finders.find(datafile)
-        if not jsonfile:
-            raise IOError("Unable to find file: {}".format(datafile))
-
-        with io.open(jsonfile) as fp:
-            tree_data = json.load(fp)
-
         content_renderer = StrideContentRenderer(context['request'])
+        tree_data_key = 'cascade-strides:' + datafile
+        sekizai_context_key = get_sekizai_context_key()
+
+        cache = caches['default']
+        tree_data = cache.get(tree_data_key) if cache else None
+        if tree_data is None:
+            jsonfile = finders.find(datafile)
+            if not jsonfile:
+                raise IOError("Unable to find file: {}".format(datafile))
+            with io.open(jsonfile) as fp:
+                tree_data = json.load(fp)
+            if cache:
+                cache.set(tree_data_key, tree_data)
+
         with context.push(cms_content_renderer=content_renderer):
             content = content_renderer.render_cascade(context, tree_data)
 
         # some templates use Sekizai's templatetag `addtoblock` or `add_data`, which have to be re-added to the context
         cache = caches['default']
         if cache:
-            sekizai_context_key = get_sekizai_context_key()
             SEKIZAI_CONTENT_HOLDER = cache.get_or_set(sekizai_context_key, context.get(sekizai_context_key))
             if SEKIZAI_CONTENT_HOLDER:
                 for name in SEKIZAI_CONTENT_HOLDER:
