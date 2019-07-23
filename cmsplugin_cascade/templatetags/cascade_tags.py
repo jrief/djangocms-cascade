@@ -31,7 +31,7 @@ class StrideRenderer(Tag):
     )
 
     def render_tag(self, context, datafile):
-        from sekizai.helpers import get_varname
+        from sekizai.helpers import get_varname as get_sekizai_context_key
         from cmsplugin_cascade.strides import StrideContentRenderer
 
         jsonfile = finders.find(datafile)
@@ -48,11 +48,11 @@ class StrideRenderer(Tag):
         # some templates use Sekizai's templatetag `addtoblock` or `add_data`, which have to be re-added to the context
         cache = caches['default']
         if cache:
-            varname = get_varname()
-            SEKIZAI_CONTENT_HOLDER = cache.get_or_set(varname, context.get(varname))
+            sekizai_context_key = get_sekizai_context_key()
+            SEKIZAI_CONTENT_HOLDER = cache.get_or_set(sekizai_context_key, context.get(sekizai_context_key))
             if SEKIZAI_CONTENT_HOLDER:
                 for name in SEKIZAI_CONTENT_HOLDER:
-                    context[varname][name] = SEKIZAI_CONTENT_HOLDER[name]
+                    context[sekizai_context_key].setdefault(name, SEKIZAI_CONTENT_HOLDER[name])
         return content
 
 register.tag('render_cascade', StrideRenderer)
@@ -68,28 +68,13 @@ class RenderPlugin(Tag):
         if not plugin:
             return ''
 
-        if LooseVersion(CMS_VERSION) < LooseVersion('3.5'):
-            content_renderer = context['cms_content_renderer']
-            content = content_renderer.render_plugin(
-                instance=plugin,
-                context=context,
-                editable=content_renderer.user_is_on_edit_mode(),
-            )
-        else:
-            toolbar = get_toolbar_from_request(context['request'])
-            if 'cms_content_renderer' in context and context['cms_content_renderer'].__module__=="cmsplugin_cascade.strides" :
-                content_renderer=context['cms_content_renderer']
-            elif 'cms_renderer' in context.dicts[1]:
-                content_renderer=context.dicts[1]['cms_renderer']
-            elif  'cms_content_renderer' in context:
-                content_renderer=context['cms_content_renderer']
-            else:
-                content_renderer = toolbar.content_renderer
-            content = content_renderer.render_plugin(
-                instance=plugin,
-                context=context,
-                editable=toolbar.edit_mode_active,
-            )
+        toolbar = get_toolbar_from_request(context['request'])
+        content_renderer = context.get('cms_content_renderer', toolbar.get_content_renderer())
+        content = content_renderer.render_plugin(
+            instance=plugin,
+            context=context,
+            editable=toolbar.edit_mode_active,
+        )
         return content
 
 register.tag('render_plugin', RenderPlugin)
