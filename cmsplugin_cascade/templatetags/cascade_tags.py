@@ -75,7 +75,7 @@ class RenderPlugin(Tag):
             return ''
 
         toolbar = get_toolbar_from_request(context['request'])
-        content_renderer = context.get('cms_content_renderer', toolbar.get_content_renderer())
+        content_renderer = context.get('cms_content_renderer', toolbar.content_renderer)
         content = content_renderer.render_plugin(
             instance=plugin,
             context=context,
