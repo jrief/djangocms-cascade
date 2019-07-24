@@ -260,7 +260,6 @@ class StrideContentRenderer(object):
             tree_data={ "plugins": [rootplug] }
             return tree_data
 
-
     def render_cascade(self, context, tree_data):
         contents = []
         #format treedata djangocms-cascade
@@ -271,8 +270,6 @@ class StrideContentRenderer(object):
             tree_data = self.cms_transfer_to_cascade_tree( context, tree_data)
             contents = self.render_cascade_plugins( context, tree_data)
         return contents
-
-
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
         from sekizai.helpers import get_varname as get_sekizai_context_key
