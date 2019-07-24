@@ -11,15 +11,12 @@ from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin
-from cms.utils.placeholder import get_placeholder_conf
-
 import json
 from cms.models import CMSPlugin
 
-
 __all__ = ['register_stride', 'StrideContentRenderer']
 
-
+#needed for cms json format
 def last_inner_append(x, y):
     try:
         if isinstance(x[-1], list):
@@ -205,13 +202,12 @@ class TextStridePlugin(StridePluginBase):
         return context
 
 
-
 class StrideContentRenderer(object):
     def __init__(self, request):
         self.request = request
         self.language = get_language_from_request(request)
         self._cached_templates = {}
- 
+
     def render_cascade_plugins(self, context, tree_data):
         contents = []
         # create temporary copy of context to prevent pollution for other CMS placeholders
@@ -219,13 +215,12 @@ class StrideContentRenderer(object):
         for plugin_type, data, children_data in tree_data.get('plugins', []):
             plugin_class = strides_plugin_map.get(plugin_type)
             element_class = strides_element_map.get(plugin_type)
-
             plugin_instance = element_class(plugin_class(), data, children_data)
             # create a temporary object to store the plugins cache status
             cms_cachable_plugins = type(str('CachablePlugins'), (object,), {'value': True})
             context.push(cms_cachable_plugins=cms_cachable_plugins)
             contents.append(self.render_plugin(plugin_instance, context))
-            return mark_safe(''.join(contents)), context
+        return mark_safe(''.join(contents))
 
     def cms_transfer_to_cascade_tree(self, context, tree_data):
             source_map = {}
@@ -270,11 +265,13 @@ class StrideContentRenderer(object):
         contents = []
         #format treedata djangocms-cascade
         if 'plugins' in  tree_data:
-            contents ,  context = self.render_cascade_plugins( context, tree_data)
+            contents = self.render_cascade_plugins( context, tree_data)
         #format treedata djangocms-transfer
         elif tree_data:
             tree_data = self.cms_transfer_to_cascade_tree( context, tree_data)
-            contents , context = self.render_cascade_plugins( context, tree_data)
+            contents = self.render_cascade_plugins( context, tree_data)
+        return contents
+
 
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
