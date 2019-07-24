@@ -1,5 +1,9 @@
+import factory.fuzzy
 import pytest
+from pytest_factoryboy import register
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from cms.api import create_page
 from cmsplugin_cascade.models import CascadePage
 
@@ -24,3 +28,20 @@ def cms_page():
 def cms_placeholder(cms_page):
     placeholder = cms_page.placeholders.get(slot='Main Content')
     return placeholder
+
+
+@register
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = get_user_model()
+
+    @classmethod
+    def create(cls, **kwargs):
+        user = super().create(**kwargs)
+        assert isinstance(user, get_user_model())
+        assert user.is_authenticated == True
+        return user
+
+    username = factory.Sequence(lambda n: 'uid-{}'.format(n))
+    password = make_password('secret')
+    email = factory.fuzzy.FuzzyText(suffix='@example.com')
