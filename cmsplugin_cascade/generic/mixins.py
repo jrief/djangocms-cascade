@@ -80,7 +80,7 @@ class SectionMixin(object):
             # when adding a new element, `element_id` can not be validated for uniqueness
             postfix = 0
             # check if form simplewarpper has function check_unique_element_id
-            if 'check_unique_element_id' in dir(form):
+            if not 'check_unique_element_id' in dir(form):
                 form_ = SectionForm                   
             else:
                 form_ = form

@@ -106,6 +106,9 @@ class AppSettings(object):
         extra_inline_styles.setdefault(
             'Overflow',
             (['overflow', 'overflow-x', 'overflow-y'], SelectOverflowField))
+        extra_inline_styles.setdefault(
+            'Zoom',
+            (['zoom'], SizeField))
 
         if 'cmsplugin_cascade.segmentation' in INSTALLED_APPS:
             config.setdefault('segmentation_mixins', [
