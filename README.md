@@ -163,4 +163,4 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
 If someone wants to start a subproject for a CSS framework, other than Bootstrap-3/4.
 
 If you are a native English speaker, please check the documentation for spelling mistakes and
-grammar, since English not my mother tongue.
+grammar, since English is not my mother tongue.
