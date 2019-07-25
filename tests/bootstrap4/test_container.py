@@ -1,6 +1,5 @@
 import pytest
 from bs4 import BeautifulSoup
-from django.http import QueryDict
 from django.utils.html import strip_spaces_between_tags
 from cms.plugin_rendering import ContentRenderer
 from cms.utils.plugins import build_plugin_tree
@@ -13,9 +12,8 @@ def test_edit_bootstrap_container(rf, bootstrap_container):
     container_plugin, container_model = bootstrap_container
     request = rf.get('/')
     ModelForm = container_plugin.get_form(request, container_model)
-    post_data = QueryDict('', mutable=True)
-    post_data.setlist('breakpoints', ['sm', 'md'])
-    form = ModelForm(post_data, None, instance=container_model)
+    data = {'breakpoints': ['sm', 'md']}
+    form = ModelForm(data, None, instance=container_model)
     assert form.is_valid()
     soup = BeautifulSoup(form.as_p(), features='lxml')
     input_element = soup.find(id="id_breakpoints_0")
@@ -35,9 +33,8 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     row_plugin, row_model = bootstrap_row
     request = rf.get('/')
     ModelForm = row_plugin.get_form(request, row_model)
-    post_data = QueryDict('', mutable=True)
-    post_data['num_children'] = 3
-    form = ModelForm(post_data, None, instance=row_model)
+    data = {'num_children': 3}
+    form = ModelForm(data, None, instance=row_model)
     assert form.is_valid()
     row_plugin.save_model(request, row_model, form, False)
 
@@ -56,23 +53,22 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     # change data inside the first column
     cms_plugin = row_model.get_descendants().first()
     column_model, column_plugin = cms_plugin.get_plugin_instance()
-    post_data = QueryDict('', mutable=True)
-    post_data.update({'xs-column-width': 'col', 'sm-column-offset': 'offset-sm-1', 'sm-column-width': 'col-sm-3'})
+    data = {'xs-column-width': 'col', 'sm-column-offset': 'offset-sm-1', 'sm-column-width': 'col-sm-3'}
     ModelForm = column_plugin.get_form(request, column_model)
-    form = ModelForm(post_data, None, instance=column_model)
+    form = ModelForm(data, None, instance=column_model)
     assert form.is_valid()
     column_plugin.save_model(request, column_model, form, True)
 
     # change data inside the last column
     cms_plugin = row_model.get_descendants().last()
     column_model, column_plugin = cms_plugin.get_plugin_instance()
-    post_data = QueryDict('', mutable=True)
-    post_data.update({'xs-column-width': 'col', 'sm-responsive-utils': 'hidden-sm', 'sm-column-width': 'col-sm-4'})
+    data = {'xs-column-width': 'col', 'sm-responsive-utils': 'hidden-sm', 'sm-column-width': 'col-sm-4'}
     ModelForm = column_plugin.get_form(request, column_model)
-    form = ModelForm(post_data, None, instance=column_model)
+    form = ModelForm(data, None, instance=column_model)
     assert form.is_valid()
     column_plugin.save_model(request, column_model, form, False)
 
+    # render the plugin and check the output
     context = {
         'request': request,
     }
