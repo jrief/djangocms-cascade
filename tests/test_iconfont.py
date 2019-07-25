@@ -82,13 +82,16 @@ def test_iconfont_change_view(admin_client, icon_font):
 @pytest.mark.django_db
 def simple_icon(admin_site, cms_placeholder, icon_font):
     """Create and edit a SimpleIconPlugin"""
-    class Meta(IconFontFormMixin.Meta):
-        model = CascadeElement
+    class IconFontForm(IconFontFormMixin, ModelForm):
+        class Meta(IconFontFormMixin.Meta):
+            model = CascadeElement
 
-    IconFontForm = type('IconFontForm', (IconFontFormMixin, ModelForm), {'Meta': Meta})
-    data = {'icon_font': str(icon_font.id), 'symbol': 'icon-skiing'}
+    # add simple icon plugin
     simple_icon_model = add_plugin(cms_placeholder, SimpleIconPlugin, 'en')
     assert isinstance(simple_icon_model, CascadeElement)
+
+    # edit simple icon plugin
+    data = {'icon_font': str(icon_font.id), 'symbol': 'icon-skiing'}
     form = IconFontForm(data=data, instance=simple_icon_model)
     assert form.is_valid()
     simple_icon_model = form.save()
