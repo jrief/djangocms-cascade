@@ -1,5 +1,3 @@
-import pkg_resources
-from django.forms.models import ModelChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
@@ -11,7 +9,7 @@ from entangled.forms import get_related_object
 class IconPluginMixin(CascadePluginMixinBase):
     change_form_template = 'cascade/admin/change_form.html'
     ring_plugin = 'IconPluginMixin'
-    require_icon_font = True  # if False, the icon_font is optional
+    require_icon = True  # if False, the icon is optional
 
     class Media:
         css = {'all': ['cascade/css/admin/iconplugin.css']}
@@ -27,11 +25,20 @@ class IconPluginMixin(CascadePluginMixinBase):
         attrs = {}
         if not getattr(self, 'require_icon', True):
             # if the icon is optional, override choice field to reflect this
-            attrs['icon_font'] = ModelChoiceField(
-                IconFont.objects.all(),
-                label=_("Font"),
-                empty_label=_("No Icon"),
-                required=False,
+            icon_font = IconFontFormMixin.base_fields['icon_font']
+            symbol = IconFontFormMixin.base_fields['symbol']
+            attrs.update(
+                icon_font=icon_font.__class__(
+                    icon_font.queryset,
+                    label=icon_font.label,
+                    empty_label=_("No Icon"),
+                    required=False,
+                ),
+                symbol=symbol.__class__(
+                    widget=symbol.widget,
+                    label=symbol.label,
+                    required=False,
+                )
             )
         form = kwargs.get('form', self.form)
         assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"

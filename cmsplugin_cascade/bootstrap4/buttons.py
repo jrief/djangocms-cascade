@@ -95,8 +95,8 @@ class ButtonFormMixin(EntangledModelFormMixin):
             ('icon-right', _("Icon placed right")),
         ],
         widget=widgets.RadioSelect,
-        required=False,
-        help_text=_("Add an Icon before or after the button content.")
+        initial='icon-right',
+        help_text=_("Add an Icon before or after the button content."),
     )
 
     stretched_link = BooleanField(
@@ -124,6 +124,7 @@ class BootstrapButtonMixin(IconPluginMixin):
 
     class Media:
         js = ['cascade/js/admin/buttonmixin.js']
+
 
 class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     module = 'Bootstrap'
