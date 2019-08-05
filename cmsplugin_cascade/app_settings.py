@@ -66,7 +66,7 @@ class AppSettings(object):
         config.setdefault('link_plugin_classes', (
             'cmsplugin_cascade.link.plugin_base.DefaultLinkPluginBase',
             'cmsplugin_cascade.link.plugin_base.LinkElementMixin',
-            'cmsplugin_cascade.link.forms.LinkForm',))
+            'cmsplugin_cascade.link.forms.LinkForm'))
 
         config['plugins_with_bookmark'] = list(config.get('plugins_with_bookmark', []))
         config['plugins_with_bookmark'].extend(['SimpleWrapperPlugin', 'HeadingPlugin'])
