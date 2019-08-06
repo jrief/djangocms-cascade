@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-from django.db.utils import OperationalError
+from django.db.utils import DatabaseError
 import django.db.models.deletion
 from cmsplugin_cascade.models import CascadeElement, CascadePage, IconFont
 
@@ -17,7 +17,7 @@ def forwards(apps, schema_editor):
             icon_font = cms_page.cascadepage.icon_font
             if not icon_font:
                 continue
-        except (AttributeError, OperationalError):
+        except (AttributeError, DatabaseError):
             continue
         if 'icon_font' not in cascade_element.glossary:
             cascade_element.glossary['icon_font'] = icon_font.pk
