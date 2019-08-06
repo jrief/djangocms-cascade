@@ -22,6 +22,5 @@ before_script:
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then export PYVER=py35; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then export PYVER=py36; fi"
 
-
 script:
   - tox -e"$PYVER-$DJANGO-$CMS"
