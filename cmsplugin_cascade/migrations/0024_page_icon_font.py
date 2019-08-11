@@ -11,12 +11,12 @@ def forwards(apps, schema_editor):
     for cascade_element in CascadeElement.objects.all():
         if cascade_element.plugin_type not in ['FramedIconPlugin', 'TextIconPlugin', 'BootstrapButtonPlugin']:
             continue
-        cms_page = cascade_element.page.get_public_object()
         try:
+            cms_page = cascade_element.page.get_public_object()
             icon_font = cms_page.cascadepage.icon_font
             if not icon_font:
                 continue
-        except AttributeError:
+        except:
             continue
         if 'icon_font' not in cascade_element.glossary:
             cascade_element.glossary['icon_font'] = icon_font.pk
