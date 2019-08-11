@@ -1,7 +1,7 @@
-{% load l10n thumbnail %}
+{% load l10n static cascade_tags thumbnail %}
 {% localize off %}{% spaceless %}
-{% if instance.image %} 
 <picture{{ instance.html_tag_attributes }}>
+{% if instance.image|is_valid_image %}
 	{% for elem in elements %}
 		{% thumbnail instance.image elem.size zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
 		{% if elem.size2 %}
@@ -13,10 +13,8 @@
 	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}"{% if not is_fluid %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %} />
 		{% endif %}
 	{% endfor %}
-</picture>
 {% else %}
-<div>
-	<svg viewBox="0 0 {{ instance.glossary.image.width }} {{instance.glossary.image.height }}" style="background-color: {{ instance.glossary.ramdom_svg_color }};"  width="100%" height="100%" />
-</div>
+	<img src="{% static 'cascade/fallback.svg' %}" style="background-color:lightgray;" class="{{ instance.css_classes }}" />
 {% endif %}
+</picture>
 {% endspaceless %}{% endlocalize %}

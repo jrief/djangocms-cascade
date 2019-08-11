@@ -1,8 +1,6 @@
 import io
 import json
 import os
-from distutils.version import LooseVersion
-from cms import __version__ as CMS_VERSION
 from cms.toolbar.utils import get_toolbar_from_request
 from django import template
 from django.conf import settings
@@ -84,6 +82,14 @@ class RenderPlugin(Tag):
         return content
 
 register.tag('render_plugin', RenderPlugin)
+
+
+@register.filter
+def is_valid_image(image):
+    try:
+        return image.file.file
+    except:
+        return False
 
 
 @register.simple_tag

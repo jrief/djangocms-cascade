@@ -59,6 +59,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                     form_fields['extra_css_classes'] = ChoiceField(
                         label=_("Customized CSS Class"),
                         choices=choices,
+                        required=False,
                         help_text=_("Customized CSS class to be added to this element."),
                     )
 

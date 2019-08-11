@@ -4,12 +4,13 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import SizeField, ColorField, BorderChoiceField
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
-from cmsplugin_cascade.icon.mixins import IconPluginMixin
-from entangled.forms import EntangledModelFormMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+from cmsplugin_cascade.icon.forms import IconFormMixin
+from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
 
 
-class FramedIconFormMixin(EntangledModelFormMixin):
+class FramedIconFormMixin(IconFormMixin):
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
 
     RADIUS_CHOICES = [(None, _("Square"))] + \
@@ -56,7 +57,8 @@ class FramedIconFormMixin(EntangledModelFormMixin):
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['font_size', 'color', 'background_color', 'text_align', 'border', 'border_radius']}
+        entangled_fields = {'glossary': ['font_size', 'color', 'background_color', 'text_align', 'border',
+                                         'border_radius']}
 
 
 class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
@@ -66,8 +68,8 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     allow_children = False
     render_template = 'cascade/bootstrap4/framedicon.html'
     model_mixins = (LinkElementMixin,)
+    form = type('FramedIconForm', (LinkFormMixin, FramedIconFormMixin), {'require_link': False})
     ring_plugin = 'FramedIconPlugin'
-    link_required = False
 
     class Media:
         js = ['cascade/js/admin/framediconplugin.js']
@@ -90,10 +92,6 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
         inline_styles = cls.super(FramedIconPlugin, cls).get_inline_styles(instance)
         inline_styles['font-size'] = instance.glossary.get('font_size', '1em')
         return inline_styles
-
-    def get_form(self, request, obj=None, **kwargs):
-        kwargs.setdefault('form', FramedIconFormMixin)
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         context = self.super(FramedIconPlugin, self).render(context, instance, placeholder)

@@ -63,8 +63,6 @@ class LinkForm(EntangledModelFormMixin):
 
     link_type = fields.ChoiceField(
         label=_("Link"),
-        choices=LINK_TYPE_CHOICES,
-        initial=LINK_TYPE_CHOICES[0][0],
         help_text=_("Type of link"),
     )
 
@@ -124,6 +122,13 @@ class LinkForm(EntangledModelFormMixin):
                                          'link_target', 'link_title']}
 
     def __init__(self, *args, **kwargs):
+        link_type_choices = []
+        if not getattr(self, 'require_link', True):
+            link_type_choices.append(('', _("No Link")))
+            self.declared_fields['link_type'].required = False
+        link_type_choices.extend(self.LINK_TYPE_CHOICES)
+        self.declared_fields['link_type'].choices = link_type_choices
+        self.declared_fields['link_type'].initial = link_type_choices[0][0]
         instance = kwargs.get('instance')
         if instance and instance.glossary.get('link_type') == 'cmspage':
             self._preset_section(instance)
@@ -170,13 +175,6 @@ class LinkForm(EntangledModelFormMixin):
         if error:
             raise error
         return cleaned_data
-
-    @classmethod
-    def get_form_class(cls):
-        """
-        Hook to return a form class for editing a CMSPlugin inheriting from ``LinkPluginBase``.
-        """
-        return cls
 
     @classmethod
     def unset_required_for(cls, sharable_fields):

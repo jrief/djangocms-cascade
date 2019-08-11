@@ -1,7 +1,9 @@
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
-from cmsplugin_cascade.icon.mixins import IconPluginMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+from cmsplugin_cascade.icon.forms import IconFormMixin
+from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
 
 
 class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
@@ -10,9 +12,9 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     require_parent = False
     allow_children = False
     render_template = 'cascade/plugins/simpleicon.html'
+    form = type('SimpleIconForm', (LinkFormMixin, IconFormMixin), {'require_link': False})
     model_mixins = (LinkElementMixin,)
     ring_plugin = 'IconPlugin'
-    link_required = False
 
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
@@ -29,10 +31,10 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     render_template = 'cascade/plugins/texticon.html'
     ring_plugin = 'IconPlugin'
     parent_classes = ['TextPlugin']
+    form = type('TextIconForm', (LinkFormMixin, IconFormMixin), {'require_link': False})
     model_mixins = (LinkElementMixin,)
     allow_children = False
     require_parent = False
-    link_required = False
 
     class Media:
         js = ['cascade/js/admin/iconplugin.js']
