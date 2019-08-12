@@ -3,7 +3,7 @@
 
 <uib-accordion close-others="{% if instance.glossary.close_others %}true{% else %}false{% endif %}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 {% for card in instance.child_plugin_instances %}{% with css_classes=card.css_classes %}
-	<div uib-accordion-group heading="{{ card.heading }}"{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if forloop.first and instance.glossary.first_is_open %} is-open="true"{% endif %}{% if card.no_body_padding %} template-url="cascade/accordion-group-no-padding.html"{% endif %}>
+	<div uib-accordion-group heading="{{ card.glossary.heading }}"{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if forloop.first and instance.glossary.first_is_open %} is-open="true"{% endif %}{% if card.no_body_padding %} template-url="cascade/accordion-group-no-padding.html"{% endif %}>
 	{% render_plugin card %}
 	</div>
 {% endwith %}{% endfor %}
