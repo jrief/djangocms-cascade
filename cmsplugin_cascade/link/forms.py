@@ -1,3 +1,5 @@
+import re
+import requests
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
@@ -10,7 +12,6 @@ from cms.models import Page
 from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
-import requests
 from cms.utils import get_current_site
 
 
@@ -156,7 +157,7 @@ class LinkForm(EntangledModelFormMixin):
                 error = ValidationError(_("CMS page to link to is missing."))
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if cleaned_data['download_file'] is None:
+            if not cleaned_data['download_file'] is None:
                 error = ValidationError(_("File for download is missing."))
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
@@ -172,6 +173,11 @@ class LinkForm(EntangledModelFormMixin):
                 error = ValidationError(_("No external URL provided."))
             if error:
                 self.add_error('ext_url', error)
+        elif link_type == 'email':
+            mail_to = cleaned_data['mail_to']
+            if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
+                error = ValidationError(_("'{email}' is not a valid email address.").format(email=mail_to))
+                self.add_error('mail_to', error)
         if error:
             raise error
         return cleaned_data
