@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.forms import widgets, ChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import ColorField, MultiSizeField
@@ -60,7 +61,7 @@ class ImageBackgroundMixin(object):
         return ''
 
 
-class JumbotronFormMixin(BootstrapPictureFormMixin):
+class JumbotronFormMixin(EntangledModelFormMixin):
     """
     Form class to validate the JumbotronPlugin.
     """
@@ -157,9 +158,9 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     def get_form(self, request, obj=None, **kwargs):
         if self.get_parent_instance(request, obj) is None:
             # we only ask for breakpoints, if the jumbotron is the root of the placeholder
-            kwargs['form'] = type('JumbotronForm', (ContainerFormMixin, JumbotronFormMixin), {})
+            kwargs['form'] = type('JumbotronForm', (JumbotronFormMixin, BootstrapPictureFormMixin, ContainerFormMixin), {})
         else:
-            kwargs['form'] = JumbotronFormMixin
+            kwargs['form'] = type('JumbotronForm', (JumbotronFormMixin, BootstrapPictureFormMixin), {})
         return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
