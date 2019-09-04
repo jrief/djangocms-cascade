@@ -9,7 +9,7 @@ assert DJANGO_VERSION >= (1, 11), "djangocms-cascade with Bootstrap-4 requires a
 
 
 CASCADE_PLUGINS = ['accordion', 'buttons', 'card', 'carousel', 'container', 'embeds', 'image', 'jumbotron', 'navbar',
-                   'picture', 'tabs']
+                   'picture', 'tabs', 'lists']
 if 'cms_bootstrap' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS.append('secondary_menu')
 
@@ -55,6 +55,9 @@ def set_defaults(config):
     config['plugins_with_extra_mixins'].setdefault('HorizontalRulePlugin', BootstrapUtilities(
         BootstrapUtilities.margins,
     ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapJumbotronPlugin', BootstrapUtilities(
+        BootstrapUtilities.positions,
+    ))
 
     config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
         inline_styles={
@@ -75,10 +78,26 @@ def set_defaults(config):
         ('cascade/bootstrap4/secmenu-list-group.html', _("List Group")),
         ('cascade/bootstrap4/secmenu-unstyled-list.html', _("Unstyled List"))
     ])
-
-    config['plugins_with_extra_mixins'].setdefault('BootstrapNavListPlugin', BootstrapUtilities(
-        BootstrapUtilities.flex_directions, BootstrapUtilities.margins, BootstrapUtilities.display_propertys
+    '''
+    config['plugins_with_extra_fields'].setdefault('BootstrapNavbarPlugin', PluginExtraFieldsConfig(
+        inline_styles={
+            'extra_fields:Colors':['color','background-color'],
+        }
     ))
+    '''
+    config['plugins_with_extra_mixins'].setdefault('BootstrapNavBrandPlugin', BootstrapUtilities(
+        BootstrapUtilities.background_and_color
+    ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapNavListPlugin', BootstrapUtilities(
+        BootstrapUtilities.flex_directions, BootstrapUtilities.margins, BootstrapUtilities.display_propertys, BootstrapUtilities.background_and_color
+    ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapListsPlugin', BootstrapUtilities(
+        BootstrapUtilities.flex_directions, BootstrapUtilities.margins, BootstrapUtilities.display_propertys, BootstrapUtilities.background_and_color
+    ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapNavbarToogler', BootstrapUtilities(
+        BootstrapUtilities.background_and_color
+    ))
+
     config['plugins_with_extra_mixins'].setdefault('BootstrapNavCollapsePlugin', BootstrapUtilities(
         BootstrapUtilities.justify_content
     ))
