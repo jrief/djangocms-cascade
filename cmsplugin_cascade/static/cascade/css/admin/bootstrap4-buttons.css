@@ -1,8 +1,8 @@
-.form-row.field-glossary .glossary-field.glossary_button_type {
+.form-row.field-button_type {
   max-width: 630px;
 }
-
 .btn {
+  margin-bottom: 0.25rem;
   display: inline-block;
   font-weight: 400;
   text-align: center;

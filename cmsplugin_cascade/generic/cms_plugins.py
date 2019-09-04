@@ -7,7 +7,8 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.utils import compute_aspect_ratio
 
@@ -177,10 +178,9 @@ class TextImagePlugin(LinkPluginBase):
     model_mixins = (ImagePropertyMixin, LinkElementMixin)
     allow_children = False
     require_parent = False
-    form = TextImageFormMixin
+    form = type('TextImageForm', (LinkFormMixin, TextImageFormMixin), {'require_link': False})
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
-    link_required = False
 
     class Media:
         js = ['cascade/js/admin/textimageplugin.js']

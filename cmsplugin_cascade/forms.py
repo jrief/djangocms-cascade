@@ -1,5 +1,3 @@
-from cmsplugin_cascade.models import CascadeElement
-
 
 class ManageChildrenFormMixin(object):
     """

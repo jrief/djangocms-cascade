@@ -11,7 +11,7 @@ def get_default_icon_font():
         return ''
 
 
-class IconFontFormMixin(EntangledModelFormMixin):
+class IconFormMixin(EntangledModelFormMixin):
     icon_font = ModelChoiceField(
         IconFont.objects.all(),
         label=_("Font"),
@@ -25,3 +25,10 @@ class IconFontFormMixin(EntangledModelFormMixin):
 
     class Meta:
         entangled_fields = {'glossary': ['icon_font', 'symbol']}
+
+    def __init__(self, *args, **kwargs):
+        if not getattr(self, 'require_icon', True):
+            self.declared_fields['icon_font'].required = False
+            self.declared_fields['icon_font'].empty_label = _("No Icon")
+            self.declared_fields['symbol'].required = False
+        super().__init__(*args, **kwargs)

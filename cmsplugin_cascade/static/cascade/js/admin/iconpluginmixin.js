@@ -27,18 +27,20 @@ django.jQuery(function($) {
 			var link;
 			if ($selectIconFont.length === 0)
 				return;
-			link = {
-				id: "id_iconfont_link",
-				rel: "stylesheet",
-				type: "text/css",
-				href: django.cascade.iconfont_stylesheet_urls[$selectIconFont.val()]
-			};
 			$('#id_iconfont_link').remove();
-			$("<link/>", link).appendTo("head");
-
-			$('#id_iconfont_families').remove();
 			if ($selectIconFont.val()) {
+				link = {
+					id: "id_iconfont_link",
+					rel: "stylesheet",
+					type: "text/css",
+					href: django.cascade.iconfont_stylesheet_urls[$selectIconFont.val()]
+				};
+				$("<link/>", link).appendTo("head");
+
+				$('.form-row.field-symbol').show();
 				$.get(django.cascade.fetch_fonticons_url + $selectIconFont.val()).done(this.renderIcons);
+			} else {
+				$('.form-row.field-symbol').hide();
 			}
 		},
 		selectIcon: function() {

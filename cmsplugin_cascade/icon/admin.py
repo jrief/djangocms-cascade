@@ -43,7 +43,10 @@ class UploadIconsForms(ModelForm):
                     _("File does not seem to originate from <a href=\"{url}\" target=\"_blank\">{url}</a>"),
                     url=fontello_url,
                 ))
-            for icon_font in IconFont.objects.all():
+            other_icon_fonts = IconFont.objects.all()
+            if self.instance:
+                other_icon_fonts = other_icon_fonts.exclude(id=self.instance.id)
+            for icon_font in other_icon_fonts:
                 if icon_font.config_data['css_prefix_text'] == css_prefix_text:
                     msg = format_lazy(_(
                         "Icon Font '{icon_font}' already uses CSS prefix '{css_prefix}'.<br/>" \

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django import VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -8,6 +9,7 @@ from .grid import Breakpoint, Bound
 assert DJANGO_VERSION >= (1, 11), "djangocms-cascade with Bootstrap-4 requires at least Django-1.11"
 
 
+
 CASCADE_PLUGINS = ['accordion', 'buttons', 'card', 'carousel', 'container', 'embeds', 'image', 'jumbotron', 'navbar',
                    'picture', 'tabs', 'lists']
 if 'cms_bootstrap' in settings.INSTALLED_APPS:
@@ -16,20 +18,20 @@ if 'cms_bootstrap' in settings.INSTALLED_APPS:
 
 def set_defaults(config):
     config.setdefault('bootstrap4', {})
-    config['bootstrap4'].setdefault('default_bounds', {
-        Breakpoint.xs: Bound(320, 572),
-        Breakpoint.sm: Bound(540, 540),
-        Breakpoint.md: Bound(720, 720),
-        Breakpoint.lg: Bound(960, 960),
-        Breakpoint.xl: Bound(1140, 1140),
-    })
-    config['bootstrap4'].setdefault('fluid_bounds', {
-        Breakpoint.xs: Bound(320, 576),
-        Breakpoint.sm: Bound(576, 768),
-        Breakpoint.md: Bound(768, 992),
-        Breakpoint.lg: Bound(992, 1200),
-        Breakpoint.xl: Bound(1200, 1980),
-    })
+    config['bootstrap4'].setdefault('default_bounds', OrderedDict([
+        (Breakpoint.xs, Bound(320, 572)),
+        (Breakpoint.sm, Bound(540, 540)),
+        (Breakpoint.md, Bound(720, 720)),
+        (Breakpoint.lg, Bound(960, 960)),
+        (Breakpoint.xl, Bound(1140, 1140)),
+    ]))
+    config['bootstrap4'].setdefault('fluid_bounds', OrderedDict([
+        (Breakpoint.xs, Bound(320, 576)),
+        (Breakpoint.sm, Bound(576, 768)),
+        (Breakpoint.md, Bound(768, 992)),
+        (Breakpoint.lg, Bound(992, 1200)),
+        (Breakpoint.xl, Bound(1200, 1980)),
+    ]))
     config['bootstrap4'].setdefault('gutter', 30)
 
     config['plugins_with_extra_mixins'].setdefault('BootstrapAccordionPlugin', BootstrapUtilities(
@@ -65,6 +67,8 @@ def set_defaults(config):
             'extra_units:Margins': 'px,rem',
             'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
             'extra_units:Paddings': 'px,rem',
+            'extra_fields:Zoom': ['zoom'],
+            'extra_units:Zoom': '%',
         }
     ))
     config['plugins_with_extra_fields'].setdefault('BootstrapTabSetPlugin', PluginExtraFieldsConfig(

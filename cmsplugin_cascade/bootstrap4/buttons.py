@@ -1,16 +1,14 @@
 from django import VERSION as DJANGO_VERSION
-from django.conf import settings
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin, LinkForm
-if 'cmsplugin_cascade.icon' in settings.INSTALLED_APPS:
-    from cmsplugin_cascade.icon.mixins import IconPluginMixin
-else:
-    from cmsplugin_cascade.plugin_base import CascadePluginMixinBase as IconPluginMixin
+from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
+from cmsplugin_cascade.icon.forms import IconFormMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 
 
 class ButtonTypeWidget(widgets.RadioSelect):
@@ -88,6 +86,13 @@ class ButtonFormMixin(EntangledModelFormMixin):
         widget=widgets.CheckboxSelectMultiple,
     )
 
+    stretched_link = BooleanField(
+        label=_("Stretched link"),
+        required=False,
+        help_text=_("Stretched-link utility to make any anchor the size of it’s nearest position: " \
+                    "relative parent, perfect for entirely clickable cards!")
+    )
+
     icon_align = ChoiceField(
         label=_("Icon alignment"),
         choices=[
@@ -95,15 +100,8 @@ class ButtonFormMixin(EntangledModelFormMixin):
             ('icon-right', _("Icon placed right")),
         ],
         widget=widgets.RadioSelect,
-        required=False,
-        help_text=_("Add an Icon before or after the button content.")
-    )
-
-    stretched_link = BooleanField(
-        label=_("Stretched link"),
-        required=False,
-        help_text=_("Stretched-link utility to make any anchor the size of it’s nearest position: " \
-                    "relative parent, perfect for entirely clickable cards!")
+        initial='icon-right',
+        help_text=_("Add an Icon before or after the button content."),
     )
 
     class Meta:
@@ -119,14 +117,13 @@ class BootstrapButtonMixin(IconPluginMixin):
     default_css_class = 'btn'
     default_css_attributes = ['button_type', 'button_size', 'button_options', 'stretched_link']
     ring_plugin = 'ButtonMixin'
-    form = ButtonFormMixin
-    require_icon = False
 
     class Media:
+        css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
         js = ['cascade/js/admin/buttonmixin.js']
 
     def render(self, context, instance, placeholder):
-        context = self.super(BootstrapButtonMixin, self).render(context, instance, placeholder)
+        self.super(BootstrapButtonMixin, self).render(context, instance, placeholder)
         if 'icon_font_class' in context:
             mini_template = '{0}<i class="{1} {2}" aria-hidden="true"></i>{3}'
             icon_align = instance.glossary.get('icon_align')
@@ -137,16 +134,20 @@ class BootstrapButtonMixin(IconPluginMixin):
         return context
 
 
+class BootstrapButtonFormMixin(LinkFormMixin, IconFormMixin, ButtonFormMixin):
+    require_link = False
+    require_icon = False
+
+
 class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     module = 'Bootstrap'
     name = _("Button")
     model_mixins = (LinkElementMixin,)
+    form = BootstrapButtonFormMixin
     ring_plugin = 'ButtonPlugin'
-    require_icon = False
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 
     class Media:
-        css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
         js = ['cascade/js/admin/buttonplugin.js']
 
     @classmethod

@@ -48,7 +48,10 @@ class CascadeModelBase(CMSPlugin):
     @property
     def html_tag_attributes(self):
         attributes = self.plugin_class.get_html_tag_attributes(self)
-        return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
+        joined = format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
+        if joined:
+            return mark_safe(' ' + joined)
+        return ''
 
     def get_parent_instance(self):
         for model in CascadeModelBase._get_cascade_elements():

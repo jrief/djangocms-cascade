@@ -3,7 +3,8 @@ from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from entangled.forms import EntangledModelFormMixin
 
 
@@ -24,7 +25,7 @@ class TextLinkPlugin(LinkPluginBase):
     text_enabled = True
     render_template = 'cascade/link/text-link.html'
     ring_plugin = 'TextLinkPlugin'
-    form = TextLinkFormMixin
+    form = type('TextLinkForm', (LinkFormMixin, TextLinkFormMixin), {})
     parent_classes = ['TextPlugin']
 
     class Media:

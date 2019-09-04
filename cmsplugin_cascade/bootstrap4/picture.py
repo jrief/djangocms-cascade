@@ -5,9 +5,11 @@ from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, parse_responsive_length, compute_aspect_ratio_with_glossary
 from .fields import BootstrapMultiSizeField
+from .image import BootstrapImageFormMixin
 
 logger = logging.getLogger('cascade')
 
@@ -46,27 +48,33 @@ class BootstrapPictureFormMixin(ImageFormMixin):
         help_text = _("Options to use when resizing the image."),
     )
 
+    image_shapes = MultipleChoiceField(
+        label=_("Image Shapes"),
+        choices=BootstrapImageFormMixin.SHAPE_CHOICES,
+        widget=widgets.CheckboxSelectMultiple,
+        initial=['img-fluid']
+    )
+
     class Meta:
-        entangled_fields = {'glossary': ['responsive_heights', 'responsive_zoom', 'resize_options']}
+        entangled_fields = {'glossary': ['responsive_heights', 'responsive_zoom', 'resize_options', 'image_shapes']}
 
 
 class BootstrapPicturePlugin(LinkPluginBase):
     name = _("Picture")
-    model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
     require_parent = True
     allow_children = False
     raw_id_fields = LinkPluginBase.raw_id_fields + ['image_file']
+    model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     admin_preview = False
     ring_plugin = 'PicturePlugin'
-    form = BootstrapPictureFormMixin
+    form = type('BootstrapPictureForm', (LinkFormMixin, BootstrapPictureFormMixin), {'require_link': False})
     render_template = 'cascade/bootstrap4/linked-picture.html'
     default_css_class = 'img-fluid'
-    default_css_attributes = ('image_shapes',)
+    default_css_attributes = ['image_shapes']
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
-    link_required = False
 
     class Media:
         js = ['cascade/js/admin/pictureplugin.js']

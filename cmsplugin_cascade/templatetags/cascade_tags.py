@@ -1,8 +1,6 @@
 import io
 import json
 import os
-from distutils.version import LooseVersion
-from cms import __version__ as CMS_VERSION
 from cms.toolbar.utils import get_toolbar_from_request
 from django import template
 from django.conf import settings
@@ -31,28 +29,34 @@ class StrideRenderer(Tag):
     )
 
     def render_tag(self, context, datafile):
-        from sekizai.helpers import get_varname
+        from sekizai.helpers import get_varname as get_sekizai_context_key
         from cmsplugin_cascade.strides import StrideContentRenderer
 
-        jsonfile = finders.find(datafile)
-        if not jsonfile:
-            raise IOError("Unable to find file: {}".format(datafile))
-
-        with io.open(jsonfile) as fp:
-            tree_data = json.load(fp)
-
         content_renderer = StrideContentRenderer(context['request'])
+        tree_data_key = 'cascade-strides:' + datafile
+        sekizai_context_key = get_sekizai_context_key()
+
+        cache = caches['default']
+        tree_data = cache.get(tree_data_key) if cache else None
+        if tree_data is None:
+            jsonfile = finders.find(datafile)
+            if not jsonfile:
+                raise IOError("Unable to find file: {}".format(datafile))
+            with io.open(jsonfile) as fp:
+                tree_data = json.load(fp)
+            if cache:
+                cache.set(tree_data_key, tree_data)
+
         with context.push(cms_content_renderer=content_renderer):
             content = content_renderer.render_cascade(context, tree_data)
 
         # some templates use Sekizai's templatetag `addtoblock` or `add_data`, which have to be re-added to the context
         cache = caches['default']
         if cache:
-            varname = get_varname()
-            SEKIZAI_CONTENT_HOLDER = cache.get_or_set(varname, context.get(varname))
+            SEKIZAI_CONTENT_HOLDER = cache.get_or_set(sekizai_context_key, context.get(sekizai_context_key))
             if SEKIZAI_CONTENT_HOLDER:
                 for name in SEKIZAI_CONTENT_HOLDER:
-                    context[varname][name] = SEKIZAI_CONTENT_HOLDER[name]
+                    context[sekizai_context_key].setdefault(name, SEKIZAI_CONTENT_HOLDER[name])
         return content
 
 register.tag('render_cascade', StrideRenderer)
@@ -68,31 +72,24 @@ class RenderPlugin(Tag):
         if not plugin:
             return ''
 
-        if LooseVersion(CMS_VERSION) < LooseVersion('3.5'):
-            content_renderer = context['cms_content_renderer']
-            content = content_renderer.render_plugin(
-                instance=plugin,
-                context=context,
-                editable=content_renderer.user_is_on_edit_mode(),
-            )
-        else:
-            toolbar = get_toolbar_from_request(context['request'])
-            if 'cms_content_renderer' in context and context['cms_content_renderer'].__module__=="cmsplugin_cascade.strides" :
-                content_renderer=context['cms_content_renderer']
-            elif 'cms_renderer' in context.dicts[1]:
-                content_renderer=context.dicts[1]['cms_renderer']
-            elif  'cms_content_renderer' in context:
-                content_renderer=context['cms_content_renderer']
-            else:
-                content_renderer = toolbar.content_renderer
-            content = content_renderer.render_plugin(
-                instance=plugin,
-                context=context,
-                editable=toolbar.edit_mode_active,
-            )
+        toolbar = get_toolbar_from_request(context['request'])
+        content_renderer = context.get('cms_content_renderer', toolbar.content_renderer)
+        content = content_renderer.render_plugin(
+            instance=plugin,
+            context=context,
+            editable=toolbar.edit_mode_active,
+        )
         return content
 
 register.tag('render_plugin', RenderPlugin)
+
+
+@register.filter
+def is_valid_image(image):
+    try:
+        return image.file.file
+    except:
+        return False
 
 
 @register.simple_tag

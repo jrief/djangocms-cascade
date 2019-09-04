@@ -1,3 +1,5 @@
+import re
+import requests
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
@@ -10,7 +12,6 @@ from cms.models import Page
 from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
-import requests
 from cms.utils import get_current_site
 
 
@@ -63,8 +64,6 @@ class LinkForm(EntangledModelFormMixin):
 
     link_type = fields.ChoiceField(
         label=_("Link"),
-        choices=LINK_TYPE_CHOICES,
-        initial=LINK_TYPE_CHOICES[0][0],
         help_text=_("Type of link"),
     )
 
@@ -124,6 +123,13 @@ class LinkForm(EntangledModelFormMixin):
                                          'link_target', 'link_title']}
 
     def __init__(self, *args, **kwargs):
+        link_type_choices = []
+        if not getattr(self, 'require_link', True):
+            link_type_choices.append(('', _("No Link")))
+            self.declared_fields['link_type'].required = False
+        link_type_choices.extend(self.LINK_TYPE_CHOICES)
+        self.declared_fields['link_type'].choices = link_type_choices
+        self.declared_fields['link_type'].initial = link_type_choices[0][0]
         instance = kwargs.get('instance')
         if instance and instance.glossary.get('link_type') == 'cmspage':
             self._preset_section(instance)
@@ -151,7 +157,7 @@ class LinkForm(EntangledModelFormMixin):
                 error = ValidationError(_("CMS page to link to is missing."))
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if cleaned_data['download_file'] is None:
+            if not cleaned_data['download_file'] is None:
                 error = ValidationError(_("File for download is missing."))
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
@@ -167,16 +173,14 @@ class LinkForm(EntangledModelFormMixin):
                 error = ValidationError(_("No external URL provided."))
             if error:
                 self.add_error('ext_url', error)
+        elif link_type == 'email':
+            mail_to = cleaned_data['mail_to']
+            if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
+                error = ValidationError(_("'{email}' is not a valid email address.").format(email=mail_to))
+                self.add_error('mail_to', error)
         if error:
             raise error
         return cleaned_data
-
-    @classmethod
-    def get_form_class(cls):
-        """
-        Hook to return a form class for editing a CMSPlugin inheriting from ``LinkPluginBase``.
-        """
-        return cls
 
     @classmethod
     def unset_required_for(cls, sharable_fields):
