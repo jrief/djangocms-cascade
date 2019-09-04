@@ -4,10 +4,10 @@ Link Plugin
 
 **djangocms-cascade** ships with its own link plugin. This is because other plugins from the
 Cascade eco-system, such as the **BootstrapButtonPlugin**, the **BootstrapImagePlugin** or the
-**BootstrapPicturePlugin** also require the functionality to set links to internal- and external
-URLs. Since we do not want to duplicate the linking functionality for each of these plugins, it has
-been moved into its own base class. Therefore we will use the terminology **TextLinkPlugin** when
-referring to text-based links.
+**BootstrapPicturePlugin** also require a functionality in order to set links to internal- and
+external URLs. Since we do not want to duplicate the linking functionality for each of those
+plugins, it has been moved into its own base classes. Therefore we will use the terminology
+**TextLinkPlugin** when referring to text-based links.
 
 The de-facto plugin for links, djangocms-link_ can't be used as a base class for these plugins,
 hence an alternative implementation has been created within the Cascade framework. The link related
@@ -28,14 +28,16 @@ The behavior of this Plugin is what you expect from a Link editor. The field **L
 text displayed between the opening and closing ``<a>`` tag. If used in combination with
 djangocms-text-ckeditor_ the field automatically is filled out.
 
-By changing the **Link type**, the user can choose between three types of Links:
+By changing the **Link type**, the user can choose between different types of Links:
 
  * Internal Links pointing to another page inside the CMS.
  * External Links pointing to a valid Internet URL.
+ * Files from filer to download.
  * Links pointing to a valid e-mail address.
+ * and optionally anything else, if the Link plugin has been extended appropriately.
 
 The optional field **Title** can be used to add a ``title="some value"`` attribute to the
-``<a href ...>`` element.
+``<a ...>`` element.
 
 With **Link Target**, the user can specify, whether the linked content shall open in the current
 window or if the browser shall open a new window.
@@ -46,7 +48,7 @@ Link Plugin with sharable fields
 
 If your web-site contains many links pointing onto external URLs, you might want to refer to them
 by a symbolic name, rather than having to reenter the URL repeatedly. With **djangocms-cascade**
-this can be achieved easily by declaring some of the plugin's fields as “sharable”.
+this can be achieved easily by declaring some of the plugin's fields as "sharable".
 
 Assure that ``INSTALLED_APPS`` contain ``'cmsplugin_cascade.sharable'``, then redefine the
 **TextLinkPlugin** to have sharable fields in ``settings.py``:
@@ -57,7 +59,7 @@ Assure that ``INSTALLED_APPS`` contain ``'cmsplugin_cascade.sharable'``, then re
 	    ...
 	    'plugins_with_sharables':
 	        ...
-	        'TextLinkPlugin':  ('link',),  # and optionally other fields
+	        'TextLinkPlugin': ['link_type', 'ext_url'],
 	        ...
 	    },
 	    ...
