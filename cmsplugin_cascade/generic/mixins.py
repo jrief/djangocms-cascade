@@ -8,11 +8,21 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.models import CascadePage
 
 
-class SectionForm(models.ModelForm):
-    def clean_glossary(self):
-        glossary = self.cleaned_data['glossary']
-        self.check_unique_element_id(self.instance, glossary['element_id'])
-        return glossary
+class SectionFormMixin(EntangledModelFormMixin):
+    element_id = CharField(
+        label=_("Element ID"),
+        max_length=15,
+        required=False,
+        help_text=_("A unique identifier for this element.")
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['element_id']}
+
+    def clean_element_id(self):
+        element_id = self.cleaned_data['element_id']
+        self.check_unique_element_id(self.instance, element_id)
+        return element_id
 
     @classmethod
     def check_unique_element_id(cls, instance, element_id):
@@ -48,17 +58,6 @@ class SectionModelMixin(object):
         super().delete(*args, **kwargs)
 
 
-class SectionFormMixin(EntangledModelFormMixin):
-    element_id = CharField(
-        label=_("Element ID"),
-        max_length=15,
-        help_text=_("A unique identifier for this element.")
-    )
-
-    class Meta:
-        entangled_fields = {'glossary': ['element_id']}
-
-
 class SectionMixin(object):
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', self.form)
@@ -81,7 +80,7 @@ class SectionMixin(object):
             postfix = 0
             # check if form simplewarpper has function check_unique_element_id
             if not 'check_unique_element_id' in dir(form):
-                form_ = SectionForm                   
+                form_ = SectionFormMixin
             else:
                 form_ = form
             while True:
