@@ -1,7 +1,6 @@
- 
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
- 
+from cmsplugin_cascade.fields import SizeField
 from .plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap4.jumbotron import ImageBackgroundMixin, JumbotronFormMixin
 from cmsplugin_cascade import app_settings
@@ -10,11 +9,11 @@ from cmsplugin_cascade.bootstrap4.picture import get_picture_elements
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 
 from cmsplugin_cascade.bootstrap4.container import get_widget_choices, ContainerBreakpointsWidget
-
+from cmsplugin_cascade.bootstrap4.image import get_image_tags
 from .grid import Breakpoint
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
-
-from django.forms.fields import BooleanField, ChoiceField
+from django.forms import widgets
+from django.forms.fields import BooleanField, CharField, ChoiceField 
 
 from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
@@ -26,8 +25,8 @@ logger = logging.getLogger('cascade')
 
 class NavFormMixin(EntangledModelFormMixin):
     OPTION_NAV_COLLAPSE = [(c, c) for c in [ "inherit", "navbar-expand","navbar-expand-sm", "navbar-expand-md","navbar-expand-lg", "navbar-expand-xl"] ]
-    OPTION_NAV_COLOR = [(c, c) for c in [ "navbar-light", "navbar-dark"]]
-    OPTION_NAV_BG_COLOR = [ "bg-primary", "bg-secondary","bg-success", "bg-danger", "bg-warning", "bg-info" ,"bg-light", "bg-dark" , "bg-white", "bg-transparent"] 
+    OPTION_NAV_COLOR = [(c, c) for c in [ "inherit", "navbar-light", "navbar-dark"]]
+    OPTION_NAV_BG_COLOR = [ "inherit", "bg-primary", "bg-secondary","bg-success", "bg-danger", "bg-warning", "bg-info" ,"bg-light", "bg-dark" , "bg-white", "bg-transparent"] 
     OPTION_NAV_BG_GRADIENT = [ "bg-gradient-primary", "bg-gradient-secondary", "bg-gradient-success", "bg-gradient-danger", "bg-gradient-warning", "bg-gradient-info", "bg-gradient-light", "bg-gradient-dark"]
     OPTION_NAV_BG_MIX = OPTION_NAV_BG_COLOR + OPTION_NAV_BG_GRADIENT
     OPTION_NAV_PLACEMENTS=["inherit", "fixed-top" , "fixed-bottom" , "sticky-top"]
@@ -53,205 +52,159 @@ class NavFormMixin(EntangledModelFormMixin):
     navbar_placement = ChoiceField(
         label=_('navbar-place'),
         choices=[(c, c) for c in OPTION_NAV_PLACEMENTS],
-        help_text=_("Adjust interval placement."),
-    )
-
-    breakpoints = ChoiceField(
-        label=_('Available Breakpoints'),
-        choices=get_widget_choices(),
-        widget=ContainerBreakpointsWidget(choices=get_widget_choices()),
-        initial=[bp.name for bp in app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds'].keys()],
-        help_text=_("Supported display widths for Bootstrap's grid system."),
-    )
-
-    fluid = BooleanField(
-        label=_('Fluid Container'),
-        initial=False,
-        required=False,
-        help_text=_("Changing your outermost '.container' to '.container-fluid'.")
+        help_text=_("Adjust position ( 'fixed-top or fixed-button need to be set in Jumbotron if it is a plugin parent.')"),
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['navbar_collapse', 'navbar_color', 'navbar_bg_color', 'navbar_placement', 'breakpoints', 'fluid' ]}
-
-    """
-    def clean_breapoints(self):
-        # TODO: check this
-        if len(self.cleaned_data['glossary']['breakpoints']) == 0:
-            raise ValidationError(_("At least one breakpoint must be selected."))
-        return self.cleaned_data['glossary']
-    """
+        entangled_fields = {'glossary': ['navbar_collapse', 'navbar_color', 'navbar_bg_color', 'navbar_placement',]}
 
 
-
-class BootstrapNavbarFormMixin(NavFormMixin, JumbotronFormMixin):
+class BootstrapNavbarFormMixin(NavFormMixin):
     pass
 
 
 @plugin_pool.register_plugin
 class BootstrapNavbarPlugin(BootstrapPluginBase):
     name = _("Navbar")
-    model_mixins = (ContainerGridMixin, ImagePropertyMixin, ImageBackgroundMixin)
     default_css_class = 'navbar'
     default_css_attributes = ('options',)
     require_parent = False
     parent_classes = None
     render_template = 'cascade/bootstrap4/navbar.html'
-    #glossary_variables = ['container_max_widths', 'media_queries']
-    raw_id_fields = ['image_file']
     ring_plugin = 'BootstrapNavbarPlugin'
+    fixed_top_and_toolbar = None
 
 
     class Media:
         js = ['cascade/js/admin/navbarplugin.js']
 
     def get_form(self, request, obj=None, **kwargs):
-        if self.get_parent_instance(request, obj) is None:
-            # we only ask for breakpoints, if the Navjumbotron is the root of the placeholder
-            kwargs['form'] = type('NavbarForm', (ContainerFormMixin, BootstrapNavbarFormMixin), {})
-            kwargs['form'].declared_fields['image_file'].required=False
-        else:
-            kwargs['form'] = BootstrapNavbarFormMixin
-            kwargs['form'].declared_fields['image_file'].required=False
+        kwargs['form'] = BootstrapNavbarFormMixin
+        if obj.glossary.get('navbar_placement') == 'fixed-top':
+            obj.fixed_top_and_toolbar=True
         return super().get_form(request, obj, **kwargs)
-    """
-    def render(self, context, instance, placeholder):
-        # image shall be rendered in a responsive context using the ``<picture>`` element
-        try:
-            elements = get_picture_elements(instance)
-        except Exception as exc:
-            logger.warning("Unable generate picture elements. Reason: {}".format(exc))
-        else:
-            try:
-                if instance.child_plugin_instances and instance.child_plugin_instances[0].plugin_type == 'BootstrapRowPlugin':
-                    padding='padding: {0}px {0}px;'.format(int( app_settings.CMSPLUGIN_CASCADE['bootstrap4']['gutter']/2))
-                    context.update({'add_gutter_if_child_is_BootstrapRowPlugin': padding,})
-                context.update({
-                    'elements': [e for e in elements if 'media' in e] if elements else [],
-                    'CSS_PREFIXES': app_settings.CSS_PREFIXES,
-                })
-            except Exception as exc:
-                logger.warning("Unable generate picture elements. Reason: {}".format(exc))        
-        return self.super(BootstrapNavbarPlugin, self).render(context, instance, placeholder)
-    """
+
+
     @classmethod
-    def sanitize_model(cls, obj):
+    def sanitize_model(cls, obj ):
         sanitized = False
+        if hasattr(obj, 'fixed_top_and_toolbar'):
+            navbar_placement = obj.glossary.get('navbar_placement')
+            del obj.fixed_top_and_toolbar
+            
         # if the jumbotron is the root of the placeholder, we consider it as "fluid"
         obj.glossary['fluid'] = obj.parent is None
         super().sanitize_model(obj)
-        grid_container = obj.get_bound_plugin().get_grid_instance()
-        obj.glossary.setdefault('media_queries', {})
-        for bp, bound in grid_container.bounds.items():
-            obj.glossary['media_queries'].setdefault(bp.name, {})
-            width = round(bound.max)
-            if obj.glossary['media_queries'][bp.name].get('width') != width:
-                obj.glossary['media_queries'][bp.name]['width'] = width
-                sanitized = True
-            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
-                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
-                sanitized = True
         return sanitized
-
+ 
+    
     @classmethod
-    def get_css_classes(cls, obj):
+    def get_css_classes(cls, obj, ):
         css_classes = cls.super(BootstrapNavbarPlugin, cls).get_css_classes(obj)
-        if obj.glossary.get('fluid'):
-            css_classes.append('jumbotron-fluid')
-        else:
-            css_classes.append('jumbotron')
         navbar_collapse = obj.glossary.get('navbar_collapse', '')
         navbar_color = obj.glossary.get('navbar_color', '')
         navbar_bg_color = obj.glossary.get('navbar_bg_color', '')
-        navbar_placement = obj.glossary.get('placement', '')
+        navbar_placement = obj.glossary.get('navbar_placement', '')
         if navbar_collapse != 'inherit':
-           css_classes.append(navbar_collapse)
+            css_classes.append(navbar_collapse)
         if navbar_color != 'inherit':
             css_classes.append(navbar_color)
         if navbar_bg_color != 'inherit':
             css_classes.append(navbar_bg_color)
-        if navbar_placement  != 'inherit':
-            css_classes.append(navbar_placement )
+        if navbar_placement != 'inherit':
+            css_classes.append(navbar_placement)
         return css_classes
 
     @classmethod
     def get_identifier(cls, obj):
-        try:
-            content = obj.image.name or obj.image.original_filename
-        except AttributeError:
-            content = _("Without background image")
         identifier = super(BootstrapNavbarPlugin, cls).get_identifier(obj)
         css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
-        return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1} {2}</div>',
-identifier, css_classes_without_default, content)
-
-
-
+        return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
+identifier, css_classes_without_default)
 
 @plugin_pool.register_plugin
 class BootstrapNavBrandPlugin(BootstrapPluginBase, LinkPluginBase,):
     name = _("Nav brand")
     parent_classes = ['BootstrapNavbarPlugin'] 
+    direct_child_classes = ('BootstrapTabPanePlugin', 'BootstrapListsPlugin')
     model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_brand.html'
     raw_id_fields = LinkPluginBase.raw_id_fields + ['image_file']
+    default_css_class = ''
+    require_parent = False
+    
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = super(BootstrapNavBrandPlugin, cls).get_css_classes(obj)
+        return css_classes
 
+    @classmethod
+    def get_identifier(cls, obj):
+        identifier = super(BootstrapNavBrandPlugin, cls).get_identifier(obj)
+        css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
+        return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
+        identifier, css_classes_without_default)
+
+
+class BootstrapNavBrandThumbImageFormMixin(EntangledModelFormMixin):
+    image_width_fixed = SizeField(
+        label=_("Fixed Image Width"),
+        allowed_units=['px'],
+        required = False,
+        help_text=_("Set a fixed image width in pixels."),
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['image_width_fixed']}
+
+class BootstrapNavBrandImageFormMixin( ImageFormMixin,   BootstrapNavBrandThumbImageFormMixin  ):
+    pass
 
 @plugin_pool.register_plugin
 class BootstrapNavBrandImagePlugin(BootstrapPluginBase):
     name = _("Nav brand Image") 
     model_mixins = (ImagePropertyMixin,)
-    parent_classes = ['BootstrapNavBrandPlugin'] 
+    parent_classes = ['BootstrapNavBrandPlugin', 'BootstrapListsPlugin'] 
     allow_children = True
     alien_child_classes = True
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     raw_id_fields = ['image_file']
     SIZE_CHOICES = ('auto', 'width/height', 'cover', 'contain')
-    form = ImageFormMixin
+    form = BootstrapNavBrandImageFormMixin
     raw_id_fields = ['image_file']
     render_template = 'cascade/bootstrap4/navbar_brand_image.html'
+    default_css_class = 'nav-brand-logo-ts'
 
-    def render(self, context, instance, placeholder):
-        context = self.super(BootstrapNavBrandImagePlugin, self).render(context, instance, placeholder)
+
+    def render(self, context, instance, placeholder, tags=None):
         try:
-            parent_glossary = instance.parent.get_bound_plugin().glossary
-            instance.glossary.update(responsive_heights=parent_glossary['container_max_heights'])
-            elements = get_picture_elements(instance)
+            tags = get_image_tags(instance)
         except Exception as exc:
-            logger.warning("Unable generate picture elements. Reason: {}".format(exc))
-        else:
-            context.update({
-                'is_fluid': False,
-                'elements': elements,
-            })
+            logger.warning("Unable generate image tags. Reason: {}".format(exc))
+        tags = tags if tags else {}
+        if 'extra_styles' in tags:
+            extra_styles = tags.pop('extra_styles')
+            inline_styles = instance.glossary.get('inline_styles', {})
+            inline_styles.update(extra_styles)
+            instance.glossary['inline_styles'] = inline_styles
+        context.update(dict(instance=instance, placeholder=placeholder, **tags))
+        return context
 
     @classmethod
-    def sanitize_model(cls, obj):
-        sanitized = super().sanitize_model(obj)
-        resize_options = obj.get_parent_glossary().get('resize_options', [])
-        if obj.glossary.get('resize_options') != resize_options:
-            obj.glossary.update(resize_options=resize_options)
-            sanitized = True
-        parent = obj.parent
-        
-        while parent.plugin_type != 'BootstrapColumnPlugin':
-            parent = parent.parent
-            if parent is None:
-                logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
-                return
-        grid_column = parent.get_bound_plugin().get_grid_instance()
-        obj.glossary.setdefault('media_queries', {})
-        for bp in Breakpoint:
-            obj.glossary['media_queries'].setdefault(bp.name, {})
-            width = round(grid_column.get_bound(bp).max)
-            if obj.glossary['media_queries'][bp.name].get('width') != width:
-                obj.glossary['media_queries'][bp.name]['width'] = width
-                sanitized = True
-            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
-                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
-                sanitized = True
-            return sanitized
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(BootstrapNavBrandImagePlugin, cls).get_css_classes(obj)
+        css_class = obj.glossary.get('css_class')
+        if css_class:
+            css_classes.append(css_class)
+        return css_classes
 
+    @classmethod
+    def get_child_css_classes(cls, obj):
+        child_css_classes = cls.super(BootstrapNavBrandImagePlugin, cls).get_child_css_classes(obj)
+        child_css_classes = obj.glossary.get('child_css_class')
+        if child_css_class:
+            child_css_classes.append(css_class)
+        return css_classes
 
 @plugin_pool.register_plugin
 class BootstrapNavCollapsePlugin(BootstrapPluginBase):
@@ -300,11 +253,12 @@ class  BootstrapNavListPlugin(BootstrapPluginBase):
 
 @plugin_pool.register_plugin
 class BootstrapNavItemsMainMemuPlugin(BootstrapPluginBase):
-    name = _("Nav items main menu")
-    parent_classes = ['BootstrapNavListPlugin'] 
+    name = _("Nav items Main Menu ")
+    parent_classes = None
+    require_parent = False
+    allow_children = False  
     alien_child_classes = True
-    render_template = 'cascade/bootstrap4/navbar_nav_items_links.html'
-
+    render_template = 'cascade/bootstrap4/navbar_nav_items_li_menu_main_links.html'
 
 @plugin_pool.register_plugin
 class BootstrapNavItemsPlugin(BootstrapPluginBase):
@@ -326,6 +280,6 @@ class BootstrapNavbarNavLinkPlugin(BootstrapPluginBase):
 @plugin_pool.register_plugin
 class BootstrapNavbarToogler(BootstrapPluginBase):
     name = _("Nav toogler")
-    default_css_class = ''
+    default_css_class = 'navbar-toggler'
     parent_classes = ['BootstrapNavbarPlugin'] 
     render_template = 'cascade/bootstrap4/navbar_toogler.html'

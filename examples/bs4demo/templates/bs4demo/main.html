@@ -26,11 +26,7 @@ observer.observe($('.cms-structure-content')[0], { childList: true});
 {% endaddtoblock %}
 {% endif %}
 
-{% if cms_version >= "3.5.0" and request.toolbar %}
-	<style>
-	body { padding-top:46px; }
-	.fixed-top {  top: 46px !important;}
-	</style>
+{% if cms_version >= "3.5.0" and request.toolbar  %}
 {% endif %}
 
 {% endblock header %}

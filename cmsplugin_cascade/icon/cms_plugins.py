@@ -107,6 +107,8 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
         text_align = instance.glossary.get('text_align')
         if text_align:
             css_classes.append(text_align)
+        if instance.parent.plugin_type == 'BootstrapListsPlugin':
+            css_classes.insert(0,'nav-link navbar-text')
         return css_classes
 
     @classmethod

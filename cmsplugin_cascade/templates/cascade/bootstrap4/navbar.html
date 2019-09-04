@@ -1,6 +1,26 @@
 {% load bootstrap_tags cms_tags %}
 {% block extra-styles %}{% endblock %}
 {% block extra-scripts %}{% endblock %}
+
+{# Navbar Plugin compese space top toolbar CMS' #}
+{% if request.toolbar and request.toolbar.edit_mode_active %}
+{% if instance.parent.plugin_type == 'BootstrapJumbotronPlugin' and 'fixed-top' in instance.css_classes  %} 
+	<style>
+	body { padding-top:2.8rem  }
+	// .fixed-top  { top: 2.8rem !important; }
+    .jumbotron-fluid { margin-top: 2.8rem !important ;}
+	</style> 
+ {% endif %}
+ {% if instance.plugin_type == 'BootstrapNavbarPlugin' and 'fixed-top' in instance.css_classes  %} 
+	<style>
+	body { padding-top:2.8rem  }
+	 .fixed-top  { top:2.8rem  !important; }
+    //.jumbotron-fluid { margin-top: 2.8rem !important;}
+	</style> 
+{% endif %}
+{% endif %}
+
+
 {% with instance_css_classes=instance.css_classes instance_inline_styles=instance.inline_styles %}
 <nav {% if instance_css_classes %} class="{{ instance_css_classes }}"{% endif %}{% if instance_inline_styles %} style="{{ instance_inline_styles }}"{% endif %} role="navigation">
 {% endwith %}

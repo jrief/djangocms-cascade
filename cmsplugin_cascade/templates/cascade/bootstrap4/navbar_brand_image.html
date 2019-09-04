@@ -1,22 +1,14 @@
 {% load l10n thumbnail %}
 {% localize off %}{% spaceless %}
-{% if instance.image %} 
-<picture {{ instance.html_tag_attributes }}>
-	{% for elem in elements %}
-		{% thumbnail instance.image elem.size zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
-		{% if elem.size2 %}
-			{% thumbnail instance.image elem.size2 zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb2 %}
-		{% endif %}
-		{% if elem.tag == "source" %}
-	<source srcset="{{ thumb.url }}{% if thumb2 %} 1x, {{ thumb2.url }} 2x{% endif %}" media="{{ elem.media }}" />
-		{% elif elem.tag == "img" %}
-	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}"{% if not is_fluid %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %} />
-		{% endif %}
-	{% endfor %}
-</picture>
-{% else %}
-<div>
-	<svg viewBox="0 0 {{ instance.glossary.image.width }} {{instance.glossary.image.height }}" style="background-color: {{ instance.glossary.ramdom_svg_color }};"  width="100%" height="100%" />
-</div>
-{% endif %}
+{% with css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+{% if instance.image %} <img {% else %} <div><svg viewBox="0 0 {{ instance.glossary.image.width }} {{instance.glossary.image.height }}" style="background-color: {{ instance.glossary.ramdom_svg_color }};"{% endif %} {{ instance.html_tag_attributes }}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}
+
+	{% if sizes %}sizes="{{ sizes|join:', ' }}"{% endif %}
+	srcset="{% for key, srcset in srcsets.items %}
+		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=instance.image.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
+	{% endfor %}"
+	{% thumbnail instance.image src.size crop=src.crop upscale=src.upscale subject_location=instance.image.subject_location as thumb %}
+	src="{{ thumb.url }}"{% if not sizes %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %} />{% if not instance.image %}</div>{% endif %}
+	{% endwith %}
 {% endspaceless %}{% endlocalize %}
+
