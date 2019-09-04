@@ -143,7 +143,7 @@ class BootstrapUtilities(type):
                 initial='',
             )
         return form_fields
-        
+
     @property
     def flex_directions(cls):
         form_fields = {}
@@ -210,5 +210,37 @@ class BootstrapUtilities(type):
                 choices=choices,
                 required=False,
                 initial=''
+            )
+        return form_fields
+
+    @property
+    def positions(cls):
+        form_fields = {}
+        choices_format = [
+            ('{}', _("Position")),
+        ]
+        notation = ['inherit', 'fixed-top' , 'fixed-bottom' , 'sticky-top']
+        choices = [ (str(n), str(n)) for c, l in choices_format for n in notation]
+        form_fields['Position'] = ChoiceField(
+            label=format_lazy(_("Position")),
+            choices=choices,
+            required=False,
+            initial=''
+            )
+        return form_fields
+
+    @property
+    def list_inline(cls):
+        form_fields = {}
+        choices_format = [
+            ('{}', _("List inline")),
+        ]
+        notation = ['inherit', 'fixed-top' , 'fixed-bottom' , 'sticky-top']
+        choices = [ (str(n), str(n)) for c, l in choices_format for n in notation]
+        form_fields['Position'] = ChoiceField(
+            label=format_lazy(_("Position")),
+            choices=choices,
+            required=False,
+            initial=''
             )
         return form_fields
