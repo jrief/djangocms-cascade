@@ -4,7 +4,6 @@ from django.db.models import Q
 from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
@@ -80,13 +79,14 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super().get_identifier(obj)
         breakpoints = obj.glossary.get('breakpoints')
         content = obj.glossary.get('fluid') and '(fluid) ' or ''
         if breakpoints:
             BREAKPOINTS = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
             devices = ', '.join([str(bp.label) for bp in BREAKPOINTS if bp.name in breakpoints])
             content = _("{0}for {1}").format(content, devices)
-        return mark_safe(content)
+        return format_html('{0}{1}', identifier, content)
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -139,9 +139,10 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super().get_identifier(obj)
         num_cols = obj.get_num_children()
         content = ungettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
-        return mark_safe(content)
+        return format_html('{0}{1}', identifier, content)
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
@@ -336,6 +337,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        identifier = super().get_identifier(obj)
         glossary = obj.get_complete_glossary()
         widths = []
         for bp in glossary.get('breakpoints', []):
@@ -349,6 +351,6 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             content = ungettext_lazy("default width: {0} unit", "default width: {0} units", width).format(width)
         else:
             content = _("unknown width")
-        return mark_safe(content)
+        return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
