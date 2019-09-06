@@ -157,7 +157,7 @@ class LinkForm(EntangledModelFormMixin):
                 error = ValidationError(_("CMS page to link to is missing."))
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if not cleaned_data['download_file'] is None:
+            if cleaned_data['download_file'] is None:
                 error = ValidationError(_("File for download is missing."))
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
