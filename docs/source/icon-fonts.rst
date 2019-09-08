@@ -5,7 +5,7 @@ Using Fonts with Icons
 Introduction
 ============
 
-Sometime we want to enrich our web pages with vectorized symbols. A lot of them can be found in
+Sometimes we want to enrich our web pages with vectorized symbols. A lot of them can be found in
 various font libraries, such as `Font Awesome`_, `Material Icons`_, `Streamline Icons`_ and many
 more. A typical approach would be to upload the chosen SVG symbol, and use it as image. This
 process however is time consuming and error-prone to organize. Therefore, **djangocms-cascade**
@@ -16,7 +16,7 @@ packaging. In the future, this service  might be integrated into **djangocms-cas
 
 This submodule, if enabled adds three additional plugins: **Icon with frame**, **Simple icon** and
 **Icon in text**. Additionally it allows to decorate buttons with an icon on the left or right side
-of the main text.
+of its main content.
 
 
 Configuration
@@ -123,13 +123,13 @@ By storing these attributes under a common name, one can reuse them across vario
 having to set them for each one, separately. Additionally, each of the shared styling attributes
 can be changed globally in Django's admin backend at
 ``Start › django CMS Cascade › Shared between Plugins``. For details please refer to the section
-about :doc:`sharable-fields`.
+about :ref:`sharable-fields`.
 
 
 Using the Icon Plugin in plain text
 ===================================
 
-If **django-CMS** is configured to use the **djangocms-ckeditor-widget**, then you may use the
+If **django-CMS** is configured to use the `CKEditor for django-CMS`_, then you may use the
 **Icon Plugin** inside plain text. Place the cursor at the desired location in text and select
 **Icon** from the pull down menu **CMS Plugins**. This opens a popup where you may select the
 font family and the symbol. All other attributes described above, are not available with this
@@ -139,3 +139,4 @@ type of plugin.
 .. _Material Icons: https://design.google.com/icons/
 .. _Streamline Icons: https://streamlineicons.com/
 .. _Fontello: http://fontello.com/
+.. _CKEditor for django-CMS: https://pypi.org/project/djangocms-text-ckeditor/

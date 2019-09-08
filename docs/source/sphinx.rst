@@ -126,7 +126,7 @@ Depending on your template layout, the way you import this may vary.
 Linking onto Documentation Pages
 --------------------------------
 
-By overriding the :doc:`link-plugin` with a special target named **Documentation**, we can
+By overriding the :ref:`link-plugin` with a special target named **Documentation**, we can
 even add links onto our documentation pages symbolically. This means, that whenever we open the
 **LinkPlugin** editor, an additional target is added. It offers a select box showing all
 pages from our documentation tree. This prevents us, having to hard code the URL pointing
