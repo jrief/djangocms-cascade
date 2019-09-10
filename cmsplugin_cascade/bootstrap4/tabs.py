@@ -1,7 +1,7 @@
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from django.utils.safestring import mark_safe 
+from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.forms.fields import IntegerField
 from entangled.forms import EntangledModelFormMixin
