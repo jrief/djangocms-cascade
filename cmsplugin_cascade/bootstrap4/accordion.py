@@ -1,11 +1,7 @@
 from django.forms import widgets, BooleanField, CharField
 from django.forms.fields import IntegerField
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from django import VERSION as DJANGO_VERSION
-if DJANGO_VERSION < (2, 0):
-    from django.utils.text import mark_safe
-else:
-    from django.utils.safestring import mark_safe 
+from django.utils.safestring import mark_safe 
 from django.utils.text import Truncator
 from django.utils.html import escape
 from entangled.forms import EntangledModelFormMixin
