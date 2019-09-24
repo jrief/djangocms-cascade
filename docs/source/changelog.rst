@@ -4,7 +4,7 @@ Release History
 
 1.0 (Warning: API changes!)
 ===========================
-* Add support for Django-2.0.
+* Add support for Django-2.0/2.1.
 * Drop support for Python-2.7.
 * Introduce a much simpler way for writing customized CMS plugins. Instead of using a special multi-widget,
   thanks to django-entangled_, now all plugins use Django forms to create the editors for their plugin models.
