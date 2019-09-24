@@ -16,18 +16,19 @@ Instead of creating one database model for each CMS plugin, Cascade shares one d
 all of them. The payload then is stored inside a JSON field instead of declaring each attribute
 explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
 
-## Breaking News
 
-The next version of **djangocms-cascade** will be 1.0. This is a major release with a much simpler way of
-writing your own plugins. There you can use Django forms to create editors for your plugin models, still
-keeping all its data in a JSON field.
+## Version 1.0
 
-In addition, version 1.0 drops support for Python-2.7 and adds support for django-CMS-3.6
-and Django-2.0/2.1.
+Version 1.0 of **djangocms-cascade** is a major release with a much simpler way of writing your
+own plugins. There you can use [Django forms to create editors](https://github.com/jrief/django-entangled)
+for your plugin models, still keeping all its data inside JSON fields.
 
-Please test the development branch for release 1.0 and share your experience.
+**Important Note:** In version 1, the internal structure of many Cascade plugins changed. Running
+`./manage.py migrate cmsplugin_cascade` modifies these fields, however no backward migration has
+been provided yet. Therefore, assure to backup your database before upgrading.
 
-https://github.com/jrief/djangocms-cascade/tree/releases/1.0.x
+In addition, version 1 drops support for Python-2.7 and adds support for django-CMS-3.6 and
+Django-2.0/2.1.
 
 
 ### Perfect for nested grid systems
@@ -58,13 +59,6 @@ buttons and text-links.
 Since the payload of plugins is already serialized, we can even copy them from one site to another
 site supporting **djangocms-cascade**.
 
-
-### Additional features in version 0.18
-
-* Can handle more than one Icon Font on the same page.
-* Plugin for YouTube videos.
-* Added link type to download arbitrary files.
-* Bootstrap-4's Card Plugin offers three distinct children for Header, Body and Footer.
 
 ## Documentation
 
