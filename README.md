@@ -24,8 +24,8 @@ own plugins. There you can use [Django forms to create editors](https://github.c
 for your plugin models, still keeping all its data inside JSON fields.
 
 **Important Note:** In version 1, the internal structure of many Cascade plugins changed. Running
-`./manage.py migrate cmsplugin_cascade` modifies these fields, however no backward migration has
-been provided yet. Therefore, assure to backup your database before upgrading.
+`./manage.py migrate cmsplugin_cascade` converts these fields, however no backward migration has
+been provided yet. Please assure to backup your database before upgrading.
 
 In addition, version 1 drops support for Python-2.7 and adds support for django-CMS-3.6 and
 Django-2.0/2.1.
