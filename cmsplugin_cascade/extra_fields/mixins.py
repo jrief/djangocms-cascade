@@ -93,10 +93,11 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
         """Enrich list of CSS classes with customized ones"""
         css_classes = super().get_css_classes(obj)
         extra_css_classes = obj.glossary.get('extra_css_classes')
-        if isinstance(extra_css_classes, str):
-            css_classes.append(extra_css_classes)
-        elif isinstance(extra_css_classes, (list, tuple)):
-            css_classes.extend(extra_css_classes)
+        if extra_css_classes:
+            if isinstance(extra_css_classes, str):
+                css_classes.append(extra_css_classes)
+            elif isinstance(extra_css_classes, (list, tuple)):
+                css_classes.extend(extra_css_classes)
         return css_classes
 
     @classmethod
