@@ -1,19 +1,12 @@
 from django.core.exceptions import ValidationError
 from django.forms.fields import CharField
-from django.db.models.fields.related import ManyToOneRel
 from django.utils.translation import ugettext_lazy as _
-from filer.fields.image import FilerImageField, AdminImageFormField
-from filer.models.imagemodels import Image
 from entangled.forms import EntangledModelFormMixin, EntangledField, get_related_object
+from cmsplugin_cascade.fields import CascadeImageField
 
 
 class ImageFormMixin(EntangledModelFormMixin):
-    image_file = AdminImageFormField(
-        ManyToOneRel(FilerImageField, Image, 'file_ptr'),
-        Image.objects.all(),
-        to_field_name='image_file',
-        label=_("Image"),
-    )
+    image_file = CascadeImageField()
 
     image_title = CharField(
         label=_('Image Title'),

@@ -1,17 +1,20 @@
 import re
 import json
 import warnings
+from django import VERSION as DJANGO_VERSION
+from django.db.models.fields.related import ManyToOneRel
+from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.forms.fields import Field, CharField, ChoiceField, BooleanField, MultiValueField
 from django.forms.utils import ErrorList
-from django.core.exceptions import ValidationError
-from django import VERSION as DJANGO_VERSION
 if DJANGO_VERSION >= (2, 0):
    from django.core.validators import ProhibitNullCharactersValidator
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _, ugettext
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.widgets import ColorPickerWidget, BorderChoiceWidget, MultipleTextInputWidget
+from filer.fields.image import FilerImageField, AdminImageFormField
+from filer.models.imagemodels import Image
 
 
 class GlossaryField(object):
@@ -264,3 +267,12 @@ class HiddenDictField(Field):
             return json.loads(value)
         except:
             raise ValidationError("Invalid Field Value")
+
+
+class CascadeImageField(AdminImageFormField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label', _("Image"))
+        super().__init__(
+            ManyToOneRel(FilerImageField, Image, 'file_ptr'),
+            Image.objects.all(),
+            'image_file', *args, **kwargs)
