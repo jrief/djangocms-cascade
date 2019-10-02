@@ -22,10 +22,10 @@ django.jQuery(function($) {
 			this.refreshChangeForm();
 		},
 		fileIdInputChanged: function () {
-			var $backgroundHorizontalPosition = $('#id_glossary_background_horizontal_position'),
-			    $backgroundVerticalPosition = $('#id_glossary_background_vertical_position'),
-			    $backgroundAttachment = $('#id_glossary_background_attachment'),
-			    $backgroundRepeat = $('#id_glossary_background_repeat');
+			var $backgroundHorizontalPosition = $('#id_background_horizontal_position'),
+			    $backgroundVerticalPosition = $('#id_background_vertical_position'),
+			    $backgroundAttachment = $('input[name="background_attachment"]'),
+			    $backgroundRepeat = $('input[name="background_repeat"]');
 			if ($fileIdInputSelector.val()) {
 				$backgroundHorizontalPosition.prop('disabled', false);
 				$backgroundVerticalPosition.prop('disabled', false);
