@@ -57,14 +57,6 @@ def set_defaults(config):
         BootstrapUtilities.margins,
     ))
 
-    config['plugins_with_extra_fields'].setdefault('BootstrapJumbotronPlugin', PluginExtraFieldsConfig(
-        inline_styles={
-            'extra_fields:Margins': ['margin-top', 'margin-bottom'],
-            'extra_units:Margins': 'px,rem',
-            'extra_fields:Paddings': ['padding-top', 'padding-bottom'],
-            'extra_units:Paddings': 'px,rem',
-        }
-    ))
     config['plugins_with_extra_fields'].setdefault('BootstrapTabSetPlugin', PluginExtraFieldsConfig(
         css_classes={
             'multiple': True,
