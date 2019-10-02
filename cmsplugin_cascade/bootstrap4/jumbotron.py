@@ -181,7 +181,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     name = _("Jumbotron")
     model_mixins = (ContainerGridMixin, ImagePropertyMixin, ImageBackgroundMixin)
     require_parent = False
-    parent_classes = ['BootstrapContainerPlugin']
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     allow_children = True
     alien_child_classes = True
     form = JumbotronFormMixin
