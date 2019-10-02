@@ -225,10 +225,18 @@ class MultiSizeField(MultiValueField):
     def __init__(self, properties, *args, **kwargs):
         required = kwargs.pop('required', False)
         require_all_fields = kwargs.pop('require_all_fields', required)
+        initial = kwargs.pop('initial', None)
+        if isinstance(initial, (list, tuple)):
+            if len(initial) != len(properties):
+                raise ValueError("The number of initial values must be {}.".format(len(properties)))
+            initial = dict(zip(properties, initial))
+        elif not isinstance(initial, dict):
+            initial = {prop: initial for prop in properties}
         allowed_units = kwargs.pop('allowed_units', None)
         fields = [SizeField(required=required, allowed_units=allowed_units)] * len(properties)
         widget = MultipleTextInputWidget(properties)
-        super().__init__(fields=fields, widget=widget, required=required, require_all_fields=require_all_fields, *args, **kwargs)
+        super().__init__(fields=fields, widget=widget, required=required,
+                         require_all_fields=require_all_fields, initial=initial, *args, **kwargs)
         self.properties = list(properties)
 
     def prepare_value(self, value):
