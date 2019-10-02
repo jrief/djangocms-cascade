@@ -1,6 +1,6 @@
 import logging
 from django.core.exceptions import ValidationError
-from django.forms import widgets, ChoiceField
+from django.forms import widgets, BooleanField, ChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
@@ -79,11 +79,19 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     REPEAT_CHOICES = ['repeat', 'repeat-x', 'repeat-y', 'no-repeat']
     SIZE_CHOICES = ['auto', 'width/height', 'cover', 'contain']
 
+    fluid = BooleanField(
+        label=_("Is fluid"),
+        initial=True,
+        required=False,
+        help_text=_("Shall this element occupy the entire horizontal space of its parent."),
+    )
+
     element_heights = BootstrapMultiSizeField(
         label=("Element Heights"),
         required=True,
         allowed_units=['rem', 'px'],
         initial='300px',
+        help_text=_("This property specifies the height for each Bootstrap breakpoint."),
     )
 
     background_color = ColorField(
@@ -101,7 +109,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
         widget=widgets.RadioSelect,
         initial='no-repeat',
         required=False,
-        help_text=_("This property specifies how an image repeates."),
+        help_text=_("This property specifies how the background image repeates."),
     )
 
     background_attachment = ChoiceField(
@@ -110,7 +118,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
         widget=widgets.RadioSelect,
         initial='local',
         required=False,
-        help_text=_("This property specifies how to move the background relative to the viewport."),
+        help_text=_("This property specifies how to move the background image relative to the viewport."),
     )
 
     background_vertical_position = ChoiceField(
@@ -135,7 +143,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
         widget=widgets.RadioSelect,
         initial='auto',
         required=False,
-        help_text=_("This property specifies how an image is sized."),
+        help_text=_("This property specifies how the background image is sized."),
     )
 
     background_width_height = MultiSizeField(
@@ -147,7 +155,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['background_color', 'element_heights', 'image_file',
+        entangled_fields = {'glossary': ['fluid', 'background_color', 'element_heights', 'image_file',
                                          'background_repeat', 'background_attachment',
                                          'background_vertical_position', 'background_horizontal_position',
                                          'background_size', 'background_width_height']}
@@ -217,8 +225,6 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = False
-        # if the jumbotron is the root of the placeholder, we consider it as "fluid"
-        obj.glossary['fluid'] = obj.parent is None
         super().sanitize_model(obj)
         grid_container = obj.get_bound_plugin().get_grid_instance()
         obj.glossary.setdefault('media_queries', {})
