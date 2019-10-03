@@ -8,6 +8,7 @@ Release History
 * In **BootstrapJumbotrom**: Add multiple fields to set height in all five breakpoints.
 * Allow Jumbotron to be child of a Bootstrap Column.
 * Fix regression in JavaScript part of Jumbotron: Some HTML selectors did not work in version 1.0.
+* Fix regression in ColorField of Jumbotron. Background color is rendered correctly.
 * ``MultiSizeField`` accepts ``initial`` as single value or list in addition to dictionary.
 * Add reusable field ``CascadeImageField`` to reference images in **django-filer**.
 
