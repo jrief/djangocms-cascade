@@ -8,6 +8,24 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
 
+from entangled.forms import EntangledModelFormMixin
+
+from django.forms.fields import BooleanField, HiddenInput
+from django.utils.translation import ugettext_lazy as _
+from django.template import engines
+from django.forms import MediaDefiningClass 
+
+class ExtraFieldsPluginFormMixin( EntangledModelFormMixin):
+    """In this form, the label will be canceled later to give the plugin setting URL directly (hack dynamic url
+       for custom_css_classes_and_styles about site and the plugin)"""
+    plugin_setting =CharField(
+        widget=widgets.TextInput(attrs={'style': 'display:none;'}),
+        required=False,
+        label=""
+    )
+    
+    class Meta:
+        entangled_fields = {'glossary': ['plugin_setting']}
 
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     """
@@ -27,8 +45,24 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
         try:
             site = get_current_site(request)
             extra_fields = PluginExtraFields.objects.get(plugin_type=clsname, site=site)
+            extra_fields_db = True
         except ObjectDoesNotExist:
+            extra_fields_db = False
             extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
+
+        if extra_fields_db and app_settings.CMSPLUGIN_CASCADE['MERGE_EXTRA_FIELDS_SET'] :
+            if clsname in app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].keys():
+                for key_style, value_style in app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'][clsname].inline_styles.items():
+                    extra_fields.inline_styles.update({style:extra_fields.inline_styles[ key_style] + value_style})
+                for key_css_classes, value_css_classes in app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'][clsname].css_classes.items():
+                    if value_css_classes == '':
+                        value_css_classes  = extra_fields.css_classes[key_css_classes]
+                    elif type(value_css_classes) == list:
+                        list_extra_fields = extra_fields.css_classes[key_css_classes].replace(' ', '').split(",")
+                        list_css_classes = list(dict.fromkeys(list_extra_fields + v))
+                        value_css_classes = ','.join(list_css_classes)
+                    extra_fields.css_classes.update({ key_css_classes:value_css_classes } )
+                extra_fields.save()
 
         if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
             form_fields = {}
@@ -85,7 +119,15 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
             class Meta:
                 entangled_fields = {'glossary': list(form_fields.keys())}
             form_fields['Meta'] = Meta
-            kwargs['form'] = type(base_form.__name__, (base_form,), form_fields)
+            site = get_current_site(request)
+            if extra_fields_db:
+                list(ExtraFieldsPluginFormMixin.base_fields.values())[0].label=  format_html('<a href="/admin/cmsplugin_cascade/pluginextrafields/{0}/change/#{1}" data-current={2}> {3}</a>', extra_fields.id, request.path_info , clsname, _('Plugin setting'))
+                list(ExtraFieldsPluginFormMixin.base_fields.values())[0].help_text =  format_html('<div style="width:auto">{}_{}</div>', site, clsname)
+                kwargs['form'] = type(base_form.__name__, (ExtraFieldsPluginFormMixin,base_form,), form_fields)
+            else:
+                list(ExtraFieldsPluginFormMixin.base_fields.values())[0].label=  format_html('<a href="/admin/cmsplugin_cascade/pluginextrafields/#{1}" data-current={1}> {2}</a>', request.path_info , clsname, _('Plugin setting'))
+                list(ExtraFieldsPluginFormMixin.base_fields.values())[0].help_text =  format_html('<div style="width:auto">{}_{}</div>', site, clsname)
+                kwargs['form'] = type(base_form.__name__, (ExtraFieldsPluginFormMixin,base_form,), form_fields)
         return super().get_form(request, obj, **kwargs)
 
     @classmethod
