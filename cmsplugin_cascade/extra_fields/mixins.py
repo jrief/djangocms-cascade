@@ -1,7 +1,7 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import MediaDefiningClass, widgets
-from django.forms.fields import CharField, ChoiceField, MultipleChoiceField, BooleanField
+from django.forms.fields import CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
