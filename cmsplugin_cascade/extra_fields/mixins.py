@@ -11,15 +11,28 @@ from cmsplugin_cascade.fields import SizeField
 from entangled.forms import EntangledModelFormMixin
 
 class ExtraFieldsPluginFormMixin( EntangledModelFormMixin):
-    """In this form, choices will overided later to give path of parameter custom css classes
+    """In this form, choices and help_text will overided later to give path of parameter custom css classes
      and styles for the plugin)"""
-    
+
     custom_css_classes_and_styles = ChoiceField(
         widget=widgets.RadioSelect(attrs={'style': 'display:none;'}),
         choices=[],
         required=False,
-        label=_("Custom css classes and styles"),
+        label=_("Set custom css classes and styles"),
     )
+
+    def custom_form(clsname, request, extra_fields):
+            site = get_current_site(request)
+            form_custom = ExtraFieldsPluginFormMixin.base_fields['custom_css_classes_and_styles']
+            if hasattr(extra_fields, 'id'):
+                admin_path_plugin_extra_field_set = "/admin/cmsplugin_cascade/pluginextrafields/{}/change/".format( extra_fields.id )
+                form_custom.choices = [('', format_html('<a href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
+                form_custom.help_text =  format_html('<div style="width:auto">Site: {} Plugin: {}</div>', site, clsname)
+            else:
+                admin_path_plugin_extra_field_set = "/admin/cmsplugin_cascade/pluginextrafields/" 
+                form_custom.choices = [('', format_html('<a href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
+                form_custom.help_text =  format_html('<div style="width:auto">Site: {} Plugin: {}</div>', site, clsname)
+
     class Meta:
         entangled_fields = {'glossary':['custom_css_classes_and_styles']}
 
@@ -41,16 +54,15 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
         try:
             site = get_current_site(request)
             extra_fields = PluginExtraFields.objects.get(plugin_type=clsname, site=site)
-            extra_fields_db = True
         except ObjectDoesNotExist:
-            extra_fields_db = False
             extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
 
-        if extra_fields_db and app_settings.CMSPLUGIN_CASCADE['MERGE_EXTRA_FIELDS_SET'] :
-            if clsname in app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].keys():
-                for key_style, value_style in app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'][clsname].inline_styles.items():
+        if hasattr(extra_fields, 'id') and app_settings.CMSPLUGIN_CASCADE['MERGE_EXTRA_FIELDS_SET'] :
+            settings_extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields']
+            if clsname in settings_extra_fields.keys():
+                for key_style, value_style in settings_extra_fields[clsname].inline_styles.items():
                     extra_fields.inline_styles.update({key_style:extra_fields.inline_styles[key_style] + value_style})
-                for key_css_classes, value_css_classes in app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'][clsname].css_classes.items():
+                for key_css_classes, value_css_classes in settings_extra_fields[clsname].css_classes.items():
                     if value_css_classes == '':
                         value_css_classes = extra_fields.css_classes[key_css_classes]
                     elif type(value_css_classes) == list:
@@ -114,18 +126,12 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
             assert issubclass(base_form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
             class Meta:
                 entangled_fields = {'glossary': list(form_fields.keys())}
+
+            # overide fields 'custom_css_classes_and_styles' attributes: choices, help_text.
+            ExtraFieldsPluginFormMixin.custom_form(clsname ,request, extra_fields)
+
             form_fields['Meta'] = Meta
-            site = get_current_site(request)
-            if extra_fields_db:
-                admin_path_plugin_extra_field_set = f"/admin/cmsplugin_cascade/pluginextrafields/{extra_fields.id}/change/" 
-                list(ExtraFieldsPluginFormMixin.base_fields.values())[0].choices = [('', format_html('<a href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
-                list(ExtraFieldsPluginFormMixin.base_fields.values())[0].help_text =  format_html('<div style="width:auto">Site:{} Plugin;{}</div>', site, clsname)
-                kwargs['form'] = type(base_form.__name__, (ExtraFieldsPluginFormMixin,base_form,), form_fields)
-            else:
-                admin_path_plugin_extra_field_set = f"/admin/cmsplugin_cascade/pluginextrafields/" 
-                list(ExtraFieldsPluginFormMixin.base_fields.values())[0].choices = [('', format_html('<a href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
-                list(ExtraFieldsPluginFormMixin.base_fields.values())[0].help_text =  format_html('<div style="width:auto">Site:{} Plugin;{}</div>', site, clsname)
-                kwargs['form'] = type(base_form.__name__, (ExtraFieldsPluginFormMixin,base_form,), form_fields)
+            kwargs['form'] = type(base_form.__name__, (base_form,ExtraFieldsPluginFormMixin), form_fields)
         return super().get_form(request, obj, **kwargs)
 
     @classmethod
