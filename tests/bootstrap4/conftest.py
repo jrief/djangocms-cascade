@@ -2,7 +2,7 @@ import pytest
 from cms.api import add_plugin
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.container import BootstrapContainerPlugin, BootstrapRowPlugin, BootstrapColumnPlugin
-from cmsplugin_cascade.bootstrap4.tab import BootstrapTabSetPlugin
+from cmsplugin_cascade.bootstrap4.tabs import BootstrapTabSetPlugin
 
 
 @pytest.fixture
