@@ -130,4 +130,3 @@ Adding too many styling fields to a plugin can mess up any web project. Therefor
 this feature rarely and wise. If many people have write access to plugins, set extra permissions on
 this table, in order to not mess things up. For instance, it rarely makes sense to activate
 ``min-width``, ``width`` and ``max-width``.
-
