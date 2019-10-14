@@ -11,7 +11,7 @@ from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.bootstrap4.container import get_widget_choices, ContainerBreakpointsWidget
 from cmsplugin_cascade.bootstrap4.image import get_image_tags
 from .grid import Breakpoint
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.link.config import LinkPluginBase
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField, ChoiceField 
 
@@ -123,11 +123,10 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
 identifier, css_classes_without_default)
 
 @plugin_pool.register_plugin
-class BootstrapNavBrandPlugin(BootstrapPluginBase, LinkPluginBase,):
+class BootstrapNavBrandPlugin(BootstrapPluginBase, LinkPluginBase):
     name = _("Nav brand")
     parent_classes = ['BootstrapNavbarPlugin'] 
     direct_child_classes = ('BootstrapTabPanePlugin', 'BootstrapListsPlugin')
-    model_mixins = (LinkElementMixin,)
     render_template = 'cascade/bootstrap4/navbar_brand.html'
     raw_id_fields = LinkPluginBase.raw_id_fields + ['image_file']
     default_css_class = ''
