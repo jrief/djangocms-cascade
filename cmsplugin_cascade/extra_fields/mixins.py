@@ -57,7 +57,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
         except ObjectDoesNotExist:
             extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
 
-        if hasattr(extra_fields, 'id') and app_settings.CMSPLUGIN_CASCADE['MERGE_EXTRA_FIELDS_SET'] :
+        if hasattr(extra_fields, 'id') and app_settings.CMSPLUGIN_CASCADE['merge_extra_fields'] :
             settings_extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields']
             if clsname in settings_extra_fields.keys():
                 for key_style, value_style in settings_extra_fields[clsname].inline_styles.items():
