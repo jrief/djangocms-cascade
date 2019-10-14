@@ -85,6 +85,13 @@ styles shall be applied.
 
 .. |customize-styles| image:: /_static/customize-styles.png
 
+If the plugin has the default configuration, for example: sets the upper, lower, upper, and lower margins.
+The default settings above will be available in the plug-in editor because CMSPLUGIN_CASCADE variable.
+** merge_extra_fields **: True are set in defaults.
+
+Also it is possible to access the configuration of the plugin directly in its form, via a link
+that opens in a new window.
+
 
 Allow ID
 --------
@@ -123,3 +130,4 @@ Adding too many styling fields to a plugin can mess up any web project. Therefor
 this feature rarely and wise. If many people have write access to plugins, set extra permissions on
 this table, in order to not mess things up. For instance, it rarely makes sense to activate
 ``min-width``, ``width`` and ``max-width``.
+
