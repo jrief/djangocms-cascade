@@ -26,11 +26,11 @@ class ExtraFieldsPluginFormMixin( EntangledModelFormMixin):
             form_custom = ExtraFieldsPluginFormMixin.base_fields['custom_css_classes_and_styles']
             if hasattr(extra_fields, 'id'):
                 admin_path_plugin_extra_field_set = "/admin/cmsplugin_cascade/pluginextrafields/{}/change/".format( extra_fields.id )
-                form_custom.choices = [('', format_html('<a href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
+                form_custom.choices = [('', format_html('<a target="_blank" href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
                 form_custom.help_text =  format_html('<div style="width:auto">Site: {} Plugin: {}</div>', site, clsname)
             else:
                 admin_path_plugin_extra_field_set = "/admin/cmsplugin_cascade/pluginextrafields/" 
-                form_custom.choices = [('', format_html('<a href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
+                form_custom.choices = [('', format_html('<a target="_blank" href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
                 form_custom.help_text =  format_html('<div style="width:auto">Site: {} Plugin: {}</div>', site, clsname)
 
     class Meta:
