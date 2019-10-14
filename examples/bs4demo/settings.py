@@ -224,6 +224,9 @@ CMSPLUGIN_CASCADE = {
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
 }
+ 
+JS_COLOR_PICKER_WITH_ALPHA = True 
+CASCADE_CLIPS_LIBRARY = True
 
 CMS_PLACEHOLDER_CONF = {
 
