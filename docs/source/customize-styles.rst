@@ -87,7 +87,7 @@ styles shall be applied.
 
 If the plugin has the default configuration, for example: sets the upper, lower, upper, and lower margins.
 The default settings above will be available in the plug-in editor because CMSPLUGIN_CASCADE variable.
-** merge_extra_fields **: True are set in defaults.
+**merge_extra_fields**: True are set in defaults.
 
 Also it is possible to access the configuration of the plugin directly in its form, via a link
 that opens in a new window.
