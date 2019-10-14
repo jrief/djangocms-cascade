@@ -17,6 +17,7 @@ django-sass-processor = "*"
 django-select2 = "*"
 djangocms-bootstrap = "*"
 django-admin-sortable2 = "*"
+libsass = "*"
 
 [dev-packages]
 tox = "*"
