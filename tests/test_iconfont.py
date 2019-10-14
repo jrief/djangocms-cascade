@@ -12,7 +12,7 @@ from filer.models.filemodels import File as FilerFileModel
 from cms.api import add_plugin
 from cms.plugin_rendering import ContentRenderer
 from cmsplugin_cascade.models import CascadeElement, IconFont
-from cmsplugin_cascade.icon.forms import IconFontFormMixin
+from cmsplugin_cascade.icon.forms import IconFormMixin
 from cmsplugin_cascade.icon.cms_plugins import SimpleIconPlugin
 from .conftest import UserFactory
 
@@ -82,8 +82,8 @@ def test_iconfont_change_view(admin_client, icon_font):
 @pytest.mark.django_db
 def simple_icon(admin_site, cms_placeholder, icon_font):
     """Create and edit a SimpleIconPlugin"""
-    class IconFontForm(IconFontFormMixin, ModelForm):
-        class Meta(IconFontFormMixin.Meta):
+    class IconFontForm(IconFormMixin, ModelForm):
+        class Meta(IconFormMixin.Meta):
             model = CascadeElement
 
     # add simple icon plugin

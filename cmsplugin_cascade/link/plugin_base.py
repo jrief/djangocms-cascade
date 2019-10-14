@@ -1,10 +1,9 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
-from entangled.forms import EntangledModelFormMixin
+from entangled.forms import get_related_object
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from filer.models.filemodels import File as FilerFileModel
-from entangled.forms import get_related_object
 
 
 class LinkPluginBase(CascadePluginBase):
@@ -42,19 +41,7 @@ class LinkPluginBase(CascadePluginBase):
             relobj = get_related_object(obj.glossary, 'download_file')
             if isinstance(relobj, FilerFileModel):
                 return relobj.url
-
-    def get_form(self, request, obj=None, **kwargs):
-        from cmsplugin_cascade.link.config import LinkForm as MandatoryLinkForm, VoluntaryLinkForm
-
-        form = kwargs.get('form', self.form)
-        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
-        if getattr(self, 'link_required', True):
-            # the default
-            kwargs['form'] = type(form.__name__, (MandatoryLinkForm, form), {})
-        else:
-            # link type can be "No Link"
-            kwargs['form'] = type(form.__name__, (VoluntaryLinkForm, form), {})
-        return super().get_form(request, obj, **kwargs)
+        return linktype
 
 
 class DefaultLinkPluginBase(LinkPluginBase):
@@ -86,5 +73,5 @@ class LinkElementMixin(object):
         link_type = self.glossary.get('link_type')
         if link_type == 'download':
             relobj = get_related_object(self.glossary, 'download_file')
-            if isinstance(relobj.link_model, FilerFileModel):
+            if isinstance(relobj, FilerFileModel):
                 return mark_safe(relobj.original_filename)

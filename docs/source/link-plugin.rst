@@ -1,17 +1,19 @@
+.. _link-plugin:
+
 ===========
 Link Plugin
 ===========
 
 **djangocms-cascade** ships with its own link plugin. This is because other plugins from the
 Cascade eco-system, such as the **BootstrapButtonPlugin**, the **BootstrapImagePlugin** or the
-**BootstrapPicturePlugin** also require the functionality to set links to internal- and external
-URLs. Since we do not want to duplicate the linking functionality for each of these plugins, it has
-been moved into its own base class. Therefore we will use the terminology **TextLinkPlugin** when
-referring to text-based links.
+**BootstrapPicturePlugin** also require a functionality in order to set links to internal- and
+external URLs. Since we do not want to duplicate the linking functionality for each of those
+plugins, it has been moved into its own mixin-classes. Therefore we will use the terminology
+**TextLinkPlugin** when referring to text-based links.
 
 The de-facto plugin for links, djangocms-link_ can't be used as a base class for these plugins,
 hence an alternative implementation has been created within the Cascade framework. The link related
-data is stored in a sub-dictionary named ``link`` in our main JSON field.
+data is stored in a various fields in our main JSON field (named ``glossary``).
 
 
 Prerequisites
@@ -28,27 +30,31 @@ The behavior of this Plugin is what you expect from a Link editor. The field **L
 text displayed between the opening and closing ``<a>`` tag. If used in combination with
 djangocms-text-ckeditor_ the field automatically is filled out.
 
-By changing the **Link type**, the user can choose between three types of Links:
+By changing the **Link type**, the user can choose between different types of Links:
 
  * Internal Links pointing to another page inside the CMS.
  * External Links pointing to a valid Internet URL.
+ * Files from **django-filer** to download.
  * Links pointing to a valid e-mail address.
+ * Optionally any other linkable object, if another Django application extends the Link-Plugin (see
+   below for details).
 
 The optional field **Title** can be used to add a ``title="some value"`` attribute to the
-``<a href ...>`` element.
+``<a ...>`` element.
 
 With **Link Target**, the user can specify, whether the linked content shall open in the current
 window or if the browser shall open a new window.
 
 
-Link Plugin with sharable fields
+Link Plugin with Sharable Fields
 ================================
 
-If your web-site contains many links pointing onto external URLs, you might want to refer to them
-by a symbolic name, rather than having to reenter the URL repeatedly. With **djangocms-cascade**
-this can be achieved easily by declaring some of the plugin's fields as “sharable”.
+If your web-site contains many links pointing onto a few external URLs, you might want to refer to
+them by a symbolic name, rather than having to reenter the URL repeatedly. With
+**djangocms-cascade** this can be achieved easily by declaring some of the plugin's fields as
+*sharable*.
 
-Assure that ``INSTALLED_APPS`` contain ``'cmsplugin_cascade.sharable'``, then redefine the
+Assure that ``INSTALLED_APPS`` contains ``'cmsplugin_cascade.sharable'``, then redefine the
 **TextLinkPlugin** to have sharable fields in ``settings.py``:
 
 .. code-block:: python
@@ -56,9 +62,9 @@ Assure that ``INSTALLED_APPS`` contain ``'cmsplugin_cascade.sharable'``, then re
 	CMSPLUGIN_CASCADE = {
 	    ...
 	    'plugins_with_sharables':
-	        ...
-	        'TextLinkPlugin':  ('link',),  # and optionally other fields
-	        ...
+	        …
+	        'TextLinkPlugin': ['link_type', 'ext_url'],
+	        …
 	    },
 	    ...
 	}
@@ -70,7 +76,7 @@ form.
 
 .. |sharable-link-element| image:: _static/sharable-link-element.png
 
-Now the URL for this ink entity is stored in a central entity. This feature is useful, if for
+The URL for this link entity now is stored in a central entity. This feature is useful, if for
 instance the URL of an external web page may change in the future. Then the administrator can change
 that link in the administration area once, rather than having to go through all the pages and check
 if that link was used.
@@ -86,11 +92,11 @@ Changing shared settings
 
 The settings of a shared plugin can be changed globally, for all plugins using them. To edit such a
 shared setting, in the Django Admin, go into the list view for
-**Home › Cmsplugin_cascade › Shared between Plugins** and choose the named shared settings.
+**Home › django CMS Cascade › Shared between Plugins** and choose the named shared settings.
 
-Please note, that each plugin type can specify which fields shall be sharable between its plugins.
-In this example, only the Link itself is shared, but one could configure **djangocms-cascade** to
-also share the ``title`` and/or the link's ``target`` tags.
+Please note, that each plugin type can specify which fields shall be sharable between plugins of
+the same type. In this example, only the Link itself is shared, but one could configure
+**djangocms-cascade** to also share the link's ``title``, the ``target``, and other tags.
 
 Then only these fields are editable in the detail view **Shared between Plugins**. The interface
 for other shared plugin may vary substantially, depending of their type definition.
@@ -104,80 +110,124 @@ a URL and thus add the method get_absolute_url_ to that Django model. Since such
 CMS page, nor a URL to an external web page, it would be convenient to access that model using a
 special Link type.
 
-For example, in django-shop_ we can allow to link directly from a CMS page to a shop's product.
+For example, in django-shop_ we can allow to link directly to a product, sold by the shop.
 This is achieved by reconfiguring the Link Plugin inside Cascade with:
 
 .. code-block:: python
 
 	CMSPLUGIN_CASCADE = {
-	    ...
+	    …
 	    'link_plugin_classes': (
 	        'shop.cascade.plugin_base.CatalogLinkPluginBase',
-	        'cmsplugin_cascade.link.plugin_base.LinkElementMixin',
 	        'shop.cascade.plugin_base.CatalogLinkForm',
 	    ),
-	    ...
+	    …
 	}
 
 The tuple specified through ``link_plugin_classes`` replaces the base class for the **LinkPlugin**
 class and the form class used by its editor.
 
-Here two classes are replaced, the **LinkPlugin** base class is implemented as:
+Here we replace the two built-in classes :class:`cmsplugin_cascade.link.plugin_base.DefaultLinkPluginBase`
+and :class:`cmsplugin_cascade.link.forms.LinkForm` by alternative implementations.
 
 .. code-block:: python
 	:caption: shop/cascade/plugin_base.py
 
-	from cmsplugin_cascade.link.plugin_base import LinkPluginBase, LinkElementMixin
+	from entangled.forms import get_related_object
+	from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 
 	class CatalogLinkPluginBase(LinkPluginBase):
-	    fields = (('link_type', 'cms_page', 'section', 'product'), 'glossary',)
-	    ring_plugin = 'ShopLinkPlugin'
+	    @classmethod
+	    def get_link(cls, obj):
+	        link_type = obj.glossary.get('link_type')
+	        if link_type == 'product':
+	            relobj = get_related_object(obj.glossary, 'product')
+	            if relobj:
+	                return relobj.get_absolute_url()
+	        else:
+	            return super().get_link(obj) or link_type
 
-	    class Media:
-	        css = {'all': ['shop/css/admin/editplugin.css']}
-	        js = ['shop/js/admin/shoplinkplugin.js']
+This class handles links of type "Product" and creates a URL pointing onto a Django model implementing
+the method ``get_absolute_url``.
 
-it adds the field ``product`` to list of fields rendered by the editor.
-
-Additionally, we have to override the form class:
+Additionally, we have to override the form class used by the Link plugin editor:
 
 .. code-block:: python
 	:caption: shop/cascade/plugin_base.py
 
-	from django.forms.fields import ModelChoiceField
-	from cmsplugin_cascade.link.forms import LinkForm
-	from myshop.models import MyProduct
+	from cms.plugin_pool import plugin_pool
+	from django.forms import models
+	from shop.models.product import ProductModel
 
 	class CatalogLinkForm(LinkForm):
-	    LINK_TYPE_CHOICES = [('cmspage', _("CMS Page")), ('product', _("Product")]
+	    LINK_TYPE_CHOICES = [
+	        ('cmspage', _("CMS Page")),
+	        ('product', _("Product")),
+	        ('download', _("Download File")),
+	        ('exturl', _("External URL")),
+	        ('email', _("Mail To")),
+	    ]
 
-	    product = ModelChoiceField(
+	    product = models.ModelChoiceField(
+	        label=_("Product"),
+	        queryset=ProductModel.objects.all(),
 	        required=False,
-	        queryset=MyProduct.objects.all(),
-	        label='',
-	        help_text=_("An internal link onto a product from the shop"),
+	        help_text=_("An internal link onto a product from the catalog"),
 	    )
 
-	    def clean_product(self):
-	        if self.cleaned_data.get('link_type') == 'product':
-	            app_label = MyProduct._meta.app_label
-	            self.cleaned_data['link_data'] = {
-	                'type': 'product',
-	                'model': '{0}.{1}'.format(app_label, MyProduct.__name__),
-	                'pk': self.cleaned_data['product'],
-	            }
+	    class Meta:
+	        entangled_fields = {'glossary': ['product']}
 
-	    def set_initial_product(self, initial):
-	        try:
-	            # check if that product still exists, otherwise return nothing
-	            Model = apps.get_model(*initial['link']['model'].split('.'))
-	            initial['product'] = Model.objects.get(pk=initial['link']['pk']).pk
-	        except (KeyError, ValueError, ObjectDoesNotExist):
-	            pass
+Now the select box for **Link type** will offer one additional option named "Product". When this is
+selected, the page administrator can select one product in the shop and the link will point onto
+its proper detail page.
 
 
-Now the select box for **Link type** will offer one additional option: "Product". When this is
-selected, the site administrator can choose between all of the shops products.
+Using Links in your own Plugins
+===============================
+
+Many HTML components allow to link onto other resources, for instance images, the button element,
+icons, etc. Since we don't want the reimplement the linking functionality for each of them,
+**djangocms-cascade** offers a few base classes, which can be used by those plugin. As an example,
+let's implement a simple button plugin.
+
+.. code-block:: python
+	:caption: myproject/cascade/button.py
+
+	from django.forms import models
+	from cms.plugin_pool import plugin_pool
+	from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+	from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+
+	class ButtonForm(LinkFormMixin):
+	    require_link = False
+
+	    button_content = models.CharField(
+	        label=_("Button Content"),
+	    )
+
+	    class Meta:
+	        entangled_fields = {'glossary': ['link_content']}
+
+	class ButtonPlugin(LinkPluginBase):
+	    name = _("Button")
+	    model_mixins = (LinkElementMixin,)
+	    form = ButtonForm
+	    render_template = 'myproject/button.html'
+	    allow_children = False
+
+	plugin_pool.register_plugin(ButtonPlugin)
+
+What we see here is, that our ``ButtonForm``, which is used by our ``ButtonPlugin`` inherits from
+a base form offering all the fields required to link somewhere. Sine the button may just display
+some content, but without linking anywhere, we make that optional by setting ``require_link`` to
+``False``. The box for selecting the "Link Type" then adds "No Link" to its set of options.
+
+We don't even have to bother, whether our custom button can point onto links types specified by yet
+another third party app, and not handled by **djangocms-cascade** – All these additional link types
+are handled automatically by the configuration setting ``CMSPLUGIN_CASCADE['link_plugin_classes']``
+as explained in the previous section.
+
 
 .. _djangocms-link: https://github.com/divio/djangocms-link
 .. _djangocms-text-ckeditor: https://github.com/divio/djangocms-text-ckeditor

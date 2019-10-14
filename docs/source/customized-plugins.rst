@@ -2,10 +2,11 @@
 Extending Cascade
 =================
 
-All Cascade plugins are derived from the same base class ``CascadeModelBase``, which stores all its
-model fields inside a dictionary, serialized as JSON string in the database. This makes it much
-easier to extend the Cascade eco-system, since no database migration [#migration]_ is required when
-adding a new, or extending plugins from this project.
+All Cascade plugins are derived from the same base class
+:class:`cmsplugin_cascade.plugin_base.CascadeModelBase`, which stores all its model fields inside a
+dictionary, serialized as JSON string in the database. This makes it much easier to extend the
+Cascade eco-system, since no database migration [#migration]_ is required when adding a new, or
+extending plugins from this project.
 
 The database model ``CascadeModelBase`` stores all the plugin settings in a single JSON field named
 ``glossary``. This in practice behaves like a Django context, but in order to avoid confusion with
@@ -44,9 +45,9 @@ for this plugin". This is because no editable fields have been added to that plu
 Customize the Plugin Editor
 ===========================
 
-In order to make the plugin remember its settings and other optional data, the programmer must add
-a list of special form fields to its plugin. These fields then are used to auto-generate the editor
-for the given DjangoCMS plugin.
+In order to make the plugin remember its settings and other optional data, we must specify a Django
+form to be used by the plugin. Since its payload data is stored in a JSON field, we use
+django-entangled_, to map the form fields.
 
 Each of those form fields handles a special field value, or in some cases, a list of field values.
 They all require one or more Django form fields, which are rendered by the plugins popup editor.
@@ -72,7 +73,7 @@ to the plugin class.
 	        entangled_fields = {'glossary': ['color']}
 
 	class StylishPlugin(CascadePluginBase):
-	    ...
+	    …
 	    form = StylishFormMixin
 
 In the plugin's editor, the form now pops up with a single select box, where the user can choose
@@ -168,7 +169,7 @@ JavaScript
 ----------
 
 In case your customized plugin requires some Javascript code to improve the editor's experience,
-please refer to the section :doc:`client-side`.
+please refer to the section :ref:`client-side`.
 
 
 Adding extra fields to the model

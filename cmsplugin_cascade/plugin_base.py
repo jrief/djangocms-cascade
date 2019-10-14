@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import MediaDefiningClass, ModelForm
 from django.utils.functional import lazy

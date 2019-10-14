@@ -7,10 +7,10 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.fields import SizeField
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkElementMixin
+from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
    compute_aspect_ratio_with_glossary)
-import random
 
 logger = logging.getLogger('cascade')
 
@@ -97,12 +97,11 @@ class BootstrapImagePlugin(LinkPluginBase):
     model_mixins = (ImagePropertyMixin, LinkElementMixin,)
     admin_preview = False
     ring_plugin = 'ImagePlugin'
-    form = BootstrapImageFormMixin
+    form = type('BootstrapImageForm', (LinkFormMixin, BootstrapImageFormMixin), {'require_link': False})
     render_template = 'cascade/bootstrap4/linked-image.html'
     default_css_attributes = ['image_shapes', 'image_alignment']
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
-    link_required = False
 
     class Media:
         js = ['cascade/js/admin/imageplugin.js']
@@ -173,7 +172,6 @@ def get_image_tags(instance):
         aspect_ratio = compute_aspect_ratio(instance.image)
     elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
-        instance.glossary['ramdom_svg_color'] = 'hsl({}, 30%, 80%, 0.8)'.format(str(random.randint(0, 360)))
     else:
         # if accessing the image file fails or fake image fails, abort here
         raise FileNotFoundError("Unable to compute aspect ratio of image")
