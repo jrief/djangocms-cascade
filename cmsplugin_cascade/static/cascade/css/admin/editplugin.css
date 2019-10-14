@@ -33,7 +33,7 @@ form label[for=id_cms_page], form label[for=id_section] { width: 0; }
 .field-box > .select2-container, .fieldBox > .select2-container { min-width: 350px; }
 .field-box.field-link_type, .fieldBox.field-link_type { float: none; margin-bottom: 15px; }
 
-#id_condition { width: 100%; }
+#id_condition, #id_link_content { width: calc(100% - 20px); }
 
 form .form-row .select2-selection { height: 36px; }
-form .form-row .django-select2 { min-width: 400px !important; }
+form .form-row .django-select2 { width: calc(100% - 40px) !important; }

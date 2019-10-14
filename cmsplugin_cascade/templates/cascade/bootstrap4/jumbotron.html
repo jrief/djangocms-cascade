@@ -2,31 +2,32 @@
 
 {% addtoblock "css" %}{% localize off %}
 <style>
+{% for elem in instance.element_heights %}
+@media{{ elem.media }} {
+	#cascadeelement_id-{{ instance.pk }} {
+		height: {{ elem.height }};
+	}
+}
+{% endfor %}
 #cascadeelement_id-{{ instance.pk }} {
-	{{ instance.background_color }}
+	{{ instance.background_color }}{% if instance.image %}
 	{{ instance.background_attachment }}
 	{{ instance.background_position }}
 	{{ instance.background_repeat }}
-	{{ instance.background_size }}
+	{{ instance.background_size }}{% endif %}
 	{{ instance.inline_styles }}
 }
 {% if instance.image %}
-{% for elem in elements %}
-{% thumbnail instance.image elem.size crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
-{% if elem.size2 %}
-	{% thumbnail instance.image elem.size2 zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb2 %}
-{% endif %}
+	{% for elem in elements %}
+		{% thumbnail instance.image elem.size crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
+			{% if elem.size2 %}{% thumbnail instance.image elem.size2 zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb2 %}{% endif %}
 @media{{ elem.media }} {
 	#cascadeelement_id-{{ instance.pk }} {
 		background-image: url({{ thumb.url }});{% if thumb2 %}{% for imgage_set in CSS_PREFIXES.image_set %}
 		background-image: {{ imgage_set }}(url({{ thumb.url }}) 1x, url({{ thumb2.url }}) 2x);{% endfor %}{% endif %}
 	}
 }
-{% endfor %}
-{% else %}
-	#cascadeelement_id-{{ instance.pk }} {
-	background-image:  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='100%' height='100%' style='background-color: {{ instance.glossary.ramdom_svg_color }};' ></svg>");
-	}
+	{% endfor %}
 {% endif %}
 </style>
 {% endlocalize %}{% endaddtoblock %}

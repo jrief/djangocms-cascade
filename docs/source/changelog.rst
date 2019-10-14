@@ -2,11 +2,29 @@
 Release History
 ===============
 
-1.0
-===
-* Add support for Django-2.0.
-* Drop support for Python-2.7.
 
+1.1
+===
+* In **BootstrapJumbotrom**: Add multiple fields to set height in all five breakpoints.
+* Allow Jumbotron to be child of a Bootstrap Column.
+* Fix regression in JavaScript part of Jumbotron: Some HTML selectors did not work in version 1.0.
+* Fix regression in ColorField of Jumbotron. Background color is rendered correctly.
+* ``MultiSizeField`` accepts ``initial`` as single value or list in addition to dictionary.
+* Add reusable field ``CascadeImageField`` to reference images in **django-filer**.
+
+
+1.0 (Warning: API changes!)
+===========================
+* Add support for Django-2.0/2.1.
+* Drop support for Python-2.7.
+* Introduce a much simpler way for writing customized CMS plugins. Instead of using a special multi-widget,
+  thanks to django-entangled_, now all plugins use Django forms to create the editors for their plugin models.
+  As with previous versions of **djangocms-cascade**, all data is kept in a JSON field, but in a slightly
+  different format. Therefore you must invoke ``./manage.py migrate cmsplugin_cascade`` after upgrading.
+* If used in your project's settings, change ``CMSPLUGIN_CASCADE['link_plugin_classes']`` to a 2-tuple
+  providing a ``LinkPluginBase``- and a ``LinkForm``-class.
+
+.. _django-entangled: https://github.com/jrief/django-entangled
 
 0.19
 ====
@@ -236,7 +254,7 @@ Release History
 0.14
 ====
 * Added static rendering of a serialized representation of plugins copied from a ``placeholder``
-  to the clipboard. For details, please read on how to :doc:`strides`.
+  to the clipboard. For details, please read on how to :ref:`strides`.
 
 0.13.1
 ======

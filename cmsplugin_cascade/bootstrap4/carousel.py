@@ -41,7 +41,7 @@ class CarouselSlidesFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
     container_max_heights = BootstrapMultiSizeField(
         label=_("Carousel heights"),
         allowed_units=['rem', 'px'],
-        initial=dict((bp.name, '{}rem'.format(6 + 3 * i)) for i, bp in enumerate(Breakpoint)),
+        initial=['6rem', '9rem', '12rem', '15rem', '18rem'],
         help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
     )
 

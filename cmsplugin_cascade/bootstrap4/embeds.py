@@ -92,7 +92,7 @@ class BootstrapYoutubePlugin(BootstrapPluginBase):
     """
     Use this plugin to display a YouTube video.
     """
-    name = _("Youtube")
+    name = _("You Tube")
     require_parent = False
     parent_classes = ['BootstrapColumnPlugin']
     child_classes = None

@@ -1,24 +1,33 @@
 import logging
 from django.core.exceptions import ValidationError
-from django.forms import widgets, ChoiceField
+from django.forms import widgets, BooleanField, ChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.fields import ColorField, MultiSizeField
+from cmsplugin_cascade.fields import ColorField, MultiSizeField, CascadeImageField
 from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.bootstrap4.container import ContainerFormMixin, ContainerGridMixin
-from cmsplugin_cascade.bootstrap4.picture import BootstrapPictureFormMixin, get_picture_elements
+from cmsplugin_cascade.bootstrap4.container import ContainerGridMixin
+from cmsplugin_cascade.bootstrap4.fields import BootstrapMultiSizeField
+from cmsplugin_cascade.bootstrap4.picture import get_picture_elements
 
 logger = logging.getLogger('cascade')
 
 
 class ImageBackgroundMixin(object):
     @property
+    def element_heights(self):
+        element_heights = self.glossary.get('element_heights', {})
+        for bp, media_query in self.glossary['media_queries'].items():
+            if bp in element_heights:
+                yield {'media': media_query['media'], 'height': element_heights[bp]}
+
+    @property
     def background_color(self):
         try:
-            disabled, color = self.glossary['background_color']
+            color, disabled = self.glossary['background_color']
             if not disabled and disabled != 'disabled':
                 return 'background-color: {};'.format(color)
         except (KeyError, TypeError, ValueError):
@@ -60,7 +69,7 @@ class ImageBackgroundMixin(object):
         return ''
 
 
-class JumbotronFormMixin(BootstrapPictureFormMixin):
+class JumbotronFormMixin(EntangledModelFormMixin):
     """
     Form class to validate the JumbotronPlugin.
     """
@@ -70,8 +79,28 @@ class JumbotronFormMixin(BootstrapPictureFormMixin):
     REPEAT_CHOICES = ['repeat', 'repeat-x', 'repeat-y', 'no-repeat']
     SIZE_CHOICES = ['auto', 'width/height', 'cover', 'contain']
 
+    fluid = BooleanField(
+        label=_("Is fluid"),
+        initial=True,
+        required=False,
+        help_text=_("Shall this element occupy the entire horizontal space of its parent."),
+    )
+
+    element_heights = BootstrapMultiSizeField(
+        label=("Element Heights"),
+        required=True,
+        allowed_units=['rem', 'px'],
+        initial='300px',
+        help_text=_("This property specifies the height for each Bootstrap breakpoint."),
+    )
+
     background_color = ColorField(
         label=_("Background color"),
+    )
+
+    image_file = CascadeImageField(
+        label=_("Background image"),
+        required=False,
     )
 
     background_repeat = ChoiceField(
@@ -79,7 +108,8 @@ class JumbotronFormMixin(BootstrapPictureFormMixin):
         choices=[(c, c) for c in REPEAT_CHOICES],
         widget=widgets.RadioSelect,
         initial='no-repeat',
-        help_text=_("This property specifies how an image repeates."),
+        required=False,
+        help_text=_("This property specifies how the background image repeates."),
     )
 
     background_attachment = ChoiceField(
@@ -87,13 +117,15 @@ class JumbotronFormMixin(BootstrapPictureFormMixin):
         choices=[(c, c) for c in ATTACHMENT_CHOICES],
         widget=widgets.RadioSelect,
         initial='local',
-        help_text=_("This property specifies how to move the background relative to the viewport."),
+        required=False,
+        help_text=_("This property specifies how to move the background image relative to the viewport."),
     )
 
     background_vertical_position = ChoiceField(
         label=_("Background vertical position"),
         choices=[(c, c) for c in VERTICAL_POSITION_CHOICES],
         initial='center',
+        required=False,
         help_text=_("This property moves a background image vertically within its container."),
     )
 
@@ -101,6 +133,7 @@ class JumbotronFormMixin(BootstrapPictureFormMixin):
         label=_("Background horizontal position"),
         choices=[(c, c) for c in HORIZONTAL_POSITION_CHOICES],
         initial='center',
+        required=False,
         help_text=_("This property moves a background image horizontally within its container."),
     )
 
@@ -109,7 +142,8 @@ class JumbotronFormMixin(BootstrapPictureFormMixin):
         choices=[(c, c) for c in SIZE_CHOICES],
         widget=widgets.RadioSelect,
         initial='auto',
-        help_text=_("This property specifies how an image is sized."),
+        required=False,
+        help_text=_("This property specifies how the background image is sized."),
     )
 
     background_width_height = MultiSizeField(
@@ -121,19 +155,33 @@ class JumbotronFormMixin(BootstrapPictureFormMixin):
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['background_color', 'background_repeat', 'background_attachment',
+        entangled_fields = {'glossary': ['fluid', 'background_color', 'element_heights', 'image_file',
+                                         'background_repeat', 'background_attachment',
                                          'background_vertical_position', 'background_horizontal_position',
                                          'background_size', 'background_width_height']}
 
+    def validate_optional_field(self, name):
+        field = self.fields[name]
+        value = field.widget.value_from_datadict(self.data, self.files, self.add_prefix(name))
+        if value in field.empty_values:
+            self.add_error(name, ValidationError(field.error_messages['required'], code='required'))
+        else:
+            return value
+
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data['background_size'] == 'width/height':
-            try:
-                cleaned_data['background_width_height']['width']
-            except KeyError:
-                msg = _("You must at least set a background width.")
-                self.add_error('background_width_height', msg)
-                raise ValidationError(msg)
+        if cleaned_data['image_file']:
+            self.validate_optional_field('background_repeat')
+            self.validate_optional_field('background_attachment')
+            self.validate_optional_field('background_vertical_position')
+            self.validate_optional_field('background_horizontal_position')
+            if self.validate_optional_field('background_size') == 'width/height':
+                try:
+                    cleaned_data['background_width_height']['width']
+                except KeyError:
+                    msg = _("You must at least set a background width.")
+                    self.add_error('background_width_height', msg)
+                    raise ValidationError(msg)
         return cleaned_data
 
 
@@ -141,9 +189,10 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     name = _("Jumbotron")
     model_mixins = (ContainerGridMixin, ImagePropertyMixin, ImageBackgroundMixin)
     require_parent = False
-    parent_classes = ('BootstrapColumnPlugin',)
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     allow_children = True
     alien_child_classes = True
+    form = JumbotronFormMixin
     raw_id_fields = ['image_file']
     render_template = 'cascade/bootstrap4/jumbotron.html'
     ring_plugin = 'JumbotronPlugin'
@@ -153,14 +202,6 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
 
     class Media:
         js = ['cascade/js/admin/jumbotronplugin.js']
-
-    def get_form(self, request, obj=None, **kwargs):
-        if self.get_parent_instance(request, obj) is None:
-            # we only ask for breakpoints, if the jumbotron is the root of the placeholder
-            kwargs['form'] = type('JumbotronForm', (ContainerFormMixin, JumbotronFormMixin), {})
-        else:
-            kwargs['form'] = JumbotronFormMixin
-        return super().get_form(request, obj, **kwargs)
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
@@ -184,8 +225,6 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = False
-        # if the jumbotron is the root of the placeholder, we consider it as "fluid"
-        obj.glossary['fluid'] = obj.parent is None
         super().sanitize_model(obj)
         grid_container = obj.get_bound_plugin().get_grid_instance()
         obj.glossary.setdefault('media_queries', {})

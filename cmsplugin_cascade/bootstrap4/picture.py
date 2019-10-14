@@ -27,7 +27,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
         required=False,
         require_all_fields=False,
         allowed_units=['px', '%'],
-        initial={bp.name: '100%' for bp in Breakpoint},
+        initial='100%',
         help_text=_("Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."),
     )
 
@@ -36,7 +36,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
         required=False,
         require_all_fields=False,
         allowed_units=['%'],
-        initial={bp.name: '0%' for bp in Breakpoint},
+        initial=['0%', '0%', '0%', '0%', '0%'],
         help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),
     )
 

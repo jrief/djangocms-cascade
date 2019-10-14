@@ -93,6 +93,30 @@ class BootstrapUtilities(type):
         return form_fields
 
     @property
+    def vertical_margins(cls):
+        form_fields = {}
+        choices_format = [
+            ('my-{}{}', _("Vertical margins ({})")),
+            ('mt-{}{}', _("Top margin ({})")),
+            ('mb-{}{}', _("Bottom margin ({})")),
+        ]
+        sizes = list(range(0, 6)) + ['auto']
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+                choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
+                choices.insert(0, ('', _("No Margins")))
+            else:
+                choices = [(c.format(bp.name + '-', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
+                choices.insert(0, ('', _("Inherit from above")))
+            form_fields['margins_{}'.format(bp.name)] = ChoiceField(
+                label=format_lazy(_("Margins for {breakpoint}"), breakpoint=bp.label),
+                choices=choices,
+                required=False,
+                initial='',
+            )
+        return form_fields
+
+    @property
     def paddings(cls):
         form_fields = {}
         choices_format = [

@@ -73,5 +73,5 @@ class LinkElementMixin(object):
         link_type = self.glossary.get('link_type')
         if link_type == 'download':
             relobj = get_related_object(self.glossary, 'download_file')
-            if isinstance(relobj.link_model, FilerFileModel):
+            if isinstance(relobj, FilerFileModel):
                 return mark_safe(relobj.original_filename)

@@ -10,7 +10,10 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class JSONMultiWidget(widgets.MultiWidget):
-    """Base class for MultiWidgets using a JSON field in database"""
+    """
+    Deprecated.
+    Base class for MultiWidgets using a JSON field in database.
+    """
     html_parser = HTMLParser()
 
     def __init__(self, glossary_fields):
