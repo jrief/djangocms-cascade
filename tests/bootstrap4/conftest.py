@@ -2,8 +2,6 @@ import pytest
 from cms.api import add_plugin
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.container import BootstrapContainerPlugin, BootstrapRowPlugin, BootstrapColumnPlugin
-from cmsplugin_cascade.bootstrap4.tabs import BootstrapTabSetPlugin
-
 
 @pytest.fixture
 @pytest.mark.django_db
@@ -41,12 +39,3 @@ def bootstrap_column(admin_site, bootstrap_row):
     assert isinstance(column_plugin, BootstrapColumnPlugin)
     return column_plugin, column_model
 
-
-@pytest.fixture
-@pytest.mark.django_db
-def bootstrap_tabset(admin_site, bootstrap_column):
-    tabset_model = add_plugin( bootstrap_column, BootstrapTabSetPlugin, 'en', glossary=glossary)
-    assert isinstance(container_model, CascadeElement)
-    tabset_plugin = container_model.get_plugin_class_instance(admin_site)
-    assert isinstance(tabset_plugin, BootstrapTabSetPlugin)
-    return tabset_plugin, container_model
