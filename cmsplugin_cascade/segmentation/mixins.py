@@ -54,11 +54,17 @@ class EmulateUserAdminMixin(object):
     @staticmethod
     def populate_toolbar(segmentation_menu, request):
         active = 'emulate_user_id' in request.session
-        segmentation_menu.add_sideframe_item(_("Emulate User"), url=reverse('admin:emulate-users'),
-                                             active=active)
-        segmentation_menu.add_ajax_item(_("Clear emulations"),
-                                        action=reverse('admin:clear-emulations'),
-                                        on_success=REFRESH_PAGE)
+        segmentation_menu.add_sideframe_item(
+            _("Emulate User"),
+            url=reverse('admin:emulate-users'),
+            active=active,
+        )
+        segmentation_menu.add_ajax_item(
+            _("Clear emulations"),
+            action=reverse('admin:clear-emulations'),
+            on_success=REFRESH_PAGE,
+            disabled=not active,
+        )
 
     def get_urls(self):
         return [
