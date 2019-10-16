@@ -1,11 +1,13 @@
 import io
 import json
 import os
+import random
 from cms.toolbar.utils import get_toolbar_from_request
 from django import template
 from django.conf import settings
 from django.core.cache import caches
 from django.template.exceptions import TemplateDoesNotExist
+from django.templatetags.static import static
 from django.contrib.staticfiles import finders
 from django.utils.safestring import mark_safe
 from classytags.arguments import Argument
@@ -102,6 +104,49 @@ def is_valid_image(image):
     except:
         return False
 
+class FallBack(Tag):
+    name = 'fallback'
+
+    options = Options(
+        Argument('plugin',required=False, default='world') 
+    )
+    def render_tag(self, context, plugin):
+        for context_ in  context:
+           if 'instance'in context_ :
+               glossary = context_['instance'].glossary
+               plugin_type = context_['instance'].plugin_type
+               if plugin_type == 'BootstrapImagePlugin':
+                   ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(800, 900)))
+               if plugin_type == 'BootstrapPicturePlugin':
+                   ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 100)))
+               if plugin_type == 'BootstrapJumbotronPlugin':
+                   ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(400, 500)))
+               witdh = glossary['image'].get('width','')
+               height = glossary['image'].get('height','')
+               exif_orientation = glossary['image'].get('exif_orientation','') 
+               css_classes =   glossary.get('css_classes','') 
+               inline_styles =  glossary.get('inline_styles', '')
+               html_tag_attributes =  glossary.get('html_tag_attributes','')
+               static_fallback_svg = static('cascade/fallback_light.svg')
+               x = random.randint(0,round(witdh/1.8))
+               y = random.randint(0,round(height/1.9))
+               svg='<svg  class="mx-auto" ViewBox="0 0 {witdh} {height}" version="1.1" style="background-color:\
+               {ramdom_svg_color};" {html_tag_attributes} class="{css_classes}" style="{inline_styles}" \
+                xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
+                <image x="{x}"  y="{y}" \  width="10%" xlink:href="{static_fallback_svg}"> \
+                </svg>'.format(
+                    witdh=witdh,
+                    height=height,
+                    ramdom_svg_color=ramdom_svg_color,
+                    css_classes=css_classes,
+                    inline_styles = inline_styles,
+                    html_tag_attributes = html_tag_attributes,
+                    static_fallback_svg=static_fallback_svg,
+                    x=x,
+                    y=y)
+               return mark_safe(svg)
+
+register.tag('fallback', FallBack)
 
 @register.simple_tag
 def sphinx_docs_include(path):
