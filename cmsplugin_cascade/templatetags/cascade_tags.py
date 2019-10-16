@@ -128,8 +128,8 @@ class FallBack(Tag):
                inline_styles =  glossary.get('inline_styles', '')
                html_tag_attributes =  glossary.get('html_tag_attributes','')
                static_fallback_svg = static('cascade/fallback_light.svg')
-               x = random.randint(0,round(witdh/1.8))
-               y = random.randint(0,round(height/1.9))
+               x = random.randint(0,round(witdh/1.19))
+               y = random.randint(0,round(height/1.19))
                svg='<svg  class="mx-auto" ViewBox="0 0 {witdh} {height}" version="1.1" style="background-color:\
                {ramdom_svg_color};" {html_tag_attributes} class="{css_classes}" style="{inline_styles}" \
                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
