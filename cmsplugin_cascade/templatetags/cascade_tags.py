@@ -110,6 +110,7 @@ class FallBack(Tag):
     options = Options(
         Argument('plugin',required=False, default='world') 
     )
+    
     def render_tag(self, context, plugin):
         for context_ in  context:
            if 'instance'in context_ :
@@ -117,23 +118,28 @@ class FallBack(Tag):
                plugin_type = context_['instance'].plugin_type
                if plugin_type == 'BootstrapImagePlugin':
                    ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(800, 900)))
+                   image_fallback='image'
                if plugin_type == 'BootstrapPicturePlugin':
                    ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 100)))
+                   image_fallback='_image_properties'
                if plugin_type == 'BootstrapJumbotronPlugin':
                    ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(400, 500)))
-               witdh = glossary['image'].get('width','')
-               height = glossary['image'].get('height','')
-               exif_orientation = glossary['image'].get('exif_orientation','') 
+                   image_fallback='_image_properties'
+                
+               witdh = glossary[image_fallback].get('width','')
+               height = glossary[image_fallback].get('height','')
+               exif_orientation = glossary[image_fallback].get('exif_orientation','') 
                css_classes =   glossary.get('css_classes','') 
                inline_styles =  glossary.get('inline_styles', '')
                html_tag_attributes =  glossary.get('html_tag_attributes','')
                static_fallback_svg = static('cascade/fallback_light.svg')
                x = random.randint(0,round(witdh/1.19))
                y = random.randint(0,round(height/1.19))
+            
                svg='<svg  class="mx-auto" ViewBox="0 0 {witdh} {height}" version="1.1" style="background-color:\
-               {ramdom_svg_color};" {html_tag_attributes} class="{css_classes}" style="{inline_styles}" \
+                {ramdom_svg_color};" {html_tag_attributes} class="{css_classes}"   style="{inline_styles}" \
                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
-                <image x="{x}"  y="{y}" \  width="10%" xlink:href="{static_fallback_svg}"> \
+                <image x="{x}"  y="{y}"  width="10%" xlink:href="{static_fallback_svg}"> \
                 </svg>'.format(
                     witdh=witdh,
                     height=height,
