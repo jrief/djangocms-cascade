@@ -148,8 +148,8 @@ class FallBack(Tag):
                    witdh = glossary[image_fallback].get('width','')
                    height = glossary[image_fallback].get('height','')
                    exif_orientation = glossary[image_fallback].get('exif_orientation','') 
-                   x = random.randint(0,round(witdh/1.19))
-                   y = random.randint(0,round(height/1.19))
+                   x = random.randint(0,round(int(witdh)/1.19))
+                   y = random.randint(0,round(int(height)/1.19))
 
                if fallbal_plugin_type == 'BootstrapJumbotronPlugin':
                    style='''
