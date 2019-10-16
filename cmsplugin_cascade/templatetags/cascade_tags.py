@@ -104,6 +104,7 @@ def is_valid_image(image):
     except:
         return False
 
+    
 class FallBack(Tag):
     name = 'fallback'
 
@@ -115,32 +116,58 @@ class FallBack(Tag):
         for context_ in  context:
            if 'instance'in context_ :
                glossary = context_['instance'].glossary
-               plugin_type = context_['instance'].plugin_type
-               if plugin_type == 'BootstrapImagePlugin':
-                   ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(800, 900)))
+               print('glossary')
+               print(glossary)
+               instance = context_['instance']
+               if instance.plugin_type == 'BootstrapImagePlugin':
+                   #color skybkue
+                   ramdom_svg_color = 'hsl({}, 71%, 93%, 0.8)'.format( str(random.randint(180, 200)))
                    image_fallback='image'
-               if plugin_type == 'BootstrapPicturePlugin':
-                   ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(0, 100)))
+                   static_fallback_svg = static('cascade/fallback_light.svg')
+               if instance.plugin_type == 'BootstrapPicturePlugin':
+                   #color sunrise
+                   ramdom_svg_color = 'hsl({}, 80%,95%, 0.8)'.format( str(random.randint(300, 400)))
                    image_fallback='_image_properties'
-               if plugin_type == 'BootstrapJumbotronPlugin':
-                   ramdom_svg_color = 'hsl({}, 30%, 80%, 0.8)'.format( str(random.randint(400, 500)))
-                   image_fallback='_image_properties'
-                
-               witdh = glossary[image_fallback].get('width','')
-               height = glossary[image_fallback].get('height','')
-               exif_orientation = glossary[image_fallback].get('exif_orientation','') 
-               css_classes =   glossary.get('css_classes','') 
-               inline_styles =  glossary.get('inline_styles', '')
-               html_tag_attributes =  glossary.get('html_tag_attributes','')
-               static_fallback_svg = static('cascade/fallback_light.svg')
-               x = random.randint(0,round(witdh/1.19))
-               y = random.randint(0,round(height/1.19))
-            
-               svg='<svg  class="mx-auto" ViewBox="0 0 {witdh} {height}" version="1.1" style="background-color:\
-                {ramdom_svg_color};" {html_tag_attributes} class="{css_classes}"   style="{inline_styles}" \
-                xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
-                <image x="{x}"  y="{y}"  width="10%" xlink:href="{static_fallback_svg}"> \
-                </svg>'.format(
+                   static_fallback_svg = static('cascade/fallback_light_picture.svg')
+               if instance.plugin_type == 'BootstrapJumbotronPlugin':
+                   #color morning
+                   ramdom_svg_color = 'hsl({}, 90%, 90%, 0.8)'.format( str(random.randint(50, 70)))
+                   image_fallback=None
+                   static_fallback_svg = static('cascade/fallback_light_jumbotron.svg')
+               if image_fallback:
+                   witdh = glossary[image_fallback].get('width','')
+                   height = glossary[image_fallback].get('height','')
+                   exif_orientation = glossary[image_fallback].get('exif_orientation','') 
+                   x = random.randint(0,round(witdh/1.19))
+                   y = random.randint(0,round(height/1.19))
+               else:
+                   witdh =''; height = ''; exif_orientation = ''; x = ''; y = ' ';
+
+               css_classes = glossary.get('css_classes','') 
+               inline_styles = glossary.get('inline_styles','')
+               html_tag_attributes = glossary.get('html_tag_attributes','')
+               
+               print(instance.pk)
+               if instance.plugin_type == 'BootstrapJumbotronPlugin':
+                   style='''
+                        background: url({static_fallback_svg});
+                        background-size: auto;
+                        background-position-y: 96px;
+                        background-size: 50%;
+                        background-repeat: no-repeat;
+                        background-position-x: 50%;
+                        background-attachment: fixed;
+                        background-color: {ramdom_svg_color};
+                        border: white solid;
+                    '''.format(ramdom_svg_color=ramdom_svg_color, static_fallback_svg=static_fallback_svg)
+                    
+                   return style
+               else:
+                   svg='<svg  ViewBox="0 0 {witdh} {height}" version="1.1" style="background-color:\
+                    {ramdom_svg_color}; border: white solid;" {html_tag_attributes} class="{css_classes}"   style="{inline_styles}" \
+                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
+                    <image x="{x}"  y="{y}" width="10%" xlink:href="{static_fallback_svg}"> \
+                    </svg>'.format(
                     witdh=witdh,
                     height=height,
                     ramdom_svg_color=ramdom_svg_color,
@@ -150,7 +177,7 @@ class FallBack(Tag):
                     static_fallback_svg=static_fallback_svg,
                     x=x,
                     y=y)
-               return mark_safe(svg)
+                   return svg
 
 register.tag('fallback', FallBack)
 
