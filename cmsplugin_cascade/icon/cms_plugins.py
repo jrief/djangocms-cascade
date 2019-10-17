@@ -23,7 +23,7 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = cls.super(SimpleIconPlugin, cls).get_css_classes(obj)
-        if cls.plugin_class.__class__ == 'BootstrapNavItemsPlugin':
+        if cls == 'BootstrapNavItemsPlugin':
             css_classes.insert(0,'nav-link navbar-text')
         return css_classes
 
