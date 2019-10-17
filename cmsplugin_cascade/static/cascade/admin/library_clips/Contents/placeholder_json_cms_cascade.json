@@ -1,9 +1,68 @@
 {
   "plugins":[
     [
+      "BootstrapJumbotronPlugin",
+      {
+        "glossary":{
+          "hide_plugin":false,
+          "fluid":true,
+          "background_color":[
+            "#808080",
+            false
+          ],
+          "element_heights":{
+            "xs":"300px",
+            "sm":"300px",
+            "md":"300px",
+            "lg":"300px",
+            "xl":"300px"
+          },
+          "image_file":{
+            "model":"filer.image",
+            "pk": 123421
+          },
+          "background_repeat":"no-repeat",
+          "background_attachment":"local",
+          "background_vertical_position":"center",
+          "background_horizontal_position":"center",
+          "background_size":"auto",
+          "background_width_height":{},
+          "media_queries":{
+            "xs":{
+              "width":576,
+              "media":"(max-width: 575.98px)"
+            },
+            "sm":{
+              "width":768,
+              "media":"(min-width: 576px) and (max-width: 767.98px)"
+            },
+            "md":{
+              "width":992,
+              "media":"(min-width: 768px) and (max-width: 991.98px)"
+            },
+            "lg":{
+              "width":1200,
+              "media":"(min-width: 992px) and (max-width: 1199.98px)"
+            },
+            "xl":{
+              "width":1980,
+              "media":"(min-width: 1200px)"
+            }
+          }
+        },
+        "pk": 1234106
+      },
+      []
+    ],
+    [
       "BootstrapContainerPlugin",
       {
         "glossary":{
+          "hide_plugin":false,
+          "padding_xs":"p-4",
+          "padding_sm":"",
+          "padding_md":"",
+          "padding_lg":"",
           "breakpoints":[
             "xs",
             "sm",
@@ -11,14 +70,9 @@
             "lg",
             "xl"
           ],
-          "fluid":"",
-          "padding_xs":"",
-          "padding_sm":"",
-          "padding_md":"",
-          "padding_lg":"",
-          "hide_plugin":""
+          "fluid":false
         },
-        "pk":452
+        "pk": 1234107
       },
       [
         [
@@ -31,7 +85,7 @@
               "margins_lg":"",
               "hide_plugin":""
             },
-            "pk":4503
+            "pk": 1234108
           },
           [
             [
@@ -40,7 +94,7 @@
                 "glossary":{
                   "xs-column-width":"col"
                 },
-                "pk":4504
+                "pk": 1234109
               },
               [
                 [
@@ -67,7 +121,7 @@
                         "type":"none"
                       },
                       "image":{
-                        "pk":14,
+                        "pk": 123414,
                         "model":"filer.Image",
                         "width":345,
                         "height":213,
@@ -85,7 +139,7 @@
                         "xl":"(min-width: 1200px) 1140.00px"
                       }
                     },
-                    "pk":4505
+                    "pk": 1234110
                   },
                   []
                 ],
@@ -106,12 +160,207 @@
                       "link":{
                         "type":"cmspage",
                         "model":"cms.Page",
-                        "pk":4,
+                        "pk": 12344,
                         "section":""
                       },
-                      "link_content":"button"
+                      "link_content":"fff"
                     },
-                    "pk":4506
+                    "pk": 1234111
+                  },
+                  []
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "BootstrapRowPlugin",
+          {
+            "glossary":{
+              "margins_xs":"",
+              "margins_sm":"",
+              "margins_md":"",
+              "margins_lg":"",
+              "hide_plugin":""
+            },
+            "pk": 1234112
+          },
+          [
+            [
+              "BootstrapColumnPlugin",
+              {
+                "glossary":{
+                  "xs-column-width":"col"
+                },
+                "pk": 1234113
+              },
+              [
+                [
+                  "BootstrapPicturePlugin",
+                  {
+                    "glossary":{
+                      "hide_plugin":false,
+                      "link_type":"",
+                      "cms_page":null,
+                      "section":"",
+                      "download_file":null,
+                      "ext_url":"",
+                      "mail_to":"",
+                      "link_target":"",
+                      "link_title":"",
+                      "responsive_heights":{
+                        "xs":"100%",
+                        "sm":"100%",
+                        "md":"100%",
+                        "lg":"100%",
+                        "xl":"100%"
+                      },
+                      "responsive_zoom":{
+                        "xs":"0%",
+                        "sm":"0%",
+                        "md":"0%",
+                        "lg":"0%",
+                        "xl":"0%"
+                      },
+                      "resize_options":[
+                        "subject_location",
+                        "high_resolution"
+                      ],
+                      "image_shapes":[
+                        "img-fluid"
+                      ],
+                      "image_file":{
+                        "model":"filer.image",
+                        "pk": 12348
+                      },
+                      "image_title":"",
+                      "alt_tag":"",
+                      "_image_properties":{
+                        "width":941,
+                        "height":448,
+                        "exif_orientation":1
+                      },
+                      "media_queries":{
+                        "xs":{
+                          "width":572,
+                          "media":"(max-width: 575.98px)"
+                        },
+                        "sm":{
+                          "width":540,
+                          "media":"(min-width: 576px) and (max-width: 767.98px)"
+                        },
+                        "md":{
+                          "width":720,
+                          "media":"(min-width: 768px) and (max-width: 991.98px)"
+                        },
+                        "lg":{
+                          "width":960,
+                          "media":"(min-width: 992px) and (max-width: 1199.98px)"
+                        },
+                        "xl":{
+                          "width":1140,
+                          "media":"(min-width: 1200px)"
+                        }
+                      }
+                    },
+                    "pk": 1234115
+                  },
+                  []
+                ],
+                [
+                  "BootstrapCarouselPlugin",
+                  {
+                    "glossary":{
+                      "hide_plugin":false,
+                      "margins_xs":"",
+                      "margins_sm":"",
+                      "margins_md":"",
+                      "margins_lg":"",
+                      "interval":5,
+                      "options":[
+                        "slide",
+                        "pause",
+                        "wrap"
+                      ],
+                      "container_max_heights":{
+                        "xs":"9rem",
+                        "sm":"9rem",
+                        "md":"9rem",
+                        "lg":"9rem",
+                        "xl":"9rem"
+                      },
+                      "resize_options":[
+                        "upscale",
+                        "crop",
+                        "subject_location",
+                        "high_resolution"
+                      ]
+                    },
+                    "pk": 1234116
+                  },
+                  [
+                    [
+                      "BootstrapCarouselSlidePlugin",
+                      {
+                        "glossary":{
+                          "resize_options":[
+                            "upscale",
+                            "crop",
+                            "subject_location",
+                            "high_resolution"
+                          ],
+                          "media_queries":{
+                            "xs":{
+                              "width":572,
+                              "media":"(max-width: 575.98px)"
+                            },
+                            "sm":{
+                              "width":540,
+                              "media":"(min-width: 576px) and (max-width: 767.98px)"
+                            },
+                            "md":{
+                              "width":720,
+                              "media":"(min-width: 768px) and (max-width: 991.98px)"
+                            },
+                            "lg":{
+                              "width":960,
+                              "media":"(min-width: 992px) and (max-width: 1199.98px)"
+                            },
+                            "xl":{
+                              "width":1140,
+                              "media":"(min-width: 1200px)"
+                            }
+                          }
+                        },
+                        "pk": 1234117
+                      },
+                      []
+                    ]
+                  ]
+                ],
+                [
+                  "BootstrapButtonPlugin",
+                  {
+                    "glossary":{
+                      "hide_plugin":false,
+                      "link_type":"",
+                      "cms_page":null,
+                      "section":"",
+                      "download_file":null,
+                      "ext_url":"",
+                      "mail_to":"",
+                      "link_target":"",
+                      "link_title":"",
+                      "icon_font":null,
+                      "symbol":"",
+                      "link_content":"Button",
+                      "button_type":"btn-secondary",
+                      "button_size":"",
+                      "button_options":[],
+                      "icon_align":"icon-left",
+                      "stretched_link":false
+                    },
+                    "pk": 1234114
                   },
                   []
                 ]
