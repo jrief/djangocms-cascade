@@ -145,9 +145,9 @@ class FallBack(Tag):
                    image_fallback=None
                    static_fallback_svg = static('cascade/fallback_light_picture.svg')
                if image_fallback :
-                   witdh = glossary[image_fallback].get('width','')
-                   height = glossary[image_fallback].get('height','')
-                   exif_orientation = glossary[image_fallback].get('exif_orientation','') 
+                   witdh = glossary[image_fallback].get('width',0)
+                   height = glossary[image_fallback].get('height',0)
+                   exif_orientation = glossary[image_fallback].get('exif_orientation',0) 
                if width >= 1:
                    x = random.randint(0,round(witdh/1.19))
                if height >= 1:                  
