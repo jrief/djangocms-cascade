@@ -149,7 +149,7 @@ class FallBack(Tag):
                    height = glossary[image_fallback].get('height',0)
                    exif_orientation = glossary[image_fallback].get('exif_orientation',0) 
                if width >= 1:
-                   x = random.randint(0,round(witdh/1.19))
+                   x = random.randint(0,round(width/1.19))
                if height >= 1:                  
                    y = random.randint(0,round(height/1.19))
  
