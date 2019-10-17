@@ -109,7 +109,7 @@ class FallBack(Tag):
     name = 'fallback'
 
     options = Options(
-        Argument('plugin',required=False, default='world') 
+        Argument('plugin',required=False) 
     )
     
     def render_tag(self, context, plugin):
@@ -119,7 +119,7 @@ class FallBack(Tag):
                instance = context_['instance']
                fallbal_plugin_type = plugin.plugin_class.__name__
                css_classes = glossary.get('css_classes','')
-               witdh =''; height = ''; exif_orientation = ''; x = ''; y = ' ';
+               witdh =0; height = 0; exif_orientation = 0; x = 0; y = 0;
                inline_styles = glossary.get('inline_styles','')
                html_tag_attributes = glossary.get('html_tag_attributes','')
 
