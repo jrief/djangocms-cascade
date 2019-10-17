@@ -111,7 +111,7 @@ class ButtonFormMixin(EntangledModelFormMixin):
 
 class BootstrapButtonMixin(IconPluginMixin):
     require_parent = True
-    parent_classes = ('BootstrapColumnPlugin', 'SimpleWrapperPlugin','BootstrapNavItemsPlugin', 'BootstrapListsPlugin')
+    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin','BootstrapNavItemsPlugin', 'BootstrapListsPlugin']
     render_template = 'cascade/bootstrap4/button.html'
     allow_children = False
     default_css_class = 'btn'
@@ -121,17 +121,6 @@ class BootstrapButtonMixin(IconPluginMixin):
     class Media:
         css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
         js = ['cascade/js/admin/buttonmixin.js']
-
-    def render(self, context, instance, placeholder):
-        self.super(BootstrapButtonMixin, self).render(context, instance, placeholder)
-        if 'icon_font_class' in context:
-            mini_template = '{0}<i class="{1} {2}" aria-hidden="true"></i>{3}'
-            icon_align = instance.glossary.get('icon_align')
-            if icon_align == 'icon-left':
-                context['icon_left'] = format_html(mini_template, '', context['icon_font_class'], 'cascade-icon-left', ' ')
-            elif icon_align == 'icon-right':
-                context['icon_right'] = format_html(mini_template, ' ', context['icon_font_class'], 'cascade-icon-right', '')
-        return context
 
 
 class BootstrapButtonFormMixin(LinkFormMixin, IconFormMixin, ButtonFormMixin):
@@ -175,6 +164,16 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         attributes = cls.super(BootstrapButtonPlugin, cls).get_html_tag_attributes(obj)
         attributes.update(cls.DEFAULT_BUTTON_ATTRIBUTES)
         return attributes
+    
+    def render(self, context, instance, placeholder):
+        self.super(BootstrapButtonPlugin, self).render(context, instance, placeholder)
+        if 'icon_font_class' in context:
+            mini_template = '{0}<i class="{1} {2}" aria-hidden="true"></i>{3}'
+            icon_align = instance.glossary.get('icon_align')
+            if icon_align == 'icon-left':
+                context['icon_left'] = format_html(mini_template, '', context['icon_font_class'], 'cascade-icon-left', ' ')
+            elif icon_align == 'icon-right':
+                context['icon_right'] = format_html(mini_template, ' ', context['icon_font_class'], 'cascade-icon-right', '')
+        return context
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
-
