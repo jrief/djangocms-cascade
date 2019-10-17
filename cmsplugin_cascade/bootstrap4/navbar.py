@@ -80,8 +80,9 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         kwargs['form'] = BootstrapNavbarFormMixin
-        if obj.glossary.get('navbar_placement') == 'fixed-top':
-            obj.fixed_top_and_toolbar=True
+        if hasattr(obj, 'glossary'):
+            if obj.glossary.get('navbar_placement') == 'fixed-top':
+                obj.fixed_top_and_toolbar=True
         return super().get_form(request, obj, **kwargs)
 
 
