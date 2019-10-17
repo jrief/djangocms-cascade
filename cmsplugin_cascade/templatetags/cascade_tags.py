@@ -173,7 +173,7 @@ class FallBack(Tag):
                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
                     <image x="{x}"  y="{y}" width="10%" xlink:href="{static_fallback_svg}"> \
                     </svg>'.format(
-                    witdh=witdh,
+                    width=width,
                     height=height,
                     ramdom_svg_color=ramdom_svg_color,
                     css_classes=css_classes,
