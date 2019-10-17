@@ -117,9 +117,9 @@ class FallBack(Tag):
            if 'instance'in context_ :
                glossary = context_['instance'].glossary
                instance = context_['instance']
-               fallbal_plugin_type = plugin.plugin_class.__name__
+               fallback_plugin_type = plugin.plugin_class.__name__
                css_classes = glossary.get('css_classes','')
-               witdh =0; height = 0; exif_orientation = 0; x = 0; y = 0;
+               witdh = 0; height = 0; exif_orientation = 0; x = 0; y = 0;
                inline_styles = glossary.get('inline_styles','')
                html_tag_attributes = glossary.get('html_tag_attributes','')
 
@@ -129,7 +129,7 @@ class FallBack(Tag):
                    static_fallback_svg = static('cascade/fallback_light.svg')
                    ramdom_svg_color = 'hsl({}, 71%, 93%, 0.8)'.format( str(random.randint(180, 200)))
                    
-               elif fallbal_plugin_type == 'BootstrapJumbotronPlugin':
+               elif fallback_plugin_type == 'BootstrapJumbotronPlugin':
                    # color morning
                    image_fallback=None
                    ramdom_svg_color = 'hsl({}, 90%, 90%, 0.8)'.format( str(random.randint(50, 70)))
@@ -144,14 +144,16 @@ class FallBack(Tag):
                    ramdom_svg_color = 'hsl({}, 86%,94%, 0.8)'.format( str(random.randint(150, 150)))
                    image_fallback=None
                    static_fallback_svg = static('cascade/fallback_light_picture.svg')
-               if image_fallback :   
+               if image_fallback :
                    witdh = glossary[image_fallback].get('width','')
                    height = glossary[image_fallback].get('height','')
                    exif_orientation = glossary[image_fallback].get('exif_orientation','') 
-                   x = random.randint(0,round(int(witdh)/1.19))
-                   y = random.randint(0,round(int(height)/1.19))
-
-               if fallbal_plugin_type == 'BootstrapJumbotronPlugin':
+               if width >= 1:
+                   x = random.randint(0,round(witdh/1.19))
+               if height >= 1:                  
+                   y = random.randint(0,round(height/1.19))
+ 
+               if fallback_plugin_type == 'BootstrapJumbotronPlugin':
                    style='''
                         background: url({static_fallback_svg});
                         background-size: auto;
