@@ -7,7 +7,7 @@ if getattr(settings, 'CASCADE_CLIPS_LIBRARY', None):
     extra_cascade_patterns = [url(r'cascade_copytoclipboard/$',
                                   views.CascadeCopyToClipboard.as_view(),
                                   name='cascade_copytoclipboard'),
-                              url(r'cascade_clips/1/$',
+                              url(r'cascade_clips/(\d+)/$',
                                   views.CascadeLibClips,
                                   name='cascade_clips'),
                               url(r'cascade_clips_folder/(\d+)/$',
