@@ -6,12 +6,16 @@ python:
   - 3.7
 
 env:
-  matrix:
   - DJANGOVER=django111 CMSVER=cms35
   - DJANGOVER=django111 CMSVER=cms36
   - DJANGOVER=django20 CMSVER=cms36
   - DJANGOVER=django21 CMSVER=cms36
   - DJANGOVER=django22 CMSVER=cms37
+
+matrix:
+  exclude:
+    - python: 3.7
+      env: DJANGOVER=django111
 
 install:
   - pip install tox
