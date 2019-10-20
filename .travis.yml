@@ -3,6 +3,7 @@ language: python
 python:
   - 3.5
   - 3.6
+  - 3.7
 
 env:
   matrix:
@@ -10,17 +11,10 @@ env:
   - DJANGO='django111' CMS='cms36'
   - DJANGO='django20' CMS='cms36'
   - DJANGO='django21' CMS='cms36'
+  - DJANGO='django22' CMS='cms37'
 
 install:
   - pip install tox
 
-services:
-  - xvfb
-
-before_script:
-  - export DISPLAY=:99.0
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then export PYVER=py35; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then export PYVER=py36; fi"
-
 script:
-  - tox -e"$PYVER-$DJANGO-$CMS"
+  - tox -e "$PYVER-$DJANGO-$CMS"
