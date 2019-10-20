@@ -7,14 +7,14 @@ python:
 
 env:
   matrix:
-  - DJANGO='django111' CMS='cms35'
-  - DJANGO='django111' CMS='cms36'
-  - DJANGO='django20' CMS='cms36'
-  - DJANGO='django21' CMS='cms36'
-  - DJANGO='django22' CMS='cms37'
+  - DJANGOVER=django111 CMSVER=cms35
+  - DJANGOVER=django111 CMSVER=cms36
+  - DJANGOVER=django20 CMSVER=cms36
+  - DJANGOVER=django21 CMSVER=cms36
+  - DJANGOVER=django22 CMSVER=cms37
 
 install:
   - pip install tox
 
 script:
-  - tox -e "$PYVER-$DJANGO-$CMS"
+  - tox -e "$PYVER-$DJANGOVER-$CMSVER"
