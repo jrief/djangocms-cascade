@@ -17,4 +17,5 @@ install:
   - pip install tox
 
 script:
-  - tox -e "$PYVER-$DJANGOVER-$CMSVER"
+  - export TOX_ENV=py${TRAVIS_PYTHON_VERSION/./}-${DJANGOVER}-${CMSVER}
+  - tox -e "$TOX_ENV"
