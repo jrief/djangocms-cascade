@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.1.1
+=====
+* Support for django-CMS version 3.7 and Django version 2.2.
+* In the CMS-Toolbar: Segmentation > Clear emulations is enabled only, if emulations are active.
+
 
 1.1
 ===
