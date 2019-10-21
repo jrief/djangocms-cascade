@@ -10,8 +10,8 @@ assert DJANGO_VERSION >= (1, 11), "djangocms-cascade with Bootstrap-4 requires a
 
 
 
-CASCADE_PLUGINS = ['accordion', 'buttons', 'card', 'carousel', 'container', 'embeds', 'image', 'jumbotron', 'navbar',
-                   'picture', 'tabs', 'lists']
+CASCADE_PLUGINS = ['accordion', 'buttons', 'card', 'carousel', 'container', 'embeds', 'icon', 'image', 'jumbotron',
+                   'picture', 'tabs', 'navbar', 'lists']
 if 'cms_bootstrap' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS.append('secondary_menu')
 
