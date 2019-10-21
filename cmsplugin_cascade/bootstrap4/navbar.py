@@ -15,7 +15,6 @@ from cmsplugin_cascade.link.config import LinkPluginBase
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField, ChoiceField 
 
-from django.utils.translation import ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 
@@ -34,13 +33,13 @@ class NavFormMixin(EntangledModelFormMixin):
     navbar_collapse = ChoiceField(
         label=_('navbar collapse'),
         choices=OPTION_NAV_COLLAPSE,
-        help_text=_("Adjust interval for the  navbar_collapse.")
+        help_text=_("Adjust interval for the navbar_collapse.")
     )
 
     navbar_color = ChoiceField(
         label=_('navbar bg color'),
         choices=OPTION_NAV_COLOR,
-        help_text=_("Adjust interval for the  navbar color."),
+        help_text=_("Adjust interval for the navbar color.")
     )
 
     navbar_bg_color = ChoiceField(
@@ -52,11 +51,11 @@ class NavFormMixin(EntangledModelFormMixin):
     navbar_placement = ChoiceField(
         label=_('navbar-place'),
         choices=[(c, c) for c in OPTION_NAV_PLACEMENTS],
-        help_text=_("Adjust position ( 'fixed-top or fixed-button need to be set in Jumbotron if it is a plugin parent.')"),
+        help_text=_("Adjust position ('fixed-top or fixed-button need to be set in Jumbotron if it is a plugin parent.')")
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['navbar_collapse', 'navbar_color', 'navbar_bg_color', 'navbar_placement',]}
+        entangled_fields = {'glossary':['navbar_collapse', 'navbar_color', 'navbar_bg_color', 'navbar_placement']}
 
 
 class BootstrapNavbarFormMixin(NavFormMixin):
@@ -67,7 +66,7 @@ class BootstrapNavbarFormMixin(NavFormMixin):
 class BootstrapNavbarPlugin(BootstrapPluginBase):
     name = _("Navbar")
     default_css_class = 'navbar'
-    default_css_attributes = ('options',)
+    default_css_attributes = ('options')
     require_parent = False
     parent_classes = None
     render_template = 'cascade/bootstrap4/navbar.html'
@@ -87,12 +86,11 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
 
 
     @classmethod
-    def sanitize_model(cls, obj ):
+    def sanitize_model(cls, obj):
         sanitized = False
         if hasattr(obj, 'fixed_top_and_toolbar'):
             navbar_placement = obj.glossary.get('navbar_placement')
             del obj.fixed_top_and_toolbar
-            
         # if the jumbotron is the root of the placeholder, we consider it as "fluid"
         obj.glossary['fluid'] = obj.parent is None
         super().sanitize_model(obj)
@@ -119,7 +117,7 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapNavbarPlugin, cls).get_identifier(obj)
-        css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
+        css_classes_without_default = obj.css_classes.replace( cls.default_css_class ,'',1)
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
 identifier, css_classes_without_default)
 
@@ -141,7 +139,7 @@ class BootstrapNavBrandPlugin(BootstrapPluginBase, LinkPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapNavBrandPlugin, cls).get_identifier(obj)
-        css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
+        css_classes_without_default = obj.css_classes.replace( cls.default_css_class,'',1)
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
         identifier, css_classes_without_default)
 
@@ -151,13 +149,13 @@ class BootstrapNavBrandThumbImageFormMixin(EntangledModelFormMixin):
         label=_("Fixed Image Width"),
         allowed_units=['px'],
         required = False,
-        help_text=_("Set a fixed image width in pixels."),
+        help_text=_("Set a fixed image width in pixels.")
     )
 
     class Meta:
         entangled_fields = {'glossary': ['image_width_fixed']}
 
-class BootstrapNavBrandImageFormMixin( ImageFormMixin,   BootstrapNavBrandThumbImageFormMixin  ):
+class BootstrapNavBrandImageFormMixin( ImageFormMixin, BootstrapNavBrandThumbImageFormMixin):
     pass
 
 @plugin_pool.register_plugin
@@ -222,7 +220,7 @@ class BootstrapNavCollapsePlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         identifier = super(BootstrapNavCollapsePlugin, cls).get_identifier(obj)
-        css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
+        css_classes_without_default = obj.css_classes.replace( cls.default_css_class,'',1)
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
         identifier, css_classes_without_default)
 
@@ -230,7 +228,7 @@ class BootstrapNavCollapsePlugin(BootstrapPluginBase):
 @plugin_pool.register_plugin
 class  BootstrapNavListPlugin(BootstrapPluginBase):
     name = _("Nav list")
-    parent_classes = [' BootstrapNavbarPlugin', 'BootstrapNavCollapsePlugin' ] 
+    parent_classes = ['BootstrapNavbarPlugin','BootstrapNavCollapsePlugin']
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar_nav_list.html'
     default_css_class = 'navbar-nav'
@@ -244,11 +242,11 @@ class  BootstrapNavListPlugin(BootstrapPluginBase):
     def get_identifier(cls, obj):
         identifier = super(BootstrapNavListPlugin, cls).get_identifier(obj)
         if hasattr(cls,'default_css_class'):
-            css_classes_without_default = obj.css_classes.replace( cls.default_css_class , '' , 1)
+            css_classes_without_default = obj.css_classes.replace( cls.default_css_class,'',1)
         else:
             css_classes_without_default = obj.css_classes
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
-        identifier, css_classes_without_default )
+        identifier, css_classes_without_default)
 
 
 @plugin_pool.register_plugin
@@ -256,7 +254,7 @@ class BootstrapNavItemsMainMemuPlugin(BootstrapPluginBase):
     name = _("Nav items Main Menu ")
     parent_classes = None
     require_parent = False
-    allow_children = False  
+    allow_children = False
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar_nav_items_li_menu_main_links.html'
 
@@ -264,7 +262,7 @@ class BootstrapNavItemsMainMemuPlugin(BootstrapPluginBase):
 class BootstrapNavItemsPlugin(BootstrapPluginBase):
     default_css_class = 'nav-item'
     name = _("Nav item")
-    parent_classes = ['BootstrapNavListPlugin'] 
+    parent_classes = ['BootstrapNavListPlugin']
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar_nav_item.html'
 
@@ -272,7 +270,7 @@ class BootstrapNavItemsPlugin(BootstrapPluginBase):
 @plugin_pool.register_plugin
 class BootstrapNavbarNavLinkPlugin(BootstrapPluginBase):
     name = _("Nav Link")
-    parent_classes = ['BootstrapNavItemsPlugin'] 
+    parent_classes = ['BootstrapNavItemsPlugin']
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar_nav_link.html'
 
@@ -281,5 +279,5 @@ class BootstrapNavbarNavLinkPlugin(BootstrapPluginBase):
 class BootstrapNavbarToogler(BootstrapPluginBase):
     name = _("Nav toogler")
     default_css_class = 'navbar-toggler'
-    parent_classes = ['BootstrapNavbarPlugin'] 
+    parent_classes = ['BootstrapNavbarPlugin']
     render_template = 'cascade/bootstrap4/navbar_toogler.html'
