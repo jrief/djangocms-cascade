@@ -2,6 +2,12 @@
 Release History
 ===============
 
+1.1.2
+=====
+* Prepend ``admin/js/jquery.init.js`` in front of JS file paths using ``django.jQuery``. This is required by a
+  change in Django-2.2 (https://docs.djangoproject.com/en/2.2/releases/2.2/#merging-of-form-media-assets).
+
+
 1.1.1
 =====
 * Support for django-CMS version 3.7 and Django version 2.2.
