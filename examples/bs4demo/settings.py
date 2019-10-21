@@ -230,7 +230,7 @@ CASCADE_CLIPS_LIBRARY = True
 
 CMS_PLACEHOLDER_CONF = {
 
-    'Header Content': {
+    'Navbar Content': {
         'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin','BootstrapNavbarPlugin', 'BootstrapListPlugin', 'BootstrapNavItemsMainMemuPlugin'],
         'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None, 'BootstrapNavItemsMainMemuPlugin':None},
 
