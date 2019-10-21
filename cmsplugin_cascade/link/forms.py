@@ -23,8 +23,8 @@ class HeavySelectWidget(HeavySelect2Widget):
     @property
     def media(self):
         parent_media = super().media
-        # prepend JS snippet to re-add 'jQuery' to the global namespace
-        js = ['cascade/js/admin/jquery.restore.js', *parent_media._js]
+        # append jquery.init.js to enforce select2.js into the global 'jQuery' namespace
+        js = list(parent_media._js) + ['admin/js/jquery.init.js']
         return Media(css=parent_media._css, js=js)
 
 
