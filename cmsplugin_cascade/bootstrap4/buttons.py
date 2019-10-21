@@ -120,7 +120,7 @@ class BootstrapButtonMixin(IconPluginMixin):
 
     class Media:
         css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
-        js = ['cascade/js/admin/buttonmixin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonmixin.js']
 
     def render(self, context, instance, placeholder):
         self.super(BootstrapButtonMixin, self).render(context, instance, placeholder)
@@ -148,7 +148,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 
     class Media:
-        js = ['cascade/js/admin/buttonplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonplugin.js']
 
     @classmethod
     def get_identifier(cls, instance):

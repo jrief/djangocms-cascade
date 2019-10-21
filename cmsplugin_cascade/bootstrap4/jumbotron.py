@@ -201,7 +201,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     """
 
     class Media:
-        js = ['cascade/js/admin/jumbotronplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/jumbotronplugin.js']
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element

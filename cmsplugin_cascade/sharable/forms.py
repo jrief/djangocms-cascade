@@ -88,7 +88,7 @@ class SharableGlossaryMixin(metaclass=forms.MediaDefiningClass):
     ring_plugin = 'SharableGlossaryMixin'
 
     class Media:
-        js = ['cascade/js/admin/sharableglossary.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/sharableglossary.js']
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
         if request.method == 'GET' and request.GET.get('glossary'):
