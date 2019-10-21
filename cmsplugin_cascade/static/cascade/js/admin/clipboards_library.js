@@ -18,16 +18,16 @@ function LocalStorage_or_AppendFolderRender(element, url, timestamp) {
         $(".btn").removeClass("active");
         $(this).addClass("active");
 
-        var id_folder = url.substring(url.lastIndexOf('/') + 1);
-        var timestamp_storage_folder = 'timestamp_storage_' + id_folder;
+        var idFolder = url.substring(url.lastIndexOf("/") + 1);
+        var timestamp_storage_folder = "timestamp_storage_" + idFolder;
         timestamp_storage = sessionStorage.getItem(timestamp_storage_folder);
-        sessionStorage.setItem('folder_current_id', id_folder);
+        sessionStorage.setItem("folder_current_id", idFolder);
 
         if (sessionStorage.getItem(timestamp_storage_folder) === timestamp.toString() && sessionStorage.getItem('HTML_FOLDER_CLIPS_' + id_folder !== null)) {
-            data_html = sessionStorage.getItem('HTML_FOLDER_CLIPS_' + id_folder);
+            data_html = sessionStorage.getItem('HTML_FOLDER_CLIPS_' + idFolder);
             $(".clips-wrapper").html(data_html);
         } else {
-            var token = '{ "csrfmiddlewaretoken": "' + CMS.config.csrf + '" }';
+            var token = "{ 'csrfmiddlewaretoken': '" + CMS.config.csrf + "' }";
            // CMS.API.Helpers.csrf(tokenf);
             var data = {
                 placeholder_id: 1,
@@ -37,12 +37,12 @@ function LocalStorage_or_AppendFolderRender(element, url, timestamp) {
 
             $.ajax({
                 type: 'POST',
-                url: '/cascade_libclips_folder/' + id_folder + '/',
+                url: '/cascade_libclips_folder/' + idFolder + '/',
                 post: token,
                 data: data,
                 success: function(response) {
                     sessionStorage.setItem(timestamp_storage_folder, timestamp);
-                    sessionStorage.setItem('HTML_FOLDER_CLIPS_' + id_folder, response);
+                    sessionStorage.setItem("HTML_FOLDER_CLIPS_é + idFolder, response);
                     $(".clips-wrapper").html(response);
                 }
             });
