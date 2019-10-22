@@ -63,6 +63,7 @@ django.jQuery(function($) {
 		refreshChangeForm: function() {
 			this.fileIdInputChanged();
 			this.backgroundInputSizeChanged();
+			this.elementHeightsChoicesChanged();
 			this.$super && this.$super();
 		}
 
