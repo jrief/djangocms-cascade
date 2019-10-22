@@ -19,10 +19,15 @@ logger = logging.getLogger('cascade')
 class ImageBackgroundMixin(object):
     @property
     def element_heights(self):
-        element_heights = self.glossary.get('element_heights', {})
-        for bp, media_query in self.glossary['media_queries'].items():
-            if bp in element_heights:
-                yield {'media': media_query['media'], 'height': element_heights[bp]}
+        try:
+            element_heights_choices = self.glossary.get('element_heights_choices', {})
+            if element_heights_choices == 'element heights':
+                element_heights = self.glossary.get('element_heights', {})
+                for bp, media_query in self.glossary['media_queries'].items():
+                    if bp in element_heights:
+                        yield {'media': media_query['media'], 'height': element_heights[bp]}
+        except (KeyError, TypeError, ValueError):
+            pass
 
     @property
     def background_color(self):
@@ -78,12 +83,22 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     HORIZONTAL_POSITION_CHOICES = ['left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right']
     REPEAT_CHOICES = ['repeat', 'repeat-x', 'repeat-y', 'no-repeat']
     SIZE_CHOICES = ['auto', 'width/height', 'cover', 'contain']
+    ELEMENT_HEIGHT = ['element heights','auto']
 
     fluid = BooleanField(
         label=_("Is fluid"),
         initial=True,
         required=False,
         help_text=_("Shall this element occupy the entire horizontal space of its parent."),
+    )
+
+    element_heights_choices = ChoiceField(
+        label=_("Element heights choices"),
+        choices=[(c, c) for c in ELEMENT_HEIGHT],
+        widget=widgets.RadioSelect,
+        initial='element heights',
+        required=False,
+        help_text=_("This property specifies how the background image is sized."),
     )
 
     element_heights = BootstrapMultiSizeField(
@@ -155,7 +170,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['fluid', 'background_color', 'element_heights', 'image_file',
+        entangled_fields = {'glossary': ['fluid', 'background_color', 'element_heights_choices', 'element_heights', 'image_file',
                                          'background_repeat', 'background_attachment',
                                          'background_vertical_position', 'background_horizontal_position',
                                          'background_size', 'background_width_height']}
