@@ -3,9 +3,11 @@ django.jQuery(function($) {
 
 	// create class handling the client-side part of JumbotronPlugin
 	var base_plugins = eval(django.cascade.ring_plugin_bases.JumbotronPlugin),
-	    $fileIdInputSelector = $('#id_image_file'),
-	    $backgroundInputSize = $('input[name="background_size"]'),
-	    $backgroundWidthHeight = $('.form-row.field-background_width_height');
+		$fileIdInputSelector = $('#id_image_file'),
+		$backgroundInputSize = $('input[name="background_size"]'),
+		$backgroundWidthHeight = $('.form-row.field-background_width_height'),
+		$elementHeightsChoices = $('input[name="element_heights_choices"]'),
+		$elementHeights = $('.form-row.field-element_heights');
 
 	django.cascade.JumbotronPlugin = ring.create(base_plugins, {
 		constructor: function() {
@@ -17,7 +19,7 @@ django.jQuery(function($) {
 				window.setTimeout(self.fileIdInputChanged);
 			});
 			$backgroundInputSize.on('change', self.backgroundInputSizeChanged);
-
+			$elementHeightsChoices.on('change', self.elementHeightsChoicesChanged);
 			// set defaults
 			this.refreshChangeForm();
 		},
@@ -48,6 +50,14 @@ django.jQuery(function($) {
 				$backgroundWidthHeight.show();
 			} else {
 				$backgroundWidthHeight.hide();
+			}
+		},
+		elementHeightsChoicesChanged: function() {
+			var $inputField = $('input[name="element_heights_choices"]:checked');
+			if ($inputField.val() === 'element heights') {
+				$elementHeights.show();
+			} else {
+				$elementHeights.hide();
 			}
 		},
 		refreshChangeForm: function() {
