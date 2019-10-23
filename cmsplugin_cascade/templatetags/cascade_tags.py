@@ -124,26 +124,27 @@ class FallBack(Tag):
                html_tag_attributes = glossary.get('html_tag_attributes','')
 
                if 'image' in glossary:
-                   # color skybkue
                    image_fallback='image'
                    static_fallback_svg = static('cascade/fallback_light.svg')
-                   ramdom_svg_color = 'hsl({}, 71%, 93%, 0.8)'.format( str(random.randint(180, 200)))
+                   # color skybkue
+                   svg_color = 'hsl(196, 71%, 93%, 0.8)'
                    
                elif fallback_plugin_type == 'BootstrapJumbotronPlugin':
-                   # color morning
                    image_fallback=None
-                   ramdom_svg_color = 'hsl({}, 90%, 90%, 0.8)'.format( str(random.randint(50, 70)))
                    static_fallback_svg = static('cascade/fallback_light_jumbotron.svg')
+                   # color morning
+                   svg_color = 'hsl(62, 90%, 90%, 0.8)'            
                elif '_image_properties' in  glossary:
-                   # color sunrise
                    image_fallback='_image_properties'
-                   ramdom_svg_color = 'hsl({}, 80%,95%, 0.8)'.format( str(random.randint(300, 400)))
+                   ramdom_svg_color = 'hsl(368, 80%,95%, 0.8)'
                    static_fallback_svg = static('cascade/fallback_light_picture.svg')
+                   # color sunrise
+                   svg_color = 'hsl(368, 80%,95%, 0.8)'             
                else:
-                   # color garden
-                   ramdom_svg_color = 'hsl({}, 86%,94%, 0.8)'.format( str(random.randint(150, 150)))
                    image_fallback=None
                    static_fallback_svg = static('cascade/fallback_light_picture.svg')
+                   # color garden
+                   svg_color = 'hsl(150, 86%,94%, 0.8)'
                if image_fallback :
                    width = glossary[image_fallback].get('width',0)
                    height = glossary[image_fallback].get('height',0)
@@ -175,10 +176,10 @@ class FallBack(Tag):
                     </svg>'.format(
                     width=width,
                     height=height,
-                    ramdom_svg_color=ramdom_svg_color,
+                    svg_color=svg_color,
                     css_classes=css_classes,
-                    inline_styles = inline_styles,
-                    html_tag_attributes = html_tag_attributes,
+                    inline_styles=inline_styles,
+                    html_tag_attributes=html_tag_attributes,
                     static_fallback_svg=static_fallback_svg,
                     x=x,
                     y=y)
