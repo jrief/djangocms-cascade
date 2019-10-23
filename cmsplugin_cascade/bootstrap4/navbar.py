@@ -68,7 +68,6 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
     default_css_class = 'navbar'
     default_css_attributes = ('options')
     require_parent = False
-    parent_classes = None
     render_template = 'cascade/bootstrap4/navbar.html'
     ring_plugin = 'BootstrapNavbarPlugin'
     fixed_top_and_toolbar = None
@@ -88,7 +87,7 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = False
-        if hasattr(obj, 'fixed_top_and_toolbar'):
+        if hasattr(obj,'fixed_top_and_toolbar'):
             navbar_placement = obj.glossary.get('navbar_placement')
             del obj.fixed_top_and_toolbar
         # if the jumbotron is the root of the placeholder, we consider it as "fluid"
@@ -250,29 +249,13 @@ class  BootstrapNavListPlugin(BootstrapPluginBase):
 
 
 @plugin_pool.register_plugin
-class BootstrapNavItemsMainMemuPlugin(BootstrapPluginBase):
-    name = _("Nav items Main Menu ")
+class BootstrapNavItemsMainMenuPlugin(BootstrapPluginBase):
+    name = _("NavItems MainMenu ")
     parent_classes = None
     require_parent = False
     allow_children = False
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar_nav_items_li_menu_main_links.html'
-
-@plugin_pool.register_plugin
-class BootstrapNavItemsPlugin(BootstrapPluginBase):
-    default_css_class = 'nav-item'
-    name = _("Nav item")
-    parent_classes = ['BootstrapNavListPlugin']
-    alien_child_classes = True
-    render_template = 'cascade/bootstrap4/navbar_nav_item.html'
-
-
-@plugin_pool.register_plugin
-class BootstrapNavbarNavLinkPlugin(BootstrapPluginBase):
-    name = _("Nav Link")
-    parent_classes = ['BootstrapNavItemsPlugin']
-    alien_child_classes = True
-    render_template = 'cascade/bootstrap4/navbar_nav_link.html'
 
 
 @plugin_pool.register_plugin
