@@ -28,7 +28,7 @@
 	}
 }
 	{% endfor %}
-{% else %}
+{% elif 'pk' in  instance.glossary.image_file %}
 	#cascadeelement_id-{{ instance.pk }} {
 	{% fallback instance %} 
 	}
