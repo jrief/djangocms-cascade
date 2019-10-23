@@ -28,6 +28,17 @@
 	}
 }
 	{% endfor %}
+
+{% else %}
+	#cascadeelement_id-{{ instance.pk }} {
+	{% fallback instance %} 
+	}
+{% endif %}
+{% if request.toolbar and request.toolbar.edit_mode_active %}
+{% if 'fixed-top' in instance.glossary.values and instance.get_first_child.plugin_type == 'BootstrapNavbarPlugin' %}
+	body { padding-top:2.8rem  }
+	.jumbotron-fluid { margin-top: 2.8rem !important ;}
+{% endif %}
 {% endif %}
 </style>
 {% endlocalize %}{% endaddtoblock %}
@@ -37,5 +48,5 @@
 	{% for plugin in instance.child_plugin_instances %}
 		{% render_plugin plugin %}
 	{% endfor %}
-</div>  
+</div>
 {% endspaceless %}{% endlocalize %}
