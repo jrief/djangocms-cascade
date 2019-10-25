@@ -11,5 +11,5 @@
 <div><svg viewBox="0 0 {{instance.glossary.image_properties.width }} {{ instance.glossary.image_properties.height  }}" style="background-color: hsl(368, 80%,85%, 0.8);" {{ instance.html_tag_attributes }} {% if css_classes %} class='fallback-picture {{ css_classes|cut:"img-fluid"|cut:"col" }}'{% endif %}
 {% if inline_styles %} style="{{ inline_styles }}"{% endif %} {% if sizes %} sizes="{{ sizes|join:', ' }}"{% endif %}
 	xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
-	<image x="{{ "12345679"|random }}00" y="{{ "12345679"|random }}00" xlink:href="{% static 'cascade/fallback_light_picture.svg' %}">
+	<image x="{{ "12345679"|random }}0" y="{{ "12345679"|random }}0" xlink:href="{% static 'cascade/fallback_light_picture.svg' %}">
 </svg></div>
