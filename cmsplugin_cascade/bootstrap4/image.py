@@ -170,7 +170,8 @@ def get_image_tags(instance):
     """
     if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
         aspect_ratio = compute_aspect_ratio(instance.image)
-    elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
+    # fallback logic
+    elif 'image_properties' in instance.glossary and 'width' in instance.glossary['image_properties']:
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
     else:
         # if accessing the image file fails or fake image fails, abort here
@@ -182,6 +183,7 @@ def get_image_tags(instance):
     upscale = 'upscale' in resize_options
     if 'subject_location' in resize_options and hasattr(instance.image, 'subject_location'):
         subject_location = instance.image.subject_location
+    # fallback logic
     else:
         subject_location = None
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
@@ -193,7 +195,12 @@ def get_image_tags(instance):
     else:
         image_width = parse_responsive_length(instance.glossary['image_width_fixed'])
         if not image_width[0]:
-            image_width = (instance.image.width, image_width[1])
+            if hasattr(instance,'image' ) and  hasattr(instance.image,'width' ) :
+                image_width = (instance.image.width, image_width[1])
+            # logic fallback
+            else:
+                image_width = (instance.glossary['image_properties']['width'],image_width[1] )
+
     try:
         image_height = parse_responsive_length(instance.glossary['image_height'])
     except KeyError:
