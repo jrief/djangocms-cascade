@@ -163,14 +163,14 @@ class FallBack(Tag):
                         background-repeat: no-repeat;
                         background-position-x: 50%;
                         background-attachment: fixed;
-                        background-color: {ramdom_svg_color};
+                        background-color: {svg_color};
                         border: white solid;
-                    '''.format( ramdom_svg_color=ramdom_svg_color, static_fallback_svg=static_fallback_svg)
+                    '''.format( ramdom_svg_color=svg_color, static_fallback_svg=static_fallback_svg)
                     
                    return style
                else:
                    svg='<svg  ViewBox="0 0 {width} {height}" version="1.1" style="background-color:\
-                    {ramdom_svg_color}; border: white solid;" {html_tag_attributes} class="{css_classes}"   style="{inline_styles}" \
+                    {svg_color}; border: white solid;" {html_tag_attributes} class="{css_classes}"   style="{inline_styles}" \
                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
                     <image x="{x}"  y="{y}" width="10%" xlink:href="{static_fallback_svg}"> \
                     </svg>'.format(
