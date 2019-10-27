@@ -135,4 +135,4 @@ class StridePluginTest(CascadeTestCase):
         html = template.render(self.context)
         soup = BeautifulSoup(html, features='lxml')
         button = soup.find(class_='btn')
-        self.assertSetEqual(set(button.attrs['class']), {'carousel', 'slide', 'pause', 'wrap', 'slide'})
+        self.assertSetEqual(set(button.attrs['class']), {'btn', 'btn-secondary'})
