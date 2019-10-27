@@ -31,7 +31,7 @@
 
 {% else %}
 	#cascadeelement_id-{{ instance.pk }} {
-	{% fallback instance %} 
+	{# fallback instance #} 
 	}
 {% endif %}
 {% if request.toolbar and request.toolbar.edit_mode_active %}
