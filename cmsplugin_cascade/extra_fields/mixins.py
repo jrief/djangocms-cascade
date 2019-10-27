@@ -12,7 +12,7 @@ from entangled.forms import EntangledModelFormMixin
 
 class ExtraFieldsPluginFormMixin( EntangledModelFormMixin):
     """In this form, choices and help_text will overided later to give path of parameter custom css classes
-     and styles for the plugin)"""
+     and styles for the plugin"""
 
     custom_css_classes_and_styles = ChoiceField(
         widget=widgets.RadioSelect(attrs={'style': 'display:none;'}),
