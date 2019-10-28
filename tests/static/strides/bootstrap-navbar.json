@@ -14,7 +14,7 @@
             true
           ],
           "navbar_collapse":"navbar-expand-md",
-          "navbar_color":"navbar-dark",
+          "navbar_color":"navbar-light",
           "navbar_bg_color":"bg-transparent",
           "navbar_placement":"inherit",
           "position_jumbotron":"inherit"
