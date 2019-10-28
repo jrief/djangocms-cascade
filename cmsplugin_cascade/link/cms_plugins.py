@@ -35,7 +35,10 @@ class TextLinkPlugin(LinkPluginBase):
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = cls.super(TextLinkPlugin, cls).get_css_classes(obj)
-        if obj.parent.plugin_type == 'TextPlugin' and obj.parent.parent.plugin_type == 'BootstrapListsPlugin' :
+        if  hasattr(obj.parent.parent, 'plugin_type' ) == 'BootstrapListsPlugin':
+            css_classes.insert(0,'nav-link navbar-text')
+        # strides pass
+        if hasattr(obj.parent.parent, 'plugin'):
             css_classes.insert(0,'nav-link navbar-text')
         return css_classes
 
