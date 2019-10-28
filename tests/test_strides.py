@@ -138,4 +138,4 @@ class StridePluginTest(CascadeTestCase):
         html = template.render(self.context)
         soup = BeautifulSoup(html, features='lxml')
         navbar = soup.find(class_='navbar')
-        self.assertSetEqual(set( navbar.attrs['class']), {'navbar', 'navbar-expand-lg'})
+        self.assertSetEqual(set( navbar.attrs['class']), {'navbar', 'navbar-expand-md','navbar-light','bg-transparent' })
