@@ -34,7 +34,7 @@ class  BootstrapListsPlugin(BootstrapPluginBase):
     
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super(BootstrapListsPlugin, cls).get_css_classes(obj)
+        css_classes = cls.super(BootstrapListsPlugin, cls).get_css_classes(obj)
         list_options = [obj.glossary.get('list_options')] if obj.glossary.get('list_options') else ''
         if list_options:
             for opts in list_options:
