@@ -24,7 +24,7 @@ class StridePluginTest(CascadeTestCase):
     def setUp(self):
         request = RequestFactory().get('/')
         self.context = RequestContext(request, {})
-        request.current_page = Page.objects.get(pk=self.home_page.pk)
+        request.current_page = Page.objects.get(id=self.home_page.id)
         
 
     def assertStyleEqual(self, provided, expected):
