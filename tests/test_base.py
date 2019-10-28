@@ -6,6 +6,7 @@ from django.template.context import Context
 from cms.api import create_page
 from cms.test_utils.testcases import CMSTestCase
 from cmsplugin_cascade.models import CascadePage
+from cms.models import Page
 
 from djangocms_helper.base_test import BaseTestCase
 
@@ -23,6 +24,7 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
         self.placeholder = self.home_page.placeholders.get(slot='Main Content')
 
         self.request = self.get_request(self.home_page, 'en')
+        self.request.current_page = Page.objects.get(pk=self.home_page.pk)
         self.admin_site = admin.sites.AdminSite()
 
     def get_request_context(self):
