@@ -30,19 +30,19 @@ class BootstrapNavbarFormMixin(EntangledModelFormMixin):
     OPTION_NAV_PLACEMENTS=["inherit", "fixed-top" , "fixed-bottom" , "sticky-top"]
 
     navbar_collapse = ChoiceField(
-        label=_('navbar collapse'),
+        label=_('Navbar collapse'),
         choices=OPTION_NAV_COLLAPSE,
         help_text=_("Adjust interval for the navbar_collapse.")
     )
 
     navbar_color = ChoiceField(
-        label=_('navbar bg color'),
+        label=_('Navbar text color'),
         choices=OPTION_NAV_COLOR,
-        help_text=_("Adjust interval for the navbar color.")
+        help_text=_("Adjust the navbar color.")
     )
 
     navbar_bg_color = ChoiceField(
-        label=_('navbar-bg'),
+        label=_('Navbar bg color'),
         choices=[(c, c) for c in OPTION_NAV_BG_MIX ],
         help_text=_("Adjust interval for the  navbar background color."),
     )
