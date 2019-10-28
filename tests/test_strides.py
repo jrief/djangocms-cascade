@@ -13,6 +13,8 @@ from django.urls import reverse
 from django.template import RequestContext, Template
 from django.test import RequestFactory
 
+from django.contrib.auth.models import AnonymousUser
+
 from cmsplugin_cascade.models import IconFont
 from filer.admin.clipboardadmin import ajax_upload
 
@@ -22,6 +24,7 @@ from .test_base import CascadeTestCase
 class StridePluginTest(CascadeTestCase):
     def setUp(self):
         request = RequestFactory().get('/')
+        request.user = AnonymousUser()
         self.context = RequestContext(request, {})      
 
     def assertStyleEqual(self, provided, expected):
