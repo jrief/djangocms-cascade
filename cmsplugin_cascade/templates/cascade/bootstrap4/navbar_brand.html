@@ -1,5 +1,5 @@
 {% extends "cascade/link/link-base.html" %}
-{% load bootstrap_tags cms_tags %}
+{% load l10n cascade_tags sekizai_tags %}
 {% block link_link %}{% with instance_link=instance|default:"#" %}
     {% block navbar-brand %}
     {% with instance_css_classes=instance.css_classes instance_inline_styles=instance.inline_styles %}<a  href="{{ instance.link }}" {{ instance.html_tag_attributes }}{% if instance_css_classes %} class="navbar-brand list-item {{ instance_css_classes }}"{% endif %}{% if instance_inline_styles %} style="{{ instance_inline_styles }}"{% endif %}>
@@ -11,4 +11,3 @@
     {% endblock %}
 {% endwith %}
 {% endblock %}
-
