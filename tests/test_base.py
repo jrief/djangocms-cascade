@@ -7,7 +7,6 @@ from cms.api import create_page
 from cms.test_utils.testcases import CMSTestCase
 from cmsplugin_cascade.models import CascadePage
 from cms.models import Page
-from django.contrib.auth.models import AnonymousUser
 
 from djangocms_helper.base_test import BaseTestCase
 
@@ -24,7 +23,6 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
 
         self.placeholder = self.home_page.placeholders.get(slot='Main Content')
         self.request = self.get_request(self.home_page, 'en')
-        self.request.user = AnonymousUser()
         self.admin_site = admin.sites.AdminSite()
 
     def get_request_context(self):
