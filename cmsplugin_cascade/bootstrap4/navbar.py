@@ -213,8 +213,9 @@ class BootstrapNavCollapsePlugin(BootstrapPluginBase):
 
     @classmethod
     def get_css_classes(cls, obj):
-        css_classes = super().get_css_classes(obj)
+        css_classes = cls.super().get_css_classes(obj)
         return css_classes
+
 
     @classmethod
     def get_identifier(cls, obj):
