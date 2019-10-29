@@ -281,6 +281,8 @@ SASS_PROCESSOR_ROOT = STATIC_ROOT
 # to access files such as fonts via staticfiles finders
 NODE_MODULES_URL = STATIC_URL + 'node_modules/'
 
+CASCADE_THEME = True
+
 try:
     from .private_settings import *
 except ImportError:
