@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "bs4demo"
+version = "1.1.1"
+description = "djangocms-cascade demo"
+authors = ["Jacob Rief <jacob.rief@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+django = "<2.2"
+djangocms-cascade =  "*"
+django-compressor = "*"
+django-filer =  "*"
+django-sass-processor = "*"
+django-select2 = "*"
+djangocms-bootstrap = "*"
+django-admin-sortable2 = "*"
+libsass = "*"
+djangocms-history = "*"
+djangocms-transfer = "*"
+
+[dev-packages]
+tox = "*"
+pytest = "*"
+pytest-django = "*"
+beautifulsoup4 = "*"
+lxml = "*"
+factory-boy = "*"
+pytest-factoryboy = "*"
+autopep8 = "*"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
