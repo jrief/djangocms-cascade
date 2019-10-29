@@ -5,7 +5,7 @@ from cms.extensions.toolbar import ExtensionToolbar
 from cms.toolbar_pool import toolbar_pool
 from cms.toolbar.items import Break
 from cms.toolbar_base import CMSToolbar
-from cms.cms_toolbars import PAGE_MENU_SECOND_BREAK, USER_SETTINGS_BREAK
+from cms.cms_toolbars import PAGE_MENU_SECOND_BREAK, ADMIN_MENU_IDENTIFIER, USER_SETTINGS_BREAK
 from cmsplugin_cascade.models import CascadePage
 
 
@@ -31,12 +31,12 @@ class CascadeToolbar(CMSToolbar):
         if getattr(settings, 'CASCADE_THEME', None):
             admin_menu = self.toolbar.get_or_create_menu(
                 ADMIN_MENU_IDENTIFIER, _('Site'))
-            position_user_set= admin_menu.find_first(Break, identifier=USER_SETTINGS_BREAK)
+            position_user_set = admin_menu.find_first(Break, identifier=USER_SETTINGS_BREAK)
             position_theme = admin_menu.add_break('THEME', position_user_set)
             position_theme = admin_menu.find_first(Break, identifier=USER_SETTINGS_BREAK)
             
             admin_menu.add_modal_item( 
                 name='Theme',
-                url=reverse('cascade_theme'),
+                url="reverse('cascade_theme')",
                 position=position_theme,
                 )
