@@ -18,7 +18,8 @@
     "leaflet-easybutton": "^2.2.0",
     "picturefill": "^3.0.2",
     "popper.js": "^1.12.9",
-    "select2": "^4.0.3"
+    "select2": "^4.0.3",
+    "a-color-picker": "^1.2.1"
   },
   "devDependencies": {},
   "scripts": {
@@ -35,3 +36,4 @@
   },
   "homepage": "https://github.com/jrief/djangocms-cascade#readme"
 }
+
