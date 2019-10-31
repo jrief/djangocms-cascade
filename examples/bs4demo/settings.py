@@ -7,6 +7,7 @@ import sys
 from django.urls import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade import __path__ as cmsplugin_cascade_path
 from django.utils.text import format_lazy
 
 DEBUG = True
@@ -36,6 +37,7 @@ DATABASES = {
 
 INSTALLED_APPS = [
     'django.contrib.auth',
+    'dynamic_preferences',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
@@ -132,6 +134,8 @@ TEMPLATES = [{
             'sekizai.context_processors.sekizai',
             'cms.context_processors.cms_settings',
             'bs4demo.context_processors.cascade',
+            'django.template.context_processors.request',
+            'dynamic_preferences.processors.global_preferences',
         ),
     },
 }]
@@ -273,6 +277,7 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
 }
 
 SASS_PROCESSOR_INCLUDE_DIRS = [
+    os.path.join(cmsplugin_cascade_path[0], 'static'),
     os.path.join(PROJECT_ROOT, 'node_modules'),
 ]
 
@@ -282,6 +287,17 @@ SASS_PROCESSOR_ROOT = STATIC_ROOT
 NODE_MODULES_URL = STATIC_URL + 'node_modules/'
 
 CASCADE_THEME = True
+
+SASS_PROCESSOR_CUSTOM_FUNCTIONS = {
+    'get-color-primary-docfunclist': 'cmsplugin_cascade.cascade_theme.utils.get_color_primary',
+    'get-color-secondary-docfunclist': 'cmsplugin_cascade.cascade_theme.utils.get_color_secondary',
+    'get-color-success-docfunclist': 'cmsplugin_cascade.cascade_theme.utils.get_color_success',
+    'get-color-warning-docfunclist': 'cmsplugin_cascade.cascade_theme.utils.get_color_warning',
+    'get-color-danger-docfunclist': 'cmsplugin_cascade.cascade_theme.utils.get_color_danger',
+    'get-color-info-docfunclist': 'cmsplugin_cascade.cascade_theme.utils.get_color_info',
+    'get-color-light-docfunclist': 'cmsplugin_cascade.cascade_theme.utils.get_color_light',
+    'get-color-dark-docfunclist': 'cmsplugin_cascade.cascade_theme.utils.get_color_dark',
+}
 
 try:
     from .private_settings import *
