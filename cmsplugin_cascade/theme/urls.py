@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
 from django.conf import settings
-from cmsplugin_cascade.cascade_theme.views import myview, CascadePreferenceFormView
+from cmsplugin_cascade.theme.views import myview, CascadePreferenceFormView
 
 if getattr(settings, 'CASCADE_THEME', None):
     extra_cascade_theme_patterns = [
