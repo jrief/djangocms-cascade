@@ -1,4 +1,18 @@
 @import "variables";
+$primary: get-color-primary-docfunclist();
+$secondary: get-color-secondary-docfunclist();
+
+$theme-colors: (
+  primary: get-color-primary-docfunclist(),
+  secondary: get-color-secondary-docfunclist(),
+  success: get-color-success-docfunclist(),
+  warning: get-color-warning-docfunclist(),
+  danger: get-color-danger-docfunclist(),
+  info: get-color-info-docfunclist(),
+  light: get-color-light-docfunclist(),
+  dark: get-color-dark-docfunclist(),
+);
+
 @import "bootstrap/scss/bootstrap";
 @import "footer";
 

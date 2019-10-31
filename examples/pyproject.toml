@@ -20,6 +20,7 @@ django-admin-sortable2 = "*"
 libsass = "*"
 djangocms-history = "*"
 djangocms-transfer = "*"
+django-dynamic-preferences = "*"
 
 [dev-packages]
 tox = "*"
