@@ -342,11 +342,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             width = obj.glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
             if width:
                 widths.append(width)
-        if len(widths) > 1:
-            content = _("widths: {0} units").format(' / '.join(widths))
-        elif len(widths) == 1:
-            width = widths[0]
-            content = ungettext_lazy("default width: {0} unit", "default width: {0} units", width).format(width)
+        if len(widths) > 0:
+            content = _("widths: {}").format(' / '.join(widths))
         else:
             content = _("unknown width")
         return mark_safe(content)
