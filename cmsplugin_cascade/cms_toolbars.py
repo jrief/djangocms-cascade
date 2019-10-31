@@ -34,9 +34,9 @@ class CascadeToolbar(CMSToolbar):
             position_user_set = admin_menu.find_first(Break, identifier=USER_SETTINGS_BREAK)
             position_theme = admin_menu.add_break('THEME', position_user_set)
             position_theme = admin_menu.find_first(Break, identifier=USER_SETTINGS_BREAK)
-            
-            admin_menu.add_modal_item( 
+
+            admin_menu.add_modal_item(
                 name='Theme',
-                url="reverse('cascade_theme')",
+                url="/theme/",
                 position=position_theme,
                 )
