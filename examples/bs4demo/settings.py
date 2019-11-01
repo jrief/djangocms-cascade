@@ -289,18 +289,17 @@ NODE_MODULES_URL = STATIC_URL + 'node_modules/'
 CASCADE_THEME = True
 
 SASS_PROCESSOR_CUSTOM_FUNCTIONS = {
-    'get-color-primary-docfunclist': 'cmsplugin_cascade.theme.utils.get_color_primary',
-    'get-color-secondary-docfunclist': 'cmsplugin_cascade.theme.utils.get_color_secondary',
-    'get-color-success-docfunclist': 'cmsplugin_cascade.theme.utils.get_color_success',
-    'get-color-warning-docfunclist': 'cmsplugin_cascade.theme.utils.get_color_warning',
-    'get-color-danger-docfunclist': 'cmsplugin_cascade.theme.utils.get_color_danger',
-    'get-color-info-docfunclist': 'cmsplugin_cascade.theme.utils.get_color_info',
-    'get-color-light-docfunclist': 'cmsplugin_cascade.theme.utils.get_color_light',
-    'get-color-dark-docfunclist': 'cmsplugin_cascade.theme.utils.get_color_dark',
+    'get-color-primary-presass': 'cmsplugin_cascade.theme.utils.get_color_primary',
+    'get-color-secondary-presass': 'cmsplugin_cascade.theme.utils.get_color_secondary',
+    'get-color-success-presass': 'cmsplugin_cascade.theme.utils.get_color_success',
+    'get-color-warning-presass': 'cmsplugin_cascade.theme.utils.get_color_warning',
+    'get-color-danger-presass': 'cmsplugin_cascade.theme.utils.get_color_danger',
+    'get-color-info-presass': 'cmsplugin_cascade.theme.utils.get_color_info',
+    'get-color-light-presass': 'cmsplugin_cascade.theme.utils.get_color_light',
+    'get-color-dark-presass': 'cmsplugin_cascade.theme.utils.get_color_dark',
 }
 
 try:
     from .private_settings import *
 except ImportError:
     pass
-
