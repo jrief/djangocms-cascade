@@ -1,3 +1,4 @@
+from django.conf import settings
 from dynamic_preferences.registries import global_preferences_registry
 # We instantiate a manager for our global preferences
 global_preferences = global_preferences_registry.manager()
@@ -26,3 +27,10 @@ def get_color_light():
 def get_color_dark():
     return global_preferences['dark__color']
 
+def get_path_file_variables_scss():
+    if getattr(settings, 'CASCADE_SCSS_VARIABLES', None):
+        path_variables_scss = '"../{}"'.format( settings.CASCADE_SCSS_VARIABLES)
+    else:
+        project_name =  settings.ROOT_URLCONF.split('.')[0]
+        path_variables_scss  = '"../{0}/static/{0}/css/variables.scss"'.format(project_name)
+    return path_variables_scss 
