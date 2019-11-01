@@ -23,4 +23,4 @@ workdir/
 filer_public/
 filer_public_thumbnails/
 examples/bs3demo/private_settings.py
-examples/bs4demo/static/bs4demo/css/main__replace_sass_cfunc_list.scss
+examples/bs4demo/static/bs4demo/css/main__presass.scss
