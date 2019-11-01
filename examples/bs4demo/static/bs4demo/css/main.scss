@@ -1,16 +1,14 @@
 @import "variables";
-$primary: get-color-primary-docfunclist();
-$secondary: get-color-secondary-docfunclist();
 
 $theme-colors: (
-  primary: get-color-primary-docfunclist(),
-  secondary: get-color-secondary-docfunclist(),
-  success: get-color-success-docfunclist(),
-  warning: get-color-warning-docfunclist(),
-  danger: get-color-danger-docfunclist(),
-  info: get-color-info-docfunclist(),
-  light: get-color-light-docfunclist(),
-  dark: get-color-dark-docfunclist(),
+  primary: get-color-primary-presass(),
+  secondary: get-color-secondary-presass(),
+  success: get-color-success-presass(),
+  warning: get-color-warning-presass(),
+  danger: get-color-danger-presass(),
+  info: get-color-info-presass(),
+  light: get-color-light-presass(),
+  dark: get-color-dark-presass(),
 );
 
 @import "bootstrap/scss/bootstrap";
