@@ -1,5 +1,4 @@
 from django import VERSION as DJANGO_VERSION
-from django.conf import settings
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
@@ -121,6 +120,7 @@ class BootstrapButtonMixin(IconPluginMixin):
 
     class Media:
         if getattr(settings, 'CASCADE_THEME', None):
+            from django.conf import settings
             from sass_processor.processor import sass_processor
             css = {
                 'all': [sass_processor('cascade/css/admin/bootstrap4-buttons.scss'), 'cascade/css/admin/iconplugin.css'],
