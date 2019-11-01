@@ -297,6 +297,7 @@ SASS_PROCESSOR_CUSTOM_FUNCTIONS = {
     'get-color-info-presass': 'cmsplugin_cascade.theme.utils.get_color_info',
     'get-color-light-presass': 'cmsplugin_cascade.theme.utils.get_color_light',
     'get-color-dark-presass': 'cmsplugin_cascade.theme.utils.get_color_dark',
+    'get-path-variables-scss-presass': "cmsplugin_cascade.theme.utils.get_path_variables_scss",
 }
 
 try:
