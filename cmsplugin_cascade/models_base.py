@@ -1,19 +1,13 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import mark_safe, format_html_join
 from django.utils.functional import cached_property
-
+import json
 from jsonfield.fields import JSONField
-
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cms.utils.placeholder import get_placeholder_conf
 
 
-@python_2_unicode_compatible
 class CascadeModelBase(CMSPlugin):
     """
     The container to hold additional HTML element tags.
@@ -54,7 +48,10 @@ class CascadeModelBase(CMSPlugin):
     @property
     def html_tag_attributes(self):
         attributes = self.plugin_class.get_html_tag_attributes(self)
-        return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
+        joined = format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
+        if joined:
+            return mark_safe(' ' + joined)
+        return ''
 
     def get_parent_instance(self):
         for model in CascadeModelBase._get_cascade_elements():
@@ -103,7 +100,14 @@ class CascadeModelBase(CMSPlugin):
             for child in children:
                 child.save(sanitize_only=True)
                 child.sanitize_children()
-
+                
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = cls(*values)
+        if isinstance(instance.glossary, str):
+           instance.glossary = json.loads(instance.glossary)
+        return instance
+                
     def save(self, sanitize_only=False, *args, **kwargs):
         """
         A hook which let the plugin instance sanitize the current object model while saving it.
@@ -113,9 +117,9 @@ class CascadeModelBase(CMSPlugin):
         sanitized = self.plugin_class.sanitize_model(self)
         if sanitize_only:
             if sanitized:
-                super(CascadeModelBase, self).save(no_signals=True)
+                super().save(no_signals=True)
         else:
-            super(CascadeModelBase, self).save(*args, **kwargs)
+            super().save(*args, **kwargs)
 
     @classmethod
     def _get_cascade_elements(cls):

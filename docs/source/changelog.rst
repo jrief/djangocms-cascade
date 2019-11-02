@@ -2,6 +2,120 @@
 Release History
 ===============
 
+1.1.3
+=====
+* Fix problem in rendering the plugin's identifier, if Bootstrap Row is created with flexible widths columns.
+
+
+1.1.2
+=====
+* Prepend ``admin/js/jquery.init.js`` in front of JS file paths using ``django.jQuery``. This is required by a
+  change in Django-2.2 (https://docs.djangoproject.com/en/2.2/releases/2.2/#merging-of-form-media-assets).
+
+
+1.1.1
+=====
+* Support for django-CMS version 3.7 and Django version 2.2.
+* In the CMS-Toolbar: Segmentation > Clear emulations is enabled only, if emulations are active.
+
+
+1.1
+===
+* In **BootstrapJumbotrom**: Add multiple fields to set height in all five breakpoints.
+* Allow Jumbotron to be child of a Bootstrap Column.
+* Fix regression in JavaScript part of Jumbotron: Some HTML selectors did not work in version 1.0.
+* Fix regression in ColorField of Jumbotron. Background color is rendered correctly.
+* ``MultiSizeField`` accepts ``initial`` as single value or list in addition to dictionary.
+* Add reusable field ``CascadeImageField`` to reference images in **django-filer**.
+
+
+1.0 (Warning: API changes!)
+===========================
+* Add support for Django-2.0/2.1.
+* Drop support for Python-2.7.
+* Introduce a much simpler way for writing customized CMS plugins. Instead of using a special multi-widget,
+  thanks to django-entangled_, now all plugins use Django forms to create the editors for their plugin models.
+  As with previous versions of **djangocms-cascade**, all data is kept in a JSON field, but in a slightly
+  different format. Therefore you must invoke ``./manage.py migrate cmsplugin_cascade`` after upgrading.
+* If used in your project's settings, change ``CMSPLUGIN_CASCADE['link_plugin_classes']`` to a 2-tuple
+  providing a ``LinkPluginBase``- and a ``LinkForm``-class.
+
+.. _django-entangled: https://github.com/jrief/django-entangled
+
+0.19
+====
+* For each **django-CMS** page, **djangocms-cascade** optionally adds a one-to-one relation onto
+  a page extension named ``CascadePage``. This model has been extended to optionally point onto an
+  icon font and a font symbol. In **djangocms-bootstrap** version 1.1 this symbol now can be
+  rendered in front of the page title.
+
+  Remember to invoke ``./manage.py migrate cmsplugin_cascade``.
+
+
+0.18.2
+======
+* Fixed: CSS files, such as those extracted from an icon-font, served from the ``/media`` folder
+  can not be compressed by django-compressor. To prevent this, an alternative compressor for
+  Sekizai's templatetag ``{% render_block "css/js" ... %}`` has been added. Adopt your templates!
+
+0.18.1
+======
+* Fix problem with PicturePlugin: subject_location not honored.
+* Use predefined margins for **HorizontalRulePlugin** in Bootstrap-4.
+* In Django admin: ``jquery.init.js`` must be the first dependency in admin media.
+
+0.18
+====
+* In Plugins using Icons, such as **TextIconPlugin**, **BootstrapButtonPlugin** and
+  **FramedIconPlugin**, it now is possible to select the Icon Font. This was the behaviour <0.17 and
+  has been dropped, because back then, icons using two or more different fonts on he same page, lead
+  to confusion. By enforcing a specific CSS icon prefix, it now is possible to use as many different
+  icon fonts, as you want, on the same page.
+* In your ``settings.py`` replace ``CKEDITOR_SETTINGS['stylesSet']`` by
+  ``format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))``.
+* Add **SimpleIconPlugin**, which renders an icon without any frame.
+* Add a special link type to download arbitrary files. All plugins which can link, can now set a
+  link onto a downloadable file, managed by ``django.Filer``.
+* Add **BootstrapYoutubePlugin** which can be used to embed video available on YouTube.
+* When managing Icon Fonts, one entry can be set as the default font.
+* Fix: Hide link title, when no linking is desired.
+* In plugins with links, refactor the usage of ``get_form`` by using a new ``VoluntaryLinkForm``.
+* Plugin **BootstrapSecondaryMenuPlugin** can be used outside of columns.
+* Add property ``floats`` to mixin ``BootstrapUtilities`` in order to handle Bootstrap's float
+  utilities.
+  Replace field ``quick_float`` in **BootstrapButton** against this mixin property.
+* Card plugin offers three distinct children for Header, Body and Footer. Themselves, they can be
+  extended individually.
+
+0.17.10
+=======
+* Fix problem of missing referer, required to determine the current page when accessing an
+  **IconFontPlugin** from inside the CKEditor.
+
+0.17.9
+======
+* Catch IconFont exceptions, if CKEditor is used outside of CMS pages.
+* Fix: Supress AttributeError in `BootstrapCardPlugin.get_identifier`.
+
+0.17.8
+======
+* For better reusability of ``IconFont``-s: Refactor method ``unzip_archive`` into external
+  utility function.
+
+0.17.7
+======
+* Fix: Restore-to-Clipboard with data from differently configured instances of Cascade
+  may cause an Internal Server Error. Now such an import shows an error message importing
+  whatever is parsable.
+* Add ``role="button"`` to the **ButtonPlugin**.
+* Optionally add CSS class ``stretched-link`` introduced in Bootstrap-4.3 to ``<a href="...">``.
+* Fix: We can not see the SVG file, if the image file existed and was not found, specifically 
+  when copying a Persisted clipboard.
+* Fix: If jsonfield is serialized as string, convert and reload as JSON.
+* Fix: **ImagePlugin** / **PicturePlugin** can't be copied by clipboard CMS.
+* Fix: Strides Plugin Element object has no attribute ``placeholder``.
+
+
 0.17.6
 ======
 * Fix: Tabset support for Bootstrap-4 using jQuery.
@@ -156,7 +270,7 @@ Release History
 0.14
 ====
 * Added static rendering of a serialized representation of plugins copied from a ``placeholder``
-  to the clipboard. For details, please read on how to :doc:`strides`.
+  to the clipboard. For details, please read on how to :ref:`strides`.
 
 0.13.1
 ======

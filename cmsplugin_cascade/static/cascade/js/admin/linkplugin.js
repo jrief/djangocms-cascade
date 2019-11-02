@@ -1,7 +1,8 @@
 django.jQuery(function($) {
 	'use strict';
 	var $link_type = $("#id_link_type"), $cmspage_select = $("#id_cms_page");
-	var $link_target = $(".glossary-widget .glossary_target");
+	var $link_target = $(".form-row.field-link_target");
+	var $link_title = $(".form-row.field-link_title");
 
 	django.cascade.LinkPluginBase = ring.create({
 		LinkType: ring.create({
@@ -14,6 +15,7 @@ django.jQuery(function($) {
 				if (this.addTarget) {
 					$link_target.show();
 				}
+				$link_title.show();
 			},
 			hide: function() {
 				this.$element.hide();
@@ -35,9 +37,10 @@ django.jQuery(function($) {
 			this.refreshChangeForm();
 		},
 		initializeLinkTypes: function() {
-			this.linkTypes['cmspage'] = new this.LinkType('.form-row .field-box.field-cms_page, .form-row .field-box.field-section', true);
-			this.linkTypes['exturl'] = new this.LinkType('.form-row .field-box.field-ext_url', true);
-			this.linkTypes['email'] = new this.LinkType('.form-row .field-box.field-mail_to');
+			this.linkTypes['cmspage'] = new this.LinkType('.form-row.field-cms_page, .form-row.field-section', true);
+			this.linkTypes['download'] = new this.LinkType('.form-row.field-download_file');
+			this.linkTypes['exturl'] = new this.LinkType('.form-row.field-ext_url', true);
+			this.linkTypes['email'] = new this.LinkType('.form-row.field-mail_to');
 		},
 		toggleLinkTypes: function(linkTypeName) {
 			$.each(this.linkTypes, function(name, linkType) {
@@ -50,39 +53,13 @@ django.jQuery(function($) {
 			if (!this.linkTypes[linkTypeName] || !this.linkTypes[linkTypeName].addTarget) {
 				$link_target.hide();
 			}
-		},
-		toggleSharedGlossary: function($option) {
-			var glossary = $option.data('glossary');
-			try {
-				$link_type.val(glossary['link']['type']);
-				try {
-					$cmspage_select.select2("data", {id: glossary['link']['pk'], text: glossary['link']['identifier']});
-					$cmspage_select.prop('disabled', true);
-				} catch(err) {
-					if (!(err instanceof TypeError))
-						throw err;
-					$cmspage_select.val(glossary['link']['pk']);
-				}
-				$('#id_ext_url').val(glossary['link']['url']);
-				$('#id_mail_to').val(glossary['link']['email']);
-			} catch (err) {
-				try {
-					if (!(err instanceof TypeError))
-						throw err;
-					$cmspage_select.prop('disabled', false);
-				} catch (err) {
-					if (!(err instanceof TypeError))
-						console.error(err);
-				}
-			}
-			if (this.$super) {
-				this.$super($option);
-			} else {
-				this.refreshChangeForm();
+			if (!this.linkTypes[linkTypeName]) {
+				$link_title.hide();
 			}
 		},
 		toggleCMSPage: function(page_id) {
-			var url = django.cascade.page_sections_url + page_id, $selSection = $('#id_section');
+			var url = django.cascade.page_sections_url + page_id,
+			    $selSection = $('#id_section');
 
 			$.get(url, function(response) {
 				var k, val;

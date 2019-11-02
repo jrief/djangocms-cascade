@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.core.cache import caches
+from django.template.context import make_context
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.html import format_html_join
@@ -87,7 +85,10 @@ class StrideElementBase(object):
     @property
     def html_tag_attributes(self):
         attributes = self.plugin_class.get_html_tag_attributes(self)
-        return format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
+        joined = format_html_join(' ', '{0}="{1}"', ((attr, val) for attr, val in attributes.items() if val))
+        if joined:
+            return mark_safe(' ' + joined)
+        return ''
 
 
 class TextStrideElement(object):
@@ -188,26 +189,32 @@ class StrideContentRenderer(object):
 
     def render_cascade(self, context, tree_data):
         contents = []
+        # create temporary copy of context to prevent pollution for other CMS placeholders
+        context = make_context(flatten_context(context))
         for plugin_type, data, children_data in tree_data.get('plugins', []):
             plugin_class = strides_plugin_map.get(plugin_type)
             element_class = strides_element_map.get(plugin_type)
             plugin_instance = element_class(plugin_class(), data, children_data)
             # create a temporary object to store the plugins cache status
             cms_cachable_plugins = type(str('CachablePlugins'), (object,), {'value': True})
-            with context.push(cms_cachable_plugins=cms_cachable_plugins):
-                contents.append(self.render_plugin(plugin_instance, context))
+            context.push(cms_cachable_plugins=cms_cachable_plugins)
+            contents.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(contents))
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
+        from sekizai.helpers import get_varname as get_sekizai_context_key
+
+        sekizai_context_key = get_sekizai_context_key()
         if app_settings.CMSPLUGIN_CASCADE['cache_strides'] and getattr(instance.plugin, 'cache', not editable):
             cache = caches['default']
             key = 'cascade_element-{}'.format(instance.pk)
             content = cache.get(key)
             if content:
+                context[sekizai_context_key]['css'].extend(cache.get(key + ':css_list', []))
+                context[sekizai_context_key]['js'].extend(cache.get(key + ':js_list', []))
                 return content
         else:
             context['cms_cachable_plugins'].value = False
-
         context = instance.plugin.render(context, instance, placeholder)
         context = flatten_context(context)
 
@@ -216,6 +223,8 @@ class StrideContentRenderer(object):
         content = template.render(context)
         if context['cms_cachable_plugins'].value:
             cache.set(key, content)
+            cache.set(key + ':css_list', context[sekizai_context_key]['css'].data)
+            cache.set(key + ':js_list', context[sekizai_context_key]['js'].data)
         return content
 
     def user_is_on_edit_mode(self):

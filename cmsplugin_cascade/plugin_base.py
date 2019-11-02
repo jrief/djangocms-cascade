@@ -1,20 +1,14 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from collections import OrderedDict
+from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ImproperlyConfigured
-from django.forms import MediaDefiningClass
-from django.utils import six
+from django.forms import MediaDefiningClass, ModelForm
 from django.utils.functional import lazy
 from django.utils.module_loading import import_string
-from django.utils.translation import string_concat
+from django.utils.text import format_lazy
 from django.utils.safestring import SafeText, mark_safe
-
+from entangled.forms import EntangledModelFormMixin
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
-
-from . import app_settings
-from .fields import GlossaryField
+from cmsplugin_cascade import app_settings
 from .mixins import CascadePluginMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
@@ -22,12 +16,11 @@ from .generic.mixins import SectionMixin, SectionModelMixin
 from .sharable.forms import SharableGlossaryMixin
 from .strides import register_stride
 from .extra_fields.mixins import ExtraFieldsMixin
-from .widgets import JSONMultiWidget
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
 
-mark_safe_lazy = lazy(mark_safe, six.text_type)
+mark_safe_lazy = lazy(mark_safe, str)
 
 fake_proxy_models = {}
 
@@ -57,7 +50,6 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
     ring_plugin_bases = {}
 
     def __new__(cls, name, bases, attrs):
-        cls.build_glossary_fields(bases, attrs)
         ring_plugin = attrs.get('ring_plugin')
         if ring_plugin:
             ring_plugin_bases = [b.ring_plugin for b in bases
@@ -68,53 +60,11 @@ class CascadePluginMixinMetaclass(MediaDefiningClass):
             cls.ring_plugin_bases[ring_plugin].extend(ring_plugin_bases)
             cls.ring_plugin_bases[ring_plugin] = remove_duplicates(cls.ring_plugin_bases[ring_plugin])
 
-        new_class = super(CascadePluginMixinMetaclass, cls).__new__(cls, name, bases, attrs)
+        new_class = super().__new__(cls, name, bases, attrs)
         return new_class
 
-    @classmethod
-    def build_glossary_fields(cls, bases, attrs):
-        # collect glossary fields from all base classes
-        base_glossary_fields = []
-        for base_class in bases:
-            base_glossary_fields.extend(getattr(base_class, 'glossary_fields', []))
 
-        # collect declared glossary fields from current class
-        declared_glossary_fields = []
-        for field_name in list(attrs.keys()):
-            if isinstance(attrs[field_name], GlossaryField):
-                field = attrs.pop(field_name)
-                field.name = field_name
-                declared_glossary_fields.append(field)
-
-        if 'glossary_fields' in attrs:
-            if declared_glossary_fields:
-                msg = "Can not mix 'glossary_fields' with declared atributes of type 'GlossaryField'"
-                raise ImproperlyConfigured(msg)
-            declared_glossary_fields = list(attrs['glossary_fields'])
-
-        glossary_field_order = attrs.get('glossary_field_order')
-        if glossary_field_order:
-            # if reordering is desired, reorder the glossary fields
-            unordered_fields = dict((gf.name, gf) for gf in base_glossary_fields)
-            for gf in declared_glossary_fields:
-                unordered_fields.update({gf.name: gf})
-            unordered_fields.update(dict((gf.name, gf) for gf in declared_glossary_fields))
-            glossary_fields = OrderedDict((k, unordered_fields[k]) for k in glossary_field_order
-                                                                       if k in unordered_fields)
-            # append fields not in glossary_field_order
-            glossary_fields.update(dict((k, v) for k, v in unordered_fields.items()
-                                                   if k not in glossary_field_order))
-        else:
-            # merge glossary fields from base classes with the declared ones, overwriting the former ones
-            glossary_fields = OrderedDict((gf.name, gf) for gf in base_glossary_fields)
-            for gf in declared_glossary_fields:
-                glossary_fields.update({gf.name: gf})
-
-        if glossary_fields:
-            attrs['glossary_fields'] = glossary_fields.values()
-
-
-class CascadePluginMixinBase(six.with_metaclass(CascadePluginMixinMetaclass)):
+class CascadePluginMixinBase(metaclass=CascadePluginMixinMetaclass):
     """
     Use this as a base for mixin classes used by other CascadePlugins
     """
@@ -148,13 +98,9 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             model_mixins = (SectionModelMixin,) + model_mixins
         if name in cls.plugins_with_sharables:
             bases = (SharableGlossaryMixin,) + bases
-            attrs['fields'] = list(attrs.get('fields', ['glossary']))
-            attrs['fields'].extend([('save_shared_glossary', 'save_as_identifier'), 'shared_glossary'])
             attrs['sharable_fields'] = cls.plugins_with_sharables[name]
             base_model = SharableCascadeElement
         else:
-            attrs['exclude'] = list(attrs.get('exclude', []))
-            attrs['exclude'].append('shared_glossary')
             base_model = CascadeElement
         if name in cls.plugins_with_extra_render_templates:
             bases = (RenderTemplateMixin,) + bases
@@ -174,13 +120,12 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
                 reversion.revisions.register(base_model)
         # handle ambiguous plugin names by appending a symbol
         if 'name' in attrs and app_settings.CMSPLUGIN_CASCADE['plugin_prefix']:
-            attrs['name'] = mark_safe_lazy(string_concat(
-                app_settings.CMSPLUGIN_CASCADE['plugin_prefix'], "&nbsp;", attrs['name']))
+            attrs['name'] = format_lazy('{}&nbsp;{}', app_settings.CMSPLUGIN_CASCADE['plugin_prefix'], attrs['name'])
 
         register_stride(name, bases, attrs, model_mixins)
         if name == 'CascadePluginBase':
             bases += (CascadePluginMixin, CMSPluginBase,)
-        return super(CascadePluginBaseMetaclass, cls).__new__(cls, name, bases, attrs)
+        return super().__new__(cls, name, bases, attrs)
 
 
 class TransparentWrapper(object):
@@ -200,11 +145,11 @@ class TransparentWrapper(object):
     def get_child_classes(cls, slot, page, instance=None):
         if hasattr(cls, 'direct_child_classes'):
             return cls.direct_child_classes
-        child_classes = set(super(TransparentWrapper, cls).get_child_classes(slot, page, instance))
+        child_classes = set(super().get_child_classes(slot, page, instance))
         while True:
             instance = instance.get_parent_instance() if instance and instance.parent else None
             if instance is None:
-                child_classes.update(super(TransparentWrapper, cls).get_child_classes(slot, page, instance))
+                child_classes.update(super().get_child_classes(slot, page, instance))
                 return list(child_classes)
             if not issubclass(instance.plugin_class, TransparentWrapper):
                 child_classes.update(instance.plugin_class.get_child_classes(slot, page, instance))
@@ -214,7 +159,7 @@ class TransparentWrapper(object):
     def get_parent_classes(cls, slot, page, instance=None):
         if hasattr(cls, 'direct_parent_classes'):
             return cls.direct_parent_classes
-        parent_classes = set(super(TransparentWrapper, cls).get_parent_classes(slot, page, instance) or [])
+        parent_classes = set(super().get_parent_classes(slot, page, instance) or [])
         if isinstance(instance, CascadeElement):
             instance = instance.get_parent_instance() if instance and instance.parent else None
             if instance is not None:
@@ -247,23 +192,20 @@ class TransparentContainer(TransparentWrapper):
             return _leaf_transparent_plugins
 
 
-class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
+class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     change_form_template = 'cascade/admin/change_form.html'
-    glossary_variables = []  # entries in glossary not handled by a form editor
     model_mixins = ()  # model mixins added to the final Django model
     parent_classes = None
     alien_child_classes = False
+    form = EntangledModelFormMixin
 
     class Media:
         css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
         js = ['cascade/js/underscore.js', 'cascade/js/ring.js']
 
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
-        super(CascadePluginBase, self).__init__(model, admin_site)
-        if isinstance(glossary_fields, (list, tuple)):
-            self.glossary_fields = list(glossary_fields)
-        elif not hasattr(self, 'glossary_fields'):
-            self.glossary_fields = []
+        assert glossary_fields is None, "glossary_fields is deprecated"
+        super().__init__(model, admin_site)
 
     def __repr__(self):
         return "<class '{}'>".format(self.__class__.__name__)
@@ -283,7 +225,7 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
         """
         Return all parent classes including those marked as "transparent".
         """
-        parent_classes = super(CascadePluginBase, cls).get_parent_classes(slot, page, instance)
+        parent_classes = super().get_parent_classes(slot, page, instance)
         if parent_classes is None:
             if cls.get_require_parent(slot, page) is False:
                 return
@@ -371,34 +313,13 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
             child.save()
 
     def get_form(self, request, obj=None, **kwargs):
-        """
-        Build the form used for changing the model.
-        """
-        widgets = kwargs.pop('widgets', {})
-        labels = kwargs.pop('labels', {})
-        glossary_fields = kwargs.pop('glossary_fields', self.glossary_fields)
-        widgets.update(glossary=JSONMultiWidget(glossary_fields))
-        labels.update(glossary='')  # remove label for glossary, since each subfields provides a label itself
-        kwargs.update(widgets=widgets, labels=labels)
-        form = super(CascadePluginBase, self).get_form(request, obj, **kwargs)
-        # help_text can not be cleared using an empty string in modelform_factory
-        form.base_fields['glossary'].help_text = ''
-        if request.method == 'POST':
-            is_shared = bool(request.POST.get('shared_glossary'))
-            for field in glossary_fields:
-                if not (is_shared and field.name in self.sharable_fields):
-                    form.base_fields['glossary'].validators.append(field.run_validators)
-        form.glossary_fields = glossary_fields
-        return form
-
-    def save_model(self, request, new_obj, form, change):
-        if change and self.glossary_variables:
-            old_obj = super(CascadePluginBase, self).get_object(request, form.instance.id)
-            for key in self.glossary_variables:
-                if key not in new_obj.glossary and key in old_obj.glossary:
-                    # transfer listed glossary variable from the old to new object
-                    new_obj.glossary[key] = old_obj.glossary[key]
-        super(CascadePluginBase, self).save_model(request, new_obj, form, change)
+        form = kwargs.get('form', self.form)
+        assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
+        if issubclass(form, ModelForm):
+            kwargs['form'] = form
+        else:
+            kwargs['form'] = type(form.__name__, (form, ModelForm), {})
+        return super().get_form(request, obj, **kwargs)
 
     def get_parent_instance(self, request=None, obj=None):
         """
@@ -454,11 +375,11 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
             return next_sibling.get_bound_plugin()
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        ring_plugin_bases = dict((ring_plugin, ['django.cascade.{}'.format(b) for b in bases])
-                                 for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items())
+        ring_plugin_bases = {ring_plugin: ['django.cascade.{}'.format(b) for b in bases]
+                             for ring_plugin, bases in CascadePluginMixinMetaclass.ring_plugin_bases.items()}
         context.update(
             ring_plugin_bases=ring_plugin_bases,
-            plugin_title=string_concat(self.module, " ", self.name, " Plugin"),
+            plugin_title=format_lazy("{} {} Plugin", self.module, self.name),
             plugin_intro=mark_safe(getattr(self, 'intro_html', '')),
             plugin_footnote=mark_safe(getattr(self, 'footnote_html', '')),
         )
@@ -466,23 +387,14 @@ class CascadePluginBase(six.with_metaclass(CascadePluginBaseMetaclass)):
             context.update(
                 ring_plugin=self.ring_plugin,
             )
-
-        # remove glossary field from rendered form
-        form = context['adminform'].form
-        try:
-            fields = list(form.fields)
-            fields.remove('glossary')
-            context['empty_form'] = len(fields) + len(form.glossary_fields) == 0
-        except KeyError:
-            pass
-        return super(CascadePluginBase, self).render_change_form(request, context, add, change, form_url, obj)
+        return super().render_change_form(request, context, add, change, form_url, obj)
 
     def in_edit_mode(self, request, placeholder):
         """
         Returns True, if the plugin is in "edit mode".
         """
         toolbar = getattr(request, 'toolbar', None)
-        edit_mode = getattr(toolbar, 'edit_mode', False) and getattr(placeholder, 'is_editable', True)
+        edit_mode = getattr(toolbar, 'edit_mode_active', False) and getattr(placeholder, 'is_editable', True)
         if edit_mode:
             edit_mode = placeholder.has_change_permission(request.user)
         return edit_mode

@@ -1,0 +1,5 @@
+{% with inline_styles=instance.inline_styles %}
+<div class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+	<iframe class="embed-responsive-item" src="{{ youtube_url }}" {{ allowfullscreen }}></iframe>
+</div>
+{% endwith %}

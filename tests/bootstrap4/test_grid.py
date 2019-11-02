@@ -1,5 +1,4 @@
 import pytest
-from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import (Bootstrap4Container, Bootstrap4Row, Bootstrap4Column, BootstrapException,
                                                Breakpoint, Bound, fluid_bounds)
 

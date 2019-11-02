@@ -1,116 +1,113 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 from bs4 import BeautifulSoup
-import json
-
-from django.contrib.auth import get_user_model
-from django.test.client import Client
-from django.core.urlresolvers import reverse, resolve
-from django.core.files.uploadedfile import SimpleUploadedFile
-
-from filer.admin.clipboardadmin import ajax_upload
-
+import pytest
+import factory.fuzzy
+from pytest_factoryboy import register
+from django import VERSION as DJANGO_VERSION
+from django.forms.models import ModelForm
+from django.urls import reverse, resolve
+from django.core.files import File as DjangoFile
+from django.template.context import RequestContext
+from filer.models.filemodels import File as FilerFileModel
 from cms.api import add_plugin
-from cms.utils.plugins import build_plugin_tree
-
-from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.models import IconFont
-from cmsplugin_cascade.bootstrap3.container import BootstrapContainerPlugin
-from cmsplugin_cascade.icon.cms_plugins import FramedIconPlugin
-from .test_base import CascadeTestCase
-
-BS3_BREAKPOINT_KEYS = list(tp[0] for tp in app_settings.CMSPLUGIN_CASCADE['bootstrap3']['breakpoints'])
+from cms.plugin_rendering import ContentRenderer
+from cmsplugin_cascade.models import CascadeElement, IconFont
+from cmsplugin_cascade.icon.forms import IconFormMixin
+from cmsplugin_cascade.icon.cms_plugins import SimpleIconPlugin
+from .conftest import UserFactory
 
 
-class IconFontTestCase(CascadeTestCase):
-    client = Client()
+@register
+class IconFileFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = FilerFileModel
 
-    def setUp(self):
-        super(IconFontTestCase, self).setUp()
-        UserModel = get_user_model()
-        self.admin_user = UserModel.objects.get(username='admin')
+    @classmethod
+    def create(cls, **kwargs):
+        filename = os.path.join(os.path.dirname(__file__), 'assets/fontello-b504201f.zip')
+        fileobj = DjangoFile(open(filename, 'rb'), name='fontello-b504201f.zip')
+        owner = UserFactory(is_active=True, is_staff=True)
+        filer_fileobj = FilerFileModel.objects.create(
+            owner=owner,
+            original_filename=fileobj.name,
+            file=fileobj,
+        )
+        return filer_fileobj
 
-    def test_add_font(self):
-        with self.login_user_context(self.admin_user):
-            # upload the zipfile into the filer's clipboard
-            filename = os.path.join(os.path.dirname(__file__), 'assets/fontello-b504201f.zip')
-            with open(filename, 'rb') as zipfile:
-                uploaded_file = SimpleUploadedFile('fontello-b504201f.zip', zipfile.read(), content_type='application/zip')
-            request = self.get_request(reverse('admin:filer-ajax_upload'))
-            self.assertTrue(request.user.is_staff, "User is not a staff user")
-            request.FILES.update(file=uploaded_file)
-            response = ajax_upload(request)
-            self.assertEqual(response.status_code, 200)
-            content = json.loads(response.content.decode('utf-8'))
-            self.assertDictContainsSubset({'label': 'fontello-b504201f.zip'}, content)
 
-            # save the form and submit the remaining fields
-            add_iconfont_url = reverse('admin:cmsplugin_cascade_iconfont_add')
-            data = {
-                'identifier': "Fontellico",
-                'zip_file': content['file_id'],
-                '_continue': "Save and continue editing",
-            }
-            response = self.client.post(add_iconfont_url, data)
-            self.assertEqual(response.status_code, 302)
-            resolver_match = resolve(response.url)
-            self.assertEqual(resolver_match.url_name, 'cmsplugin_cascade_iconfont_change')
+@pytest.fixture
+@pytest.mark.django_db
+def icon_font(admin_client, icon_file_factory):
+    icon_file = icon_file_factory()
+    data = {
+        'identifier': "Fontellico",
+        'zip_file': icon_file.id,
+        'is_default': 'on',
+        '_continue': "Save and continue editing",
+    }
+    add_iconfont_url = reverse('admin:cmsplugin_cascade_iconfont_add')
+    response = admin_client.post(add_iconfont_url, data)
+    assert response.status_code == 302
+    resolver_match = resolve(response.url)
+    assert resolver_match.url_name == 'cmsplugin_cascade_iconfont_change'
 
-            # check the content of the uploaded file
-            icon_font = IconFont.objects.get(pk=resolver_match.args[0])
-            self.assertEqual(icon_font.identifier, "Fontellico")
-            self.assertEqual(icon_font.config_data['name'], 'fontelico')
-            self.assertEqual(len(icon_font.config_data['glyphs']), 34)
+    # check the content of the uploaded file
+    if DJANGO_VERSION >= (2, 0):
+        icon_font = IconFont.objects.get(pk=resolver_match.kwargs['object_id'])
+    else:
+        icon_font = IconFont.objects.get(pk=resolver_match.args[0])
+    assert icon_font.identifier == "Fontellico"
+    assert icon_font.config_data['name'] == 'fontelico'
+    assert len(icon_font.config_data['glyphs']) == 34
+    return icon_font
 
-            # check if the uploaded fonts are rendered inside Preview Icons
-            response = self.client.get(response.url)
-            self.assertEqual(response.status_code, 200)
-            soup = BeautifulSoup(response.content, 'lxml')
-            preview_iconfont = soup.find('div', class_="preview-iconfont")
-            icon_items = preview_iconfont.ul.find_all('li')
-            self.assertEqual(len(icon_items), 34)
-            self.assertListEqual(icon_items[0].i.attrs['class'], ['icon-emo-happy'])
-            self.assertListEqual(icon_items[33].i.attrs['class'], ['icon-marquee'])
 
-            # select icon font from toolbar
-            self.placeholder.page.cascadepage.icon_font = icon_font
-            self.placeholder.page.cascadepage.save()
+@pytest.mark.django_db
+def test_iconfont_change_view(admin_client, icon_font):
+    # check if the uploaded fonts are rendered inside Preview Icons
+    change_url = reverse('admin:cmsplugin_cascade_iconfont_change', args=[icon_font.id])
+    response = admin_client.get(change_url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, 'lxml')
+    css_prefix = soup.find('div', class_='field-css_prefix').find('div', class_='readonly')
+    assert css_prefix.text == 'icon-'
+    preview_iconfont = soup.find('div', class_='preview-iconfont')
+    icon_items = preview_iconfont.ul.find_all('li')
+    assert len(icon_items) == 34
+    assert icon_items[0].i.attrs['class'] == ['icon-emo-happy']
+    assert icon_items[33].i.attrs['class'] == ['icon-marquee']
 
-            # create container
-            container_model = add_plugin(self.placeholder, BootstrapContainerPlugin, 'en',
-                                         glossary={'breakpoints': BS3_BREAKPOINT_KEYS})
-            container_plugin = container_model.get_plugin_class_instance()
-            self.assertIsInstance(container_plugin, BootstrapContainerPlugin)
 
-            # add icon as child to this container
-            glossary = {"font_size": "10em", "color": ["","#88258e"], "background_color": ["on","#c8ffcd"],
-                        "symbol": "emo-wink", "icon_font": icon_font.pk,
-                        "border_radius":"50%","border":["","solid","#000000"]}
-            icon_model = add_plugin(self.placeholder, FramedIconPlugin, 'en', target=container_model,
-                                    glossary=glossary)
-            icon_plugin = icon_model.get_plugin_class_instance()
-            self.assertIsInstance(icon_plugin, FramedIconPlugin)
+@pytest.fixture
+@pytest.mark.django_db
+def simple_icon(admin_site, cms_placeholder, icon_font):
+    """Create and edit a SimpleIconPlugin"""
+    class IconFontForm(IconFormMixin, ModelForm):
+        class Meta(IconFormMixin.Meta):
+            model = CascadeElement
 
-            # render the plugins
-            plugin_list = [container_model, icon_model]
-            build_plugin_tree(plugin_list)
-            html = self.get_html(container_model, self.get_request_context())
-            soup = BeautifulSoup(html, 'lxml')
+    # add simple icon plugin
+    simple_icon_model = add_plugin(cms_placeholder, SimpleIconPlugin, 'en')
+    assert isinstance(simple_icon_model, CascadeElement)
 
-            # look for the icon symbol
-            style = soup.find('span', class_='icon-emo-wink').attrs['style'].split(';')
-            self.assertIn('color:#88258e', style)
-            self.assertIn('display:inline-block', style)
+    # edit simple icon plugin
+    data = {'icon_font': str(icon_font.id), 'symbol': 'icon-skiing'}
+    form = IconFontForm(data=data, instance=simple_icon_model)
+    assert form.is_valid()
+    simple_icon_model = form.save()
+    assert simple_icon_model.glossary['icon_font']['model'] == 'cmsplugin_cascade.iconfont'
+    assert simple_icon_model.glossary['symbol'] == 'icon-skiing'
+    simple_icon_plugin = simple_icon_model.get_plugin_class_instance(admin_site)
+    assert isinstance(simple_icon_plugin, SimpleIconPlugin)
+    return simple_icon_plugin, simple_icon_model
 
-            # look for the CSS file
-            response = self.client.get(container_model.placeholder.page.get_absolute_url() + '?edit')
-            self.assertEqual(response.status_code, 200)
-            soup = BeautifulSoup(response.content, 'lxml')
-            links = soup.head.find_all('link')
-            for link in links:
-                if link.attrs['href'].endswith('fontelico.css'):
-                    break
-            else:
-                self.fail("No CSS file with font definition found")
+
+@pytest.mark.django_db
+def test_simple_icon(rf, simple_icon):
+    """Render a SimpleIconPlugin"""
+    simple_icon_plugin, simple_icon_model = simple_icon
+    request = rf.get('/')
+    context = RequestContext(request)
+    content_renderer = ContentRenderer(request)
+    html = content_renderer.render_plugin(simple_icon_model, context).strip()
+    assert html == '<i class="icon-icon-skiing"></i>'

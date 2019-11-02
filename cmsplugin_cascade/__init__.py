@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 """
 See PEP 386 (https://www.python.org/dev/peps/pep-0386/)
 
@@ -21,6 +19,6 @@ Release logic:
 15. git commit -m 'Start with <version>'
 16. git push
 """
-__version__ = "0.17.6"
+__version__ = "1.1.3"
 
 default_app_config = 'cmsplugin_cascade.apps.CascadeConfig'

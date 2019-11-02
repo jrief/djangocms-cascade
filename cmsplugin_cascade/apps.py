@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.apps import AppConfig, apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import pre_migrate, post_migrate
 from django.db.utils import DatabaseError
 from django.urls import reverse
-from django.utils.text import force_text
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -17,11 +13,10 @@ class CascadeConfig(AppConfig):
     default_permissions = ('add', 'change', 'delete')
 
     def ready(self):
-        if 'cmsplugin_cascade.icon' in settings.INSTALLED_APPS:
-            stylesSet = force_text(settings.CKEDITOR_SETTINGS.get('stylesSet'))
-            if stylesSet != 'default:{}'.format(reverse('admin:cascade_texticon_wysiwig_config')):
-                msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config'))`"
-                raise ImproperlyConfigured(msg)
+        stylesSet = str(settings.CKEDITOR_SETTINGS.get('stylesSet'))
+        if stylesSet != 'default:{}'.format(reverse('admin:cascade_texteditor_config')):
+            msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))`"
+            raise ImproperlyConfigured(msg)
 
         pre_migrate.connect(self.__class__.pre_migrate, sender=self)
         post_migrate.connect(self.__class__.post_migrate, sender=self)

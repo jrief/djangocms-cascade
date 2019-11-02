@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.contrib import admin
 from django.contrib import messages
 from django.contrib.admin.templatetags.admin_static import static
 from django.forms import widgets
 from django.forms.utils import flatatt
-from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
@@ -27,7 +23,7 @@ class JSONAdminWidget(widgets.Textarea):
         attrs = {'cols': '40', 'rows': '3'}
         super(JSONAdminWidget, self).__init__(attrs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if value is None:
             value = ''
         final_attrs = self.build_attrs(self.attrs, extra_attrs=dict(attrs, name=name))
@@ -39,7 +35,7 @@ class JSONAdminWidget(widgets.Textarea):
             '</button>\n'
             '<div class="status-line"><label></label><strong id="pasted_success">{5}</strong>'
             '<strong id="copied_success">{6}</strong></div>',
-            flatatt(final_attrs), force_text(value), id_data, clippy_url,
+            flatatt(final_attrs), str(value), id_data, clippy_url,
             _("Copy to Clipboard"),
             _("Successfully pasted JSON data"),
             _("Successfully copied JSON data"))
@@ -78,9 +74,10 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
             messages.add_message(request, messages.INFO, _("Persisted content has been restored to CMS clipboard."))
-        super(CascadeClipboardAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
         if request.POST.get('restore_clipboard'):
             self._deserialize_to_clipboard(request, obj.data)
+
 
     def _serialize_from_clipboard(self, language):
         """
@@ -114,11 +111,19 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         """
         def plugins_from_data(placeholder, parent, data):
             for plugin_type, data, children_data in data:
-                plugin_class = plugin_pool.get_plugin(plugin_type)
+                try:
+                    plugin_class = plugin_pool.get_plugin(plugin_type)
+                except Exception:
+                    messages.add_message(request, messages.ERROR, "Unable create plugin of type: {}".format(plugin_type))
+                    continue
                 kwargs = dict(data)
                 inlines = kwargs.pop('inlines', [])
                 shared_glossary = kwargs.pop('shared_glossary', None)
-                instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
+                try:
+                    instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
+                except Exception:
+                    messages.add_message(request, messages.ERROR, "Unable to create structure for plugin: {}".format(plugin_class.name))
+                    continue
                 if isinstance(instance, CascadeElement):
                     instance.plugin_class.add_inline_elements(instance, inlines)
                     instance.plugin_class.add_shared_reference(instance, shared_glossary)

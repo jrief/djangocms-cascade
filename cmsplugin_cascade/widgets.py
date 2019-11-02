@@ -1,20 +1,15 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import re
 import json
-import six
-try:
-    from html.parser import HTMLParser  # py3
-except ImportError:
-    from HTMLParser import HTMLParser  # py2
+from html.parser import HTMLParser  # py3
+
+import warnings
+
 from django.core.exceptions import ValidationError
-from django.forms import widgets
-from django.utils import six
-from django.utils.safestring import mark_safe
+from django.contrib.staticfiles.finders import find
+from django.forms import Media, widgets
 from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.utils.six.moves.urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 from .fields import GlossaryField
 from cmsplugin_cascade import app_settings
@@ -23,10 +18,16 @@ from cms.models import Page
 
 
 class JSONMultiWidget(widgets.MultiWidget):
-    """Base class for MultiWidgets using a JSON field in database"""
+    """
+    Deprecated.
+    Base class for MultiWidgets using a JSON field in database.
+    """
     html_parser = HTMLParser()
 
     def __init__(self, glossary_fields):
+        from cmsplugin_cascade.fields import GlossaryField
+        warnings.warn("JSONMultiWidget is deprecated")
+
         self.glossary_fields = list(glossary_fields)
         self.normalized_fields = []
         for field in self.glossary_fields:
@@ -39,16 +40,17 @@ class JSONMultiWidget(widgets.MultiWidget):
         unique_keys = set([field.name for field in self.normalized_fields])
         if len(self.normalized_fields) > len(unique_keys):
             raise ValueError('List of glossary_fields may contain only unique keys')
-        super(JSONMultiWidget, self).__init__((field.widget for field in self.normalized_fields))
+        super().__init__((field.widget for field in self.normalized_fields))
 
     def decompress(self, values):
         if not isinstance(values, dict):
             values = json.loads(values or '{}')
         for field in self.normalized_fields:
+            initial_value = field.initial() if callable(field.initial) else field.initial
             if isinstance(field.widget, widgets.MultiWidget):
-                values[field.name] = field.widget.decompress(values.get(field.name, field.initial))
+                values[field.name] = field.widget.decompress(values.get(field.name, initial_value))
             else:
-                values.setdefault(field.name, field.initial)
+                values.setdefault(field.name, initial_value)
         return values
 
     def value_from_datadict(self, data, files, name):
@@ -69,7 +71,7 @@ class JSONMultiWidget(widgets.MultiWidget):
             for field in self.normalized_fields
         )
 
-    def render(self, name, value, attrs):
+    def render(self, name, value, attrs=None, renderer=None):
         values = self.decompress(value)
         render_fieldsets = []
         for fieldset in self.glossary_fields:
@@ -80,13 +82,13 @@ class JSONMultiWidget(widgets.MultiWidget):
                 field_attrs = dict(**attrs)
                 field_attrs.update(id='{id}_{0}'.format(field.name, **attrs))
                 field_value = values.get(field.name)
-                if isinstance(field_value, six.string_types):
+                if isinstance(field_value, str):
                     field_value = self.html_parser.unescape(field_value)
                 render_fields.append((
                     field.name,
-                    six.text_type(field.label),
+                    str(field.label),
                     field.widget.render(field.name, field_value, field_attrs),
-                    six.text_type(field.help_text),
+                    str(field.help_text),
                 ))
             html = format_html_join('',
                  '<div class="glossary-field glossary_{0}"><h1>{1}</h1><div class="glossary-box">{2}</div><small>{3}</small></div>',
@@ -105,274 +107,164 @@ class NumberInputWidget(widgets.NumberInput):
             raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
 
 
-class CascadingSizeWidgetMixin(object):
-    POSSIBLE_UNITS = ('rem', 'px', 'em', '%')
-    required_message = _("In '%(label)s': This field is required.")
-    invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid number, ending in %(endings)s.")
+class AColorPickerMixin(object):
+    acolorpicker_js = 'node_modules/a-color-picker/dist/acolorpicker.js'
 
-    def compile_validation_pattern(self, units=None):
-        """
-        Assure that passed in units are valid size units, or if missing, use all possible units.
-        Return a tuple with a regular expression to be used for validating and an error message
-        in case this validation failed.
-        """
-        if units is None:
-            units = list(self.POSSIBLE_UNITS)
+    def __init__(self, with_alpha, *args, **kwargs):
+        self.with_acolorpicker = bool(find(self.acolorpicker_js))
+        if with_alpha and not self.with_acolorpicker:
+            msg = "Node package 'a-color-picker' not found in 'node_modules'.\n" \
+                  "Please install it from npm into your project directory and add " \
+                  "('node_modules', 'project_directory/node_modules') to your STATICFILES_DIRS."
+            raise FileNotFoundError(msg)
+        super().__init__(*args, **kwargs)
+
+    @property
+    def media(self):
+        if self.with_acolorpicker:
+            js = [self.acolorpicker_js, 'cascade/js/admin/colorpicker.js']
         else:
-            for u in units:
-                if u not in self.POSSIBLE_UNITS:
-                    raise ValidationError('{} is not a valid unit for a size field'.format(u))
-        regex = re.compile(r'^(-?\d+)({})$'.format('|'.join(units)))
-        endings = (' %s ' % ugettext("or")).join("'%s'" % u.replace('%', '%%') for u in units)
-        params = {'label': '%(label)s', 'value': '%(value)s', 'field': '%(field)s', 'endings': endings}
-        return regex, self.invalid_message % params
+            js = ['cascade/js/admin/colorpicker.js']
+        return Media(js=js)
+
+    @classmethod
+    def rgb2hex(cls, val):
+        match = re.search('rgb[a]?\((\d+),\s*(\d+),\s*(\d+)[^)]*\)', val)
+        if match:
+            val = "#{:02x}{:02x}{:02x}".format(*[int(m) for m in match.groups()])
+        return val
 
 
-class CascadingSizeWidget(CascadingSizeWidgetMixin, widgets.TextInput):
-    """
-    Use this field for validating Input Fields containing a value ending in ``px``, ``em`` or ``%``.
-    Use it for values representing a margin, padding, width or height.
-    """
-    DEFAULT_ATTRS = {'style': 'width: 5em;'}
-
-    def __init__(self, allowed_units=None, attrs=None, required=None):
-        self.required = True if required is None else required
-        if attrs is None:
-            attrs = self.DEFAULT_ATTRS
-        self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
-            units=allowed_units)
-        super(CascadingSizeWidget, self).__init__(attrs=attrs)
-
-    def validate(self, value):
-        if not value:
-            if self.required:
-                raise ValidationError(self.required_message, code='required', params={})
-            return
-        if value == '0':
-            return
-        match = self.validation_pattern.match(value)
-        if not (match and match.group(1).isdigit()):
-            params = {'value': value}
-            raise ValidationError(self.invalid_message, code='invalid', params=params)
-
-
-class ColorPickerWidget(widgets.MultiWidget):
+class ColorPickerWidget(AColorPickerMixin, widgets.MultiWidget):
     """
     Use this field to enter a color value. Clicking onto this widget will pop up a color picker.
-    The value passed to the GlossaryField is guaranteed to be in #rgb format.
+    The value passed to the consumer is a tuple of a Boolean and a string guaranteed to be in #rgb format.
     """
-    DEFAULT_COLOR = '#ffffff'
-    DEFAULT_ATTRS = {'style': 'width: 11em; padding-left: 26px;', 'type': 'text'}
-    validation_pattern = re.compile('(#(?:[0-9a-fA-F]{2}){2,4}|(#[0-9a-fA-F]{3})|(rgb|hsl)a?\((-?\d+%?[,\s]+){2,3}\s*[\d\.]+%?\))')
-    invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
-    from django.conf import settings
-    JS_COLOR_PICKER_WITH_ALPHA= True if hasattr(settings, 'COLOR_PICKER_WITH_ALPHA') and settings.COLOR_PICKER_WITH_ALPHA == True else False
+    template_name = 'cascade/admin/widgets/colorpicker.html'
 
-    if JS_COLOR_PICKER_WITH_ALPHA:
-        class Media:
-            js = ['cascade/js/admin/colorpickerext.js' ]
-    else:
-        class Media:
-            js = ['cascade/js/admin/colorpicker.js' ]
+    def __init__(self, with_alpha):
+        widget_list = [
+            widgets.TextInput(attrs={'data-with_alpha': str(with_alpha).lower(), 'class': 'cascade-rgba'}),
+            widgets.TextInput(attrs={'type': 'color'}),
+            widgets.CheckboxInput(),
+        ]
+        super().__init__(with_alpha, widget_list)
 
-    def __init__(self, attrs=DEFAULT_ATTRS):
-        attrs = dict(attrs)
-        widget_list = [widgets.TextInput(attrs=attrs), widgets.CheckboxInput()]
-        super(ColorPickerWidget, self).__init__(widget_list)
-
-    def __iter__(self):
-        for name in ('color', 'disabled'):
-            yield name
+    @property
+    def media(self):
+        return super().media + Media(css={'all': ['cascade/css/admin/colorpicker.css']})
 
     def decompress(self, values):
-        if not isinstance(values, (list, tuple)) or len(values) != 2:
-            # Disabled on
-            values = ('on', self.DEFAULT_COLOR,)
+        assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
+        values = list(values)
         return values
 
     def value_from_datadict(self, data, files, name):
-        values = (
-            escape(data.get('{0}_disabled'.format(name), '')),
-            escape(data.get('{0}_color'.format(name), self.DEFAULT_COLOR)),
-        )
+        if self.with_acolorpicker:
+            color = data.get('{}_0'.format(name))
+        else:
+            color = data.get('{}_1'.format(name))
+        values = [
+            escape(color),
+            bool(data.get('{}_2'.format(name))),
+        ]
         return values
 
-    def render(self, name, values, attrs):
-        disabled, color = values
-        elem_id = attrs['id']
-        attrs = dict(attrs)
-        html = '<div class="clearfix">'
-        html += '<div style="position: relative;">'
-        key, attrs['id'] = '{0}_color'.format(name), '{0}_color'.format(elem_id)
-        html += format_html('<div class="sibling-field color_picker">{0}</div>', self.widgets[0].render(key, color, attrs))
-        key, attrs['id'] = '{0}_disabled'.format(name), '{0}_disabled'.format(elem_id)
-        html += format_html('<div class="sibling-field inherit"><label for="{0}">{1}{2}</label></div>',
-                            key, self.widgets[1].render(key, disabled, attrs), _("Inherit"))
-        html += '</div></div>'
-        return mark_safe(html)
-
-    def validate(self, values, field_name):
-        if field_name == 'color':
-            color = values[1]
-            if not self.validation_pattern.match(color):
-                raise ValidationError(self.invalid_message, code='invalid', params={'value': color})
-
-
-class SelectTextAlignWidget(widgets.Select):
-    CHOICES = [('left', 'left'), ('center', 'center'), ('right', 'right'), ('justify', 'justify')]
-
-    def __init__(self, attrs=None):
-        super(SelectTextAlignWidget, self).__init__(attrs, choices=self.CHOICES)
-
-
-class SelectOverflowWidget(widgets.Select):
-    CHOICES = [('auto', 'auto'), ('scroll', 'scroll'), ('hidden', 'hidden')]
-
-    def __init__(self, attrs=None):
-        super(SelectOverflowWidget, self).__init__(attrs, choices=self.CHOICES)
+    def get_context(self, name, value, attrs):
+        if not isinstance(value, list):
+            values = self.decompress(value)
+        else:
+            values = list(value)
+        assert len(values) == 2
+        values.insert(0, values[0])
+        values[1] = self.rgb2hex(values[0])
+        context = super().get_context(name, values, attrs)
+        return context
 
 
 class MultipleTextInputWidget(widgets.MultiWidget):
     """
-    A widgets accepting multiple input values to be used for rendering CSS inline styles.
-    Additionally this widget validates the input data and raises a ValidationError
+    A widgets accepting multiple input values.
     """
     required = False
 
-    def __init__(self, labels, required=None, attrs=None):
-        text_widgets = [widgets.TextInput({'placeholder': label}) for label in labels]
-        super(MultipleTextInputWidget, self).__init__(text_widgets, attrs)
+    def __init__(self, labels, attrs=None):
+        text_widgets = [widgets.TextInput()] * len(labels)
+        super().__init__(text_widgets, attrs)
         self.labels = labels[:]
-        if required is not None:
-            self.required = required
-        self.validation_errors = []
-        # check if derived classes contain proper error messages
-        if hasattr(self, 'validation_pattern') and not hasattr(self, 'invalid_message'):
-            raise AttributeError("Multiple...InputWidget class is missing element: 'invalid_message'")
-        if self.required and not hasattr(self, 'required_message'):
-            raise AttributeError("Multiple...InputWidget class is missing element: 'required_message'")
-
-    def __iter__(self):
-        self.validation_errors = []
-        for label in self.labels:
-            yield label
 
     def decompress(self, values):
-        if not isinstance(values, dict):
-            values = {}
-        for key in self.labels:
-            values.setdefault(key, None)
-        return values
+        assert isinstance(values, dict), "Values to decompress are kept as dict in JSON"
+        return list(values.values())
 
     def value_from_datadict(self, data, files, name):
-        values = {}
-        for key in self.labels:
-            values[key] = escape(data.get('{0}-{1}'.format(name, key), ''))
+        values = [escape(data.get('{0}-{1}'.format(name, label), '')) for label in self.labels]
         return values
 
-    def render(self, name, value, attrs):
+    def render(self, name, value, attrs=None, renderer=None):
         widgets = []
-        values = value or {}
+        values = value[:] if isinstance(value, (list, tuple)) else []
+        values.extend([''] * max(len(self.labels) - len(values), 0))
         elem_id = attrs['id']
         for index, key in enumerate(self.labels):
             label = '{0}-{1}'.format(name, key)
             attrs['id'] = '{0}_{1}'.format(elem_id, key)
-            errors = key in self.validation_errors and 'errors' or ''
-            widgets.append((self.widgets[index].render(label, values.get(key), attrs), key, label, errors))
-        return format_html('<div class="clearfix">{0}</div>',
-                    format_html_join('\n', '<div class="sibling-field {3}"><label for="{2}">{1}</label>{0}</div>', widgets))
-
-    def validate(self, value, field_name):
-        if hasattr(self, 'validation_pattern'):
-            val = value.get(field_name)
-            if not val:
-                if self.required:
-                    raise ValidationError(self.required_message, code='required', params={'field': field_name})
-                return
-            if val and not self.validation_pattern.match(val):
-                self.validation_errors.append(field_name)
-                params = {'value': val, 'field': field_name}
-                raise ValidationError(self.invalid_message, code='invalid', params=params)
+            widgets.append((self.widgets[index].render(label, values[index], attrs, renderer), key, label))
+        return format_html('<div>{0}</div>',
+                           format_html_join('\n',
+                                            '<div class="sibling-field"><label for="{2}">{1}</label>{0}</div>',
+                                            widgets))
 
 
-class MultipleCascadingSizeWidget(CascadingSizeWidgetMixin, MultipleTextInputWidget):
-    DEFAULT_ATTRS = {'style': 'width: 4em;'}
-    invalid_message = _("In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a valid number, ending in %(endings)s.")
-
-    def __init__(self, labels, allowed_units=None, attrs=None, required=True):
-        if attrs is None:
-            attrs = self.DEFAULT_ATTRS
-        self.validation_pattern, self.invalid_message = self.compile_validation_pattern(
-            units=allowed_units)
-        super(MultipleCascadingSizeWidget, self).__init__(labels, required=required, attrs=attrs)
-
-
-class SetBorderWidget(widgets.MultiWidget):
+class BorderChoiceWidget(AColorPickerMixin, widgets.MultiWidget):
     """
     Use this field to enter the three values of a border: width style color.
     """
-    DEFAULT_COLOR = '#000000'
-    BORDER_STYLES = ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'hidden',
-                     'inset', 'outset', 'ridge']
+    template_name = 'cascade/admin/widgets/borderchoice.html'
 
-    invalid_border_message = _("In '%(label)s': Value '%(value)s' is not a valid border style.")
-    color_validation_pattern = re.compile('^#[0-9a-f]{3}([0-9a-f]{3})?$')
-    invalid_color_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
-
-    def __init__(self, attrs=None):
+    def __init__(self, choices, with_alpha):
         widget_list = [
-            CascadingSizeWidget(),
-            widgets.Select(choices=[(s, s) for s in self.BORDER_STYLES]),
-            widgets.TextInput(attrs={'style': 'width: 5em;', 'type': 'color'})
+            widgets.TextInput(attrs={'size': 5}),
+            widgets.Select(choices=choices),
+            widgets.TextInput(attrs={'data-with_alpha': str(with_alpha).lower(), 'class': 'cascade-rgba'}),
+            widgets.TextInput(attrs={'type': 'color'}),
         ]
-        super(SetBorderWidget, self).__init__(widget_list)
+        super().__init__(with_alpha, widget_list)
 
-    def __iter__(self):
-        for name in ('width', 'style', 'color'):
-            yield name
+    @property
+    def media(self):
+        return super().media + Media(css={'all': ['cascade/css/admin/colorpicker.css',
+                                                  'cascade/css/admin/borderchoice.css']})
 
     def decompress(self, values):
-        if not isinstance(values, (list, tuple)) or len(values) != 3:
-            values = ('0px', 'none', self.DEFAULT_COLOR,)
-        return values
+        assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
+        return list(values)
 
     def value_from_datadict(self, data, files, name):
-        values = (
-            escape(data.get('{0}-width'.format(name), '0px')),
-            escape(data.get('{0}-style'.format(name), 'none')),
-            escape(data.get('{0}-color'.format(name), self.DEFAULT_COLOR)),
-        )
+        try:
+            if self.with_acolorpicker:
+                color = data.get('{}_2'.format(name))
+            else:
+                color = data.get('{}_3'.format(name))
+            values = [
+                escape(data['{}_0'.format(name)]),
+                escape(data['{}_1'.format(name)]),
+                escape(color),
+            ]
+        except KeyError:
+            values = ['0px', 'none', 'none']
         return values
 
-    def render(self, name, values, attrs):
-        width, style, color = values
-        elem_id = attrs['id']
-        attrs = dict(attrs)
-        html = '<div class="clearfix">'
-        key, attrs['id'] = '{0}-width'.format(name), '{0}_width'.format(elem_id)
-        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[0].render(key, width, attrs))
-        key, attrs['id'] = '{0}-style'.format(name), '{0}_style'.format(elem_id)
-        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[1].render(key, style, attrs))
-        key, attrs['id'] = '{0}-color'.format(name), '{0}_color'.format(elem_id)
-        html += format_html('<div class="sibling-field">{0}</div>', self.widgets[2].render(key, color, attrs))
-        html += '</div>'
-        return mark_safe(html)
-
-    def validate(self, values, key):
-        if key == 'width':
-            if values[0]:
-                self.widgets[0].validate(values[0])
-        elif key == 'style':
-            style = values[1]
-            if style not in self.BORDER_STYLES:
-                raise ValidationError(self.invalid_border_message, code='invalid', params={'value': style})
-        elif key == 'color':
-            color = values[2]
-            if not self.color_validation_pattern.match(color):
-                raise ValidationError(self.invalid_color_message, code='invalid', params={'value': color})
+    def get_context(self, name, value, attrs):
+        if not isinstance(value, list):
+            values = self.decompress(value)
         else:
-            raise KeyError("{} is not a valid border widget attribute.".format(key))
-
+            values = list(value)
+        assert len(values) == 3
+        values.insert(2, values[2])
+        values[3] = self.rgb2hex(values[2])
+        context = super().get_context(name, values, attrs)
+        return context
 
 class HmltAttrsWidget(widgets.MultiWidget):
     """
@@ -488,4 +380,3 @@ class HmltAttrsWidget(widgets.MultiWidget):
                     elif not self.validation_pattern.match(value_attibute_value):
                         self.widgets[index].validate(value_attibute_value)
                         raise ValidationError(self.invalid_message, code='invalid', params={key_attibute_name : value_attibute_value})
-

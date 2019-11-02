@@ -1,88 +1,73 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import re
-from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.conf.urls import url
 from django.contrib import admin
-from django.utils.encoding import force_text
+from django.core.exceptions import ValidationError
+from django.forms import widgets
+from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
+from django.forms.models import ModelForm
+from django.http.response import HttpResponse
+from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-from django.forms import widgets
+from entangled.forms import EntangledModelForm
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.fields import GlossaryField
-from cmsplugin_cascade.models import PluginExtraFields
+from cmsplugin_cascade.fields import SizeField
+from cmsplugin_cascade.models import PluginExtraFields, TextEditorConfigFields, IconFont
 from cmsplugin_cascade.extra_fields.mixins import ExtraFieldsMixin
-from cmsplugin_cascade.widgets import JSONMultiWidget, MultipleCascadingSizeWidget
-from cmsplugin_cascade.utils import rectify_partial_form_field
 
 
-class ClassNamesWidget(widgets.TextInput):
-    """
-    Use this field to enter a list of comma separated CSS class names.
-    """
-    DEFAULT_ATTRS = {'style': 'width: 35em;'}
+class PluginExtraFieldsForm(EntangledModelForm):
     validation_pattern = re.compile(r'^[A-Za-z0-9_-]+$')
-    invalid_message = _("In '%(label)s': Value '%(value)s' is not a valid color.")
 
-    def __init__(self, attrs=DEFAULT_ATTRS, required=False):
-        self.required = required
-        super(ClassNamesWidget, self).__init__(attrs=attrs)
+    class_names = CharField(
+        label=_("CSS class names"),
+        required=False,
+        widget=widgets.TextInput(attrs={'style': 'width: 50em;'}),
+        help_text=_("Freely selectable CSS classnames for this Plugin, separated by commas."),
+    )
 
-    def validate(self, value):
+    multiple = BooleanField(
+        label=_("Allow multiple"),
+        required=False,
+        help_text=_("Allow to select multiple of the above CSS classes."),
+    )
+
+    class Meta:
+        untangled_fields = ['plugin_type', 'site']
+        entangled_fields = {
+            'css_classes': ['class_names', 'multiple'],
+            'inline_styles': [],
+        }
+
+    def clean_class_names(self):
+        value = self.cleaned_data['class_names']
         for val in value.split(','):
-            if val and not self.validation_pattern.match(val.strip()):
-                raise ValidationError(_("'%s' is not a valid CSS class name.") % val)
+            val = val.strip()
+            if val and not self.validation_pattern.match(val):
+                msg = _("CSS class '{}' contains invalid characters.")
+                raise ValidationError(msg.format(val))
+        return value
 
 
 class PluginExtraFieldsAdmin(admin.ModelAdmin):
     list_display = ['name', 'module', 'site', 'allowed_classes_styles']
     DISTANCE_UNITS = [
+        ('px,em,rem,%', _("px, em, rem and %")),
         ('px,em,%', _("px, em and %")),
+        ('px,rem,em', _("px, rem and em")),
         ('px,em', _("px and em")),
+        ('px,rem,%', _("px, rem and %")),
         ('px,%', _("px and %")),
+        ('px,rem', _("px and rem")),
         ('px', _("px")),
+        ('%,rem', _("% and rem")),
         ('%', _("%")),
     ]
-    classname_fields = [(
-        GlossaryField(
-            ClassNamesWidget(),
-            label=_("CSS class names"),
-            name='class_names',
-            help_text=_("Freely selectable CSS classnames for this Plugin, separated by commas."),
-        ),
-        GlossaryField(
-            widgets.CheckboxInput(),
-            label=_("Allow multiple"),
-            name='multiple',
-        ),
-    )]
 
     class Media:
         css = {'all': ('cascade/css/admin/partialfields.css',)}
-
-    def __init__(self, model, admin_site):
-        super(PluginExtraFieldsAdmin, self).__init__(model, admin_site)
-        self.style_fields = []
-        for style, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
-            extra_field = GlossaryField(
-                widgets.CheckboxSelectMultiple(choices=((c, c) for c in choices_tuples[0])),
-                label=_("Customized {0} Fields:").format(style),
-                name='extra_fields:{0}'.format(style)
-            )
-            Widget = choices_tuples[1]
-            if issubclass(Widget, MultipleCascadingSizeWidget):
-                self.style_fields.append((
-                    extra_field,
-                    GlossaryField(
-                        widgets.Select(choices=self.DISTANCE_UNITS),
-                        label=_("Units for {0} Fields:").format(style),
-                        name='extra_units:{0}'.format(style),
-                        initial=self.DISTANCE_UNITS[0][0],
-                    ),
-                ))
-            else:
-                self.style_fields.append(extra_field)
 
     @cached_property
     def plugins_for_site(self):
@@ -92,27 +77,36 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
             except KeyError:
                 return False
             else:
-                assert issubclass(plugin, ExtraFieldsMixin)
+                assert issubclass(plugin, ExtraFieldsMixin), "Expected plugin to be of type `ExtraFieldsMixin`."
                 return config.allow_override
 
         cascade_plugins = set([p for p in plugin_pool.get_all_plugins() if show_in_backend(p)])
-        return [(p.__name__, '{}: {}'.format(p.module, force_text(p.name))) for p in cascade_plugins]
+        return [(p.__name__, '{}: {}'.format(p.module, str(p.name))) for p in cascade_plugins]
 
     def get_form(self, request, obj=None, **kwargs):
-        """
-        Build the form used for changing the model.
-        """
-        kwargs.update(widgets={
-            'plugin_type': widgets.Select(choices=self.plugins_for_site),
-            'css_classes': JSONMultiWidget(self.classname_fields),
-            'inline_styles': JSONMultiWidget(self.style_fields)
-        })
-        form = super(PluginExtraFieldsAdmin, self).get_form(request, obj, **kwargs)
-        rectify_partial_form_field(form.base_fields['css_classes'], self.classname_fields)
-        form.classname_fields = self.classname_fields
-        rectify_partial_form_field(form.base_fields['inline_styles'], self.style_fields)
-        form.style_fields = self.style_fields
-        return form
+        form_fields = {
+            'plugin_type': ChoiceField(choices=self.plugins_for_site),
+        }
+        for style, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
+            form_fields['extra_fields:{0}'.format(style)] = MultipleChoiceField(
+                label=_("Customized {0} fields:").format(style),
+                choices=[(c, c) for c in choices_tuples[0]],
+                required=False,
+                widget=widgets.CheckboxSelectMultiple,
+                help_text=_("Allow these extra inlines styles for the given plugin type."),
+            )
+            if issubclass(choices_tuples[1], SizeField):
+                form_fields['extra_units:{0}'.format(style)] = ChoiceField(
+                    label=_("Units for {0} Fields:").format(style),
+                    choices=self.DISTANCE_UNITS,
+                    required=False,
+                    help_text=_("Allow these size units for customized {0} fields.").format(style),
+                )
+        inline_styles_fields = list(form_fields.keys())
+        form = type('PluginExtraFieldsForm', (PluginExtraFieldsForm,), form_fields)
+        form._meta.entangled_fields['inline_styles'] = inline_styles_fields
+        kwargs.setdefault('form', form)
+        return super().get_form(request, obj=None, **kwargs)
 
     def has_add_permission(self, request):
         """
@@ -131,3 +125,42 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
     allowed_classes_styles.short_description = _("Allowed Classes and Styles")
 
 admin.site.register(PluginExtraFields, PluginExtraFieldsAdmin)
+
+
+class TextEditorConfigForm(ModelForm):
+    validation_pattern = re.compile(r'^[A-Za-z0-9_-]+$')
+
+    class Meta:
+        fields = ['name', 'element_type', 'css_classes']
+
+    def clean_css_classes(self):
+        css_classes = []
+        for val in self.cleaned_data['css_classes'].split(' '):
+            if val:
+                if self.validation_pattern.match(val.strip()):
+                    css_classes.append(val)
+                else:
+                    raise ValidationError(_("'%s' is not a valid CSS class name.") % val)
+        return ' '.join(css_classes)
+
+
+class TextEditorConfigAdmin(admin.ModelAdmin):
+    list_display = ['name', 'element_type']
+    form = TextEditorConfigForm
+
+    def get_urls(self):
+        return [
+            url(r'^wysiwig-config\.js$', self.render_texteditor_config,
+                name='cascade_texteditor_config'),
+        ] + super().get_urls()
+
+    def render_texteditor_config(self, request):
+        context = {
+            'text_editor_configs': TextEditorConfigFields.objects.all(),
+        }
+        if 'cmsplugin_cascade.icon' in settings.INSTALLED_APPS:
+            context['icon_fonts'] = IconFont.objects.all()
+        javascript = render_to_string('cascade/admin/ckeditor.wysiwyg.txt', context)
+        return HttpResponse(javascript, content_type='application/javascript')
+
+admin.site.register(TextEditorConfigFields, TextEditorConfigAdmin)

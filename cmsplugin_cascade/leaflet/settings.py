@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 
 CASCADE_PLUGINS = ['map']
 

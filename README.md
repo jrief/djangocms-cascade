@@ -16,6 +16,21 @@ Instead of creating one database model for each CMS plugin, Cascade shares one d
 all of them. The payload then is stored inside a JSON field instead of declaring each attribute
 explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
 
+
+## Version 1.0
+
+Version 1.0 of **djangocms-cascade** is a major release with a much simpler way of writing your
+own plugins. There you can use [Django forms to create editors](https://github.com/jrief/django-entangled)
+for your plugin models, still keeping all its data inside JSON fields.
+
+**Important Note:** In version 1, the internal structure of many Cascade plugins changed. Running
+`./manage.py migrate cmsplugin_cascade` converts these fields, however no backward migration has
+been provided yet. Please assure to backup your database before upgrading.
+
+In addition, version 1 drops support for Python-2.7 and adds support for django-CMS-3.6 and
+Django-2.0/2.1.
+
+
 ### Perfect for nested grid systems
 
 Since **Cascade** keeps track on the widths of all columns, ``<img>`` and ``<picture>`` elements can
@@ -43,13 +58,6 @@ buttons and text-links.
 
 Since the payload of plugins is already serialized, we can even copy them from one site to another
 site supporting **djangocms-cascade**.
-
-
-### Additional features in version 0.17
-
-* Support for Bootstrap-4.
-* Support for django-CMS-3.5 and later.
-* Icon fonts are handled per page rather than per plugin to avoid ambiguities.
 
 
 ## Documentation
@@ -149,4 +157,4 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
 If someone wants to start a subproject for a CSS framework, other than Bootstrap-3/4.
 
 If you are a native English speaker, please check the documentation for spelling mistakes and
-grammar, since English not my mother tongue.
+grammar, since English is not my mother tongue.

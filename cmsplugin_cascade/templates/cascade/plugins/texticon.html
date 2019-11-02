@@ -1,6 +1,6 @@
 {% load static sekizai_tags %}{% spaceless %}
 {% if stylesheet_url %}{% addtoblock "css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}{% endif %}
-{% with instance_link=instance.link  inline_styles=instance.inline_styles %}
-{% if instance_link %}<a href="{{ instance_link }}" {{ instance.html_tag_attributes }}>{% endif %}<i {{ instance.icon_font_class }}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>{% if not instance.icon_font_class %} &square; {% endif %}</i>{% if instance_link %}</a>{% endif %}
+{% with instance_link=instance.link %}
+{% if instance_link %}<a href="{{ instance_link }}"{{ instance.html_tag_attributes }}>{% endif %}<i class="{{ icon_font_class }}">{% if not icon_font_class %}{# render a placeholder for icon selection #} &square; {% endif %}</i>{% if instance_link %}</a>{% endif %}
 {% endwith %}
 {% endspaceless %}

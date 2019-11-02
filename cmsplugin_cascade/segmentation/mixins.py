@@ -1,20 +1,12 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from distutils.version import LooseVersion
-
+from django import VERSION as DJANGO_VERSION
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _, ungettext
-from django.utils.encoding import force_text
 from django.utils.html import format_html
-
-from cms import __version__ as cms_version
 from cms.constants import REFRESH_PAGE
 
 
@@ -33,11 +25,8 @@ class SegmentPluginModelMixin(object):
         return {}
 
     def render_plugin(self, context=None, placeholder=None, admin=False, processors=None):
-        assert LooseVersion(cms_version) < LooseVersion('3.4'), \
-               "Since CMS-3.4, method `render_plugin` shall not be invoked by model instance"
-
         context.update(self.get_context_override(context['request']))
-        content = super(SegmentPluginModelMixin, self).render_plugin(context, placeholder, admin, processors)
+        content = super().render_plugin(context, placeholder, admin, processors)
         context.pop()
         return content
 
@@ -49,7 +38,7 @@ class EmulateUserModelMixin(SegmentPluginModelMixin):
         """
         Override the request object with an emulated user.
         """
-        context_override = super(EmulateUserModelMixin, self).get_context_override(request)
+        context_override = super().get_context_override(request)
         try:
             if request.user.is_staff:
                 user = self.UserModel.objects.get(pk=request.session['emulate_user_id'])
@@ -65,18 +54,24 @@ class EmulateUserAdminMixin(object):
     @staticmethod
     def populate_toolbar(segmentation_menu, request):
         active = 'emulate_user_id' in request.session
-        segmentation_menu.add_sideframe_item(_("Emulate User"), url=reverse('admin:emulate-users'),
-                                             active=active)
-        segmentation_menu.add_ajax_item(_("Clear emulations"),
-                                        action=reverse('admin:clear-emulations'),
-                                        on_success=REFRESH_PAGE)
+        segmentation_menu.add_sideframe_item(
+            _("Emulate User"),
+            url=reverse('admin:emulate-users'),
+            active=active,
+        )
+        segmentation_menu.add_ajax_item(
+            _("Clear emulations"),
+            action=reverse('admin:clear-emulations'),
+            on_success=REFRESH_PAGE,
+            disabled=not active,
+        )
 
     def get_urls(self):
         return [
             url(r'^emulate_users/$', self.admin_site.admin_view(self.emulate_users), name='emulate-users'),
             url(r'^emulate_user/(?P<user_id>\d+)/$', self.admin_site.admin_view(self.emulate_user), name='emulate-user'),
             url(r'^clear_emulations/$', self.admin_site.admin_view(self.clear_emulations), name='clear-emulations'),
-        ] + super(EmulateUserAdminMixin, self).get_urls()
+        ] + super().get_urls()
 
     def emulate_user(self, request, user_id):
         try:
@@ -89,7 +84,7 @@ class EmulateUserAdminMixin(object):
         """
         The list view
         """
-        def display_as_link(self, obj):
+        def display_as_link(obj):
             try:
                 identifier = getattr(user_model_admin, list_display_link)(obj)
             except AttributeError:
@@ -121,23 +116,34 @@ class EmulateUserAdminMixin(object):
             display_as_link.short_description = user_model_admin.identifier.short_description
         except AttributeError:
             display_as_link.short_description = admin.utils.label_for_field(list_display_link, self.UserModel)
-        self.display_as_link = six.create_bound_method(display_as_link, self)
+        self.display_as_link = display_as_link
 
         ChangeList = self.get_changelist(request)
-        cl = ChangeList(request, self.UserModel, list_display,
-            (None,),  # disable list_display_links in ChangeList, instead override that field
-            user_model_admin.list_filter,
-            user_model_admin.date_hierarchy, user_model_admin.search_fields,
-            user_model_admin.list_select_related, user_model_admin.list_per_page,
-            user_model_admin.list_max_show_all,
-            (),  # disable list_editable
-            self)
+        if DJANGO_VERSION < (2, 1):
+            cl = ChangeList(request, self.UserModel, list_display,
+                (None,),  # disable list_display_links in ChangeList, instead override that field
+                user_model_admin.list_filter,
+                user_model_admin.date_hierarchy, user_model_admin.search_fields,
+                user_model_admin.list_select_related, user_model_admin.list_per_page,
+                user_model_admin.list_max_show_all,
+                (),  # disable list_editable
+                self)
+        else:
+            cl = ChangeList(request, self.UserModel, list_display,
+                (None,),  # disable list_display_links in ChangeList, instead override that field
+                user_model_admin.list_filter,
+                user_model_admin.date_hierarchy, user_model_admin.search_fields,
+                user_model_admin.list_select_related, user_model_admin.list_per_page,
+                user_model_admin.list_max_show_all,
+                (),  # disable list_editable
+                self,
+                None)
         cl.formset = None
         selection_note_all = ungettext('%(total_count)s selected',
             'All %(total_count)s selected', cl.result_count)
 
         context = {
-            'module_name': force_text(opts.verbose_name_plural),
+            'module_name': str(opts.verbose_name_plural),
             'selection_note': _('0 of %(cnt)s selected') % {'cnt': len(cl.result_list)},
             'selection_note_all': selection_note_all % {'total_count': cl.result_count},
             'title': _("Select %(user_model)s to emulate") % {'user_model': opts.verbose_name},

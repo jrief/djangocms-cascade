@@ -4,7 +4,8 @@ from __future__ import unicode_literals
 import os
 import sys
 
-from django.core.urlresolvers import reverse_lazy
+
+from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from django.utils.text import format_lazy
@@ -64,19 +65,25 @@ INSTALLED_APPS = [
     'bs4demo',
 ]
 
-MIDDLEWARE_CLASSES = [
+
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
 ]
+
+
 
 # silence false-positive warning 1_6.W001
 # https://docs.djangoproject.com/en/1.8/ref/checks/#backwards-compatibility
@@ -212,8 +219,6 @@ CMSPLUGIN_CASCADE = {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
         'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
-        'BootstrapButtonPlugin': ('button_type', 'button_size', 'button_options', 'icon_font',),
-        'TextLinkPlugin': ('link', 'target',),
     },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
     'allow_plugin_hiding': True,
@@ -283,7 +288,6 @@ CMSPLUGIN_CASCADE = {
     }
 }
 
-
 CMS_PLACEHOLDER_CONF = {
     # this placeholder is used in templates/main.html, it shows how to
     # scaffold a djangoCMS page starting with an empty placeholder
@@ -304,7 +308,7 @@ CKEDITOR_SETTINGS = {
     'language': '{{ language }}',
     'skin': 'moono-lisa',
     'toolbar': 'CMS',
-    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texticon_wysiwig_config')),
+    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
 }
 
 SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'
@@ -344,3 +348,4 @@ try:
     from .private_settings import *
 except ImportError:
     pass
+

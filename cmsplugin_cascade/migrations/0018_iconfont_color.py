@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from django.utils.six import string_types
 from cmsplugin_cascade.models import CascadeElement
 
 
@@ -12,13 +11,13 @@ def forwards(apps, schema_editor):
             continue
 
         color = cascade_element.glossary.get('color')
-        if isinstance(color, string_types):
+        if isinstance(color, str):
             cascade_element.glossary['color'] = ('', color)
             cascade_element.save()
         shared = cascade_element.shared_glossary
         if shared:
             color = shared.glossary.get('color')
-            if isinstance(color, string_types):
+            if isinstance(color, str):
                 shared.glossary['color'] = ('', color)
                 shared.save()
 
