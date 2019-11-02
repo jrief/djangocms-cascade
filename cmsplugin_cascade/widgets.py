@@ -11,7 +11,6 @@ from django.utils.html import escape, format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
 from urllib.parse import quote, urlparse
 
-from .fields import GlossaryField
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import GlossaryField
 from cms.models import Page
