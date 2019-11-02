@@ -19,5 +19,34 @@
 	<script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}" type="text/javascript"></script>
 	<script src="{% static 'node_modules/popper.js/dist/umd/popper.js' %}" type="text/javascript"></script>
 	<script src="{% static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}" type="text/javascript"></script>
+	<script src="{% static 'node_modules/a-color-picker/dist/acolorpicker.js' %}" type="text/javascript"></script>
+	<script type="text/javascript">
+	var picker = null, AColorPicker = window.AColorPicker;
+	if (AColorPicker) {
+	$("[id*='__color']").on('click', function(evt) {
+		var $this = $(this);
+		var $colorInput = $this.parent();
+		console.log($colorInput.val( ));
+		var options = {color: $this.val(), showAlpha: true};
+			if (picker) {
+				picker.destroy();
+			}
+			picker = AColorPicker.createPicker($this.parent(), options);
+			 	$('.a-color-picker').css("cssText", "position:absolute;padding: 2px 0 !important; z-index:1; left:33px;top:100px;");
+			picker.on('change', function(picker, color) {
+				$colorInput.css("cssText", "background-color:"+ AColorPicker.parseColor(color, 'hex') + "!important");
+				$this.val(color);
+				});
+		evt.preventDefault();
+	})}
+	$("html").mouseup(function(e) 
+	{
+	var container = $(".a-color-picker");
+	if (!container.is(e.target) && container.has(e.target).length === 0) 
+	{
+	container.hide();
+	}
+});
+	</script>
 </body>
 </html>
