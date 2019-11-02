@@ -3,7 +3,6 @@
 {% block head %}
 {% addtoblock "css" %}<link rel="stylesheet" href="{% sass_src 'bs4demo/css/main.scss' %}" type="text/css" />{% endaddtoblock %}
 {% endblock head %}
-
 {% block content %}
     {# we continue to pass the sections key in case someone subclassed the template and use these #}
     {# include "cascade/admin/theme/sections.html" with registry=registry sections=registry.sections #} 
@@ -13,25 +12,23 @@
     {% for field in form %}
         {% if '__color' in field.name  %}
         <div class="text-center fieldWrapper custom-control custom-radio custom-control-inline">
-        <div>
-          {{ field.label_tag }} 
-                 <div class="  p-3 mb-3 bg-{{ field.name|cut:'__color' }}"> 
-                   {{ field }}
-                 </div>
-                 </div>
+            <div class="picker">
+            {{ field.label_tag }} 
+                <div class="preview  p-3 mb-3 bg-{{ field.name|cut:'__color' }}"> 
+                  {{ field }}
                 </div>
+             </div>
+         </div>
        {% else %}
-               <div class="fieldWrapper p2">
-       {{ field.label_tag }} : {{ field }}
-            </div>
+       <div class="fieldWrapper p2">
+           {{ field.label_tag }} : {{ field }}
+       </div>
        {% endif %}
-            {{ field.errors }}
-  
+       {{ field.errors }}
     {% endfor %}
        </div>
-       <div class="text-center">
-        <input class="btn btn-secondary btn-lg" type="submit" value="{% trans 'Submit' %}" />
-    </div>
+           <div class="text-center">
+              <input class="btn btn-secondary btn-lg" type="submit" value="{% trans 'Submit' %}" />
+           </div>
     </form>
 {% endblock %}
-
