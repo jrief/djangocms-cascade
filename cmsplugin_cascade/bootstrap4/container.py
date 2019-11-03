@@ -77,6 +77,10 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     require_parent = False
     model_mixins = (ContainerGridMixin,)
     form = ContainerFormMixin
+    footnote_html = """<p>
+    For more information about the Container please read the
+    <a href="https://getbootstrap.com/docs/4.3/layout/overview/#containers" target="_new">Bootstrap documentation</a>.
+    </p>"""
 
     @classmethod
     def get_identifier(cls, obj):
