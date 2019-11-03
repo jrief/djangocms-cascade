@@ -89,7 +89,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     element_heights = BootstrapMultiSizeField(
         label=("Element Heights"),
         required=True,
-        allowed_units=['rem', 'px'],
+        allowed_units=['rem', 'px', 'auto'],
         initial='300px',
         help_text=_("This property specifies the height for each Bootstrap breakpoint."),
     )
