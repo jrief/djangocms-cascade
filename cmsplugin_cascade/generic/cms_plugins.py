@@ -183,7 +183,7 @@ class TextImagePlugin(LinkPluginBase):
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
 
     class Media:
-        js = ['cascade/js/admin/textimageplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/textimageplugin.js']
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):
