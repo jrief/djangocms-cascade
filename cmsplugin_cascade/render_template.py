@@ -29,14 +29,17 @@ class RenderTemplateMixin(metaclass=MediaDefiningClass):
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', self.form)
         assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
-        kwargs['form'] = type(form.__name__, (RenderTemplateFormMixin, form), {})
-        kwargs['form'].base_fields['render_template'].choices = self.get_template_choices()
+        choices = self.get_template_choices()
+        if isinstance(choices, (list, tuple)):
+            form = type(form.__name__, (RenderTemplateFormMixin, form), {})
+            form.base_fields['render_template'].choices = choices
+            kwargs['form'] = form
         return super().get_form(request, obj, **kwargs)
 
     def get_render_template(self, context, instance, placeholder):
         try:
             template = instance.glossary.get('render_template', self.get_template_choices()[0][0])
             get_template(template)  # check if template exists
-        except (KeyError, IndexError, TemplateDoesNotExist):
-            template = super().get_render_template(context, instance, placeholder)
+        except (KeyError, IndexError, TemplateDoesNotExist, TypeError):
+            template = self.render_template
         return template
