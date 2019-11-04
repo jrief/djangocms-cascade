@@ -175,6 +175,7 @@ class LeafletPlugin(CascadePluginBase):
         js = [
             'node_modules/leaflet/dist/leaflet.js',
             'node_modules/leaflet-easybutton/src/easy-button.js',
+            'admin/js/jquery.init.js',
             'cascade/js/admin/leafletplugin.js',
         ]
 

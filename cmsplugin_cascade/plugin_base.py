@@ -1,3 +1,4 @@
+from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import MediaDefiningClass, ModelForm
 from django.utils.functional import lazy
@@ -200,15 +201,11 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
 
     class Media:
         css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
-        js = ['admin/js/jquery.init.js', 'cascade/js/underscore.js', 'cascade/js/ring.js']
+        js = ['cascade/js/underscore.js', 'cascade/js/ring.js']
 
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
         assert glossary_fields is None, "glossary_fields is deprecated"
         super().__init__(model, admin_site)
-        # if isinstance(glossary_fields, (list, tuple)):
-        #     self.glossary_fields = list(glossary_fields)
-        # elif not hasattr(self, 'glossary_fields'):
-        #     self.glossary_fields = []
 
     def __repr__(self):
         return "<class '{}'>".format(self.__class__.__name__)

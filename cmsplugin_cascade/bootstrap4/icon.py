@@ -72,7 +72,7 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     ring_plugin = 'FramedIconPlugin'
 
     class Media:
-        js = ['cascade/js/admin/framediconplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/framediconplugin.js']
 
     @classmethod
     def get_tag_type(self, instance):

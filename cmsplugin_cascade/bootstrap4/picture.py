@@ -77,7 +77,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
 
     class Media:
-        js = ['cascade/js/admin/pictureplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/pictureplugin.js']
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the picture element

@@ -71,7 +71,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
     cache = False
 
     class Media:
-        js = ['cascade/js/admin/segmentplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/segmentplugin.js']
 
     @classmethod
     def get_identifier(cls, obj):

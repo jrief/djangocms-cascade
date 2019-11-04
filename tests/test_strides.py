@@ -139,3 +139,10 @@ class StridePluginTest(CascadeTestCase):
         soup = BeautifulSoup(html, features='lxml')
         navbar = soup.find(class_='navbar')
         self.assertSetEqual(set( navbar.attrs['class']), {'navbar', 'navbar-expand-md','navbar-light','bg-transparent' })
+
+    def test_button_plugin(self):
+        template = Template('{% load cascade_tags %}{% render_cascade "strides/bootstrap-button.json" %}')
+        html = template.render(self.context)
+        soup = BeautifulSoup(html, features='lxml')
+        button = soup.find(class_='btn')
+        self.assertSetEqual(set(button.attrs['class']), {'btn', 'btn-secondary'})

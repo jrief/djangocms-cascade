@@ -29,7 +29,7 @@ class TextLinkPlugin(LinkPluginBase):
     parent_classes = ['TextPlugin']
 
     class Media:
-        js = ['cascade/js/admin/textlinkplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/textlinkplugin.js']
 
 
     @classmethod

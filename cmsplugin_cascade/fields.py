@@ -173,17 +173,26 @@ class SizeUnitValidator():
     code = 'invalid_size_unit'
 
     def __init__(self, allowed_units=None, allow_negative=True):
-        possible_units = ['rem', 'px', 'em', '%']
+        possible_units = ['rem', 'px', 'em', '%', 'auto']
         if allowed_units is None:
             self.allowed_units = possible_units
         else:
             self.allowed_units = [au for au in allowed_units if au in possible_units]
-        if allow_negative:
-            self.validation_pattern = re.compile(r'^-?(\d+)({})$'.format('|'.join(self.allowed_units)))
+        units_with_value = list(self.allowed_units)
+        if 'auto' in self.allowed_units:
+            self.allow_auto = True
+            units_with_value.remove('auto')
         else:
-            self.validation_pattern = re.compile(r'^(\d+)({})$'.format('|'.join(self.allowed_units)))
+            self.allow_auto = False
+        if allow_negative:
+            patterns = r'^-?(\d+)({})$'.format('|'.join(units_with_value))
+        else:
+            patterns = r'^(\d+)({})$'.format('|'.join(units_with_value))
+        self.validation_pattern = re.compile(patterns)
 
     def __call__(self, value):
+        if self.allow_auto and value == 'auto':
+            return
         match = self.validation_pattern.match(value)
         if not (match and match.group(1).isdigit()):
             allowed_units = " {} ".format(ugettext("or")).join("'{}'".format(u) for u in self.allowed_units)
