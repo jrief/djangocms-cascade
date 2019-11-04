@@ -162,7 +162,7 @@ class LeafletPlugin(CascadePluginBase):
     form = LeafletFormMixin
     admin_preview = False
     render_template = 'cascade/plugins/leaflet.html'
-    inlines = (MarkerInline,)
+    inlines = [MarkerInline]
     model_mixins = (LeafletModelMixin,)
     settings = mark_safe(json.dumps(app_settings.CMSPLUGIN_CASCADE['leaflet']))
 

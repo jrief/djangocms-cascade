@@ -1,4 +1,3 @@
-from django import VERSION as DJANGO_VERSION
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import MediaDefiningClass, ModelForm
 from django.utils.functional import lazy
