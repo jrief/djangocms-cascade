@@ -1,6 +1,5 @@
 from django.forms import MediaDefiningClass
 from django.forms.fields import ChoiceField
-from django.utils.six import with_metaclass
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import get_template, TemplateDoesNotExist
 from entangled.forms import EntangledModelFormMixin
@@ -17,7 +16,7 @@ class RenderTemplateFormMixin(EntangledModelFormMixin):
         entangled_fields = {'glossary': ['render_template']}
 
 
-class RenderTemplateMixin(with_metaclass(MediaDefiningClass)):
+class RenderTemplateMixin(metaclass=MediaDefiningClass):
     """
     If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates']``,
     then this ``RenderTemplateMixin`` class is added automatically to its plugin class in order
