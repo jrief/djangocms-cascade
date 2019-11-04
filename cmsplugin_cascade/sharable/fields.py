@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class SharedSettingsWidget(widgets.MultiWidget):
     class Media:
-        js = ['cascade/js/admin/sharedsettingsfield.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/sharedsettingsfield.js']
 
     def __init__(self):
         widget_list = [

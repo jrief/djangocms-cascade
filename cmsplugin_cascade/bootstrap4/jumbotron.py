@@ -89,7 +89,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     element_heights = BootstrapMultiSizeField(
         label=("Element Heights"),
         required=True,
-        allowed_units=['rem', 'px'],
+        allowed_units=['rem', 'px', 'auto'],
         initial='300px',
         help_text=_("This property specifies the height for each Bootstrap breakpoint."),
     )
@@ -201,7 +201,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     """
 
     class Media:
-        js = ['cascade/js/admin/jumbotronplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/jumbotronplugin.js']
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element

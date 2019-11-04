@@ -3,24 +3,36 @@ language: python
 python:
   - 3.5
   - 3.6
+  - 3.7
 
 env:
-  matrix:
-  - DJANGO='django111' CMS='cms35'
-  - DJANGO='django111' CMS='cms36'
-  - DJANGO='django20' CMS='cms36'
-  - DJANGO='django21' CMS='cms36'
+  - DJANGOVER=django111 CMSVER=cms35
+  - DJANGOVER=django111 CMSVER=cms36
+  - DJANGOVER=django20 CMSVER=cms36
+  - DJANGOVER=django21 CMSVER=cms36
+  - DJANGOVER=django22 CMSVER=cms37
+
+matrix:
+  exclude:
+    - python: 3.7
+      env: DJANGOVER=django111 CMSVER=cms35
+    - python: 3.7
+      env: DJANGOVER=django111 CMSVER=cms36
+    - python: 3.7
+      env: DJANGOVER=django111 CMSVER=cms37
+
+jobs:
+  allow_failures:
+    - python: 3.7
+      env: DJANGOVER=django20 CMSVER=cms36
+    - python: 3.7
+      env: DJANGOVER=django21 CMSVER=cms36
+    - python: 3.7
+      env: DJANGOVER=django22 CMSVER=cms37
 
 install:
   - pip install tox
 
-services:
-  - xvfb
-
-before_script:
-  - export DISPLAY=:99.0
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then export PYVER=py35; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then export PYVER=py36; fi"
-
 script:
-  - tox -e"$PYVER-$DJANGO-$CMS"
+  - export TOX_ENV=py${TRAVIS_PYTHON_VERSION/./}-${DJANGOVER}-${CMSVER}
+  - tox -e "$TOX_ENV"

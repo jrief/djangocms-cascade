@@ -15,7 +15,7 @@ class LinkPluginBase(CascadePluginBase):
     html_tag_attributes = {'title': 'title', 'target': 'target'}
 
     class Media:
-        js = ['cascade/js/admin/linkplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/linkplugin.js']
 
     @classmethod
     def get_link(cls, obj):

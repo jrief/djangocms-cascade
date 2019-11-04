@@ -104,7 +104,7 @@ class BootstrapImagePlugin(LinkPluginBase):
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
 
     class Media:
-        js = ['cascade/js/admin/imageplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/imageplugin.js']
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapImagePlugin, self).render(context, instance, placeholder)
