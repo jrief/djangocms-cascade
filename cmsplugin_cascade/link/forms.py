@@ -32,13 +32,15 @@ class LinkSearchField(ModelChoiceField):
     widget = HeavySelectWidget(data_view='admin:get_published_pagelist')
 
     def __init__(self, *args, **kwargs):
-        queryset = Page.objects.public()
+        queryset = Page.objects.published().public()
         try:
             queryset = queryset.on_site(get_current_site())
         except:
             pass  # can happen if database is not ready yet
         kwargs.setdefault('queryset', queryset)
         super().__init__(*args, **kwargs)
+        # set a minimal set of choices, otherwise django-select2 builds them for every published page
+        self.choices = [(index, str(page)) for index, page in enumerate(queryset[:10])]
 
 
 class SectionChoiceField(fields.ChoiceField):
