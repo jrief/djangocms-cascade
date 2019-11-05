@@ -50,8 +50,8 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
     }
 
     class Media:
-        css = {'all': ('cascade/css/admin/clipboard.css',)}
-        js = ('cascade/js/admin/clipboard.js',)
+        css = {'all': ['cascade/css/admin/clipboard.css']}
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/clipboard.js']
 
     def save_clipboard(self, obj):
         return format_html('<input type="submit" value="{}" class="default pull-left" name="save_clipboard" />',
