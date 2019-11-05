@@ -155,15 +155,15 @@ class LinkForm(EntangledModelFormMixin):
         link_type = cleaned_data.get('link_type')
         error = None
         if link_type == 'cmspage':
-            if cleaned_data['cms_page'] is None:
+            if not cleaned_data.get('cms_page'):
                 error = ValidationError(_("CMS page to link to is missing."))
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if cleaned_data['download_file'] is None:
+            if not cleaned_data.get('download_file'):
                 error = ValidationError(_("File for download is missing."))
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
-            ext_url = cleaned_data['ext_url']
+            ext_url = cleaned_data.get('ext_url')
             if ext_url:
                 try:
                     response = requests.head(ext_url, allow_redirects=True)
@@ -172,13 +172,17 @@ class LinkForm(EntangledModelFormMixin):
                 except Exception as exc:
                     error = ValidationError(_("Failed to connect to {url}.").format(url=ext_url))
             else:
-                error = ValidationError(_("No external URL provided."))
+                error = ValidationError(_("No valid URL provided."))
             if error:
                 self.add_error('ext_url', error)
         elif link_type == 'email':
-            mail_to = cleaned_data['mail_to']
-            if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
-                error = ValidationError(_("'{email}' is not a valid email address.").format(email=mail_to))
+            mail_to = cleaned_data.get('mail_to')
+            if mail_to:
+                if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
+                    error = ValidationError(_("'{email}' is not a valid email address.").format(email=mail_to))
+            else:
+                error = ValidationError(_("No email address provided."))
+            if error:
                 self.add_error('mail_to', error)
         if error:
             raise error
