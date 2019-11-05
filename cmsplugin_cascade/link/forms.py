@@ -6,6 +6,7 @@ from django.db.models.fields.related import ManyToOneRel
 from django.forms import fields, Media, ModelChoiceField
 from django.forms.widgets import RadioSelect
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import HeavySelect2Widget
 from cms.models import Page
@@ -15,8 +16,9 @@ from filer.fields.file import AdminFileWidget, FilerFileField
 from cms.utils import get_current_site
 
 
-def format_page_link(*args, **kwargs):
-    return format_html("{} ({})", *args, **kwargs)
+def format_page_link(title, path):
+    html = format_html("{} ({})", mark_safe(title), path)
+    return html
 
 
 class HeavySelectWidget(HeavySelect2Widget):
