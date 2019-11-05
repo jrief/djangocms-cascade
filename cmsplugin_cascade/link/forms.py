@@ -21,7 +21,11 @@ def format_page_link(title, path):
     return html
 
 
-class HeavySelectWidget(HeavySelect2Widget):
+class PageSelect2Widget(HeavySelect2Widget):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('data_view', 'admin:get_published_pagelist')
+        super().__init__(*args, **kwargs)
+
     @property
     def media(self):
         parent_media = super().media
@@ -29,9 +33,19 @@ class HeavySelectWidget(HeavySelect2Widget):
         js = list(parent_media._js) + ['admin/js/jquery.init.js']
         return Media(css=parent_media._css, js=js)
 
+    def render(self, *args, **kwargs):
+        # replace self.choices by an empty list in order to prevent building the whole optgroup
+        try:
+            page = Page.objects.get(pk=kwargs['value'])
+        except (Page.DoesNotExist, ValueError, KeyError):
+            self.choices = []
+        else:
+            self.choices = [(kwargs['value'], str(page))]
+        return super().render(*args, **kwargs)
+
 
 class LinkSearchField(ModelChoiceField):
-    widget = HeavySelectWidget(data_view='admin:get_published_pagelist')
+    widget = PageSelect2Widget()
 
     def __init__(self, *args, **kwargs):
         queryset = Page.objects.published().public()
@@ -41,8 +55,6 @@ class LinkSearchField(ModelChoiceField):
             pass  # can happen if database is not ready yet
         kwargs.setdefault('queryset', queryset)
         super().__init__(*args, **kwargs)
-        # set a minimal set of choices, otherwise django-select2 builds them for every published page
-        self.choices = [(index, str(page)) for index, page in enumerate(queryset[:10])]
 
 
 class SectionChoiceField(fields.ChoiceField):
