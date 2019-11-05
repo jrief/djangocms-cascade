@@ -23,7 +23,7 @@ class CascadePageAdmin(PageExtensionAdmin):
     def media(self):
         media = super().media
         media += Media(css={'all': ['cascade/css/admin/cascadepage.css']},
-                       js=['cascade/js/admin/cascadepage.js'])
+                       js=['admin/js/jquery.init.js', 'cascade/js/admin/cascadepage.js'])
         return media
 
     def get_form(self, request, obj=None, **kwargs):
