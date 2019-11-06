@@ -54,7 +54,8 @@ class LinkSearchField(ModelChoiceField):
         except:
             choices = []  # can happen if database is not ready yet
         else:
-            choices = [(index, str(page)) for index, page in enumerate(queryset)]
+            # set a minimal set of choices, otherwise django-select2 builds them for every published page
+            choices = [(index, str(page)) for index, page in enumerate(queryset[:15])]
         kwargs.setdefault('queryset', queryset)
         super().__init__(*args, **kwargs)
         self.choices = choices
