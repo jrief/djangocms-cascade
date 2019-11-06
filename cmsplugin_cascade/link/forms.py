@@ -48,13 +48,16 @@ class LinkSearchField(ModelChoiceField):
     widget = PageSelect2Widget()
 
     def __init__(self, *args, **kwargs):
-        queryset = Page.objects.published().public()
+        queryset = Page.objects.public()
         try:
-            queryset = queryset.on_site(get_current_site())
+            queryset = queryset.published().on_site(get_current_site())
         except:
-            pass  # can happen if database is not ready yet
+            choices = []  # can happen if database is not ready yet
+        else:
+            choices = [(index, str(page)) for index, page in enumerate(queryset)]
         kwargs.setdefault('queryset', queryset)
         super().__init__(*args, **kwargs)
+        self.choices = choices
 
 
 class SectionChoiceField(fields.ChoiceField):
