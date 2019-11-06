@@ -89,7 +89,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'jsonfield',
-    'reversion',
     'filer',
     'easy_thumbnails',
     'treebeard',
