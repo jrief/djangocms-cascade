@@ -2,6 +2,22 @@
 Release History
 ===============
 
+1.1.4
+=====
+* Add special unit ``auto`` to the existing sizing units. Allow it as unit for element heights in Jumbotron.
+* Adopt JavaScript code for some plugins by enforcing the loading order, so that the file ``query.init.js``
+  always is loaded before its plugin-JS.
+* In Carousel plugin, only allow pixels as unit.
+* Fix problem of possible non-existing folder, when deleting an icon font.
+* On plugins with more than one rendering template, allow to deactivate that choice actively.
+* Actively check, that ``django_select2`` is installed.
+* Fix: Pasting an invalid URL into the LinkPluigin's external link field, could cause a KeyError.
+* In In LinkPlugin, render search results as safe html, without htmlentities.
+* Fix: When rendering the editor of a LinkPlugin on sites with thousands of CMS pages, it took considerably
+  too long.
+* Allows the user to paste an existing URL into the CMS link box, pointing onto the correct CMS page.
+
+
 1.1.3
 =====
 * Fix problem in rendering the plugin's identifier, if Bootstrap Row is created with flexible widths columns.
