@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.1.5
+=====
+* Fix regression introduced in 1.1.4: In ``LinkSearchField`` reduce the initial number of choices for
+  the ``ModelChoice`` field to max. 15 entities.
+
 1.1.4
 =====
 * Add special unit ``auto`` to the existing sizing units. Allow it as unit for element heights in Jumbotron.
