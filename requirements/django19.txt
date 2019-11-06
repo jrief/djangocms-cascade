@@ -1,2 +1,2 @@
-Django==1.9.12
+Django==1.11.23
 -r base.txt
