@@ -210,7 +210,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         for bp in breakpoints:
             try:
-                last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp) + 1])
+                last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp)])
             except IndexError:
                 last = None
             finally:
