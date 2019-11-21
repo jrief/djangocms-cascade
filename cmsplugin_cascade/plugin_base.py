@@ -386,6 +386,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             context.update(
                 ring_plugin=self.ring_plugin,
             )
+        context['empty_form'] = not context['adminform'].form._meta.entangled_fields
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def in_edit_mode(self, request, placeholder):
