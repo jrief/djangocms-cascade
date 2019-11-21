@@ -28,7 +28,7 @@ class Breakpoint(Enum):
     def range(cls, first, last):
         if first: first = first.value
         if last: last = last.value
-        return itertools.islice(cls, first, last)
+        return itertools.islice(cls, first, last+1)
 
     def __gt__(self, other):
         return self.value > other.value
