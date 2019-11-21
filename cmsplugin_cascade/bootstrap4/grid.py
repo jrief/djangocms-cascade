@@ -46,6 +46,13 @@ class Breakpoint(Enum):
     def __le__(self, other):
         return self.value <= other.value
 
+    def __iter__(self):
+        yield self.xs
+        yield self.sm
+        yield self.md
+        yield self.lg
+        yield self.xl
+
     @property
     def label(self):
         return [
