@@ -71,6 +71,9 @@ fieldset div[class*="field-padding"] div, fieldset div[class*="field-margin"] di
       text-align: left !important;
       padding-top: 6px;
     }
+    fieldset div[class*="field-padding"] select, fieldset div[class*="field-margin"] select, fieldset div[class*="field-float"] select, div[class*="field-field-vertical"] select{
+      width: 200px;
+    }
 }
 
 @media  screen and (min-width: 1301px)  {
