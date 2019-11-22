@@ -37,3 +37,61 @@ form label[for=id_cms_page], form label[for=id_section] { width: 0; }
 
 form .form-row .select2-selection { height: 36px; }
 form .form-row .django-select2 { width: calc(100% - 40px) !important; }
+
+
+
+.container-thumbnail{
+  display: grid;
+}
+
+fieldset .form-row[class*="field-breakpoints"] div:first-child{
+  display: grid;
+}
+
+fieldset div[class*="field-padding"] label, fieldset div[class*="field-margin"] label, fieldset div[class*="field-float"] label, fieldset div[class*="field-field-vertical"] label {
+  width: 182px;
+  text-align: left;
+}
+
+fieldset div[class*="field-padding"] div, fieldset div[class*="field-margin"] div, fieldset div[class*="field-float"] div, div[class*="field-field-vertical"] div{
+  display: grid;
+}
+
+@media screen and (max-width: 1300px) {
+    .fieldBox[class*="column"] {
+      float: none !important;
+    }
+    .fieldBox[class*="column"] .fieldBox + .fieldBox {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+    .fieldBox[class*="column"] label {
+      text-align: left !important;
+      padding-top: 6px;
+    }
+}
+
+@media  screen and (min-width: 1301px)  {
+    .fieldBox[class*="responsive-utils"] , .fieldBox[class*="column"] {
+      display: inline-grid !important;
+      width: 225px !important;
+    }
+    .fieldBox[class*="responsive-utils"] .help, .fieldBox[class*="column"] .help {
+      margin-left: 0px !important;
+      padding-left: 0px !important;
+    }
+    .fieldBox[class*="responsive-utils"] label, .fieldBox[class*="column"] label  {
+      width: 220px !important;
+      text-align: left !important;
+    }
+    .fieldBox[class*="responsive-utils"] ul {
+      margin-left: 0px !important;
+      padding-left: 0px !important;
+    }
+    .fieldBox[class*="field-responsive"] {
+      width: 770px !important ;
+      display: inline-grid;
+    }
+}
+
