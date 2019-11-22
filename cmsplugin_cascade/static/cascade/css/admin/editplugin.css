@@ -61,10 +61,11 @@ fieldset div[class*="field-padding"] div, fieldset div[class*="field-margin"] di
     .fieldBox[class*="column"] {
       float: none !important;
     }
-    .fieldBox[class*="column"] .fieldBox + .fieldBox {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #eee;
+    fieldset .fieldBox + .fieldBox {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid 
+        #eee;
     }
     .fieldBox[class*="column"] label {
       text-align: left !important;
