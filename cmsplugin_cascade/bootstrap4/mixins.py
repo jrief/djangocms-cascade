@@ -36,10 +36,26 @@ class BootstrapUtilities(type):
                 form_fields.update(arg.fget(cls))
 
         class Meta:
-            entangled_fields = {'glossary': list(form_fields.keys())}
+            entangled_fields = {'glossary':cls.fields_property_in_nested_lists(form_fields)}
 
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta))
         return type('BootstrapUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})
+
+    def fields_property_in_nested_lists(form_fields):
+        """
+        The underscore is used to filter the fields.
+        """
+        fieldsets = []
+        separate_property={}
+        for key in form_fields.keys():
+            if  key.split('_')[0] in key:
+                if not  key.split('_')[0] in  separate_property :
+                    separate_property[key.split('_')[0]] = []
+                    separate_property[key.split('_')[0]].append(key)
+                else:
+                    separate_property[key.split('_')[0]].append(key)
+        fieldsets.extend(list(separate_property.values())) 
+        return fieldsets
 
     @property
     def background_and_color(cls):
