@@ -17,7 +17,7 @@
 <script type="text/javascript">
 (function() {
 	var mapPosition = {{ instance.map_position }};
-	var viewMap = L.map('cascadeelement_id-{{ instance.pk }}').setView([mapPosition.lat, mapPosition.lng], mapPosition.zoom);
+	var viewMap = L.map('cascadeelement_id-{{ instance.pk }}', {scrollWheelZoom: {{ instance.glossary.scroll_wheel_zoom|yesno:'true,false'}}}).setView([mapPosition.lat, mapPosition.lng], mapPosition.zoom);
 	var settings = {{ settings }};
 	L.tileLayer(
 		settings.tilesURL,

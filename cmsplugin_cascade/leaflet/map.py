@@ -127,12 +127,20 @@ class LeafletFormMixin(EntangledModelFormMixin):
         help_text=_("Optional, set a minimum height in pixels."),
     )
 
+    scroll_wheel_zoom = BooleanField(
+        label=_("Zoom by scrolling wheel"),
+        initial=True,
+        required=False,
+        help_text=_("Zoom into map on mouse over by scrolling wheel."),
+    )
+
     map_position = HiddenDictField(
         initial=app_settings.CMSPLUGIN_CASCADE['leaflet']['default_position'],
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['map_width', 'map_height', 'map_position']}
+        entangled_fields = {'glossary': ['map_width', 'map_height', 'map_position', 'map_min_height',
+                                         'scroll_wheel_zoom']}
 
     def clean(self):
         cleaned_data = super().clean()
