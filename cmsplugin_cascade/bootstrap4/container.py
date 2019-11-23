@@ -4,10 +4,12 @@ from django.db.models import Q
 from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.utils.safestring import mark_safe
+from django.utils.text import format_lazy
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
+from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from .plugin_base import BootstrapPluginBase
 from . import grid
@@ -240,7 +242,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 )
             else:
                 # wider breakpoints may inherit from next narrower ones
-                choices.insert(0, ('', _("Inherit from above")))
+                choices.insert(0, ('', format_lazy(_("Inherit column width from {}"), previous_devices)))
                 field_name = '{}-column-width'.format(bp)
                 width_fields[field_name] = ChoiceField(
                     choices=choices,
@@ -253,14 +255,16 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         _("Override column width for all devices."),
                     )
                 )
+            previous_devices = devices
 
             # handle offset
             if breakpoints.index(bp) == 0:
                 choices = [('', _("No offset"))]
                 offset_range = range(1, 13)
             else:
-                choices = [('', _("Inherit from above"))]
+                choices = [('', format_lazy(_("Inherit offset from {}"), previous_label))]
                 offset_range = range(0, 13)
+            previous_label = Breakpoint[bp].label
             if bp == 'xs':
                 choices.extend(('offset-{}'.format(i), units[i]) for i in offset_range)
             else:
