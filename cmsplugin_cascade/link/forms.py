@@ -9,11 +9,11 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import HeavySelect2Widget
+from cms.utils import get_current_site
 from cms.models import Page
 from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
-from cms.utils import get_current_site
 
 
 def format_page_link(title, path):
