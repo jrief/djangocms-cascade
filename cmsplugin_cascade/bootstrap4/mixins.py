@@ -60,7 +60,7 @@ class BootstrapUtilities(type):
             entangled_fields = {'glossary': [values for values in form_fields_by_property_name.values()] }
 
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta) )
-        return type('HtmlAttrsUtilitiesMixin', (CascadeUtilities2Mixin,), {'utility_form_mixin': utility_form_mixin,
+        return type('HtmlAttrsUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin,
                      'attr_type': form_fields_by_attr_type , 'fields_with_choices_anchors': fields_choices_anchors })
 
     @property
