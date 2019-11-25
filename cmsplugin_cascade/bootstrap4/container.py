@@ -320,10 +320,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 required=False,
                 help_text=help_text,
             )
-        glossary_fields = list(width_fields.keys())
-        glossary_fields.extend(offset_fields.keys())
-        glossary_fields.extend(reorder_fields.keys())
-        glossary_fields.extend(responsive_fields.keys())
+
+        glossary_fields = (list(width_fields.keys()), list(offset_fields.keys()),list(reorder_fields.keys()),\
+                           list(responsive_fields.keys()))
 
         class Meta:
             entangled_fields = {'glossary': glossary_fields}
