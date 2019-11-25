@@ -23,8 +23,8 @@ Dependency packaging to made easy with Pipenv or Poetry.
 	$ python -m venv .venv 
 	$ poetry shell
 	$ poetry update
-	
-	Initialize the database, create a superuser and start the development server:
+
+Initialize the database, create a superuser and start the development server:
 
 .. code-block:: bash
 
