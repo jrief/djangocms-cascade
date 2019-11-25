@@ -8,17 +8,34 @@ from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 
 class BootstrapUtilities(type):
     """
+    Factory for building a class ``BootstrapUtilitiesMixin``. This class then is used as a mixin to
+    all sorts of Bootstrap-4 plugins. Various Bootstrap-4 plugins are shipped using this mixin class
+    in different configurations. These configurations can be overridden through the project's
+    settings using:
+    ```
+    CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {
+        'Bootstrap<ANY>Plugin': BootstrapUtilities(
+            BootstrapUtilities.background_and_color,
+            BootstrapUtilities.margins,
+            BootstrapUtilities.paddings,
+            …
+        ),
+        …
+    }
+    ```
     The class ``BootstrapUtilities`` offers a bunch of property methods which return a list of
     input fields and/or select boxes. They then can be added to the plugin's editor. This is
     specially useful to add CSS classes or HTML data attributes from the utilities section of Bootstrap-4, such as
     margins, borders, colors, etc.
+    
     The 'property_name' attritbute in property methods is needed because python property methods don't have name
     attributes without using inspect module or others things. 
     The 'attrs_type' attritbute in property methods can have two possiblity values 'css_classes' or 'html_data_attrs'.
-    The 'anchors_fields' in the property_fields attributes can add choices id elements of the current page, theses choices are realy set
-    when the request is available.
+    The 'anchors_fields' in the property_fields attributes can add choices id elements of the current page, theses
+    choices are realy set when the request is available.
     """
-    def __new__(cls, *args,):
+    
+    def __new__(cls, *args):
         form_fields = {}
         form_fields_by_property_name = {}
         form_fields_by_attr_type = {}
@@ -28,7 +45,7 @@ class BootstrapUtilities(type):
             if isinstance(arg, property):
                 property_fields=arg.fget(cls)
                 form_subfields = property_fields['form_fields']
-                attrs_type  = property_fields['attrs_type']
+                attrs_type = property_fields['attrs_type']
                 property_name = property_fields['property_name']
  
                 form_fields_by_attr_type.setdefault(attrs_type, [])
@@ -43,7 +60,8 @@ class BootstrapUtilities(type):
             entangled_fields = {'glossary': [values for values in form_fields_by_property_name.values()] }
 
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta) )
-        return type('HtmlAttrsUtilitiesMixin', (CascadeUtilities2Mixin,), {'utility_form_mixin': utility_form_mixin, 'attr_type': form_fields_by_attr_type , 'fields_with_choices_anchors': fields_choices_anchors })
+        return type('HtmlAttrsUtilitiesMixin', (CascadeUtilities2Mixin,), {'utility_form_mixin': utility_form_mixin,
+                     'attr_type': form_fields_by_attr_type , 'fields_with_choices_anchors': fields_choices_anchors })
 
     @property
     def background_and_color(cls):
