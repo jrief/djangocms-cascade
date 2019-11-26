@@ -314,7 +314,8 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', self.form)
         assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
-        self.fieldsets = tuple(gen_separate_fieldsets(form))
+        if not self.fieldsets:
+            self.fieldsets = tuple(gen_separate_fieldsets(form))
         if issubclass(form, ModelForm):
             kwargs['form'] = form
         else:
