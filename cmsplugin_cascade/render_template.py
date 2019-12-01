@@ -10,6 +10,7 @@ class RenderTemplateFormMixin(EntangledModelFormMixin):
     render_template = ChoiceField(
         label=_("Render template"),
         help_text=_("Use alternative template for rendering this plugin."),
+        required=False,
     )
 
     class Meta:
