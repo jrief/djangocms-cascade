@@ -123,3 +123,25 @@ Adding too many styling fields to a plugin can mess up any web project. Therefor
 this feature rarely and wise. If many people have write access to plugins, set extra permissions on
 this table, in order to not mess things up. For instance, it rarely makes sense to activate
 ``min-width``, ``width`` and ``max-width``.
+
+
+Dynamically add styles to the Text-Editor
+=========================================
+
+In Cascade it is also possible to dynamically add styles to the CKTextEditor.
+Ensure that in your ``settings.py`` the following is active:
+
+.. python
+
+	CKEDITOR_SETTINGS = {
+	    ...
+	    'toolbar_CMS': [
+	        ...
+	        ['Styles'],
+	        ...
+	    ],
+	    'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
+	}
+
+Then in the Django-Admin, by adding entries in *Start › django CMS Cascade › Text Editor Configs*
+it is possible to use these special styles inside the text editor.
