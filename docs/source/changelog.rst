@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.1.6
+=====
+* Fix regression introduced in 1.1.5: In ``BootstrapButtonPlugin``, Strides did not work anymore.
+* Fallback to empty form, if a Cascade plugin had not a form enheriting from ``EntangledModelFormMixin``.
+
 1.1.5
 =====
 * Fix regression introduced in 1.1.4: In ``LinkSearchField`` reduce the initial number of choices for

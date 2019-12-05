@@ -19,6 +19,6 @@ Release logic:
 15. git commit -m 'Start with <version>'
 16. git push
 """
-__version__ = "1.1.5"
+__version__ = "1.1.6"
 
 default_app_config = 'cmsplugin_cascade.apps.CascadeConfig'
