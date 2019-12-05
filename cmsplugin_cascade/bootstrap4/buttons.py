@@ -123,7 +123,7 @@ class BootstrapButtonMixin(IconPluginMixin):
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonmixin.js']
 
     def render(self, context, instance, placeholder):
-        self.super(BootstrapButtonMixin, self).render(context, instance, placeholder)
+        context = super().render(context, instance, placeholder)
         if 'icon_font_class' in context:
             mini_template = '{0}<i class="{1} {2}" aria-hidden="true"></i>{3}'
             icon_align = instance.glossary.get('icon_align')
@@ -175,5 +175,9 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         attributes = cls.super(BootstrapButtonPlugin, cls).get_html_tag_attributes(obj)
         attributes.update(cls.DEFAULT_BUTTON_ATTRIBUTES)
         return attributes
+
+    def render(self, context, instance, placeholder):
+        context = self.super(BootstrapButtonPlugin, self).render(context, instance, placeholder)
+        return context
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)
