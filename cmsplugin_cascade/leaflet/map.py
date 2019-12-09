@@ -1,4 +1,5 @@
 import json
+
 from django.forms.fields import CharField, BooleanField
 from django.forms import widgets
 from django.db.models.fields.related import ManyToOneRel
@@ -9,15 +10,19 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin, EntangledModelForm
 from filer.fields.image import FilerImageField, AdminImageFormField
-from filer.models.imagemodels import Image
+from filer.settings import settings as filer_settings
+from filer.utils.loader import load_model
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.fields import HTMLFormField
+
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import HiddenDictField, SizeField, MultiSizeField
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
 from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
+
+Image = load_model(filer_settings.FILER_IMAGE_MODEL)
 
 
 class MarkerModelMixin(object):
