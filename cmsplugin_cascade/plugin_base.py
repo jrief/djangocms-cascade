@@ -319,7 +319,9 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', self.form)
         assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
-        bases = (CascadeFormMixin, form)
+        bases = (form,)
+        if not issubclass(form, CascadeFormMixin):
+            bases = (CascadeFormMixin,) + bases
         if not issubclass(form, ModelForm):
             bases += (ModelForm,)
         kwargs['form'] = type(form.__name__, bases, {})
@@ -391,7 +393,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             context.update(
                 ring_plugin=self.ring_plugin,
             )
-        context['empty_form'] = not context['adminform'].form._meta.entangled_fields
+        context['empty_form'] = not context['adminform'].form._meta.entangled_fields.get('glossary')
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def in_edit_mode(self, request, placeholder):
