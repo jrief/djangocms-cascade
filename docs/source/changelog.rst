@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.1.7
+=====
+* Support to use use a swappable Image model in django-filer.
+
+
 1.1.6
 =====
 * Fix regression introduced in 1.1.5: In ``BootstrapButtonPlugin``, Strides did not work anymore.
