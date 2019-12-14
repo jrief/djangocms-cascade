@@ -191,12 +191,17 @@ class TransparentContainer(TransparentWrapper):
             return _leaf_transparent_plugins
 
 
+class CascadeFormMixin(EntangledModelFormMixin):
+    class Meta:
+        entangled_fields = {'glossary': []}
+
+
 class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     change_form_template = 'cascade/admin/change_form.html'
     model_mixins = ()  # model mixins added to the final Django model
     parent_classes = None
     alien_child_classes = False
-    form = EntangledModelFormMixin
+    form = CascadeFormMixin  # safety fallback for plugins without any form
 
     class Media:
         css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
@@ -314,10 +319,12 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', self.form)
         assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
-        if issubclass(form, ModelForm):
-            kwargs['form'] = form
-        else:
-            kwargs['form'] = type(form.__name__, (form, ModelForm), {})
+        bases = (form,)
+        if not issubclass(form, CascadeFormMixin):
+            bases = (CascadeFormMixin,) + bases
+        if not issubclass(form, ModelForm):
+            bases += (ModelForm,)
+        kwargs['form'] = type(form.__name__, bases, {})
         return super().get_form(request, obj, **kwargs)
 
     def get_parent_instance(self, request=None, obj=None):
@@ -386,7 +393,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             context.update(
                 ring_plugin=self.ring_plugin,
             )
-        context['empty_form'] = not context['adminform'].form._meta.entangled_fields
+        context['empty_form'] = not context['adminform'].form._meta.entangled_fields.get('glossary')
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def in_edit_mode(self, request, placeholder):

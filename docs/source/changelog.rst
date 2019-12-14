@@ -2,6 +2,19 @@
 Release History
 ===============
 
+1.1.8
+=====
+* Fix: Handle plugins with defined but empty forms.
+
+1.1.7
+=====
+* Support to use use a swappable Image model in django-filer.
+
+1.1.6
+=====
+* Fix regression introduced in 1.1.5: In ``BootstrapButtonPlugin``, Strides did not work anymore.
+* Fallback to empty form, if a Cascade plugin had not a form enheriting from ``EntangledModelFormMixin``.
+
 1.1.5
 =====
 * Fix regression introduced in 1.1.4: In ``LinkSearchField`` reduce the initial number of choices for
