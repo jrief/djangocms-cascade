@@ -2,6 +2,10 @@
 Release History
 ===============
 
+1.1.9
+=====
+* Fix: Handle float values in size fields expecting ``em``-s and ``rem``-s.
+
 1.1.8
 =====
 * Fix: Handle plugins with defined but empty forms.
