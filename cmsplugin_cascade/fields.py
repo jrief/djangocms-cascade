@@ -185,16 +185,18 @@ class SizeUnitValidator():
         else:
             self.allow_auto = False
         if allow_negative:
-            patterns = r'^-?(\d+)({})$'.format('|'.join(units_with_value))
+            patterns = r'^(-?\d+(\.\d+)?)({})$'.format('|'.join(units_with_value))
         else:
-            patterns = r'^(\d+)({})$'.format('|'.join(units_with_value))
+            patterns = r'^(\d+(\.\d+)?)({})$'.format('|'.join(units_with_value))
         self.validation_pattern = re.compile(patterns)
 
     def __call__(self, value):
         if self.allow_auto and value == 'auto':
             return
         match = self.validation_pattern.match(value)
-        if not (match and match.group(1).isdigit()):
+        try:
+            float(match.group(1))
+        except (AttributeError, ValueError):
             allowed_units = " {} ".format(ugettext("or")).join("'{}'".format(u) for u in self.allowed_units)
             params = {'value': value, 'allowed_units': allowed_units}
             raise ValidationError(self.message, code=self.code, params=params)
