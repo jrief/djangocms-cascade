@@ -98,8 +98,11 @@ class CascadeUtilitiesMixin(metaclass=MediaDefiningClass):
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', self.form)
         for anchors_field  in self.fields_with_choices_anchors:
-            currentpage_element_ids =  obj.page.cascadepage.glossary.get('element_ids', {})
-            self.utility_form_mixin.base_fields[anchors_field].choices=[[items,value] for items, value  in currentpage_element_ids.items()]
+            if hasattr(obj.page,'cascadepage'):
+                currentpage_element_ids =  obj.page.cascadepage.glossary.get('element_ids', {})
+                self.utility_form_mixin.base_fields[anchors_field].choices=[[items,value] for items, value  in currentpage_element_ids.items()]
+            else:
+                self.utility_form_mixin.base_fields[anchors_field].choices=[]
         assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
         kwargs['form'] = type(form.__name__, (self.utility_form_mixin, form), {})
         return super().get_form(request, obj, **kwargs)
