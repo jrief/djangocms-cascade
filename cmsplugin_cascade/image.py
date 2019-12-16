@@ -20,10 +20,10 @@ class ImageFormMixin(EntangledModelFormMixin):
         help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
     )
 
-    _image_properties = EntangledField()
+    image_properties = EntangledField()
 
     class Meta:
-        entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', '_image_properties']}
+        entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', 'image_properties']}
 
     def clean(self):
         cleaned_data = super().clean()
@@ -31,7 +31,7 @@ class ImageFormMixin(EntangledModelFormMixin):
         if not image_file:
             raise ValidationError(_("No image has been selected."))
         # _image_properties are just a cached representation, maybe useless
-        cleaned_data['_image_properties'] = {
+        cleaned_data['image_properties'] = {
             'width': image_file._width,
             'height': image_file._height,
             'exif_orientation': image_file.exif.get('Orientation', 1),

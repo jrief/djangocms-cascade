@@ -148,7 +148,10 @@ def get_picture_elements(instance):
 
     if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
         aspect_ratio = compute_aspect_ratio(instance.image)
+    # fallback logic picture
     elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
+        aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
+    elif 'image_properties' in instance.glossary and 'width' in instance.glossary['image_properties']:
         aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
     else:
         # if accessing the image file fails or fake image fails, abort here

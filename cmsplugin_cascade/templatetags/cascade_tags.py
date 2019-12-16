@@ -1,11 +1,13 @@
 import io
 import json
 import os
+import random
 from cms.toolbar.utils import get_toolbar_from_request
 from django import template
 from django.conf import settings
 from django.core.cache import caches
 from django.template.exceptions import TemplateDoesNotExist
+from django.templatetags.static import static
 from django.contrib.staticfiles import finders
 from django.utils.safestring import mark_safe
 from classytags.arguments import Argument
@@ -102,6 +104,88 @@ def is_valid_image(image):
     except:
         return False
 
+
+class FallBack(Tag):
+    name = 'fallback'
+
+    options = Options(
+        Argument('plugin',required=False) 
+    )
+    
+    def render_tag(self, context, plugin):
+        for context_ in  context:
+           if 'instance'in context_ :
+               glossary = context_['instance'].glossary
+               instance = context_['instance']
+               fallback_plugin_type = plugin.plugin_class.__name__
+               css_classes = glossary.get('css_classes','')
+               width = 0; height = 0; exif_orientation = 0; x = 0; y = 0;
+               inline_styles = glossary.get('inline_styles','')
+               html_tag_attributes = glossary.get('html_tag_attributes','')
+
+               if 'image' in glossary:
+                   image_fallback='image'
+                   static_fallback_svg = static('cascade/fallback_light.svg')
+                   # color skybkue
+                   svg_color = 'hsl(196, 71%, 93%, 0.8)'
+                   
+               elif fallback_plugin_type == 'BootstrapJumbotronPlugin':
+                   image_fallback=None
+                   static_fallback_svg = static('cascade/fallback_light_jumbotron.svg')
+                   # color morning
+                   svg_color = 'hsl(62, 90%, 90%, 0.8)'            
+               elif '_image_properties' in  glossary:
+                   image_fallback='_image_properties'
+                   ramdom_svg_color = 'hsl(368, 80%,95%, 0.8)'
+                   static_fallback_svg = static('cascade/fallback_light_picture.svg')
+                   # color sunrise
+                   svg_color = 'hsl(368, 80%,95%, 0.8)'             
+               else:
+                   image_fallback=None
+                   static_fallback_svg = static('cascade/fallback_light_picture.svg')
+                   # color garden
+                   svg_color = 'hsl(150, 86%,94%, 0.8)'
+               if image_fallback :
+                   width = glossary[image_fallback].get('width',0)
+                   height = glossary[image_fallback].get('height',0)
+                   exif_orientation = glossary[image_fallback].get('exif_orientation',0) 
+               if width >= 1:
+                   x = random.randint(0,round(width/1.19))
+               if height >= 1:                  
+                   y = random.randint(0,round(height/1.19))
+ 
+               if fallback_plugin_type == 'BootstrapJumbotronPlugin':
+                   style='''
+                        background: url({static_fallback_svg});
+                        background-size: auto;
+                        background-position-y: 20%;
+                        background-size: 50%;
+                        background-repeat: no-repeat;
+                        background-position-x: 50%;
+                        background-attachment: fixed;
+                        background-color: {svg_color};
+                        border: white solid;
+                    '''.format( ramdom_svg_color=svg_color, static_fallback_svg=static_fallback_svg)
+                    
+                   return style
+               else:
+                   svg='<svg  ViewBox="0 0 {width} {height}" version="1.1" style="background-color:\
+                    {svg_color}; border: white solid;" {html_tag_attributes} class="{css_classes}"   style="{inline_styles}" \
+                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
+                    <image x="{x}"  y="{y}" width="10%" xlink:href="{static_fallback_svg}"> \
+                    </svg>'.format(
+                    width=width,
+                    height=height,
+                    svg_color=svg_color,
+                    css_classes=css_classes,
+                    inline_styles=inline_styles,
+                    html_tag_attributes=html_tag_attributes,
+                    static_fallback_svg=static_fallback_svg,
+                    x=x,
+                    y=y)
+                   return svg
+                
+register.tag('fallback', FallBack)
 
 @register.simple_tag
 def sphinx_docs_include(path):
