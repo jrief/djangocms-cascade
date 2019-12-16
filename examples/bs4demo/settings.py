@@ -7,6 +7,8 @@ import sys
 from django.urls import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade.bootstrap4.mixins import BootstrapUtilities
+from cmsplugin_cascade.generic.mixins_html_attrs import HtmlAttrsUtilities
 from django.utils.text import format_lazy
 
 DEBUG = True
@@ -223,6 +225,10 @@ CMSPLUGIN_CASCADE = {
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
+    'plugins_with_extra_mixins': {
+    'BootstrapColumnPlugin':BootstrapUtilities(BootstrapUtilities.background_and_color, BootstrapUtilities.floats, BootstrapUtilities.vertical_margins, BootstrapUtilities.paddings, BootstrapUtilities.margins,
+     HtmlAttrsUtilities.scroll_animate ),
+    },
 }
 
 CMS_PLACEHOLDER_CONF = {

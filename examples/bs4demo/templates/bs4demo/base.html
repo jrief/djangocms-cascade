@@ -52,6 +52,14 @@
 	<script src="{% static 'node_modules/popper.js/dist/umd/popper.js' %}" type="text/javascript"></script>
 	<script src="{% static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}" type="text/javascript"></script>
 	{% endif %}
+	<script src="{% static 'node_modules/intersection-observer/intersection-observer.js' %}" type="text/javascript"></script>
+	<script src="{% static 'node_modules/sal.js/dist/sal.js' %}" type="text/javascript"></script>
+	<script  type="text/javascript">
+		sal({
+			threshold: 1,
+			once: false,
+		});
+	</script>
 	{% render_block "js" %}
 </body>
 
