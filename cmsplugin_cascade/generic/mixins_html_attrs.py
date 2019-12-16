@@ -7,23 +7,23 @@ from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from django.contrib.admin.utils import flatten
 from cmsplugin_cascade import app_settings
 
-class HtmlAttrsUtilities(type):
+class GenericUtilities(type):
     """
-    Factory for building a class ``HtmlAttrsUtilitiesMixin``. This class then is used as a mixin to
+    Factory for building a class ``GenericUtilitiesMixin``. This class then is used as a mixin to
     all sorts of generic plugins. Various plugins are shipped using this mixin class
     in different configurations. These configurations can be overridden through the project's
     settings using:
     ```
     CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {
-        'Bootstrap<ANY>Plugin': HtmlAttrsUtilities(
-            HtmlAttrsUtilities.scroll_animate,
+        'Bootstrap<ANY>Plugin': GenericUtilities(
+            GenericUtilities.scroll_animate,
             …
         ),
         …
     }
     ```
 
-    The class ``HtmlAttrsUtilities`` offers a bunch of property methods which return a list of
+    The class ``GenericUtilities`` offers a bunch of property methods which return a list of
     input fields and/or select boxes. They then can be added to the plugin's editor. 
     Specficed with attritbute in property methods 'attrs_type' with two possible values 'css_classes' or 'html_data_attrs'
     Html data attribute need some time anchors of current page.
@@ -54,7 +54,7 @@ class HtmlAttrsUtilities(type):
             entangled_fields = {'glossary': list(form_fields) }
 
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta) )
-        return type('HtmlAttrsUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin,
+        return type('GenericUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin,
                      'attr_type': form_fields_by_attr_type , 'fields_with_choices_anchors': fields_choices_anchors })
 
     @property

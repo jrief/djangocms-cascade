@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from cmsplugin_cascade.bootstrap4.mixins import BootstrapUtilities
-from cmsplugin_cascade.generic.mixins_html_attrs import HtmlAttrsUtilities
+from cmsplugin_cascade.generic.mixins_html_attrs import GenericUtilities
 from django.utils.text import format_lazy
 
 DEBUG = True
@@ -227,7 +227,7 @@ CMSPLUGIN_CASCADE = {
     'cache_strides': True,
     'plugins_with_extra_mixins': {
     'BootstrapColumnPlugin':BootstrapUtilities(BootstrapUtilities.background_and_color, BootstrapUtilities.floats, BootstrapUtilities.vertical_margins, BootstrapUtilities.paddings, BootstrapUtilities.margins,
-     HtmlAttrsUtilities.scroll_animate ),
+     GenericUtilities.scroll_animate ),
     },
 }
 
