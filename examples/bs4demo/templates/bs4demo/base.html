@@ -60,6 +60,18 @@
 			once: false,
 		});
 	</script>
+	{% if request.toolbar and request.toolbar.edit_mode_active %}
+		<script>
+		$(function() {
+			CMS.$(window).on('cms-content-refresh', function () {
+				sal({
+					threshold: 1,
+					once: false,
+				});
+			});
+		});
+		</script>
+	{% endif %}
 	{% render_block "js" %}
 </body>
 
