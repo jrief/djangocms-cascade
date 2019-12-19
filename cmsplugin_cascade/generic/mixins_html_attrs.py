@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
+from cmsplugin_cascade.widget import SelectIconWidget
 from django.contrib.admin.utils import flatten
 from cmsplugin_cascade import app_settings
 
@@ -51,7 +52,7 @@ class GenericUtilities(type):
                     fields_choices_anchors.extend(property_fields['anchors_fields'])
 
         class Meta:
-            entangled_fields = {'glossary': list(form_fields) }
+            entangled_fields = {'glossary': list(form_fields.keys())}
 
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta) )
         return type('GenericUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin,
@@ -79,7 +80,7 @@ class GenericUtilities(type):
             ('flip-right', _("flip-right")),
         ]
 
-        choices_data_sal_delay= [(c, c) for c in ["inherit"] + [i for i in range(0, 2100, 100)]]
+        choices_data_sal_delay= list((c, c) for c in ["inherit"] + [ i for i in range(0, 2100, 100)])
         choices_data_sal_easing= [
             ('ease', _("ease")),
             ('ease-in-out-back', _("ease-in-out-back")),
@@ -91,6 +92,7 @@ class GenericUtilities(type):
                         label=_("Scroll effects"),
                         choices=choices_data_sal,
                         required=False,
+                        widget=SelectIconWidget(choices=get_widget_choices(choices_data_sal), attrs={'data_entangled':'Scroll_animate'}), 
                         initial='',
                     )
         form_fields['data-sal-delay'] = ChoiceField(
@@ -100,9 +102,12 @@ class GenericUtilities(type):
                         initial='',
                         help_text='Delay in milliseconde',
                     )
+        attrs={'data_entangled':'Scroll_animate'}
+        form_fields['data-sal-delay'].widget.attrs = {**attrs }
         form_fields['data-sal-easing'] = ChoiceField(
                         label=_("Animation type"),
                         choices=choices_data_sal_easing,
+                        widget=SelectIconWidget(choices=get_widget_choices(choices_data_sal_easing), attrs={'data_entangled':'Scroll_animate'}), 
                         required=False,
                         initial='',
                     )

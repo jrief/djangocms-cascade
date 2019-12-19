@@ -11,6 +11,7 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.widget import SelectIconWidget
 from .plugin_base import BootstrapPluginBase
 from . import grid
 
@@ -234,6 +235,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     choices=choices,
                     label=_("Column width for {}").format(devices),
                     initial='col-{}-12'.format(bp),
+                    widget=SelectIconWidget(choices=get_widget_choices(), attrs={'data_entangled':'width'}),
                     help_text=choose_help_text(
                         _("Column width for devices narrower than {:.1f} pixels."),
                         _("Column width for devices wider than {:.1f} pixels."),
@@ -249,6 +251,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     label=_("Column width for {}").format(devices),
                     initial='',
                     required=False,
+                    widget=SelectIconWidget(choices=get_widget_choices(), attrs={'data_entangled':'width'}),
                     help_text=choose_help_text(
                         _("Override column width for devices narrower than {:.1f} pixels."),
                         _("Override column width for devices wider than {:.1f} pixels."),
@@ -277,6 +280,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             )
             field_name = '{}-column-offset'.format(bp)
             offset_fields[field_name] = ChoiceField(
+                widget=SelectIconWidget(choices=get_widget_choices(), attrs={'data_entangled':'offset'}),
                 choices=choices,
                 label=label,
                 required=False,
@@ -297,6 +301,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             )
             field_name = '{}-column-ordering'.format(bp)
             reorder_fields[field_name] = ChoiceField(
+                widget=SelectIconWidget(choices=get_widget_choices(), attrs={'data_entangled':'reorder'}),
                 choices=choices,
                 label=label,
                 required=False,
@@ -316,7 +321,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 choices=choices,
                 label=label,
                 initial='',
-                widget=widgets.RadioSelect,
+                widget=SelectIconWidget(choices=get_widget_choices(), attrs={'data_entangled':'Responsive'}),
                 required=False,
                 help_text=help_text,
             )

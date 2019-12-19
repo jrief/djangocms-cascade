@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
-
+from cmsplugin_cascade.widget import SelectIconWidget
 
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     """
@@ -51,7 +51,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         label=_("Customized CSS Classes"),
                         choices=choices,
                         required=False,
-                        widget=widgets.CheckboxSelectMultiple,
+                        widget=widgets.CheckboxSelectMultiple( attrs={'data_entangled':'custom_css_classes',}),
                         help_text=_("Customized CSS classes to be added to this element."),
                     )
                 else:
@@ -60,6 +60,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         label=_("Customized CSS Class"),
                         choices=choices,
                         required=False,
+                        widget=SelectIconWidget(choices=choices, attrs={'data_entangled':'custom_css_classe',}),
                         help_text=_("Customized CSS class to be added to this element."),
                     )
 
@@ -77,7 +78,9 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                     }
                     if issubclass(Field, SizeField):
                         field_kwargs['allowed_units'] = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
-                    form_fields[key] = Field(**field_kwargs)
+                    field = Field(**field_kwargs)
+                    field.widget.attrs = {'data_entangled': style.split(':')[0]}
+                    form_fields[key] = field
 
             # extend the form with some extra fields
             base_form = kwargs.pop('form', self.form)
