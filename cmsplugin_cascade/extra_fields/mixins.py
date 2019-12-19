@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
-from cmsplugin_cascade.widget import SelectIconWidget
+from cmsplugin_cascade.widgets import SelectIconWidget
 
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     """
