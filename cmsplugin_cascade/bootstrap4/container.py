@@ -11,7 +11,7 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.widget import SelectIconWidget
+from cmsplugin_cascade.widgets import SelectIconWidget
 from .plugin_base import BootstrapPluginBase
 from . import grid
 
