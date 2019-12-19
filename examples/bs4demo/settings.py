@@ -225,6 +225,20 @@ CMSPLUGIN_CASCADE = {
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
+    'plugins_with_extra_fields': {
+    'BootstrapColumnPlugin': PluginExtraFieldsConfig(
+        css_classes={'multiple': True, 'class_names': 'custom-zoom-over, custom-zoom-over2'},
+        inline_styles={
+            'extra_fields:Border': ['border',],
+            'extra_fields:Border Radius': ['border-radius'],
+            'extra_units:Border Radius': 'px,rem',
+            'extra_fields:Colors': ['color', 'background-color'],
+            'extra_fields:Margins': ['margin-top', 'margin-right', 'margin-botton,', 'margin-left'],
+            'extra_units:Margins': 'px,em',
+            'extra_fields:Paddings': ['padding-top', 'padding-right', 'padding-botton,', 'padding-left'],
+            'extra_units:Paddings': 'px,em',
+        }),
+    },
     'plugins_with_extra_mixins': {
     'BootstrapColumnPlugin':BootstrapUtilities(BootstrapUtilities.background_and_color, BootstrapUtilities.floats, BootstrapUtilities.vertical_margins, BootstrapUtilities.paddings, BootstrapUtilities.margins,
      GenericUtilities.scroll_animate ),
