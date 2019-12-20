@@ -51,6 +51,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         label=_("Customized CSS Classes"),
                         choices=choices,
                         required=False,
+                        widget=widgets.CheckboxSelectMultiple,
                         help_text=_("Customized CSS classes to be added to this element."),
                     )
                 else:

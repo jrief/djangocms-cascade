@@ -102,4 +102,3 @@ class SectionMixin(object):
             cms_page.cascadepage.glossary.setdefault('element_ids', {})
             cms_page.cascadepage.glossary['element_ids'][str(obj.pk)] = element_id
             cms_page.cascadepage.save()
-
