@@ -1,12 +1,11 @@
+from os import environ
 from django.forms.fields import ChoiceField
 from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
-from cmsplugin_cascade.helpers import SelectIconWidget
 from cmsplugin_cascade.helpers import entangled_nested
-
 
 class BootstrapUtilities(type):
     """
@@ -52,10 +51,16 @@ class BootstrapUtilities(type):
 
                 form_fields.update(form_subfields)
                 form_fields_by_property_name[property_name]= property_fields['form_fields']
+
                 form_fields_by_attr_type.setdefault(attrs_type, [])
                 form_fields_by_attr_type[attrs_type ].extend(property_fields['form_fields'].keys())
+
                 if 'anchors_fields' in  property_fields:
                     fields_choices_anchors.extend(property_fields['anchors_fields'])
+
+        if environ.get('COMPACT_FORM', False):
+            for property_name , field in form_fields_by_property_name.items():
+                entangled_nested(field, data_nested=property_name)
 
         class Meta:
             entangled_fields = {'glossary': list(form_fields) }
@@ -86,7 +91,6 @@ class BootstrapUtilities(type):
             label=_("Background and color"),
             choices=choices,
             required=False,
-            widget=SelectIconWidget(choices=choices, attrs={'data_entangled':'background_and_color'}),
             initial='',
         )}
         property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
@@ -118,7 +122,6 @@ class BootstrapUtilities(type):
             form_fields['margins_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Margins for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,
-                widget=SelectIconWidget(choices=choices, attrs={'data_entangled':'Margins'}),
                 required=False,
                 initial='',
             )
@@ -147,7 +150,6 @@ class BootstrapUtilities(type):
             form_fields['margins_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Margins for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,
-                widget=SelectIconWidget(choices=choices, attrs={'data_entangled':'Marginsd'}),
                 required=False,
                 initial='',
             )
@@ -180,7 +182,6 @@ class BootstrapUtilities(type):
             form_fields['padding_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Padding for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,
-                widget=SelectIconWidget(choices=choices, attrs={'data_entangled':'Paddings'}),
                 required=False,
                 initial='',
             )
@@ -208,7 +209,6 @@ class BootstrapUtilities(type):
             form_fields['float_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Floats for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,
-                widget=SelectIconWidget(choices=choices, attrs={'data_entangled':'Floats'}),
                 required=False,
                 initial='',
             )

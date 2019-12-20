@@ -30,16 +30,17 @@ class SelectIconWidget(widgets.Select):
     pass
        # template_name = 'cascade/admin/widgets/selecticon.html'
 
-def entangled_nested(*fields, data_nested=None,):
+def entangled_nested(*fields, data_nested=None,template_key=None):
    """
    The Fields are classed by groups key with widget attribute 'data_nested' and set widget template name.
+   Used in Compact form mode.
    """
-    if app_settings.CMSPLUGIN_CASCADE['compact_form']:
-        for field in fields:
-            if isinstance(field, dict):
-                for field in field.values():
-                    field.widget.attrs['data_nested']=data_nested
-            else:
-                field.widget.attrs['data_nested']=data_nested
-                #field.widget.template_name = 'cascade/admin/widgets/selecticon.html'
+   for field in fields:
+       if isinstance(field, dict):
+           for field in field.values():
+               field.widget.attrs['data_nested']=data_nested
+       else:
+           field.widget.attrs['data_nested']=data_nested
+           if template_key == 'select_icon':
+              field.widget.template_name = 'cascade/admin/widgets/selecticon.html'
 

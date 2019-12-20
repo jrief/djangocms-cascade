@@ -1,3 +1,4 @@
+from os import environ
 from django.forms.fields import ChoiceField
 from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -49,16 +50,22 @@ class GenericUtilities(type):
 
                 form_fields.update(form_subfields)
                 form_fields_by_property_name[property_name]= property_fields['form_fields']
+
                 form_fields_by_attr_type.setdefault(attrs_type, [])
                 form_fields_by_attr_type[attrs_type ].extend(property_fields['form_fields'].keys())
+
                 if 'anchors_fields' in  property_fields:
                     fields_choices_anchors.extend(property_fields['anchors_fields'])
 
+        if environ.get('COMPACT_FORM', False):
+            for property_name , field in form_fields_by_property_name.items():
+                entangled_nested(field, data_nested=property_name)
+
         class Meta:
-            entangled_fields = {'glossary': list(form_fields.keys())}
+            entangled_fields = {'glossary': list(form_fields) }
 
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta) )
-        return type('GenericUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin,
+        return type('HtmlAttrsUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin,
                      'attr_type': form_fields_by_attr_type , 'fields_with_choices_anchors': fields_choices_anchors })
 
     @property
@@ -95,7 +102,6 @@ class GenericUtilities(type):
                         label=_("Scroll effects"),
                         choices=choices_data_sal,
                         required=False,
-                        widget=SelectIconWidget(choices=get_widget_choices(choices_data_sal), attrs={'data_entangled':'Scroll_animate'}), 
                         initial='',
                     )
         form_fields['data-sal-delay'] = ChoiceField(
@@ -110,7 +116,6 @@ class GenericUtilities(type):
         form_fields['data-sal-easing'] = ChoiceField(
                         label=_("Animation type"),
                         choices=choices_data_sal_easing,
-                        widget=SelectIconWidget(choices=get_widget_choices(choices_data_sal_easing), attrs={'data_entangled':'Scroll_animate'}), 
                         required=False,
                         initial='',
                     )

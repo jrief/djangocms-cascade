@@ -1,3 +1,4 @@
+from os import environ
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import MediaDefiningClass, widgets
@@ -7,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
-from cmsplugin_cascade.helpers import SelectIconWidget
 from cmsplugin_cascade.helpers import entangled_nested
 
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
@@ -52,7 +52,6 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         label=_("Customized CSS Classes"),
                         choices=choices,
                         required=False,
-                        widget=widgets.CheckboxSelectMultiple( attrs={'data_entangled':'custom_css_classes',}),
                         help_text=_("Customized CSS classes to be added to this element."),
                     )
                 else:
@@ -61,11 +60,10 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         label=_("Customized CSS Class"),
                         choices=choices,
                         required=False,
-                        widget=SelectIconWidget(choices=choices, attrs={'data_entangled':'custom_css_classe',}),
                         help_text=_("Customized CSS class to be added to this element."),
                     )
-                if app_settings.CMSPLUGIN_CASCADE['compact_form']:
-                    entangled_nested( form_fields['extra_css_classes'], data_nested="custom_css_classes")
+            if environ.get('COMPACT_FORM', False):
+                entangled_nested( form_fields['extra_css_classes'], data_nested="custom_css_classes")
             # add input fields to let the user enter styling information
             for style, choices_list in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
@@ -81,9 +79,8 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                     if issubclass(Field, SizeField):
                         field_kwargs['allowed_units'] = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
                     field = Field(**field_kwargs)
-                    if app_settings.CMSPLUGIN_CASCADE['compact_form']:
+                    if environ.get('COMPACT_FORM', False):
                         entangled_nested(field, data_nested=style.split(':')[0])
-                 #   field.widget.attrs = {'data_entangled': style.split(':')[0]}
                     form_fields[key] = field
 
             # extend the form with some extra fields
