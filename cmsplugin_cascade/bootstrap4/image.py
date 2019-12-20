@@ -82,6 +82,13 @@ class BootstrapImageFormMixin(ImageFormMixin):
         help_text=_("How to align a non-responsive image."),
     )
 
+    image_shapes.widget.attrs={ 'data_entangled':'image_setting'}
+    image_width_responsive.widget.attrs={ 'data_entangled':'image_setting'}
+    image_width_fixed.widget.attrs={ 'data_entangled':'image_setting'}
+    image_height.widget.attrs={ 'data_entangled':'image_setting'}
+    resize_options.widget.attrs={ 'data_entangled':'image_setting'}
+    image_alignment.widget.attrs={ 'data_entangled':'image_setting'}
+    
     class Meta:
         entangled_fields = {'glossary': ['image_shapes', 'image_width_responsive', 'image_width_fixed',
                                          'image_height', 'resize_options', 'image_alignment']}

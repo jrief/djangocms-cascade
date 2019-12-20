@@ -326,7 +326,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             bases += (ModelForm,)
         form=type(form.__name__, bases, {})
         from cmsplugin_cascade.helpers import fieldset_by_widget_attr
-        self.fieldsets = fieldset_by_widget_attr( form ,'data_entangled')
+        self.fieldsets = fieldset_by_widget_attr( form ,'data_nested')
         kwargs['form'] =form
         return super().get_form(request, obj, **kwargs)
 

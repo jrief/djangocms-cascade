@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.forms import MediaDefiningClass
 from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
-
+from cmsplugin_cascade import app_settings
 
 def remove_duplicates(lst):
     """

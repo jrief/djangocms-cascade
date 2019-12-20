@@ -7,7 +7,7 @@ from django.forms import Media, widgets
 from django.utils.html import escape, format_html, format_html_join
 from six.moves.html_parser import HTMLParser
 from django.utils.translation import ugettext_lazy as _
-
+from cmsplugin_cascade import app_settings
 
 class JSONMultiWidget(widgets.MultiWidget):
     """

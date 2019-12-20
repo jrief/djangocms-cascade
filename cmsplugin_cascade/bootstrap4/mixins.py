@@ -4,7 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
-from cmsplugin_cascade.widgets import SelectIconWidget
+from cmsplugin_cascade.helpers import SelectIconWidget
+from cmsplugin_cascade.helpers import entangled_nested
 
 
 class BootstrapUtilities(type):

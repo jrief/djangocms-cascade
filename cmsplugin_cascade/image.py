@@ -21,6 +21,9 @@ class ImageFormMixin(EntangledModelFormMixin):
     )
 
     _image_properties = EntangledField()
+    image_file.widget.attrs={ 'data_entangled':'image_file'}
+    image_title.widget.attrs={ 'data_entangled':'image_file'}
+    alt_tag.widget.attrs={ 'data_entangled':'image_file'}
 
     class Meta:
         entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', '_image_properties']}
