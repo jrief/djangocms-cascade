@@ -1,4 +1,3 @@
-from os import environ
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import MediaDefiningClass, widgets
@@ -8,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
-from cmsplugin_cascade.helpers import entangled_nested
+from cmsplugin_cascade.helpers import entangled_nested, used_compact_form
 
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     """
@@ -62,7 +61,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         required=False,
                         help_text=_("Customized CSS class to be added to this element."),
                     )
-            if environ.get('COMPACT_FORM', False):
+            if used_compact_form:
                 entangled_nested( form_fields['extra_css_classes'], data_nested="custom_css_classes")
             # add input fields to let the user enter styling information
             for style, choices_list in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
@@ -79,7 +78,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                     if issubclass(Field, SizeField):
                         field_kwargs['allowed_units'] = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
                     field = Field(**field_kwargs)
-                    if environ.get('COMPACT_FORM', False):
+                    if used_compact_form:
                         entangled_nested(field, data_nested=style.split(':')[0])
                     form_fields[key] = field
 

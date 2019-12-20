@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
-from cmsplugin_cascade.helpers import entangled_nested
+from cmsplugin_cascade.helpers import entangled_nested, used_compact_form
 
 class BootstrapUtilities(type):
     """
@@ -58,7 +58,7 @@ class BootstrapUtilities(type):
                 if 'anchors_fields' in  property_fields:
                     fields_choices_anchors.extend(property_fields['anchors_fields'])
 
-        if environ.get('COMPACT_FORM', False):
+        if used_compact_form:
             for property_name , field in form_fields_by_property_name.items():
                 entangled_nested(field, data_nested=property_name)
 

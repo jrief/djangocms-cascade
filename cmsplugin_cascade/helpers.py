@@ -1,7 +1,10 @@
+from os import environ
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.utils import flatten_fieldsets
 from django.forms import widgets
 from cmsplugin_cascade import app_settings
+
+used_compact_form = environ.get('COMPACT_FORM', False)
 
 traductions_keys_to_title = { 
        'background_and_color': _( "Background and color" ),
@@ -26,10 +29,6 @@ def fieldset_by_widget_attr( form, attr_data_name, traductions=traductions_keys_
     return fieldsets
 
 
-class SelectIconWidget(widgets.Select):
-    pass
-       # template_name = 'cascade/admin/widgets/selecticon.html'
-
 def entangled_nested(*fields, data_nested=None,template_key=None):
    """
    The Fields are classed by groups key with widget attribute 'data_nested' and set widget template name.
@@ -43,4 +42,3 @@ def entangled_nested(*fields, data_nested=None,template_key=None):
            field.widget.attrs['data_nested']=data_nested
            if template_key == 'select_icon':
               field.widget.template_name = 'cascade/admin/widgets/selecticon.html'
-

@@ -11,7 +11,7 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.helpers import SelectIconWidget, entangled_nested
+from cmsplugin_cascade.helpers import entangled_nested, used_compact_form
 from .plugin_base import BootstrapPluginBase
 from . import grid
 
@@ -49,7 +49,7 @@ class ContainerFormMixin(EntangledModelFormMixin):
         help_text=_("Changing your outermost '.container' to '.container-fluid'.")
     )
 
-    if app_settings.CMSPLUGIN_CASCADE['compact_form']:
+    if used_compact_form:
         entangled_nested( breakpoints, fluid, data_nested="container")
 
     class Meta:
@@ -125,7 +125,7 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         help_text=_('Number of columns to be created with this row.'),
     )
 
-    if app_settings.CMSPLUGIN_CASCADE['compact_form']:
+    if used_compact_form:
         entangled_nested( num_children, data_nested="row")
 
     class Meta:
@@ -337,7 +337,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         glossary_fields.extend(responsive_fields.keys())
 
 
-        if app_settings.CMSPLUGIN_CASCADE['compact_form']:
+        if used_compact_form:
             entangled_nested(width_fields, data_nested="column")
             entangled_nested(offset_fields, data_nested="offset")
             entangled_nested(reorder_fields, data_nested="reorder")
