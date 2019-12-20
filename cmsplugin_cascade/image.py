@@ -3,7 +3,7 @@ from django.forms.fields import CharField
 from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin, EntangledField, get_related_object
 from cmsplugin_cascade.fields import CascadeImageField
-
+from cmsplugin_cascade.helpers import used_compact_form
 
 class ImageFormMixin(EntangledModelFormMixin):
     image_file = CascadeImageField()
@@ -21,9 +21,11 @@ class ImageFormMixin(EntangledModelFormMixin):
     )
 
     _image_properties = EntangledField()
-    image_file.widget.attrs={ 'data_entangled':'image_file'}
-    image_title.widget.attrs={ 'data_entangled':'image_file'}
-    alt_tag.widget.attrs={ 'data_entangled':'image_file'}
+
+    if used_compact_form:
+        image_file.widget.attrs={ 'data_entangled':'image_file'}
+        image_title.widget.attrs={ 'data_entangled':'image_file'}
+        alt_tag.widget.attrs={ 'data_entangled':'image_file'}
 
     class Meta:
         entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', '_image_properties']}

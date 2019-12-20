@@ -225,7 +225,6 @@ CMSPLUGIN_CASCADE = {
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
-    'compact_form': True,
     'plugins_with_extra_fields': {
     'BootstrapColumnPlugin': PluginExtraFieldsConfig(
         css_classes={'multiple': True, 'class_names': 'custom-zoom-over, custom-zoom-over2'},
