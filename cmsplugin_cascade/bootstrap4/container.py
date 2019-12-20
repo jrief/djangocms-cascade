@@ -323,6 +323,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 choices=choices,
                 label=label,
                 initial='',
+                widget=widgets.RadioSelect,
                 required=False,
                 help_text=help_text,
             )

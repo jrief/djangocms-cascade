@@ -1,4 +1,3 @@
-from os import environ
 from django.forms.fields import ChoiceField
 from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -24,6 +23,7 @@ class BootstrapUtilities(type):
         …
     }
     ```
+
     The class ``BootstrapUtilities`` offers a bunch of property methods which return a list of
     input fields and/or select boxes. They then can be added to the plugin's editor. This is
     specially useful to add CSS classes or HTML data attributes from the utilities section of Bootstrap-4, such as
