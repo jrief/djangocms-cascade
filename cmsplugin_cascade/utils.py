@@ -110,6 +110,7 @@ class CascadeUtilitiesMixin(metaclass=MediaDefiningClass):
 
     @classmethod
     def get_css_classes(cls, obj):
+        """Enrich list of CSS classes with customized ones"""
         css_classes = super().get_css_classes(obj)
         if 'css_classes' in  cls.attr_type:
             for utility_field_name in cls.attr_type['css_classes']:
@@ -120,6 +121,7 @@ class CascadeUtilitiesMixin(metaclass=MediaDefiningClass):
 
     @classmethod
     def get_html_tag_attributes(cls, obj):
+        """Enrich list of HTML attribute data with customized ones"""
         attributes = super().get_html_tag_attributes(obj)
         if 'html_data_attrs' in  cls.attr_type:
             for utility_field_name in cls.attr_type['html_data_attrs']:

@@ -8,6 +8,7 @@ from django.utils.html import escape, format_html, format_html_join
 from six.moves.html_parser import HTMLParser
 from django.utils.translation import ugettext_lazy as _
 
+
 class JSONMultiWidget(widgets.MultiWidget):
     """
     Deprecated.
