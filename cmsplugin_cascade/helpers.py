@@ -17,6 +17,10 @@ def fieldset_by_widget_attr( form, attr_data_name, traductions=traductions_keys_
             data_entangled_value = field.widget.attrs[attr_data_name]
             if data_entangled_value == 'Colors':
                data_entangled_value = "background_and_color"
+            if data_entangled_value == 'Margins':
+               data_entangled_value = "margins"
+            if data_entangled_value == 'Paddings':
+               data_entangled_value = "paddings"
             nested.setdefault(data_entangled_value,[])
             nested[data_entangled_value].append(key)
     fieldsets=()

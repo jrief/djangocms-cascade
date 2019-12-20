@@ -18,6 +18,7 @@ from .extra_fields.mixins import ExtraFieldsMixin
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
+from .helpers import fieldset_by_widget_attr
 
 mark_safe_lazy = lazy(mark_safe, str)
 
@@ -325,8 +326,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         if not issubclass(form, ModelForm):
             bases += (ModelForm,)
         form=type(form.__name__, bases, {})
-        from cmsplugin_cascade.helpers import fieldset_by_widget_attr
-        self.fieldsets = fieldset_by_widget_attr( form ,'data_nested')
+        self.fieldsets = fieldset_by_widget_attr(form ,'data_nested')
         kwargs['form'] =form
         return super().get_form(request, obj, **kwargs)
 

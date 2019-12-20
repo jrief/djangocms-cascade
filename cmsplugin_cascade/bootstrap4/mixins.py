@@ -63,7 +63,7 @@ class BootstrapUtilities(type):
                 entangled_nested(field, data_nested=property_name)
 
         class Meta:
-            entangled_fields = {'glossary': list(form_fields.keys()) }
+            entangled_fields = {'glossary': list(form_fields.keys())}
 
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta) )
         return type('HtmlAttrsUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin,
