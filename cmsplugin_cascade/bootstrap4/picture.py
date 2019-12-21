@@ -50,7 +50,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
     )
 
     if used_compact_form:
-        entangled_nested(responsive_heights, responsive_zoom, options, resize_options, image_shapes, data_nested='picture')
+        entangled_nested(responsive_heights, responsive_zoom, resize_options, image_shapes, data_nested='picture')
 
     class Meta:
         entangled_fields = {'glossary': ['responsive_heights', 'responsive_zoom', 'resize_options', 'image_shapes']}
