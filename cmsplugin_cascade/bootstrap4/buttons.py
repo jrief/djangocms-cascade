@@ -9,7 +9,7 @@ from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
 from cmsplugin_cascade.icon.forms import IconFormMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
-
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 class ButtonTypeWidget(widgets.RadioSelect):
     """
@@ -103,6 +103,11 @@ class ButtonFormMixin(EntangledModelFormMixin):
         initial='icon-right',
         help_text=_("Add an Icon before or after the button content."),
     )
+
+    if used_compact_form:
+        entangled_nested(link_content,button_type,button_size,button_options,\
+           stretched_link, data_nested='button')
+        entangled_nested(icon_align, data_nested='icon')
 
     class Meta:
         entangled_fields = {'glossary': ['link_content', 'button_type', 'button_size', 'button_options', 'icon_align',

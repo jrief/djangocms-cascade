@@ -14,7 +14,7 @@ from cms.models import Page
 from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
-
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 def format_page_link(title, path):
     html = format_html("{} ({})", mark_safe(title), path)
@@ -137,6 +137,10 @@ class LinkForm(EntangledModelFormMixin):
         required=False,
         help_text=_("Link's Title"),
     )
+
+    if used_compact_form:
+        entangled_nested(link_type, cms_page, section, download_file, ext_url, mail_to,
+                                         link_target, link_title, data_nested='link')
 
     class Meta:
         entangled_fields = {'glossary': ['link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',

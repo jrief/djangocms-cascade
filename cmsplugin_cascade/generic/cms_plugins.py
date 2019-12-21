@@ -11,7 +11,7 @@ from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.utils import compute_aspect_ratio
-
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 class SimpleWrapperFormMixin(EntangledModelFormMixin):
     TAG_CHOICES = [(cls, _("<{}> – Element").format(cls)) for cls in ['div', 'span', 'section', 'article']] + \
@@ -74,6 +74,9 @@ class HeadingFormMixin(EntangledModelFormMixin):
         label=_("Heading content"),
         widget=widgets.TextInput(attrs={'style': 'width: 100%; padding-right: 0; font-weight: bold; font-size: 125%;'}),
     )
+
+    if used_compact_form:
+        entangled_nested(tag_type, content, tag_type , data_nested='heading')
 
     class Meta:
         entangled_fields = {'glossary': ['tag_type', 'content']}
@@ -164,6 +167,9 @@ class TextImageFormMixin(ImageFormMixin):
         widget=widgets.RadioSelect,
         initial='',
     )
+
+    if used_compact_form:
+        entangled_nested(image_width, image_height, resize_options, alignement, data_nested='text_image')
 
     class Meta:
         entangled_fields = {'glossary': ['image_width', 'image_height', 'resize_options', 'alignement']}

@@ -62,8 +62,8 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         required=False,
                         help_text=_("Customized CSS class to be added to this element."),
                     )
-            if used_compact_form:
-                entangled_nested( form_fields['extra_css_classes'], data_nested="custom_css_classes")
+                if used_compact_form:
+                    entangled_nested( form_fields['extra_css_classes'], data_nested="custom_css_classes")
             # add input fields to let the user enter styling information
             for style, choices_list in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
