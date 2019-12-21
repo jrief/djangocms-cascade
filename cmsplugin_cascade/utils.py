@@ -89,7 +89,6 @@ class CascadeUtilitiesMixin(metaclass=MediaDefiningClass):
     enrich it with utility classes or html_attrs, such as :class:`cmsplugin_cascade.bootstrap4.mixins.BootstrapUtilities`.
     If anchor_fields is specified in the property_fields attributes, these attribute choices are set when the request 
     is available whit id elements of the current page.
-
     """
 
     def __str__(self):
