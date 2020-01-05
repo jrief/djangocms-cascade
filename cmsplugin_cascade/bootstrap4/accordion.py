@@ -36,7 +36,7 @@ class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
     )
 
     if used_compact_form:
-        entangled_nested(num_children,close_others,first_is_open,  data_nested='accordion')
+        entangled_nested(num_children, close_others,first_is_open, data_nested='accordion')
 
     class Meta:
         untangled_fields = ['num_children']

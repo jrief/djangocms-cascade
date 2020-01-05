@@ -60,7 +60,7 @@ class BootstrapUtilities(type):
 
         if used_compact_form:
             for property_name , field in form_fields_by_property_name.items():
-                entangled_nested(field, data_nested=property_name)
+                entangled_nested(field, data_nested=property_name , template_key=property_name)
 
         class Meta:
             entangled_fields = {'glossary': list(form_fields.keys())}

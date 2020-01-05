@@ -203,7 +203,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[1].format(bs4_breakpoints[first].min)
             else:
                 return phrases[2]
-            
+
         if 'parent' in self._cms_initial_attributes:
             container=self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').last().get_bound_plugin()
         else:
@@ -334,10 +334,10 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
 
         if used_compact_form:
-            entangled_nested(width_fields, data_nested="column")
-            entangled_nested(offset_fields, data_nested="offset")
-            entangled_nested(reorder_fields, data_nested="reorder")
-            entangled_nested(responsive_fields, data_nested="responsive")
+            entangled_nested(width_fields, data_nested="column", template_key="column", )
+            entangled_nested(offset_fields, data_nested="offset", template_key="column", )
+            entangled_nested(reorder_fields, data_nested="reorder", template_key="column",)
+            entangled_nested(responsive_fields, data_nested="responsive", template_key="column")
 
         class Meta:
             entangled_fields = {'glossary': glossary_fields}

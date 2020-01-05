@@ -58,7 +58,7 @@ class FramedIconFormMixin(IconFormMixin):
 
     if used_compact_form:
         entangled_nested(font_size, color, background_color, text_align, border,
-                                         border_radius , data_nested='icon')
+                                         border_radius, data_nested='icon')
 
     class Meta:
         entangled_fields = {'glossary': ['font_size', 'color', 'background_color', 'text_align', 'border',

@@ -1,0 +1,359 @@
+
+.form-row[class*="column-width"],
+.form-row[class*="offset"],
+.form-row[class*="column-ordering"],
+.form-row[class*="responsive"],
+.form-row[class*="float"]{
+  padding:0px;
+}
+
+.form-row[class*="column-width"] .help { 
+  display:none;
+}
+
+.form-row[class*="column-width"] .select__box .help {
+  display:none;
+}
+
+.fieldBox[class*="column-ordering"] div.help,
+.fieldBox[class*="responsive"] div.help,
+.fieldBox[class*="offset"] div.help  {
+  display:none;
+}
+
+.fieldBox[class*="column-width"]> label:first-child,
+.fieldBox[class*="margins"]> label:first-child,
+.fieldBox[class*="float"]> label:first-child,
+.fieldBox[class*="responsive"]> label:first-child,
+.fieldBox[class*="field-padding"]> label:first-child,
+.fieldBox[class*="column-ordering"]> label:first-child,
+.form-row[class*="background_and_color"] div> label:first-child,
+.fieldBox[class*="offset"]> label:first-child {
+  display:none;
+}
+
+
+
+.fieldBox[class*="data-sal"],
+.fieldBox[class*="inline_styles:margin"],
+.fieldBox[class*="inline_styles:padding"]{
+  display: inline-grid !important;
+}
+
+
+.input__container + label{
+width:100% ;
+}
+
+.form-row[class*="field-padding"] .fieldBox,
+.form-row[class*="margins"] .fieldBox,
+.form-row[class*="column-width"] .fieldBox ,
+.form-row[class*="offset"] .fieldBox ,
+.form-row[class*="column-ordering"] .fieldBox,
+.form-row[class*="responsive"] .fieldBox,
+.form-row[class*="float"] .fieldBox{
+margin-right:0px;
+ 
+}
+
+
+
+.form-row[class*="field-padding"] fieldset,
+.form-row[class*="margins"] fieldset,
+.form-row[class*="column-width"] fieldset,
+.form-row[class*="offset"] fieldset,
+.form-row[class*="column-ordering"] fieldset,
+.form-row[class*="responsive"] fieldset,
+.form-row[class*="float"] fieldset{
+ width: 512px;
+}
+
+#bootstrapcolumnpluginmodel_form  fieldset {
+display: flex;
+justify-content: center;
+margin-bottom: 0px;
+
+}
+
+
+fieldset .form-row { 
+ width: 567px;
+  }
+fieldset  h2{
+  width: 65px;
+border: 1px solid;
+}
+
+
+.form-row .field-background_and_color{
+width: 548px;
+}
+
+.input__container{
+opacity:0;
+position:absolute;
+}
+
+
+.select-box__option i[class*="icon-"]{
+font-size:60px;
+  //  pointer-events: none;
+    //background:white;
+
+}
+svg {
+z-index:42;
+
+}
+
+
+
+.select-box__option div[class*="icon-"]{
+font-size:60px;
+
+}
+
+.min_overlay{
+position:absolute;
+opacity:0 !important;
+display: inline-block;
+width: 60px;
+height: 60px;
+}
+
+.min_overlay + label{
+width:100%;
+}
+
+
+form .form-row.field-cms_page {
+    height: 100% !important;
+    float: left;
+}
+
+fieldset .fieldBox {
+    float: left;
+    margin-right: 20px;
+    display: inline-flex;
+}
+
+
+.select-box {
+  position: absolute;
+  display: contents;
+  font-family: "Open Sans", "Helvetica Neue", "Segoe UI", "Calibri", "Arial", sans-serif;
+  font-size: 18px;
+  color: #60666d;
+}
+
+.select-box help {
+  display: none;
+}
+
+
+.select-box__current {
+  position: relative;
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+  outline: none;
+  width: 90px
+}
+
+.select-box__current:focus > .select-box__icon  {
+  -webkit-transform: translateY(-50%) rotate(180deg);
+          transform: translateY(-50%) rotate(180deg);
+}
+
+.select-box__option:hover, .select-box__option:focus {
+  color: #546c84;
+  background-color: #fbfbfb;
+}
+ .select-box__input{
+  display: none;
+}
+
+.select-box__option a:active +  {
+  color: #546c84;
+  background-color: #fbfbfb;  pointer-events:none;
+}
+ 
+.select-box__input:checked + .select-box__input-text {
+  display: inline-grid !important;
+  
+}
+
+.select-box__option {
+  display: block;
+  background-color: #fff;
+}
+
+.select-box__input {
+  display: none;
+}
+
+.select-box__input-text {
+  display: none;
+  width: 100%;
+  cursor:pointer;
+}
+
+
+.select-box__input-text::after , {
+  display: block !important;
+  width: 100%;
+    background-color: red;
+}
+
+ 
+.toggle__input:not(checked) ~ .toggle__content {
+    display: none;
+}
+
+.toggle__input:checked ~ .toggle__content {
+    display: block;
+}    
+
+ label:focus {
+background:red;
+
+}
+
+.select-box__list li label  {
+padding: 0 !important;
+}
+
+.select-box__list{
+  overflow : hidden; 
+  position: absolute;
+  width: 96%;
+  padding:10px;
+ 
+  list-style: none;
+  display: inline-flex;
+  flex-wrap: wrap;
+  left:0px;
+  font-size:400;
+  justify-content: center;
+  margin-left: 0 !important;
+  padding-left: 0!important;
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+}
+
+
+.select-box__option{
+  padding: 15px;
+  background-color: #fff;
+}
+
+ 
+svg {
+  width: 2px;
+  height:1px;
+      position: absolute;
+    left: 0px;
+}
+
+.form-row.field-button_type {
+  max-width: none !important;
+}
+
+
+.form-row[class*="background_and_color"] svg foreignObject a {
+pointer-events:all;
+}
+
+.form-row[class*="background_and_color"] div labeel {
+opacity: 0;
+position: absolute;
+left: -1000px;
+}
+
+
+input[name="my-input"]:focus-within:checked + label .select-box svg foreignObject  {
+width:100%;
+height:100%;
+}
+
+input[name="my-input"]:focus-within:checked + label .select-box svg {
+width:100% ;
+height:100%;
+}
+
+
+
+input[name="my-input"]:focus-within:checked + label .select-box svg foreignObject div .select-box__list {
+clip-path : unset;
+background-color: white !important;
+pointer-events:visible;
+height: auto;
+opacity: 1;
+  -webkit-animation-name: none;
+animation-name: none;
+z-index:9900;
+left:0px;
+}
+
+
+.description {
+background:#79aec8;
+width:70px;
+color:white;
+}
+
+
+.icon_desc {
+font-size: xxx-large;
+
+}
+
+.select-box__icon {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  width: 20px;
+  opacity: 0.3;
+  transition: 0.2s ease;
+}
+
+
+.select-box__value {
+   
+  display: block;
+  text-align: center;
+  width:90px;
+}
+
+.buttons ul {
+background: white;
+}
+
+.buttons ul a {
+padding:10px !important;
+
+}
+
+.buttons ul label{
+padding:0,4rem;
+}
+
+.buttons ul div{
+
+}
+
+.form-row .fieldBox > label[for*=""]  {
+display: none;
+  font-family:'border box';
+ font-size: xx-large;
+}
+
+
+.field-button_type .select-box__input-text { 
+padding: 2px !important;
+ width: auto;
+background-color: none;
+}
+
+.select-box__list label {
+font-size: none !important;
+}
