@@ -27,7 +27,6 @@ class ButtonSizeWidget(widgets.RadioSelect):
     """
     template_name = 'cascade/admin/legacy_widgets/button_sizes.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/button_sizes.html'
 
- 
 class ButtonFormMixin(EntangledModelFormMixin):
     BUTTON_TYPES = [
         ('btn-primary', _("Primary")),
@@ -70,14 +69,6 @@ class ButtonFormMixin(EntangledModelFormMixin):
         help_text=_("Display Link using this Button Style")
     )
 
-    button_type2 = ChoiceField(
-        label=_("Button Type2"),
-        widget=ButtonTypeWidget(choices=BUTTON_TYPES),
-        choices=BUTTON_TYPES,
-        initial='btn-primary',
-        help_text=_("Display Link using this Button Style")
-    )
-    
     button_size = ChoiceField(
         label=_("Button Size"),
         widget=ButtonSizeWidget(choices=BUTTON_SIZES),
@@ -119,11 +110,10 @@ class ButtonFormMixin(EntangledModelFormMixin):
         entangled_nested(link_content,button_type,button_size,button_options,\
            stretched_link, data_nested='button')
         entangled_nested(button_type, data_nested='button', template_key='button_type')
-        entangled_nested(button_type2, data_nested='button', template_key='button_type')
         entangled_nested(icon_align, data_nested='icon')
 
     class Meta:
-        entangled_fields = {'glossary': ['link_content', 'button_type',  'button_type2', 'button_size', 'button_options', 'icon_align',
+        entangled_fields = {'glossary': ['link_content', 'button_type', 'button_size', 'button_options', 'icon_align',
                                          'stretched_link']}
 
 
@@ -166,7 +156,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     form = BootstrapButtonFormMixin
     ring_plugin = 'ButtonPlugin'
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
- 
+
     class Media:
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonplugin.js']
 

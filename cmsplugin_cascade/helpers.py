@@ -12,6 +12,8 @@ used_compact_form = True if environ.get('COMPACT_FORM', False) == 'True' else Fa
 
 traductions_keys_to_title = {
        'background_and_color': _( "Background and color" ),
+       'scroll_animate': _( "Scroll Animate" ),
+       'custom_css_classes':  _( "Custom css classes" ),
     }
 
 
@@ -41,9 +43,11 @@ def fieldset_by_widget_attr( form, attr_data_name, cls_media, traductions=traduc
                 nested[data_entangled_value].append(key)
             else:
                 nested[data_entangled_value].extend(key)
+                
 
     if hasattr(cls_media, 'css'):
-        cls_media.css['all'].extend(css_appended)
+        if not css_appended in cls_media.css['all']:
+            cls_media.css['all'].extend(css_appended)
     else:
         cls_media.css = {
         'all': css_appended
@@ -73,9 +77,12 @@ def fieldset_by_widget_attr( form, attr_data_name, cls_media, traductions=traduc
             key_title = traductions[key_title]
 
         if 'link_type' in  fields_lists_str or 'icon_font' in  fields_lists_str or 'button' in  fields_lists_str:
-            fieldsets +=( None, {'fields':(fields_lists_str,), 'description':  '<div ><b>{1}</b><br><i class="icon_desc icon-{0}"></i></div>'.format(icon , key_title )}),
+            fieldsets +=( None, {'classes': ('cascade_box',),'fields':(fields_lists_str,), 'description': 
+            '<div ><b>{1}</b><br><i class="icon_desc icon-{0}"></i>\
+            <br><label><input type="checkbox" id="help" name="help"> Help</label></div>'.format(icon , key_title )}),
         else:
-            fieldsets +=( None, {'fields':((fields_lists_str),), 'description': '<div ><b>{1}</b><br><i class="icon_desc icon-{0}"></i></div>'.format(icon, key_title )}),
+            fieldsets +=( None, { 'classes': ['cascade_box', 'nested'], 'fields':((fields_lists_str),), 'description': '<div ><b>{1}</b><br><i class="icon_desc icon-{0}"></i>\
+            <label><input type="checkbox" id="help" name="help" value="Help"> Help</label></div>'.format(icon, key_title )}),
     extra_fields = set(list(form.declared_fields.keys())) - set(flatten_fieldsets(fieldsets))
     if not nested:
         fieldsets +=(None, {'fields':list(extra_fields)}),
@@ -93,6 +100,7 @@ def apply_widgets_tpl( field,template_key):
           field.widget.template_name = 'cascade/admin/compact_forms/widgets/select_icon_button_types.html'
        if template_key == 'column' or template_key == 'paddings' or template_key == 'margins'   or template_key == 'floats' :
           field.widget.template_name = 'cascade/admin/compact_forms/widgets/select_icon_columns.html'
+        #  field.widget.attrs.update({'class''dede'})
        if template_key == 'background_and_color':
           field.widget.template_name = 'cascade/admin/compact_forms/widgets/select_icon_colors.html'
 

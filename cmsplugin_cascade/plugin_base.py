@@ -330,24 +330,6 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         form = type(form.__name__, bases, {})
         if used_compact_form:
             self.fieldsets, self.Media = fieldset_by_widget_attr(form ,'data_nested', self.Media)
-
-        #self.Media.css= 
-    #    media_css = self.Media.css if hasattr(self.Media , 'css' ) else {}
-        #if not media_css:
-        
-        
-        """
-        media_css = {
-            'all': ['cascade/css/admin/compact_forms.css']
-        }
-        if media_css:
-            self.Media.css = media_css
-        """
-       # print(self.Media.css)
-      #  print(self.Media.update('css', 'cascade/css/admin/compact_forms.css'))
- 
- 
-        #form.Media(css={'all': ['cascade/css/admin/compact_forms.css']})
         kwargs['form'] = form
         return super().get_form(request, obj, **kwargs)
 

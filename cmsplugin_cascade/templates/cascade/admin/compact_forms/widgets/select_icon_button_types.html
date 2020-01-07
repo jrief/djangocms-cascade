@@ -26,7 +26,7 @@
                          {% for option in options %}
                           <li>
                              <label for="{{ id }}_{{ index }}" aria-hidden="aria-hidden" class="select-box__option">
-                               <div class="{% if 'outline-light' in option.value or 'outline-warning' in option.value %} btn-dark {% endif %}" >
+                               <div {% if 'outline-light' in option.value or 'outline-warning' in option.value %} class=" btn-dark"{% endif %}>
                                      <a class="btn {{ option.value }}" role="button">{{ option.label }}</a>
                                </div>
                              </label>
