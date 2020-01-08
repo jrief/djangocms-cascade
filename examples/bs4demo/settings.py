@@ -240,7 +240,7 @@ CMSPLUGIN_CASCADE = {
         }),
     },
     'plugins_with_extra_mixins': {
-    'BootstrapColumnPlugin':BootstrapUtilities(BootstrapUtilities.background_and_color, BootstrapUtilities.floats, BootstrapUtilities.vertical_margins, BootstrapUtilities.paddings, BootstrapUtilities.margins,
+    'BootstrapColumnPlugin':BootstrapUtilities(BootstrapUtilities.background_and_color, BootstrapUtilities.vertical_margins, BootstrapUtilities.floats, BootstrapUtilities.paddings, BootstrapUtilities.margins,
      GenericUtilities.scroll_animate ),
     },
 }

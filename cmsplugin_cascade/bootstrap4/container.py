@@ -20,17 +20,27 @@ def get_widget_choices():
     breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
     widget_choices = []
     for index, (bp, bound) in enumerate(breakpoints.items()):
-        if index == 0:
-            widget_choices.append((bp.name, "{} (<{:.1f}px)".format(bp.label, bound.max)))
-        elif index == len(breakpoints) - 1:
-            widget_choices.append((bp.name, "{} (≥{:.1f}px)".format(bp.label, bound.min)))
+        if not used_compact_form:
+            if index == 0:
+                widget_choices.append((bp.name, "{} (<{:.1f}px)".format(bp.label, bound.max)))
+            elif index == len(breakpoints) - 1:
+                widget_choices.append((bp.name, "{} (≥{:.1f}px)".format(bp.label, bound.min)))
+            else:
+                widget_choices.append((bp.name, "{} (≥{:.1f}px and <{:.1f}px)".format(bp.label, bound.min, bound.max)))
         else:
-            widget_choices.append((bp.name, "{} (≥{:.1f}px and <{:.1f}px)".format(bp.label, bound.min, bound.max)))
+            print(bp._name_)
+            if index == 0:
+                 widget_choices.append((bp.name, "{} <{:.1f}px".format(bp._name_, bound.max)))
+            else:
+                 widget_choices.append((bp.name, "{} ≥{:.1f}px".format(bp._name_, bound.min)))
     return widget_choices
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
-    template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
+    if not used_compact_form:
+        template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
+    else:
+        template_name = 'cascade/admin/compact_forms/widgets/container_breakpoints.html'
 
 
 class ContainerFormMixin(EntangledModelFormMixin):
@@ -240,7 +250,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 width_fields[field_name] = ChoiceField(
                     choices=choices,
                     label=_("Column width for {}").format(devices),
-                    initial='col-{}-12'.format(bp),
+                    initial='col' if bp =='xs' else 'col-{}'.format(bp),
                     help_text=choose_help_text(
                         _("Column width for devices narrower than {:.1f} pixels."),
                         _("Column width for devices wider than {:.1f} pixels."),

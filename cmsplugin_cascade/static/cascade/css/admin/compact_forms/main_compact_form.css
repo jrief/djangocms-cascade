@@ -34,10 +34,30 @@ padding:0px;
 margin:0px;
 }
 
+
+.cascade_box .form-row .fieldBox .container-thumbnail{
+display:inline-grid;
+}
+
+.cascade_box .form-row .field-breakpoints{
+
+width: 100%;
+display: grid;
+}
+
+.cascade_box .form-row  .container-thumbnail label {
+ width: 82px !important;
+ text-align: center;
+}
+ 
+.fieldBox.field-fluid{
+padding: 2rem !important;
+display: inherit;
+}
+
 .cascade_box .form-row{ 
   width: 463px;
 }
-
 
 .nested .form-row{ 
  padding:0px;
