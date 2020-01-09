@@ -114,9 +114,9 @@ class AColorPickerMixin(object):
     @property
     def media(self):
         if self.with_acolorpicker:
-            js = [self.acolorpicker_js, 'cascade/js/admin/colorpicker.js']
+            js = [self.acolorpicker_js, 'admin/js/jquery.init.js', 'cascade/js/admin/colorpicker.js']
         else:
-            js = ['cascade/js/admin/colorpicker.js']
+            js = ['admin/js/jquery.init.js', 'cascade/js/admin/colorpicker.js']
         return Media(js=js)
 
     @classmethod

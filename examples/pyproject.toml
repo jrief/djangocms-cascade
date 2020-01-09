@@ -1,6 +1,7 @@
 [tool.poetry]
 name = "bs4demo"
-version = "1.1.1"
+
+version = "1.1.5"
 description = "djangocms-cascade demo"
 authors = ["Jacob Rief <jacob.rief@gmail.com>"]
 license = "MIT"
@@ -9,7 +10,7 @@ license = "MIT"
 python = "^3.6"
 
 [tool.poetry.dev-dependencies]
-django = "<2.2"
+django = "<2.3"
 djangocms-cascade =  "*"
 django-compressor = "*"
 django-filer =  "*"
@@ -18,6 +19,9 @@ django-select2 = "*"
 djangocms-bootstrap = "*"
 django-admin-sortable2 = "*"
 libsass = "*"
+djangocms-history = "*"
+djangocms-transfer = "*"
+django-dynamic-preferences = "*"
 
 [dev-packages]
 tox = "*"

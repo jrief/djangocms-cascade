@@ -321,8 +321,11 @@ class IconFont(models.Model):
         if isinstance(instance, cls):
             font_folder = os.path.join(app_settings.CMSPLUGIN_CASCADE['icon_font_root'], instance.font_folder)
             shutil.rmtree(font_folder, ignore_errors=True)
-            temp_folder = os.path.abspath(os.path.join(font_folder, os.path.pardir))
-            os.rmdir(temp_folder)
+            try:
+                temp_folder = os.path.abspath(os.path.join(font_folder, os.path.pardir))
+                os.rmdir(temp_folder)
+            except FileNotFoundError:
+                pass
 
 models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')
 
