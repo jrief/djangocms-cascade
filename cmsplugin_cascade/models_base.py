@@ -59,6 +59,15 @@ class CascadeModelBase(CMSPlugin):
                 return model.objects.get(id=self.parent_id)
             except model.DoesNotExist:
                 continue
+        # in case our plugin is the child of a TextPlugin, return its grandparent
+        parent = self.get_parent()
+        if parent and parent.plugin_type == 'TextPlugin':
+            grandparent_id = self.get_parent().parent_id
+            for model in CascadeModelBase._get_cascade_elements():
+                try:
+                    return model.objects.get(id=grandparent_id)
+                except model.DoesNotExist:
+                    continue
 
     def get_parent_glossary(self):
         """
