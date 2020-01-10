@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.2
+===
+* Refactor submodule ``generic`` into separate modules. This enables the client project
+  to use them individually.
+
 1.1.9
 =====
 * Fix: Handle float values in size fields expecting ``em``-s and ``rem``-s.
