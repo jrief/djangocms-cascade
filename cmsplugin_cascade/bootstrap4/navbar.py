@@ -76,7 +76,6 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
     default_css_class = 'navbar'
     default_css_attributes = ('options')
     require_parent = False
-    parent_classes = False
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar.html'
     ring_plugin = 'BootstrapNavbarPlugin'
