@@ -77,8 +77,6 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
     model_mixins = (ContainerGridMixin,)
     default_css_class = 'navbar'
     default_css_attributes = ('options')
-    #require_parent = False
-    #parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapNavbarPlugin']
     alien_child_classes = True
     render_template = 'cascade/bootstrap4/navbar.html'
     ring_plugin = 'BootstrapNavbarPlugin'
@@ -136,7 +134,6 @@ class BootstrapNavbarPlugin(BootstrapPluginBase):
 class BootstrapNavBrandPlugin(LinkPluginBase):
     name = _("Nav brand")
     parent_classes = ['BootstrapNavbarPlugin']
-  #  direct_child_classes = ('BootstrapTabPanePlugin', 'BootstrapListsPlugin', 'BootstrapButtonPlugin')
     render_template = 'cascade/bootstrap4/navbar_brand.html'
     raw_id_fields = LinkPluginBase.raw_id_fields + ['image_file']
     default_css_class = ''
@@ -238,7 +235,7 @@ class BootstrapNavCollapsePlugin(BootstrapPluginBase):
         identifier = super(BootstrapNavCollapsePlugin, cls).get_identifier(obj)
         css_classes_without_default = obj.css_classes.replace( cls.default_css_class,'',1)
         return format_html('<div style="font-size: smaller; white-space: pre-wrap;" >{0}{1}</div>',
-        identifier, 'css_classes_without_default')
+        identifier, css_classes_without_default)
 
     @classmethod
     def sanitize_model(cls, obj):
