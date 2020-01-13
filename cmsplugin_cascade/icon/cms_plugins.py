@@ -17,7 +17,7 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     ring_plugin = 'IconPlugin'
 
     class Media:
-        js = ['cascade/js/admin/iconplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/iconplugin.js']
 
 plugin_pool.register_plugin(SimpleIconPlugin)
 
@@ -37,7 +37,7 @@ class TextIconPlugin(IconPluginMixin, LinkPluginBase):
     require_parent = False
 
     class Media:
-        js = ['cascade/js/admin/iconplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/iconplugin.js']
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):

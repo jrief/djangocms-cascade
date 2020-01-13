@@ -13,6 +13,9 @@ class CascadeConfig(AppConfig):
     default_permissions = ('add', 'change', 'delete')
 
     def ready(self):
+        if 'django_select2' not in settings.INSTALLED_APPS:
+            raise ImproperlyConfigured('django_select2 not configured')
+
         stylesSet = str(settings.CKEDITOR_SETTINGS.get('stylesSet'))
         if stylesSet != 'default:{}'.format(reverse('admin:cascade_texteditor_config')):
             msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))`"

@@ -1,9 +1,11 @@
 import re
 import json
 import warnings
+
 from django import VERSION as DJANGO_VERSION
-from django.db.models.fields.related import ManyToOneRel
+from django.apps import apps
 from django.core.exceptions import ValidationError
+from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.forms.fields import Field, CharField, ChoiceField, BooleanField, MultiValueField
 from django.forms.utils import ErrorList
@@ -14,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.widgets import ColorPickerWidget, BorderChoiceWidget, MultipleTextInputWidget
 from filer.fields.image import FilerImageField, AdminImageFormField
-from filer.models.imagemodels import Image
+from filer.settings import settings as filer_settings
 
 
 class GlossaryField(object):
@@ -185,16 +187,18 @@ class SizeUnitValidator():
         else:
             self.allow_auto = False
         if allow_negative:
-            patterns = r'^-?(\d+)({})$'.format('|'.join(units_with_value))
+            patterns = r'^(-?\d+(\.\d+)?)({})$'.format('|'.join(units_with_value))
         else:
-            patterns = r'^(\d+)({})$'.format('|'.join(units_with_value))
+            patterns = r'^(\d+(\.\d+)?)({})$'.format('|'.join(units_with_value))
         self.validation_pattern = re.compile(patterns)
 
     def __call__(self, value):
         if self.allow_auto and value == 'auto':
             return
         match = self.validation_pattern.match(value)
-        if not (match and match.group(1).isdigit()):
+        try:
+            float(match.group(1))
+        except (AttributeError, ValueError):
             allowed_units = " {} ".format(ugettext("or")).join("'{}'".format(u) for u in self.allowed_units)
             params = {'value': value, 'allowed_units': allowed_units}
             raise ValidationError(self.message, code=self.code, params=params)
@@ -280,6 +284,8 @@ class HiddenDictField(Field):
 
 class CascadeImageField(AdminImageFormField):
     def __init__(self, *args, **kwargs):
+        model_name_tuple = filer_settings.FILER_IMAGE_MODEL.split('.')
+        Image = apps.get_model(*model_name_tuple, require_ready=False)
         kwargs.setdefault('label', _("Image"))
         super().__init__(
             ManyToOneRel(FilerImageField, Image, 'file_ptr'),

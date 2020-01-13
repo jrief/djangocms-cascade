@@ -2,26 +2,19 @@ import logging
 from django.forms import widgets, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
+from cmsplugin_cascade.bootstrap4.utils import get_picture_elements, IMAGE_RESIZE_OPTIONS, IMAGE_SHAPE_CHOICES
+from cmsplugin_cascade.bootstrap4.fields import BootstrapMultiSizeField
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
-from cmsplugin_cascade.utils import compute_aspect_ratio, parse_responsive_length, compute_aspect_ratio_with_glossary
-from .fields import BootstrapMultiSizeField
-from .image import BootstrapImageFormMixin
 
-logger = logging.getLogger('cascade')
+logger = logging.getLogger('cascade.bootstrap4')
 
 
 class BootstrapPictureFormMixin(ImageFormMixin):
-    RESIZE_OPTIONS = [
-        ('upscale', _("Upscale image")),
-        ('crop', _("Crop image")),
-        ('subject_location', _("With subject location")),
-        ('high_resolution', _("Optimized for Retina"))
-    ]
-
     responsive_heights = BootstrapMultiSizeField(
         label=_("Adapt Picture Heights"),
         required=False,
@@ -42,7 +35,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
 
     resize_options = MultipleChoiceField(
         label=_("Resize Options"),
-        choices=RESIZE_OPTIONS,
+        choices=IMAGE_RESIZE_OPTIONS,
         widget=widgets.CheckboxSelectMultiple,
         initial=['subject_location', 'high_resolution'],
         help_text = _("Options to use when resizing the image."),
@@ -50,7 +43,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
 
     image_shapes = MultipleChoiceField(
         label=_("Image Shapes"),
-        choices=BootstrapImageFormMixin.SHAPE_CHOICES,
+        choices=IMAGE_SHAPE_CHOICES,
         widget=widgets.CheckboxSelectMultiple,
         initial=['img-fluid']
     )
@@ -135,70 +128,3 @@ class BootstrapPicturePlugin(LinkPluginBase):
         return sanitized
 
 plugin_pool.register_plugin(BootstrapPicturePlugin)
-
-
-def get_picture_elements(instance):
-    """
-    Create a context, used to render a <picture> together with all its ``<source>`` elements:
-    It returns a list of HTML elements, each containing the information to render a ``<source>``
-    element.
-    The purpose of this HTML entity is to display images with art directions. For normal images use
-    the ``<img>`` element.
-    """
-
-    if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
-        aspect_ratio = compute_aspect_ratio(instance.image)
-    elif 'image' in instance.glossary and 'width' in instance.glossary['image']: 
-        aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
-    else:
-        # if accessing the image file fails or fake image fails, abort here
-        logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
-        return
-
-    # container_max_heights = instance.glossary.get('container_max_heights', {})
-    resize_options = instance.glossary.get('resize_options', {})
-    crop = 'crop' in resize_options
-    upscale = 'upscale' in resize_options
-    if 'subject_location' in resize_options and hasattr(instance.image, 'subject_location'):
-        subject_location = instance.image.subject_location
-    else:
-        subject_location = None
-    max_width = 0
-    max_zoom = 0
-    elements = []
-    for bp, media_query in instance.glossary['media_queries'].items():
-        width, media = media_query['width'], media_query['media']
-        max_width = max(max_width, width)
-        size = None
-        try:
-            image_height = parse_responsive_length(instance.glossary['responsive_heights'][bp])
-        except KeyError:
-            image_height = (None, None)
-        if image_height[0]:  # height was given in px
-            size = (int(width), image_height[0])
-        elif image_height[1]:  # height was given in %
-            size = (int(width), int(round(width * aspect_ratio * image_height[1])))
-        try:
-            zoom = int(
-                instance.glossary['responsive_zoom'][bp].strip().rstrip('%')
-            )
-        except (AttributeError, KeyError, ValueError):
-            zoom = 0
-        max_zoom = max(max_zoom, zoom)
-        if size is None:
-            # as fallback, adopt height to current width
-            size = (int(width), int(round(width * aspect_ratio)))
-        elem = {'tag': 'source', 'size': size, 'zoom': zoom, 'crop': crop,
-                'upscale': upscale, 'subject_location': subject_location, 'media': media}
-        if 'high_resolution' in resize_options:
-            elem['size2'] = (size[0] * 2, size[1] * 2)
-        elements.append(elem)
-
-    # add a fallback image for old browsers which can't handle the <source> tags inside a <picture> element
-    if image_height[1]:
-        size = (int(max_width), int(round(max_width * aspect_ratio * image_height[1])))
-    else:
-        size = (int(max_width), int(round(max_width * aspect_ratio)))
-    elements.append({'tag': 'img', 'size': size, 'zoom': max_zoom, 'crop': crop,
-                     'upscale': upscale, 'subject_location': subject_location})
-    return elements

@@ -3,7 +3,7 @@ argparse==1.2.1
 django-admin-sortable2==0.7.3
 django-classy-tags==0.9.0
 django-mptt==0.10.0
-django-sass-processor==0.7.3
+django-sass-processor==0.7.4
 django-sekizai==1.0.0
 django-filer==1.5.0
 django-treebeard==4.3

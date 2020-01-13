@@ -77,13 +77,14 @@ class BootstrapUtilities(type):
             ('ml-{}{}', _("Left margin ({})")),
         ]
         sizes = list(range(0, 6)) + ['auto']
-        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+        for bp in Breakpoint:
             if bp == Breakpoint.xs:
                 choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
                 choices.insert(0, ('', _("No Margins")))
             else:
                 choices = [(c.format(bp.name + '-', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
-                choices.insert(0, ('', _("Inherit from above")))
+                choices.insert(0, ('', format_lazy(_("Inherit margin from {}"), previous_label)))
+            previous_label = bp.label
             form_fields['margins_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Margins for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,
@@ -101,13 +102,14 @@ class BootstrapUtilities(type):
             ('mb-{}{}', _("Bottom margin ({})")),
         ]
         sizes = list(range(0, 6)) + ['auto']
-        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+        for bp in Breakpoint:
             if bp == Breakpoint.xs:
                 choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
                 choices.insert(0, ('', _("No Margins")))
             else:
                 choices = [(c.format(bp.name + '-', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
-                choices.insert(0, ('', _("Inherit from above")))
+                choices.insert(0, ('', format_lazy(_("Inherit margin from {}"), previous_label)))
+            previous_label = bp.label
             form_fields['margins_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Margins for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,
@@ -129,13 +131,14 @@ class BootstrapUtilities(type):
             ('pl-{}{}', _("Left padding ({})")),
         ]
         sizes = range(0, 6)
-        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+        for bp in Breakpoint:
             if bp == Breakpoint.xs:
                 choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
                 choices.insert(0, ('', _("No Padding")))
             else:
                 choices = [(c.format(bp.name + '-', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
-                choices.insert(0, ('', _("Inherit from above")))
+                choices.insert(0, ('', format_lazy(_("Inherit padding from {}"), previous_label)))
+            previous_label = bp.label
             form_fields['padding_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Padding for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,
@@ -152,13 +155,14 @@ class BootstrapUtilities(type):
             ('float-{}left', _("Float left")),
             ('float-{}right', _("Float right")),
         ]
-        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+        for bp in Breakpoint:
             if bp == Breakpoint.xs:
                 choices = [(c.format(''), l) for c, l in choices_format]
                 choices.insert(0, ('', _("Unset")))
             else:
                 choices = [(c.format(bp.name + '-'), l) for c, l in choices_format]
-                choices.insert(0, ('', _("Inherit from above")))
+                choices.insert(0, ('', format_lazy(_("Inherit float from {}"), previous_label)))
+            previous_label = bp.label
             form_fields['float_{}'.format(bp.name)] = ChoiceField(
                 label=format_lazy(_("Floats for {breakpoint}"), breakpoint=bp.label),
                 choices=choices,

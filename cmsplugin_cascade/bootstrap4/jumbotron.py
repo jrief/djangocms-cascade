@@ -196,9 +196,10 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     raw_id_fields = ['image_file']
     render_template = 'cascade/bootstrap4/jumbotron.html'
     ring_plugin = 'JumbotronPlugin'
-    footnote_html = """
-<p>For more information about the Jumbotron please read </p>
-    """
+    footnote_html = """<p>
+    For more information about the Jumbotron please read the
+    <a href="https://getbootstrap.com/docs/4.3/components/jumbotron/" target="_new">Bootstrap documentation</a>.
+    </p>"""
 
     class Media:
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/jumbotronplugin.js']
@@ -212,7 +213,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         else:
             try:
                 if instance.child_plugin_instances and instance.child_plugin_instances[0].plugin_type == 'BootstrapRowPlugin':
-                    padding='padding: {0}px {0}px;'.format(int( app_settings.CMSPLUGIN_CASCADE['bootstrap4']['gutter']/2))
+                    padding='padding: {0}px {0}px;'.format(int(app_settings.CMSPLUGIN_CASCADE['bootstrap4']['gutter']/2))
                     context.update({'add_gutter_if_child_is_BootstrapRowPlugin': padding,})
                 context.update({
                     'elements': [e for e in elements if 'media' in e] if elements else [],
