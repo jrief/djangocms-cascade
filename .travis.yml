@@ -36,4 +36,3 @@ install:
 script:
   - export TOX_ENV=py${TRAVIS_PYTHON_VERSION/./}-${DJANGOVER}-${CMSVER}
   - tox -e "$TOX_ENV"
-
