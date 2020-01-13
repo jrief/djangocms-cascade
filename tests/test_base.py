@@ -19,7 +19,9 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
             # >= Django CMS v3.5.x
             self.home_page.set_as_homepage()
         CascadePage.assure_relation(self.home_page)
+
         self.placeholder = self.home_page.placeholders.get(slot='Main Content')
+
         self.request = self.get_request(self.home_page, 'en')
         self.admin_site = admin.sites.AdminSite()
 
