@@ -147,7 +147,6 @@ class BootstrapUtilities(type):
             )
         return form_fields
 
-
     @property
     def floats(cls):
         form_fields = {}

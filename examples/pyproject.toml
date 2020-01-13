@@ -1,6 +1,5 @@
 [tool.poetry]
 name = "bs4demo"
-
 version = "1.1.5"
 description = "djangocms-cascade demo"
 authors = ["Jacob Rief <jacob.rief@gmail.com>"]

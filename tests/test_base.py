@@ -6,7 +6,6 @@ from django.template.context import Context
 from cms.api import create_page
 from cms.test_utils.testcases import CMSTestCase
 from cmsplugin_cascade.models import CascadePage
-from cms.models import Page
 
 from djangocms_helper.base_test import BaseTestCase
 
@@ -20,7 +19,6 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
             # >= Django CMS v3.5.x
             self.home_page.set_as_homepage()
         CascadePage.assure_relation(self.home_page)
-
         self.placeholder = self.home_page.placeholders.get(slot='Main Content')
         self.request = self.get_request(self.home_page, 'en')
         self.admin_site = admin.sites.AdminSite()
