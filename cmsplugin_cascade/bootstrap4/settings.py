@@ -65,6 +65,7 @@ def set_defaults(config):
             'class_names': ['nav-tabs', 'nav-pills', 'nav-fill', 'nav-justified'],
         },
     ))
+
     config['plugins_with_extra_render_templates'].setdefault('BootstrapSecondaryMenuPlugin', [
         ('cascade/bootstrap4/secmenu-list-group.html', _("List Group")),
         ('cascade/bootstrap4/secmenu-unstyled-list.html', _("Unstyled List"))
