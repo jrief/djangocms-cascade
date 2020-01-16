@@ -180,4 +180,5 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         context = self.super(BootstrapButtonPlugin, self).render(context, instance, placeholder)
         return context
 
+    
 plugin_pool.register_plugin(BootstrapButtonPlugin)

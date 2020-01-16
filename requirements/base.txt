@@ -11,4 +11,5 @@ djangocms-bootstrap==1.1.2
 djangocms-text-ckeditor==3.8.0
 easy-thumbnails==2.6.0
 html5lib==1.0.1
-jsonfield==1.0.3
+jsonfield2==3.0.2
+djangocms-transfer==0.2.0

@@ -43,9 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
-    #'reversion',
     'djangocms_text_ckeditor',
     'django_select2',
+    'djangocms_transfer',
     'cmsplugin_cascade',
     'cmsplugin_cascade.clipboard',
     'cmsplugin_cascade.extra_fields',
@@ -247,6 +247,8 @@ CKEDITOR_SETTINGS = {
     'toolbar': 'CMS',
     'stylesSet': format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config')),
 }
+
+CASCADE_CLIPS_LIBRARY = True
 
 SELECT2_CSS = 'node_modules/select2/dist/css/select2.min.css'
 SELECT2_JS = 'node_modules/select2/dist/js/select2.min.js'

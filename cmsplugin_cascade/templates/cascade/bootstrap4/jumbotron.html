@@ -28,6 +28,10 @@
 	}
 }
 	{% endfor %}
+{% else %}
+	#cascadeelement_id-{{ instance.pk }} {
+	{% fallback instance %} 
+	}
 {% endif %}
 </style>
 {% endlocalize %}{% endaddtoblock %}

@@ -1,0 +1,24 @@
+{% load i18n cms_admin static cascade_tags  static cms_tags bootstrap_tags sekizai_tags sass_tags %}
+ {% for c , v in clips.items %}
+    {% with dee=c|stringformat:"i"  %}
+        {% if  c == folder_id  %}
+        <div class="{{ v.folder_name }}  "">
+        {% for f in v.list_json_files %}
+        <div class=" p-1 m-1"> 
+        <button type="button" data-post='{ "csrfmiddlewaretoken" :"{{ csrf_token }}" }' onclick='ajaxCopyToClipboard(event, this, "/cascade_copytoclipboard/", "{{ f }}"); return false;' href="#" class="{{ v.folder_name }} btn btn-light">{{ f }}</button> 
+        {% include  "./cascade_stride_clips.html" with filejson=f %}
+        </div>
+        {% endfor %}
+        </div>
+        {% if  not v.list_json_files  %}
+            <div class="{{ v.folder_name }}  z">
+            <p class="text-center p-2"> There are no clipboards in the folder  {{ v.folder_name }}.</p> 
+            </div>
+            {% endif %}
+        {% endif %}
+    {% endwith %}
+{% endfor%}
+
+
+
+

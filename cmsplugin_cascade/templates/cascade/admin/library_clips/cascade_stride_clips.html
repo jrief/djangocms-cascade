@@ -1,0 +1,12 @@
+{% load i18n cms_admin cascade_tags %}
+<div class="cms-cascade-clipboard">
+ <div class="rounded" style="background-color: #eee8e8;  min-height: 100px;">
+  <svg class="rounded" viewbox="0 0 1000 1000">
+   {% with filejson as  filejson  %}
+   <foreignobject height="100%" style="pointer-events:none;" width="100%">
+    {% render_cascade filejson %}
+   </foreignobject>
+  </svg>
+  {% endwith %}
+ </div>
+</div>

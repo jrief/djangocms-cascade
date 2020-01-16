@@ -1,0 +1,5 @@
+<li class="{% if active %}cms-toolbar-item-navigation-active{% endif %}{% if disabled %} cms-toolbar-item-navigation-disabled{% endif %} {{ extra_classes|join:' ' }}">
+    <a  onclick="{{ name_func_js_filter | escapejs }}( event, this);return false; " {% if disabled %} tabindex="-1"{% endif %} href="{{ action }}" data-method="{{ method }}" data-post="{{ data }}"{% if question %} data-text="{{ question }}"{% endif %}{% if on_success %} data-on-success="{{ on_success }}"{% endif %} data-rel="modal_clips"{% if on_close %} data-on-close="{{ on_close }}"{% endif %} {% if data_modal_style %} data-style="{{ data_modal_style }}"{% endif %}  >
+        <span>{{ name }}<span class="cms-icon cms-icon-arrow"></span></span>
+    </a>
+</li>

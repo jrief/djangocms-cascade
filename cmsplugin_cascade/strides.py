@@ -11,8 +11,21 @@ from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin
+import json
+from cms.models import CMSPlugin
 
 __all__ = ['register_stride', 'StrideContentRenderer']
+
+#needed for cms json format
+def last_inner_append(x, y):
+    try:
+        if isinstance(x[-1], list):
+            last_inner_append(x[-1], y)
+            return x
+    except IndexError:
+        pass
+    x.append(y)
+    return x
 
 
 class EmulateQuerySet(object):
@@ -45,11 +58,19 @@ class StrideElementBase(object):
         return self.plugin.__class__
 
     def child_plugin_instances(self):
-        for plugin_type, data, children_data in self.children_data:
-            plugin_class = strides_plugin_map.get(plugin_type)
-            element_class = strides_element_map.get(plugin_type)
-            if element_class:
-                yield element_class(plugin_class(), data, children_data, parent=self)
+        try:
+            for plugin_type, data, children_data in self.children_data:
+                plugin_class = strides_plugin_map.get(plugin_type)
+                element_class = strides_element_map.get(plugin_type)
+                if element_class:
+                    yield element_class(plugin_class(), data, children_data, parent=self)
+        except:
+            #text plugin cms transfer json format missing info children_data
+            for plugin_type, data in self.children_data:
+                plugin_class = strides_plugin_map.get(plugin_type)
+                element_class = strides_element_map.get(plugin_type)
+                if element_class:
+                    yield element_class(plugin_class(), data, [], parent=self)
 
     def get_num_children(self):
         return len(self.children_data)
@@ -187,7 +208,7 @@ class StrideContentRenderer(object):
         self.language = get_language_from_request(request)
         self._cached_templates = {}
 
-    def render_cascade(self, context, tree_data):
+    def render_cascade_plugins(self, context, tree_data):
         contents = []
         # create temporary copy of context to prevent pollution for other CMS placeholders
         context = make_context(flatten_context(context))
@@ -200,6 +221,55 @@ class StrideContentRenderer(object):
             context.push(cms_cachable_plugins=cms_cachable_plugins)
             contents.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(contents))
+
+    def cms_transfer_to_cascade_tree(self, context, tree_data):
+            source_map = {}
+            new_plugins={}
+            childrens_data =[]
+            glossary = tree_data[0]['data']['glossary']
+            glossary = json.loads(glossary)
+            tree_data[0]['data']['glossary'] = glossary
+            if tree_data[0]['parent_id']:
+                root_plugin_id = tree_data[0]['parent_id']
+                source_map[root_plugin_id] = tree_data[0]['plugin_type']
+            for data in tree_data:
+                if  'glossary' in  data['data']  and isinstance(data['data']['glossary'], str):
+                    data['data']['glossary'] = json.loads(data['data']['glossary'])
+                if data['parent_id']:
+                    root_plugin_id = data['parent_id']
+                    source_map[root_plugin_id] = data['plugin_type']
+                else :
+                    new_plugins.update(data['data'])
+                    new_plugins.update({  'pk': data['pk'] })
+                    rootplug=[ data['plugin_type'] , new_plugins  ]
+                archived_plugin=data
+                if archived_plugin['parent_id']:
+                    parent = source_map[ archived_plugin['parent_id']]
+                else:
+                    parent = None
+                if parent and parent != CMSPlugin :
+                    child_plug = {}
+                    child_plug.update(data['data'])
+                    child_plug.update({  'pk': data['pk'] })
+                    child_plug= [[ data['plugin_type'] , child_plug]]
+                    if childrens_data == []:
+                       last_inner_append(childrens_data, child_plug[0])
+                    else:
+                       last_inner_append(childrens_data, child_plug)
+            rootplug.append( childrens_data) 
+            tree_data={ "plugins": [rootplug] }
+            return tree_data
+
+    def render_cascade(self, context, tree_data):
+        contents = []
+        #format treedata djangocms-cascade
+        if 'plugins' in  tree_data:
+            contents = self.render_cascade_plugins( context, tree_data)
+        #format treedata djangocms-transfer
+        elif tree_data:
+            tree_data = self.cms_transfer_to_cascade_tree( context, tree_data)
+            contents = self.render_cascade_plugins( context, tree_data)
+        return contents
 
     def render_plugin(self, instance, context, placeholder=None, editable=False):
         from sekizai.helpers import get_varname as get_sekizai_context_key

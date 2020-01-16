@@ -1,4 +1,3 @@
-
 class AppSettings(object):
 
     def _setting(self, name, default=None):
@@ -162,6 +161,28 @@ class AppSettings(object):
         of steps would exceed ``RESPONSIVE_IMAGE_MAX_STEPS``, then a higher step width is used.
         """
         return 50
+
+    @property
+    def CASCADE_CLIPBOARD_LIBRARY(self):
+        if self._setting('CASCADE_CLIPS_LIBRARY'):
+            import os
+            import pathlib
+            from django.contrib.staticfiles import finders
+            relative_path_clipboard_Libary='cascade/admin/library_clips/'
+            path = finders.find(relative_path_clipboard_Libary)
+            data={}
+            if path:
+                list_folders_top=next(os.walk(path))[1]
+                for n, i in enumerate(list_folders_top, 1):
+                   clips_=[]
+                   list_subfolder_path=os.path.join(path, i)
+                   files_path=list(pathlib.Path(list_subfolder_path).glob('**/*.json'))
+                   for p in files_path:
+                      timestamp=int(os.path.getctime(list_subfolder_path))
+                      clips_.append( str(pathlib.Path(relative_path_clipboard_Libary).joinpath(p.relative_to(path))))
+                   data.update({ str(n):{'folder_name':i ,'list_json_files': clips_, 'timestamp' : timestamp }})
+            return self._setting('CASCADE_CLIPBOARD_LIBRARY', (data, ))
+
 
 import sys  # noqa
 app_settings = AppSettings()

@@ -52,6 +52,13 @@
 	<script src="{% static 'node_modules/popper.js/dist/umd/popper.js' %}" type="text/javascript"></script>
 	<script src="{% static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}" type="text/javascript"></script>
 	{% endif %}
+	{# needed if you use settings.  CASCADE_CLIPS_LIBRARY = True #}
+	{% if request.toolbar %}
+		{% addtoblock "js" %}<script src="{% static 'cascade/js/admin/main.js' %}" type="text/javascript"></script>{% endaddtoblock %}
+	{% endif %}
+	{% if request.toolbar and request.toolbar.edit_mode_active %}
+		{% addtoblock "js" %}<script src="{% static 'cascade/js/admin/static_menu_position.js' %}" type="text/javascript"> </script>{% endaddtoblock %}
+	{% endif %}
 	{% render_block "js" %}
 </body>
 

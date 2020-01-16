@@ -146,7 +146,8 @@ class SharableGlossaryMixin(metaclass=forms.MediaDefiningClass):
         except SharedGlossary.DoesNotExist:
             shared_glossary = obj.shared_glossary if obj else None
         for field_name in self.sharable_fields:
-            kwargs['form'].base_fields[field_name].disabled = bool(shared_glossary)
+            if hasattr(kwargs['form'].base_fields, field_name):
+                kwargs['form'].base_fields[field_name].disabled = bool(shared_glossary)
         return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):

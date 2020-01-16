@@ -23,3 +23,4 @@ for module in app_settings.CASCADE_PLUGINS:
         except ImportError:
             # otherwise just use the named module as plugin
             import_module('{}'.format(module))
+
