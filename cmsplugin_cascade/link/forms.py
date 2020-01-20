@@ -56,7 +56,7 @@ class LinkSearchField(ModelChoiceField):
         else:
             # set a minimal set of choices, otherwise django-select2 builds them for every published page
             choices = [(index, str(page)) for index, page in enumerate(queryset[:15])]
-        kwargs.setdefault('queryset', queryset)
+        kwargs.setdefault('queryset', queryset.distinct())
         super().__init__(*args, **kwargs)
         self.choices = choices
 
