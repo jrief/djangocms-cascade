@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.2.3
+=====
+* Make page editor for extra fields configurable.
+
+
 1.2.2
 =====
 * Refactor ``TextLinkFormMixin`` from ``cmsplugin_cascade.link.cms_plugin`` into
