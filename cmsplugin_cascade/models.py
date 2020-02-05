@@ -37,7 +37,7 @@ class SharedGlossary(models.Model):
     glossary = JSONField(
         null=True,
         blank=True,
-        default=dict,
+        default={},
     )
 
     class Meta:
@@ -112,7 +112,7 @@ class InlineCascadeElement(models.Model):
 
     glossary = JSONField(
         blank=True,
-        default=dict,
+        default={},
     )
 
     class Meta:
@@ -128,7 +128,7 @@ class SortableInlineCascadeElement(models.Model):
 
     glossary = JSONField(
         blank=True,
-        default=dict,
+        default={},
     )
 
     order = models.PositiveIntegerField(
@@ -166,13 +166,13 @@ class PluginExtraFields(models.Model):
     css_classes = JSONField(
         null=True,
         blank=True,
-        default=dict,
+        default={},
     )
 
     inline_styles = JSONField(
         null=True,
         blank=True,
-        default=dict,
+        default={},
     )
 
     class Meta:
@@ -239,7 +239,7 @@ class CascadeClipboard(models.Model):
     data = JSONField(
         null=True,
         blank=True,
-        default=dict,
+        default={},
     )
 
     class Meta:
@@ -343,13 +343,13 @@ class CascadePage(PageExtension):
     """
     settings = JSONField(
         blank=True,
-        default=dict,
+        default={},
         help_text=_("User editable settings for this page."),
     )
 
     glossary = JSONField(
         blank=True,
-        default=dict,
+        default={},
         help_text=_("Store for arbitrary page data."),
     )
 
