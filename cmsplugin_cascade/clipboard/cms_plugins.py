@@ -131,9 +131,13 @@ class CascadeClipboardPlugin(CMSPluginBase):
         placeholder.mark_as_dirty(language, clear_cache=False)
 
         # create a list of pasted plugins to be added to the structure view
-        new_plugins = placeholder.get_plugins(language).exclude(pk__in=tree_order)
-        data = json.loads(get_plugin_tree_as_json(request, list(new_plugins)))
-        data['plugin_order'] = tree_order + ['__COPY__']
+        all_plugins = placeholder.get_plugins(language)
+        if all_plugins.exists():
+            new_plugins = placeholder.get_plugins(language).exclude(pk__in=tree_order)
+            data = json.loads(get_plugin_tree_as_json(request, list(new_plugins)))
+            data['plugin_order'] = tree_order + ['__COPY__']
+        else:
+            return render(request, 'cascade/admin/clipboard_reload_page.html')
         data['target_placeholder_id'] = placeholder.pk
         context = {'structure_data': json.dumps(data)}
         return render(request, 'cascade/admin/clipboard_paste_plugins.html', context)
