@@ -1,10 +1,9 @@
 import json
-
 from django.conf.urls import url
 from django.contrib.admin import site as default_admin_site
 from django.contrib.admin.helpers import AdminForm
 from django.core.exceptions import PermissionDenied
-from django.forms import CharField, ModelChoiceField
+from django.forms import CharField, ModelChoiceField, ModelMultipleChoiceField
 from django.shortcuts import render
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -17,13 +16,28 @@ from cms.toolbar.utils import get_plugin_tree_as_json
 from cms.utils import get_language_from_request
 from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
 from cmsplugin_cascade.clipboard.utils import deserialize_to_clipboard, serialize_from_placeholder
-from cmsplugin_cascade.models import CascadeClipboard
+from cmsplugin_cascade.models import CascadeClipboard, CascadeClipboardGroup
+from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
+from django.forms import widgets
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+
+class ClipboardWidget(widgets.Select):
+        #template_name = 'django/forms/widgets/select.html'
+        template_name = 'cascade/admin/widgets/clipboard.html'
 
 
 class CascadeClipboardPlugin(CMSPluginBase):
     system = True
     render_plugin = False
     change_form_template = 'admin/cms/page/plugin/change_form.html'
+
+
+    def __init__(self, *args,**kwargs):
+       # conditional model depend model gived in view
+       if 'model' in kwargs:
+           self.model = kwargs['model']
+       super().__init__(*args, **kwargs)
+
 
     def get_plugin_urls(self):
         urlpatterns = [
@@ -40,12 +54,12 @@ class CascadeClipboardPlugin(CMSPluginBase):
         })
         return [
             PluginMenuItem(
-                _("Export to Clipboard"),
+                _("Export from Clipboard"),
                 reverse('admin:export_clipboard_plugins') + '?' + data,
                 data={},
                 action='modal',
                 attributes={
-                    'icon': 'export',
+                    'icon': 'import',
                 },
             ),
             PluginMenuItem(
@@ -56,31 +70,39 @@ class CascadeClipboardPlugin(CMSPluginBase):
                 attributes={
                     'icon': 'import',
                 },
-            )
+            ),
         ]
+
 
     def render_modal_window(self, request, form):
         """
         Render a modal popup window with a select box to edit the form
         """
+        form.fields['group'].widget = RelatedFieldWidgetWrapper(
+              form.fields['group'].widget,CascadeClipboard.group.rel,
+                default_admin_site, can_change_related=True) 
+
         opts = self.model._meta
         fieldsets = [(None, {'fields': list(form.fields)})]
         adminForm = AdminForm(form, fieldsets, {}, [])
+
         context = {
             **default_admin_site.each_context(request),
             'title': form.title,
             'adminform': adminForm,
-            'add': False,
+            'add': True,
             'change': True,
-            'save_as': False,
-            'has_add_permission': False,
+            'save_as': True,
+            'has_add_permission': True,
             'has_change_permission': True,
+            'can_change_related':True,
+            'can_add_related':True,
             'opts': opts,
             'root_path': reverse('admin:index'),
             'is_popup': True,
-            'app_label': opts.app_label,
             'media': self.media + form.media,
         }
+
         return TemplateResponse(request, self.change_form_template, context)
 
     def import_plugins_view(self, request):
@@ -93,6 +115,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
                     queryset=CascadeClipboard.objects.all(),
                     label=_("Select Clipboard Content"),
                     required=False,
+                    widget=ClipboardWidget,
                 ),
                 'title': title,
             })
@@ -103,6 +126,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
                 'clipboard': ModelChoiceField(
                     queryset=CascadeClipboard.objects.all(),
                     label=_("Select Clipboard Content"),
+                    widget=ClipboardWidget,
                 ),
                 'title': title,
             })
@@ -151,6 +175,10 @@ class CascadeClipboardPlugin(CMSPluginBase):
             Form = type('ClipboardExportForm', (ClipboardBaseForm,), {
                 'identifier': CharField(required=False),
                 'title': title,
+                'group' : ModelMultipleChoiceField(
+                queryset=CascadeClipboardGroup.objects.all(),
+                required=False,
+            ),
             })
             form = Form(request.GET)
             assert form.is_valid()
@@ -158,6 +186,10 @@ class CascadeClipboardPlugin(CMSPluginBase):
             Form = type('ClipboardExportForm', (ClipboardBaseForm,), {
                 'identifier': CharField(),
                 'title': title,
+                'group' : ModelMultipleChoiceField(
+                queryset=CascadeClipboardGroup.objects.all(),
+                required=False,
+            ),
             })
             form = Form(request.POST)
             if form.is_valid():
@@ -168,11 +200,13 @@ class CascadeClipboardPlugin(CMSPluginBase):
         placeholder = form.cleaned_data['placeholder']
         language = form.cleaned_data['language']
         identifier = form.cleaned_data['identifier']
+        group = form.cleaned_data['group']
         data = serialize_from_placeholder(placeholder)
-        CascadeClipboard.objects.create(
+        cascade_clipboard = CascadeClipboard.objects.create(
             identifier=identifier,
             data=data,
         )
+        cascade_clipboard.group.set(group) 
         return render(request, 'cascade/admin/clipboard_close_frame.html', {})
 
 plugin_pool.register_plugin(CascadeClipboardPlugin)
