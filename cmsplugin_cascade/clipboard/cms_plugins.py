@@ -31,14 +31,6 @@ class CascadeClipboardPlugin(CMSPluginBase):
     render_plugin = False
     change_form_template = 'admin/cms/page/plugin/change_form.html'
 
-
-    def __init__(self, *args,**kwargs):
-       # conditional model depend model gived in view
-       if 'model' in kwargs:
-           self.model = kwargs['model']
-       super().__init__(*args, **kwargs)
-
-
     def get_plugin_urls(self):
         urlpatterns = [
             url(r'^export-plugins/$', self.export_plugins_view, name='export_clipboard_plugins'),
