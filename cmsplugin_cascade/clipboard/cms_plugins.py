@@ -70,10 +70,6 @@ class CascadeClipboardPlugin(CMSPluginBase):
         """
         Render a modal popup window with a select box to edit the form
         """
-        form.fields['group'].widget = RelatedFieldWidgetWrapper(
-              form.fields['group'].widget,CascadeClipboard.group.rel,
-                default_admin_site, can_change_related=True) 
-
         opts = self.model._meta
         fieldsets = [(None, {'fields': list(form.fields)})]
         adminForm = AdminForm(form, fieldsets, {}, [])
@@ -173,6 +169,10 @@ class CascadeClipboardPlugin(CMSPluginBase):
             ),
             })
             form = Form(request.GET)
+            form.fields['group'].widget = RelatedFieldWidgetWrapper(
+              form.fields['group'].widget,CascadeClipboard.group.rel,
+                default_admin_site, can_change_related=True)
+
             assert form.is_valid()
         elif request.method == 'POST':
             Form = type('ClipboardExportForm', (ClipboardBaseForm,), {
@@ -184,6 +184,10 @@ class CascadeClipboardPlugin(CMSPluginBase):
             ),
             })
             form = Form(request.POST)
+            form.fields['group'].widget = RelatedFieldWidgetWrapper(
+              form.fields['group'].widget,CascadeClipboard.group.rel,
+                default_admin_site, can_change_related=True) 
+
             if form.is_valid():
                 return self.add_to_clipboard(request, form)
         return self.render_modal_window(request, form)
