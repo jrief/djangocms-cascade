@@ -22,8 +22,8 @@ from django.forms import widgets
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 
 class ClipboardWidget(widgets.Select):
-        #template_name = 'django/forms/widgets/select.html'
-        template_name = 'cascade/admin/widgets/clipboard.html'
+        template_name = 'django/forms/widgets/select.html'
+        #template_name = 'cascade/admin/widgets/clipboard.html'
 
 
 class CascadeClipboardPlugin(CMSPluginBase):
