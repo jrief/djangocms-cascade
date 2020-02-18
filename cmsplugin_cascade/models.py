@@ -225,6 +225,12 @@ class Segmentation(models.Model):
         managed = False  # it's a dummy model
         db_table = None
 
+class CascadeClipboardGroup(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return str(self.name)
+
 
 class CascadeClipboard(models.Model):
     """
@@ -235,6 +241,8 @@ class CascadeClipboard(models.Model):
         max_length=50,
         unique=True,
     )
+
+    group = models.ManyToManyField(CascadeClipboardGroup)
 
     data = JSONField(
         null=True,
