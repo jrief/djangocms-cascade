@@ -69,7 +69,6 @@ class StrideRenderer(Tag):
             SEKIZAI_CONTENT_HOLDER = cache.get_or_set(sekizai_context_key, context.get(sekizai_context_key))
             if SEKIZAI_CONTENT_HOLDER:
                 for name in SEKIZAI_CONTENT_HOLDER:
-                    context[sekizai_context_key] = {'name':''}
                     context[sekizai_context_key][name] = SEKIZAI_CONTENT_HOLDER[name]
         return content
 
