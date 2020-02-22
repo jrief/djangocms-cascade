@@ -27,7 +27,7 @@ class StrideRenderer(Tag):
     name = 'render_cascade'
     options = Options(
         Argument('data_clipboard'),
-        Argument('identifier'),
+        Argument('identifier', required=True),
     )
 
     def render_tag(self, context, data_clipboard, identifier=None):
