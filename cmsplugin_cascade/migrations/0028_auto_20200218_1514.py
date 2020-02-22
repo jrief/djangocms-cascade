@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cascadeclipboard',
             name='group',
-            field=models.ManyToManyField(to='cmsplugin_cascade.CascadeClipboardGroup'),
+            field=models.ManyToManyField(blank=True, to='cmsplugin_cascade.CascadeClipboardGroup'),
         ),
     ]
