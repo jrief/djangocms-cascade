@@ -129,7 +129,6 @@ class CascadeClipboardPlugin(CMSPluginBase):
             clipboards_groupby[ 'Clipboard Home'] = [('demo', 'demo')]
             clipboard_home = CascadeClipboardGroup.objects.create(name="Clipboard Home")
             data_demo = self.populate_static_json("demo_carousel-plugin.json")
-            print(data_demo)
             group_clipboard_home = clipboard_home
             cascade_clipboard = CascadeClipboard.objects.create(
                 identifier="demo",
