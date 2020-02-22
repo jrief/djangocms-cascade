@@ -60,7 +60,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
                 data={},
                 action='modal',
                 attributes={
-                    'icon': 'import',
+                    'icon': 'export',
                 },
             ),
             PluginMenuItem(
