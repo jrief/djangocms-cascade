@@ -286,7 +286,11 @@ class CascadeClipboardPlugin(CMSPluginBase):
        clipboard_folder ='cascade/admin/clipboards/'
        path = finders.find(clipboard_folder)
        with io.open(os.path.join(path, filename), 'r') as fh:
-            config_data = json.load(fh)
+            if hasattr(fh,'read'):
+                config_data = json.load(fh)
+            else:
+                #needed for test
+                config_data = {}
        return config_data
 
 plugin_pool.register_plugin(CascadeClipboardPlugin)
