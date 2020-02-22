@@ -231,7 +231,6 @@ class CascadeClipboardGroup(models.Model):
     def __str__(self):
         return str(self.name)
 
-
 class CascadeClipboard(models.Model):
     """
     A model class to persist, export and re-import the clipboard's content.
@@ -242,7 +241,7 @@ class CascadeClipboard(models.Model):
         unique=True,
     )
 
-    group = models.ManyToManyField(CascadeClipboardGroup)
+    group = models.ManyToManyField(CascadeClipboardGroup,blank=True)
 
     data = JSONField(
         null=True,

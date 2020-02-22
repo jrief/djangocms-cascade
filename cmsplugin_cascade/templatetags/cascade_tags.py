@@ -26,25 +26,39 @@ class StrideRenderer(Tag):
     """
     name = 'render_cascade'
     options = Options(
-        Argument('datafile'),
+        Argument('data_clipboard'),
+        Argument('identifier'),
     )
 
-    def render_tag(self, context, datafile):
+    def render_tag(self, context, data_clipboard, identifier=None):
         from sekizai.helpers import get_varname as get_sekizai_context_key
         from cmsplugin_cascade.strides import StrideContentRenderer
 
+        if isinstance(data_clipboard, dict):
+            identifier = identifier
+            datafile = False
+        else :
+            datafile = data_clipboard
+            identifier = datafile
+        tree_data_key = 'cascade-strides:' + identifier
         cache = caches['default']
-        tree_data_key = 'cascade-strides:' + datafile
         tree_data = cache.get(tree_data_key) if cache else None
         if tree_data is None:
-            jsonfile = finders.find(datafile)
-            if not jsonfile:
-                raise IOError("Unable to find file: {}".format(datafile))
-
-            with io.open(jsonfile) as fp:
-                tree_data = json.load(fp)
-
-        content_renderer = StrideContentRenderer(context['request'])
+            if datafile:
+                jsonfile = finders.find(datafile)
+                if not jsonfile:
+                    raise IOError("Unable to find file: {}".format(datafile))
+                    with io.open(jsonfile) as fp:
+                        tree_data = json.load(fp)
+                else:
+                    tree_data = json.load(data_clipboard)
+            else:
+                tree_data = data_clipboard
+        if 'request' in context:
+            data_req = context['request']
+        else:
+            data_req = None
+        content_renderer = StrideContentRenderer(data_req)
         with context.push(cms_content_renderer=content_renderer):
             content = content_renderer.render_cascade(context, tree_data)
 
@@ -55,6 +69,7 @@ class StrideRenderer(Tag):
             SEKIZAI_CONTENT_HOLDER = cache.get_or_set(sekizai_context_key, context.get(sekizai_context_key))
             if SEKIZAI_CONTENT_HOLDER:
                 for name in SEKIZAI_CONTENT_HOLDER:
+                    context[sekizai_context_key] = {'name':''}
                     context[sekizai_context_key][name] = SEKIZAI_CONTENT_HOLDER[name]
         return content
 
@@ -74,9 +89,6 @@ class RenderPlugin(Tag):
     def render_tag(self, context, plugin):
         if not plugin:
             return ''
-
-        request = context['request']
-        toolbar = get_toolbar_from_request(request)
         if 'cms_content_renderer' in context and isinstance(context['cms_content_renderer'], StrideContentRenderer):
             content_renderer = context['cms_content_renderer']
         elif 'cms_renderer' in context:
@@ -84,11 +96,17 @@ class RenderPlugin(Tag):
         elif 'cms_content_renderer' in context:
             content_renderer = context['cms_content_renderer']
         else:
+            request = context['request']
+            toolbar = get_toolbar_from_request(request)
             content_renderer = toolbar.content_renderer
+        try:
+           toolbar_edit_mode = toolbar.edit_mode_active
+        except UnboundLocalError:
+           toolbar_edit_mode = True
         content = content_renderer.render_plugin(
             instance=plugin,
             context=context,
-            editable=toolbar.edit_mode_active,
+            editable=toolbar_edit_mode
         )
         return content
 
@@ -110,3 +128,10 @@ def sphinx_docs_include(path):
         raise TemplateDoesNotExist("'{path}' does not exist".format(path=path))
     with io.open(filename) as fh:
         return mark_safe(fh.read())
+
+
+
+@register.simple_tag
+def cascadeclipboard_data_by_identifier(queryset, identifier ):
+    qs_identifier=queryset.filter(identifier=identifier)
+    return qs_identifier[0].data

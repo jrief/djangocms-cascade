@@ -41,3 +41,36 @@ div.cms .cms-structure.cms-structure-condensed .cms-submenu-item a[data-icon=exp
 div.cms .cms-structure.cms-structure-condensed .cms-submenu-item a[data-icon=import]:before {
 	top: 12px !important;
 }
+
+.container_clipboard {
+	display: flex;
+	justify-content: space-between;
+}
+
+.cascade_clipboard_admin {
+	padding: 1rem;
+}
+
+
+.button_clipboard {
+	background-color:#ffffff;
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	cursor:pointer;
+	color:#666666;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+}
+.button_clipboard:hover {
+	background-color:#f6f6f6;
+}
+.button_clipboard:active {
+	position:relative;
+	top:1px;
+}
+
