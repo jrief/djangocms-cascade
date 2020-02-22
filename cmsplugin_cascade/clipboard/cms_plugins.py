@@ -285,12 +285,9 @@ class CascadeClipboardPlugin(CMSPluginBase):
        from django.contrib.staticfiles import finders
        clipboard_folder ='cascade/admin/clipboards/'
        path = finders.find(clipboard_folder)
+       os.path.join(path, filename)
        with io.open(os.path.join(path, filename), 'r') as fh:
-            if hasattr(fh,'read'):
-                config_data = json.load(fh)
-            else:
-                #needed for test
-                config_data = {}
+            config_data = json.load(fh)
        return config_data
 
 plugin_pool.register_plugin(CascadeClipboardPlugin)

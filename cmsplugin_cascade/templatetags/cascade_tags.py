@@ -50,8 +50,6 @@ class StrideRenderer(Tag):
                     raise IOError("Unable to find file: {}".format(datafile))
                     with io.open(jsonfile) as fp:
                         tree_data = json.load(fp)
-                else:
-                    tree_data = json.load(data_clipboard)
             else:
                 tree_data = data_clipboard
         if 'request' in context:
