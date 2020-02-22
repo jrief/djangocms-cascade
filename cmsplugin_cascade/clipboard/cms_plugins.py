@@ -142,7 +142,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
 
         if request.GET.get('group'):
             req_parameter_group = request.GET.get('group')
-            title = f": {req_parameter_group}"
+            title = ": {}".format(req_parameter_group)
         else:
             req_parameter_group = "Clipboard Home"
             title =  _("Import to Clipboard")
