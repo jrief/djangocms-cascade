@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'sass_processor',
     'sekizai',
     'bs4demo',
+        'django_extensions',
 ]
 
 

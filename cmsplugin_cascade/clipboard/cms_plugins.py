@@ -123,14 +123,14 @@ class CascadeClipboardPlugin(CMSPluginBase):
                clipboards_groupby.setdefault('ungroup', [])
                clipboards_groupby['ungroup'].append(( groups.identifier ,groups.identifier,))
 
-        [treegroup( groups, index)  for index, groups in enumerate(queryset , start=1)] 
-        
+        [treegroup( groups, index)  for index, groups in enumerate(queryset , start=1)]
+
         if not 'Clipboard Home' in clipboards_groupby:
             clipboards_groupby[ 'Clipboard Home'] = [('demo', 'demo')]
             clipboard_home = CascadeClipboardGroup.objects.create(name="Clipboard Home")
             data_demo = self.populate_static_json("demo_carousel-plugin.json")
             print(data_demo)
-            group_clipboard_home = clipboard_home 
+            group_clipboard_home = clipboard_home
             cascade_clipboard = CascadeClipboard.objects.create(
                 identifier="demo",
                 data=data_demo,
@@ -138,11 +138,11 @@ class CascadeClipboardPlugin(CMSPluginBase):
             cascade_clipboard.group.set([group_clipboard_home])
 
         CHOICES=(list(clipboards_groupby.items(),))
-        ff=_("Import from Clipboard") 
+        ff=_("Import from Clipboard")
 
         if request.GET.get('group'):
             req_parameter_group = request.GET.get('group')
-            title = f": {req_parameter_group}" 
+            title = f": {req_parameter_group}"
         else:
             req_parameter_group = "Clipboard Home"
             title =  _("Import to Clipboard")
@@ -151,7 +151,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
         if not req_parameter_group in clipboards_groupby:
             clipboards_groupby[req_parameter_group] = ''
 
-        if 'ungroup' in clipboards_groupby : 
+        if 'ungroup' in clipboards_groupby :
             len_ungroup = len(clipboards_groupby[req_parameter_group])
         else:
             len_ungroup = 0
@@ -284,7 +284,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
     def populate_static_json(self, filename):
        import os, io, json
        from django.contrib.staticfiles import finders
-       clipboard_folder ='cascade/admin/clipboard/'
+       clipboard_folder ='cascade/admin/clipboards/'
        path = finders.find(clipboard_folder)
        with io.open(os.path.join(path, filename), 'r') as fh:
             config_data = json.load(fh)

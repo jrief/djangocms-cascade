@@ -1,0 +1,21 @@
+<div class="container_clipboard">
+    <div>
+        <a class="button_clipboard"  href="{% url 'admin:import_clipboard_plugins' %}?group=Clipboard Home&placeholder={{ widget.attrs.placeholder_ref_id }}&language={{ widget.attrs.language }}">Clipboard Home<small></small></a> 
+    </div>
+
+    <div>
+    </div>
+
+    <div>
+        <a class="button_clipboard" href="{% url 'admin:cmsplugin_cascade_cascadeclipboardgroup_changelist' %}?group=demo">admin groups <small></small></a> 
+        <a class="button_clipboard" href="{% url 'admin:cmsplugin_cascade_cascadeclipboard_changelist' %} ">admin clipboard<small></small></a>
+    </div>
+</div>
+<div class='cascade_clipboard_admin'>
+    {% for group in groups_exclude_home %}
+    <a  class="button_clipboard"  href="{% url 'admin:import_clipboard_plugins' %}?group={{ group }}&placeholder={{ widget.attrs.placeholder_ref_id }}&language={{ widget.attrs.language }}">{{ group }}</a>
+    {% endfor %}
+    {% if widget.attrs.count_target  %}
+    <a class="button_clipboard" href="{% url 'admin:import_clipboard_plugins' %}?group=ungroup&placeholder={{ widget.attrs.placeholder_ref_id }}&language={{ widget.attrs.language }}">Ungroup<small></small></a>
+    {% endif %}
+</div>
