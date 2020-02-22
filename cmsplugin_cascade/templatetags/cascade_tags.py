@@ -27,7 +27,7 @@ class StrideRenderer(Tag):
     name = 'render_cascade'
     options = Options(
         Argument('data_clipboard'),
-        Argument('identifier', required=True),
+        Argument('identifier', required=False),
     )
 
     def render_tag(self, context, data_clipboard, identifier=None):
@@ -127,7 +127,6 @@ def sphinx_docs_include(path):
         raise TemplateDoesNotExist("'{path}' does not exist".format(path=path))
     with io.open(filename) as fh:
         return mark_safe(fh.read())
-
 
 
 @register.simple_tag
