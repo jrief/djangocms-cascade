@@ -206,9 +206,6 @@ class StrideContentRenderer(object):
         from sekizai.helpers import get_varname as get_sekizai_context_key
 
         sekizai_context_key = get_sekizai_context_key()
-        print("sekizai_context_kesssssssssy")
-        print(sekizai_context_key)
-        print( placeholder)
         if app_settings.CMSPLUGIN_CASCADE['cache_strides'] and getattr(instance.plugin, 'cache', not editable):
             cache = caches['default']
             key = 'cascade_element-{}'.format(instance.pk)
