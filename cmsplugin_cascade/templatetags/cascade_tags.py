@@ -33,17 +33,22 @@ class StrideRenderer(Tag):
     def render_tag(self, context, data_clipboard, identifier=None):
         from sekizai.helpers import get_varname as get_sekizai_context_key
         from cmsplugin_cascade.strides import StrideContentRenderer
+        tr=False
         if isinstance(data_clipboard, dict):
+            # qs_clipboards
             identifier = identifier
             datafile = False
-        else :
+        elif isinstance(data_clipboard, str):
+            # relative path
             datafile = data_clipboard
             identifier = datafile
+
         tree_data_key = 'cascade-strides:' + identifier
         cache = caches['default']
         tree_data = cache.get(tree_data_key) if cache else None
+
         if tree_data is None:
-            if datafile:
+            if datafile :
                 jsonfile = finders.find(datafile)
                 if not jsonfile:
                     raise IOError("Unable to find file: {}".format(datafile))

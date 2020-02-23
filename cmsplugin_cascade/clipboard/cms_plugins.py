@@ -129,7 +129,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
             identifier = 'demo'
             clipboards_groupby[ 'Clipboard Home'] = [( identifier,  identifier)]
             clipboard_home = CascadeClipboardGroup.objects.create(name="Clipboard Home")
-            data_demo = "cascade/admin/clipboards/demo_carousel-plugin.json"
+            data_demo = self.populate_static_json("cascade/admin/clipboards/demo_carousel-plugin.json")
             group_clipboard_home = clipboard_home
             cascade_clipboard = CascadeClipboard.objects.create(
                 identifier=identifier,
@@ -279,5 +279,14 @@ class CascadeClipboardPlugin(CMSPluginBase):
         )
         cascade_clipboard.group.set(group) 
         return render(request, 'cascade/admin/clipboard_close_frame.html', {})
+
+
+    def populate_static_json(self, relative_path_filename):
+       import os, io, json
+       from django.contrib.staticfiles import finders
+       path = finders.find(relative_path_filename)
+       with io.open(path, 'r') as fh:
+            config_data = json.load(fh)
+       return config_data
 
 plugin_pool.register_plugin(CascadeClipboardPlugin)
