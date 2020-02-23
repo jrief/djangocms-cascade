@@ -11,6 +11,7 @@ from django.utils.safestring import mark_safe
 from classytags.arguments import Argument
 from classytags.core import Options, Tag
 from cmsplugin_cascade.strides import StrideContentRenderer
+from django.templatetags.static import static
 
 register = template.Library()
 
@@ -113,6 +114,85 @@ class RenderPlugin(Tag):
 
 register.tag('render_plugin', RenderPlugin)
 
+
+class FallBack(Tag):
+    name = 'fallback'
+
+    options = Options(
+        Argument('plugin',required=False) 
+    )
+
+    def render_tag(self, context, plugin):
+        for context_ in  context:
+           if 'instance'in context_ :
+               glossary = context_['instance'].glossary
+               instance = context_['instance']
+               fallback_plugin_type = plugin.plugin_class.__name__
+               css_classes = glossary.get('css_classes','')
+               width = 0; height = 0; exif_orientation = 0; x = 0; y = 0;
+               inline_styles = glossary.get('inline_styles','')
+               html_tag_attributes = glossary.get('html_tag_attributes','')
+
+               if 'image' in glossary:
+                   image_fallback = 'image'
+                   img = settings.CMSPLUGIN_CASCADE["fallback"]["image"]['svg']
+                   color = settings.CMSPLUGIN_CASCADE["fallback"]["image"]['color']
+                   static_fallback_svg = static(img)
+               elif fallback_plugin_type == 'BootstrapJumbotronPlugin':
+                   image_fallback=None
+                   img = settings.CMSPLUGIN_CASCADE["fallback"]["jumbotron"]['svg']
+                   color = settings.CMSPLUGIN_CASCADE["fallback"]["jumbotron"]['color']
+                   static_fallback_svg = static(img)
+               elif 'image_properties' in  glossary:
+                   image_fallback='image_properties'
+                   img = settings.CMSPLUGIN_CASCADE["fallback"]["picture"]['svg']
+                   color = settings.CMSPLUGIN_CASCADE["fallback"]["picture"]['color']
+                   static_fallback_svg = static(img)
+               else:
+                   image_fallback=None
+                   img = settings.CMSPLUGIN_CASCADE["fallback"]["picture"]['svg']
+                   color = settings.CMSPLUGIN_CASCADE["fallback"]["picture"]['color']
+                   static_fallback_svg = static(img)
+               if image_fallback :
+                   width = glossary[image_fallback].get('width',0)
+                   height = glossary[image_fallback].get('height',0)
+                   exif_orientation = glossary[image_fallback].get('exif_orientation',0) 
+
+               x = 50
+               y = 50
+
+               if fallback_plugin_type == 'BootstrapJumbotronPlugin':
+                   style='''
+                        background: url({static_fallback_svg});
+                        background-size: auto;
+                        background-position-y: 20%;
+                        background-size: 50%;
+                        background-repeat: no-repeat;
+                        background-position-x: 50%;
+                        background-attachment: fixed;
+                        background-color: {color};
+                        border: white solid;
+                    '''.format( color=color, static_fallback_svg=static_fallback_svg)
+
+                   return style
+               else:
+                   svg='<svg  ViewBox="0 0 {width} {height}" version="1.1" style="background-color:\
+                    {color}; border: white solid;" {html_tag_attributes} class="{css_classes}"   style="{inline_styles}" \
+                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink"> \
+                    <image x="{x}"  y="{y}" width="10%" xlink:href="{static_fallback_svg}"> \
+                    </svg>'.format(
+                    width=width,
+                    height=height,
+                    color=color,
+                    css_classes=css_classes,
+                    inline_styles=inline_styles,
+                    html_tag_attributes=html_tag_attributes,
+                    static_fallback_svg=static_fallback_svg,
+                    x=x,
+                    y=y)
+                   return svg
+
+register.tag('fallback', FallBack)
 
 @register.filter
 def is_valid_image(image):

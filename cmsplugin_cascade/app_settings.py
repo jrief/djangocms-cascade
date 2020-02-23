@@ -132,6 +132,14 @@ class AppSettings(object):
 
         config.setdefault('register_page_editor', True)
 
+
+        config.setdefault('fallback',{
+          'image':{'color':'hsl(196, 71%, 93%, 0.8)', 'svg':''},
+          'picture':{'color':'hsl(150, 86%,94%, 0.8)', 'svg':'' },
+          'jumbotron':{'color':'hsl(62, 90%, 90%, 0.8)', 'svg':''},
+         })
+
+
         for module_name in self.CASCADE_PLUGINS:
             try:
                 settings_module = import_module('{}.settings'.format(module_name))

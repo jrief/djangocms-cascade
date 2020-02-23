@@ -1,0 +1,8 @@
+{% load l10n cascade_tags %}
+{% with tag_type=instance.tag_type css_classes=instance.css_classes inline_styles=instance.inline_styles element_id=instance.element_id %}
+<{{ tag_type }}{{ instance.html_tag_attributes }}{% if element_id %} id="{{ element_id|unlocalize }}"{% endif %}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+{% for plugin in instance.child_plugin_instances %}
+	{% render_plugin plugin %}
+{% endfor %}
+</{{ tag_type }}>
+{% endwith %}

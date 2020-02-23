@@ -28,6 +28,10 @@
 	}
 }
 	{% endfor %}
+{% elif 'pk' in  instance.glossary.image_file %}
+	#cascadeelement_id-{{ instance.pk }} {
+	{% fallback instance %} 
+	}
 {% endif %}
 </style>
 {% endlocalize %}{% endaddtoblock %}
@@ -39,3 +43,4 @@
 	{% endfor %}
 </div>  
 {% endspaceless %}{% endlocalize %}
+
