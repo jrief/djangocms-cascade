@@ -126,12 +126,13 @@ class CascadeClipboardPlugin(CMSPluginBase):
         [treegroup( groups, index)  for index, groups in enumerate(queryset , start=1)]
 
         if not 'Clipboard Home' in clipboards_groupby:
-            clipboards_groupby[ 'Clipboard Home'] = [('demo', 'demo')]
+            identifier = 'demo'
+            clipboards_groupby[ 'Clipboard Home'] = [( identifier,  identifier)]
             clipboard_home = CascadeClipboardGroup.objects.create(name="Clipboard Home")
-            data_demo = self.populate_static_json("demo_carousel-plugin.json")
+            data_demo = "cascade/admin/clipboards/demo_carousel-plugin.json"
             group_clipboard_home = clipboard_home
             cascade_clipboard = CascadeClipboard.objects.create(
-                identifier="demo",
+                identifier=identifier,
                 data=data_demo,
             )
             cascade_clipboard.group.set([group_clipboard_home])
@@ -278,16 +279,5 @@ class CascadeClipboardPlugin(CMSPluginBase):
         )
         cascade_clipboard.group.set(group) 
         return render(request, 'cascade/admin/clipboard_close_frame.html', {})
-
-
-    def populate_static_json(self, filename):
-       import os, io, json
-       from django.contrib.staticfiles import finders
-       clipboard_folder ='cascade/admin/clipboards/'
-       path = finders.find(clipboard_folder)
-       os.path.join(path, filename)
-       with io.open(os.path.join(path, filename), 'r') as fh:
-            config_data = json.load(fh)
-       return config_data
 
 plugin_pool.register_plugin(CascadeClipboardPlugin)
