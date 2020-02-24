@@ -1,15 +1,9 @@
 {% load static cascade_tags sekizai_tags %}
-
 {% spaceless %}
 {% include "cascade/admin/widgets/clipboard_menu_group.html" %} 
 
-
-{% block css %}
-
-{% endblock %}
-
 {% with id=widget.attrs.id %}
-<input type="radio" name="cascade-input" id="{{ id }}" style="display: none;"  >
+<input type="radio" name="cascade-input" id="{{ id }}" style="display: none;">
 <labeld for="{{ id }}" width="100%" height="100%" >
 <div class="select-box buttons">
     <div tabindex="{{ widget.attrs.pk }}"  class="select-box__current" style="display: inline-flex;flex-wrap: wrap;position:absolute;">

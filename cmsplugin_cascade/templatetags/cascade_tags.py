@@ -75,7 +75,7 @@ class StrideRenderer(Tag):
                 for name in SEKIZAI_CONTENT_HOLDER:
                     context[sekizai_context_key][name] = SEKIZAI_CONTENT_HOLDER[name]
         return content
-        
+
 register.tag('render_cascade', StrideRenderer)
 
 
@@ -99,9 +99,6 @@ class RenderPlugin(Tag):
         elif 'cms_content_renderer' in context:
             content_renderer = context['cms_content_renderer']
         else:
-            #print('request')
-            #print(request)
-            print(context['cms_content_renderer'])
             request = context['request']
             toolbar = get_toolbar_from_request(request)
             content_renderer = toolbar.content_renderer
@@ -213,7 +210,6 @@ def sphinx_docs_include(path):
         raise TemplateDoesNotExist("'{path}' does not exist".format(path=path))
     with io.open(filename) as fh:
         return mark_safe(fh.read())
-
 
 
 @register.simple_tag

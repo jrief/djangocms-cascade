@@ -11,6 +11,8 @@ from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin
+from collections import defaultdict
+from sekizai.data import UniqueSequence
 
 __all__ = ['register_stride', 'StrideContentRenderer']
 
@@ -191,14 +193,12 @@ class TextStridePlugin(StridePluginBase):
 
 class StrideContentRenderer(object):
     def __init__(self, request):
-
         if request:
             self.request = request
             self.language = get_language_from_request(request)
-
         self._cached_templates = {}
 
-    def render_cascade(self, context, tree_data, **kwargs):
+    def render_cascade(self, context, tree_data):
         contents = []
         # create temporary copy of context to prevent pollution for other CMS placeholders
         context = make_context(flatten_context(context))
@@ -209,8 +209,6 @@ class StrideContentRenderer(object):
             # create a temporary object to store the plugins cache status
             cms_cachable_plugins = type(str('CachablePlugins'), (object,), {'value': True})
             context.push(cms_cachable_plugins=cms_cachable_plugins)
-            
-            
             contents.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(contents))
 
@@ -218,11 +216,6 @@ class StrideContentRenderer(object):
         from sekizai.helpers import get_varname as get_sekizai_context_key
 
         sekizai_context_key = get_sekizai_context_key()
-
-        from collections import defaultdict
-
-        from sekizai.data import UniqueSequence
-     #   from sekizai.helpers import get_varname
         context[sekizai_context_key] =  defaultdict(UniqueSequence)
 
         if app_settings.CMSPLUGIN_CASCADE['cache_strides'] and getattr(instance.plugin, 'cache', not editable):

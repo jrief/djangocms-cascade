@@ -201,7 +201,6 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     For more information about the Jumbotron please read the
     <a href="https://getbootstrap.com/docs/4.3/components/jumbotron/" target="_new">Bootstrap documentation</a>.
     </p>"""
-    
 
     class Media:
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/jumbotronplugin.js']
