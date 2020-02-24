@@ -20,7 +20,7 @@ from cmsplugin_cascade.models import CascadeClipboard, CascadeClipboardGroup
 from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
 from django.forms import widgets
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.shortcuts import render
+
 
 class ClipboardWidget(widgets.Select):
     #template_name = 'django/forms/widgets/select.html'
@@ -98,7 +98,6 @@ class CascadeClipboardPlugin(CMSPluginBase):
             'is_popup': True,
             'app_label': opts.app_label,
             'media': self.media + form.media,
-
         }
 
         return TemplateResponse(request, self.change_form_template, context)
