@@ -216,3 +216,7 @@ def sphinx_docs_include(path):
 def cascadeclipboard_data_by_identifier(queryset, identifier ):
     qs_identifier=queryset.filter(identifier=identifier)
     return qs_identifier[0].data
+
+@register.simple_tag
+def fallback_config(type_fallback):
+    return settings.CMSPLUGIN_CASCADE["fallback"][type_fallback]

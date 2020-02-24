@@ -134,8 +134,8 @@ class AppSettings(object):
 
 
         config.setdefault('fallback',{
-          'image':{'color':'hsl(196, 71%, 93%, 0.8)', 'svg':''},
-          'picture':{'color':'hsl(150, 86%,94%, 0.8)', 'svg':'' },
+          'image':{'color':'hsla(221.7, 57.5%, 84.3%, 0.8)', 'svg':''},
+          'picture':{'color':'hsla(0, 40%, 80.4%, 0.8)', 'svg':'' },
           'jumbotron':{'color':'hsl(62, 90%, 90%, 0.8)', 'svg':''},
          })
 
