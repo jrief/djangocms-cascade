@@ -13,7 +13,7 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin
 from collections import defaultdict
 from sekizai.data import UniqueSequence
-
+from random import randint
 __all__ = ['register_stride', 'StrideContentRenderer']
 
 
@@ -32,8 +32,7 @@ class StrideElementBase(object):
     """
     def __init__(self, plugin, data, children_data, parent=None):
         self.plugin = plugin
-        from random import randint
-        #pass args fake id
+        #pass args radom id
         data['pk'] = randint(0, 20000)
         self.id = data.get('pk')
         self.glossary = data.get('glossary', {})
@@ -43,7 +42,6 @@ class StrideElementBase(object):
 
     @property
     def pk(self):
-        from random import randint #self.id+1
         return self.id
 
     @property
