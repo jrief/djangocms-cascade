@@ -1,7 +1,7 @@
 {% load l10n static  thumbnail %}
 {% if  instance.glossary.image_properties.width != src.size.0 or  instance.glossary.image_properties.height != src.size.1 %}
 {% if not 'img-fluid' in  instance.glossary.image_shapes %}
-<div><svg viewBox="0 0 {{instance.glossary.image_properties.width }} {{ instance.glossary.image_properties.height  }}"{{ instance.html_tag_attributes }} {% if css_classes %} class='{{ css_classes|cut:"img-fluid" }}'{% endif %}  
+<div><svg viewBox="0 0 {{instance.glossary.image_properties.width }} {{ instance.glossary.image_properties.height  }}" style="background-color:hsl(196, 71%, 50%, 0.8);" {{ instance.html_tag_attributes }} {% if css_classes %} class='{{ css_classes|cut:"img-fluid" }}'{% endif %}  
 {% if inline_styles %} style="{{ inline_styles }}"{% endif %} {% if sizes %} sizes="{{ sizes|join:', ' }}"{% endif %}
 	src="{{ thumb.url }}" {% if not sizes %}  width="{{ src.size.0 }}"  height="{{ src.size.1 }}"{% endif %}
 	xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
@@ -9,7 +9,7 @@
 </svg></div>
 {% else %}
 <div><svg viewBox="0 0 {{ srcsets.320w.size.0 }} {{ srcsets.320w.size.1 }}" 
-style="{% if inline_styles %} {{ inline_styles }} {% endif %} "
+style="{% if inline_styles %} {{ inline_styles }} {% endif %}  background-color:hsl(196, 71%, 50%, 0.8) !important;"
 {{ instance.html_tag_attributes }} {% if css_classes %} class='{{ css_classes|cut:"img-fluid"|cut:"img-thumbnail" }}'  {% endif %}  
 {% if inline_styles %} style="{{ inline_styles }}"{% endif %} {% if sizes %} sizes="{{ sizes|join:', ' }}"{% endif %}
 	src="{{ thumb.url }}" {% if not sizes %}  width="{{ src.size.0 }}"  height="{{ src.size.1 }}"{% endif %}

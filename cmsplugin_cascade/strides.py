@@ -30,6 +30,9 @@ class StrideElementBase(object):
     """
     def __init__(self, plugin, data, children_data, parent=None):
         self.plugin = plugin
+        from random import randint
+        #pass args fake id
+        data['pk'] = randint(0, 20000)
         self.id = data.get('pk')
         self.glossary = data.get('glossary', {})
         self.sortinline_elements = self.inline_elements = EmulateQuerySet(data.get('inlines', []))
@@ -38,6 +41,7 @@ class StrideElementBase(object):
 
     @property
     def pk(self):
+        from random import randint #self.id+1
         return self.id
 
     @property
@@ -151,6 +155,10 @@ class StridePluginBase(CascadePluginMixin):
 
         if not template:
             raise TemplateDoesNotExist("plugin {} has no render_template".format(self.__class__))
+
+        if hasattr(instance.plugin, 'render_template_fallback'):
+            template = instance.plugin.render_template_fallback
+
         return template
 
     def in_edit_mode(self, request, placeholder):
@@ -183,12 +191,14 @@ class TextStridePlugin(StridePluginBase):
 
 class StrideContentRenderer(object):
     def __init__(self, request):
+
         if request:
             self.request = request
             self.language = get_language_from_request(request)
+
         self._cached_templates = {}
 
-    def render_cascade(self, context, tree_data):
+    def render_cascade(self, context, tree_data, **kwargs):
         contents = []
         # create temporary copy of context to prevent pollution for other CMS placeholders
         context = make_context(flatten_context(context))
@@ -199,6 +209,8 @@ class StrideContentRenderer(object):
             # create a temporary object to store the plugins cache status
             cms_cachable_plugins = type(str('CachablePlugins'), (object,), {'value': True})
             context.push(cms_cachable_plugins=cms_cachable_plugins)
+            
+            
             contents.append(self.render_plugin(plugin_instance, context))
         return mark_safe(''.join(contents))
 
@@ -206,26 +218,37 @@ class StrideContentRenderer(object):
         from sekizai.helpers import get_varname as get_sekizai_context_key
 
         sekizai_context_key = get_sekizai_context_key()
+
+        from collections import defaultdict
+
+        from sekizai.data import UniqueSequence
+     #   from sekizai.helpers import get_varname
+        context[sekizai_context_key] =  defaultdict(UniqueSequence)
+
         if app_settings.CMSPLUGIN_CASCADE['cache_strides'] and getattr(instance.plugin, 'cache', not editable):
+
             cache = caches['default']
             key = 'cascade_element-{}'.format(instance.pk)
             content = cache.get(key)
             if content:
-                context[sekizai_context_key]['css'].extend(cache.get(key + ':css_list', []))
-                context[sekizai_context_key]['js'].extend(cache.get(key + ':js_list', []))
+                if sekizai_context_key in context:
+                    context[sekizai_context_key]['css'].extend(cache.get(key + ':css_list', []))
+                    context[sekizai_context_key]['js'].extend(cache.get(key + ':js_list', []))
                 return content
         else:
             context['cms_cachable_plugins'].value = False
         context = instance.plugin.render(context, instance, placeholder)
         context = flatten_context(context)
 
-        template = instance.plugin._get_render_template(context, instance, placeholder)
+        template = instance.plugin._get_render_template( context, instance, placeholder)
         template = self.get_cached_template(template)
+
         content = template.render(context)
         if context['cms_cachable_plugins'].value:
             cache.set(key, content)
-            cache.set(key + ':css_list', context[sekizai_context_key]['css'].data)
-            cache.set(key + ':js_list', context[sekizai_context_key]['js'].data)
+            if sekizai_context_key in context:
+                cache.set(key + ':css_list', context[sekizai_context_key]['css'].data)
+                cache.set(key + ':js_list', context[sekizai_context_key]['js'].data)
         return content
 
     def user_is_on_edit_mode(self):

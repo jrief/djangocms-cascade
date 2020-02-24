@@ -20,7 +20,7 @@ from cmsplugin_cascade.models import CascadeClipboard, CascadeClipboardGroup
 from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
 from django.forms import widgets
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-
+from django.shortcuts import render
 
 class ClipboardWidget(widgets.Select):
     #template_name = 'django/forms/widgets/select.html'
@@ -82,7 +82,6 @@ class CascadeClipboardPlugin(CMSPluginBase):
         opts = self.model._meta
         fieldsets = [(None, {'fields': list(form.fields)})]
         adminForm = AdminForm(form, fieldsets, {}, [])
-
         context = {
             **default_admin_site.each_context(request),
             'title': form.title,
@@ -99,10 +98,10 @@ class CascadeClipboardPlugin(CMSPluginBase):
             'is_popup': True,
             'app_label': opts.app_label,
             'media': self.media + form.media,
+
         }
 
         return TemplateResponse(request, self.change_form_template, context)
-
 
     def import_plugins_view(self, request, *args, **kwargs):
         # TODO: check for permissions
@@ -169,7 +168,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
                 'title': title,
             })
 
-            Form.Media =type("Media",(), {'css'  : { 'all': ['cascade/css/admin/clipboard.css'] }}) 
+            Form.Media = type("Media",(), {'css'  : { 'all': ['cascade/css/admin/clipboard.css'] }}) 
             form = Form(request.GET)
             assert form.is_valid()
         elif request.method == 'POST':

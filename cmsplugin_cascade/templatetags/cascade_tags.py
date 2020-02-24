@@ -22,8 +22,9 @@ class StrideRenderer(Tag):
     {% render_cascade "cascade-data.json" %}
 
     Keyword arguments:
-    datafile -- Filename containing the cascade tree. Must be file locatable by Django's
+    data_clipboard -- Filename containing the cascade tree. Must be file locatable by Django's
     static file finders.
+    identifier --- Identifier persitent clipboard db.
     """
     name = 'render_cascade'
     options = Options(
@@ -74,7 +75,7 @@ class StrideRenderer(Tag):
                 for name in SEKIZAI_CONTENT_HOLDER:
                     context[sekizai_context_key][name] = SEKIZAI_CONTENT_HOLDER[name]
         return content
-
+        
 register.tag('render_cascade', StrideRenderer)
 
 
@@ -88,7 +89,7 @@ class RenderPlugin(Tag):
         Argument('plugin')
     )
 
-    def render_tag(self, context, plugin):
+    def render_tag(self, context, plugin, request=None):
         if not plugin:
             return ''
         if 'cms_content_renderer' in context and isinstance(context['cms_content_renderer'], StrideContentRenderer):
@@ -98,6 +99,9 @@ class RenderPlugin(Tag):
         elif 'cms_content_renderer' in context:
             content_renderer = context['cms_content_renderer']
         else:
+            #print('request')
+            #print(request)
+            print(context['cms_content_renderer'])
             request = context['request']
             toolbar = get_toolbar_from_request(request)
             content_renderer = toolbar.content_renderer
@@ -209,6 +213,7 @@ def sphinx_docs_include(path):
         raise TemplateDoesNotExist("'{path}' does not exist".format(path=path))
     with io.open(filename) as fh:
         return mark_safe(fh.read())
+
 
 
 @register.simple_tag

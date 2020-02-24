@@ -1,6 +1,12 @@
-{% load static cascade_tags %}
+{% load static cascade_tags sekizai_tags %}
+
 {% spaceless %}
 {% include "cascade/admin/widgets/clipboard_menu_group.html" %} 
+
+
+{% block css %}
+
+{% endblock %}
 
 {% with id=widget.attrs.id %}
 <input type="radio" name="cascade-input" id="{{ id }}" style="display: none;"  >
@@ -13,7 +19,9 @@
                      <input type="radio" id="{{ id }}_{{ index }}" type="radio" name="{{ widget.name }}"{% if widget.value != None %} value="{{ option.value }}"{% endif %}{% include "django/forms/widgets/attrs.html" %} {% if widget.value.0 ==  option.value %} checked="checked" {% endif %} class="select-box__input"/>
                      <p class="select-box__input-text {% if  'outline-light' in option.value or 'outline-warning' in option.value %} btn-dark {% endif %}">
                          <a class="btn {{ option.value }}" role="button"><h1>{{ option.label }}</h1></a>
-                          {% include "cascade/admin/widgets/clipboard_stride.html" %} 
+                         
+                          {% cascadeclipboard_data_by_identifier qs_clipboards option.label as data %}
+                          {% include "cascade/admin/widgets/clipboard_stride.html" with data=data %} 
                      </p>
                  {% endfor %}
              </div>

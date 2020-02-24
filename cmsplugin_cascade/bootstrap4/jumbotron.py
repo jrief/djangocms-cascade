@@ -195,11 +195,13 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     form = JumbotronFormMixin
     raw_id_fields = ['image_file']
     render_template = 'cascade/bootstrap4/jumbotron.html'
+    render_template_fallback = "cascade/generic/fallback_jumbotron.html" # mode stride gallery
     ring_plugin = 'JumbotronPlugin'
     footnote_html = """<p>
     For more information about the Jumbotron please read the
     <a href="https://getbootstrap.com/docs/4.3/components/jumbotron/" target="_new">Bootstrap documentation</a>.
     </p>"""
+    
 
     class Media:
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/jumbotronplugin.js']
