@@ -11,6 +11,7 @@ python = "^3.6"
 [tool.poetry.dev-dependencies]
 django = "<2.3"
 djangocms-cascade =  "*"
+dango-entangled = { git = "https://github.com/jrief/django-entangled.git", branch="develop" }
 django-compressor = "*"
 django-filer =  "*"
 django-sass-processor = "*"
