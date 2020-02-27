@@ -42,6 +42,8 @@ div.cms .cms-structure.cms-structure-condensed .cms-submenu-item a[data-icon=imp
 	top: 12px !important;
 }
 
+
+
 .container_clipboard {
 	display: flex;
 	justify-content: space-between;
@@ -50,7 +52,6 @@ div.cms .cms-structure.cms-structure-condensed .cms-submenu-item a[data-icon=imp
 .cascade_clipboard_admin {
 	padding: 1rem;
 }
-
 
 .button_clipboard {
 	background-color:#ffffff;
@@ -74,3 +75,67 @@ div.cms .cms-structure.cms-structure-condensed .cms-submenu-item a[data-icon=imp
 	top:1px;
 }
 
+.cms-admin-modal{
+background-color: white;
+}
+.field-placeholder, .field-language, #footer {
+	display:none;
+}
+
+.field-clipboard {
+	border-bottom: none;
+}
+
+.select-box__current {
+	display: inline-flex;
+	flex-wrap: wrap;
+	position:absolute;
+}
+
+.cms-cascade-clipboard {
+	width:400px;
+	margin-right:1rem;
+	margin-bottom:1rem;
+}
+
+.clipboard-base .clipboard-fullscreen:checked ~ .cms-cascade-clipboard {
+	width:100%;
+}
+
+.clipboard-fullscreen {
+	display: inline-block;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+	position: relative;
+	right: 3Opx;
+	left: 50%;
+	top: 26px;
+}
+
+.clipboard-fullscreen:after{
+	content:'fullscreen';
+	cursor: pointer;
+}
+
+.clipboard-fullscreen:checked:after {
+	content:'back';
+	cursor: pointer;
+}
+
+.clipboard-base .clipboard-fullscreen:checked {
+	display: inline-block;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+}
+
+.clipboard-base .clipboard-fullscreen:not(:checked), .clipboard-base .clipboard-fullscreen:not(:checked) ~ .cms-cascade-clipboard {
+	display:none;
+}
+
+.clipboard-base .select-box__current {
+	display:inherit;
+}

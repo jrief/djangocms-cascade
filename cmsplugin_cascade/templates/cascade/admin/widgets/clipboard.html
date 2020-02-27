@@ -1,46 +1,90 @@
-{% load static cascade_tags sekizai_tags %}
+{% load static cascade_tags sekizai_tags  sass_tags %}
 {% spaceless %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% sass_src main_scss %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'cascade/css/admin/clipboard.css' %}" type="text/css" /> 
+{% endblock %}
+
 {% include "cascade/admin/widgets/clipboard_menu_group.html" %} 
 
 {% with id=widget.attrs.id %}
 <input type="radio" name="cascade-input" id="{{ id }}" style="display: none;">
-<labeld for="{{ id }}" width="100%" height="100%" >
+<label for="{{ id }}" width="100%" height="100%" >
 <div class="select-box buttons">
-    <div tabindex="{{ widget.attrs.pk }}"  class="select-box__current" style="display: inline-flex;flex-wrap: wrap;position:absolute;">
+    <div tabindex="{{ widget.attrs.pk }}"  class="select-box__current">
         {% for group, options, index in widget.optgroups %}
             <div class="select-box__value">
+              <input type="checkbox"   class="clipboard-fullscreen" name="radios" value="fullscreend">
                 {% for option in options %}
-                     <input type="radio" id="{{ id }}_{{ index }}" type="radio" name="{{ widget.name }}"{% if widget.value != None %} value="{{ option.value }}"{% endif %}{% include "django/forms/widgets/attrs.html" %} {% if widget.value.0 ==  option.value %} checked="checked" {% endif %} class="select-box__input"/>
-                     <p class="select-box__input-text {% if  'outline-light' in option.value or 'outline-warning' in option.value %} btn-dark {% endif %}">
-                         <a class="btn {{ option.value }}" role="button"><h1>{{ option.label }}</h1></a>
-                         
-                          {% cascadeclipboard_data_by_identifier qs_clipboards option.label as data %}
-                          {% include "cascade/admin/widgets/clipboard_stride.html" with data=data %} 
-                     </p>
+                      {% cascadeclipboard_data_by_identifier qs_clipboards option.label as data %}
+                      {% include "cascade/admin/widgets/clipboard_stride.html" with data=data %}
                  {% endfor %}
              </div>
         {% endfor %}
     </div>
-    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-        <foreignObject >
-            <div xmlns="http://www.w3.org/1999/xhtml">
-                <ul class="select-box__list ">
-                     {% for group, options, index in widget.optgroups %}
-                         {% for option in options %}
-                          <li>
-                             <label for="{{ id }}_{{ index }}" aria-hidden="aria-hidden" class="select-box__option">
-                               <div {% if 'outline-light' in option.value or 'outline-warning' in option.value %} class=" btn-dark"{% endif %}>
-                                     <a class="btn {{ option.value }}" role="button">{{ option.label }}</a>
-                               </div>
-                             </label>
-                          </li>
-                         {% endfor %}
-                     {% endfor %}
-                 </ul>
-             </div>
-         </foreignObject>
-    </svg>
-    </div>
+ </div>
 </label>
+
+
+{% block after_field_sets %}
+<script src="{% static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}" type="text/javascript"></script>
+{% endblock %}
+
+
+<script>
+const div_select_box = document.querySelector(".select-box");
+const svg_stride = document.querySelectorAll(".cms-cascade-svg-viewer");
+const input_fullscreen = document.querySelectorAll(".clipboard-fullscreen");
+const xs = document.getElementById("js-cascade-btn-xs");
+const sm = document.getElementById("js-cascade-btn-sm");
+const md = document.getElementById("js-cascade-btn-md");
+const lg = document.getElementById("js-cascade-btn-lg");
+const xl = document.getElementById("js-cascade-btn-xl");
+const max = document.getElementById("js-cascade-btn-max");
+
+input_fullscreen.forEach(element => {
+   element.addEventListener('click', function(event) {
+      if ( div_select_box.classList.contains('clipboard-base')){
+        div_select_box.classList.remove('clipboard-base');
+      }
+      else {
+        div_select_box.classList.add('clipboard-base');
+      }
+    });
+});
+
+function parser_clipboards(elements, viewbox){
+  elements.forEach(element => {
+    element.setAttribute("viewBox",  viewbox);
+  });
+}
+
+xs.addEventListener('click', function(event) {
+  parser_clipboards(svg_stride ,'0 0 475 600');
+  });
+sm.addEventListener('click', function(event) {
+  parser_clipboards(svg_stride ,'0 0 767 800');
+  });
+md.addEventListener('click', function(event) {
+  parser_clipboards(svg_stride ,'0 0 991 900');
+  });
+lg.addEventListener('click', function(event) {
+  parser_clipboards(svg_stride ,'0 0 1199 2000');
+  });
+xl.addEventListener('click', function(event) {
+  parser_clipboards(svg_stride ,'0 0 2000 4000');
+  });
+max.addEventListener('click', function(event) {
+  parser_clipboards(svg_stride ,'0 0 5000 10000');
+  });
+
+</script>
+
+{% block footer%}
+
+{% endblock %}
+
+
 {% endwith %}
-{% endspaceless %}  
+{% endspaceless %}

@@ -20,6 +20,7 @@ from cmsplugin_cascade.models import CascadeClipboard, CascadeClipboardGroup
 from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
 from django.forms import widgets
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+from django.conf import settings
 
 
 class ClipboardWidget(widgets.Select):
@@ -32,6 +33,7 @@ class ClipboardWidget(widgets.Select):
         groups=list(CascadeClipboardGroup.objects.all().exclude( name='Clipboard Home').values_list('name',flat=True))
         context['groups_exclude_home'] = groups
         context['qs_clipboards'] = CascadeClipboard.objects.all()
+        context['main_scss'] = settings.CMSPLUGIN_CASCADE['fallback']['path_main_scss']
         return context
 
 
@@ -102,9 +104,13 @@ class CascadeClipboardPlugin(CMSPluginBase):
 
         return TemplateResponse(request, self.change_form_template, context)
 
+
     def import_plugins_view(self, request, *args, **kwargs):
         # TODO: check for permissions
 
+
+        view_breakdown = request.session.get('view_breakdown', "lg")
+ 
         placeholder_ref_id = None
         if request.GET.get('placeholder'):
             placeholder_ref_id = request.GET.get('placeholder')
@@ -162,12 +168,12 @@ class CascadeClipboardPlugin(CMSPluginBase):
                     choices=CHOICES,
                     label=_("Select Clipboard"),
                     required=False,
-                    widget=ClipboardWidget(attrs={"placeholder_ref_id": placeholder_ref_id, "language": language, 'count_target':len_ungroup  }),
+                    widget=ClipboardWidget(attrs={"placeholder_ref_id": placeholder_ref_id, "language": language, 'count_target':len_ungroup ,'view_breakdown':view_breakdown  }),
                 ),
                 'title': title,
             })
 
-            Form.Media = type("Media",(), {'css'  : { 'all': ['cascade/css/admin/clipboard.css'] }}) 
+            Form.Media = type("Media",(), {'css'  : { 'all': [ ''] }}) 
             form = Form(request.GET)
             assert form.is_valid()
         elif request.method == 'POST':
