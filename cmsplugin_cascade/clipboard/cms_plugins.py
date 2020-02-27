@@ -130,16 +130,18 @@ class CascadeClipboardPlugin(CMSPluginBase):
         [treegroup( groups, index)  for index, groups in enumerate(queryset , start=1)]
 
         if not 'Clipboard Home' in clipboards_groupby:
-            identifier = 'demo'
-            clipboards_groupby[ 'Clipboard Home'] = [( identifier,  identifier)]
-            clipboard_home = CascadeClipboardGroup.objects.create(name="Clipboard Home")
-            data_demo = self.populate_static_json("cascade/admin/clipboards/demo_carousel-plugin.json")
-            group_clipboard_home = clipboard_home
-            cascade_clipboard = CascadeClipboard.objects.create(
-                identifier=identifier,
-                data=data_demo,
-            )
-            cascade_clipboard.group.set([group_clipboard_home])
+            identifier = 'Demo'
+            group ='Clipboard Home'
+            # For only one fiel demo.
+            # data_demo = self.populate_static_json("cascade/admin/clipboards/demo_carousel-plugin.json")
+            # self.populate_db_group_clipboards( clipboards_groupby, identifier, group, data_demo)
+            
+            # folder to group and file to group.
+            data_folders = self.populate_static_folderGroup_json('cascade/admin/clipboards/')
+            if data_folders:
+                self.populate_db_data_clipboards( data_folders, identifier, group)
+
+
 
         CHOICES=(list(clipboards_groupby.items(),))
         ff=_("Import from Clipboard")
@@ -283,14 +285,51 @@ class CascadeClipboardPlugin(CMSPluginBase):
         )
         cascade_clipboard.group.set(group) 
         return render(request, 'cascade/admin/clipboard_close_frame.html', {})
+        
 
+    def populate_db_group_clipboards(self, clipboards_groupby, identifier, group, data_clipboard):
+        clipboards_groupby[ group] = [( identifier, identifier)]
+        clipboard_home = CascadeClipboardGroup.objects.get_or_create(name=group)
+        cascade_clipboard = CascadeClipboard.objects.get_or_create(
+            identifier=identifier,
+            data=data_clipboard,
+        )
+        cascade_clipboard[0].group.set([clipboard_home[0]])
 
     def populate_static_json(self, relative_path_filename):
-       import os, io, json
-       from django.contrib.staticfiles import finders
-       path = finders.find(relative_path_filename)
-       with io.open(path, 'r') as fh:
+        import os, io, json
+        from django.contrib.staticfiles import finders
+        path = finders.find(relative_path_filename)
+        with io.open(path, 'r') as fh:
             config_data = json.load(fh)
-       return config_data
+        return config_data
+ 
+    def populate_db_data_clipboards(self,data, identifier,  group_name ):
+        for group_name , values in data.items():
+            if len(values) >= 1:
+               for value in values:
+                  identifier = value.split('/')[-1].replace('.json','')
+                  data_clipboard = self.populate_static_json(value)
+                  self.populate_db_group_clipboards(data, identifier,  group_name, data_clipboard)
+
+
+    def populate_static_folderGroup_json(self, relative_path_folder):
+        import os, io, json
+        import pathlib
+        from django.contrib.staticfiles import finders
+        input_path = finders.find(relative_path_folder)
+        data = {}
+        if input_path:
+            list_folders_top=next(os.walk(input_path))[1]
+            for n, group_folder in enumerate(list_folders_top, 1):
+               clipboards_folder=[]
+               list_subfolder_path=os.path.join(input_path, group_folder)
+               files_path=list(pathlib.Path(list_subfolder_path).glob('**/*.json'))
+               for path in files_path:
+                  clipboards_folder.append( str(pathlib.Path(relative_path_folder).joinpath(path.relative_to(input_path))))
+               data.update({ group_folder  : clipboards_folder})
+        return data
+
+
 
 plugin_pool.register_plugin(CascadeClipboardPlugin)
