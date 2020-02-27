@@ -132,7 +132,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
         if not 'Clipboard Home' in clipboards_groupby:
             identifier = 'Demo'
             group ='Clipboard Home'
-            # For only one fiel demo.
+
             # data_demo = self.populate_static_json("cascade/admin/clipboards/demo_carousel-plugin.json")
             # self.populate_db_group_clipboards( clipboards_groupby, identifier, group, data_demo)
             
@@ -141,7 +141,10 @@ class CascadeClipboardPlugin(CMSPluginBase):
             if data_folders:
                 self.populate_db_data_clipboards( data_folders, identifier, group)
 
-
+            # Clipboard home
+            data_demo = self.populate_static_json("cascade/admin/clipboards/demo/demo_carousel-plugin.json")
+            self.populate_db_group_clipboards( clipboards_groupby, identifier, group, data_demo)
+            
 
         CHOICES=(list(clipboards_groupby.items(),))
         ff=_("Import from Clipboard")

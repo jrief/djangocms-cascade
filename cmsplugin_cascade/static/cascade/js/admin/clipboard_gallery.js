@@ -26,7 +26,7 @@ function parser_clipboards(elements, viewbox){
 }
 
 xs.addEventListener('click', function(event) {
-  parser_clipboards(svg_stride ,'0 0 475 600');
+  parser_clipboards(svg_stride ,'0 0 475 500');
   });
 sm.addEventListener('click', function(event) {
   parser_clipboards(svg_stride ,'0 0 767 800');
@@ -35,7 +35,7 @@ md.addEventListener('click', function(event) {
   parser_clipboards(svg_stride ,'0 0 991 900');
   });
 lg.addEventListener('click', function(event) {
-  parser_clipboards(svg_stride ,'0 0 1199 2000');
+  parser_clipboards(svg_stride ,'0 0 1199 1400');
   });
 xl.addEventListener('click', function(event) {
   parser_clipboards(svg_stride ,'0 0 2000 4000');

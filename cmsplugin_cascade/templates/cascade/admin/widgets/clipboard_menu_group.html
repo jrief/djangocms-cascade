@@ -3,40 +3,40 @@
     <div>
         <a class="button_clipboard"  href="{% url 'admin:import_clipboard_plugins' %}?group=Clipboard Home&placeholder={{ widget.attrs.placeholder_ref_id }}&language={{ widget.attrs.language }}">Clipboard Home<small></small></a> 
     </div>
-
     <div>
 
- 
-    
-<a class="button_clipboard" id='js-cascade-btn-xs'>
-   <img src="{% static 'cascade/admin/bootstrap4/' %}xs.svg" style="height: 25px;" />
-   <small>xs</small>
-</a> 
-<a class="button_clipboard" id='js-cascade-btn-sm'>
-   <img src="{% static 'cascade/admin/bootstrap4/' %}sm.svg" style="height: 25px;" />
-   <small>sm</small>
-</a>
-<a class="button_clipboard" id='js-cascade-btn-md'>
-   <img src="{% static 'cascade/admin/bootstrap4/' %}md.svg" style="height: 25px;" />
-   <small>md</small>
-</a>
-<a class="button_clipboard" id='js-cascade-btn-lg'>
-   <img src="{% static 'cascade/admin/bootstrap4/' %}lg.svg" style="height: 25px;" />
-   <small>lg</small>
-</a>
-<a class="button_clipboard" id='js-cascade-btn-xl'>
-   <img src="{% static 'cascade/admin/bootstrap4/' %}xl.svg" style="height: 25px;" />
-   <small> xl</small>
-</a>
-<a class="button_clipboard" id='js-cascade-btn-max'>
-  Max
-</a>
 
     </div>
 
     <div>
-        <a class="button_clipboard" href="{% url 'admin:cmsplugin_cascade_cascadeclipboardgroup_changelist' %}">admin groups <small></small></a> 
-        <a class="button_clipboard" href="{% url 'admin:cmsplugin_cascade_cascadeclipboard_changelist' %} ">admin clipboard<small></small></a>
+        <a class="button_clipboard shortcuts-admin" href="{% url 'admin:cmsplugin_cascade_cascadeclipboardgroup_changelist' %}">admin groups <small></small></a> 
+        <a class="button_clipboard shortcuts-admin" href="{% url 'admin:cmsplugin_cascade_cascadeclipboard_changelist' %} ">admin clipboard<small></small></a>
+        
+        
+        <a class="button_clipboard" id='js-cascade-btn-xs'>
+           <img src="{% static 'cascade/admin/bootstrap4/' %}xs.svg" style="height: 25px;" />
+           <small>xs</small>
+        </a> 
+        <a class="button_clipboard" id='js-cascade-btn-sm'>
+           <img src="{% static 'cascade/admin/bootstrap4/' %}sm.svg" style="height: 25px;" />
+           <small>sm</small>
+        </a>
+        <a class="button_clipboard" id='js-cascade-btn-md'>
+           <img src="{% static 'cascade/admin/bootstrap4/' %}md.svg" style="height: 25px;" />
+           <small>md</small>
+        </a>
+        <a class="button_clipboard" id='js-cascade-btn-lg'>
+           <img src="{% static 'cascade/admin/bootstrap4/' %}lg.svg" style="height: 25px;" />
+           <small>lg</small>
+        </a>
+        <a class="button_clipboard" id='js-cascade-btn-xl'>
+           <img src="{% static 'cascade/admin/bootstrap4/' %}xl.svg" style="height: 25px;" />
+           <small> xl</small>
+        </a>
+        <a class="button_clipboard" id='js-cascade-btn-max'>
+          Max
+        </a>
+
     </div>
 </div>
 <div class='cascade_clipboard_admin'>
