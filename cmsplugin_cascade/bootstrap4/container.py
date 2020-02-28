@@ -249,7 +249,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 width_fields[field_name] = ChoiceField(
                     choices=choices,
                     label=_("Column width for {}").format(devices),
-                    initial='col' if bp =='xs' else 'col-{}'.format(bp),
+                    initial='col' if bp == 'xs' else 'col-{}'.format(bp),
                     help_text=choose_help_text(
                         _("Column width for devices narrower than {:.1f} pixels."),
                         _("Column width for devices wider than {:.1f} pixels."),

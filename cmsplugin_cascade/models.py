@@ -34,7 +34,11 @@ class SharedGlossary(models.Model):
         unique=True,
     )
 
-    glossary = JSONField(null=True, blank=True, default={})
+    glossary = JSONField(
+        null=True,
+        blank=True,
+        default={},
+    )
 
     class Meta:
         unique_together = ['plugin_type', 'identifier']
@@ -106,7 +110,10 @@ class InlineCascadeElement(models.Model):
         on_delete=models.CASCADE,
     )
 
-    glossary = JSONField(blank=True, default={})
+    glossary = JSONField(
+        blank=True,
+        default={},
+    )
 
     class Meta:
         db_table = 'cmsplugin_cascade_inline'
@@ -181,7 +188,7 @@ class PluginExtraFields(models.Model):
 
 
 class TextEditorConfigFields(models.Model):
-    ELEMENT_CHOICES = [(c, c) for c in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'address', 'div']]
+    ELEMENT_CHOICES = [(c, c) for c in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'address', 'div', 'span']]
 
     name = models.CharField(
         _("Name"),
