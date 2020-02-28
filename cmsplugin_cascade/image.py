@@ -1,8 +1,10 @@
 from django.core.exceptions import ValidationError
-from django.forms.fields import CharField
+from django.forms.fields import Field, CharField
 from django.utils.translation import ugettext_lazy as _
-from entangled.forms import EntangledModelFormMixin, EntangledField, get_related_object
+from entangled.forms import EntangledModelFormMixin, EntangledFormField , EntangledModelForm
+from entangled.utils import get_related_object
 from cmsplugin_cascade.fields import CascadeImageField
+from entangled.fields import EntangledInvisibleField
 
 
 class ImageFormMixin(EntangledModelFormMixin):
@@ -20,7 +22,7 @@ class ImageFormMixin(EntangledModelFormMixin):
         help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
     )
 
-    _image_properties = EntangledField()
+    _image_properties = EntangledInvisibleField()
 
     class Meta:
         entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', '_image_properties']}

@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
-from entangled.forms import get_related_object
+from entangled.utils import get_related_object
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from filer.models.filemodels import File as FilerFileModel
 
