@@ -10,6 +10,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 
 class AccordionForm(EntangledForm):
@@ -69,7 +70,7 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
         return context
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
+        wanted_children = int(form.cleaned_data.get('accordion_nested.num_children'))
         super().save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, BootstrapAccordionGroupPlugin)
 
