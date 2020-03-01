@@ -4,7 +4,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from django.utils.safestring import mark_safe 
 from django.utils.text import Truncator
 from django.utils.html import escape
-from entangled.forms import EntangledModelFormMixin
+from entangled.forms import EntangledModelFormMixin, EntangledFormField, EntangledForm
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
@@ -12,7 +12,7 @@ from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
 
 
-class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+class AccordionForm(EntangledForm):
     num_children = IntegerField(
         min_value=1,
         initial=1,
@@ -35,9 +35,13 @@ class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
          help_text=_("Start with the first card open.")
     )
 
+
+class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+    accordion_nested = EntangledFormField(AccordionForm)
+
     class Meta:
-        untangled_fields = ['num_children']
-        entangled_fields = {'glossary': ['close_others', 'first_is_open']}
+        untangled_fields = ['accordion_nested.num_children']
+        entangled_fields = {'glossary': ['accordion_nested']}
 
 
 class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
@@ -72,7 +76,7 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapAccordionPlugin)
 
 
-class AccordionGroupFormMixin(EntangledModelFormMixin):
+class AccordionGroupForm(EntangledForm):
     heading = CharField(
         label=_("Heading"),
         widget=widgets.TextInput(attrs={'size': 80}),
@@ -85,8 +89,11 @@ class AccordionGroupFormMixin(EntangledModelFormMixin):
          help_text=_("Add standard padding to card body."),
     )
 
+class AccordionGroupFormMixin(EntangledModelFormMixin):
+    accordion_nested = EntangledFormField(AccordionGroupForm)
+
     class Meta:
-        entangled_fields = {'glossary': ['heading', 'body_padding']}
+        entangled_fields = {'glossary': ['accordion_nested']}
 
     def clean_heading(self):
         return escape(self.cleaned_data['heading'])
