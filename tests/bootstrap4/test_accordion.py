@@ -19,7 +19,7 @@ def bootstrap_accordion(rf, admin_site, bootstrap_column):
     assert isinstance(accordion_model, CascadeElement)
     accordion_plugin = accordion_model.get_plugin_class_instance(admin_site)
     assert isinstance(accordion_plugin, BootstrapAccordionPlugin)
-    data = {'num_children': 2, 'close_others': 'on', 'first_is_open': 'on'}
+    data = {'accordion_nested.num_children': 2, 'accordion_nested.close_others': 'on', 'accordion_nested.first_is_open': 'on'}
     ModelForm = accordion_plugin.get_form(request, accordion_model)
     form = ModelForm(data, None, instance=accordion_model)
     assert form.is_valid()
@@ -37,7 +37,7 @@ def test_edit_accordion_group(rf, admin_site, bootstrap_accordion):
     accordion_plugin, accordion_model = bootstrap_accordion
     first_group = accordion_model.get_first_child()
     group_model, group_plugin = first_group.get_plugin_instance(admin_site)
-    data = {'heading': "Hello", 'body_padding': 'on'}
+    data = {'accordion_nested.heading': "Hello", 'accordion_nested.body_padding': 'on'}
     ModelForm = group_plugin.get_form(request, group_model)
     form = ModelForm(data, None, instance=group_model)
     assert form.is_valid()
