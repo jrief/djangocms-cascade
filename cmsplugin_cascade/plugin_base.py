@@ -325,6 +325,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         if not issubclass(form, ModelForm):
             bases += (ModelForm,)
         kwargs['form'] = type(form.__name__, bases, {})
+        kwargs['fields'] = form.declared_fields
         return super().get_form(request, obj, **kwargs)
 
     def get_parent_instance(self, request=None, obj=None):
