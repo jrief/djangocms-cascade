@@ -24,8 +24,8 @@ def bootstrap_accordion(rf, admin_site, bootstrap_column):
     form = ModelForm(data, None, instance=accordion_model)
     assert form.is_valid()
     accordion_plugin.save_model(request, accordion_model, form, False)
-    assert accordion_model.glossary['accordion_nested.close_others'] is True
-    assert accordion_model.glossary['accordion_nested.first_is_open'] is True
+    assert accordion_model.glossary['accordion_nested']['close_others'] is True
+    assert accordion_model.glossary['accordion_nested']['first_is_open'] is True
     for child in accordion_model.get_children():
         assert isinstance(child.get_plugin_class_instance(admin_site), BootstrapAccordionGroupPlugin)
     return accordion_plugin, accordion_model
