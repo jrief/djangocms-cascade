@@ -59,4 +59,3 @@ Hello</button></h5></div>
 <div class="card-body"></div></div></div></div>""".format(accordion_id=accordion_model.id, group_id=group_model.id)
     expected = expected.replace('\n', '').replace('\t', '')
     assert html == expected
-
