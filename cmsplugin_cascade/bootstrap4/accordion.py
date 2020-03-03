@@ -110,7 +110,7 @@ class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, instance):
-        heading = instance.glossary.get('accordion_nested', {}).get('heading' , True)
+        heading = instance.glossary.get('accordion_nested', {}).get('heading' , '')
         return Truncator(heading).words(3, truncate=' ...')
 
     def render(self, context, instance, placeholder):
