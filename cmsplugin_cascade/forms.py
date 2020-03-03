@@ -15,3 +15,21 @@ class ManageChildrenFormMixin(object):
             initial = {'num_children': instance.get_num_children()}
             kwargs.update(initial=initial)
         super().__init__(*args, **kwargs)
+
+
+class ManageNestedFormMixin(object):
+    """
+    Classes derived from ``CascadePluginBase`` can optionally add this mixin class to their form,
+    offering initial data (instance.glossary) of form nested.
+    """
+    def __init__(self, *args, **kwargs,):
+        instance = kwargs.get('instance')
+        if instance:
+           for field_name, field in self.base_fields.items():
+               if len(field_name.split('.')) == 2:
+                   tenant_nested  = field_name.split('.')[0]
+                   field_nested  = field_name.split('.')[1]
+                   if tenant_nested in instance.glossary and field_nested in instance.glossary[tenant_nested]:
+                       field.initial = instance.glossary[tenant_nested][field_nested]
+        super().__init__(*args, **kwargs)
+
