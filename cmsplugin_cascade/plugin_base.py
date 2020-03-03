@@ -328,7 +328,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         form = type(form.__name__, bases, { })
         kwargs['fields'] = form.declared_fields
         kwargs['form'] = form
-        self.fieldsets = gen_fieldsets_by_entangled(form)
+        self.fieldsets = gen_fieldsets_by_entangled_form(form)
         return super().get_form(request, obj, **kwargs)
 
     def get_parent_instance(self, request=None, obj=None):
