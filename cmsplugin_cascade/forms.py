@@ -27,7 +27,7 @@ class ManageNestedFormMixin(object):
         if instance:
            for field_name, field in self.base_fields.items():
                if len(field_name.split('.')) == 2:
-                   tenant_nested,  field_nested  = field_name.split('.')[1]
+                   tenant_nested, field_nested = field_name.split('.')
                    if tenant_nested in instance.glossary and field_nested in instance.glossary[tenant_nested]:
                        field.initial = instance.glossary[tenant_nested][field_nested]
         super().__init__(*args, **kwargs)
