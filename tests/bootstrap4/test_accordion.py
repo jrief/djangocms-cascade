@@ -42,8 +42,8 @@ def test_edit_accordion_group(rf, admin_site, bootstrap_accordion):
     form = ModelForm(data, None, instance=group_model)
     assert form.is_valid()
     group_plugin.save_model(request, group_model, form, False)
-    assert group_model.glossary['accordion_nested.heading'] == "Hello"
-    assert group_model.glossary['accordion_nested.body_padding'] is True
+    assert group_model.glossary['accordion_nested']['heading'] == "Hello"
+    assert group_model.glossary['accordion_nested']['body_padding'] is True
 
     # render the plugin
     build_plugin_tree([accordion_model, group_model])
