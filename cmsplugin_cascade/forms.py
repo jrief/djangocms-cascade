@@ -22,7 +22,7 @@ class ManageNestedFormMixin(object):
     Classes derived from ``CascadePluginBase`` can optionally add this mixin class to their form,
     offering initial data (instance.glossary) of form nested.
     """
-    def __init__(self, *args, **kwargs,):
+    def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
         if instance:
            for field_name, field in self.base_fields.items():
