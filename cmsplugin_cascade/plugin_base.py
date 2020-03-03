@@ -409,4 +409,3 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         if edit_mode:
             edit_mode = placeholder.has_change_permission(request.user)
         return edit_mode
-

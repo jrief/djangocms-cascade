@@ -2,7 +2,6 @@
 {% localize off %}{% spaceless %}{% with inline_styles=instance.inline_styles plugin_id=instance.id %}
 <div id="cmsplugin_{{ plugin_id }}" class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 	{% for card in instance.child_plugin_instances %}
-	{{ card.glossary.accordion_nested.heading }}
 	<div class="card">
 		<div class="card-header" id="heading_{{ card.id }}">
 			<h5 class="mb-0">
