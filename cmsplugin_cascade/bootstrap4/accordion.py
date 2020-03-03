@@ -116,7 +116,7 @@ class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapAccordionGroupPlugin, self).render(context, instance, placeholder)
         context.update({
-            'heading': mark_safe(instance.glossary.get('accordion_nested', {}).get('heading' , True)),
+            'heading': mark_safe(instance.glossary.get('accordion_nested', {}).get('heading' , '')),
             'no_body_padding': not instance.glossary.get('accordion_nested', {}).get('no_body_padding' , True),
         })
         return context
