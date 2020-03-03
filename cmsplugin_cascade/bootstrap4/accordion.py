@@ -36,7 +36,7 @@ class AccordionForm(EntangledForm):
          help_text=_("Start with the first card open.")
     )
 
-class AccordionFormMixin( ManageNestedFormMixin, EntangledModelFormMixin):
+class AccordionFormMixin(EntangledModelFormMixin, ManageNestedFormMixin):
     accordion_nested = EntangledFormField(AccordionForm)
 
     class Meta:
@@ -63,8 +63,8 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapAccordionPlugin, self).render(context, instance, placeholder)
         context.update({
-            'close_others': instance.glossary['accordion_nested']['close_others'],
-            'first_is_open': instance.glossary['accordion_nested']['first_is_open'],
+            'close_others': instance.glossary.get('accordion_nested', {}).get('close_others', True),
+            'first_is_open': instance.glossary.get('accordion_nested', {}).get('first_is_open', True),
         })
         return context
 
