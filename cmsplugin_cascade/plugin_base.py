@@ -23,16 +23,6 @@ mark_safe_lazy = lazy(mark_safe, str)
 
 fake_proxy_models = {}
 
-def form_initial_data_nested(form,  initial_data):
-   #truc = kwargs.get('truc', False)
-   if initial_data:
-       for field_name, field in form.base_fields.items():
-           if len(field_name.split('.')) == 2:
-               tenant_nested  = field_name.split('.')[0]
-               field_nested  = field_name.split('.')[1]
-               field.initial = initial_data[tenant_nested ][field_nested]
-
-
 
 def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
     """
@@ -77,24 +67,6 @@ class CascadePluginMixinBase(metaclass=CascadePluginMixinMetaclass):
     """
     Use this as a base for mixin classes used by other CascadePlugins
     """
-
-
-def __getitem__(cls , name):
-    """Return a BoundField with the given name."""
-    try:
-        field = self.fields[name]
-    except KeyError:
-        raise KeyError(
-            "Key '%s' not found in '%s'. Choices are: %s." % (
-                name,
-                self.__class__.__name__,
-                ', '.join(sorted(self.fields)),
-            )
-        )
-    if name not in self._bound_fields_cache:
-        self._bound_fields_cache[name] = field.get_bound_field(self, name)
-    return self._bound_fields_cache[name]
-
 
 
 class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetaclass):
