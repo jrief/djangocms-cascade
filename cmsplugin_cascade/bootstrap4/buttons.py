@@ -94,6 +94,7 @@ class ButtonForm(EntangledForm):
 
 class ButtonFormMixin(EntangledModelFormMixin, ManageNestedFormMixin):
     button_opts_nested = EntangledFormField(ButtonForm)
+
     icon_align = ChoiceField(
         label=_("Icon alignment"),
         choices=[

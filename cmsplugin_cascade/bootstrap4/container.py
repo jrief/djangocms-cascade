@@ -7,10 +7,10 @@ from django.utils.safestring import mark_safe
 from django.utils.text import format_lazy
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
-from entangled.forms import EntangledModelFormMixin
+from entangled.forms import EntangledModelFormMixin, EntangledFormField, EntangledForm
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
-from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.forms import ManageChildrenFormMixin, ManageNestedFormMixin
 from .plugin_base import BootstrapPluginBase
 from . import grid
 
@@ -31,8 +31,7 @@ def get_widget_choices():
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
     template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
 
-
-class ContainerFormMixin(EntangledModelFormMixin):
+class ContainerForm(EntangledForm):
     breakpoints = MultipleChoiceField(
         label=_('Available Breakpoints'),
         choices=get_widget_choices(),
@@ -48,21 +47,26 @@ class ContainerFormMixin(EntangledModelFormMixin):
         help_text=_("Changing your outermost '.container' to '.container-fluid'.")
     )
 
-    class Meta:
-        entangled_fields = {'glossary': ['breakpoints', 'fluid']}
-
     def clean_breapoints(self):
         # TODO: check this
-        if len(self.cleaned_data['glossary']['breakpoints']) == 0:
+        if len(self.cleaned_data['glossary'].get('container_nested',{})['breakpoints']) == 0:
             raise ValidationError(_("At least one breakpoint must be selected."))
         return self.cleaned_data['glossary']
 
 
+class ContainerFormMixin(EntangledModelFormMixin, ManageNestedFormMixin):
+    container_nested = EntangledFormField(ContainerForm)
+
+    class Meta:
+        entangled_fields = {'glossary': ['container_nested']}
+
+
+
 class ContainerGridMixin(object):
     def get_grid_instance(self):
-        fluid = self.glossary.get('fluid', False)
+        fluid = self.glossary.get('container_nested',{}).get('fluid', False)
         try:
-            breakpoints = [getattr(grid.Breakpoint, bp) for bp in self.glossary['breakpoints']]
+            breakpoints = [getattr(grid.Breakpoint, bp) for bp in self.glossary.get('container_nested',{})['breakpoints']]
         except KeyError:
             breakpoints = [bp for bp in grid.Breakpoint]
         if fluid:
@@ -85,8 +89,8 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        breakpoints = obj.glossary.get('breakpoints')
-        content = obj.glossary.get('fluid') and '(fluid) ' or ''
+        breakpoints = obj.glossary.get('container_nested',{}).get('breakpoints')
+        content = obj.glossary.get('container_nested',{}).get('fluid') and '(fluid) ' or ''
         if breakpoints:
             BREAKPOINTS = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
             devices = ', '.join([str(bp.label) for bp in BREAKPOINTS if bp.name in breakpoints])
@@ -96,7 +100,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = cls.super(BootstrapContainerPlugin, cls).get_css_classes(obj)
-        if obj.glossary.get('fluid'):
+        if obj.glossary.get('container_nested',{}).get('fluid'):
             css_classes.append('container-fluid')
         else:
             css_classes.append('container')
@@ -108,8 +112,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
-
-class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+class BootstrapRowForm(EntangledForm):
     """
     Form class to add non-materialized field to count the number of children.
     """
@@ -121,9 +124,16 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         help_text=_('Number of columns to be created with this row.'),
     )
 
-    class Meta:
-        untangled_fields = ['num_children']
 
+class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+    """
+    Form class to add non-materialized field to count the number of children.
+    """
+    row_nested = EntangledFormField(BootstrapRowForm)
+
+    class Meta:
+        untangled_fields = ['row_nested.num_children']
+        entangled_fields = {'glossary': ['row_nested']}
 
 class RowGridMixin(object):
     def get_grid_instance(self):
@@ -149,7 +159,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         return mark_safe(content)
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
+        wanted_children = int(form.cleaned_data.get('row_nested.num_children', 1))
         super().save_model(request, obj, form, change)
         child_glossary = {'xs-column-width': 'col'}
         self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
@@ -188,7 +198,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     def get_form(self, request, obj=None, **kwargs):
         def choose_help_text(*phrases):
-            bounds = 'fluid_bounds' if container.glossary.get('fluid') else 'default_bounds'
+            bounds = 'fluid_bounds' if container.glossary.get('container_nested',{}).get('fluid') else 'default_bounds'
             bs4_breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4'][bounds]
             if last:
                 return phrases[0].format(bs4_breakpoints[last].max)
@@ -206,7 +216,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             else:
                 jumbotrons=obj.get_ancestors().filter(plugin_type='BootstrapJumbotronPlugin')
                 container=jumbotrons.order_by('depth').last().get_bound_plugin()
-        breakpoints = container.glossary['breakpoints']
+        breakpoints = container.glossary['container_nested']['breakpoints']
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
@@ -345,7 +355,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     def get_identifier(cls, obj):
         glossary = obj.get_complete_glossary()
         widths = []
-        for bp in glossary.get('breakpoints', []):
+        for bp in glossary.get('container_nested',{}).get('breakpoints', []):
             width = obj.glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
             if width:
                 widths.append(width)
