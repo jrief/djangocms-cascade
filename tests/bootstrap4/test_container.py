@@ -12,7 +12,7 @@ def test_edit_bootstrap_container(rf, bootstrap_container):
     container_plugin, container_model = bootstrap_container
     request = rf.get('/')
     ModelForm = container_plugin.get_form(request, container_model)
-    data = {'container_nested.breakpoints': ['sm', 'md']}}
+    data = {'container_nested.breakpoints': ['sm', 'md']}
     form = ModelForm(data, None, instance=container_model)
     assert form.is_valid()
     soup = BeautifulSoup(form.as_p(), features='lxml')
