@@ -20,7 +20,7 @@ def test_edit_bootstrap_container(rf, bootstrap_container):
     assert {'type': 'checkbox', 'name': 'container_nested.breakpoints', 'value': 'xs'}.items() <= input_element.attrs.items()
     input_element = soup.find(id="id_container_nested.breakpoints_2")
     assert {'type': 'checkbox', 'name': 'container_nested.breakpoints', 'value': 'md', 'checked': ''}.items() <= input_element.attrs.items()
-    input_element = soup.find(id="id_container_nested.id_fluid")
+    input_element = soup.find(id="id_container_nested.fluid")
     assert {'type': 'checkbox', 'name': 'container_nested.fluid'}.items() <= input_element.attrs.items()
     container_plugin.save_model(request, container_model, form, False)
     assert container_model.glossary['carousel_nested']['breakpoints'] == ['sm', 'md']
