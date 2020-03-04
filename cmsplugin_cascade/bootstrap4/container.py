@@ -125,7 +125,7 @@ class BootstrapRowForm(EntangledForm):
     )
 
 
-class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin, ManageNestedFormMixin):
     """
     Form class to add non-materialized field to count the number of children.
     """
