@@ -33,7 +33,7 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     row_plugin, row_model = bootstrap_row
     request = rf.get('/')
     ModelForm = row_plugin.get_form(request, row_model)
-    data = {'row_nested.num_children': 3}}
+    data = {'row_nested.num_children': 3}
     form = ModelForm(data, None, instance=row_model)
     assert form.is_valid()
     row_plugin.save_model(request, row_model, form, False)
