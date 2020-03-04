@@ -23,6 +23,8 @@ def fieldset_by_widget_attr( form, attr_data_name, cls_media, traductions=traduc
     css_appended = [ 'cascade/css/admin/compact_forms/main_compact_form.css', 'cascade/css/admin/cascade_box.css' ]
     fieldsets = ()
     for key, field in form.declared_fields.items():
+        print('key')
+        print(key)
         if 'data_nested' in field.widget.attrs :
             data_entangled_value = field.widget.attrs[attr_data_name]
             if data_entangled_value == 'background_and_color':

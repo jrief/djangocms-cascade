@@ -28,6 +28,7 @@ def get_widget_choices():
             else:
                 widget_choices.append((bp.name, "{} (≥{:.1f}px and <{:.1f}px)".format(bp.label, bound.min, bound.max)))
         else:
+            print(bp._name_)
             if index == 0:
                  widget_choices.append((bp.name, "{} <{:.1f}px".format(bp._name_, bound.max)))
             else:
