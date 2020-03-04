@@ -5,14 +5,14 @@ from cms.plugin_rendering import ContentRenderer
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.container import BootstrapColumnPlugin
-
+from entangled.forms import EntangledModelFormMixin, EntangledFormField, EntangledForm
 
 @pytest.mark.django_db
 def test_edit_bootstrap_container(rf, bootstrap_container):
     container_plugin, container_model = bootstrap_container
     request = rf.get('/')
     ModelForm = container_plugin.get_form(request, container_model)
-    data = {'container_nested' :{'breakpoints': ['sm', 'md']}}
+    data = {'container_nested.breakpoints': ['sm', 'md']}}
     form = ModelForm(data, None, instance=container_model)
     assert form.is_valid()
     soup = BeautifulSoup(form.as_p(), features='lxml')
@@ -33,7 +33,7 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     row_plugin, row_model = bootstrap_row
     request = rf.get('/')
     ModelForm = row_plugin.get_form(request, row_model)
-    data = {'row_nested' :{ 'num_children': 3}}
+    data = {'row_nested.num_children': 3}}
     form = ModelForm(data, None, instance=row_model)
     assert form.is_valid()
     row_plugin.save_model(request, row_model, form, False)
