@@ -23,8 +23,8 @@ def test_edit_bootstrap_container(rf, bootstrap_container):
     input_element = soup.find(id="id_container_nested.fluid")
     assert {'type': 'checkbox', 'name': 'container_nested.fluid'}.items() <= input_element.attrs.items()
     container_plugin.save_model(request, container_model, form, False)
-    assert container_model.glossary['carousel_nested']['breakpoints'] == ['sm', 'md']
-    assert 'fluid' in container_model.glossary['carousel_nested']
+    assert container_model.glossary['container_nested']['breakpoints'] == ['sm', 'md']
+    assert 'fluid' in container_model.glossary['container_nested']
     assert str(container_model) == "for Landscape Phones, Tablets"
 
 

@@ -216,8 +216,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             else:
                 jumbotrons=obj.get_ancestors().filter(plugin_type='BootstrapJumbotronPlugin')
                 container=jumbotrons.order_by('depth').last().get_bound_plugin()
-        breakpoints = container.glossary['container_nested.breakpoints']
 
+        breakpoints = container.glossary['container_nested']['breakpoints']
+        
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         for bp in breakpoints:
