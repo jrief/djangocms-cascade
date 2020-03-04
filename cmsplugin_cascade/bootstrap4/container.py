@@ -342,6 +342,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             entangled_fields = {'glossary': glossary_fields}
 
         attrs = dict(width_fields, **offset_fields, **reorder_fields, **responsive_fields, Meta=Meta)
+        #ColumnForm = type('ColumnForm', (EntangledForm,), attrs)
         kwargs['form'] = type('ColumnForm', (EntangledModelFormMixin,), attrs)
         return super().get_form(request, obj, **kwargs)
 
