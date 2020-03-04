@@ -106,7 +106,7 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
         background_color, inherit = instance.glossary.get('icon_nested',{}).get('background_color', (ColorField.DEFAULT_COLOR, True))
         if not inherit:
             styles['background-color'] = background_color
-        border = instance.get('icon_nested',{}).glossary.get('border')
+        border = instance.glossary.get('icon_nested',{}).get('border')
         if isinstance(border, list) and border[0] and border[1] != 'none':
             styles.update(border='{0} {1} {2}'.format(*border))
             radius = instance.get('icon_nested',{}).glossary.get('border_radius')

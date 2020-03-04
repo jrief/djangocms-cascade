@@ -64,6 +64,8 @@ class ContainerFormMixin(EntangledModelFormMixin, ManageNestedFormMixin):
 
 class ContainerGridMixin(object):
     def get_grid_instance(self):
+        print('self.glossary')
+        print(self.glossary)
         fluid = self.glossary.get('container_nested',{}).get('fluid', False)
         try:
             breakpoints = [getattr(grid.Breakpoint, bp) for bp in self.glossary.get('container_nested',{})['breakpoints']]
@@ -217,7 +219,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 jumbotrons=obj.get_ancestors().filter(plugin_type='BootstrapJumbotronPlugin')
                 container=jumbotrons.order_by('depth').last().get_bound_plugin()
 
-        breakpoints = container.glossary.get('container_nested',{}).get('breakpoints')
+        breakpoints = container.glossary.get('container_nested',{}).get('breakpoints' , [])
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
