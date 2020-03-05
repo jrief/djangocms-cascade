@@ -169,6 +169,14 @@ class ColorField(MultiValueField):
         return color if not inherit_color else ''
 
 
+class ColorFieldExtra(ColorField):
+    """
+    ColorFieldExtra have default inherit_color=True.
+    """
+    def __init__(self, *args, **kwargs):
+        kwargs['inherit_color'] = True
+        super().__init__(*args, **kwargs)
+
 @deconstructible
 class SizeUnitValidator():
     allowed_units = []
