@@ -2,6 +2,7 @@
 {% localize off %}{% spaceless %}
 <picture{{ instance.html_tag_attributes }}>
 {% if instance.image|is_valid_image %}
+
 	{% for elem in elements %}
 		{% thumbnail instance.image elem.size zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
 		{% if elem.size2 %}
@@ -14,7 +15,8 @@
 		{% endif %}
 	{% endfor %}
 {% else %}
-	<img src="{% static 'cascade/fallback.svg' %}" style="background-color:lightgray;" class="{{ instance.css_classes }}" />
+	<div>{# fallback instance #}</div>
+	{% include "cascade/generic/fallback_picture.html" %}
 {% endif %}
 </picture>
 {% endspaceless %}{% endlocalize %}

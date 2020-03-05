@@ -1,0 +1,656 @@
+[[package]]
+category = "dev"
+description = "Python package for providing Mozilla's CA Bundle."
+name = "certifi"
+optional = false
+python-versions = "*"
+version = "2019.11.28"
+
+[[package]]
+category = "dev"
+description = "Universal encoding detector for Python 2 and 3"
+name = "chardet"
+optional = false
+python-versions = "*"
+version = "3.0.4"
+
+[[package]]
+category = "dev"
+description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
+name = "django"
+optional = false
+python-versions = ">=3.5"
+version = "2.2.10"
+
+[package.dependencies]
+pytz = "*"
+sqlparse = "*"
+
+[package.extras]
+argon2 = ["argon2-cffi (>=16.1.0)"]
+bcrypt = ["bcrypt"]
+
+[[package]]
+category = "dev"
+description = "Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin"
+name = "django-admin-sortable2"
+optional = false
+python-versions = "*"
+version = "0.7.5"
+
+[package.dependencies]
+Django = ">=1.8,<3.1"
+
+[[package]]
+category = "dev"
+description = "A helper class for handling configuration defaults of packaged apps gracefully."
+name = "django-appconf"
+optional = false
+python-versions = "*"
+version = "1.0.3"
+
+[package.dependencies]
+django = "*"
+six = "*"
+
+[[package]]
+category = "dev"
+description = "Class based template tags for Django"
+name = "django-classy-tags"
+optional = false
+python-versions = "*"
+version = "1.0.0"
+
+[package.dependencies]
+django = ">=1.11"
+six = "*"
+
+[[package]]
+category = "dev"
+description = "An Advanced Django CMS"
+name = "django-cms"
+optional = false
+python-versions = "*"
+version = "3.7.1"
+
+[package.dependencies]
+Django = ">=1.11,<3.0"
+django-classy-tags = ">=0.7.2"
+django-formtools = ">=2.1"
+django-sekizai = ">=0.7"
+django-treebeard = ">=4.3"
+djangocms-admin-style = ">=1.2"
+
+[[package]]
+category = "dev"
+description = "Compresses linked and inline JavaScript or CSS into single cached files."
+name = "django-compressor"
+optional = false
+python-versions = "*"
+version = "2.4"
+
+[package.dependencies]
+django-appconf = ">=1.0.3"
+rcssmin = "1.0.6"
+rjsmin = "1.1.0"
+six = ">=1.12.0"
+
+[[package]]
+category = "dev"
+description = "Dynamic global and instance settings for your django project"
+name = "django-dynamic-preferences"
+optional = false
+python-versions = "*"
+version = "1.8.1"
+
+[package.dependencies]
+django = ">=1.11"
+persisting-theory = ">=0.2.1"
+six = "*"
+
+[[package]]
+category = "dev"
+description = "Edit JSON field using Django Model Form"
+name = "django-entangled"
+optional = false
+python-versions = "*"
+version = "0.3"
+
+[[package]]
+category = "dev"
+description = "A file management application for django that makes handling of files and images a breeze."
+name = "django-filer"
+optional = false
+python-versions = "*"
+version = "1.6.0"
+
+[package.dependencies]
+Unidecode = ">=0.04,<1.1"
+django = ">=1.11,<3.0"
+django-mptt = ">=0.6,<1.0"
+django_polymorphic = ">=0.7,<2.1"
+easy-thumbnails = ">=2,<3.0"
+
+[[package]]
+category = "dev"
+description = "A set of high-level abstractions for Django forms"
+name = "django-formtools"
+optional = false
+python-versions = "*"
+version = "2.2"
+
+[package.dependencies]
+Django = ">=1.11"
+
+[[package]]
+category = "dev"
+description = "script tag with additional attributes for django.forms.Media"
+name = "django-js-asset"
+optional = false
+python-versions = "*"
+version = "1.2.2"
+
+[[package]]
+category = "dev"
+description = "Utilities for implementing Modified Preorder Tree Traversal with your Django Models and working with trees of Model instances."
+name = "django-mptt"
+optional = false
+python-versions = ">=3.5"
+version = "0.11.0"
+
+[package.dependencies]
+Django = ">=1.11"
+django-js-asset = "*"
+
+[[package]]
+category = "dev"
+description = "Seamless polymorphic inheritance for Django models"
+name = "django-polymorphic"
+optional = false
+python-versions = "*"
+version = "2.0.3"
+
+[package.dependencies]
+Django = ">=1.11"
+
+[[package]]
+category = "dev"
+description = "SASS processor to compile SCSS files into *.css, while rendering, or offline."
+name = "django-sass-processor"
+optional = false
+python-versions = "*"
+version = "0.8"
+
+[package.extras]
+dev = ["libsass (>=0.13)"]
+management-command = ["django-compressor (>=2.4)"]
+
+[[package]]
+category = "dev"
+description = "Django Sekizai"
+name = "django-sekizai"
+optional = false
+python-versions = "*"
+version = "1.1.0"
+
+[package.dependencies]
+django = ">=1.11"
+django-classy-tags = ">=0.9.0"
+six = "*"
+
+[[package]]
+category = "dev"
+description = "Select2 option fields for Django"
+name = "django-select2"
+optional = false
+python-versions = "*"
+version = "7.2.0"
+
+[package.dependencies]
+django = ">=2.2"
+django-appconf = ">=0.6.0"
+
+[[package]]
+category = "dev"
+description = "Efficient tree implementations for Django"
+name = "django-treebeard"
+optional = false
+python-versions = "*"
+version = "4.3.1"
+
+[package.dependencies]
+Django = ">=1.8"
+
+[[package]]
+category = "dev"
+description = "Adds pretty CSS styles for the django CMS admin interface."
+name = "djangocms-admin-style"
+optional = false
+python-versions = "*"
+version = "1.5.0"
+
+[[package]]
+category = "dev"
+description = "Templates and templatetags to be used with django-CMS with Bootstrap3 or Bootstrap4."
+name = "djangocms-bootstrap"
+optional = false
+python-versions = "*"
+version = "1.1.2"
+
+[package.dependencies]
+django-cms = ">3.4"
+
+[[package]]
+category = "dev"
+description = "Build Single Page Applications using the Django-CMS plugin system"
+name = "djangocms-cascade"
+optional = false
+python-versions = "*"
+version = "1.2.3"
+
+[package.dependencies]
+django = ">=1.11,<3.0"
+django-classy-tags = ">=0.8"
+django-cms = ">=3.5,<4"
+django-entangled = "*"
+djangocms-text-ckeditor = ">=3.7"
+jsonfield = "*"
+requests = "*"
+
+[[package]]
+category = "dev"
+description = "Adds undo/redo functionality to django CMS"
+name = "djangocms-history"
+optional = false
+python-versions = "*"
+version = "1.1.0"
+
+[package.dependencies]
+django-cms = ">=3.4.5"
+
+[[package]]
+category = "dev"
+description = "Text Plugin for django CMS with CKEditor support"
+name = "djangocms-text-ckeditor"
+optional = false
+python-versions = "*"
+version = "3.8.0"
+
+[package.dependencies]
+Pillow = "*"
+django-cms = ">=3.4.5"
+html5lib = ">=0.999999999"
+
+[[package]]
+category = "dev"
+description = "Adds import and export of plugin data."
+name = "djangocms-transfer"
+optional = false
+python-versions = "*"
+version = "0.2.0"
+
+[package.dependencies]
+django-cms = ">=3.4.5"
+
+[[package]]
+category = "dev"
+description = "Easy thumbnails for Django"
+name = "easy-thumbnails"
+optional = false
+python-versions = ">=3.5"
+version = "2.7"
+
+[package.dependencies]
+django = ">=1.11,<4.0"
+pillow = "*"
+
+[[package]]
+category = "dev"
+description = "HTML parser based on the WHATWG HTML specification"
+name = "html5lib"
+optional = false
+python-versions = "*"
+version = "1.0.1"
+
+[package.dependencies]
+six = ">=1.9"
+webencodings = "*"
+
+[package.extras]
+all = ["genshi", "chardet (>=2.2)", "datrie", "lxml"]
+chardet = ["chardet (>=2.2)"]
+datrie = ["datrie"]
+genshi = ["genshi"]
+lxml = ["lxml"]
+
+[[package]]
+category = "dev"
+description = "Internationalized Domain Names in Applications (IDNA)"
+name = "idna"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "2.8"
+
+[[package]]
+category = "dev"
+description = "A reusable Django field that allows you to store validated JSON in your model."
+name = "jsonfield"
+optional = false
+python-versions = "*"
+version = "3.0.0"
+
+[package.dependencies]
+Django = ">=2.2"
+
+[[package]]
+category = "dev"
+description = "Sass for Python: A straightforward binding of libsass for Python."
+name = "libsass"
+optional = false
+python-versions = "*"
+version = "0.19.4"
+
+[package.dependencies]
+six = "*"
+
+[[package]]
+category = "dev"
+description = "Registries that can autodiscover values accross your project apps"
+name = "persisting-theory"
+optional = false
+python-versions = "*"
+version = "0.2.1"
+
+[[package]]
+category = "dev"
+description = "Python Imaging Library (Fork)"
+name = "pillow"
+optional = false
+python-versions = ">=3.5"
+version = "7.0.0"
+
+[[package]]
+category = "dev"
+description = "World timezone definitions, modern and historical"
+name = "pytz"
+optional = false
+python-versions = "*"
+version = "2019.3"
+
+[[package]]
+category = "dev"
+description = "CSS Minifier"
+name = "rcssmin"
+optional = false
+python-versions = "*"
+version = "1.0.6"
+
+[[package]]
+category = "dev"
+description = "Python HTTP for Humans."
+name = "requests"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "2.22.0"
+
+[package.dependencies]
+certifi = ">=2017.4.17"
+chardet = ">=3.0.2,<3.1.0"
+idna = ">=2.5,<2.9"
+urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
+
+[package.extras]
+security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)"]
+socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
+
+[[package]]
+category = "dev"
+description = "Javascript Minifier"
+name = "rjsmin"
+optional = false
+python-versions = "*"
+version = "1.1.0"
+
+[[package]]
+category = "dev"
+description = "Python 2 and 3 compatibility utilities"
+name = "six"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "1.14.0"
+
+[[package]]
+category = "dev"
+description = "Non-validating SQL parser"
+name = "sqlparse"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "0.3.0"
+
+[[package]]
+category = "dev"
+description = "ASCII transliterations of Unicode text"
+name = "unidecode"
+optional = false
+python-versions = "*"
+version = "1.0.23"
+
+[[package]]
+category = "dev"
+description = "HTTP library with thread-safe connection pooling, file post, and more."
+name = "urllib3"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
+version = "1.25.8"
+
+[package.extras]
+brotli = ["brotlipy (>=0.6.0)"]
+secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
+socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
+
+[[package]]
+category = "dev"
+description = "Character encoding aliases for legacy web content"
+name = "webencodings"
+optional = false
+python-versions = "*"
+version = "0.5.1"
+
+[metadata]
+content-hash = "2115171a195bcabffe11d3f5f9b97eb118bbc02c9c77c45ed3c7c68db1550ff6"
+python-versions = "^3.6"
+
+[metadata.files]
+certifi = [
+    {file = "certifi-2019.11.28-py2.py3-none-any.whl", hash = "sha256:017c25db2a153ce562900032d5bc68e9f191e44e9a0f762f373977de9df1fbb3"},
+    {file = "certifi-2019.11.28.tar.gz", hash = "sha256:25b64c7da4cd7479594d035c08c2d809eb4aab3a26e5a990ea98cc450c320f1f"},
+]
+chardet = [
+    {file = "chardet-3.0.4-py2.py3-none-any.whl", hash = "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"},
+    {file = "chardet-3.0.4.tar.gz", hash = "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"},
+]
+django = [
+    {file = "Django-2.2.10-py3-none-any.whl", hash = "sha256:9a4635813e2d498a3c01b10c701fe4a515d76dd290aaa792ccb65ca4ccb6b038"},
+    {file = "Django-2.2.10.tar.gz", hash = "sha256:1226168be1b1c7efd0e66ee79b0e0b58b2caa7ed87717909cd8a57bb13a7079a"},
+]
+django-admin-sortable2 = [
+    {file = "django-admin-sortable2-0.7.5.tar.gz", hash = "sha256:1366cb159439aa28472639dc1f33d6370a56d4c3efbe3def854d953aaa6bbd24"},
+]
+django-appconf = [
+    {file = "django-appconf-1.0.3.tar.gz", hash = "sha256:35f13ca4d567f132b960e2cd4c832c2d03cb6543452d34e29b7ba10371ba80e3"},
+    {file = "django_appconf-1.0.3-py2.py3-none-any.whl", hash = "sha256:c98a7af40062e996b921f5962a1c4f3f0c979fa7885f7be4710cceb90ebe13a6"},
+]
+django-classy-tags = [
+    {file = "django-classy-tags-1.0.0.tar.gz", hash = "sha256:ad6a25fc2b58a098f00d86bd5e5dad47922f5ca4e744bc3cccb7b4be5bc35eb1"},
+]
+django-cms = [
+    {file = "django-cms-3.7.1.tar.gz", hash = "sha256:05ea915d490562413428e04acb9ecae604c63b8dc5ed9250d0e9437b1314c996"},
+    {file = "django_cms-3.7.1-py2.py3-none-any.whl", hash = "sha256:89d1e3bebd732a6bd00b0cfaf8128bfb0924429e83f1297e0b34dd9343e55b7a"},
+]
+django-compressor = [
+    {file = "django_compressor-2.4-py2.py3-none-any.whl", hash = "sha256:57ac0a696d061e5fc6fbc55381d2050f353b973fb97eee5593f39247bc0f30af"},
+    {file = "django_compressor-2.4.tar.gz", hash = "sha256:d2ed1c6137ddaac5536233ec0a819e14009553fee0a869bea65d03e5285ba74f"},
+]
+django-dynamic-preferences = [
+    {file = "django-dynamic-preferences-1.8.1.tar.gz", hash = "sha256:727f71f865ff29df93c01a0a1686af0dca19776ee786f876ea0ae7e062719b24"},
+    {file = "django_dynamic_preferences-1.8.1-py2.py3-none-any.whl", hash = "sha256:1d600c2f88baa9e0098e856f8a14e320a4a479305deea1afbc8722d953c44c65"},
+]
+django-entangled = [
+    {file = "django-entangled-0.3.tar.gz", hash = "sha256:e51cb1748f30d3dc474fd32d195f051307507a3dbbe789f0fed29b80ce2e6a35"},
+]
+django-filer = [
+    {file = "django-filer-1.6.0.tar.gz", hash = "sha256:3f2045cfd9e53c1a29cd8a71747e984faead630ee72baab29d6b3b45584d52e0"},
+]
+django-formtools = [
+    {file = "django-formtools-2.2.tar.gz", hash = "sha256:c5272c03c1cd51b2375abf7397a199a3148a9fbbf2f100e186467a84025d13b2"},
+    {file = "django_formtools-2.2-py2.py3-none-any.whl", hash = "sha256:304fa777b8ef9e0693ce7833f885cb89ba46b0e46fc23b01176900a93f46742f"},
+]
+django-js-asset = [
+    {file = "django-js-asset-1.2.2.tar.gz", hash = "sha256:c163ae80d2e0b22d8fb598047cd0dcef31f81830e127cfecae278ad574167260"},
+    {file = "django_js_asset-1.2.2-py2.py3-none-any.whl", hash = "sha256:8ec12017f26eec524cab436c64ae73033368a372970af4cf42d9354fcb166bdd"},
+]
+django-mptt = [
+    {file = "django-mptt-0.11.0.tar.gz", hash = "sha256:dfdb3af75ad27cdd4458b0544ec8574174f2b90f99bc2cafab6a15b4bc1895a8"},
+    {file = "django_mptt-0.11.0-py2.py3-none-any.whl", hash = "sha256:90eb236eb4f1a92124bd7c37852bbe09c0d21158477cc237556d59842a91c509"},
+]
+django-polymorphic = [
+    {file = "django-polymorphic-2.0.3.tar.gz", hash = "sha256:1fb5505537bcaf71cfc951ff94c4e3ba83c761eaca04b7b2ce9cb63937634ea5"},
+    {file = "django_polymorphic-2.0.3-py2.py3-none-any.whl", hash = "sha256:79e7df455fdc8c3d28d38b7ab8323fc21d109a162b8ca282119e0e9ce8db7bdb"},
+]
+django-sass-processor = [
+    {file = "django-sass-processor-0.8.tar.gz", hash = "sha256:e039551994feaaba6fcf880412b25a772dd313162a34cbb4289814988cfae340"},
+]
+django-sekizai = [
+    {file = "django-sekizai-1.1.0.tar.gz", hash = "sha256:e2f6e666d4dd9d3ecc27284acb85ef709e198014f5d5af8c6d54ed04c2d684d9"},
+]
+django-select2 = [
+    {file = "django-select2-7.2.0.tar.gz", hash = "sha256:4c531cb7e9eb4152c7e5f8ab83be386f46978b3d80e91e55ad1fb46382222a0b"},
+    {file = "django_select2-7.2.0-py2.py3-none-any.whl", hash = "sha256:d17bb0e64503a7e52ba405f73a187664906cefda5f1c33971c67ab0b3891e91c"},
+]
+django-treebeard = [
+    {file = "django-treebeard-4.3.1.tar.gz", hash = "sha256:83aebc34a9f06de7daaec330d858d1c47887e81be3da77e3541fe7368196dd8a"},
+]
+djangocms-admin-style = [
+    {file = "djangocms-admin-style-1.5.0.tar.gz", hash = "sha256:47d9868aa448e593ce90059d6542a4d907c120d357cd0561c586f5557e3ba316"},
+]
+djangocms-bootstrap = [
+    {file = "djangocms-bootstrap-1.1.2.tar.gz", hash = "sha256:60e0802111df17298933104fdc73fc7bb74924e435d5c025b3a12a29a10e6761"},
+]
+djangocms-cascade = [
+    {file = "djangocms-cascade-1.2.3.tar.gz", hash = "sha256:5fb0e6519d36577469bbbd6645c41220db0abade147fe6e0dc530c02b845755a"},
+]
+djangocms-history = [
+    {file = "djangocms-history-1.1.0.tar.gz", hash = "sha256:783c0aea25671e14df634838660e53023d6559c66697c9d8d8cfa771842e9ff2"},
+]
+djangocms-text-ckeditor = [
+    {file = "djangocms-text-ckeditor-3.8.0.tar.gz", hash = "sha256:0f0291cdf305c469741a639d89c71ee77f29dfc5aada4f7a453d6dc2926ceca9"},
+]
+djangocms-transfer = [
+    {file = "djangocms-transfer-0.2.0.tar.gz", hash = "sha256:9e7d251a82fa13beb6bf541a157a63b8306a8ae29a90349c783f0077e439f325"},
+]
+easy-thumbnails = [
+    {file = "easy-thumbnails-2.7.tar.gz", hash = "sha256:e4e7a0dd4001f56bfd4058428f2c91eafe27d33ef3b8b33ac4e013b159b9ff91"},
+]
+html5lib = [
+    {file = "html5lib-1.0.1-py2.py3-none-any.whl", hash = "sha256:20b159aa3badc9d5ee8f5c647e5efd02ed2a66ab8d354930bd9ff139fc1dc0a3"},
+    {file = "html5lib-1.0.1.tar.gz", hash = "sha256:66cb0dcfdbbc4f9c3ba1a63fdb511ffdbd4f513b2b6d81b80cd26ce6b3fb3736"},
+]
+idna = [
+    {file = "idna-2.8-py2.py3-none-any.whl", hash = "sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"},
+    {file = "idna-2.8.tar.gz", hash = "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407"},
+]
+jsonfield = [
+    {file = "jsonfield-3.0.0-py3-none-any.whl", hash = "sha256:a6616f38db42542d1f2434f5eae1a91550e5cc15dff27edd87b4358493ef2a92"},
+    {file = "jsonfield-3.0.0.tar.gz", hash = "sha256:1a17efe9a26850e9175900cb37cf30c6182fc2251989f8af44ef47fbbf48eaff"},
+]
+libsass = [
+    {file = "libsass-0.19.4-cp27-cp27m-macosx_10_14_intel.whl", hash = "sha256:74acd9adf506142699dfa292f0e569fdccbd9e7cf619e8226f7117de73566e32"},
+    {file = "libsass-0.19.4-cp27-cp27m-win32.whl", hash = "sha256:50778d4be269a021ba2bf42b5b8f6ff3704ab96a82175a052680bddf3ba7cc9f"},
+    {file = "libsass-0.19.4-cp27-cp27m-win_amd64.whl", hash = "sha256:4dcfd561fb100250b89496e1362b96f2cc804f689a59731eb0f94f9a9e144f4a"},
+    {file = "libsass-0.19.4-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:845a9573b25c141164972d498855f4ad29367c09e6d76fad12955ad0e1c83013"},
+    {file = "libsass-0.19.4-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:81a013a4c2a614927fd1ef7a386eddabbba695cbb02defe8f31cf495106e974c"},
+    {file = "libsass-0.19.4-cp35-cp35m-win32.whl", hash = "sha256:fcb7ab4dc81889e5fc99cafbc2017bc76996f9992fc6b175f7a80edac61d71df"},
+    {file = "libsass-0.19.4-cp35-cp35m-win_amd64.whl", hash = "sha256:fc5f8336750f76f1bfae82f7e9e89ae71438d26fc4597e3ab4c05ca8fcd41d8a"},
+    {file = "libsass-0.19.4-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:9b59afa0d755089c4165516400a39a289b796b5612eeef5736ab7a1ebf96a67c"},
+    {file = "libsass-0.19.4-cp36-cp36m-win32.whl", hash = "sha256:c93df526eeef90b1ea4799c1d33b6cd5aea3e9f4633738fb95c1287c13e6b404"},
+    {file = "libsass-0.19.4-cp36-cp36m-win_amd64.whl", hash = "sha256:0fd8b4337b3b101c6e6afda9112cc0dc4bacb9133b59d75d65968c7317aa3272"},
+    {file = "libsass-0.19.4-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:003a65b4facb4c5dbace53fb0f70f61c5aae056a04b4d112a198c3c9674b31f2"},
+    {file = "libsass-0.19.4-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:338e9ae066bf1fde874e335324d5355c52d2081d978b4f74fc59536564b35b08"},
+    {file = "libsass-0.19.4-cp37-cp37m-win32.whl", hash = "sha256:e318f06f06847ff49b1f8d086ac9ebce1e63404f7ea329adab92f4f16ba0e00e"},
+    {file = "libsass-0.19.4-cp37-cp37m-win_amd64.whl", hash = "sha256:a7e685466448c9b1bf98243339793978f654a1151eb5c975f09b83c7a226f4c1"},
+    {file = "libsass-0.19.4-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:6a51393d75f6e3c812785b0fa0b7d67c54258c28011921f204643b55f7355ec0"},
+    {file = "libsass-0.19.4.tar.gz", hash = "sha256:8b5b6d1a7c4ea1d954e0982b04474cc076286493f6af2d0a13c2e950fbe0be95"},
+]
+persisting-theory = [
+    {file = "persisting-theory-0.2.1.tar.gz", hash = "sha256:00ff7dcc8f481ff75c770ca5797d968e8725b6df1f77fe0cf7d20fa1e5790c0a"},
+]
+pillow = [
+    {file = "Pillow-7.0.0-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:5f3546ceb08089cedb9e8ff7e3f6a7042bb5b37c2a95d392fb027c3e53a2da00"},
+    {file = "Pillow-7.0.0-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:9d2ba4ed13af381233e2d810ff3bab84ef9f18430a9b336ab69eaf3cd24299ff"},
+    {file = "Pillow-7.0.0-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:ff3797f2f16bf9d17d53257612da84dd0758db33935777149b3334c01ff68865"},
+    {file = "Pillow-7.0.0-cp35-cp35m-win32.whl", hash = "sha256:c18f70dc27cc5d236f10e7834236aff60aadc71346a5bc1f4f83a4b3abee6386"},
+    {file = "Pillow-7.0.0-cp35-cp35m-win_amd64.whl", hash = "sha256:875358310ed7abd5320f21dd97351d62de4929b0426cdb1eaa904b64ac36b435"},
+    {file = "Pillow-7.0.0-cp36-cp36m-macosx_10_6_intel.whl", hash = "sha256:ab76e5580b0ed647a8d8d2d2daee170e8e9f8aad225ede314f684e297e3643c2"},
+    {file = "Pillow-7.0.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:a62ec5e13e227399be73303ff301f2865bf68657d15ea50b038d25fc41097317"},
+    {file = "Pillow-7.0.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:8ac6ce7ff3892e5deaab7abaec763538ffd011f74dc1801d93d3c5fc541feee2"},
+    {file = "Pillow-7.0.0-cp36-cp36m-win32.whl", hash = "sha256:91b710e3353aea6fc758cdb7136d9bbdcb26b53cefe43e2cba953ac3ee1d3313"},
+    {file = "Pillow-7.0.0-cp36-cp36m-win_amd64.whl", hash = "sha256:bf598d2e37cf8edb1a2f26ed3fb255191f5232badea4003c16301cb94ac5bdd0"},
+    {file = "Pillow-7.0.0-cp37-cp37m-macosx_10_6_intel.whl", hash = "sha256:5bfef0b1cdde9f33881c913af14e43db69815c7e8df429ceda4c70a5e529210f"},
+    {file = "Pillow-7.0.0-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:dc058b7833184970d1248135b8b0ab702e6daa833be14035179f2acb78ff5636"},
+    {file = "Pillow-7.0.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:c5ed816632204a2fc9486d784d8e0d0ae754347aba99c811458d69fcdfd2a2f9"},
+    {file = "Pillow-7.0.0-cp37-cp37m-win32.whl", hash = "sha256:54ebae163e8412aff0b9df1e88adab65788f5f5b58e625dc5c7f51eaf14a6837"},
+    {file = "Pillow-7.0.0-cp37-cp37m-win_amd64.whl", hash = "sha256:87269cc6ce1e3dee11f23fa515e4249ae678dbbe2704598a51cee76c52e19cda"},
+    {file = "Pillow-7.0.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:0a628977ac2e01ca96aaae247ec2bd38e729631ddf2221b4b715446fd45505be"},
+    {file = "Pillow-7.0.0-cp38-cp38-manylinux1_i686.whl", hash = "sha256:62a889aeb0a79e50ecf5af272e9e3c164148f4bd9636cc6bcfa182a52c8b0533"},
+    {file = "Pillow-7.0.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:bf4003aa538af3f4205c5fac56eacaa67a6dd81e454ffd9e9f055fff9f1bc614"},
+    {file = "Pillow-7.0.0-cp38-cp38-win32.whl", hash = "sha256:7406f5a9b2fd966e79e6abdaf700585a4522e98d6559ce37fc52e5c955fade0a"},
+    {file = "Pillow-7.0.0-cp38-cp38-win_amd64.whl", hash = "sha256:5f7ae9126d16194f114435ebb79cc536b5682002a4fa57fa7bb2cbcde65f2f4d"},
+    {file = "Pillow-7.0.0-pp373-pypy36_pp73-win32.whl", hash = "sha256:8453f914f4e5a3d828281a6628cf517832abfa13ff50679a4848926dac7c0358"},
+    {file = "Pillow-7.0.0.tar.gz", hash = "sha256:4d9ed9a64095e031435af120d3c910148067087541131e82b3e8db302f4c8946"},
+]
+pytz = [
+    {file = "pytz-2019.3-py2.py3-none-any.whl", hash = "sha256:1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d"},
+    {file = "pytz-2019.3.tar.gz", hash = "sha256:b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"},
+]
+rcssmin = [
+    {file = "rcssmin-1.0.6.tar.gz", hash = "sha256:ca87b695d3d7864157773a61263e5abb96006e9ff0e021eff90cbe0e1ba18270"},
+]
+requests = [
+    {file = "requests-2.22.0-py2.py3-none-any.whl", hash = "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"},
+    {file = "requests-2.22.0.tar.gz", hash = "sha256:11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4"},
+]
+rjsmin = [
+    {file = "rjsmin-1.1.0-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:799890bd07a048892d8d3deb9042dbc20b7f5d0eb7da91e9483c561033b23ce2"},
+    {file = "rjsmin-1.1.0-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:211c2fe8298951663bbc02acdffbf714f6793df54bfc50e1c6c9e71b3f2559a3"},
+    {file = "rjsmin-1.1.0-cp27-cp27mu-manylinux1_i686.whl", hash = "sha256:585e75a84d9199b68056fd4a083d9a61e2a92dfd10ff6d4ce5bdb04bc3bdbfaf"},
+    {file = "rjsmin-1.1.0-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:e487a7783ac4339e79ec610b98228eb9ac72178973e3dee16eba0e3feef25924"},
+    {file = "rjsmin-1.1.0-cp34-cp34m-manylinux1_i686.whl", hash = "sha256:0ab825839125eaca57cc59581d72e596e58a7a56fbc0839996b7528f0343a0a8"},
+    {file = "rjsmin-1.1.0-cp34-cp34m-manylinux1_x86_64.whl", hash = "sha256:6044ca86e917cd5bb2f95e6679a4192cef812122f28ee08c677513de019629b3"},
+    {file = "rjsmin-1.1.0-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:ecd29f1b3e66a4c0753105baec262b331bcbceefc22fbe6f7e8bcd2067bcb4d7"},
+    {file = "rjsmin-1.1.0-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:975b69754d6a76be47c0bead12367a1ca9220d08e5393f80bab0230d4625d1f4"},
+    {file = "rjsmin-1.1.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:466fe70cc5647c7c51b3260c7e2e323a98b2b173564247f9c89e977720a0645f"},
+    {file = "rjsmin-1.1.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:e3908b21ebb584ce74a6ac233bdb5f29485752c9d3be5e50c5484ed74169232c"},
+    {file = "rjsmin-1.1.0-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:714329db774a90947e0e2086cdddb80d5e8c4ac1c70c9f92436378dedb8ae345"},
+    {file = "rjsmin-1.1.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:dd0f4819df4243ffe4c964995794c79ca43943b5b756de84be92b445a652fb86"},
+    {file = "rjsmin-1.1.0.tar.gz", hash = "sha256:b15dc75c71f65d9493a8c7fa233fdcec823e3f1b88ad84a843ffef49b338ac32"},
+]
+six = [
+    {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
+    {file = "six-1.14.0.tar.gz", hash = "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a"},
+]
+sqlparse = [
+    {file = "sqlparse-0.3.0-py2.py3-none-any.whl", hash = "sha256:40afe6b8d4b1117e7dff5504d7a8ce07d9a1b15aeeade8a2d10f130a834f8177"},
+    {file = "sqlparse-0.3.0.tar.gz", hash = "sha256:7c3dca29c022744e95b547e867cee89f4fce4373f3549ccd8797d8eb52cdb873"},
+]
+unidecode = [
+    {file = "Unidecode-1.0.23-py2.py3-none-any.whl", hash = "sha256:092cdf7ad9d1052c50313426a625b717dab52f7ac58f859e09ea020953b1ad8f"},
+    {file = "Unidecode-1.0.23.tar.gz", hash = "sha256:8b85354be8fd0c0e10adbf0675f6dc2310e56fda43fa8fe049123b6c475e52fb"},
+]
+urllib3 = [
+    {file = "urllib3-1.25.8-py2.py3-none-any.whl", hash = "sha256:2f3db8b19923a873b3e5256dc9c2dedfa883e33d87c690d9c7913e1f40673cdc"},
+    {file = "urllib3-1.25.8.tar.gz", hash = "sha256:87716c2d2a7121198ebcb7ce7cccf6ce5e9ba539041cfbaeecfb641dc0bf6acc"},
+]
+webencodings = [
+    {file = "webencodings-0.5.1-py2.py3-none-any.whl", hash = "sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78"},
+    {file = "webencodings-0.5.1.tar.gz", hash = "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"},
+]

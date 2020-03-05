@@ -131,9 +131,18 @@ class AppSettings(object):
         config.setdefault('cache_strides', True)
 
         config.setdefault('merge_extra_fields',True)
+      
+        config.setdefault('fallback',{
+          # default
+          'path_main_scss': 'bs4demo/css/main.scss',
+          'image':{'color':'hsla(221.7, 57.5%, 84.3%, 0.8)', 'svg':''},
+          'picture':{'color':'hsla(0, 40%, 80.4%, 0.8)', 'svg':'' },
+          'jumbotron':{'color':'hsl(62, 90%, 90%, 0.8)', 'svg':''},
+         })
 
         config.setdefault('register_page_editor', True)
  
+
         for module_name in self.CASCADE_PLUGINS:
             try:
                 settings_module = import_module('{}.settings'.format(module_name))
