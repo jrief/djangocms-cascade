@@ -4,8 +4,7 @@ from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, URLField, Field
 from django.utils.six.moves.urllib.parse import urlparse, urlunparse, ParseResult
 from django.utils.translation import ugettext_lazy as _
-from entangled.forms import EntangledModelFormMixin, EntangledForm, EntangledFormField
-from entangled.fields import EntangledInvisibleField
+from entangled.forms import EntangledModelFormMixin, EntangledField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
 
@@ -18,7 +17,7 @@ class YoutubeFormMixin(EntangledModelFormMixin):
         ('embed-responsive-1by1', _("Responsive 1:1")),
     ]
 
-    videoid =  EntangledInvisibleField()
+    videoid = EntangledField()
 
     url = URLField(
         label=_("YouTube URL"),
