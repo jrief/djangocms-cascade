@@ -130,8 +130,10 @@ class AppSettings(object):
 
         config.setdefault('cache_strides', True)
 
-        config.setdefault('register_page_editor', True)
+        config.setdefault('merge_extra_fields',True)
 
+        config.setdefault('register_page_editor', True)
+ 
         for module_name in self.CASCADE_PLUGINS:
             try:
                 settings_module = import_module('{}.settings'.format(module_name))
