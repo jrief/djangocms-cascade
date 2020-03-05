@@ -19,13 +19,13 @@ def bootstrap_accordion(rf, admin_site, bootstrap_column):
     assert isinstance(accordion_model, CascadeElement)
     accordion_plugin = accordion_model.get_plugin_class_instance(admin_site)
     assert isinstance(accordion_plugin, BootstrapAccordionPlugin)
-    data = {'accordion_nested.num_children': 2, 'accordion_nested.close_others': 'on', 'accordion_nested.first_is_open': 'on'}
+    data = {'num_children': 2, 'close_others': 'on', 'first_is_open': 'on'}
     ModelForm = accordion_plugin.get_form(request, accordion_model)
     form = ModelForm(data, None, instance=accordion_model)
     assert form.is_valid()
     accordion_plugin.save_model(request, accordion_model, form, False)
-    assert accordion_model.glossary['accordion_nested.close_others'] is True
-    assert accordion_model.glossary['accordion_nested.first_is_open'] is True
+    assert accordion_model.glossary['close_others'] is True
+    assert accordion_model.glossary['first_is_open'] is True
     for child in accordion_model.get_children():
         assert isinstance(child.get_plugin_class_instance(admin_site), BootstrapAccordionGroupPlugin)
     return accordion_plugin, accordion_model
@@ -37,13 +37,13 @@ def test_edit_accordion_group(rf, admin_site, bootstrap_accordion):
     accordion_plugin, accordion_model = bootstrap_accordion
     first_group = accordion_model.get_first_child()
     group_model, group_plugin = first_group.get_plugin_instance(admin_site)
-    data = {'accordion_nested.heading': "Hello", 'accordion_nested.body_padding': 'on'}
+    data = {'heading': "Hello", 'body_padding': 'on'}
     ModelForm = group_plugin.get_form(request, group_model)
     form = ModelForm(data, None, instance=group_model)
     assert form.is_valid()
     group_plugin.save_model(request, group_model, form, False)
-    assert group_model.glossary['accordion_nested.heading'] == "Hello"
-    assert group_model.glossary['accordion_nested.body_padding'] is True
+    assert group_model.glossary['heading'] == "Hello"
+    assert group_model.glossary['body_padding'] is True
 
     # render the plugin
     build_plugin_tree([accordion_model, group_model])
@@ -59,3 +59,4 @@ Hello</button></h5></div>
 <div class="card-body"></div></div></div></div>""".format(accordion_id=accordion_model.id, group_id=group_model.id)
     expected = expected.replace('\n', '').replace('\t', '')
     assert html == expected
+
