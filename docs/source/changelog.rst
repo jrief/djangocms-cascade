@@ -2,6 +2,21 @@
 Release History
 ===============
 
+1.2.3
+=====
+* Make page editor for extra fields configurable.
+
+
+1.2.2
+=====
+* Refactor ``TextLinkFormMixin`` from ``cmsplugin_cascade.link.cms_plugin`` into
+  ``cmsplugin_cascade.link.forms``. Adopt your import accordingly.
+
+1.2.1
+=====
+* In **TextEditorConfig** add HTML element ``<span>`` to available choices.
+* Fix: Adding a link onto a page with different translations, can cause a too many pages exception.
+
 1.2
 ===
 * Refactor submodule ``generic`` into separate modules. This enables the client project

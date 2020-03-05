@@ -56,7 +56,7 @@ class LinkSearchField(ModelChoiceField):
         else:
             # set a minimal set of choices, otherwise django-select2 builds them for every published page
             choices = [(index, str(page)) for index, page in enumerate(queryset[:15])]
-        kwargs.setdefault('queryset', queryset)
+        kwargs.setdefault('queryset', queryset.distinct())
         super().__init__(*args, **kwargs)
         self.choices = choices
 
@@ -216,3 +216,14 @@ class LinkForm(EntangledModelFormMixin):
             cls.base_fields['link_content'].required = False
         if 'link_type' in cls.base_fields and 'link' not in sharable_fields:
             cls.base_fields['link_type'].required = False
+
+
+class TextLinkFormMixin(EntangledModelFormMixin):
+    link_content = fields.CharField(
+        label=_("Link Content"),
+        widget=fields.TextInput(attrs={'id': 'id_name'}),  # replace auto-generated id so that CKEditor automatically transfers the text into this input field
+        help_text=_("Content of Link"),
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['link_content']}
