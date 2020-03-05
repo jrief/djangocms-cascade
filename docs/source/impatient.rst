@@ -13,15 +13,16 @@ Create a Python Virtual Environment
 To keep environments separate, create a virtual environment and install external dependencies.
 Missing packages with JavaScript files and Style Sheets, which are not available via pip must be
 installed via npm:
+Dependency packaging to made easy with Pipenv or Poetry.
 
 .. code-block:: bash
 
 
 	$ git clone --depth=1 https://github.com/jrief/djangocms-cascade.git
-	$ cd djangocms-cascade
-	$ virtualenv cascadenv
-	$ source cascadenv/bin/activate
-	(cascadenv)$ pip install -r requirements/django110.txt
+	$ cd djangocms-cascade/examples/
+	$ python -m venv .venv 
+	$ poetry shell
+	$ poetry update
 
 Initialize the database, create a superuser and start the development server:
 

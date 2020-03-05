@@ -13,12 +13,8 @@ form .field-download_file { width: 100%; }
 form  label.inline { text-align: right; }
 form .field-glossary { padding: 0 10px; }
 
-form .container-thumbnail img,
-	form .field-button_type span.btn,
-	form .field-button_size span.btn { display: inline-block; }
-form .container-thumbnail .label,
-	form .field-button_type .label,
-	form .field-button_size .label { display: inline; }
+form .container-thumbnail img { display: inline-block; }
+form .container-thumbnail .label { display: inline; }
 
 form .form-row.field-save_settings_as input[type="checkbox"] {
   margin-right: 2em;
@@ -36,4 +32,4 @@ form label[for=id_cms_page], form label[for=id_section] { width: 0; }
 #id_condition, #id_link_content { width: calc(100% - 20px); }
 
 form .form-row .select2-selection { height: 36px; }
-form .form-row .django-select2 { width: calc(100% - 40px) !important; }
+form .form-row .django-select2 { width: calc(100% - 200px) !important; }

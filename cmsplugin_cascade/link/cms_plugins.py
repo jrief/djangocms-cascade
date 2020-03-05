@@ -1,22 +1,9 @@
-from django.forms.fields import CharField
-from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.link.forms import TextLinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
-from entangled.forms import EntangledModelFormMixin
-
-
-class TextLinkFormMixin(EntangledModelFormMixin):
-    link_content = CharField(
-        label=_("Link Content"),
-        widget=TextInput(attrs={'id': 'id_name'}),  # replace auto-generated id so that CKEditor automatically transfers the text into this input field
-        help_text=_("Content of Link"),
-    )
-
-    class Meta:
-        entangled_fields = {'glossary': ['link_content']}
 
 
 class TextLinkPlugin(LinkPluginBase):

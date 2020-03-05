@@ -3,12 +3,13 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.utils.text import format_lazy
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
+from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from .plugin_base import BootstrapPluginBase
 from . import grid
@@ -77,6 +78,10 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     require_parent = False
     model_mixins = (ContainerGridMixin,)
     form = ContainerFormMixin
+    footnote_html = """<p>
+    For more information about the Container please read the
+    <a href="https://getbootstrap.com/docs/4.3/layout/overview/#containers" target="_new">Bootstrap documentation</a>.
+    </p>"""
 
     @classmethod
     def get_identifier(cls, obj):
@@ -207,7 +212,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         for bp in breakpoints:
             try:
-                last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp) + 1])
+                last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp)])
             except IndexError:
                 last = None
             finally:
@@ -228,7 +233,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 width_fields[field_name] = ChoiceField(
                     choices=choices,
                     label=_("Column width for {}").format(devices),
-                    initial='col-{}-12'.format(bp),
+                    initial='col' if bp == 'xs' else 'col-{}'.format(bp),
                     help_text=choose_help_text(
                         _("Column width for devices narrower than {:.1f} pixels."),
                         _("Column width for devices wider than {:.1f} pixels."),
@@ -237,7 +242,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 )
             else:
                 # wider breakpoints may inherit from next narrower ones
-                choices.insert(0, ('', _("Inherit from above")))
+                choices.insert(0, ('', format_lazy(_("Inherit column width from {}"), previous_devices)))
                 field_name = '{}-column-width'.format(bp)
                 width_fields[field_name] = ChoiceField(
                     choices=choices,
@@ -250,14 +255,16 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         _("Override column width for all devices."),
                     )
                 )
+            previous_devices = devices
 
             # handle offset
             if breakpoints.index(bp) == 0:
                 choices = [('', _("No offset"))]
                 offset_range = range(1, 13)
             else:
-                choices = [('', _("Inherit from above"))]
+                choices = [('', format_lazy(_("Inherit offset from {}"), previous_label))]
                 offset_range = range(0, 13)
+            previous_label = Breakpoint[bp].label
             if bp == 'xs':
                 choices.extend(('offset-{}'.format(i), units[i]) for i in offset_range)
             else:
@@ -342,11 +349,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             width = obj.glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
             if width:
                 widths.append(width)
-        if len(widths) > 1:
-            content = _("widths: {0} units").format(' / '.join(widths))
-        elif len(widths) == 1:
-            width = widths[0]
-            content = ungettext_lazy("default width: {0} unit", "default width: {0} units", width).format(width)
+        if len(widths) > 0:
+            content = _("widths: {}").format(' / '.join(widths))
         else:
             content = _("unknown width")
         return mark_safe(content)

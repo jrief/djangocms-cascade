@@ -3,12 +3,37 @@ Generic Plugins
 ===============
 
 
-**Cascade** is shipped with a few plugins, which can be used independently of the underlying CSS
-framework. To avoid duplication, they are bundled into the section **Generic** and are available
-by default in the placeholders context menu.
+**DjangoCMS-Cascade** is shipped with a few plugins, which can be used independently of the
+underlying CSS framework. To avoid duplication, they are bundled into the section **Generic** and
+are available by default in the placeholders context menu.
 
 All these plugins qualify as plugins with `extra fields`_, which means that they can be configured
 by the site administrator to accept additional CSS styles and classes.
+
+
+Configuration
+=============
+
+In order to use these generic plugins, you must activate them in the project's ``settings.py``:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE_PLUGINS = [
+	    ...
+	    'cmsplugin_cascade.generic',
+	    ...
+	]
+
+If only a few of those plugins shall we activated, name them explicitly, for instance:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE_PLUGINS = [
+	    ...
+	    'cmsplugin_cascade.generic.heading',
+	    'cmsplugin_cascade.generic.horizontal_rule',
+	    ...
+	]
 
 
 .. _extra fields: extra-fields

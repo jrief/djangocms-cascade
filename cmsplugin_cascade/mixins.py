@@ -1,7 +1,3 @@
-try:
-    from django.contrib.sites.shortcuts import get_current_site
-except ImportError:
-    from django.contrib.sites.models import get_current_site
 from cmsplugin_cascade.models import InlineCascadeElement, SortableInlineCascadeElement
 
 
@@ -26,7 +22,8 @@ class CascadePluginMixin(object):
         css_classes = []
         if hasattr(cls, 'default_css_class'):
             css_classes.append(cls.default_css_class)
-        for attr in getattr(cls, 'default_css_attributes', []):
+        default_css_attributes = getattr(cls, 'default_css_attributes', [])
+        for attr in default_css_attributes:
             css_class = instance.glossary.get(attr)
             if isinstance(css_class, str):
                 css_classes.append(css_class)

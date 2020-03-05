@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.urls import reverse
@@ -9,7 +10,6 @@ from cms.cms_toolbars import PAGE_MENU_SECOND_BREAK, ADMIN_MENU_IDENTIFIER, USER
 from cmsplugin_cascade.models import CascadePage
 
 
-@toolbar_pool.register
 class CascadePageToolbar(ExtensionToolbar):
     model = CascadePage
 
@@ -22,7 +22,6 @@ class CascadePageToolbar(ExtensionToolbar):
                 position = current_page_menu.find_first(Break, identifier=PAGE_MENU_SECOND_BREAK)
                 disabled = not self.toolbar.edit_mode_active
                 current_page_menu.add_modal_item(_("Extra Page Fields"), position=position, url=url, disabled=disabled)
-        
         
 @toolbar_pool.register
 class CascadeToolbar(CMSToolbar):
@@ -40,3 +39,6 @@ class CascadeToolbar(CMSToolbar):
                 url="/theme/",
                 position=position_theme,
                 )
+
+if settings.CMSPLUGIN_CASCADE['register_page_editor']:
+    toolbar_pool.register(CascadePageToolbar)
