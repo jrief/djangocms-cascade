@@ -4,14 +4,16 @@ from django.forms import widgets
 from django.forms.fields import IntegerField, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.bootstrap4.fields import BootstrapMultiSizeField
+from cmsplugin_cascade.bootstrap4.grid import Breakpoint
+from cmsplugin_cascade.bootstrap4.picture import get_picture_elements
+from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.bootstrap4.utils import IMAGE_RESIZE_OPTIONS
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.image import ImagePropertyMixin, ImageFormMixin
-from .fields import BootstrapMultiSizeField
-from .plugin_base import BootstrapPluginBase
-from .picture import BootstrapPictureFormMixin, get_picture_elements
-from .grid import Breakpoint
 
 logger = logging.getLogger('cascade')
 
@@ -47,7 +49,7 @@ class CarouselSlidesFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
 
     resize_options = MultipleChoiceField(
         label=_("Resize Options"),
-        choices=BootstrapPictureFormMixin.RESIZE_OPTIONS,
+        choices=IMAGE_RESIZE_OPTIONS,
         widget=widgets.CheckboxSelectMultiple,
         help_text=_("Options to use when resizing the image."),
         initial=['upscale', 'crop', 'subject_location', 'high_resolution'],

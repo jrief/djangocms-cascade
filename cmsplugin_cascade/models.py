@@ -181,7 +181,7 @@ class PluginExtraFields(models.Model):
 
 
 class TextEditorConfigFields(models.Model):
-    ELEMENT_CHOICES = [(c, c) for c in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'address', 'div']]
+    ELEMENT_CHOICES = [(c, c) for c in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'address', 'div', 'span']]
 
     name = models.CharField(
         _("Name"),
