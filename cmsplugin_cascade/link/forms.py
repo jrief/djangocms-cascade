@@ -12,8 +12,7 @@ from django_select2.forms import HeavySelect2Widget
 
 from cms.utils import get_current_site
 from cms.models import Page
-from entangled.forms import EntangledModelFormMixin
-from entangled.utils import get_related_object
+from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
  
