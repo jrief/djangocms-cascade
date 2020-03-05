@@ -44,7 +44,7 @@ class BootstrapUtilities(type):
 
         for arg in args:
             if isinstance(arg, property):
-                property_fields=arg.fget(cls)
+                property_fields = arg.fget(cls)
                 form_subfields = property_fields['form_fields']
                 attrs_type = property_fields['attrs_type']
                 property_name = property_fields['property_name']
@@ -219,6 +219,8 @@ class BootstrapUtilities(type):
     @property
     def flex_directions(cls):
         form_fields = {}
+        attrs_type = 'css_classes'
+        property_name = 'flex_directions'
         choices_format = [
             ('flex-{}row', _("horizontal")),
             ('flex-{}row-reverse', _("horizontal reverse")),
@@ -238,11 +240,14 @@ class BootstrapUtilities(type):
                 required=False,
                 initial=''
             )
-        return form_fields
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields 
 
     @property
     def display_propertys(cls):
         form_fields = {}
+        attrs_type = 'css_classes'
+        property_name = 'display_propertys'
         choices_format = [
             ('d-{}{}', _("horizontal")),
         ]
@@ -260,11 +265,14 @@ class BootstrapUtilities(type):
                 required=False,
                 initial=''
             )
-        return form_fields
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields
 
     @property
     def justify_content(cls):
         form_fields = {}
+        attrs_type = 'css_classes'
+        property_name = 'justify_content'
         choices_format = [
             ('justify-content-{}{}', _("Justify Content")),
         ]
@@ -283,11 +291,14 @@ class BootstrapUtilities(type):
                 required=False,
                 initial=''
             )
-        return form_fields
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields
 
     @property
     def positions(cls):
         form_fields = {}
+        attrs_type = 'css_classes'
+        property_name = 'positions'
         choices_format = [
             ('{}', _("Position")),
         ]
@@ -299,11 +310,14 @@ class BootstrapUtilities(type):
             required=False,
             initial=''
             )
-        return form_fields
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields
 
     @property
     def list_inline(cls):
         form_fields = {}
+        attrs_type = 'css_classes'
+        property_name = 'list_inline'
         choices_format = [
             ('{}', _("List inline")),
         ]
@@ -315,5 +329,5 @@ class BootstrapUtilities(type):
             required=False,
             initial=''
             )
-        return form_fields
-
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields
