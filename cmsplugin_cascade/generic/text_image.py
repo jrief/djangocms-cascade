@@ -8,7 +8,7 @@ from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio
-
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 class TextImageFormMixin(ImageFormMixin):
     RESIZE_OPTIONS = [
@@ -48,6 +48,9 @@ class TextImageFormMixin(ImageFormMixin):
         widget=widgets.RadioSelect,
         initial='',
     )
+
+    if used_compact_form:
+        entangled_nested(image_width, image_height, resize_options, alignement, data_nested='text_image')
 
     class Meta:
         entangled_fields = {'glossary': ['image_width', 'image_height', 'resize_options', 'alignement']}
