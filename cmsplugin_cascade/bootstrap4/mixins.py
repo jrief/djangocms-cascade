@@ -214,3 +214,106 @@ class BootstrapUtilities(type):
             )
         property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
         return property_fields 
+
+
+    @property
+    def flex_directions(cls):
+        form_fields = {}
+        choices_format = [
+            ('flex-{}row', _("horizontal")),
+            ('flex-{}row-reverse', _("horizontal reverse")),
+            ('flex-{}column', _("Vertical")),
+            ('flex-{}column-reverse', _("Vertical reverse")),
+        ]
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+                choices = [ (c.format(''),  l ) for c, l in choices_format]
+                choices.insert(0, ('', _("No Flex Directions")))
+            else:
+                choices = [(c.format(bp.name + '-'), l) for c, l in choices_format]
+                choices.insert(0, ('', _("Inherit from above")))
+            form_fields['Flex_{}'.format(bp.name)] = ChoiceField(
+                label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
+                choices=choices,
+                required=False,
+                initial=''
+            )
+        return form_fields
+
+    @property
+    def display_propertys(cls):
+        form_fields = {}
+        choices_format = [
+            ('d-{}{}', _("horizontal")),
+        ]
+        notation = ['none', 'inline', 'inline-block', 'block', 'table', 'table-cell', 'table-row', 'flex', 'inline-flex']
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+                choices = [(c.format('',  n), c.format('',  n)) for c, l in choices_format for n in notation]
+                choices.insert(0, ('', _("No Display Propertys")))
+            else:
+                choices = [(c.format(bp.name + '-',  n), c.format(bp.name + '-',  n)) for c, l in choices_format for n in notation]
+                choices.insert(0, ('', _("Inherit from above")))
+            form_fields['Flex_{}'.format(bp.name)] = ChoiceField(
+                label=format_lazy(_("Flex Directions for {breakpoint}"), breakpoint=bp.label),
+                choices=choices,
+                required=False,
+                initial=''
+            )
+        return form_fields
+
+    @property
+    def justify_content(cls):
+        form_fields = {}
+        choices_format = [
+            ('justify-content-{}{}', _("Justify Content")),
+        ]
+        notation = [ 'start', 'end', 'center', 'between', 'around']
+        for bp in Breakpoint.range(Breakpoint.xs, Breakpoint.xl):
+            if bp == Breakpoint.xs:
+                choices = [(c.format('',  n), c.format('',  n)) for c, l in choices_format for n in notation]
+                choices.insert(0, ('', _("No Justify content")))
+            else:
+                choices = [(c.format(bp.name + '-',  n), 
+                   c.format(bp.name + '-',  n)) for c, l in choices_format for n in notation]
+                choices.insert(0, ('', _("Inherit from above")))
+            form_fields['Justify_content_{}'.format(bp.name)] = ChoiceField(
+                label=format_lazy(_("Justify Content for {breakpoint}"), breakpoint=bp.label),
+                choices=choices,
+                required=False,
+                initial=''
+            )
+        return form_fields
+
+    @property
+    def positions(cls):
+        form_fields = {}
+        choices_format = [
+            ('{}', _("Position")),
+        ]
+        notation = ['inherit', 'fixed-top' , 'fixed-bottom' , 'sticky-top']
+        choices = [ (str(n), str(n)) for c, l in choices_format for n in notation]
+        form_fields['Position'] = ChoiceField(
+            label=format_lazy(_("Position")),
+            choices=choices,
+            required=False,
+            initial=''
+            )
+        return form_fields
+
+    @property
+    def list_inline(cls):
+        form_fields = {}
+        choices_format = [
+            ('{}', _("List inline")),
+        ]
+        notation = ['inherit', 'fixed-top' , 'fixed-bottom' , 'sticky-top']
+        choices = [ (str(n), str(n)) for c, l in choices_format for n in notation]
+        form_fields['Position'] = ChoiceField(
+            label=format_lazy(_("Position")),
+            choices=choices,
+            required=False,
+            initial=''
+            )
+        return form_fields
+>>>>>>> origin/navbar

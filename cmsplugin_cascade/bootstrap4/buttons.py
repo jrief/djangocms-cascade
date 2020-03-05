@@ -119,7 +119,7 @@ class ButtonFormMixin(EntangledModelFormMixin):
 
 class BootstrapButtonMixin(IconPluginMixin):
     require_parent = True
-    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
+    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin','BootstrapNavItemsPlugin', 'BootstrapListsPlugin']
     render_template = 'cascade/bootstrap4/button.html'
     allow_children = False
     default_css_class = 'btn'
@@ -178,6 +178,9 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         css_classes = cls.super(BootstrapButtonPlugin, cls).get_css_classes(obj)
         if obj.glossary.get('stretched_link'):
             css_classes.append('stretched_link')
+        if hasattr(obj, 'parent') and hasattr(obj.parent,'parent') and hasattr(obj.parent.parent,'plugin_type'):
+            if obj.parent.parent.plugin_type == 'BootstrapNavBrandPlugin':
+                css_classes.insert(0,'nav-link text-left')
         return css_classes
 
     @classmethod

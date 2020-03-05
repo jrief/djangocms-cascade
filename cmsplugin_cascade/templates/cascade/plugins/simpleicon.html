@@ -1,4 +1,4 @@
-{% load sekizai_tags %}
+{% load sekizai_tags cascade_tags %}
 {% if stylesheet_url %}{% addtoblock "css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}{% endif %}
 {% spaceless %}
 {% with instance_link=instance.link tag_type=instance.tag_type css_classes=instance.css_classes inline_styles=instance.inline_styles %}
@@ -7,7 +7,7 @@
 {% elif css_classes or inline_styles %}
 <span {% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
 {% endif %}
-	<i class="{{ icon_font_class }}"></i>
+	<i class="{{ icon_font_class }}"></i> {{ instance.glossary.content }}
 {% if instance_link %}</a>{% elif css_classes or inline_styles %}</span>{% endif %}
 {% endwith %}
 {% endspaceless %}
