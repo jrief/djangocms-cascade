@@ -18,7 +18,7 @@ from .extra_fields.mixins import ExtraFieldsMixin
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
-from .helpers import fieldset_by_widget_attr , fieldset_by_form_entangled_nested
+from .helpers import fieldset_by_widget_attr
 from cmsplugin_cascade.helpers import used_compact_form
 from django.forms import formset_factory
 
