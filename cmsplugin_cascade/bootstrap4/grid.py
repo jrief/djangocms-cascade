@@ -26,8 +26,12 @@ class Breakpoint(Enum):
 
     @classmethod
     def range(cls, first, last):
+        """
+        Iterate over all elements, starting from `first` until `last`.
+        The last element is included.
+        """
         if first: first = first.value
-        if last: last = last.value
+        if last: last = last.value + 1
         return itertools.islice(cls, first, last)
 
     def __gt__(self, other):
@@ -41,6 +45,13 @@ class Breakpoint(Enum):
 
     def __le__(self, other):
         return self.value <= other.value
+
+    def __iter__(self):
+        yield self.xs
+        yield self.sm
+        yield self.md
+        yield self.lg
+        yield self.xl
 
     @property
     def label(self):

@@ -7,6 +7,8 @@ import sys
 from django.urls import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade.bootstrap4.mixins import BootstrapUtilities
+from cmsplugin_cascade.generic.mixins_html_attrs import GenericUtilities
 from django.utils.text import format_lazy
 
 DEBUG = True
@@ -217,12 +219,30 @@ CMSPLUGIN_CASCADE = {
     'plugins_with_sharables': {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
-        'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
+        'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'resize_options',),
     },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
+    'plugins_with_extra_fields': {
+    'BootstrapColumnPlugin': PluginExtraFieldsConfig(
+        css_classes={'multiple': True, 'class_names': 'custom-zoom-over, custom-zoom-over2'},
+        inline_styles={
+            'extra_fields:Border': ['border',],
+            'extra_fields:Border Radius': ['border-radius'],
+            'extra_units:Border Radius': 'px,rem',
+            'extra_fields:Colors': ['color', 'background-color'],
+            'extra_fields:Margins': ['margin-top', 'margin-right', 'margin-botton,', 'margin-left'],
+            'extra_units:Margins': 'px,em',
+            'extra_fields:Paddings': ['padding-top', 'padding-right', 'padding-botton,', 'padding-left'],
+            'extra_units:Paddings': 'px,em',
+        }),
+    },
+    'plugins_with_extra_mixins': {
+    'BootstrapColumnPlugin':BootstrapUtilities(BootstrapUtilities.background_and_color, BootstrapUtilities.vertical_margins, BootstrapUtilities.floats, BootstrapUtilities.paddings, BootstrapUtilities.margins,
+     GenericUtilities.scroll_animate ),
+    },
 }
 
 CMS_PLACEHOLDER_CONF = {

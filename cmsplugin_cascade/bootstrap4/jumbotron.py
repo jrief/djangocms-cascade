@@ -12,6 +12,7 @@ from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap4.container import ContainerGridMixin
 from cmsplugin_cascade.bootstrap4.fields import BootstrapMultiSizeField
 from cmsplugin_cascade.bootstrap4.picture import get_picture_elements
+from cmsplugin_cascade.helpers import entangled_nested, used_compact_form
 
 logger = logging.getLogger('cascade')
 
@@ -89,7 +90,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     element_heights = BootstrapMultiSizeField(
         label=("Element Heights"),
         required=True,
-        allowed_units=['rem', 'px'],
+        allowed_units=['rem', 'px', 'auto'],
         initial='300px',
         help_text=_("This property specifies the height for each Bootstrap breakpoint."),
     )
@@ -154,6 +155,11 @@ class JumbotronFormMixin(EntangledModelFormMixin):
         help_text=_("This property specifies the width and height of a background image in px or %."),
     )
 
+    if used_compact_form:
+        entangled_nested(fluid, background_color, element_heights, image_file,
+                                 background_repeat, background_attachment,
+                                 background_vertical_position, background_horizontal_position,
+                                 background_size, background_width_height, data_nested='jumbotron')
     class Meta:
         entangled_fields = {'glossary': ['fluid', 'background_color', 'element_heights', 'image_file',
                                          'background_repeat', 'background_attachment',
@@ -196,12 +202,13 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
     raw_id_fields = ['image_file']
     render_template = 'cascade/bootstrap4/jumbotron.html'
     ring_plugin = 'JumbotronPlugin'
-    footnote_html = """
-<p>For more information about the Jumbotron please read </p>
-    """
+    footnote_html = """<p>
+    For more information about the Jumbotron please read the
+    <a href="https://getbootstrap.com/docs/4.3/components/jumbotron/" target="_new">Bootstrap documentation</a>.
+    </p>"""
 
     class Media:
-        js = ['cascade/js/admin/jumbotronplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/jumbotronplugin.js']
 
     def render(self, context, instance, placeholder):
         # image shall be rendered in a responsive context using the ``<picture>`` element
@@ -212,7 +219,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         else:
             try:
                 if instance.child_plugin_instances and instance.child_plugin_instances[0].plugin_type == 'BootstrapRowPlugin':
-                    padding='padding: {0}px {0}px;'.format(int( app_settings.CMSPLUGIN_CASCADE['bootstrap4']['gutter']/2))
+                    padding='padding: {0}px {0}px;'.format(int(app_settings.CMSPLUGIN_CASCADE['bootstrap4']['gutter']/2))
                     context.update({'add_gutter_if_child_is_BootstrapRowPlugin': padding,})
                 context.update({
                     'elements': [e for e in elements if 'media' in e] if elements else [],

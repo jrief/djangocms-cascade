@@ -21,7 +21,7 @@ class AppSettings(object):
         from django.forms.fields import NumberInput
         from django.core.exceptions import ImproperlyConfigured
         from django.utils.translation import ugettext_lazy
-        from cmsplugin_cascade.fields import (ColorField, SelectTextAlignField, SelectOverflowField, SizeField,
+        from cmsplugin_cascade.fields import (ColorFieldExtra, SelectTextAlignField, SelectOverflowField, SizeField,
                                               BorderChoiceField)
 
         if hasattr(self, '_config_CMSPLUGIN_CASCADE'):
@@ -96,7 +96,7 @@ class AppSettings(object):
             (['line-height'], NumberInput))
         extra_inline_styles.setdefault(
             'Colors',
-            (['color', 'background-color'], ColorField))
+            (['color', 'background-color'], ColorFieldExtra))
         extra_inline_styles.setdefault(
             'Border',
             (['border', 'border-top', 'border-right', 'border-bottom', 'border-left'], BorderChoiceField))
@@ -131,7 +131,9 @@ class AppSettings(object):
         config.setdefault('cache_strides', True)
 
         config.setdefault('merge_extra_fields',True)
-        
+
+        config.setdefault('register_page_editor', True)
+ 
         for module_name in self.CASCADE_PLUGINS:
             try:
                 settings_module = import_module('{}.settings'.format(module_name))

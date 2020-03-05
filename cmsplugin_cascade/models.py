@@ -34,7 +34,11 @@ class SharedGlossary(models.Model):
         unique=True,
     )
 
-    glossary = JSONField(null=True, blank=True, default={})
+    glossary = JSONField(
+        null=True,
+        blank=True,
+        default={},
+    )
 
     class Meta:
         unique_together = ['plugin_type', 'identifier']
@@ -106,7 +110,10 @@ class InlineCascadeElement(models.Model):
         on_delete=models.CASCADE,
     )
 
-    glossary = JSONField(blank=True, default={})
+    glossary = JSONField(
+        blank=True,
+        default={},
+    )
 
     class Meta:
         db_table = 'cmsplugin_cascade_inline'
@@ -181,7 +188,7 @@ class PluginExtraFields(models.Model):
 
 
 class TextEditorConfigFields(models.Model):
-    ELEMENT_CHOICES = [(c, c) for c in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'address', 'div']]
+    ELEMENT_CHOICES = [(c, c) for c in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'address', 'div', 'span']]
 
     name = models.CharField(
         _("Name"),
@@ -321,8 +328,11 @@ class IconFont(models.Model):
         if isinstance(instance, cls):
             font_folder = os.path.join(app_settings.CMSPLUGIN_CASCADE['icon_font_root'], instance.font_folder)
             shutil.rmtree(font_folder, ignore_errors=True)
-            temp_folder = os.path.abspath(os.path.join(font_folder, os.path.pardir))
-            os.rmdir(temp_folder)
+            try:
+                temp_folder = os.path.abspath(os.path.join(font_folder, os.path.pardir))
+                os.rmdir(temp_folder)
+            except FileNotFoundError:
+                pass
 
 models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')
 

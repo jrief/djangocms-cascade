@@ -1,3 +1,4 @@
+
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import MediaDefiningClass, widgets
@@ -7,8 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
-
 from entangled.forms import EntangledModelFormMixin
+from cmsplugin_cascade.helpers import entangled_nested, used_compact_form
 
 class ExtraFieldsPluginFormMixin( EntangledModelFormMixin):
     """In this form, choices and help_text will overided later to give path of parameter custom css classes
@@ -35,6 +36,7 @@ class ExtraFieldsPluginFormMixin( EntangledModelFormMixin):
 
     class Meta:
         entangled_fields = {'glossary':['custom_css_classes_and_styles']}
+
 
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     """
@@ -104,7 +106,8 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         required=False,
                         help_text=_("Customized CSS class to be added to this element."),
                     )
-
+                if used_compact_form:
+                    entangled_nested(form_fields['extra_css_classes'], data_nested="custom_css_classes")
             # add input fields to let the user enter styling information
             for style, choices_list in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
@@ -119,7 +122,10 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                     }
                     if issubclass(Field, SizeField):
                         field_kwargs['allowed_units'] = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
-                    form_fields[key] = Field(**field_kwargs)
+                    field = Field(**field_kwargs)
+                    if used_compact_form:
+                        entangled_nested(field, data_nested=style.split(':')[0])
+                    form_fields[key] = field
 
             # extend the form with some extra fields
             base_form = kwargs.pop('form', self.form)

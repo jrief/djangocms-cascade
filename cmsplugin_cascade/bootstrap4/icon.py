@@ -8,7 +8,7 @@ from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.icon.forms import IconFormMixin
 from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
-
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 class FramedIconFormMixin(IconFormMixin):
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
@@ -56,6 +56,10 @@ class FramedIconFormMixin(IconFormMixin):
         required=False,
     )
 
+    if used_compact_form:
+        entangled_nested(font_size, color, background_color, text_align, border,
+                                         border_radius, data_nested='icon')
+
     class Meta:
         entangled_fields = {'glossary': ['font_size', 'color', 'background_color', 'text_align', 'border',
                                          'border_radius']}
@@ -72,7 +76,7 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     ring_plugin = 'FramedIconPlugin'
 
     class Media:
-        js = ['cascade/js/admin/framediconplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/framediconplugin.js']
 
     @classmethod
     def get_tag_type(self, instance):

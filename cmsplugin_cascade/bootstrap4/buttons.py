@@ -9,7 +9,10 @@ from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
 from cmsplugin_cascade.icon.forms import IconFormMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
+from sass_processor.processor import sass_processor
+sass_processor('cascade/css/admin/compact_forms/bootstrap4-colors.scss')
 
 class ButtonTypeWidget(widgets.RadioSelect):
     """
@@ -23,7 +26,6 @@ class ButtonSizeWidget(widgets.RadioSelect):
     Render sample buttons in different sizes in the button's backend editor.
     """
     template_name = 'cascade/admin/legacy_widgets/button_sizes.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/button_sizes.html'
-
 
 class ButtonFormMixin(EntangledModelFormMixin):
     BUTTON_TYPES = [
@@ -104,6 +106,12 @@ class ButtonFormMixin(EntangledModelFormMixin):
         help_text=_("Add an Icon before or after the button content."),
     )
 
+    if used_compact_form:
+        entangled_nested(link_content,button_type,button_size,button_options,\
+           stretched_link, data_nested='button')
+        entangled_nested(button_type, data_nested='button', template_key='button_type')
+        entangled_nested(icon_align, data_nested='icon')
+
     class Meta:
         entangled_fields = {'glossary': ['link_content', 'button_type', 'button_size', 'button_options', 'icon_align',
                                          'stretched_link']}
@@ -120,17 +128,19 @@ class BootstrapButtonMixin(IconPluginMixin):
 
     class Media:
         css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
-        js = ['cascade/js/admin/buttonmixin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonmixin.js']
 
     def render(self, context, instance, placeholder):
-        self.super(BootstrapButtonMixin, self).render(context, instance, placeholder)
+        context = super().render(context, instance, placeholder)
         if 'icon_font_class' in context:
             mini_template = '{0}<i class="{1} {2}" aria-hidden="true"></i>{3}'
             icon_align = instance.glossary.get('icon_align')
             if icon_align == 'icon-left':
-                context['icon_left'] = format_html(mini_template, '', context['icon_font_class'], 'cascade-icon-left', ' ')
+                context['icon_left'] = format_html(mini_template, '', context['icon_font_class'], 'cascade-icon-left',
+                                                   ' ')
             elif icon_align == 'icon-right':
-                context['icon_right'] = format_html(mini_template, ' ', context['icon_font_class'], 'cascade-icon-right', '')
+                context['icon_right'] = format_html(mini_template, ' ', context['icon_font_class'],
+                                                    'cascade-icon-right', '')
         return context
 
 
@@ -148,7 +158,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 
     class Media:
-        js = ['cascade/js/admin/buttonplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonplugin.js']
 
     @classmethod
     def get_identifier(cls, instance):
@@ -173,5 +183,9 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
         attributes = cls.super(BootstrapButtonPlugin, cls).get_html_tag_attributes(obj)
         attributes.update(cls.DEFAULT_BUTTON_ATTRIBUTES)
         return attributes
+
+    def render(self, context, instance, placeholder):
+        context = self.super(BootstrapButtonPlugin, self).render(context, instance, placeholder)
+        return context
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)

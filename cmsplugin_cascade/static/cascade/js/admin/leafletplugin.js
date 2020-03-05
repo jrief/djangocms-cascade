@@ -6,7 +6,7 @@ django.jQuery(function($) {
 			this.$super();
 			this.mapPosition = JSON.parse($('#id_map_position').val());
 			this.startPosition = $.extend({}, this.mapPosition);
-			this.editMap = L.map('leaflet_edit_map');
+			this.editMap = L.map('leaflet_edit_map', {scrollWheelZoom: false});
 			L.tileLayer(
 				django.cascade.leaflet_settings.tilesURL,
 				django.cascade.leaflet_settings
