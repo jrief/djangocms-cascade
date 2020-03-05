@@ -20,7 +20,6 @@ from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
 from .helpers import fieldset_by_widget_attr
 from cmsplugin_cascade.helpers import used_compact_form
-from django.forms import formset_factory
 
 mark_safe_lazy = lazy(mark_safe, str)
 
@@ -356,8 +355,10 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         if not issubclass(form, ModelForm):
             bases += (ModelForm,)
 
-        form = type(form.__name__, bases, { })
-        kwargs['fields'] = form.declared_fields
+
+        form = type(form.__name__, bases, {})
+        if used_compact_form:
+            self.fieldsets, self.Media = fieldset_by_widget_attr(form ,'data_nested', self.Media)
         kwargs['form'] = form
 
         return super().get_form(request, obj, **kwargs)
