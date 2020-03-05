@@ -10,6 +10,7 @@ from cmsplugin_cascade.bootstrap4.fields import BootstrapMultiSizeField
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 logger = logging.getLogger('cascade.bootstrap4')
 
@@ -47,6 +48,9 @@ class BootstrapPictureFormMixin(ImageFormMixin):
         widget=widgets.CheckboxSelectMultiple,
         initial=['img-fluid']
     )
+
+    if used_compact_form:
+        entangled_nested(responsive_heights, responsive_zoom, resize_options, image_shapes, data_nested='picture')
 
     class Meta:
         entangled_fields = {'glossary': ['responsive_heights', 'responsive_zoom', 'resize_options', 'image_shapes']}

@@ -2,7 +2,11 @@
 {% load static cms_tags bootstrap_tags sekizai_tags sass_tags %}
 
 {% block head %}
-{% addtoblock "css" %}<link rel="stylesheet" href="{% sass_src 'bs4demo/css/main.scss' %}" type="text/css" />{% endaddtoblock %}
+{% addtoblock "css" %}
+<link rel="stylesheet" href="{% sass_src 'bs4demo/css/main.scss' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'node_modules/sal.js/dist/sal.css' %}" type="text/css" />
+{% endaddtoblock %}
+
 {% endblock head %}
 
 {% block header %}
