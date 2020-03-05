@@ -7,6 +7,7 @@ import sys
 from django.urls import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade import __path__ as cmsplugin_cascade_path
 from django.utils.text import format_lazy
 
 DEBUG = True
@@ -36,6 +37,7 @@ DATABASES = {
 
 INSTALLED_APPS = [
     'django.contrib.auth',
+    'dynamic_preferences',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
@@ -132,6 +134,8 @@ TEMPLATES = [{
             'sekizai.context_processors.sekizai',
             'cms.context_processors.cms_settings',
             'bs4demo.context_processors.cascade',
+            'django.template.context_processors.request',
+            'dynamic_preferences.processors.global_preferences',
         ),
     },
 }]
@@ -273,6 +277,7 @@ THUMBNAIL_OPTIMIZE_COMMAND = {
 }
 
 SASS_PROCESSOR_INCLUDE_DIRS = [
+    os.path.join(cmsplugin_cascade_path[0], 'static'),
     os.path.join(PROJECT_ROOT, 'node_modules'),
 ]
 
@@ -281,8 +286,21 @@ SASS_PROCESSOR_ROOT = STATIC_ROOT
 # to access files such as fonts via staticfiles finders
 NODE_MODULES_URL = STATIC_URL + 'node_modules/'
 
+CASCADE_THEME = True
+
+SASS_PROCESSOR_CUSTOM_FUNCTIONS = {
+    'get-color-primary-presass': 'cmsplugin_cascade.theme.utils.get_color_primary',
+    'get-color-secondary-presass': 'cmsplugin_cascade.theme.utils.get_color_secondary',
+    'get-color-success-presass': 'cmsplugin_cascade.theme.utils.get_color_success',
+    'get-color-warning-presass': 'cmsplugin_cascade.theme.utils.get_color_warning',
+    'get-color-danger-presass': 'cmsplugin_cascade.theme.utils.get_color_danger',
+    'get-color-info-presass': 'cmsplugin_cascade.theme.utils.get_color_info',
+    'get-color-light-presass': 'cmsplugin_cascade.theme.utils.get_color_light',
+    'get-color-dark-presass': 'cmsplugin_cascade.theme.utils.get_color_dark',
+    'get-path-variables-scss-presass': "cmsplugin_cascade.theme.utils.get_path_variables_scss",
+}
+
 try:
     from .private_settings import *
 except ImportError:
     pass
-

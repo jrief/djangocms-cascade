@@ -1,5 +1,6 @@
 from django import VERSION as DJANGO_VERSION
 from django.forms import widgets
+from django.conf import settings
 from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -119,7 +120,13 @@ class BootstrapButtonMixin(IconPluginMixin):
     ring_plugin = 'ButtonMixin'
 
     class Media:
-        css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
+        if getattr(settings, 'CASCADE_THEME', None):
+            from sass_processor.processor import sass_processor
+            css = {
+                'all': [sass_processor('cascade/css/admin/bootstrap4-buttons.scss'), 'cascade/css/admin/iconplugin.css'],
+            }
+        else:
+            css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonmixin.js']
 
     def render(self, context, instance, placeholder):

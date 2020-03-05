@@ -1,4 +1,16 @@
 @import "variables";
+
+$theme-colors: (
+  primary: get-color-primary-presass(),
+  secondary: get-color-secondary-presass(),
+  success: get-color-success-presass(),
+  warning: get-color-warning-presass(),
+  danger: get-color-danger-presass(),
+  info: get-color-info-presass(),
+  light: get-color-light-presass(),
+  dark: get-color-dark-presass(),
+);
+
 @import "bootstrap/scss/bootstrap";
 @import "footer";
 
