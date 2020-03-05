@@ -165,7 +165,8 @@ class ColorField(MultiValueField):
 
     @classmethod
     def css_value(self, values):
-        return values[0]
+        color, inherit_color = values
+        return color if not inherit_color else ''
 
 
 @deconstructible
