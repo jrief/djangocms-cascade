@@ -23,26 +23,49 @@ class BootstrapUtilities(type):
         …
     }
     ```
-
     The class ``BootstrapUtilities`` offers a bunch of property methods which return a list of
     input fields and/or select boxes. They then can be added to the plugin's editor. This is
-    specially useful to add CSS classes from the utilities section of Bootstrap-4, such as
+    specially useful to add CSS classes or HTML data attributes from the utilities section of Bootstrap-4, such as
     margins, borders, colors, etc.
+    
+    The 'property_name' attritbute in property methods is needed because python property methods don't have name
+    attributes without using inspect module or others things. 
+    The 'attrs_type' attritbute in property methods can have two possiblity values 'css_classes' or 'html_data_attrs'.
+    The 'anchors_fields' in the property_fields attributes can add choices id elements of the current page, theses
+    choices are realy set when the request is available.
     """
+    
     def __new__(cls, *args):
         form_fields = {}
+        form_fields_by_property_name = {}
+        form_fields_by_attr_type = {}
+        fields_choices_anchors = []
+
         for arg in args:
             if isinstance(arg, property):
-                form_fields.update(arg.fget(cls))
+                property_fields=arg.fget(cls)
+                form_subfields = property_fields['form_fields']
+                attrs_type = property_fields['attrs_type']
+                property_name = property_fields['property_name']
+
+                form_fields.update(form_subfields)
+                form_fields_by_property_name[property_name]= property_fields['form_fields']
+                form_fields_by_attr_type.setdefault(attrs_type, [])
+                form_fields_by_attr_type[attrs_type ].extend(property_fields['form_fields'].keys())
+                if 'anchors_fields' in  property_fields:
+                    fields_choices_anchors.extend(property_fields['anchors_fields'])
 
         class Meta:
-            entangled_fields = {'glossary': list(form_fields.keys())}
+            entangled_fields = {'glossary': list(form_fields) }
 
-        utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta))
-        return type('BootstrapUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})
+        utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta) )
+        return type('HtmlAttrsUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin,
+                     'attr_type': form_fields_by_attr_type , 'fields_with_choices_anchors': fields_choices_anchors })
 
     @property
     def background_and_color(cls):
+        attrs_type = 'css_classes'
+        property_name = 'background_and_color'
         choices = [
             ('', _("Default")),
             ('bg-primary text-white', _("Primary with white text")),
@@ -57,15 +80,19 @@ class BootstrapUtilities(type):
             ('bg-transparent text-dark', _("Transparent with dark text")),
             ('bg-transparent text-white', _("Transparent with white text")),
         ]
-        return {'background_and_color': ChoiceField(
+        form_fields = {'background_and_color': ChoiceField(
             label=_("Background and color"),
             choices=choices,
             required=False,
             initial='',
         )}
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields 
 
     @property
     def margins(cls):
+        attrs_type = 'css_classes'
+        property_name = 'margins'
         form_fields = {}
         choices_format = [
             ('m-{}{}', _("4 sided margins ({})")),
@@ -91,10 +118,13 @@ class BootstrapUtilities(type):
                 required=False,
                 initial='',
             )
-        return form_fields
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields 
 
     @property
     def vertical_margins(cls):
+        attrs_type = 'css_classes'
+        property_name = 'vertical_margins'
         form_fields = {}
         choices_format = [
             ('my-{}{}', _("Vertical margins ({})")),
@@ -116,10 +146,13 @@ class BootstrapUtilities(type):
                 required=False,
                 initial='',
             )
-        return form_fields
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields 
 
     @property
     def paddings(cls):
+        attrs_type = 'css_classes'
+        property_name = 'paddings'
         form_fields = {}
         choices_format = [
             ('p-{}{}', _("4 sided padding ({})")),
@@ -145,11 +178,14 @@ class BootstrapUtilities(type):
                 required=False,
                 initial='',
             )
-        return form_fields
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields 
 
     @property
     def floats(cls):
         form_fields = {}
+        attrs_type = 'css_classes'
+        property_name = 'floats'
         choices_format = [
             ('float-{}none', _("Do not float")),
             ('float-{}left', _("Float left")),
@@ -169,4 +205,6 @@ class BootstrapUtilities(type):
                 required=False,
                 initial='',
             )
-        return form_fields
+        property_fields = { 'form_fields':form_fields, 'attrs_type': attrs_type, 'property_name':property_name }
+        return property_fields 
+
