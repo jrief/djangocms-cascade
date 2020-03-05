@@ -133,7 +133,7 @@ and :class:`cmsplugin_cascade.link.forms.LinkForm` by alternative implementation
 .. code-block:: python
 	:caption: shop/cascade/plugin_base.py
 
-	from entangled.forms import get_related_object
+	from entangled.utils import get_related_object
 	from cmsplugin_cascade.link.plugin_base import LinkPluginBase
 
 	class CatalogLinkPluginBase(LinkPluginBase):

@@ -11,6 +11,7 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.helpers import entangled_nested, used_compact_form
 from .plugin_base import BootstrapPluginBase
 from . import grid
 
@@ -19,17 +20,27 @@ def get_widget_choices():
     breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
     widget_choices = []
     for index, (bp, bound) in enumerate(breakpoints.items()):
-        if index == 0:
-            widget_choices.append((bp.name, "{} (<{:.1f}px)".format(bp.label, bound.max)))
-        elif index == len(breakpoints) - 1:
-            widget_choices.append((bp.name, "{} (≥{:.1f}px)".format(bp.label, bound.min)))
+        if not used_compact_form:
+            if index == 0:
+                widget_choices.append((bp.name, "{} (<{:.1f}px)".format(bp.label, bound.max)))
+            elif index == len(breakpoints) - 1:
+                widget_choices.append((bp.name, "{} (≥{:.1f}px)".format(bp.label, bound.min)))
+            else:
+                widget_choices.append((bp.name, "{} (≥{:.1f}px and <{:.1f}px)".format(bp.label, bound.min, bound.max)))
         else:
-            widget_choices.append((bp.name, "{} (≥{:.1f}px and <{:.1f}px)".format(bp.label, bound.min, bound.max)))
+            print(bp._name_)
+            if index == 0:
+                 widget_choices.append((bp.name, "{} <{:.1f}px".format(bp._name_, bound.max)))
+            else:
+                 widget_choices.append((bp.name, "{} ≥{:.1f}px".format(bp._name_, bound.min)))
     return widget_choices
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
-    template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
+    if not used_compact_form:
+        template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
+    else:
+        template_name = 'cascade/admin/compact_forms/widgets/container_breakpoints.html'
 
 
 class ContainerFormMixin(EntangledModelFormMixin):
@@ -47,6 +58,9 @@ class ContainerFormMixin(EntangledModelFormMixin):
         required=False,
         help_text=_("Changing your outermost '.container' to '.container-fluid'.")
     )
+
+    if used_compact_form:
+        entangled_nested( breakpoints, fluid, data_nested="container")
 
     class Meta:
         entangled_fields = {'glossary': ['breakpoints', 'fluid']}
@@ -120,6 +134,9 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         initial=3,
         help_text=_('Number of columns to be created with this row.'),
     )
+
+    if used_compact_form:
+        entangled_nested( num_children, data_nested="row")
 
     class Meta:
         untangled_fields = ['num_children']
@@ -196,7 +213,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[1].format(bs4_breakpoints[first].min)
             else:
                 return phrases[2]
-            
+
         if 'parent' in self._cms_initial_attributes:
             container=self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').last().get_bound_plugin()
         else:
@@ -324,6 +341,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         glossary_fields.extend(offset_fields.keys())
         glossary_fields.extend(reorder_fields.keys())
         glossary_fields.extend(responsive_fields.keys())
+
+
+        if used_compact_form:
+            entangled_nested(width_fields, data_nested="column", template_key="column", )
+            entangled_nested(offset_fields, data_nested="offset", template_key="column", )
+            entangled_nested(reorder_fields, data_nested="reorder", template_key="column",)
+            entangled_nested(responsive_fields, data_nested="responsive", template_key="column")
 
         class Meta:
             entangled_fields = {'glossary': glossary_fields}

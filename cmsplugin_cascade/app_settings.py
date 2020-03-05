@@ -21,7 +21,7 @@ class AppSettings(object):
         from django.forms.fields import NumberInput
         from django.core.exceptions import ImproperlyConfigured
         from django.utils.translation import ugettext_lazy
-        from cmsplugin_cascade.fields import (ColorField, SelectTextAlignField, SelectOverflowField, SizeField,
+        from cmsplugin_cascade.fields import (ColorFieldExtra, SelectTextAlignField, SelectOverflowField, SizeField,
                                               BorderChoiceField)
 
         if hasattr(self, '_config_CMSPLUGIN_CASCADE'):
@@ -96,7 +96,7 @@ class AppSettings(object):
             (['line-height'], NumberInput))
         extra_inline_styles.setdefault(
             'Colors',
-            (['color', 'background-color'], ColorField))
+            (['color', 'background-color'], ColorFieldExtra))
         extra_inline_styles.setdefault(
             'Border',
             (['border', 'border-top', 'border-right', 'border-bottom', 'border-left'], BorderChoiceField))
@@ -130,9 +130,8 @@ class AppSettings(object):
 
         config.setdefault('cache_strides', True)
 
-        config.setdefault('register_page_editor', True)
-
-         
+        config.setdefault('merge_extra_fields',True)
+      
         config.setdefault('fallback',{
           # default
           'path_main_scss': 'bs4demo/css/main.scss',
@@ -141,6 +140,8 @@ class AppSettings(object):
           'jumbotron':{'color':'hsl(62, 90%, 90%, 0.8)', 'svg':''},
          })
 
+        config.setdefault('register_page_editor', True)
+ 
 
         for module_name in self.CASCADE_PLUGINS:
             try:

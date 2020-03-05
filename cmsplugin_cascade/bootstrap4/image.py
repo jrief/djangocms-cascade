@@ -10,6 +10,7 @@ from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.fields import SizeField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 logger = logging.getLogger('cascade.bootstrap4')
 
@@ -66,6 +67,10 @@ class BootstrapImageFormMixin(ImageFormMixin):
         required = False,
         help_text=_("How to align a non-responsive image."),
     )
+
+    if used_compact_form:
+        entangled_nested(image_shapes, image_width_responsive, image_width_fixed,
+         image_height, resize_options, image_alignment, data_nested='image_setting')
 
     class Meta:
         entangled_fields = {'glossary': ['image_shapes', 'image_width_responsive', 'image_width_fixed',

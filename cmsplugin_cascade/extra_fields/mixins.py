@@ -1,3 +1,4 @@
+
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import MediaDefiningClass, widgets
@@ -7,6 +8,34 @@ from django.utils.translation import ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
+from entangled.forms import EntangledModelFormMixin
+from cmsplugin_cascade.helpers import entangled_nested, used_compact_form
+
+class ExtraFieldsPluginFormMixin( EntangledModelFormMixin):
+    """In this form, choices and help_text will overided later to give path of parameter custom css classes
+     and styles for the plugin"""
+
+    custom_css_classes_and_styles = ChoiceField(
+        widget=widgets.RadioSelect(attrs={'style': 'display:none;'}),
+        choices=[],
+        required=False,
+        label=_("Set custom css classes and styles"),
+    )
+
+    def custom_form(clsname, request, extra_fields):
+            site = get_current_site(request)
+            form_custom = ExtraFieldsPluginFormMixin.base_fields['custom_css_classes_and_styles']
+            if hasattr(extra_fields, 'id'):
+                admin_path_plugin_extra_field_set = "/admin/cmsplugin_cascade/pluginextrafields/{}/change/".format( extra_fields.id )
+                form_custom.choices = [('', format_html('<a target="_blank" href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
+                form_custom.help_text =  format_html('<div style="width:auto">Site: {} Plugin: {}</div>', site, clsname)
+            else:
+                admin_path_plugin_extra_field_set = "/admin/cmsplugin_cascade/pluginextrafields/" 
+                form_custom.choices = [('', format_html('<a target="_blank" href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
+                form_custom.help_text =  format_html('<div style="width:auto">Site: {} Plugin: {}</div>', site, clsname)
+
+    class Meta:
+        entangled_fields = {'glossary':['custom_css_classes_and_styles']}
 
 
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
@@ -29,6 +58,21 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
             extra_fields = PluginExtraFields.objects.get(plugin_type=clsname, site=site)
         except ObjectDoesNotExist:
             extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
+
+        if hasattr(extra_fields, 'id') and app_settings.CMSPLUGIN_CASCADE['merge_extra_fields'] :
+            settings_extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields']
+            if clsname in settings_extra_fields.keys():
+                for key_style, value_style in settings_extra_fields[clsname].inline_styles.items():
+                    extra_fields.inline_styles.update({key_style:extra_fields.inline_styles[key_style] + value_style})
+                for key_css_classes, value_css_classes in settings_extra_fields[clsname].css_classes.items():
+                    if value_css_classes == '':
+                        value_css_classes = extra_fields.css_classes[key_css_classes]
+                    elif type(value_css_classes) == list:
+                        list_extra_fields = extra_fields.css_classes[key_css_classes].replace(' ', '').split(",")
+                        list_css_classes = list(dict.fromkeys(list_extra_fields + value_css_classes))
+                        value_css_classes = ','.join(list_css_classes)
+                    extra_fields.css_classes.update({ key_css_classes:value_css_classes})
+                extra_fields.save()
 
         if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
             form_fields = {}
@@ -62,7 +106,8 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                         required=False,
                         help_text=_("Customized CSS class to be added to this element."),
                     )
-
+                if used_compact_form:
+                    entangled_nested(form_fields['extra_css_classes'], data_nested="custom_css_classes")
             # add input fields to let the user enter styling information
             for style, choices_list in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
                 inline_styles = extra_fields.inline_styles.get('extra_fields:{0}'.format(style))
@@ -77,15 +122,22 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                     }
                     if issubclass(Field, SizeField):
                         field_kwargs['allowed_units'] = extra_fields.inline_styles.get('extra_units:{0}'.format(style)).split(',')
-                    form_fields[key] = Field(**field_kwargs)
+                    field = Field(**field_kwargs)
+                    if used_compact_form:
+                        entangled_nested(field, data_nested=style.split(':')[0])
+                    form_fields[key] = field
 
             # extend the form with some extra fields
             base_form = kwargs.pop('form', self.form)
             assert issubclass(base_form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
             class Meta:
                 entangled_fields = {'glossary': list(form_fields.keys())}
+
+            # overide fields 'custom_css_classes_and_styles' attributes: choices, help_text.
+            ExtraFieldsPluginFormMixin.custom_form(clsname ,request, extra_fields)
+
             form_fields['Meta'] = Meta
-            kwargs['form'] = type(base_form.__name__, (base_form,), form_fields)
+            kwargs['form'] = type(base_form.__name__, (base_form,ExtraFieldsPluginFormMixin), form_fields)
         return super().get_form(request, obj, **kwargs)
 
     @classmethod

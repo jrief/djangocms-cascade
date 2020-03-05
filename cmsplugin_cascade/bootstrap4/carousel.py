@@ -14,6 +14,7 @@ from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap4.utils import IMAGE_RESIZE_OPTIONS
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.image import ImagePropertyMixin, ImageFormMixin
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 logger = logging.getLogger('cascade')
 
@@ -54,6 +55,9 @@ class CarouselSlidesFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         help_text=_("Options to use when resizing the image."),
         initial=['upscale', 'crop', 'subject_location', 'high_resolution'],
     )
+
+    if used_compact_form:
+        entangled_nested(resize_options, container_max_heights,options,interval,num_children, data_nested='carousel')
 
     class Meta:
         untangled_fields = ['num_children']

@@ -9,7 +9,10 @@ from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
 from cmsplugin_cascade.icon.forms import IconFormMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
+from sass_processor.processor import sass_processor
+sass_processor('cascade/css/admin/compact_forms/bootstrap4-colors.scss')
 
 class ButtonTypeWidget(widgets.RadioSelect):
     """
@@ -23,7 +26,6 @@ class ButtonSizeWidget(widgets.RadioSelect):
     Render sample buttons in different sizes in the button's backend editor.
     """
     template_name = 'cascade/admin/legacy_widgets/button_sizes.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/button_sizes.html'
-
 
 class ButtonFormMixin(EntangledModelFormMixin):
     BUTTON_TYPES = [
@@ -103,6 +105,12 @@ class ButtonFormMixin(EntangledModelFormMixin):
         initial='icon-right',
         help_text=_("Add an Icon before or after the button content."),
     )
+
+    if used_compact_form:
+        entangled_nested(link_content,button_type,button_size,button_options,\
+           stretched_link, data_nested='button')
+        entangled_nested(button_type, data_nested='button', template_key='button_type')
+        entangled_nested(icon_align, data_nested='icon')
 
     class Meta:
         entangled_fields = {'glossary': ['link_content', 'button_type', 'button_size', 'button_options', 'icon_align',
