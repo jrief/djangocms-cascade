@@ -8,32 +8,6 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
 
-class ExtraFieldsPluginFormMixin( EntangledModelFormMixin):
-    """In this form, choices and help_text will overided later to give path of parameter custom css classes
-     and styles for the plugin"""
-
-    custom_css_classes_and_styles = ChoiceField(
-        widget=widgets.RadioSelect(attrs={'style': 'display:none;'}),
-        choices=[],
-        required=False,
-        label=_("Set custom css classes and styles"),
-    )
-
-    def custom_form(clsname, request, extra_fields):
-            site = get_current_site(request)
-            form_custom = ExtraFieldsPluginFormMixin.base_fields['custom_css_classes_and_styles']
-            if hasattr(extra_fields, 'id'):
-                admin_path_plugin_extra_field_set = "/admin/cmsplugin_cascade/pluginextrafields/{}/change/".format( extra_fields.id )
-                form_custom.choices = [('', format_html('<a target="_blank" href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
-                form_custom.help_text =  format_html('<div style="width:auto">Site: {} Plugin: {}</div>', site, clsname)
-            elif extra_fields:
-                admin_path_plugin_extra_field_set = "/admin/cmsplugin_cascade/pluginextrafields/" 
-                form_custom.choices = [('', format_html('<a target="_blank" href="{0}#{1}">{0}</a>',admin_path_plugin_extra_field_set, request.path_info ))]
-                form_custom.help_text =  format_html('<div style="width:auto">Site: {} Plugin: {}</div>', site, clsname)
-
-    class Meta:
-        entangled_fields = {'glossary':['custom_css_classes_and_styles']}
-
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     """
     If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields']``,
@@ -124,10 +98,8 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
             assert issubclass(base_form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
             class Meta:
                 entangled_fields = {'glossary': list(form_fields.keys())}
-            form_fields['Meta'] = Meta
-            # overide fields 'custom_css_classes_and_styles' attributes: choices, help_text.
-            ExtraFieldsPluginFormMixin.custom_form(clsname ,request, extra_fields)                                  
-            kwargs['form'] = type(base_form.__name__, (base_form,ExtraFieldsPluginFormMixin), form_fields)
+            form_fields['Meta'] = Meta                                 
+            kwargs['form'] = type(base_form.__name__, (base_form), form_fields)
         return super().get_form(request, obj, **kwargs)
 
     @classmethod
