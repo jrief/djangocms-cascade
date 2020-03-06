@@ -126,7 +126,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                 entangled_fields = {'glossary': list(form_fields.keys())}
             form_fields['Meta'] = Meta
             # overide fields 'custom_css_classes_and_styles' attributes: choices, help_text.
-            ExtraFieldsPluginFormMixin.custom_form(clsname ,request, extra_fields                                    
+            ExtraFieldsPluginFormMixin.custom_form(clsname ,request, extra_fields)                                  
             kwargs['form'] = type(base_form.__name__, (base_form,ExtraFieldsPluginFormMixin), form_fields)
         return super().get_form(request, obj, **kwargs)
 
