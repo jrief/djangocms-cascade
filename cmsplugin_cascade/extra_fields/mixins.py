@@ -8,6 +8,7 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
 
+
 class ExtraFieldsMixin(metaclass=MediaDefiningClass):
     """
     If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields']``,
@@ -98,7 +99,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
             assert issubclass(base_form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
             class Meta:
                 entangled_fields = {'glossary': list(form_fields.keys())}
-            form_fields['Meta'] = Meta                                 
+            form_fields['Meta'] = Meta
             kwargs['form'] = type(base_form.__name__, (base_form), form_fields)
         return super().get_form(request, obj, **kwargs)
 
