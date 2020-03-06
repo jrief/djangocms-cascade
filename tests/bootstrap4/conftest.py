@@ -3,6 +3,7 @@ from cms.api import add_plugin
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.container import BootstrapContainerPlugin, BootstrapRowPlugin, BootstrapColumnPlugin
 
+
 @pytest.fixture
 @pytest.mark.django_db
 def bootstrap_container(admin_site, cms_placeholder):
@@ -38,4 +39,3 @@ def bootstrap_column(admin_site, bootstrap_row):
     column_plugin = column_model.get_plugin_class_instance()
     assert isinstance(column_plugin, BootstrapColumnPlugin)
     return column_plugin, column_model
-
