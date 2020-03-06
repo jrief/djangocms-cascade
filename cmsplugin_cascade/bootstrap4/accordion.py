@@ -10,7 +10,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
-
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
     num_children = IntegerField(
@@ -34,6 +34,9 @@ class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
          required=False,
          help_text=_("Start with the first card open.")
     )
+
+    if used_compact_form:
+        entangled_nested(num_children, close_others,first_is_open, data_nested='accordion')
 
     class Meta:
         untangled_fields = ['num_children']
@@ -84,6 +87,9 @@ class AccordionGroupFormMixin(EntangledModelFormMixin):
          required=False,
          help_text=_("Add standard padding to card body."),
     )
+
+    if used_compact_form:
+        entangled_nested(heading,body_padding,  data_nested='accordion_group')
 
     class Meta:
         entangled_fields = {'glossary': ['heading', 'body_padding']}

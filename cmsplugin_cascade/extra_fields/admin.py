@@ -64,6 +64,16 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         ('px', _("px")),
         ('%,rem', _("% and rem")),
         ('%', _("%")),
+        ('px,em,rem,%,auto', _("px, em, rem, % and auto")),
+        ('px,em,%,auto', _("px, em, % and auto")),
+        ('px,rem,em,auto', _("px, rem, em and auto")),
+        ('px,em,auto', _("px, em and auto")),
+        ('px,rem,%,auto', _("px, rem, % and auto")),
+        ('px,%,,auto', _("px, % and auto")),
+        ('px,rem,auto', _("px, rem and auto")),
+        ('px,auto', _("px and auto")),
+        ('%,rem,auto', _("%, rem and auto")),
+        ('%,auto', _("% and auto")),
     ]
 
     class Media:

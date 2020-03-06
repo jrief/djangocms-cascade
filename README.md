@@ -4,7 +4,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 [![Software license](https://img.shields.io/pypi/l/djangocms-cascade.svg)](https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT)
 [![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/awesto/djangocms-cascade)
- [![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
+[![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
 
 The Swiss army knife for working with Django-CMS plugins.
 
@@ -17,18 +17,13 @@ all of them. The payload then is stored inside a JSON field instead of declaring
 explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
 
 
-## Version 1.0
+## Version 1.2 (released on 2020-01-10)
 
-Version 1.0 of **djangocms-cascade** is a major release with a much simpler way of writing your
-own plugins. There you can use [Django forms to create editors](https://github.com/jrief/django-entangled)
-for your plugin models, still keeping all its data inside JSON fields.
+In Version 1.2 the submodule ``generic`` has been split into separate plugins, so that all its
+plugins, ``Heading``, ``HorizontalRule``, ``TextImage`` and ``CustomSnippet`` can be activated
+independently.
 
-**Important Note:** In version 1, the internal structure of many Cascade plugins changed. Running
-`./manage.py migrate cmsplugin_cascade` converts these fields, however no backward migration has
-been provided yet. Please assure to backup your database before upgrading.
-
-In addition, version 1 drops support for Python-2.7 and adds support for django-CMS-3.6 and
-Django-2.0/2.1.
+**Note:** Check your settings, if you run into problems with this.
 
 
 ### Perfect for nested grid systems

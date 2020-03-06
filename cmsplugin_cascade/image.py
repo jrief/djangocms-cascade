@@ -59,3 +59,4 @@ class ImagePropertyMixin(object):
         # by saving this model after the full tree has been copied, ``<Any>ImagePlugin.sanitize_model()``
         # is invoked a second time with the now complete information of all column siblings.
         self.save(sanitize_only=True)
+

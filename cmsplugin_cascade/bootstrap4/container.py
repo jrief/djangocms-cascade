@@ -3,13 +3,15 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.utils.text import format_lazy
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
+from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.helpers import entangled_nested, used_compact_form
 from .plugin_base import BootstrapPluginBase
 from . import grid
 
@@ -18,17 +20,26 @@ def get_widget_choices():
     breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
     widget_choices = []
     for index, (bp, bound) in enumerate(breakpoints.items()):
-        if index == 0:
-            widget_choices.append((bp.name, "{} (<{:.1f}px)".format(bp.label, bound.max)))
-        elif index == len(breakpoints) - 1:
-            widget_choices.append((bp.name, "{} (≥{:.1f}px)".format(bp.label, bound.min)))
+        if not used_compact_form:
+            if index == 0:
+                widget_choices.append((bp.name, "{} (<{:.1f}px)".format(bp.label, bound.max)))
+            elif index == len(breakpoints) - 1:
+                widget_choices.append((bp.name, "{} (≥{:.1f}px)".format(bp.label, bound.min)))
+            else:
+                widget_choices.append((bp.name, "{} (≥{:.1f}px and <{:.1f}px)".format(bp.label, bound.min, bound.max)))
         else:
-            widget_choices.append((bp.name, "{} (≥{:.1f}px and <{:.1f}px)".format(bp.label, bound.min, bound.max)))
+            if index == 0:
+                 widget_choices.append((bp.name, "{} <{:.1f}px".format(bp._name_, bound.max)))
+            else:
+                 widget_choices.append((bp.name, "{} ≥{:.1f}px".format(bp._name_, bound.min)))
     return widget_choices
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
-    template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
+    if not used_compact_form:
+        template_name = 'cascade/admin/legacy_widgets/container_breakpoints.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/container_breakpoints.html'
+    else:
+        template_name = 'cascade/admin/compact_forms/widgets/container_breakpoints.html'
 
 
 class ContainerFormMixin(EntangledModelFormMixin):
@@ -46,6 +57,9 @@ class ContainerFormMixin(EntangledModelFormMixin):
         required=False,
         help_text=_("Changing your outermost '.container' to '.container-fluid'.")
     )
+
+    if used_compact_form:
+        entangled_nested( breakpoints, fluid, data_nested="container")
 
     class Meta:
         entangled_fields = {'glossary': ['breakpoints', 'fluid']}
@@ -77,6 +91,10 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     require_parent = False
     model_mixins = (ContainerGridMixin,)
     form = ContainerFormMixin
+    footnote_html = """<p>
+    For more information about the Container please read the
+    <a href="https://getbootstrap.com/docs/4.3/layout/overview/#containers" target="_new">Bootstrap documentation</a>.
+    </p>"""
 
     @classmethod
     def get_identifier(cls, obj):
@@ -115,6 +133,9 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         initial=3,
         help_text=_('Number of columns to be created with this row.'),
     )
+
+    if used_compact_form:
+        entangled_nested( num_children, data_nested="row")
 
     class Meta:
         untangled_fields = ['num_children']
@@ -191,7 +212,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[1].format(bs4_breakpoints[first].min)
             else:
                 return phrases[2]
-            
+
         if 'parent' in self._cms_initial_attributes:
             container=self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').last().get_bound_plugin()
         else:
@@ -207,7 +228,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         for bp in breakpoints:
             try:
-                last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp) + 1])
+                last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp)])
             except IndexError:
                 last = None
             finally:
@@ -228,7 +249,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 width_fields[field_name] = ChoiceField(
                     choices=choices,
                     label=_("Column width for {}").format(devices),
-                    initial='col-{}-12'.format(bp),
+                    initial='col' if bp == 'xs' else 'col-{}'.format(bp),
                     help_text=choose_help_text(
                         _("Column width for devices narrower than {:.1f} pixels."),
                         _("Column width for devices wider than {:.1f} pixels."),
@@ -237,7 +258,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 )
             else:
                 # wider breakpoints may inherit from next narrower ones
-                choices.insert(0, ('', _("Inherit from above")))
+                choices.insert(0, ('', format_lazy(_("Inherit column width from {}"), previous_devices)))
                 field_name = '{}-column-width'.format(bp)
                 width_fields[field_name] = ChoiceField(
                     choices=choices,
@@ -250,14 +271,16 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                         _("Override column width for all devices."),
                     )
                 )
+            previous_devices = devices
 
             # handle offset
             if breakpoints.index(bp) == 0:
                 choices = [('', _("No offset"))]
                 offset_range = range(1, 13)
             else:
-                choices = [('', _("Inherit from above"))]
+                choices = [('', format_lazy(_("Inherit offset from {}"), previous_label))]
                 offset_range = range(0, 13)
+            previous_label = Breakpoint[bp].label
             if bp == 'xs':
                 choices.extend(('offset-{}'.format(i), units[i]) for i in offset_range)
             else:
@@ -318,6 +341,13 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         glossary_fields.extend(reorder_fields.keys())
         glossary_fields.extend(responsive_fields.keys())
 
+
+        if used_compact_form:
+            entangled_nested(width_fields, data_nested="column", template_key="column", )
+            entangled_nested(offset_fields, data_nested="offset", template_key="column", )
+            entangled_nested(reorder_fields, data_nested="reorder", template_key="column",)
+            entangled_nested(responsive_fields, data_nested="responsive", template_key="column")
+
         class Meta:
             entangled_fields = {'glossary': glossary_fields}
 
@@ -342,11 +372,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             width = obj.glossary.get('{0}-column-width'.format(bp), '').replace('col-{0}-'.format(bp), '')
             if width:
                 widths.append(width)
-        if len(widths) > 1:
-            content = _("widths: {0} units").format(' / '.join(widths))
-        elif len(widths) == 1:
-            width = widths[0]
-            content = ungettext_lazy("default width: {0} unit", "default width: {0} units", width).format(width)
+        if len(widths) > 0:
+            content = _("widths: {}").format(' / '.join(widths))
         else:
             content = _("unknown width")
         return mark_safe(content)

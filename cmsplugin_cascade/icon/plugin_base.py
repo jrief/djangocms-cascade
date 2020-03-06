@@ -10,7 +10,7 @@ class IconPluginMixin(CascadePluginMixinBase):
 
     class Media:
         css = {'all': ['cascade/css/admin/iconplugin.css']}
-        js = ['cascade/js/admin/iconpluginmixin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/iconpluginmixin.js']
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, icon_fonts=IconFont.objects.all())

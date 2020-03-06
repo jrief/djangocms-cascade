@@ -11,7 +11,7 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 from .plugin_base import BootstrapPluginBase
-
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 class TabSetFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
     num_children = IntegerField(
@@ -26,6 +26,9 @@ class TabSetFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         label=_("Justified tabs"),
         required=False,
     )
+
+    if used_compact_form:
+        entangled_nested(num_children, justified, data_nested='tab')
 
     class Meta:
         untangled_fields = ['num_children']

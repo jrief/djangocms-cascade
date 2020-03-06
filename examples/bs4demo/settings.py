@@ -7,6 +7,8 @@ import sys
 from django.urls import reverse_lazy
 
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
+from cmsplugin_cascade.bootstrap4.mixins import BootstrapUtilities
+from cmsplugin_cascade.generic.mixins_html_attrs import GenericUtilities
 from django.utils.text import format_lazy
 
 DEBUG = True
@@ -62,6 +64,7 @@ INSTALLED_APPS = [
     'sass_processor',
     'sekizai',
     'bs4demo',
+        'django_extensions',
 ]
 
 
@@ -213,29 +216,56 @@ CMSPLUGIN_CASCADE_PLUGINS = (
 )
 
 CMSPLUGIN_CASCADE = {
-    'alien_plugins': ('TextPlugin', 'TextLinkPlugin',),
+    'alien_plugins': ('TextPlugin', 'TextLinkPlugin','BootstrapListPlugin', 'BootstrapNavMainMemuPlugin'),
     'plugins_with_sharables': {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
-        'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
+        'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'resize_options',),
     },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
     'allow_plugin_hiding': True,
     'leaflet': {'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6}},
     'cache_strides': True,
+    'plugins_with_extra_fields': {
+    'BootstrapColumnPlugin': PluginExtraFieldsConfig(
+        css_classes={'multiple': True, 'class_names': 'custom-zoom-over, custom-zoom-over2'},
+        inline_styles={
+            'extra_fields:Border': ['border',],
+            'extra_fields:Border Radius': ['border-radius'],
+            'extra_units:Border Radius': 'px,rem',
+            'extra_fields:Colors': ['color', 'background-color'],
+            'extra_fields:Margins': ['margin-top', 'margin-right', 'margin-botton,', 'margin-left'],
+            'extra_units:Margins': 'px,em',
+            'extra_fields:Paddings': ['padding-top', 'padding-right', 'padding-botton,', 'padding-left'],
+            'extra_units:Paddings': 'px,em',
+        }),
+    },
+    'plugins_with_extra_mixins': {
+    'BootstrapColumnPlugin':BootstrapUtilities(BootstrapUtilities.background_and_color, BootstrapUtilities.vertical_margins, BootstrapUtilities.floats, BootstrapUtilities.paddings, BootstrapUtilities.margins,
+     GenericUtilities.scroll_animate ),
+    },
 }
 
+CASCADE_CLIPS_LIBRARY = True
+
 CMS_PLACEHOLDER_CONF = {
+
+    'Header Content': {
+        'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin','BootstrapNavbarPlugin', 'BootstrapListPlugin', 'BootstrapNavItemsMainMemuPlugin'],
+        'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None, 'BootstrapNavItemsMainMemuPlugin':None},
+
+    },
+
     # this placeholder is used in templates/main.html, it shows how to
     # scaffold a djangoCMS page starting with an empty placeholder
     'Main Content': {
-        'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
-        'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
+        'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin' , 'BootstrapListPlugin'],
+        'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None , },
     },
     # this placeholder is used in templates/wrapped.html, it shows how to
     # add content to an existing Bootstrap column
     'Bootstrap Column': {
-        'plugins': ['BootstrapRowPlugin', 'TextPlugin', ],
+        'plugins': ['BootstrapRowPlugin', 'TextPlugin','BootstrapListPlugin' ],
         'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
     },

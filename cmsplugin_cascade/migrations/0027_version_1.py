@@ -58,7 +58,7 @@ def migrate_image(glossary):
         })
         if 'width' in image and 'height' in image and 'exif_orientation' in image:
             glossary.update({
-                '_image_properties': {'width': image['width'], 'height': image['height'],
+                'image_properties': {'width': image['width'], 'height': image['height'],
                                       'exif_orientation': image['exif_orientation']},
             })
         return True

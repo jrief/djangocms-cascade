@@ -1,6 +1,10 @@
 .form-row.field-button_type {
   max-width: 630px;
 }
+form .field-button_type span.btn,
+  form .field-button_size span.btn { display: inline-block; }
+form .field-button_type .label,
+  form .field-button_size .label { display: inline; }
 .btn {
   margin-bottom: 0.25rem;
   display: inline-block;

@@ -2,6 +2,86 @@
 Release History
 ===============
 
+1.3
+===
+* Paste structure of placeholder to, and from Persisting Clipboard Content.
+* Set links onto phone number.
+
+
+1.2.3
+=====
+* Make page editor for extra fields configurable.
+
+
+1.2.2
+=====
+* Refactor ``TextLinkFormMixin`` from ``cmsplugin_cascade.link.cms_plugin`` into
+  ``cmsplugin_cascade.link.forms``. Adopt your import accordingly.
+
+1.2.1
+=====
+* In **TextEditorConfig** add HTML element ``<span>`` to available choices.
+* Fix: Adding a link onto a page with different translations, can cause a too many pages exception.
+
+1.2
+===
+* Refactor submodule ``generic`` into separate modules. This enables the client project
+  to use them individually.
+
+1.1.9
+=====
+* Fix: Handle float values in size fields expecting ``em``-s and ``rem``-s.
+
+1.1.8
+=====
+* Fix: Handle plugins with defined but empty forms.
+
+1.1.7
+=====
+* Support to use use a swappable Image model in django-filer.
+
+1.1.6
+=====
+* Fix regression introduced in 1.1.5: In ``BootstrapButtonPlugin``, Strides did not work anymore.
+* Fallback to empty form, if a Cascade plugin had not a form enheriting from ``EntangledModelFormMixin``.
+
+1.1.5
+=====
+* Fix regression introduced in 1.1.4: In ``LinkSearchField`` reduce the initial number of choices for
+  the ``ModelChoice`` field to max. 15 entities.
+
+1.1.4
+=====
+* Add special unit ``auto`` to the existing sizing units. Allow it as unit for element heights in Jumbotron.
+* Adopt JavaScript code for some plugins by enforcing the loading order, so that the file ``query.init.js``
+  always is loaded before its plugin-JS.
+* In Carousel plugin, only allow pixels as unit.
+* Fix problem of possible non-existing folder, when deleting an icon font.
+* On plugins with more than one rendering template, allow to deactivate that choice actively.
+* Actively check, that ``django_select2`` is installed.
+* Fix: Pasting an invalid URL into the LinkPluigin's external link field, could cause a KeyError.
+* In In LinkPlugin, render search results as safe html, without htmlentities.
+* Fix: When rendering the editor of a LinkPlugin on sites with thousands of CMS pages, it took considerably
+  too long.
+* Allows the user to paste an existing URL into the CMS link box, pointing onto the correct CMS page.
+
+
+1.1.3
+=====
+* Fix problem in rendering the plugin's identifier, if Bootstrap Row is created with flexible widths columns.
+
+
+1.1.2
+=====
+* Prepend ``admin/js/jquery.init.js`` in front of JS file paths using ``django.jQuery``. This is required by a
+  change in Django-2.2 (https://docs.djangoproject.com/en/2.2/releases/2.2/#merging-of-form-media-assets).
+
+
+1.1.1
+=====
+* Support for django-CMS version 3.7 and Django version 2.2.
+* In the CMS-Toolbar: Segmentation > Clear emulations is enabled only, if emulations are active.
+
 
 1.1
 ===

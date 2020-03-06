@@ -2,6 +2,33 @@ import pytest
 from cmsplugin_cascade.bootstrap4.grid import (Bootstrap4Container, Bootstrap4Row, Bootstrap4Column, BootstrapException,
                                                Breakpoint, Bound, fluid_bounds)
 
+def test_breakpoint_iter():
+    for k, bp in enumerate(Breakpoint):
+        if k == 0: assert bp == Breakpoint.xs
+        if k == 1: assert bp == Breakpoint.sm
+        if k == 2: assert bp == Breakpoint.md
+        if k == 3: assert bp == Breakpoint.lg
+        if k == 4: assert bp == Breakpoint.xl
+    assert k == 4
+
+
+def test_breakpoint_range():
+    for k, bp in enumerate(Breakpoint.range(Breakpoint.xs, Breakpoint.xl)):
+        if k == 0: assert bp == Breakpoint.xs
+        if k == 1: assert bp == Breakpoint.sm
+        if k == 2: assert bp == Breakpoint.md
+        if k == 3: assert bp == Breakpoint.lg
+        if k == 4: assert bp == Breakpoint.xl
+    assert k == 4
+
+
+def test_breakpoint_partial():
+    for k, bp in enumerate(Breakpoint.range(Breakpoint.sm, Breakpoint.lg)):
+        if k == 0: assert bp == Breakpoint.sm
+        if k == 1: assert bp == Breakpoint.md
+        if k == 2: assert bp == Breakpoint.lg
+    assert k == 2
+
 
 def test_xs_cols():
     """

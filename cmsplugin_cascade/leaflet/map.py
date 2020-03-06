@@ -1,4 +1,5 @@
 import json
+
 from django.forms.fields import CharField, BooleanField
 from django.forms import widgets
 from django.db.models.fields.related import ManyToOneRel
@@ -9,15 +10,19 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from entangled.forms import EntangledModelFormMixin, EntangledModelForm
 from filer.fields.image import FilerImageField, AdminImageFormField
-from filer.models.imagemodels import Image
+from filer.settings import settings as filer_settings
+from filer.utils.loader import load_model
 from cms.plugin_pool import plugin_pool
 from djangocms_text_ckeditor.fields import HTMLFormField
+
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import HiddenDictField, SizeField, MultiSizeField
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
 from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
+
+Image = load_model(filer_settings.FILER_IMAGE_MODEL)
 
 
 class MarkerModelMixin(object):
@@ -127,12 +132,20 @@ class LeafletFormMixin(EntangledModelFormMixin):
         help_text=_("Optional, set a minimum height in pixels."),
     )
 
+    scroll_wheel_zoom = BooleanField(
+        label=_("Zoom by scrolling wheel"),
+        initial=True,
+        required=False,
+        help_text=_("Zoom into map on mouse over by scrolling wheel."),
+    )
+
     map_position = HiddenDictField(
         initial=app_settings.CMSPLUGIN_CASCADE['leaflet']['default_position'],
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['map_width', 'map_height', 'map_position']}
+        entangled_fields = {'glossary': ['map_width', 'map_height', 'map_position', 'map_min_height',
+                                         'scroll_wheel_zoom']}
 
     def clean(self):
         cleaned_data = super().clean()
@@ -162,7 +175,7 @@ class LeafletPlugin(CascadePluginBase):
     form = LeafletFormMixin
     admin_preview = False
     render_template = 'cascade/plugins/leaflet.html'
-    inlines = (MarkerInline,)
+    inlines = [MarkerInline]
     model_mixins = (LeafletModelMixin,)
     settings = mark_safe(json.dumps(app_settings.CMSPLUGIN_CASCADE['leaflet']))
 
@@ -175,6 +188,7 @@ class LeafletPlugin(CascadePluginBase):
         js = [
             'node_modules/leaflet/dist/leaflet.js',
             'node_modules/leaflet-easybutton/src/easy-button.js',
+            'admin/js/jquery.init.js',
             'cascade/js/admin/leafletplugin.js',
         ]
 

@@ -1,130 +1,14 @@
-from django.forms import widgets, CharField, ChoiceField, MultipleChoiceField
-from django.utils.html import format_html, format_html_join
-from django.utils.safestring import mark_safe
+from django.forms import widgets, ChoiceField, MultipleChoiceField
+from django.utils.html import format_html_join
 from django.utils.translation import ugettext_lazy as _
+
 from cms.plugin_pool import plugin_pool
-from entangled.forms import EntangledModelFormMixin
-from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
-from cmsplugin_cascade.plugin_base import CascadePluginBase, TransparentContainer
 from cmsplugin_cascade.utils import compute_aspect_ratio
-
-
-class SimpleWrapperFormMixin(EntangledModelFormMixin):
-    TAG_CHOICES = [(cls, _("<{}> – Element").format(cls)) for cls in ['div', 'span', 'section', 'article']] + \
-                  [('naked', _("Naked Wrapper"))]
-
-    tag_type = ChoiceField(
-        choices=TAG_CHOICES,
-        label=_("HTML element tag"),
-        help_text=_('Choose a tag type for this HTML element.')
-    )
-
-    class Meta:
-        entangled_fields = {'glossary': ['tag_type']}
-
-
-class SimpleWrapperPlugin(TransparentContainer, CascadePluginBase):
-    name = _("Simple Wrapper")
-    parent_classes = None
-    require_parent = False
-    form = SimpleWrapperFormMixin
-    allow_children = True
-    alien_child_classes = True
-
-    @classmethod
-    def get_identifier(cls, instance):
-        identifier = super().get_identifier(instance)
-        tag_name = dict(SimpleWrapperFormMixin.TAG_CHOICES).get(instance.glossary.get('tag_type'))
-        if tag_name:
-            return format_html('{0} {1}', tag_name, identifier)
-        return identifier
-
-    def get_render_template(self, context, instance, placeholder):
-        if instance.glossary.get('tag_type') == 'naked':
-            return 'cascade/generic/naked.html'
-        return 'cascade/generic/wrapper.html'
-
-plugin_pool.register_plugin(SimpleWrapperPlugin)
-
-
-class HorizontalRulePlugin(CascadePluginBase):
-    name = _("Horizontal Rule")
-    parent_classes = None
-    allow_children = False
-    tag_type = 'hr'
-    render_template = 'cascade/generic/single.html'
-
-plugin_pool.register_plugin(HorizontalRulePlugin)
-
-
-class HeadingFormMixin(EntangledModelFormMixin):
-    TAG_TYPES = [('h{}'.format(k), _("Heading {}").format(k)) for k in range(1, 7)]
-
-    tag_type = ChoiceField(
-        choices=TAG_TYPES,
-        label=_("HTML element tag"),
-        help_text=_('Choose a tag type for this HTML element.')
-    )
-
-    content = CharField(
-        label=_("Heading content"),
-        widget=widgets.TextInput(attrs={'style': 'width: 100%; padding-right: 0; font-weight: bold; font-size: 125%;'}),
-    )
-
-    class Meta:
-        entangled_fields = {'glossary': ['tag_type', 'content']}
-
-
-class HeadingPlugin(CascadePluginBase):
-    name = _("Heading")
-    parent_classes = None
-    allow_children = False
-    form = HeadingFormMixin
-    render_template = 'cascade/generic/heading.html'
-
-    @classmethod
-    def get_identifier(cls, instance):
-        tag_type = instance.glossary.get('tag_type')
-        content = mark_safe(instance.glossary.get('content', ''))
-        if tag_type:
-            return format_html('<code>{0}</code>: {1}', tag_type, content)
-        return content
-
-    def render(self, context, instance, placeholder):
-        context = self.super(HeadingPlugin, self).render(context, instance, placeholder)
-        context.update({'content': mark_safe(instance.glossary.get('content', ''))})
-        return context
-
-plugin_pool.register_plugin(HeadingPlugin)
-
-
-class CustomSnippetPlugin(TransparentContainer, CascadePluginBase):
-    """
-    Allows to add a customized template anywhere. This plugins will be registered only if the
-    project added a template using the configuration setting 'plugins_with_extra_render_templates'.
-    """
-    name = _("Custom Snippet")
-    require_parent = False
-    allow_children = True
-    alien_child_classes = True
-    render_template_choices = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].get('CustomSnippetPlugin', ()))
-    render_template = 'cascade/generic/does_not_exist.html'  # default in case the template could not be found
-
-    @classmethod
-    def get_identifier(cls, instance):
-        render_template = instance.glossary.get('render_template')
-        if render_template:
-            return format_html('{}', cls.render_template_choices.get(render_template))
-
-
-if CustomSnippetPlugin.render_template_choices:
-    # register only, if at least one template has been defined
-    plugin_pool.register_plugin(CustomSnippetPlugin)
-
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
 
 class TextImageFormMixin(ImageFormMixin):
     RESIZE_OPTIONS = [
@@ -165,6 +49,9 @@ class TextImageFormMixin(ImageFormMixin):
         initial='',
     )
 
+    if used_compact_form:
+        entangled_nested(image_width, image_height, resize_options, alignement, data_nested='text_image')
+
     class Meta:
         entangled_fields = {'glossary': ['image_width', 'image_height', 'resize_options', 'alignement']}
 
@@ -183,7 +70,7 @@ class TextImagePlugin(LinkPluginBase):
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
 
     class Media:
-        js = ['cascade/js/admin/textimageplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/textimageplugin.js']
 
     @classmethod
     def requires_parent_plugin(cls, slot, page):

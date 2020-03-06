@@ -6,39 +6,69 @@ from django.db.models.fields.related import ManyToOneRel
 from django.forms import fields, Media, ModelChoiceField
 from django.forms.widgets import RadioSelect
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import HeavySelect2Widget
+
+from cms.utils import get_current_site
 from cms.models import Page
 from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
-from cms.utils import get_current_site
+ 
+from cmsplugin_cascade.helpers import used_compact_form, entangled_nested
+ 
+
+try:
+    from phonenumber_field.formfields import PhoneNumberField
+except ImportError:
+    PhoneNumberField = None
+
+ 
+
+def format_page_link(title, path):
+    html = format_html("{} ({})", mark_safe(title), path)
+    return html
 
 
-def format_page_link(*args, **kwargs):
-    return format_html("{} ({})", *args, **kwargs)
+class PageSelect2Widget(HeavySelect2Widget):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('data_view', 'admin:get_published_pagelist')
+        super().__init__(*args, **kwargs)
 
-
-class HeavySelectWidget(HeavySelect2Widget):
     @property
     def media(self):
         parent_media = super().media
-        # prepend JS snippet to re-add 'jQuery' to the global namespace
-        js = ['cascade/js/admin/jquery.restore.js', *parent_media._js]
+        # append jquery.init.js to enforce select2.js into the global 'jQuery' namespace
+        js = list(parent_media._js) + ['admin/js/jquery.init.js']
         return Media(css=parent_media._css, js=js)
+
+    def render(self, *args, **kwargs):
+        # replace self.choices by an empty list in order to prevent building the whole optgroup
+        try:
+            page = Page.objects.get(pk=kwargs['value'])
+        except (Page.DoesNotExist, ValueError, KeyError):
+            self.choices = []
+        else:
+            self.choices = [(kwargs['value'], str(page))]
+        return super().render(*args, **kwargs)
 
 
 class LinkSearchField(ModelChoiceField):
-    widget = HeavySelectWidget(data_view='admin:get_published_pagelist')
+    widget = PageSelect2Widget()
 
     def __init__(self, *args, **kwargs):
         queryset = Page.objects.public()
         try:
-            queryset = queryset.on_site(get_current_site())
+            queryset = queryset.published().on_site(get_current_site())
         except:
-            pass  # can happen if database is not ready yet
-        kwargs.setdefault('queryset', queryset)
+            choices = []  # can happen if database is not ready yet
+        else:
+            # set a minimal set of choices, otherwise django-select2 builds them for every published page
+            choices = [(index, str(page)) for index, page in enumerate(queryset[:15])]
+        kwargs.setdefault('queryset', queryset.distinct())
         super().__init__(*args, **kwargs)
+        self.choices = choices
 
 
 class SectionChoiceField(fields.ChoiceField):
@@ -61,6 +91,8 @@ class LinkForm(EntangledModelFormMixin):
         ('exturl', _("External URL")),
         ('email', _("Mail To")),
     ]
+    if PhoneNumberField:
+        LINK_TYPE_CHOICES.append(('phonenumber', _("Phone number")))
 
     link_type = fields.ChoiceField(
         label=_("Link"),
@@ -99,6 +131,13 @@ class LinkForm(EntangledModelFormMixin):
         help_text=_("Open Email program with this address"),
     )
 
+    if PhoneNumberField:
+        phone_number = PhoneNumberField(
+            required=False,
+            label=_("Phone Number"),
+            help_text=_("International phone number, ex. +1 212 555 2368."),
+        )
+
     link_target = fields.ChoiceField(
         choices=[
             ('', _("Same Window")),
@@ -118,9 +157,15 @@ class LinkForm(EntangledModelFormMixin):
         help_text=_("Link's Title"),
     )
 
+    if used_compact_form:
+        entangled_nested(link_type, cms_page, section, download_file, ext_url, mail_to,
+                                         link_target, link_title, data_nested='link')
+
     class Meta:
         entangled_fields = {'glossary': ['link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',
                                          'link_target', 'link_title']}
+        if PhoneNumberField:
+            entangled_fields['glossary'].append('phone_number')
 
     def __init__(self, *args, **kwargs):
         link_type_choices = []
@@ -153,15 +198,15 @@ class LinkForm(EntangledModelFormMixin):
         link_type = cleaned_data.get('link_type')
         error = None
         if link_type == 'cmspage':
-            if cleaned_data['cms_page'] is None:
+            if not cleaned_data.get('cms_page'):
                 error = ValidationError(_("CMS page to link to is missing."))
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if cleaned_data['download_file'] is None:
+            if not cleaned_data.get('download_file'):
                 error = ValidationError(_("File for download is missing."))
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
-            ext_url = cleaned_data['ext_url']
+            ext_url = cleaned_data.get('ext_url')
             if ext_url:
                 try:
                     response = requests.head(ext_url, allow_redirects=True)
@@ -170,14 +215,23 @@ class LinkForm(EntangledModelFormMixin):
                 except Exception as exc:
                     error = ValidationError(_("Failed to connect to {url}.").format(url=ext_url))
             else:
-                error = ValidationError(_("No external URL provided."))
+                error = ValidationError(_("No valid URL provided."))
             if error:
                 self.add_error('ext_url', error)
         elif link_type == 'email':
-            mail_to = cleaned_data['mail_to']
-            if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
-                error = ValidationError(_("'{email}' is not a valid email address.").format(email=mail_to))
+            mail_to = cleaned_data.get('mail_to')
+            if mail_to:
+                if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
+                    msg = _("'{email}' is not a valid email address.")
+                    error = ValidationError(msg.format(email=mail_to))
+            else:
+                error = ValidationError(_("No email address provided."))
+            if error:
                 self.add_error('mail_to', error)
+        elif link_type == 'phonenumber':
+            phone_number = cleaned_data.get('phone_number')
+            if phone_number:
+                cleaned_data['phone_number'] = str(phone_number)
         if error:
             raise error
         return cleaned_data
@@ -192,3 +246,14 @@ class LinkForm(EntangledModelFormMixin):
             cls.base_fields['link_content'].required = False
         if 'link_type' in cls.base_fields and 'link' not in sharable_fields:
             cls.base_fields['link_type'].required = False
+
+
+class TextLinkFormMixin(EntangledModelFormMixin):
+    link_content = fields.CharField(
+        label=_("Link Content"),
+        widget=fields.TextInput(attrs={'id': 'id_name'}),  # replace auto-generated id so that CKEditor automatically transfers the text into this input field
+        help_text=_("Content of Link"),
+    )
+
+    class Meta:
+        entangled_fields = {'glossary': ['link_content']}

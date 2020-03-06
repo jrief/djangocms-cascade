@@ -18,10 +18,22 @@ from .extra_fields.mixins import ExtraFieldsMixin
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
 from .utils import remove_duplicates
+from .helpers import fieldset_by_widget_attr
+from cmsplugin_cascade.helpers import used_compact_form
 
 mark_safe_lazy = lazy(mark_safe, str)
 
 fake_proxy_models = {}
+
+def form_initial_data_nested(form,  initial_data):
+   #truc = kwargs.get('truc', False)
+   if initial_data:
+       for field_name, field in form.base_fields.items():
+           if len(field_name.split('.')) == 2:
+               tenant_nested  = field_name.split('.')[0]
+               field_nested  = field_name.split('.')[1]
+               field.initial = initial_data[tenant_nested ][field_nested]
+
 
 
 def create_proxy_model(name, model_mixins, base_model, attrs=None, module=None):
@@ -67,6 +79,24 @@ class CascadePluginMixinBase(metaclass=CascadePluginMixinMetaclass):
     """
     Use this as a base for mixin classes used by other CascadePlugins
     """
+
+
+def __getitem__(cls , name):
+    """Return a BoundField with the given name."""
+    try:
+        field = self.fields[name]
+    except KeyError:
+        raise KeyError(
+            "Key '%s' not found in '%s'. Choices are: %s." % (
+                name,
+                self.__class__.__name__,
+                ', '.join(sorted(self.fields)),
+            )
+        )
+    if name not in self._bound_fields_cache:
+        self._bound_fields_cache[name] = field.get_bound_field(self, name)
+    return self._bound_fields_cache[name]
+
 
 
 class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetaclass):
@@ -191,24 +221,25 @@ class TransparentContainer(TransparentWrapper):
             return _leaf_transparent_plugins
 
 
+class CascadeFormMixin(EntangledModelFormMixin):
+    class Meta:
+        entangled_fields = {'glossary': []}
+
+
 class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     change_form_template = 'cascade/admin/change_form.html'
     model_mixins = ()  # model mixins added to the final Django model
     parent_classes = None
     alien_child_classes = False
-    form = EntangledModelFormMixin
+    form = CascadeFormMixin  # safety fallback for plugins without any form
 
     class Media:
         css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
-        js = ['admin/js/jquery.init.js', 'cascade/js/underscore.js', 'cascade/js/ring.js']
+        js = ['cascade/js/underscore.js', 'cascade/js/ring.js']
 
     def __init__(self, model=None, admin_site=None, glossary_fields=None):
         assert glossary_fields is None, "glossary_fields is deprecated"
         super().__init__(model, admin_site)
-        # if isinstance(glossary_fields, (list, tuple)):
-        #     self.glossary_fields = list(glossary_fields)
-        # elif not hasattr(self, 'glossary_fields'):
-        #     self.glossary_fields = []
 
     def __repr__(self):
         return "<class '{}'>".format(self.__class__.__name__)
@@ -318,10 +349,18 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', self.form)
         assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
-        if issubclass(form, ModelForm):
-            kwargs['form'] = form
-        else:
-            kwargs['form'] = type(form.__name__, (form, ModelForm), {})
+        bases = (form,)
+        if not issubclass(form, CascadeFormMixin):
+            bases = (CascadeFormMixin,) + bases
+        if not issubclass(form, ModelForm):
+            bases += (ModelForm,)
+
+
+        form = type(form.__name__, bases, {})
+        if used_compact_form:
+            self.fieldsets, self.Media = fieldset_by_widget_attr(form ,'data_nested', self.Media)
+        kwargs['form'] = form
+
         return super().get_form(request, obj, **kwargs)
 
     def get_parent_instance(self, request=None, obj=None):
@@ -390,6 +429,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             context.update(
                 ring_plugin=self.ring_plugin,
             )
+        context['empty_form'] = not context['adminform'].form._meta.entangled_fields.get('glossary')
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def in_edit_mode(self, request, placeholder):

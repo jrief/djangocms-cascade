@@ -11,3 +11,136 @@
 	background-color: #dff0d8;
 	padding: 5px 10px;
 }
+
+div.cms .cms-structure .cms-submenu-item a[data-icon=import]:before,
+div.cms .cms-structure .cms-submenu-item a[data-icon=export]:before {
+	position: absolute;
+	content: '';
+	display: block !important;
+	width: 16px !important;
+	height: 16px !important;
+	background-image: url('../../admin/import-export.png') !important;
+	background-size: 16px 64px !important;
+	top: 15px !important;
+	overflow: hidden !important;
+	line-height: 16px !important;
+	min-height: 16px !important;
+}
+div.cms .cms-structure .cms-submenu-item a[data-icon=import]:before {
+	background-position: 0 -32px;
+}
+div.cms .cms-structure .cms-submenu-item a[data-icon=export]:hover:before,
+div.cms .cms-structure .cms-submenu-item a[data-icon=export]:focus:before {
+	background-position: 0 -16px;
+}
+div.cms .cms-structure .cms-submenu-item a[data-icon=import]:hover:before,
+div.cms .cms-structure .cms-submenu-item a[data-icon=import]:focus:before {
+	background-position: 0 -48px;
+}
+div.cms .cms-structure.cms-structure-condensed .cms-submenu-item a[data-icon=export]:before,
+div.cms .cms-structure.cms-structure-condensed .cms-submenu-item a[data-icon=import]:before {
+	top: 12px !important;
+}
+
+
+
+.container_clipboard {
+	display: flex;
+	justify-content: space-between;
+}
+
+.cascade_clipboard_admin {
+	padding: 1rem;
+}
+
+.button_clipboard {
+	background-color:#ffffff;
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	cursor:pointer;
+	color:#666666;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+}
+.button_clipboard:hover {
+	background-color:#f6f6f6;
+}
+.button_clipboard:active {
+	position:relative;
+	top:1px;
+}
+
+.cms-admin-modal{
+background-color: white;
+}
+.field-placeholder, .field-language, #footer {
+	display:none;
+}
+
+.field-clipboard {
+	border-bottom: none;
+}
+
+.select-box__current {
+	display: inline-flex;
+	flex-wrap: wrap;
+	position:absolute;
+}
+
+.cms-cascade-clipboard {
+	width:400px;
+	margin-right:1rem;
+	margin-bottom:1rem;
+}
+
+.clipboard-base .clipboard-fullscreen:checked ~ .cms-cascade-clipboard {
+	width:100%;
+}
+
+.clipboard-fullscreen {
+	display: inline-block;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+	position: relative;
+	right: 3Opx;
+	left: 50%;
+	top: 26px;
+}
+
+.clipboard-fullscreen:after{
+	content:'fullscreen';
+	cursor: pointer;
+}
+
+.clipboard-fullscreen:checked:after {
+	content:'back';
+	cursor: pointer;
+}
+
+.clipboard-base .clipboard-fullscreen:checked {
+	display: inline-block;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+}
+
+.clipboard-base .clipboard-fullscreen:not(:checked), .clipboard-base .clipboard-fullscreen:not(:checked) ~ .cms-cascade-clipboard {
+	display:none;
+}
+
+.clipboard-base .select-box__current {
+	display:inherit;
+}
+
+.shortcuts-admin{
+display:none;
+}
+

@@ -15,7 +15,7 @@ class LinkPluginBase(CascadePluginBase):
     html_tag_attributes = {'title': 'title', 'target': 'target'}
 
     class Media:
-        js = ['cascade/js/admin/linkplugin.js']
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/linkplugin.js']
 
     @classmethod
     def get_link(cls, obj):
@@ -24,6 +24,8 @@ class LinkPluginBase(CascadePluginBase):
             return '{ext_url}'.format(**obj.glossary)
         if linktype == 'email':
             return 'mailto:{mail_to}'.format(**obj.glossary)
+        if linktype == 'phonenumber':
+            return 'tel:{phone_number}'.format(**obj.glossary)
 
         # otherwise resolve by model
         if linktype == 'cmspage':

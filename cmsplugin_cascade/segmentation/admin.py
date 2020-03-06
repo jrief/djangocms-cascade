@@ -14,7 +14,7 @@ class SegmentationAdminMetaclass(MediaDefiningClass):
 
 class SegmentationAdmin(admin.ModelAdmin, metaclass=SegmentationAdminMetaclass):
     class Media:
-        js = ('cascade/js/admin/segmentation.js',)
+        js = ['admin/js/jquery.init.js', 'cascade/js/admin/segmentation.js']
 
     def get_model_perms(self, request):
         """
