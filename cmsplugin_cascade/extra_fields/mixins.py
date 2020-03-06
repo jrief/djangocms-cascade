@@ -99,7 +99,6 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
             assert issubclass(base_form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"
             class Meta:
                 entangled_fields = {'glossary': list(form_fields.keys())}
-
             form_fields['Meta'] = Meta
             kwargs['form'] = type(base_form.__name__, (base_form, form_fields)
         return super().get_form(request, obj, **kwargs)
