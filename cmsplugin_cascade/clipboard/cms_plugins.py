@@ -27,8 +27,13 @@ class ClipboardWidget(widgets.Select):
     #template_name = 'django/forms/widgets/select.html'
     template_name = 'cascade/admin/widgets/clipboard.html'
 
+    def __init__(self, *args, **kwargs):
+        self.req= None
+        super().__init__(*args, **kwargs)
+
     def get_context(self, name, value, attrs):
         context = super(ClipboardWidget, self).get_context(name, value, attrs)
+        context['request'] = self.req
         context['widget']['optgroups'] = self.optgroups(name, context['widget']['value'], attrs)
         groups=list(CascadeClipboardGroup.objects.all().exclude( name='Clipboard Home').values_list('name',flat=True))
         context['groups_exclude_home'] = groups
@@ -101,16 +106,13 @@ class CascadeClipboardPlugin(CMSPluginBase):
             'app_label': opts.app_label,
             'media': self.media + form.media,
         }
-
         return TemplateResponse(request, self.change_form_template, context)
 
 
     def import_plugins_view(self, request, *args, **kwargs):
         # TODO: check for permissions
 
-
         view_breakdown = request.session.get('view_breakdown', "lg")
- 
         placeholder_ref_id = None
         if request.GET.get('placeholder'):
             placeholder_ref_id = request.GET.get('placeholder')
@@ -144,7 +146,6 @@ class CascadeClipboardPlugin(CMSPluginBase):
             # Clipboard home
             data_demo = self.populate_static_json("cascade/admin/clipboards/demo/demo_carousel-plugin.json")
             self.populate_db_group_clipboards( clipboards_groupby, identifier, group, data_demo)
-            
 
         CHOICES=(list(clipboards_groupby.items(),))
         ff=_("Import from Clipboard")
@@ -178,7 +179,8 @@ class CascadeClipboardPlugin(CMSPluginBase):
                 'title': title,
             })
 
-            Form.Media = type("Media",(), {'css'  : { 'all': [ ''] }}) 
+            Form.Media = type("Media",(), {'css'  : { 'all': [ ''] }})
+            Form.base_fields['clipboard'].widget.req = request
             form = Form(request.GET)
             assert form.is_valid()
         elif request.method == 'POST':
@@ -210,7 +212,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
         cb_placeholder_plugin = request.toolbar.clipboard.cmsplugin_set.first()
         cb_placeholder_instance, _ = cb_placeholder_plugin.get_plugin_instance()
 
-        # bug if the Clipboard Placeholder has alias  'AliasPluginModel', object, it has no attribute 'placeholder_ref',
+        # bug  if cb_placeholder_instance.plugin_type != 'AliasPluginModel', it has no attribute 'placeholder_ref',
         # possible need request.toolbar.clipboard.clear() , add .placeholder_ref
         new_plugins = cb_placeholder_instance.placeholder_ref.get_plugins()
 
@@ -220,8 +222,8 @@ class CascadeClipboardPlugin(CMSPluginBase):
         root_plugins = placeholder.get_plugins(language).filter(parent__isnull=True).order_by('changed_date')
         for position, plugin in enumerate(root_plugins.iterator()):
             plugin.update(position=position)
-        placeholder.mark_as_dirty(language, clear_cache=False)
 
+        placeholder.mark_as_dirty(language, clear_cache=False)
         # create a list of pasted plugins to be added to the structure view
         all_plugins = placeholder.get_plugins(language)
         if all_plugins.exists():
