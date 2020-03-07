@@ -35,7 +35,7 @@ class StrideRenderer(Tag):
     def render_tag(self, context, data_clipboard, identifier=None):
         from sekizai.helpers import get_varname as get_sekizai_context_key
         from cmsplugin_cascade.strides import StrideContentRenderer
-        tr=False
+
         if isinstance(data_clipboard, dict):
             # qs_clipboards
             identifier = identifier
@@ -58,11 +58,8 @@ class StrideRenderer(Tag):
                     tree_data = json.load(fp)
             else:
                 tree_data = data_clipboard
-        if 'request' in context:
-            data_req = context['request']
-        else:
-            data_req = None
-        content_renderer = StrideContentRenderer(data_req)
+        request = context['request']
+        content_renderer = StrideContentRenderer(request)
         with context.push(cms_content_renderer=content_renderer):
             content = content_renderer.render_cascade(context, tree_data)
 
@@ -89,7 +86,7 @@ class RenderPlugin(Tag):
         Argument('plugin')
     )
 
-    def render_tag(self, context, plugin, request=None):
+    def render_tag(self, context, plugin):
         if not plugin:
             return ''
         if 'cms_content_renderer' in context and isinstance(context['cms_content_renderer'], StrideContentRenderer):
