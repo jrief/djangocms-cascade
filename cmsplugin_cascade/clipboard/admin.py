@@ -4,6 +4,7 @@ from django.contrib.admin.templatetags.admin_static import static
 from django.forms import widgets
 from django.forms.utils import flatatt
 from django.utils.html import format_html
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 from jsonfield.fields import JSONField
@@ -38,11 +39,12 @@ class JSONAdminWidget(widgets.Textarea):
 
 @admin.register(CascadeClipboard)
 class CascadeClipboardAdmin(admin.ModelAdmin):
-    fields = ('identifier', 'save_clipboard', 'restore_clipboard', 'data',)
-    readonly_fields = ('save_clipboard', 'restore_clipboard',)
+    fields = ['identifier', ('created_by', 'created_at', 'last_accessed_at'), 'save_clipboard', 'restore_clipboard', 'data']
+    readonly_fields = ['created_by', 'created_at', 'last_accessed_at', 'save_clipboard', 'restore_clipboard']
     formfield_overrides = {
         JSONField: {'widget': JSONAdminWidget},
     }
+    list_display = ['identifier', 'created_by', 'created_at']
 
     class Media:
         css = {'all': ['cascade/css/admin/clipboard.css']}
@@ -71,6 +73,8 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
             messages.add_message(request, messages.INFO, _("Persisted content has been restored to CMS clipboard."))
-        super().save_model(request, obj, form, change)
         if request.POST.get('restore_clipboard'):
             deserialize_to_clipboard(request, obj.data)
+            obj.last_accessed_at = now()
+        super().save_model(request, obj, form, change)
+
