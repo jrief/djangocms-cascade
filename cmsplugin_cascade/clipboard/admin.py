@@ -42,7 +42,7 @@ class GroupModelAdmin(PlaceholderAdminMixin, admin.ModelAdmin):
 
 @admin.register(CascadeClipboard)
 class CascadeClipboardAdmin(admin.ModelAdmin):
-    fields = ['identifier','group' , ('created_by', 'created_at', 'last_accessed_at'), 'save_clipboard', 'restore_clipboard', 'data']
+    fields = ['identifier', 'group', ('created_by', 'created_at', 'last_accessed_at'), 'save_clipboard', 'restore_clipboard', 'data']
     readonly_fields = ['created_by', 'created_at', 'last_accessed_at', 'save_clipboard', 'restore_clipboard']
     formfield_overrides = {
         JSONField: {'widget': JSONAdminWidget},

@@ -12,7 +12,7 @@ from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin
 from cmsplugin_cascade.models import CascadeElement
 
 
-def serialize_from_placeholder(placeholder, admin_site=default_admin_site):
+def serialize_from_placeholder(placeholder, admin_site=default_admin_site, language=None):
     """
     Create a serialized representation of all the plugins belonging to the clipboard.
     """
@@ -31,7 +31,7 @@ def serialize_from_placeholder(placeholder, admin_site=default_admin_site):
             populate_data(child, entry[2])
 
     data = {'plugins': []}
-    plugin_qs = placeholder.cmsplugin_set.all()
+    plugin_qs = placeholder.cmsplugin_set.filter(language=language)
     populate_data(None, data['plugins'])
     return data
 
