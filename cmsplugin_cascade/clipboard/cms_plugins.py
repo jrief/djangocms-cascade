@@ -22,7 +22,6 @@ from cmsplugin_cascade.models import CascadeClipboard
 
 
 class CascadeClipboardPlugin(CMSPluginBase):
-    system = True
     render_plugin = False
     change_form_template = 'admin/cms/page/plugin/change_form.html'
 
