@@ -17,7 +17,7 @@ from .strides import register_stride
 from .extra_fields.mixins import ExtraFieldsMixin
 from .hide_plugins import HidePluginMixin
 from .render_template import RenderTemplateMixin
-from .utils import remove_duplicates
+from .utils import remove_duplicates, gen_fieldsets_by_entangled_form
 
 mark_safe_lazy = lazy(mark_safe, str)
 
@@ -324,7 +324,11 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             bases = (CascadeFormMixin,) + bases
         if not issubclass(form, ModelForm):
             bases += (ModelForm,)
-        kwargs['form'] = type(form.__name__, bases, {})
+
+        form = type(form.__name__, bases, { })
+        kwargs['fields'] = form.declared_fields
+        kwargs['form'] = form
+        self.fieldsets = gen_fieldsets_by_entangled_form(form)
         return super().get_form(request, obj, **kwargs)
 
     def get_parent_instance(self, request=None, obj=None):

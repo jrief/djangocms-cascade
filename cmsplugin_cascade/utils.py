@@ -81,6 +81,25 @@ def parse_responsive_length(responsive_length):
         return (None, float(responsive_length.rstrip('%')) / 100)
     return (None, None)
 
+def gen_fieldsets_by_entangled_form(form):
+    """
+    Generate fieldsets with group_by if find nested entangled form.
+    """
+    fieldsets = ()
+    group_by = {}
+    for key_field , field in  form.base_fields.items():
+        if len(key_field.split('.')) == 2 :
+            nested_group, field_name = key_field.split('.')
+            group_by.setdefault(nested_group, [])
+            group_by[nested_group].append( key_field )
+        else :
+            if form.declared_fields[ key_field ]:
+                group_by.setdefault('fields_root', [])
+                group_by['fields_root'].append(key_field  )
+    for group, list_fields in group_by.items():
+        fieldsets +=(None, {'fields':list_fields }),
+    return  fieldsets 
+
 
 class CascadeUtilitiesMixin(metaclass=MediaDefiningClass):
     """

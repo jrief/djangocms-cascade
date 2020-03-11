@@ -8,9 +8,10 @@ from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 from cmsplugin_cascade.icon.forms import IconFormMixin
 from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
+from entangled.forms import EntangledModelFormMixin, EntangledFormField, EntangledForm
+from cmsplugin_cascade.forms import ManageNestedFormMixin
 
-
-class FramedIconFormMixin(IconFormMixin):
+class FramedIconForm(EntangledForm):
     SIZE_CHOICES = [('{}em'.format(c), "{} em".format(c)) for c in range(1, 13)]
 
     RADIUS_CHOICES = [(None, _("Square"))] + \
@@ -56,9 +57,12 @@ class FramedIconFormMixin(IconFormMixin):
         required=False,
     )
 
+
+class FramedIconFormMixin(IconFormMixin, ManageNestedFormMixin):
+    icon_nested = EntangledFormField(FramedIconForm)
+
     class Meta:
-        entangled_fields = {'glossary': ['font_size', 'color', 'background_color', 'text_align', 'border',
-                                         'border_radius']}
+        entangled_fields = {'glossary': ['icon_nested']}
 
 
 class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
@@ -76,13 +80,13 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
 
     @classmethod
     def get_tag_type(self, instance):
-        if instance.glossary.get('text_align') or instance.glossary.get('font_size'):
+        if instance.glossary.get('icon_nested',{}).get('text_align') or instance.glossary.get('icon_nested',{}).get('font_size'):
             return 'div'
 
     @classmethod
     def get_css_classes(cls, instance):
         css_classes = cls.super(FramedIconPlugin, cls).get_css_classes(instance)
-        text_align = instance.glossary.get('text_align')
+        text_align = instance.glossary.get('icon_nested',{}).get('text_align')
         if text_align:
             css_classes.append(text_align)
         return css_classes
@@ -90,22 +94,22 @@ class FramedIconPlugin(IconPluginMixin, LinkPluginBase):
     @classmethod
     def get_inline_styles(cls, instance):
         inline_styles = cls.super(FramedIconPlugin, cls).get_inline_styles(instance)
-        inline_styles['font-size'] = instance.glossary.get('font_size', '1em')
+        #inline_styles['font-size'] = instance.glossary.get('icon_nested',{}).get('font_size','1em')
         return inline_styles
 
     def render(self, context, instance, placeholder):
         context = self.super(FramedIconPlugin, self).render(context, instance, placeholder)
         styles = {'display': 'inline-block'}
-        color, inherit = instance.glossary.get('color', (ColorField.DEFAULT_COLOR, True))
+        color, inherit = instance.glossary.get('icon_nested',{}).get('color', (ColorField.DEFAULT_COLOR, True))
         if not inherit:
             styles['color'] = color
-        background_color, inherit = instance.glossary.get('background_color', (ColorField.DEFAULT_COLOR, True))
+        background_color, inherit = instance.glossary.get('icon_nested',{}).get('background_color', (ColorField.DEFAULT_COLOR, True))
         if not inherit:
             styles['background-color'] = background_color
-        border = instance.glossary.get('border')
+        border = instance.glossary.get('icon_nested',{}).get('border')
         if isinstance(border, list) and border[0] and border[1] != 'none':
             styles.update(border='{0} {1} {2}'.format(*border))
-            radius = instance.glossary.get('border_radius')
+            radius = instance.get('icon_nested',{}).glossary.get('border_radius')
             if radius:
                 styles['border-radius'] = radius
         attrs = []

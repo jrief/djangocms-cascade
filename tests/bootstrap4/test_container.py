@@ -5,26 +5,26 @@ from cms.plugin_rendering import ContentRenderer
 from cms.utils.plugins import build_plugin_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.container import BootstrapColumnPlugin
-
+from entangled.forms import EntangledModelFormMixin, EntangledFormField, EntangledForm
 
 @pytest.mark.django_db
 def test_edit_bootstrap_container(rf, bootstrap_container):
     container_plugin, container_model = bootstrap_container
     request = rf.get('/')
     ModelForm = container_plugin.get_form(request, container_model)
-    data = {'breakpoints': ['sm', 'md']}
+    data = {'container_nested.breakpoints': ['sm', 'md']}
     form = ModelForm(data, None, instance=container_model)
     assert form.is_valid()
     soup = BeautifulSoup(form.as_p(), features='lxml')
-    input_element = soup.find(id="id_breakpoints_0")
-    assert {'type': 'checkbox', 'name': 'breakpoints', 'value': 'xs'}.items() <= input_element.attrs.items()
-    input_element = soup.find(id="id_breakpoints_2")
-    assert {'type': 'checkbox', 'name': 'breakpoints', 'value': 'md', 'checked': ''}.items() <= input_element.attrs.items()
-    input_element = soup.find(id="id_fluid")
-    assert {'type': 'checkbox', 'name': 'fluid'}.items() <= input_element.attrs.items()
+    input_element = soup.find(id="id_container_nested.breakpoints_0")
+    assert {'type': 'checkbox', 'name': 'container_nested.breakpoints', 'value': 'xs'}.items() <= input_element.attrs.items()
+    input_element = soup.find(id="id_container_nested.breakpoints_2")
+    assert {'type': 'checkbox', 'name': 'container_nested.breakpoints', 'value': 'md', 'checked': ''}.items() <= input_element.attrs.items()
+    input_element = soup.find(id="id_container_nested.fluid")
+    assert {'type': 'checkbox', 'name': 'container_nested.fluid'}.items() <= input_element.attrs.items()
     container_plugin.save_model(request, container_model, form, False)
-    assert container_model.glossary['breakpoints'] == ['sm', 'md']
-    assert 'fluid' in container_model.glossary
+    assert container_model.glossary['container_nested']['breakpoints'] == ['sm', 'md']
+    assert 'fluid' in container_model.glossary['container_nested']
     assert str(container_model) == "for Landscape Phones, Tablets"
 
 
@@ -33,7 +33,7 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     row_plugin, row_model = bootstrap_row
     request = rf.get('/')
     ModelForm = row_plugin.get_form(request, row_model)
-    data = {'num_children': 3}
+    data = {'row_nested.num_children': 3}
     form = ModelForm(data, None, instance=row_model)
     assert form.is_valid()
     row_plugin.save_model(request, row_model, form, False)

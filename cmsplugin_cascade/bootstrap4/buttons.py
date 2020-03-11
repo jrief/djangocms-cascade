@@ -3,13 +3,13 @@ from django.forms import widgets
 from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from entangled.forms import EntangledModelFormMixin
+from entangled.forms import EntangledModelFormMixin, EntangledFormField, EntangledForm
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
 from cmsplugin_cascade.icon.forms import IconFormMixin
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
-
+from cmsplugin_cascade.forms import ManageChildrenFormMixin, ManageNestedFormMixin
 
 class ButtonTypeWidget(widgets.RadioSelect):
     """
@@ -24,8 +24,7 @@ class ButtonSizeWidget(widgets.RadioSelect):
     """
     template_name = 'cascade/admin/legacy_widgets/button_sizes.html' if DJANGO_VERSION < (2, 0) else 'cascade/admin/widgets/button_sizes.html'
 
-
-class ButtonFormMixin(EntangledModelFormMixin):
+class ButtonForm(EntangledForm):
     BUTTON_TYPES = [
         ('btn-primary', _("Primary")),
         ('btn-secondary', _("Secondary")),
@@ -93,6 +92,9 @@ class ButtonFormMixin(EntangledModelFormMixin):
                     "relative parent, perfect for entirely clickable cards!")
     )
 
+class ButtonFormMixin(EntangledModelFormMixin, ManageNestedFormMixin):
+    button_opts_nested = EntangledFormField(ButtonForm)
+
     icon_align = ChoiceField(
         label=_("Icon alignment"),
         choices=[
@@ -105,8 +107,7 @@ class ButtonFormMixin(EntangledModelFormMixin):
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['link_content', 'button_type', 'button_size', 'button_options', 'icon_align',
-                                         'stretched_link']}
+        entangled_fields = {'glossary': ['button_opts_nested', 'icon_align',]}
 
 
 class BootstrapButtonMixin(IconPluginMixin):
@@ -154,7 +155,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
 
     @classmethod
     def get_identifier(cls, instance):
-        content = instance.glossary.get('link_content')
+        content = instance.glossary.get('button_opts_nested', {}).get('link_content')
         if not content:
             try:
                 button_types = dict(ButtonFormMixin.BUTTON_TYPES)
@@ -166,7 +167,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = cls.super(BootstrapButtonPlugin, cls).get_css_classes(obj)
-        if obj.glossary.get('stretched_link'):
+        if obj.glossary.get('button_opts_nested', {}).get('stretched_link'):
             css_classes.append('stretched_link')
         return css_classes
 

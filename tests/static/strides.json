@@ -398,7 +398,7 @@
                       "FramedIconPlugin",
                       {
                         "pk":1596,
-                        "glossary":{
+                        "glossary":{ "icon_nested":{
                           "border_radius":"",
                           "text_align":"text-center",
                           "icon_font":"1",
@@ -418,7 +418,7 @@
                           ],
                           "hide_plugin":"",
                           "symbol":"umbrella"
-                        }
+                        }}
                       },
                       []
                     ],

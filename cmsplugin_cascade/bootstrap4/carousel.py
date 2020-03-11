@@ -5,20 +5,20 @@ from django.forms.fields import IntegerField, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 
-from entangled.forms import EntangledModelFormMixin
+from entangled.forms import  EntangledModelFormMixin, EntangledFormField, EntangledForm
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.fields import BootstrapMultiSizeField
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.bootstrap4.picture import get_picture_elements
 from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap4.utils import IMAGE_RESIZE_OPTIONS
-from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.forms import ManageChildrenFormMixin, ManageNestedFormMixin
 from cmsplugin_cascade.image import ImagePropertyMixin, ImageFormMixin
 
 logger = logging.getLogger('cascade')
 
 
-class CarouselSlidesFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+class CarouselSlidesForm(EntangledForm):
     OPTION_CHOICES = [('slide', _("Animate")), ('pause', _("Pause")), ('wrap', _("Wrap"))]
 
     num_children = IntegerField(min_value=1, initial=1,
@@ -55,9 +55,13 @@ class CarouselSlidesFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         initial=['upscale', 'crop', 'subject_location', 'high_resolution'],
     )
 
+class CarouselSlidesFormMixin(EntangledModelFormMixin, ManageNestedFormMixin):
+    carousel_nested = EntangledFormField(CarouselSlidesForm)
+
     class Meta:
-        untangled_fields = ['num_children']
-        entangled_fields = {'glossary': ['interval', 'options', 'container_max_heights', 'resize_options']}
+        #untangled_fields = ['num_children']
+      #  untangled_fields = ['accordion_nested.num_children']
+        entangled_fields = {'glossary': ['carousel_nested']}
 
 
 class BootstrapCarouselPlugin(BootstrapPluginBase):
@@ -79,7 +83,7 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = cls.super(BootstrapCarouselPlugin, cls).get_css_classes(obj)
-        if 'slide' in obj.glossary.get('options', []):
+        if 'slide' in obj.glossary.get('carousel_nested',{}).get('options', []):
             css_classes.append('slide')
         return css_classes
 
@@ -87,14 +91,14 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
     def get_html_tag_attributes(cls, obj):
         attributes = cls.super(BootstrapCarouselPlugin, cls).get_html_tag_attributes(obj)
         attributes.update(cls.DEFAULT_CAROUSEL_ATTRIBUTES)
-        attributes['data-interval'] = 1000 * int(obj.glossary.get('interval', 5))
-        options = obj.glossary.get('options', [])
+        attributes['data-interval'] = 1000 * int(obj.glossary.get('carousel_nested',{}).get('interval', 5))
+        options = obj.glossary.get('carousel_nested',{}).get('options', [])
         attributes['data-pause'] = 'pause' in options and 'hover' or 'false'
         attributes['data-wrap'] = 'wrap' in options and 'true' or 'false'
         return attributes
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
+        wanted_children = int(form.cleaned_data.get('carousel_nested',{}).get('num_children', 1))
         super().save_model(request, obj, form, change)
         self.extend_children(obj, wanted_children, BootstrapCarouselSlidePlugin)
         obj.sanitize_children()
@@ -104,11 +108,11 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
         sanitized = super().sanitize_model(obj)
         complete_glossary = obj.get_complete_glossary()
         # fill all invalid heights for this container to a meaningful value
-        max_height = max(obj.glossary['container_max_heights'].values())
+        max_height = max(obj.glossary.get('carousel_nested',{})['container_max_heights'].values())
         pattern = re.compile(r'^(\d+)px$')
         for bp in complete_glossary.get('breakpoints', ()):
-            if not pattern.match(obj.glossary['container_max_heights'].get(bp, '')):
-                obj.glossary['container_max_heights'][bp] = max_height
+            if not pattern.match(obj.glossary.get('carousel_nested',{})['container_max_heights'].get(bp, '')):
+                obj.glossary.get('carousel_nested',{})['container_max_heights'][bp] = max_height
         return sanitized
 
 plugin_pool.register_plugin(BootstrapCarouselPlugin)
@@ -130,7 +134,7 @@ class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
         # slide image shall be rendered in a responsive context using the ``<picture>`` element
         try:
             parent_glossary = instance.parent.get_bound_plugin().glossary
-            instance.glossary.update(responsive_heights=parent_glossary['container_max_heights'])
+            instance.glossary.update(responsive_heights=parent_glossary.get('carousel_nested',{})['container_max_heights'])
             elements = get_picture_elements(instance)
         except Exception as exc:
             logger.warning("Unable generate picture elements. Reason: {}".format(exc))
@@ -144,27 +148,29 @@ class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
     @classmethod
     def sanitize_model(cls, obj):
         sanitized = super().sanitize_model(obj)
-        resize_options = obj.get_parent_glossary().get('resize_options', [])
+        resize_options = obj.get_parent_glossary().get('carousel_nested',{}).get('resize_options', [])
         if obj.glossary.get('resize_options') != resize_options:
             obj.glossary.update(resize_options=resize_options)
             sanitized = True
+       
         parent = obj.parent
-        while parent.plugin_type != 'BootstrapColumnPlugin':
-            parent = parent.parent
-            if parent is None:
-                logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
-                return
-        grid_column = parent.get_bound_plugin().get_grid_instance()
-        obj.glossary.setdefault('media_queries', {})
-        for bp in Breakpoint:
-            obj.glossary['media_queries'].setdefault(bp.name, {})
-            width = round(grid_column.get_bound(bp).max)
-            if obj.glossary['media_queries'][bp.name].get('width') != width:
-                obj.glossary['media_queries'][bp.name]['width'] = width
-                sanitized = True
-            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
-                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
-                sanitized = True
+        if parent: # prevent copy slide error
+            while parent.plugin_type != 'BootstrapColumnPlugin':
+                parent = parent.parent
+                if parent is None:
+                    logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
+                    return
+            grid_column = parent.get_bound_plugin().get_grid_instance()
+            obj.glossary.setdefault('media_queries', {})
+            for bp in Breakpoint:
+                obj.glossary['media_queries'].setdefault(bp.name, {})
+                width = round(grid_column.get_bound(bp).max)
+                if obj.glossary['media_queries'][bp.name].get('width') != width:
+                    obj.glossary['media_queries'][bp.name]['width'] = width
+                    sanitized = True
+                if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
+                    obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
+                    sanitized = True
         return sanitized
 
     @classmethod
