@@ -31,10 +31,16 @@ class ImageFormMixin(EntangledModelFormMixin):
         if not image_file:
             raise ValidationError(_("No image has been selected."))
         # _image_properties are just a cached representation, maybe useless
+        
+        if image_file.mime_type == 'image/svg+xml':
+            image_file_orientation =  1
+        else:
+            image_file_orientation = image_file.exif.get('Orientation', 1)
+        # _image_properties are just a cached representation, maybe useless
         cleaned_data['_image_properties'] = {
             'width': image_file._width,
             'height': image_file._height,
-            'exif_orientation': image_file.exif.get('Orientation', 1),
+            'exif_orientation': image_file_orientation,
         }
         return cleaned_data
 
