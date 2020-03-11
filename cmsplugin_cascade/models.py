@@ -248,7 +248,9 @@ class CascadeClipboard(models.Model):
     created_by = models.ForeignKey(
         get_user_model(),
         verbose_name=_("Created by"),
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        editable=False,
+        null=True,
     )
 
     created_at = models.DateTimeField(
@@ -261,6 +263,7 @@ class CascadeClipboard(models.Model):
         _("Last accessed at"),
         null=True,
         default=None,
+        editable=False,
     )
 
     class Meta:
