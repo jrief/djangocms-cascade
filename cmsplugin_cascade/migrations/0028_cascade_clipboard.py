@@ -28,12 +28,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cascadeclipboard',
             name='created_by',
-            field=models.ForeignKey(default=get_default_user, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Created by'),
+            field=models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Created by'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='cascadeclipboard',
             name='last_accessed_at',
-            field=models.DateTimeField(default=None, null=True, verbose_name='Last accessed at'),
+            field=models.DateTimeField(default=None, editable=False, null=True, verbose_name='Last accessed at'),
         ),
     ]
