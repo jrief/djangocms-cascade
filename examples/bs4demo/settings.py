@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'sass_processor',
     'sekizai',
     'bs4demo',
+        'django_extensions',
 ]
 
 
@@ -217,7 +218,7 @@ CMSPLUGIN_CASCADE = {
     'plugins_with_sharables': {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
-        'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights', 'image_size', 'resize_options',),
+        'BootstrapPicturePlugin': ('image_shapes', 'responsive_heights','resize_options',),
     },
     'exclude_hiding_plugin': ('SegmentPlugin', 'Badge'),
     'allow_plugin_hiding': True,

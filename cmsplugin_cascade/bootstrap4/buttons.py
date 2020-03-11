@@ -118,6 +118,7 @@ class BootstrapButtonMixin(IconPluginMixin):
     default_css_attributes = ['button_type', 'button_size', 'button_options', 'stretched_link']
     ring_plugin = 'ButtonMixin'
 
+
     class Media:
         css = {'all': ['cascade/css/admin/bootstrap4-buttons.css', 'cascade/css/admin/iconplugin.css']}
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonmixin.js']
@@ -148,6 +149,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
     form = BootstrapButtonFormMixin
     ring_plugin = 'ButtonPlugin'
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
+#    render_template_fallback = "cascade/generic/fallback_button.html" # mode stride gallery
 
     class Media:
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonplugin.js']
