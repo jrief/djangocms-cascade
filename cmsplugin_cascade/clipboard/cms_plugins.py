@@ -147,9 +147,6 @@ class CascadeClipboardPlugin(CMSPluginBase):
             data_demo = self.populate_static_json("cascade/admin/clipboards/demo/demo_carousel-plugin.json")
             self.populate_db_group_clipboards( clipboards_groupby, identifier, group, data_demo)
 
-        CHOICES=(list(clipboards_groupby.items(),))
-        ff=_("Import from Clipboard")
-
         if request.GET.get('group'):
             req_parameter_group = request.GET.get('group')
             title = ": {}".format(req_parameter_group)
@@ -203,6 +200,8 @@ class CascadeClipboardPlugin(CMSPluginBase):
         cascade_clipboard = form.cleaned_data['clipboard']
 
         tree_order = placeholder.get_plugin_tree_order(language)
+        if not hasattr(cascade_clipboard, 'data'):
+            cascade_clipboard = CascadeClipboard.objects.get(identifier=cascade_clipboard)
         deserialize_to_clipboard(request, cascade_clipboard.data)
         cascade_clipboard.last_accessed_at = now()
         cascade_clipboard.save(update_fields=['last_accessed_at'])
