@@ -10,16 +10,10 @@
 {% static_placeholder 'Header Content' %}
 {% if request.toolbar and request.toolbar.edit_mode_active %}
 {% addtoblock "js" %}
-<script> 
-//Move static_placeholder "Header Content" as first-child in structure ui
-function static_placeholder_menu_gofirstchild(){
-if ($(".cms-structure-content").is(':empty') || $(".cms-dragbar-title[title='Header Content']") && !$(".cms-dragbar-title[title='Header Content']").parent().parent().is(':first-child') ) {
-$(".cms-dragbar-title[title='Header Content']").parent().parent().prependTo(".cms-structure-content");}
-}
-
-$(document).ready(function(){
-var observer = new MutationObserver(function(e) {static_placeholder_menu_gofirstchild();});
-observer.observe($('.cms-structure-content')[0], { childList: true});
+<script src="{% static 'cascade/js/admin/placeholder_position.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+   placeholder_position_top('Header Content');
 });
 </script>
 {% endaddtoblock %}
