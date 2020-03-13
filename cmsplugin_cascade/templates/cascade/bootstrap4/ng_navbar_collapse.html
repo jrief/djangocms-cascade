@@ -1,0 +1,7 @@
+{% load l10n cascade_tags sekizai_tags i18n %}
+{% with instance_css_classes=instance.css_classes instance_inline_styles=instance.inline_styles %}
+<div {{ instance.html_tag_attributes }}{% if instance_css_classes %} class="{{ instance_css_classes }}"{% endif %}{% if instance_inline_styles %} style="{{ instance_inline_styles }}"{% endif %}  id="navbarSupportedContent" uib-collapse="!isNavCollapsed">
+{% block navbar-collapse %}{% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}
+{% endblock %}
+</div>
+{% endwith %}

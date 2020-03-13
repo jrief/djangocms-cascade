@@ -1,4 +1,9 @@
-{% load bootstrap_tags  l10n cascade_tags  sekizai_tags %}
+{% load bootstrap_tags  l10n cascade_tags  sekizai_tags  i18n  menu_tags %}
 {% block navbar-nav %}
+
+{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui/' %}
 {% main_menu "bootstrap4/menu/navbar.html" %}
+{% else %}
+{% main_menu "bootstrap4/menu/ng-navbar.html" %}
+{% endif %}
 {% endblock %}

@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from cmsplugin_cascade.fields import SizeField
 from .plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap4.jumbotron import ImageBackgroundMixin, JumbotronFormMixin
-from cmsplugin_cascade import app_settings
+from django.conf import settings
 from cmsplugin_cascade.bootstrap4.container import ContainerFormMixin, ContainerGridMixin
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 
@@ -221,8 +221,11 @@ class BootstrapNavBrandImagePlugin(BootstrapPluginBase):
 @plugin_pool.register_plugin
 class BootstrapNavCollapsePlugin(BootstrapPluginBase):
     name = _("Nav Collapse")
-    parent_classes = ['BootstrapNavbarPlugin'] 
-    render_template = 'cascade/bootstrap4/navbar_collapse.html'
+    parent_classes = ['BootstrapNavbarPlugin']
+    if not settings.CMSPLUGIN_CASCADE['bootstrap4'].get('template_basedir'):
+        render_template = 'cascade/bootstrap4/navbar_collapse.html'
+    else:
+        render_template = 'cascade/bootstrap4/ng_navbar_collapse.html'
     default_css_class = 'collapse navbar-collapse'
  
     @classmethod
@@ -271,5 +274,20 @@ class BootstrapNavItemsMainMenuPlugin(BootstrapPluginBase):
 class BootstrapNavbarToogler(BootstrapPluginBase):
     name = _("Nav toogler")
     default_css_class = 'navbar-toggler'
-    parent_classes = ['BootstrapNavbarPlugin']
-    render_template = 'cascade/bootstrap4/navbar_toogler.html'
+    parent_classes = ['BootstrapNavbarPlugin',]
+    if not settings.CMSPLUGIN_CASCADE['bootstrap4'].get('template_basedir'):
+        render_template = 'cascade/bootstrap4/navbar_toogler.html'
+    else:
+        render_template = 'cascade/bootstrap4/ng_navbar_toogler.html'
+
+
+
+@plugin_pool.register_plugin
+class BootstrapNavbarLanguageChooser(BootstrapPluginBase):
+    name = _("Nav Lang Chooser")
+    default_css_class = 'nav-item dropdown'
+    parent_classes = ['BootstrapListsPlugin']
+    if not settings.CMSPLUGIN_CASCADE['bootstrap4'].get('template_basedir'):
+        render_template = 'bootstrap4/includes/language-chooser.html'
+    else:
+        render_template = 'bootstrap4/includes/ng-language-chooser.html'
