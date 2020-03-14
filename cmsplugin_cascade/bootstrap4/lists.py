@@ -62,3 +62,9 @@ class  BootstrapListsPlugin(BootstrapPluginBase):
         obj.glossary['child_css_classes'] = ' '.join(list_child_css_classes)
         super().sanitize_model(obj)
 
+@plugin_pool.register_plugin
+class  BootstrapListsSeparatorPlugin(BootstrapPluginBase):
+    name = _("Li Separator")
+    require_parent = True
+    parent_classes = ['BootstrapListsPlugin']
+    render_template = 'cascade/bootstrap4/navbar_list_separator.html'
