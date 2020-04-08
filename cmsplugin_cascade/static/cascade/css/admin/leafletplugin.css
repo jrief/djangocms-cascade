@@ -4,8 +4,9 @@
 	margin-bottom: 20px;
 }
 .map-button {
-	font-size: 30px;
-	line-height: 20px;
+	font-size: 18px;
+	line-height: 18px;
+	margin-left: -3px;
 }
 .disable-click {
 	pointer-events: none;
