@@ -26,7 +26,7 @@ from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_
 Image = load_model(filer_settings.FILER_IMAGE_MODEL)
 
 
-class MarkerModelMixin(object):
+class MarkerModelMixin:
     @property
     def data(self):
         return mark_safe(json.dumps(self.glossary))
@@ -160,7 +160,7 @@ class LeafletFormMixin(EntangledModelFormMixin):
         return cleaned_data
 
 
-class LeafletModelMixin(object):
+class LeafletModelMixin:
     @property
     def map_position(self):
         return mark_safe(json.dumps(self.glossary.get('map_position', {})))
