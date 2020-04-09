@@ -41,7 +41,7 @@ class ImageFormMixin(EntangledModelFormMixin):
             self.cleaned_data['_image_properties'] = {
                 'width': image_file._width,
                 'height': image_file._height,
-                'exif_orientation': image_file_orientation,,
+                'exif_orientation': image_file_orientation,
             }
         return image_file
 
