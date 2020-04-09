@@ -99,7 +99,7 @@ class NumberInputWidget(widgets.NumberInput):
             raise ValidationError(self.invalid_message, code='invalid', params={'value': value})
 
 
-class AColorPickerMixin(object):
+class AColorPickerMixin:
     acolorpicker_js = 'node_modules/a-color-picker/dist/acolorpicker.js'
 
     def __init__(self, with_alpha, *args, **kwargs):
@@ -142,9 +142,8 @@ class ColorPickerWidget(AColorPickerMixin, widgets.MultiWidget):
         ]
         super().__init__(with_alpha, widget_list)
 
-    @property
-    def media(self):
-        return super().media + Media(css={'all': ['cascade/css/admin/colorpicker.css']})
+    class Media:
+        css = {'all': ['cascade/css/admin/colorpicker.css']}
 
     def decompress(self, values):
         assert isinstance(values, (list, tuple)), "Values to decompress are kept as lists in JSON"
