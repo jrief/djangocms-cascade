@@ -41,6 +41,7 @@ django.jQuery(function($) {
 			this.linkTypes['download'] = new this.LinkType('.form-row.field-download_file');
 			this.linkTypes['exturl'] = new this.LinkType('.form-row.field-ext_url', true);
 			this.linkTypes['email'] = new this.LinkType('.form-row.field-mail_to');
+			this.linkTypes['phonenumber'] = new this.LinkType('.form-row.field-phone_number');
 		},
 		toggleLinkTypes: function(linkTypeName) {
 			$.each(this.linkTypes, function(name, linkType) {

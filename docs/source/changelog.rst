@@ -2,6 +2,12 @@
 Release History
 ===============
 
+1.3
+===
+* Paste structure of placeholder to, and from Persisting Clipboard Content.
+* Set links onto phone number.
+
+
 1.2.3
 =====
 * Make page editor for extra fields configurable.
