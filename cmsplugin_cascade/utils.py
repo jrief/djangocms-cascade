@@ -139,6 +139,7 @@ class NamedCSSClasses:
             label=_("Extra Styles"),
             choices=choices,
             widget=CheckboxSelectMultiple,
+            required=False,
         )
 
         class Meta:
