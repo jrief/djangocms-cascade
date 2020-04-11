@@ -1,5 +1,5 @@
 
-class PluginExtraFieldsConfig(object):
+class PluginExtraFieldsConfig:
     """
     Each Cascade Plugin can be configured to accept extra fields, such as an ID tag, one or more
     CSS classes or inlines styles. It is possible to configure these fields globally using an
