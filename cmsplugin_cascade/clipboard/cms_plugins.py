@@ -62,7 +62,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
         })
         return [
             PluginMenuItem(
-                _("Export from Clipboard"),
+                _("Export to Clipboard"),
                 reverse('admin:export_clipboard_plugins') + '?' + data,
                 data={},
                 action='modal',
