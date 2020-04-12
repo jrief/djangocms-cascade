@@ -6,7 +6,7 @@ from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 
 
-class BootstrapUtilities(type):
+class BootstrapUtilities:
     """
     Factory for building a class ``BootstrapUtilitiesMixin``. This class then is used as a mixin to
     all sorts of Bootstrap-4 plugins. Various Bootstrap-4 plugins are shipped using this mixin class
