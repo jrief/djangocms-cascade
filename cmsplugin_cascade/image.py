@@ -26,7 +26,7 @@ class ImageFormMixin(EntangledModelFormMixin):
         entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', 'image_properties']}
 
     def __init__(self, *args, **kwargs):
-        if not getattr(self, 'require_image', True):
+        if not getattr(self, 'require_image', True) and not 'image_file' in kwargs['instance'].glossary:
             self.base_fields['image_file'].required = False
         super().__init__(*args, **kwargs)
 
