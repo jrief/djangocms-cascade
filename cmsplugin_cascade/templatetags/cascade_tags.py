@@ -12,6 +12,7 @@ from classytags.arguments import Argument
 from classytags.core import Options, Tag
 from cmsplugin_cascade.strides import StrideContentRenderer
 from django.templatetags.static import static
+from sekizai.data import UniqueSequence
 
 register = template.Library()
 
@@ -67,7 +68,12 @@ class StrideRenderer(Tag):
         cache = caches['default']
         if cache:
             sekizai_context_key = get_sekizai_context_key()
-            SEKIZAI_CONTENT_HOLDER = cache.get_or_set(sekizai_context_key, context.get(sekizai_context_key))
+            if context.get(sekizai_context_key):
+                def context_sekizai():
+                    return  context.get(sekizai_context_key)
+            else:
+                context_sekizai = UniqueSequence
+            SEKIZAI_CONTENT_HOLDER = cache.get_or_set(sekizai_context_key, context_sekizai)
             if SEKIZAI_CONTENT_HOLDER:
                 for name in SEKIZAI_CONTENT_HOLDER:
                     context[sekizai_context_key][name] = SEKIZAI_CONTENT_HOLDER[name]
