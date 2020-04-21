@@ -1,6 +1,7 @@
 import io
 import json
 import os
+from ast import literal_eval
 from cms.toolbar.utils import get_toolbar_from_request
 from django import template
 from django.conf import settings
@@ -59,6 +60,9 @@ class StrideRenderer(Tag):
                     tree_data = json.load(fp)
             else:
                 tree_data = data_clipboard
+        if settings.CMSPLUGIN_CASCADE['fallback']['img_or_pic_lost_pk']:
+            tree_data_lost_ref_img = str(tree_data).replace("'image_file': {'model': 'filer.image', 'pk': ", "'image_file': {'model': 'filer.image', 'pk': 10000")
+            tree_data= literal_eval(tree_data_lost_ref_img)
         request = context['request']
         content_renderer = StrideContentRenderer(request)
         with context.push(cms_content_renderer=content_renderer):
