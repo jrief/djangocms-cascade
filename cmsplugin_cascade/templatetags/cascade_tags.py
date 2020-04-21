@@ -59,8 +59,8 @@ class StrideRenderer(Tag):
                 with io.open(jsonfile) as fp:
                     tree_data = json.load(fp)
             else:
-                tree_data = data_clipboard
-        if settings.CMSPLUGIN_CASCADE['fallback']['img_or_pic_lost_pk']:
+                tree_data = data_clipboard         
+        if settings.CMSPLUGIN_CASCADE.get('fallback', None ).get('img_or_pic_lost_pk', None):
             tree_data_lost_ref_img = str(tree_data).replace("'image_file': {'model': 'filer.image', 'pk': ", "'image_file': {'model': 'filer.image', 'pk': 10000")
             tree_data= literal_eval(tree_data_lost_ref_img)
         request = context['request']
