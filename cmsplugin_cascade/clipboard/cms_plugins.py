@@ -48,7 +48,7 @@ def FormViewClipboard(request, form, context):
             'groups_exclude_home':list(CascadeClipboardGroup.objects.all().exclude( name='Clipboard Home').values_list('name',flat=True,)),
             'widget_optgroups':  form['clipboard'].field.widget.optgroups_result,
               'form': form })
-    return render(request, "cascade/admin/widgets/clipboard_import.html", context)
+    return render(request, "cascade/admin/clipboard_import.html", context)
 
 
 def tree_group_clipboards():
