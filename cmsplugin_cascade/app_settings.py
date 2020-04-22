@@ -128,9 +128,11 @@ class AppSettings(object):
         config.setdefault('fallback',{
           # default
           'path_main_scss': 'bs4demo/css/main.scss',
+          'path_main_scss': 'myshop/css/default.scss',
           'image':{'color':'hsla(221.7, 57.5%, 84.3%, 0.8)', 'svg':''},
           'picture':{'color':'hsla(0, 40%, 80.4%, 0.8)', 'svg':'' },
           'jumbotron':{'color':'hsl(62, 90%, 90%, 0.8)', 'svg':''},
+          'img_or_pic_lost_pk': True,
          })
 
 
