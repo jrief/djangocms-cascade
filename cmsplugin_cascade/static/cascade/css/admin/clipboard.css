@@ -1,3 +1,6 @@
+body {
+padding-top:0px !important!;
+}
 .pull-left {
 	float: left !important;
 }
@@ -51,6 +54,7 @@ div.cms .cms-structure.cms-structure-condensed .cms-submenu-item a[data-icon=imp
 
 .cascade_clipboard_admin {
 	padding: 1rem;
+	z-index: 4;
 }
 
 .button_clipboard {
@@ -90,6 +94,8 @@ background-color: white;
 	display: inline-flex;
 	flex-wrap: wrap;
 	position:absolute;
+	justify-content: center;
+	width: 100%;
 }
 
 .cms-cascade-clipboard {
@@ -103,7 +109,6 @@ background-color: white;
 }
 
 .clipboard-fullscreen {
-	display: inline-block;
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	-o-appearance: none;
@@ -112,6 +117,12 @@ background-color: white;
 	right: 3Opx;
 	left: 50%;
 	top: 26px;
+}
+
+.form-clipboard {
+position: absolute;
+width: 100%;
+top: 3rem;
 }
 
 .clipboard-fullscreen:after{
@@ -143,4 +154,3 @@ background-color: white;
 .shortcuts-admin{
 display:none;
 }
-
