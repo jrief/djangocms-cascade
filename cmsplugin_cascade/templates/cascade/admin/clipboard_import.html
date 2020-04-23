@@ -69,7 +69,7 @@
 
 {% endwith %}
   <div class="submit-row"{% if is_popup %} style="overflow: auto;"{% endif %}>
-        <input  type="submit" name="_save"  class="default" value="{% trans 'Save' %}" {{ onclick_attrib } href='/en/admin/cms/page/plugin/cascade_clipboard_plugin/import-plugins/?placeholder=2&language=en&cms_path=/en/'/>
+        <input  type="submit" name="_save"  class="default" value="{% trans 'Save' %}" {{ onclick_attrib }/>
         <input type="submit" name="_continue" value="{% trans 'Save and continue editing' %}" {{ onclick_attrib }}/>
     </div>
 </form>
