@@ -174,6 +174,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
         CascadeClipboard.objects.create(
             identifier=identifier,
             data=data,
+            created_by=request.user,
         )
         return render(request, 'cascade/admin/clipboard_close_frame.html', {})
 
