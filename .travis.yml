@@ -7,6 +7,10 @@ python:
 
 sudo: false
 
+env:
+  - DJANGOVER=django21 CMSVER=cms36
+  - DJANGOVER=django22 CMSVER=cms37
+
 matrix:
   include:
     - python: 3.5
