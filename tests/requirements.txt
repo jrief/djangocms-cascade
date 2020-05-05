@@ -1,4 +1,5 @@
 lxml
+beautifulsoup4
 pluggy
 py
 pytest

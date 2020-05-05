@@ -5,38 +5,9 @@ python:
   - 3.6
   - 3.7
 
-sudo: false
-
 env:
   - DJANGOVER=django21 CMSVER=cms36
   - DJANGOVER=django22 CMSVER=cms37
-
-matrix:
-  include:
-    - python: 3.5
-      env: DJANGOVER=django21 CMSVER=cms36
-    - python: 3.5
-      env: DJANGOVER=django22 CMSVER=cms36
-    - python: 3.5
-      env: DJANGOVER=django21 CMSVER=cms37
-    - python: 3.5
-      env: DJANGOVER=django22 CMSVER=cms37
-    - python: 3.6
-      env: DJANGOVER=django21 CMSVER=cms36
-    - python: 3.6
-      env: DJANGOVER=django22 CMSVER=cms36
-    - python: 3.6
-      env: DJANGOVER=django21 CMSVER=cms37
-    - python: 3.6
-      env: DJANGOVER=django22 CMSVER=cms37
-    - python: 3.7
-      env: DJANGOVER=django21 CMSVER=cms37
-      dist: xenial
-      sudo: true
-    - python: 3.7
-      env: DJANGOVER=django22 CMSVER=cms37
-      dist: xenial
-      sudo: true
 
 install:
   - pip install tox
