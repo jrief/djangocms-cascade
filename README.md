@@ -20,8 +20,9 @@ explicitly. This furthermore prevents us to handle all kind of nasty database mi
 ## Version 1.3 (scheduled for 2020-05-08)
 
 Version 1.3 now supports Django versions: 3.0, 2.2 and 2.1.
-And the is nice new feature. The content of a placeholder can be pasted directly to the Clipboard.
-It also is possible to paste any item from the Clipboard, directly in the structure view of a
+
+Nice new feature: The content of a placeholder can be pasted directly to the Clipboard.
+It now is possible to paste any item from the Clipboard, directly in the structure view of a
 placeholder.
 
 Please check https://github.com/jrief/djangocms-cascade/tree/releases/1.3 for a preview.
