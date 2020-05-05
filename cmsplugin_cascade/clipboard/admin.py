@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib import messages
-from django.contrib.admin.templatetags.admin_static import static
 from django.forms import widgets
 from django.forms.utils import flatatt
+from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
