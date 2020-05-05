@@ -1,11 +1,12 @@
 import re
+from html.parser import HTMLParser
 import json
 import warnings
+
 from django.core.exceptions import ValidationError
 from django.contrib.staticfiles.finders import find
 from django.forms import Media, widgets
 from django.utils.html import escape, format_html, format_html_join
-from six.moves.html_parser import HTMLParser
 from django.utils.translation import ugettext_lazy as _
 
 
