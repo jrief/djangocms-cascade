@@ -24,6 +24,8 @@ And the is nice new feature. The content of a placeholder can be pasted directly
 It also is possible to paste any item from the Clipboard, directly in the structure view of a
 placeholder.
 
+Please check https://github.com/jrief/djangocms-cascade/tree/releases/1.3 for a preview.
+
 
 ## Version 1.2 (released on 2020-01-10)
 
