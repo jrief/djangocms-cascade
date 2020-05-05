@@ -2,13 +2,13 @@ import json
 import os
 import shutil
 from collections import OrderedDict
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.functional import cached_property
-from django.utils.six.moves.urllib.parse import urljoin
 from django.utils.translation import ugettext_lazy as _
 
 from jsonfield.fields import JSONField
