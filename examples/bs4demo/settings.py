@@ -64,8 +64,6 @@ INSTALLED_APPS = [
     'bs4demo',
 ]
 
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,8 +79,6 @@ MIDDLEWARE = [
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
 ]
-
-
 
 # silence false-positive warning 1_6.W001
 # https://docs.djangoproject.com/en/1.8/ref/checks/#backwards-compatibility
@@ -181,6 +177,10 @@ LOGGING = {
         },
     },
 }
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+XS_SHARING_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE']
 
 #############################################################
 # Application specific settings
