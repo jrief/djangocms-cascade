@@ -9,11 +9,17 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import HeavySelect2Widget
+
 from cms.utils import get_current_site
 from cms.models import Page
 from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
+
+try:
+    from phonenumber_field.formfields import PhoneNumberField
+except ImportError:
+    PhoneNumberField = None
 
 
 def format_page_link(title, path):
@@ -81,6 +87,8 @@ class LinkForm(EntangledModelFormMixin):
         ('exturl', _("External URL")),
         ('email', _("Mail To")),
     ]
+    if PhoneNumberField:
+        LINK_TYPE_CHOICES.append(('phonenumber', _("Phone number")))
 
     link_type = fields.ChoiceField(
         label=_("Link"),
@@ -119,6 +127,13 @@ class LinkForm(EntangledModelFormMixin):
         help_text=_("Open Email program with this address"),
     )
 
+    if PhoneNumberField:
+        phone_number = PhoneNumberField(
+            required=False,
+            label=_("Phone Number"),
+            help_text=_("International phone number, ex. +1 212 555 2368."),
+        )
+
     link_target = fields.ChoiceField(
         choices=[
             ('', _("Same Window")),
@@ -141,6 +156,8 @@ class LinkForm(EntangledModelFormMixin):
     class Meta:
         entangled_fields = {'glossary': ['link_type', 'cms_page', 'section', 'download_file', 'ext_url', 'mail_to',
                                          'link_target', 'link_title']}
+        if PhoneNumberField:
+            entangled_fields['glossary'].append('phone_number')
 
     def __init__(self, *args, **kwargs):
         link_type_choices = []
@@ -197,11 +214,16 @@ class LinkForm(EntangledModelFormMixin):
             mail_to = cleaned_data.get('mail_to')
             if mail_to:
                 if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
-                    error = ValidationError(_("'{email}' is not a valid email address.").format(email=mail_to))
+                    msg = _("'{email}' is not a valid email address.")
+                    error = ValidationError(msg.format(email=mail_to))
             else:
                 error = ValidationError(_("No email address provided."))
             if error:
                 self.add_error('mail_to', error)
+        elif link_type == 'phonenumber':
+            phone_number = cleaned_data.get('phone_number')
+            if phone_number:
+                cleaned_data['phone_number'] = str(phone_number)
         if error:
             raise error
         return cleaned_data

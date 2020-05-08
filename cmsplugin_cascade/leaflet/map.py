@@ -17,15 +17,16 @@ from djangocms_text_ckeditor.fields import HTMLFormField
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import HiddenDictField, SizeField, MultiSizeField
+from cmsplugin_cascade.image import ImagePropertyMixin
+from cmsplugin_cascade.mixins import WithInlineElementsMixin
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
-from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
 
 Image = load_model(filer_settings.FILER_IMAGE_MODEL)
 
 
-class MarkerModelMixin(object):
+class MarkerModelMixin:
     @property
     def data(self):
         return mark_safe(json.dumps(self.glossary))
@@ -159,13 +160,13 @@ class LeafletFormMixin(EntangledModelFormMixin):
         return cleaned_data
 
 
-class LeafletModelMixin(object):
+class LeafletModelMixin:
     @property
     def map_position(self):
         return mark_safe(json.dumps(self.glossary.get('map_position', {})))
 
 
-class LeafletPlugin(CascadePluginBase):
+class LeafletPlugin(WithInlineElementsMixin, CascadePluginBase):
     name = _("Map")
     parent_classes = None
     require_parent = False

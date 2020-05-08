@@ -1,7 +1,7 @@
 from cmsplugin_cascade.models import InlineCascadeElement, SortableInlineCascadeElement
 
 
-class CascadePluginMixin(object):
+class CascadePluginMixin:
     """
     This is the common mixin class used for both, the :class:`cmsplugin_cascade.plugin_base.CascadePluginBase`
     and the :class:`cmsplugin_cascade.strides.StridePluginBase`.
@@ -54,7 +54,7 @@ class CascadePluginMixin(object):
         return dict((attr, instance.glossary.get(key, '')) for key, attr in attributes.items())
 
 
-class WithInlineElementsMixin(object):
+class WithInlineElementsMixin:
     """
     Plugins wishing to allow child elements as inlines, shall inherit from this
     mixin class, in order to override the serialize and deserialize methods.
@@ -72,7 +72,7 @@ class WithInlineElementsMixin(object):
                 cascade_element=instance, glossary=inline_glossary)
 
 
-class WithSortableInlineElementsMixin(object):
+class WithSortableInlineElementsMixin:
     """
     Plugins wishing to allow child elements as sortable inlines, shall inherit from this
     mixin class, in order to override the serialize and deserialize methods.

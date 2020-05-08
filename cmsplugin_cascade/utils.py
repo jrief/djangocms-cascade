@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
-from django.forms import MediaDefiningClass
+from django.forms.fields import MultipleChoiceField
+from django.forms.widgets import CheckboxSelectMultiple, MediaDefiningClass
 from django.utils.translation import ugettext_lazy as _
+
 from entangled.forms import EntangledModelFormMixin
 
 
@@ -85,7 +87,7 @@ def parse_responsive_length(responsive_length):
 class CascadeUtilitiesMixin(metaclass=MediaDefiningClass):
     """
     If a Cascade plugin is listed in ``settings.CMSPLUGIN_CASCADE['plugins_with_extra_mixins']``,
-    then this ``BootstrapUtilsMixin`` class is added automatically to its plugin class in order to
+    then this ``CascadeUtilitiesMixin`` class is added automatically to its plugin class in order to
     enrich it with utility classes, such as :class:`cmsplugin_cascade.bootstrap4.mixins.BootstrapUtilities`.
     """
     def __str__(self):
@@ -104,5 +106,48 @@ class CascadeUtilitiesMixin(metaclass=MediaDefiningClass):
         for utility_field_name in cls.utility_form_mixin.base_fields.keys():
             css_class = obj.glossary.get(utility_field_name)
             if css_class:
-                css_classes.append(css_class)
+                if isinstance(css_class, str):
+                    css_classes.append(css_class)
+                elif isinstance(css_class, list):
+                    css_classes.extend(css_class)
         return css_classes
+
+
+class NamedCSSClasses:
+    """
+    Factory for building a class ``NamedCSSClassesMixin``. This class then is used as a mixin to
+    all sorts of Cascade plugins. It shall be used to optionally activate preconfigured CSS classes
+    for each configured plugin.
+    To configure, pass in a list of 2-tuples, consisting of the CSS class plus a string describing
+    this feature. For example:
+    ```
+    CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {
+        'LinkPlugin': NamedCSSClasses([
+            ('stretched-link', "Use stretched Link"),
+            ('full-width', "Full width"),
+            …
+        ]),
+        …
+    }
+    ```
+
+    The above configuration will add a checkbox for each entry in that list to the plugin editors.
+    The administrator then can choose whether to add those classes to the HTML element or not.
+    """
+    def __new__(cls, choices):
+        named_css_classes = MultipleChoiceField(
+            label=_("Extra Styles"),
+            choices=choices,
+            widget=CheckboxSelectMultiple,
+            required=False,
+        )
+
+        class Meta:
+            entangled_fields = {'glossary': ['named_css_classes']}
+
+        attrs = {
+            'named_css_classes': named_css_classes,
+            'Meta': Meta,
+        }
+        utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), attrs)
+        return type('NamedCSSClassesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})

@@ -13,7 +13,7 @@ from cms.api import add_plugin
 from cms.plugin_rendering import ContentRenderer
 from cmsplugin_cascade.models import CascadeElement, IconFont
 from cmsplugin_cascade.icon.forms import IconFormMixin
-from cmsplugin_cascade.icon.cms_plugins import SimpleIconPlugin
+from cmsplugin_cascade.icon.simpleicon import SimpleIconPlugin
 from .conftest import UserFactory
 
 

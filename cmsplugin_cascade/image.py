@@ -1,6 +1,6 @@
-from django.core.exceptions import ValidationError
 from django.forms.fields import CharField
 from django.utils.translation import ugettext_lazy as _
+
 from entangled.forms import EntangledModelFormMixin, EntangledField, get_related_object
 from cmsplugin_cascade.fields import CascadeImageField
 
@@ -25,21 +25,24 @@ class ImageFormMixin(EntangledModelFormMixin):
     class Meta:
         entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', '_image_properties']}
 
-    def clean(self):
-        cleaned_data = super().clean()
-        image_file = cleaned_data.get('image_file')
-        if not image_file:
-            raise ValidationError(_("No image has been selected."))
+    def __init__(self, *args, **kwargs):
+        if not getattr(self, 'require_image', True):
+            self.base_fields['image_file'].required = False
+        super().__init__(*args, **kwargs)
+
+    def clean_image_file(self):
+        image_file = self.cleaned_data['image_file']
         # _image_properties are just a cached representation, maybe useless
-        cleaned_data['_image_properties'] = {
-            'width': image_file._width,
-            'height': image_file._height,
-            'exif_orientation': image_file.exif.get('Orientation', 1),
-        }
-        return cleaned_data
+        if image_file:
+            self.cleaned_data['_image_properties'] = {
+                'width': image_file._width,
+                'height': image_file._height,
+                'exif_orientation': image_file.exif.get('Orientation', 1),
+            }
+        return image_file
 
 
-class ImagePropertyMixin(object):
+class ImagePropertyMixin:
     """
     A mixin class to convert a CascadeElement into a proxy model for rendering an image element.
     """
