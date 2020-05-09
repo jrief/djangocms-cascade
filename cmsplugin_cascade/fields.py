@@ -10,7 +10,7 @@ from django.forms.fields import Field, CharField, ChoiceField, BooleanField, Mul
 from django.forms.utils import ErrorList
 from django.core.validators import ProhibitNullCharactersValidator
 from django.utils.deconstruct import deconstructible
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, pgettext
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.widgets import ColorPickerWidget, BorderChoiceWidget, MultipleTextInputWidget
 from filer.fields.image import FilerImageField, AdminImageFormField
@@ -196,7 +196,7 @@ class SizeUnitValidator():
         try:
             float(match.group(1))
         except (AttributeError, ValueError):
-            allowed_units = " {} ".format(ugettext("or")).join("'{}'".format(u) for u in self.allowed_units)
+            allowed_units = " {} ".format(pgettext('allowed_units', "or")).join("'{}'".format(u) for u in self.allowed_units)
             params = {'value': value, 'allowed_units': allowed_units}
             raise ValidationError(self.message, code=self.code, params=params)
 

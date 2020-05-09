@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _, ungettext
+from django.utils.translation import gettext_lazy as _, ngettext
 from django.utils.html import format_html
 from cms.constants import REFRESH_PAGE
 
@@ -128,7 +128,7 @@ class EmulateUserAdminMixin(object):
             self,
             None)
         cl.formset = None
-        selection_note_all = ungettext('%(total_count)s selected',
+        selection_note_all = ngettext('%(total_count)s selected',
             'All %(total_count)s selected', cl.result_count)
 
         context = {

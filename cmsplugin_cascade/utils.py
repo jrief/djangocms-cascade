@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.forms.fields import MultipleChoiceField
 from django.forms.widgets import CheckboxSelectMultiple, MediaDefiningClass
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from entangled.forms import EntangledModelFormMixin
 

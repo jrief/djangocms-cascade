@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.staticfiles.finders import find
 from django.forms import Media, widgets
 from django.utils.html import escape, format_html, format_html_join
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class JSONMultiWidget(widgets.MultiWidget):

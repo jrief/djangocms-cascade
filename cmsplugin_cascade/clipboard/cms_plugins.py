@@ -10,7 +10,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.timezone import now
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase, PluginMenuItem
 from cms.plugin_pool import plugin_pool

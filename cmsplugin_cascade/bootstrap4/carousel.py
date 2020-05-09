@@ -3,7 +3,7 @@ import logging
 from django.forms import widgets
 from django.forms.fields import IntegerField, MultipleChoiceField
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ngettext_lazy, gettext_lazy as _
 
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
@@ -73,7 +73,7 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         num_cols = obj.get_num_children()
-        content = ungettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
+        content = ngettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
         return mark_safe(content)
 
     @classmethod

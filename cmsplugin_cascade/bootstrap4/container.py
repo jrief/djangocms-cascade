@@ -4,7 +4,7 @@ from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.text import format_lazy
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ngettext_lazy, gettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
@@ -115,7 +115,7 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
     ROW_NUM_COLUMNS = [1, 2, 3, 4, 6, 12]
     num_children = ChoiceField(
         label=_('Columns'),
-        choices=[(i, ungettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS],
+        choices=[(i, ngettext_lazy('{0} column', '{0} columns', i).format(i)) for i in ROW_NUM_COLUMNS],
         initial=3,
         help_text=_('Number of columns to be created with this row.'),
     )
@@ -144,7 +144,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         num_cols = obj.get_num_children()
-        content = ungettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
+        content = ngettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
         return mark_safe(content)
 
     def save_model(self, request, obj, form, change):
@@ -208,7 +208,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         breakpoints = container.glossary['breakpoints']
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
-        units = [ungettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
+        units = [ngettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         for bp in breakpoints:
             try:
                 last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp)])

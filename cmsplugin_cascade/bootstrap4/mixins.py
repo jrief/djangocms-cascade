@@ -1,6 +1,6 @@
 from django.forms.fields import ChoiceField
 from django.utils.text import format_lazy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint

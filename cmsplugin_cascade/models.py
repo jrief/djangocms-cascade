@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from jsonfield.fields import JSONField
 from filer.fields.file import FilerFileField

@@ -1,8 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.forms.fields import CharField, BooleanField, MultiValueField
-from django.utils.html import escape
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class SharedSettingsWidget(widgets.MultiWidget):

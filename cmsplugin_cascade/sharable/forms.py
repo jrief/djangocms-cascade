@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.admin.helpers import AdminForm
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.apps import apps
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models import SharedGlossary, CascadeElement

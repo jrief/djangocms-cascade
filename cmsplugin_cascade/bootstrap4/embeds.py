@@ -4,7 +4,7 @@ from urllib.parse import urlparse, urlunparse, ParseResult
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, URLField, Field
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin, EntangledField
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.plugin_base import BootstrapPluginBase
