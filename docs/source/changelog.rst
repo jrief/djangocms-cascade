@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.3.1
+=====
+* Fix external requiremnts.
+
+
 1.3
 ===
 * Drop support for Python 2.
