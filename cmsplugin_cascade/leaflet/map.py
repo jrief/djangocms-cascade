@@ -7,7 +7,7 @@ from django.contrib.admin import StackedInline
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags, strip_spaces_between_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ngettext_lazy, gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin, EntangledModelForm
 from filer.fields.image import FilerImageField, AdminImageFormField
 from filer.settings import settings as filer_settings
@@ -26,7 +26,7 @@ from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_
 Image = load_model(filer_settings.FILER_IMAGE_MODEL)
 
 
-class MarkerModelMixin(object):
+class MarkerModelMixin:
     @property
     def data(self):
         return mark_safe(json.dumps(self.glossary))
@@ -160,7 +160,7 @@ class LeafletFormMixin(EntangledModelFormMixin):
         return cleaned_data
 
 
-class LeafletModelMixin(object):
+class LeafletModelMixin:
     @property
     def map_position(self):
         return mark_safe(json.dumps(self.glossary.get('map_position', {})))
@@ -253,7 +253,7 @@ class LeafletPlugin(WithInlineElementsMixin, CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         num_elems = obj.inline_elements.count()
-        content = ungettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
+        content = ngettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
         return mark_safe(content)
 
     @classmethod

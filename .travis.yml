@@ -4,30 +4,21 @@ python:
   - 3.5
   - 3.6
   - 3.7
+  - 3.8
 
 env:
-  - DJANGOVER=django111 CMSVER=cms35
-  - DJANGOVER=django111 CMSVER=cms36
-  - DJANGOVER=django20 CMSVER=cms36
   - DJANGOVER=django21 CMSVER=cms36
+  - DJANGOVER=django22 CMSVER=cms36
   - DJANGOVER=django22 CMSVER=cms37
+  - DJANGOVER=django30 CMSVER=cms37
 
 matrix:
   exclude:
-    - python: 3.7
-      env: DJANGOVER=django111 CMSVER=cms35
-    - python: 3.7
-      env: DJANGOVER=django111 CMSVER=cms36
-    - python: 3.7
-      env: DJANGOVER=django111 CMSVER=cms37
-
-jobs:
-  allow_failures:
-    - python: 3.7
-      env: DJANGOVER=django20 CMSVER=cms36
-    - python: 3.7
+    - python: 3.8
       env: DJANGOVER=django21 CMSVER=cms36
-    - python: 3.7
+    - python: 3.8
+      env: DJANGOVER=django22 CMSVER=cms36
+    - python: 3.8
       env: DJANGOVER=django22 CMSVER=cms37
 
 install:

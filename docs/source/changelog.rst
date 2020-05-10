@@ -2,6 +2,33 @@
 Release History
 ===============
 
+1.3.1
+=====
+* Fix external requiremnts.
+* Replace deprecated ugettext against gettext.
+
+
+1.3
+===
+* Drop support for Python 2.
+* Drop support for Django-1.11 and Django-2.0.
+* Add support for Django-3.0 and Python-3.8.
+* Paste structure of placeholder directly to, and from Persisting Clipboard Content.
+* CascadeClipboardPlugin is not a system plugin anymore.
+* Add link target for phone numbers.
+* Add mixin to accept preconfigured CSS classes.
+* Fix: Style of center button in Leaflet Plugin.
+* Fix: In Leaflet Plugin accepts pasting from clipboard.
+* Move configuration setting for HorizontalRule into submodule ``generic``.
+* Add fields ``created_by``, ``created_at`` and ``last_accessed_at`` to Clipboard model.
+* Make loading of icon plugins configurable.
+
+
+1.2.3
+=====
+* Make page editor for extra fields configurable.
+
+
 1.2.2
 =====
 * Refactor ``TextLinkFormMixin`` from ``cmsplugin_cascade.link.cms_plugin`` into

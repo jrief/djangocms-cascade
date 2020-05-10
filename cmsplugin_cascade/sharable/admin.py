@@ -1,11 +1,10 @@
 from django.contrib import admin
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.html import format_html
 from entangled.forms import EntangledModelForm
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.plugin_base import CascadePluginMixinMetaclass
-from cmsplugin_cascade.widgets import JSONMultiWidget
 from cmsplugin_cascade.models import SharedGlossary, SharableCascadeElement
 
 

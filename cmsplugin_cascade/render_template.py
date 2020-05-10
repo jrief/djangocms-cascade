@@ -1,6 +1,6 @@
 from django.forms import MediaDefiningClass
 from django.forms.fields import ChoiceField
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.template.loader import get_template, TemplateDoesNotExist
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings

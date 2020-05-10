@@ -4,7 +4,7 @@ from functools import reduce
 import itertools
 from operator import add
 import re
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class BootstrapException(Exception):

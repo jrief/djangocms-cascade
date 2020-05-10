@@ -1,6 +1,6 @@
 from django.forms import widgets, BooleanField, CharField
 from django.forms.fields import IntegerField
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ungettext_lazy, gettext_lazy as _
 from django.utils.safestring import mark_safe 
 from django.utils.text import Truncator
 from django.utils.html import escape

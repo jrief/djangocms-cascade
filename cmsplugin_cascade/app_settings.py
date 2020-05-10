@@ -20,7 +20,7 @@ class AppSettings(object):
         from importlib import import_module
         from django.forms.fields import NumberInput
         from django.core.exceptions import ImproperlyConfigured
-        from django.utils.translation import ugettext_lazy
+        from django.utils.translation import gettext_lazy
         from cmsplugin_cascade.fields import (ColorField, SelectTextAlignField, SelectOverflowField, SizeField,
                                               BorderChoiceField)
 
@@ -39,14 +39,6 @@ class AppSettings(object):
 
             plugins_with_extra_fields = config['plugins_with_extra_fields']
             plugins_with_extra_fields.setdefault('SimpleWrapperPlugin', PluginExtraFieldsConfig())
-            plugins_with_extra_fields.setdefault('HorizontalRulePlugin', PluginExtraFieldsConfig(
-                inline_styles={
-                    'extra_fields:Border': ['border-top'],
-                    'extra_fields:Border Radius': ['border-radius'],
-                    'extra_units:Border Radius': 'px,rem',
-                },
-                allow_override=False,
-            ))
             for plugin, plugin_config in plugins_with_extra_fields.items():
                 if not isinstance(plugin_config, PluginExtraFieldsConfig):
                     msg = "CMSPLUGIN_CASCADE['plugins_with_extra_fields']['{}'] must instantiate a class of type PluginExtraFieldsConfig"
@@ -119,12 +111,12 @@ class AppSettings(object):
         config.setdefault('plugins_with_extra_render_templates', {})
         config['plugins_with_extra_render_templates'].setdefault(
             'TextLinkPlugin',
-            [('cascade/link/text-link.html', ugettext_lazy("default")),
-             ('cascade/link/text-link-linebreak.html', ugettext_lazy("with line break")),])
+            [('cascade/link/text-link.html', gettext_lazy("default")),
+             ('cascade/link/text-link-linebreak.html', gettext_lazy("with line break")),])
         config['plugins_with_extra_render_templates'].setdefault(
             'LeafletPlugin',
-            [('cascade/plugins/leaflet.html', ugettext_lazy("default")),
-             ('cascade/plugins/googlemap.html', ugettext_lazy("Google Map")),])
+            [('cascade/plugins/leaflet.html', gettext_lazy("default")),
+             ('cascade/plugins/googlemap.html', gettext_lazy("Google Map")),])
 
         config.setdefault('allow_plugin_hiding', False)
 
