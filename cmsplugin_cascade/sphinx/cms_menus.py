@@ -12,7 +12,7 @@ from menus.menu_pool import menu_pool
 class DocumentationMenu(CMSAttachMenu):
     name = _("Documentation Menu")  # give the menu a name this is required.
 
-    def get_nodes(self, request):
+    def get_nodes(self, request, root_page):
         """
         This method is used to build the menu tree.
         """
