@@ -27,13 +27,12 @@
 {% block sidebarsourcelink %}{% endblock %}
 
 {%- block content %}
-<div class="container">
-  <div class="row">
-    {%- block sidebar1 %}{{ bsidebar() }}{%- endblock %}
-    <div class="col-md-{{ bs_content_width }} content" role="main">
-      {% block body %}{% endblock %}
-    </div>
-  </div>
+<div class="row">
+	{%- block sidebar1 %}{%- endblock %}
+	<div class="col-md-{{ bs_content_width }} content" role="main">
+	{% block body %}{% endblock %}
+	</div>
+	{%- block sidebar2 %}{{ bsidebar() }}{%- endblock %}
 </div>
 {%- endblock %}
 
