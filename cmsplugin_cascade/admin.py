@@ -1,4 +1,5 @@
 from urllib.parse import urlparse
+
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.sites.shortcuts import get_current_site
@@ -7,6 +8,7 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.urls import reverse
 from django.utils.translation import get_language_from_request
+
 from cms.models.pagemodel import Page
 from cms.extensions import PageExtensionAdmin
 from cms.utils.page import get_page_from_path

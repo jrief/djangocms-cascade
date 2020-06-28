@@ -17,7 +17,6 @@ Dependency packaging to made easy with Pipenv or Poetry.
 
 .. code-block:: bash
 
-
 	$ git clone --depth=1 https://github.com/jrief/djangocms-cascade.git
 	$ cd djangocms-cascade/examples/
 	$ python -m venv .venv 
