@@ -1,5 +1,5 @@
 language: python
-      
+
 python:
   - 3.5
   - 3.6
@@ -20,6 +20,8 @@ matrix:
       env: DJANGOVER=django22 CMSVER=cms36
     - python: 3.8
       env: DJANGOVER=django22 CMSVER=cms37
+  allow_failures:
+      env: DJANGOVER=django30 CMSVER=cms37
 
 install:
   - pip install tox
