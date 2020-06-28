@@ -19,14 +19,8 @@ class SegmentationPluginTest(CascadeTestCase):
     def setUp(self):
         super(SegmentationPluginTest, self).setUp()
         UserModel = get_user_model()
-        try:
-            self.staff_user = UserModel.objects.get(username='staff')
-        except UserModel.DoesNotExist:
-            self.staff_user = self.get_staff_user_with_no_permissions()
-        try:
-            self.staff_user = UserModel.objects.get(username='staff')
-        except UserModel.DoesNotExist:
-            self.staff_user = self.get_staff_user_with_no_permissions()
+        self.admin_user = UserModel.objects.get(username='admin')
+        self.staff_user = UserModel.objects.get(username='staff')
 
     def test_plugin_context(self):
         # create container
@@ -64,16 +58,17 @@ class SegmentationPluginTest(CascadeTestCase):
                        text_model_staff, else_segment_model, text_model_anon]
         build_plugin_tree(plugin_list)
 
-        # render the plugins as admin user
+        # test for if-segment (render the plugins as admin user)
+        self.request.user = self.admin_user
         soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()), 'html.parser')
         self.assertHTMLEqual(soup.p.text, 'User is admin')
 
-        # render the plugins as staff user
+        # test for elif-segment (render the plugins as staff user)
         self.request.user = self.staff_user
         soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()), 'html.parser')
         self.assertHTMLEqual(soup.p.text, 'User is staff')
 
-        # render the plugins as anonymous user
+        # test for else-segment (render the plugins as anonymous user)
         self.request.user = AnonymousUser
         soup = BeautifulSoup(self.get_html(wrapper_model, self.get_request_context()), 'html.parser')
         self.assertHTMLEqual(soup.p.text, 'User is anonymous')
