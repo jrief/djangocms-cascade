@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.3.2
+=====
+* Fix migration ``0027_version_1.py`` to migrate links from version<1 upwards.
+
+
 1.3.1
 =====
 * Fix external requiremnts.
@@ -189,7 +194,7 @@ Release History
   whatever is parsable.
 * Add ``role="button"`` to the **ButtonPlugin**.
 * Optionally add CSS class ``stretched-link`` introduced in Bootstrap-4.3 to ``<a href="...">``.
-* Fix: We can not see the SVG file, if the image file existed and was not found, specifically 
+* Fix: We can not see the SVG file, if the image file existed and was not found, specifically
   when copying a Persisted clipboard.
 * Fix: If jsonfield is serialized as string, convert and reload as JSON.
 * Fix: **ImagePlugin** / **PicturePlugin** can't be copied by clipboard CMS.
