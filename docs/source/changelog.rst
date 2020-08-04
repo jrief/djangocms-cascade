@@ -2,6 +2,12 @@
 Release History
 ===============
 
+
+1.3.3
+=====
+* Fix: Deletion of markers in map plugin failed.
+
+
 1.3.2
 =====
 * Fix migration ``0027_version_1.py`` to migrate links from version<1 upwards.

@@ -1,14 +1,13 @@
 import json
 
-from django.forms.fields import CharField, BooleanField
 from django.forms import widgets
+from django.forms.fields import CharField, BooleanField
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin import StackedInline
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags, strip_spaces_between_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ngettext_lazy, gettext_lazy as _
-from entangled.forms import EntangledModelFormMixin, EntangledModelForm
 from filer.fields.image import FilerImageField, AdminImageFormField
 from filer.settings import settings as filer_settings
 from filer.utils.loader import load_model
@@ -17,6 +16,7 @@ from djangocms_text_ckeditor.fields import HTMLFormField
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import HiddenDictField, SizeField, MultiSizeField
+from cmsplugin_cascade.forms import CascadeModelForm, CascadeModelFormMixin
 from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.mixins import WithInlineElementsMixin
 from cmsplugin_cascade.models import InlineCascadeElement
@@ -32,7 +32,7 @@ class MarkerModelMixin:
         return mark_safe(json.dumps(self.glossary))
 
 
-class MarkerForm(EntangledModelForm):
+class MarkerForm(CascadeModelForm):
     title = CharField(
         label=_("Marker Title"),
         widget=widgets.TextInput(attrs={'size': 60}),
@@ -111,7 +111,7 @@ class MarkerInline(StackedInline):
     extra = 0
 
 
-class LeafletFormMixin(EntangledModelFormMixin):
+class LeafletFormMixin(CascadeModelFormMixin):
     map_width = SizeField(
         label=_("Map Width"),
         allowed_units=['px', '%'],
