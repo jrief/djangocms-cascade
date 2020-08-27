@@ -1,0 +1,10 @@
+{% with caption=instance.glossary.caption headers=instance.glossary.headers data=instance.glossary.data %}
+<table class="{{ instance.css_classes }}">
+	{% if caption %}<caption>{{ caption }}</caption>{% endif %}
+	<thead><tr>{% for th in headers %}
+		<th>{{ th }}</th>{% endfor %}
+	</tr></thead>
+	<tbody>{% for row in data %}
+		<tr>{% for index, col in row.items %}<td>{{ col }}</td>{% endfor %}</tr>{% endfor %}
+	</tbody>
+</table>{% endwith %}
