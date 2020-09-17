@@ -1,3 +1,0 @@
-Django>=1.11.15,<2.0
-Django-select2==5.11.1
--r base.txt

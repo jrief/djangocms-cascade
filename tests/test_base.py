@@ -2,15 +2,16 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.template.context import Context
+
 from cms.api import create_page
 from cms.test_utils.testcases import CMSTestCase
 from cmsplugin_cascade.models import CascadePage
 
-from djangocms_helper.base_test import BaseTestCase
 
-
-class CascadeTestCase(CMSTestCase, BaseTestCase):
+class CascadeTestCase(CMSTestCase):
     home_page = None
 
     def setUp(self):
@@ -24,6 +25,22 @@ class CascadeTestCase(CMSTestCase, BaseTestCase):
 
         self.request = self.get_request(self.home_page, 'en')
         self.admin_site = admin.sites.AdminSite()
+
+        UserModel = get_user_model()
+        UserModel.objects.get_or_create(
+            username='admin',
+            is_staff=True,
+            is_superuser=True,
+            is_active=True,
+            password=make_password('admin'),
+        )
+        UserModel.objects.get_or_create(
+            username='staff',
+            is_staff=True,
+            is_superuser=False,
+            is_active=True,
+            password=make_password('staff'),
+        )
 
     def get_request_context(self):
         context = {}

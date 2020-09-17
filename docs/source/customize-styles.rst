@@ -16,16 +16,40 @@ base.
 .. _Bootstrap themes: https://themes.getbootstrap.com/
 
 
+.. named-css-classes
+
+Configure a Cascade plugins to accept preconfigured CSS classes
+===============================================================
+
+If you want to allow, that the site editor can add additional CSS classes to Cascade plugins, then
+this can be done by a simple reconfiguration. Say we want to add the possibility to mark a link as
+`stretched link`_. This can be done by adding the CSS class ``stretched-link`` to the HTML-element
+``<a href="..." class="...">...</a>``. Since we don't neccessarily want to reimplement the
+**LinkPlugin** editor, just to add a simple checkbox allowing to add that CSS class, we can do that
+through a configuration settings:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {
+	    'LinkPlugin': NamedCSSClasses([
+	        ('stretched-link', "Use stretched Link"),
+	    ]),
+	}
+
+This will add a checkbox to the **LinkPlugin** editor, allowing the administrator to optionally
+add that CSS class to the HTML-element.
+
+
+.. _stretched link: https://getbootstrap.com/docs/4.4/utilities/stretched-link/
+
 .. extra-fields:
 
 Configure a Cascade plugins to accept extra fields
 ==================================================
 
-It is possible to configure each plugin to accept an additional ID tag, one ore more CSS classes or
-some inline styles. By default the plugins: BootstrapButtonPlugin, BootstrapRowPlugin,
-BootstrapJumbotronPlugin and the SimpleWrapperPlugin are eligible for accepting extra styles.
-Additionally, by default the user can override the margins of the HeadingPlugin and the
-HorizontalRulePlugin.
+If you want even more flexibility, is also possible to make those optional CSS classes configurable.
+Then in addition, each plugin may optionally accept an ID tag, one ore more CSS classes or some
+inline styles.
 
 To override these defaults, first assure that ``'cmsplugin_cascade.extra_fields'`` is part of
 your ``INSTALLED_APPS``. Then add a dictionary of Cascade plugins, which shall be extendible

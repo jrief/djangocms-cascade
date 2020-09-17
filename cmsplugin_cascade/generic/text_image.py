@@ -1,6 +1,6 @@
 from django.forms import widgets, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html_join
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import SizeField

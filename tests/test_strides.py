@@ -21,6 +21,7 @@ from .test_base import CascadeTestCase
 
 class StridePluginTest(CascadeTestCase):
     def setUp(self):
+        super().setUp()
         request = RequestFactory().get('/')
         self.context = RequestContext(request, {})
 

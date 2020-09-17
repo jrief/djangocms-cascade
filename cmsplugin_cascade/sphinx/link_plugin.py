@@ -3,7 +3,7 @@ import json
 import os
 from django.conf import settings
 from django.forms import fields
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
 from cms.models.pagemodel import Page
 from cmsplugin_cascade.link.plugin_base import LinkPluginBase

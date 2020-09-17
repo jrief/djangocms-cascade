@@ -1,14 +1,13 @@
 import json
 
-from django.forms.fields import CharField, BooleanField
 from django.forms import widgets
+from django.forms.fields import CharField, BooleanField
 from django.db.models.fields.related import ManyToOneRel
 from django.contrib.admin import StackedInline
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags, strip_spaces_between_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from entangled.forms import EntangledModelFormMixin, EntangledModelForm
+from django.utils.translation import ngettext_lazy, gettext_lazy as _
 from filer.fields.image import FilerImageField, AdminImageFormField
 from filer.settings import settings as filer_settings
 from filer.utils.loader import load_model
@@ -17,21 +16,23 @@ from djangocms_text_ckeditor.fields import HTMLFormField
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import HiddenDictField, SizeField, MultiSizeField
+from cmsplugin_cascade.forms import CascadeModelForm, CascadeModelFormMixin
+from cmsplugin_cascade.image import ImagePropertyMixin
+from cmsplugin_cascade.mixins import WithInlineElementsMixin
 from cmsplugin_cascade.models import InlineCascadeElement
 from cmsplugin_cascade.plugin_base import CascadePluginBase, create_proxy_model
-from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.utils import compute_aspect_ratio, get_image_size, parse_responsive_length
 
 Image = load_model(filer_settings.FILER_IMAGE_MODEL)
 
 
-class MarkerModelMixin(object):
+class MarkerModelMixin:
     @property
     def data(self):
         return mark_safe(json.dumps(self.glossary))
 
 
-class MarkerForm(EntangledModelForm):
+class MarkerForm(CascadeModelForm):
     title = CharField(
         label=_("Marker Title"),
         widget=widgets.TextInput(attrs={'size': 60}),
@@ -110,7 +111,7 @@ class MarkerInline(StackedInline):
     extra = 0
 
 
-class LeafletFormMixin(EntangledModelFormMixin):
+class LeafletFormMixin(CascadeModelFormMixin):
     map_width = SizeField(
         label=_("Map Width"),
         allowed_units=['px', '%'],
@@ -159,13 +160,13 @@ class LeafletFormMixin(EntangledModelFormMixin):
         return cleaned_data
 
 
-class LeafletModelMixin(object):
+class LeafletModelMixin:
     @property
     def map_position(self):
         return mark_safe(json.dumps(self.glossary.get('map_position', {})))
 
 
-class LeafletPlugin(CascadePluginBase):
+class LeafletPlugin(WithInlineElementsMixin, CascadePluginBase):
     name = _("Map")
     parent_classes = None
     require_parent = False
@@ -252,7 +253,7 @@ class LeafletPlugin(CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         num_elems = obj.inline_elements.count()
-        content = ungettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
+        content = ngettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
         return mark_safe(content)
 
     @classmethod
