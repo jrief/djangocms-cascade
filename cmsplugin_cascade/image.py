@@ -20,10 +20,10 @@ class ImageFormMixin(EntangledModelFormMixin):
         help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
     )
 
-    _image_properties = EntangledField()
+    image_properties = EntangledField()
 
     class Meta:
-        entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', '_image_properties']}
+        entangled_fields = {'glossary': ['image_file', 'image_title', 'alt_tag', 'image_properties']}
 
     def __init__(self, *args, **kwargs):
         if not getattr(self, 'require_image', True):
@@ -32,13 +32,21 @@ class ImageFormMixin(EntangledModelFormMixin):
 
     def clean_image_file(self):
         image_file = self.cleaned_data['image_file']
-        # _image_properties are just a cached representation, maybe useless
+        # image_properties are just a cached representation, maybe useless 
         if image_file.mime_type == 'image/svg+xml':
             image_file_orientation =  1
+            from reportlab.graphics import renderSVG
+            from svglib.svglib import svg2rlg
+            try:
+                drawing = svg2rlg(image_file.file)
+                image_file._width = drawing.width
+                image_file._height = drawing.height
+            except:
+                pass
         else:
             image_file_orientation = image_file.exif.get('Orientation', 1)
         if image_file:
-            self.cleaned_data['_image_properties'] = {
+            self.cleaned_data['image_properties'] = {
                 'width': image_file._width,
                 'height': image_file._height,
                 'exif_orientation': image_file_orientation,
@@ -66,3 +74,4 @@ class ImagePropertyMixin:
         # by saving this model after the full tree has been copied, ``<Any>ImagePlugin.sanitize_model()``
         # is invoked a second time with the now complete information of all column siblings.
         self.save(sanitize_only=True)
+    
