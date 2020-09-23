@@ -1,5 +1,7 @@
 {% load l10n static cascade_tags thumbnail %}
 {% localize off %}{% spaceless %}{% with css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+
+{% if instance.image.width %}
 <img {{ instance.html_tag_attributes }}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}
 {% if instance.image|is_valid_image %}
 	{% if sizes %} sizes="{{ sizes|join:', ' }}"{% endif %}
@@ -7,9 +9,22 @@
 		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=srcset.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
 	{% endfor %}"
 	{% thumbnail instance.image src.size crop=src.crop upscale=src.upscale subject_location=src.subject_location as thumb %}
-	src="{{ thumb.url|default:instance.image.url }}"{% if not sizes %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %}
+	src="{{ thumb.url|default:instance.image.url }}"{% if not sizes %} width="{{ thumbs.width }}" height="{{ thumbs.height }}"{% endif %}
 {% else %}
 	src="{% static 'cascade/fallback.svg' %}"
 {% endif %}
 />
+{% else %}
+<div>
+<svg viewBox="0 0 {{instance.glossary.image_properties.width }} {{ instance.glossary.image_properties.height  }}" 
+style=" max-width:{{ instance.glossary.image_properties.width  }}px; max-height:{{  instance.glossary.image_properties.height   }}px;  {% if inline_styles %} {{ inline_styles }} {% endif %}  background-color:{{ fallback_image.color }} !important;"
+{{ instance.html_tag_attributes }} {% if css_classes %} class='{{ css_classes|cut:"img-fluid"|cut:"img-thumbnail" }}' {% endif %}   
+{% if sizes %} sizes="{{ sizes|join:', ' }}"{% endif %}
+	src="{{  instance.image.url }}" {% if not sizes %}  width="{{ src.size.0 }}"  height="{{ src.size.1 }}"{% endif %}
+	xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
+	<image height="100%" width="100%"  xlink:href="{{ instance.image.url }}">
+</svg>
+</div>
+{% endif %}
+
 {% endwith %}{% endspaceless %}{% endlocalize %}
