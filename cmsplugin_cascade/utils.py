@@ -48,11 +48,12 @@ def compute_aspect_ratio(image):
 
 
 def compute_aspect_ratio_with_glossary(glossary):
-    if glossary['image']['exif_orientation'] > 4:
+    
+    if glossary['image_properties']['exif_orientation'] > 4:
         # image is rotated by 90 degrees, while keeping width and height
-        return float(glossary['image']['width']) / float(glossary['image']['height'])
+        return float(glossary['image_properties']['width']) / float(glossary['image_properties']['height'])
     else:
-        return float(glossary['image']['height']) / float(glossary['image']['width'])
+        return float(glossary['image_properties']['height']) / float(glossary['image_properties']['width'])
 
 
 def get_image_size(width, image_height, aspect_ratio):
