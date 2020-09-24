@@ -17,37 +17,35 @@
 
 
 {% else %}
-<div style="{% if 'mx-auto' in css_classes %} text-align: center; {% endif%} ">
 <svg 
-{% if src.crop %}
-        viewBox="{{instance.glossary.image_properties.bounds.left }}  {{  instance.glossary.image_properties.crop_bounds.bottom }} {{ instance.glossary.image_properties.crop_bounds.width }} {{ instance.glossary.image_properties.crop_bounds.height }}"
-
-
-        style="{% if not 'max-width' in inline_styles %}
-        {% if instance.glossary.image_width_fixed %} max-width:{{ src.size.0 }}px; max-height:{{ src.size.1 }}px; {% else  %}
-
-         max-width:{{  instance.glossary.image_properties.crop_bounds.width   }}px; max-height:{{  instance.glossary.image_properties.crop_bounds.height }}px;  {% endif %} {% endif %}  {% if inline_styles %} {{ inline_styles }} {% endif %}  background-color:{{ fallback_image.color }} !important;"
-
+    {% if src.crop %}
+        viewBox="{{image_properties.bounds.left }}  {{  image_properties.crop_bounds.bottom }} {{ image_properties.crop_bounds.width }}  {{ image_properties.crop_bounds.height }}"
     {%else %}
-        viewBox="0 0 {{ instance.glossary.image_properties.width }} {{ instance.glossary.image_properties.height}}"
+        viewBox="0 0 {{ image_properties.width }} {{ image_properties.height}}"
+    {% endif %}
+    style="
+    {% if not 'max-width' in inline_styles %}
+        {% if image_width_fixed %} 
+             max-width:{{ src.size.0 }}px; max-height:{{ src.size.1 }}px;
+        {% elif src.crop %}
+             max-width:{{ image_properties.crop_bounds.width }}px; max-height:{{  image_properties.crop_bounds.height }}px;
+        {% else %}
+             max-width:{{ image_properties.width  }}px; max-height:{{  image_properties.height }}px; 
+      {% endif %}
+    {% if inline_styles %} {{ inline_styles }} {% endif %}  background-color:{{ fallback_image.color }} !important;"
 
-        style="{% if not 'max-width' in inline_styles %} 
-        {% if instance.glossary.image_width_fixed  %} max-width:{{ src.size.O }}px; max-height:{{ src.size.1 }}px; {% else  %}{{ instance.glossary.image_properties.width  }}px; max-height:{{  instance.glossary.image_properties.height   }}px; {% endif %} {% endif %}
+      {% endif %}
 
-        {% if inline_styles %} {{ inline_styles }} {% endif %}  background-color:{{ fallback_image.color }} !important;"
-
-{% endif %} 
-
-{{ instance.html_tag_attributes }} {% if css_classes %} class='{{ css_classes|cut:"img-fluid"|cut:"img-thumbnail" }}' {% endif %}   
-{% if sizes %} sizes="{{ sizes|join:', ' }}"{% endif %}
-	src="{{  instance.image.url }}" 	
-	
-	 srcset="{% for key, srcset in srcsets.items %}
-		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=srcset.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
-	{% endfor %}"
-	xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
-	<image
-width="{{ instance.glossary.image_properties.width}}px" height="{{ instance.glossary.image_properties.height }}px"  xlink:href="{{ instance.image.url }}">
+    {{ instance.html_tag_attributes }} {% if css_classes %} class='{{ css_classes|cut:"img-fluid"|cut:"img-thumbnail" }}' {% endif %}   
+    {% if sizes %} sizes="{{ sizes|join:', ' }}"{% endif %}
+	    src="{{  instance.image.url }}" 	
+	    
+	     srcset="{% for key, srcset in srcsets.items %}
+		    {% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=srcset.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
+	    {% endfor %}"
+	    xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
+	    <image
+    width="{{ image_properties.width}}px"  	 height="{{ image_properties.height }}px"  xlink:href="{{ instance.image.url }}">
 </svg>
 </div>
 {% endif %}
