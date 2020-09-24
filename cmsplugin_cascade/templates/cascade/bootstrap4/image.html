@@ -17,12 +17,11 @@
 
 
 {% else %}
-
 <div style="{% if 'mx-auto' in css_classes %} text-align: center; {% endif%} ">
 <svg 
-
-{% if 'crop' in instance.glossary.resize_options %}
+{% if src.crop %}
         viewBox="{{instance.glossary.image_properties.bounds.left }}  {{  instance.glossary.image_properties.crop_bounds.bottom }} {{ instance.glossary.image_properties.crop_bounds.width }} {{ instance.glossary.image_properties.crop_bounds.height }}"
+
 
         style="{% if not 'max-width' in inline_styles %}
         {% if instance.glossary.image_width_fixed %} max-width:{{ src.size.0 }}px; max-height:{{ src.size.1 }}px; {% else  %}
@@ -48,7 +47,7 @@
 	{% endfor %}"
 	xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
 	<image
-	 height="{{ instance.glossary.image_properties.width }}px" width="{{ instance.glossary.image_properties.height}}px"  xlink:href="{{ instance.image.url }}">
+width="{{ instance.glossary.image_properties.width}}px" height="{{ instance.glossary.image_properties.height }}px"  xlink:href="{{ instance.image.url }}">
 </svg>
 </div>
 {% endif %}
