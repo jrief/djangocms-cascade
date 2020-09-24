@@ -9,22 +9,30 @@
 		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=srcset.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
 	{% endfor %}"
 	{% thumbnail instance.image src.size crop=src.crop upscale=src.upscale subject_location=src.subject_location as thumb %}
-	src="{{ thumb.url|default:instance.image.url }}"{% if not sizes %} width="{{ thumbs.width }}" height="{{ thumbs.height }}"{% endif %}
+	src="{{ thumb.url }}"{% if not sizes %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %}
 {% else %}
 	src="{% static 'cascade/fallback.svg' %}"
 {% endif %}
-/>
+ />
 {% else %}
 <div>
-<svg viewBox="0 0 {{instance.glossary.image_properties.width }} {{ instance.glossary.image_properties.height  }}" 
-style=" max-width:{{ instance.glossary.image_properties.width  }}px; max-height:{{  instance.glossary.image_properties.height   }}px;  {% if inline_styles %} {{ inline_styles }} {% endif %}  background-color:{{ fallback_image.color }} !important;"
+<svg 
+{% if 'crop' in instance.glossary.resize_options %}
+viewBox="{{instance.glossary.image_properties.bounds.left }}  {{  instance.glossary.image_properties.crop_bounds.bottom }} {{ instance.glossary.image_properties.crop_bounds.width }} {{ instance.glossary.image_properties.crop_bounds.height }}"
+{% else %}
+viewBox="0 0 {{ instance.glossary.image_properties.width }} {{ instance.glossary.image_properties.width }}"
+{% endif %} 
+style="{% if not 'max-width' in inline_styles %} max-width:{{ instance.glossary.image_properties.width  }}px; max-height:{{  instance.glossary.image_properties.height   }}px;  {% endif %}  {% if inline_styles %} {{ inline_styles }} {% endif %}  background-color:{{ fallback_image.color }} !important;"
 {{ instance.html_tag_attributes }} {% if css_classes %} class='{{ css_classes|cut:"img-fluid"|cut:"img-thumbnail" }}' {% endif %}   
 {% if sizes %} sizes="{{ sizes|join:', ' }}"{% endif %}
-	src="{{  instance.image.url }}" {% if not sizes %}  width="{{ src.size.0 }}"  height="{{ src.size.1 }}"{% endif %}
+	src="{{  instance.image.url }}" 	srcset="{% for key, srcset in srcsets.items %}
+		{% thumbnail instance.image srcset.size crop=srcset.crop upscale=srcset.upscale subject_location=srcset.subject_location as thumb %}{{ thumb.url }} {{ key }}{% if not forloop.last %},{% endif %}
+	{% endfor %}"
 	xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
-	<image height="100%" width="100%"  xlink:href="{{ instance.image.url }}">
+	<image height="{{ instance.glossary.image_properties.height }}" width="{{instance.glossary.image_properties.width}}" 
+	 height="100%" width="100%"  xlink:href="{{ instance.image.url }}">
 </svg>
+{% if not sizes %}  width="{{ src.size.0 }}"  height="{{ src.size.1 }}"{% endif %}
 </div>
 {% endif %}
-
 {% endwith %}{% endspaceless %}{% endlocalize %}
