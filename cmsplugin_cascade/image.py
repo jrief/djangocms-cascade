@@ -29,28 +29,33 @@ class ImageFormMixin(EntangledModelFormMixin):
         if not getattr(self, 'require_image', True):
             self.base_fields['image_file'].required = False
         super().__init__(*args, **kwargs)
-
     def clean_image_file(self):
         image_file = self.cleaned_data['image_file']
-        # image_properties are just a cached representation, maybe useless 
+        image_properties = self.cleaned_data['image_properties'] = {}
+        # image_properties are just a cached representation, maybe useless   
+        
         if image_file.mime_type == 'image/svg+xml':
             image_file_orientation =  1
-            from reportlab.graphics import renderSVG
+            #from reportlab.graphics import renderSVG
             from svglib.svglib import svg2rlg
-            try:
-                drawing = svg2rlg(image_file.file)
-                image_file._width = drawing.width
-                image_file._height = drawing.height
-            except:
-                pass
-        else:
-            image_file_orientation = image_file.exif.get('Orientation', 1)
-        if image_file:
-            self.cleaned_data['image_properties'] = {
+            drawing = svg2rlg(image_file.file)
+            left, bottom, right, top =  drawing.getBounds()
+            image_file._width = drawing.width
+            image_file._height = drawing.height
+            image_properties.update(   {
                 'width': image_file._width,
                 'height': image_file._height,
                 'exif_orientation': image_file_orientation,
-            }
+                'bounds': { 'left':str(left), 'bottom':str(bottom), 'right':str(right), 'top':str(top)},
+                'crop_bounds': { 'width':str(abs(left-right)), 'height':str(abs(bottom-top)) ,'bottom':str(abs(top-image_file._height) ) },
+            } )
+        else:
+            image_file_orientation = image_file.exif.get('Orientation', 1)
+            image_properties.update( {
+                'width': image_file._width,
+                'height': image_file._height,
+                'exif_orientation': image_file_orientation,
+            })
         return image_file
 
 
