@@ -32,7 +32,6 @@ style="{% if not 'max-width' in inline_styles %} max-width:{{ instance.glossary.
 	<image height="{{ instance.glossary.image_properties.height }}" width="{{instance.glossary.image_properties.width}}" 
 	 height="100%" width="100%"  xlink:href="{{ instance.image.url }}">
 </svg>
-{% if not sizes %}  width="{{ src.size.0 }}"  height="{{ src.size.1 }}"{% endif %}
 </div>
 {% endif %}
 {% endwith %}{% endspaceless %}{% endlocalize %}
