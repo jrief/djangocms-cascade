@@ -1,5 +1,6 @@
 {% load l10n static cascade_tags thumbnail %}
-{% localize off %}{% spaceless %}{% with css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+{% localize off %}{% spaceless %}{% with css_classes=instance.css_classes inline_styles=instance.inline_styles
+image_properties=instance.glossary.image_properties image_width_fixed=instance.glossary.image_width_fixed %}
 
 {% if instance.image.width %}
 <img {{ instance.html_tag_attributes }}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}
