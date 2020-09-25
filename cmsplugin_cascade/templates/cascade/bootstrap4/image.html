@@ -16,9 +16,13 @@ image_properties=instance.glossary.image_properties image_width_fixed=instance.g
 {% endif %}
  />
 
-
 {% else %}
-<div style="{% if 'mx-auto' in css_classes %} text-align: center; {% endif %} ">
+<div class="{% if 'mx-auto' in css_classes %} mx-auto{% endif %}" style="
+{% if src.crop %}
+     width:{{ image_properties.crop_bounds.width }}px;
+{%else %}
+     width:{{ image_properties.width  }}px;
+{% endif %}">
     <svg 
         {% if src.crop %}
             viewBox="{{image_properties.bounds.left }}  {{  image_properties.crop_bounds.bottom }} {{ image_properties.crop_bounds.width }}  {{ image_properties.crop_bounds.height }}"
