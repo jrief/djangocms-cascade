@@ -3,6 +3,12 @@ Release History
 ===============
 
 
+1.3.4
+=====
+* Fix: Internal Server error raised when deleting content of link to CMS page's form field.
+* When testing external links, use request with `User-Agent: Django-CMS-Cascade` instead of the default.
+
+
 1.3.3
 =====
 * Fix: Deletion of markers in map plugin failed.
