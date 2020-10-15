@@ -11,16 +11,15 @@ env:
   - DJANGOVER=django22 CMSVER=cms36
   - DJANGOVER=django22 CMSVER=cms37
   - DJANGOVER=django30 CMSVER=cms37
-  - DJANGOVER=django30 CMSVER=cms38
 
 matrix:
-  exclude:
+  allow_failures:
     - python: 3.8
       env: DJANGOVER=django21 CMSVER=cms36
     - python: 3.8
       env: DJANGOVER=django22 CMSVER=cms36
     - python: 3.8
-      env: DJANGOVER=django22 CMSVER=cms37
+      env: DJANGOVER=django30 CMSVER=cms37
 
 install:
   - pip install tox
