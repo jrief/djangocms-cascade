@@ -32,7 +32,7 @@ setup(
     install_requires=[
         'django>=2.1,<3.1',
         'django-classy-tags>=1.0',
-        'django-cms>=3.5,<4',
+        'django-cms>=3.5',
         'django-entangled',
         'djangocms-text-ckeditor>=3.7',
         'jsonfield',
