@@ -33,7 +33,8 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def get_urls(self):
         urls = [
-            url(r'^get_page_sections/$', lambda: None, name='get_page_sections'),  # just to reverse
+            url(r'^get_page_sections/$', lambda _: JsonResponse({'element_ids': []}),
+                name='get_page_sections'),  # just to reverse
             url(r'^get_page_sections/(?P<page_pk>\d+)$',
                 self.admin_site.admin_view(self.get_page_sections)),
             url(r'^published_pages/$', self.get_published_pagelist, name='get_published_pagelist'),
