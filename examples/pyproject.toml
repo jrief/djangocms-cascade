@@ -9,7 +9,9 @@ license = "MIT"
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
-django = "<2.3"
+django = "*"
+django-cms = { git = "https://github.com/django-cms/django-cms", branch="release/4.0.x" }
+djangocms-alias =  { git = "https://github.com/divio/djangocms-alias", branch="master" }
 djangocms-cascade =  "*"
 django-compressor = "*"
 django-filer =  "*"

@@ -12,6 +12,7 @@ from django_select2.forms import HeavySelect2Widget
 
 from cms.utils import get_current_site
 from cms.models import Page
+from cmsplugin_cascade.utils_helpers import get_qs_pages_public
 from entangled.forms import EntangledModelFormMixin, get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
@@ -54,7 +55,7 @@ class LinkSearchField(ModelChoiceField):
     widget = PageSelect2Widget()
 
     def __init__(self, *args, **kwargs):
-        queryset = Page.objects.public()
+        queryset = get_qs_pages_public()
         try:
             queryset = queryset.published().on_site(get_current_site())
         except:

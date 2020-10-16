@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'cmsplugin_cascade.sharable',
     'cmsplugin_cascade.segmentation',
     'cms',
+    'djangocms_alias',
     'cms_bootstrap',
     'adminsortable2',
     'menus',
@@ -280,6 +281,8 @@ SASS_PROCESSOR_ROOT = STATIC_ROOT
 
 # to access files such as fonts via staticfiles finders
 NODE_MODULES_URL = STATIC_URL + 'node_modules/'
+
+VERSIONING_ALIAS_MODELS_ENABLED = False
 
 try:
     from .private_settings import *
