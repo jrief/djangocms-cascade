@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.translation import get_language_from_request
 
 from cms.extensions import PageExtensionAdmin
-from cmsplugin_cascade.utils_helpers import  get_page_from_path, get_matching_published_pages
+from cmsplugin_cascade.utils_helpers import get_page_from_path, get_matching_published_pages
 from cmsplugin_cascade.models import CascadePage, IconFont
 from cmsplugin_cascade.link.forms import format_page_link
 
