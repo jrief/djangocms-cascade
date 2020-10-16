@@ -201,7 +201,8 @@ class LinkForm(EntangledModelFormMixin):
             ext_url = cleaned_data.get('ext_url')
             if ext_url:
                 try:
-                    response = requests.head(ext_url, allow_redirects=True)
+                    request_headers = {'User-Agent': 'Django-CMS-Cascade'}
+                    response = requests.head(ext_url, allow_redirects=True, headers=request_headers)
                     if response.status_code != 200:
                         error = ValidationError(_("No external page found on {url}.").format(url=ext_url))
                 except Exception as exc:
