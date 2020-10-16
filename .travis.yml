@@ -11,6 +11,7 @@ env:
   - DJANGOVER=django22 CMSVER=cms36
   - DJANGOVER=django22 CMSVER=cms37
   - DJANGOVER=django30 CMSVER=cms37
+  - DJANGOVER=django22 CMSVER=cms40
   - DJANGOVER=django30 CMSVER=cms40
 
 matrix:
@@ -21,8 +22,6 @@ matrix:
       env: DJANGOVER=django22 CMSVER=cms36
     - python: 3.8
       env: DJANGOVER=django30 CMSVER=cms37
-    - python: 3.8
-      env: DJANGOVER=django30 CMSVER=cms40
 
 install:
   - pip install tox
