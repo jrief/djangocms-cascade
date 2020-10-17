@@ -46,6 +46,10 @@ def get_qs_pages_public():
     if CMS_:
         queryset = Page.objects.public()
     else:
-        name_page_public = [ str(page_url.page) for page_url  in CMSSitemap().items()[:15]]
-        queryset = Page.objects.filter(pagecontent_set__title__in=name_page_public)
+        try:
+            name_page_public = [str(page_url.page) for page_url in CMSSitemap().items()[:15]]
+            queryset = Page.objects.filter(pagecontent_set__title__in=name_page_public)
+        except:
+            # intial empty db 
+            queryset = Page.objects
     return queryset
