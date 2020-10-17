@@ -2,7 +2,8 @@ import pytest
 from django.template.context import RequestContext
 from cms.api import add_plugin
 from cms.plugin_rendering import ContentRenderer
-from cms.utils.plugins import build_plugin_tree
+from django.utils.html import strip_spaces_between_tags, strip_tags
+from cmsplugin_cascade.utils_helpers import get_plugins_as_layered_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.accordion import BootstrapAccordionGroupPlugin, BootstrapAccordionPlugin
 
@@ -45,7 +46,7 @@ def test_edit_accordion_group(rf, admin_site, bootstrap_accordion):
     assert group_model.glossary['body_padding'] is True
 
     # render the plugin
-    build_plugin_tree([accordion_model, group_model])
+    get_plugins_as_layered_tree([accordion_model, group_model])
     context = RequestContext(request)
     content_renderer = ContentRenderer(request)
     html = content_renderer.render_plugin(accordion_model, context).strip()

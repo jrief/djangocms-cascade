@@ -53,3 +53,12 @@ def get_qs_pages_public():
             # intial empty db 
             queryset = Page.objects
     return queryset
+
+def get_plugins_as_layered_tree(plugins):
+    if CMS_:
+       from cms.utils.plugins import build_plugin_tree
+       return build_plugin_tree(plugins)
+    else:
+       from cms.utils.plugins import get_plugins_as_layered_tree as _get_plugins_as_layered_tree
+       return _get_plugins_as_layered_tree(plugins)
+

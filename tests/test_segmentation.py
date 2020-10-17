@@ -7,7 +7,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 
 from cms.api import add_plugin
-from cms.utils.plugins import build_plugin_tree
+from cmsplugin_cascade.utils_helpers import get_plugins_as_layered_tree
 from djangocms_text_ckeditor.cms_plugins import TextPlugin
 from cmsplugin_cascade.generic.simple_wrapper import SimpleWrapperPlugin
 from cmsplugin_cascade.segmentation.cms_plugins import SegmentPlugin
@@ -56,7 +56,7 @@ class SegmentationPluginTest(CascadeTestCase):
         # build the DOM
         plugin_list = [wrapper_model, if_segment_model, text_model_admin, elif_segment_model,
                        text_model_staff, else_segment_model, text_model_anon]
-        build_plugin_tree(plugin_list)
+        get_plugins_as_layered_tree(plugin_list)
 
         # test for if-segment (render the plugins as admin user)
         self.request.user = self.admin_user

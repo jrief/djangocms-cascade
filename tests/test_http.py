@@ -6,9 +6,13 @@ from django.contrib import admin
 from django.test.utils import override_settings
 from cms.models import Page
 from cms.utils.compat.dj import is_installed
-from cms.test_utils.testcases import CMSTestCase, URL_CMS_PAGE_ADD, URL_CMS_PLUGIN_ADD
+from cms.test_utils.testcases import CMSTestCase, URL_CMS_PAGE
+from urllib.parse import urljoin
+
 import pytest
 
+URL_CMS_PAGE_ADD = urljoin(URL_CMS_PAGE, "add/")
+URL_CMS_PLUGIN_ADD = urljoin(URL_CMS_PAGE, "add-plugin/")
 APPS_WITHOUT_REVERSION = [app for app in settings.INSTALLED_APPS if app != 'reversion']
 
 
