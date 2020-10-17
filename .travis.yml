@@ -25,14 +25,6 @@ matrix:
     - python: 3.8
       env: DJANGOVER=django30 CMSVER=cms37
 
-before_install:
-  - sudo apt-get autoremove sqlite3
-  - sudo apt-get install python-software-properties
-  - sudo apt-add-repository -y ppa:travis-ci/sqlite3
-  - sudo apt-get -y update
-  - sudo apt-cache show sqlite3
-  - sudo apt-get install sqlite3=3.7.15.1-1~travis1
-  
 install:
   - pip install tox
 
