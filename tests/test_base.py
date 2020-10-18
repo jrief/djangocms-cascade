@@ -23,7 +23,7 @@ class CascadeTestCase(CMSTestCase):
         if CMS_:
             self.placeholder = self.home_page.placeholders.get(slot='Main Content')
         else:
-            self.placeholder = self.home_page.get_placeholders(self.home_page.language).get(slot='Main Content')
+            self.placeholder = self.home_page.get_placeholders(self.home_page.languages).get(slot='Main Content')
         self.request = self.get_request(self.home_page, 'en')
         self.admin_site = admin.sites.AdminSite()
 

@@ -29,7 +29,7 @@ def cms_placeholder(cms_page):
     if CMS_:
         placeholder = cms_page.placeholders.get(slot='Main Content')
     else:
-        placeholder = cms_page.get_placeholders(cms_page.language).get(slot='Main Content')
+        placeholder = cms_page.get_placeholders(cms_page.languages).get(slot='Main Content')s
     return placeholder
 
 
