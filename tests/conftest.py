@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from cms.api import create_page
 from cmsplugin_cascade.models import CascadePage
-
+from cmsplugin_cascade.utils_helpers import CMS_
 
 @pytest.fixture
 def admin_site():
@@ -26,7 +26,10 @@ def cms_page():
 @pytest.fixture
 @pytest.mark.django_db
 def cms_placeholder(cms_page):
-    placeholder = cms_page.placeholders.get(slot='Main Content')
+    if CMS_:
+        placeholder = cms_page.placeholders.get(slot='Main Content')
+    else:
+        placeholder = cms_page.get_placeholders(cms_page.language).get(slot='Main Content')
     return placeholder
 
 
