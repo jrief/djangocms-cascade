@@ -50,7 +50,7 @@ def get_qs_pages_public():
             name_page_public = [str(page_url.page) for page_url in CMSSitemap().items()[:15]]
             queryset = Page.objects.filter(pagecontent_set__title__in=name_page_public)
         except:
-            # intial empty db 
+            #intial empty db 
             queryset = Page.objects
     return queryset
 
@@ -62,3 +62,29 @@ def get_plugins_as_layered_tree(plugins):
        from cms.utils.plugins import get_plugins_as_layered_tree as _get_plugins_as_layered_tree
        return _get_plugins_as_layered_tree(plugins)
 
+def get_ancestor_container(plugin):
+    if plugin.parent:
+        while plugin :
+            if str(plugin.plugin_type) in ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin']:
+                return plugin
+            elif plugin.parent:
+                plugin = plugin.parent
+    else:
+        return plugin
+
+def get_prev_sibling(plugin):
+    if CMS_:
+        ordered_siblings = plugin.get_siblings().filter(placeholder=plugin.placeholder).order_by('position')
+        pos = list(ordered_siblings).index(plugin.cmsplugin_ptr)
+        if pos > 0:
+            prev_sibling = ordered_siblings[pos - 1]
+            return prev_sibling.get_bound_plugin()
+    else:
+        if plugin.parent:
+            prev_sibling = plugin.parent.get_children().order_by('position').filter(id__lt=plugin.id).last()
+            if prev_sibling:
+                return prev_sibling.get_bound_plugin()
+        else:
+            prev_sibling = plugin.placeholder.get_plugin_tree_order(language=obj.language).filter(id__lt=plugin.id).last()
+            if prev_sibling:
+                return prev_sibling.get_bound_plugin()

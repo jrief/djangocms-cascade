@@ -8,6 +8,7 @@ from entangled.forms import EntangledModelFormMixin
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.compat.dj import is_installed
 from cmsplugin_cascade import app_settings
+from cmsplugin_cascade.utils_helpers import get_prev_sibling
 from .mixins import CascadePluginMixin
 from .models_base import CascadeModelBase
 from .models import CascadeElement, SharableCascadeElement
@@ -363,11 +364,9 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         Return the previous plugin instance for the given object.
         This differs from `obj.get_prev_sibling()` which returns an unsorted sibling.
         """
-        ordered_siblings = obj.get_siblings().filter(placeholder=obj.placeholder).order_by('position')
-        pos = list(ordered_siblings).index(obj.cmsplugin_ptr)
-        if pos > 0:
-            prev_sibling = ordered_siblings[pos - 1]
-            return prev_sibling.get_bound_plugin()
+        prev_sibling = get_prev_sibling(obj)
+        if prev_sibling:
+          return prev_sibling.get_bound_plugin()
 
     def get_next_instance(self, obj):
         """
@@ -405,3 +404,4 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         if edit_mode:
             edit_mode = placeholder.has_change_permission(request.user)
         return edit_mode
+

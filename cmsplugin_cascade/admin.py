@@ -77,7 +77,7 @@ class CascadePageAdmin(PageExtensionAdmin):
                 return JsonResponse(data)
 
         # otherwise resolve by search term
-        matching_published_pages = get_matching_published_pages()
+        matching_published_pages = get_matching_published_pages(query_term,language)
 
         for page in matching_published_pages:
             data['results'].append(self.get_result_set(language, page))

@@ -10,9 +10,9 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.utils_helpers import CMS_, get_ancestor_container
 from .plugin_base import BootstrapPluginBase
 from . import grid
-
 
 def get_widget_choices():
     breakpoints = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
@@ -195,16 +195,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[1].format(bs4_breakpoints[first].min)
             else:
                 return phrases[2]
-            
-        if 'parent' in self._cms_initial_attributes:
-            container=self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').last().get_bound_plugin()
-        else:
-            containers=obj.get_ancestors().filter(plugin_type='BootstrapContainerPlugin')
-            if containers:
-                container=containers.order_by('depth').last().get_bound_plugin()
-            else:
-                jumbotrons=obj.get_ancestors().filter(plugin_type='BootstrapJumbotronPlugin')
-                container=jumbotrons.order_by('depth').last().get_bound_plugin()
+        container = get_ancestor_container(obj).get_bound_plugin()
         breakpoints = container.glossary['breakpoints']
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}

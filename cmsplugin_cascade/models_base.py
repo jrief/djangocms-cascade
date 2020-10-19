@@ -6,7 +6,7 @@ from jsonfield.fields import JSONField
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cms.utils.placeholder import get_placeholder_conf
-
+from cmsplugin_cascade.utils_helpers import CMS_
 
 class CascadeModelBase(CMSPlugin):
     """
@@ -60,9 +60,15 @@ class CascadeModelBase(CMSPlugin):
             except model.DoesNotExist:
                 continue
         # in case our plugin is the child of a TextPlugin, return its grandparent
-        parent = self.get_parent()
+        if CMS_:
+            parent = self.get_parent()
+        else:
+            parent = self.parent
         if parent and parent.plugin_type == 'TextPlugin':
-            grandparent_id = self.get_parent().parent_id
+            if CMS_:
+                grandparent_id = self.get_parent().parent_id
+            else:
+                grandparent_id = self.parent.parent_id
             for model in CascadeModelBase._get_cascade_elements():
                 try:
                     return model.objects.get(id=grandparent_id)
@@ -143,3 +149,4 @@ class CascadeModelBase(CMSPlugin):
                        if issubclass(p.model, cls)])
             cls._cached_cascade_elements = cce
         return cls._cached_cascade_elements
+
