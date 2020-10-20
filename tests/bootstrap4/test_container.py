@@ -27,7 +27,6 @@ def test_edit_bootstrap_container(rf, bootstrap_container):
     assert 'fluid' in container_model.glossary
     assert str(container_model) == "for Landscape Phones, Tablets"
 
-
 @pytest.mark.django_db
 def test_edit_bootstrap_row(rf, bootstrap_row):
     row_plugin, row_model = bootstrap_row
@@ -42,7 +41,7 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     plugin_list = [container_model, row_model]
 
     # we now should have three columns attached to the row
-    assert row_model.get_descendant_count() == 3
+    assert len(list(row_model.get_descendants())) == 3
     for cms_plugin in row_model.get_descendants():
         column_model, column_plugin = cms_plugin.get_plugin_instance()
         assert isinstance(column_model, CascadeElement)

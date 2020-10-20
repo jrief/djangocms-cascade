@@ -35,7 +35,7 @@ def bootstrap_accordion(rf, admin_site, bootstrap_column):
 def test_edit_accordion_group(rf, admin_site, bootstrap_accordion):
     request = rf.get('/')
     accordion_plugin, accordion_model = bootstrap_accordion
-    first_group = accordion_model.get_first_child()
+    first_group = accordion_model.get_children().first()
     group_model, group_plugin = first_group.get_plugin_instance(admin_site)
     data = {'heading': "Hello", 'body_padding': 'on'}
     ModelForm = group_plugin.get_form(request, group_model)
