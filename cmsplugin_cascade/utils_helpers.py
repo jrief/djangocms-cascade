@@ -62,10 +62,15 @@ def get_plugins_as_layered_tree(plugins):
        from cms.utils.plugins import get_plugins_as_layered_tree as _get_plugins_as_layered_tree
        return _get_plugins_as_layered_tree(plugins)
 
-def get_ancestor_container(plugin):
+def get_ancestor(cls, plugin, list_plugins_name):
+    if hasattr(cls, '_cms_initial_attributes') and 'parent' in cls._cms_initial_attributes \
+                                                   and cls._cms_initial_attributes['parent']:
+        plugin = cls
+        plugin.plugin_type = cls._cms_initial_attributes['plugin_type']
+        plugin.parent = cls._cms_initial_attributes['parent']
     if plugin.parent:
         while plugin :
-            if str(plugin.plugin_type) in ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin']:
+            if str(plugin.plugin_type) in list_plugins_name:
                 return plugin
             elif plugin.parent:
                 plugin = plugin.parent
