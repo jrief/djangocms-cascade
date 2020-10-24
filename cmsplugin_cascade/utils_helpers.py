@@ -66,16 +66,17 @@ def get_ancestor(cls, plugin, list_plugins_name):
     if hasattr(cls, '_cms_initial_attributes') and 'parent' in cls._cms_initial_attributes \
                                                    and cls._cms_initial_attributes['parent']:
         plugin = cls
-        plugin.plugin_type = cls._cms_initial_attributes['plugin_type']
+        plugin.plugin_type = ['plugin_type']
         plugin.parent = cls._cms_initial_attributes['parent']
-    if plugin.parent:
-        while plugin :
-            if str(plugin.plugin_type) in list_plugins_name:
-                return plugin
-            elif plugin.parent:
-                plugin = plugin.parent
-    else:
-        return plugin
+        plugin.postion =  cls._cms_initial_attributes['position']
+        plugin.placeholder = cls._cms_initial_attributes['placeholder']
+        plugin.language = cls._cms_initial_attributes['language']
+
+    ancestor_plugin = plugin.placeholder.get_plugins().filter(
+                             plugin_type__in=list_plugins_name,
+                             position__range=[0, plugin.position]).order_by('position')[0]
+    return ancestor_plugin
+
 
 def get_prev_sibling(plugin):
     if CMS_:
