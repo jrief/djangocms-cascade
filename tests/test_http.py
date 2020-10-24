@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import json
+from urllib.parse import urljoin
 from django.conf import settings
 from django.contrib import admin
 from django.test.utils import override_settings
 from cms.models import Page
 from cms.utils.compat.dj import is_installed
 from cms.test_utils.testcases import CMSTestCase, URL_CMS_PAGE
-from urllib.parse import urljoin
 
 import pytest
 
