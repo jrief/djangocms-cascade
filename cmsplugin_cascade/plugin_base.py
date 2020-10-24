@@ -273,7 +273,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         return SafeText()
 
     @classmethod
-    def sanitize_model(cls, instance):
+    def sanitize_model(cls, instance,sanitize_related_sibling=[]):
         """
         This method is called, before the model is written to the database. It can be overloaded
         to sanitize the current models, in case a parent model changed in a way, which might
@@ -284,6 +284,11 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         if instance.glossary is None:
             instance.glossary = {}
         return False
+
+    @classmethod
+    def sanitize_related_siblings_model(cls, instance):
+        return False
+
 
     @classmethod
     def get_data_representation(cls, instance):
