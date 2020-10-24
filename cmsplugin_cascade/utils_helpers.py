@@ -52,7 +52,8 @@ def get_qs_pages_public():
         try:
             name_page_public = [str(page_url.page) for page_url in CMSSitemap().items()[:15]]
             queryset = Page.objects.filter(pagecontent_set__title__in=name_page_public)
-        except OperationalError:
+        except django.db.OperationalError:
+            #init db migrations
             queryset = Page.objects
     return queryset
 
