@@ -9,8 +9,8 @@ CMS_ = LooseVersion(CMS_VERSION) < LooseVersion('4.0')
 
 def get_page_from_path(site, path):
     if CMS_:
-        from cms.utils.page import get_page_from_path
-        page = get_page_from_path(site, path)
+        from cms.utils.page import get_page_from_path as get_page_from_path_CMS_
+        page = get_page_from_path_CMS_(site, path)
     else:
         from cms.models import PageUrl
         page_urls = (
@@ -65,32 +65,28 @@ def get_plugins_as_layered_tree(plugins):
 def get_ancestor(cls, plugin, list_plugins_name):
     if hasattr(cls, '_cms_initial_attributes') and 'parent' in cls._cms_initial_attributes \
                                                    and cls._cms_initial_attributes['parent']:
-        plugin = cls
-        plugin.plugin_type = ['plugin_type']
-        plugin.parent = cls._cms_initial_attributes['parent']
-        plugin.postion =  cls._cms_initial_attributes['position']
-        plugin.placeholder = cls._cms_initial_attributes['placeholder']
-        plugin.language = cls._cms_initial_attributes['language']
-
-    ancestor_plugin = plugin.placeholder.get_plugins().filter(
+        ancestor_plugin = self._cms_initial_attributes['placeholder'].get_plugins().filter(
+                 plugin_type__in=list_plugins_name,
+                 position__range=[0, cls._cms_initial_attributes['position']]).order_by('position')[0]
+    else:
+        ancestor_plugin = plugin.placeholder.get_plugins().filter(
                              plugin_type__in=list_plugins_name,
                              position__range=[0, plugin.position]).order_by('position')[0]
     return ancestor_plugin
 
 
 def get_prev_sibling(plugin):
+    prev_sibling = None
     if CMS_:
         ordered_siblings = plugin.get_siblings().filter(placeholder=plugin.placeholder).order_by('position')
         pos = list(ordered_siblings).index(plugin.cmsplugin_ptr)
         if pos > 0:
             prev_sibling = ordered_siblings[pos - 1]
-            return prev_sibling.get_bound_plugin()
     else:
         if plugin.parent:
             prev_sibling = plugin.parent.get_children().order_by('position').filter(id__lt=plugin.id).last()
-            if prev_sibling:
-                return prev_sibling.get_bound_plugin()
         else:
-            prev_sibling = plugin.placeholder.get_plugin_tree_order(language=obj.language).filter(id__lt=plugin.id).last()
-            if prev_sibling:
-                return prev_sibling.get_bound_plugin()
+            prev_sibling = plugin.placeholder.get_plugin_tree_order(language=plugin.language).filter(id__lt=plugin.id).last()
+    if prev_sibling:
+        prev_sibling = prev_sibling.get_bound_plugin()
+    return prev_sibling
