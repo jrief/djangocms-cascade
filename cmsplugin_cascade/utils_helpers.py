@@ -7,6 +7,7 @@ from cms.sitemaps import CMSSitemap
 
 CMS_ = LooseVersion(CMS_VERSION) < LooseVersion('4.0')
 
+
 def get_page_from_path(site, path):
     if CMS_:
         from cms.utils.page import get_page_from_path as get_page_from_path_CMS_
@@ -23,6 +24,7 @@ def get_page_from_path(site, path):
         page_urls = list(page_urls)
         page = page_urls.page
     return page
+
 
 def get_matching_published_pages(query_term, language):
     # otherwise resolve by search term
@@ -42,6 +44,7 @@ def get_matching_published_pages(query_term, language):
         ).distinct().order_by('pagecontent_set__title').iterator()
     return matching_published_pages
 
+
 def get_qs_pages_public():
     if CMS_:
         queryset = Page.objects.public()
@@ -49,10 +52,11 @@ def get_qs_pages_public():
         try:
             name_page_public = [str(page_url.page) for page_url in CMSSitemap().items()[:15]]
             queryset = Page.objects.filter(pagecontent_set__title__in=name_page_public)
-        except:
+        except Page.DoesNotExist:
             #intial empty db 
             queryset = Page.objects
     return queryset
+
 
 def get_plugins_as_layered_tree(plugins):
     if CMS_:
@@ -62,12 +66,12 @@ def get_plugins_as_layered_tree(plugins):
        from cms.utils.plugins import get_plugins_as_layered_tree as _get_plugins_as_layered_tree
        return _get_plugins_as_layered_tree(plugins)
 
-def get_ancestor(cls, plugin, list_plugins_name):
-    if hasattr(cls, '_cms_initial_attributes') and 'parent' in cls._cms_initial_attributes \
-                                                   and cls._cms_initial_attributes['parent']:
-        ancestor_plugin = cls._cms_initial_attributes['placeholder'].get_plugins().filter(
+
+def get_ancestor(list_plugins_name, plugin=False, _cms_initial_attributes=False):
+    if _cms_initial_attributes and  'parent' in _cms_initial_attributes and _cms_initial_attributes['parent']:
+        ancestor_plugin = _cms_initial_attributes['placeholder'].get_plugins().filter(
                  plugin_type__in=list_plugins_name,
-                 position__range=[0, cls._cms_initial_attributes['position']]).order_by('position')[0]
+                 position__range=[0,_cms_initial_attributes['position']]).order_by('position')[0]
     else:
         ancestor_plugin = plugin.placeholder.get_plugins().filter(
                              plugin_type__in=list_plugins_name,
