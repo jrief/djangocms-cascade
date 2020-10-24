@@ -104,6 +104,8 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         obj.sanitize_children()
+        obj.sanitize_related_siblings()
+
 
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
@@ -127,11 +129,8 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
 class RowGridMixin(object):
     def get_grid_instance(self):
         row = grid.Bootstrap4Row()
-        #query = Q(plugin_type='BootstrapContainerPlugin') | Q(plugin_type='BootstrapColumnPlugin') \
-        #  | Q(plugin_type='BootstrapJumbotronPlugin')
-        ancestor_parent_name = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
-        container = get_ancestor(None, self, ancestor_parent_name).get_bound_plugin().get_grid_instance()
-        #container = self.get_ancestors().order_by('depth').filter(query).last().get_bound_plugin().get_grid_instance()
+        class_ancestor_name = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
+        container = get_ancestor( class_ancestor_name , plugin=self).get_bound_plugin().get_grid_instance()
         container.add_row(row)
         return row
 
@@ -163,8 +162,7 @@ class ColumnGridMixin(object):
                   'xs-column-offset', 'sm-column-offset', 'md-column-offset', 'lg-column-offset', 'xs-column-offset']
     def get_grid_instance(self):
         column = None
-        query = Q(plugin_type='BootstrapRowPlugin')
-        row_obj = get_ancestor(None, self,['BootstrapRowPlugin']).get_bound_plugin()
+        row_obj = get_ancestor(['BootstrapRowPlugin'], plugin=self).get_bound_plugin()
         # column_siblings = row_obj.get_descendants().order_by('depth').filter(plugin_type='BootstrapColumnPlugin')
         row = row_obj.get_grid_instance()
         siblings = self.parent.get_children()
@@ -198,7 +196,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[1].format(bs4_breakpoints[first].min)
             else:
                 return phrases[2]
-        container = get_ancestor(self, obj, ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin']).get_bound_plugin()
+
+        container = get_ancestor(['BootstrapContainerPlugin'],
+                                 _cms_initial_attributes=self._cms_initial_attributes,
+                                 plugin=obj
+                                 ).get_bound_plugin()
         breakpoints = container.glossary['breakpoints']
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
@@ -329,8 +331,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         super().save_model(request, obj, form, change)
         obj.sanitize_children()
 
+    def sanitize_related_siblings_model(self):
+        self.sanitize_related_siblings()
+
     @classmethod
-    def sanitize_model(cls, obj):
+    def sanitize_model(cls,obj):
         sanitized = super().sanitize_model(obj)
         return sanitized
 
