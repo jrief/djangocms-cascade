@@ -2,7 +2,6 @@ import pytest
 from django.template.context import RequestContext
 from cms.api import add_plugin
 from cms.plugin_rendering import ContentRenderer
-from django.utils.html import strip_spaces_between_tags, strip_tags
 from cmsplugin_cascade.utils_helpers import get_plugins_as_layered_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.accordion import BootstrapAccordionGroupPlugin, BootstrapAccordionPlugin

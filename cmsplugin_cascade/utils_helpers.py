@@ -1,8 +1,8 @@
 from distutils.version import LooseVersion
 from django.conf import settings
+from django.db.models import Q
 from cms import __version__ as CMS_VERSION
 from cms.models.pagemodel import Page
-from django.db.models import Q
 from cms.sitemaps import CMSSitemap
 
 CMS_ = LooseVersion(CMS_VERSION) < LooseVersion('4.0')
@@ -65,7 +65,7 @@ def get_plugins_as_layered_tree(plugins):
 def get_ancestor(cls, plugin, list_plugins_name):
     if hasattr(cls, '_cms_initial_attributes') and 'parent' in cls._cms_initial_attributes \
                                                    and cls._cms_initial_attributes['parent']:
-        ancestor_plugin = self._cms_initial_attributes['placeholder'].get_plugins().filter(
+        ancestor_plugin = cls._cms_initial_attributes['placeholder'].get_plugins().filter(
                  plugin_type__in=list_plugins_name,
                  position__range=[0, cls._cms_initial_attributes['position']]).order_by('position')[0]
     else:
