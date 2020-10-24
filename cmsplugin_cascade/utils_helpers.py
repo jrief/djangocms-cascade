@@ -1,5 +1,6 @@
 from distutils.version import LooseVersion
 from django.conf import settings
+from django.db import OperationalError
 from django.db.models import Q
 from cms import __version__ as CMS_VERSION
 from cms.models.pagemodel import Page
@@ -52,7 +53,7 @@ def get_qs_pages_public():
         try:
             name_page_public = [str(page_url.page) for page_url in CMSSitemap().items()[:15]]
             queryset = Page.objects.filter(pagecontent_set__title__in=name_page_public)
-        except django.db.OperationalError:
+        except OperationalError:
             #init db migrations
             queryset = Page.objects
     return queryset
