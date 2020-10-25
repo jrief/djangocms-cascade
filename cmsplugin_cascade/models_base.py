@@ -110,8 +110,10 @@ class CascadeModelBase(CMSPlugin):
         """
         if self.parent:
             plugins = self.__class__.objects.filter(id__in=self.parent._get_descendants_ids())
-            for plugin in plugins:
-                plugin.save()
+            for i in plugins:
+                if i.plugin_class.require_parent or i.plugin_class.parent_classes:
+                   i.save()
+            return True
 
     def sanitize_children(self):
         """

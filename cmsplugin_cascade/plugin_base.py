@@ -287,8 +287,14 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
 
     @classmethod
     def sanitize_related_siblings_model(cls, instance):
+        """
+        This method is called, after the model is written to the database. It can be overloaded
+        to sanitize the current related siblings models, in case a require_parent or parent_classes is in plugin,
+        which might affect these related siblings plugin.
+        This method shall return `True`, in case a model change was necessary, otherwise it shall
+        return `False` to prevent a useless database update.
+        """
         return False
-
 
     @classmethod
     def get_data_representation(cls, instance):
