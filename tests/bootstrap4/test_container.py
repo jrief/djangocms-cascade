@@ -42,7 +42,7 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     plugin_list = [container_model, row_model]
 
     # we now should have three columns attached to the row
-    assert row_model._get_descendant_count() == 3
+    assert len(row_model.get_descendant().values_list('id')) == 3
     for cms_plugin in row_model.get_descendants():
         column_model, column_plugin = cms_plugin.get_plugin_instance()
         assert isinstance(column_model, CascadeElement)
