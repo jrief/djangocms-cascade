@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 from django.utils.html import mark_safe, format_html_join
 from django.utils.functional import cached_property
 import json
@@ -111,7 +110,8 @@ class CascadeModelBase(CMSPlugin):
         """
         if self.parent:
             plugins = self.__class__.objects.filter(id__in=self.parent._get_descendants_ids())
-            [plugin.save() for plugin in plugins]
+            for plugin in plugins:
+                plugin.save()
 
     def sanitize_children(self):
         """
@@ -147,7 +147,7 @@ class CascadeModelBase(CMSPlugin):
 
     def delete(self, *args, **kwargs):
         super().delete( *args, **kwargs)
-        sanitized = self.plugin_class.sanitize_related_siblings_model(self)
+        self.plugin_class.sanitize_related_siblings_model(self)
 
     @classmethod
     def _get_cascade_elements(cls):
