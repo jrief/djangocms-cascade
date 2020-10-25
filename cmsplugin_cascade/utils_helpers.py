@@ -1,5 +1,4 @@
 from distutils.version import LooseVersion
-from django.conf import settings
 from django.db import OperationalError
 from django.db.models import Q
 from cms import __version__ as CMS_VERSION
