@@ -149,7 +149,8 @@ class CascadeModelBase(CMSPlugin):
 
     def delete(self, *args, **kwargs):
         super().delete( *args, **kwargs)
-        self.plugin_class.sanitize_related_siblings_model(self)
+        if not CMS_:
+            self.plugin_class.sanitize_related_siblings_model(self)
 
     @classmethod
     def _get_cascade_elements(cls):

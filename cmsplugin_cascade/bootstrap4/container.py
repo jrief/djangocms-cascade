@@ -10,7 +10,7 @@ from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.utils_helpers import get_ancestor
+from cmsplugin_cascade.utils_helpers import CMS_, get_ancestor
 from .plugin_base import BootstrapPluginBase
 from . import grid
 
@@ -330,7 +330,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         obj.sanitize_children()
-        obj.sanitize_related_siblings()
+        if not CMS_:
+            obj.sanitize_related_siblings()
 
     def sanitize_related_siblings_model(self):
         self.sanitize_related_siblings()
