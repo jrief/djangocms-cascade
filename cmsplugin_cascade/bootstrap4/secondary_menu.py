@@ -3,9 +3,12 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
-from cms.models.pagemodel import Page
+#from cms.models.pagemodel import Page
+from cms.models import Page, PageContent
 from .plugin_base import BootstrapPluginBase
-
+from cmsplugin_cascade.utils_helpers import CMS_
+from django.db.models import Q
+from cms.sitemaps import CMSSitemap
 
 class SecondaryMenuFormMixin(EntangledModelFormMixin):
     page_id = ChoiceField(
@@ -29,7 +32,11 @@ class SecondaryMenuFormMixin(EntangledModelFormMixin):
         entangled_fields = {'glossary': ['page_id', 'offset', 'limit']}
 
     def __init__(self, *args, **kwargs):
-        choices = [(p.reverse_id, str(p)) for p in Page.objects.filter(reverse_id__isnull=False, publisher_is_draft=False)]
+        if CMS_:
+            choices = [(p.reverse_id, str(p)) for p in Page.objects.filter(reverse_id__isnull=False, publisher_is_draft=False)]
+        else:
+            pages_id = [ p.id for p in CMSSitemap().items()]
+            choices =  [(p.reverse_id, str(p)) for p in Page.objects.filter(reverse_id__isnull=False).filter(id__in=pages_id)]
         self.base_fields['page_id'].choices = choices
         super().__init__(*args, **kwargs)
 
