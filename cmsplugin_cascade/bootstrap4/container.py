@@ -197,11 +197,16 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             else:
                 return phrases[2]
 
-        container = get_ancestor(['BootstrapContainerPlugin'],
+        container = get_ancestor(['BootstrapContainerPlugin','BootstrapJumbotronPlugin'],
                                  _cms_initial_attributes=self._cms_initial_attributes,
                                  plugin=obj
                                  ).get_bound_plugin()
-        breakpoints = container.glossary['breakpoints']
+
+        if 'breakpoints' in  container.glossary:
+            breakpoints = container.glossary['breakpoints']
+        elif 'media_queries' in container.glossary:
+            #Case Jumbotron is first, its not has ancestor container
+            breakpoints = list(container.glossary['media_queries'].keys())
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
         units = [ngettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]

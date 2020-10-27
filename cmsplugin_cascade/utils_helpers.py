@@ -71,7 +71,8 @@ def get_ancestor(list_plugins_name, plugin=False, _cms_initial_attributes=False)
     if _cms_initial_attributes and  'parent' in _cms_initial_attributes and _cms_initial_attributes['parent']:
         ancestor_plugin = _cms_initial_attributes['placeholder'].get_plugins().filter(
                  plugin_type__in=list_plugins_name,
-                 position__range=[0,_cms_initial_attributes['position']]).order_by('position')[0]
+                 position__range=[0,_cms_initial_attributes['position']]
+                 ).order_by('position')[0]
     else:
         ancestor_plugin = plugin.placeholder.get_plugins().filter(
                              plugin_type__in=list_plugins_name,
