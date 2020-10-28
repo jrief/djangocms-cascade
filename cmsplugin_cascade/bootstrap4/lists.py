@@ -1,7 +1,7 @@
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from .plugin_base import BootstrapPluginBase
 from django.forms.fields import ChoiceField
+from .plugin_base import BootstrapPluginBase
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 
