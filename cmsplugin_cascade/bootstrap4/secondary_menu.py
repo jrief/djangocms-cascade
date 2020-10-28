@@ -3,11 +3,9 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
-#from cms.models.pagemodel import Page
-from cms.models import Page, PageContent
-from .plugin_base import BootstrapPluginBase
+from cms.models import Page
 from cmsplugin_cascade.utils_helpers import CMS_
-from django.db.models import Q
+from .plugin_base import BootstrapPluginBase
 from cms.sitemaps import CMSSitemap
 
 class SecondaryMenuFormMixin(EntangledModelFormMixin):
