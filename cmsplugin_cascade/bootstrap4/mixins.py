@@ -1,12 +1,12 @@
 from django.forms.fields import ChoiceField
 from django.utils.text import format_lazy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
 
 
-class BootstrapUtilities(type):
+class BootstrapUtilities:
     """
     Factory for building a class ``BootstrapUtilitiesMixin``. This class then is used as a mixin to
     all sorts of Bootstrap-4 plugins. Various Bootstrap-4 plugins are shipped using this mixin class

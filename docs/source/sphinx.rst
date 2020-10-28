@@ -30,14 +30,14 @@ To the project's ``settings.py``, add these options to the configuration directi
 	]
 
 	CMS_TEMPLATES = [
-	    ...,
+	    ...
 	    ('path/to/documentation.html', "Documentation Page"),
 	    ...
 	]
 
 	SPHINX_DOCS_ROOT = '/path/to/docs/_build/fragments'
 
-Replace ``'path/to/documentation.html'`` with a filename pointing to your documentation
+Replace ``'/path/to/documentation.html'`` with a filename pointing to your documentation
 root template (see below).
 
 Point ``SPHINX_DOCS_ROOT`` onto the directory, into which the HTML page fragments are generated.
@@ -45,15 +45,6 @@ Point ``SPHINX_DOCS_ROOT`` onto the directory, into which the HTML page fragment
 
 Configure Sphinx Builder
 ------------------------
-
-Locate the file ``Makefile`` inside the ``docs`` folder and add another target to it:
-
-.. code-block:: makefile
-
-	fragments:
-		$(SPHINXBUILD) -b fragments $(ALLSPHINXOPTS) $(BUILDDIR)/fragments
-		@echo
-		@echo "Build finished. The HTML fragments are in $(BUILDDIR)/fragments."
 
 Locate the file ``conf.py`` and add:
 
@@ -65,7 +56,7 @@ Locate the file ``conf.py`` and add:
 	]
 
 By invoking ``make fragments``, Sphinx generates a HTML fragment for each page inside the
-documentation folder, typically into ``docs/_build/fragments``. Later we use these fragments
+documentation folder, typically into ``docs/build/fragments``. Later we use these fragments
 and include them using a normal Django view.
 
 

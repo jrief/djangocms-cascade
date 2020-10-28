@@ -23,6 +23,7 @@ from .test_base import CascadeTestCase
 
 class StridePluginTest(CascadeTestCase):
     def setUp(self):
+        super().setUp()
         request = RequestFactory().get('/')
         request.user = AnonymousUser()
         self.context = RequestContext(request, {})      

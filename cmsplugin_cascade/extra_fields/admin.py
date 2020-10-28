@@ -9,7 +9,7 @@ from django.forms.models import ModelForm
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelForm
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings

@@ -2,6 +2,60 @@
 Release History
 ===============
 
+
+1.3.4
+=====
+* Fix: Internal Server error raised when deleting content of link to CMS page's form field.
+* When testing external links, use request with `User-Agent: Django-CMS-Cascade` instead of the default.
+
+
+1.3.3
+=====
+* Fix: Deletion of markers in map plugin failed.
+
+
+1.3.2
+=====
+* Fix migration ``0027_version_1.py`` to migrate links from version<1 upwards.
+
+
+1.3.1
+=====
+* Fix external requiremnts.
+* Replace deprecated ugettext against gettext.
+
+
+1.3
+===
+* Drop support for Python 2.
+* Drop support for Django-1.11 and Django-2.0.
+* Add support for Django-3.0 and Python-3.8.
+* Paste structure of placeholder directly to, and from Persisting Clipboard Content.
+* CascadeClipboardPlugin is not a system plugin anymore.
+* Add link target for phone numbers.
+* Add mixin to accept preconfigured CSS classes.
+* Fix: Style of center button in Leaflet Plugin.
+* Fix: In Leaflet Plugin accepts pasting from clipboard.
+* Move configuration setting for HorizontalRule into submodule ``generic``.
+* Add fields ``created_by``, ``created_at`` and ``last_accessed_at`` to Clipboard model.
+* Make loading of icon plugins configurable.
+
+
+1.2.3
+=====
+* Make page editor for extra fields configurable.
+
+
+1.2.2
+=====
+* Refactor ``TextLinkFormMixin`` from ``cmsplugin_cascade.link.cms_plugin`` into
+  ``cmsplugin_cascade.link.forms``. Adopt your import accordingly.
+
+1.2.1
+=====
+* In **TextEditorConfig** add HTML element ``<span>`` to available choices.
+* Fix: Adding a link onto a page with different translations, can cause a too many pages exception.
+
 1.2
 ===
 * Refactor submodule ``generic`` into separate modules. This enables the client project
@@ -152,7 +206,7 @@ Release History
   whatever is parsable.
 * Add ``role="button"`` to the **ButtonPlugin**.
 * Optionally add CSS class ``stretched-link`` introduced in Bootstrap-4.3 to ``<a href="...">``.
-* Fix: We can not see the SVG file, if the image file existed and was not found, specifically 
+* Fix: We can not see the SVG file, if the image file existed and was not found, specifically
   when copying a Persisted clipboard.
 * Fix: If jsonfield is serialized as string, convert and reload as JSON.
 * Fix: **ImagePlugin** / **PicturePlugin** can't be copied by clipboard CMS.

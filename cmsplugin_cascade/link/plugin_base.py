@@ -24,6 +24,8 @@ class LinkPluginBase(CascadePluginBase):
             return '{ext_url}'.format(**obj.glossary)
         if linktype == 'email':
             return 'mailto:{mail_to}'.format(**obj.glossary)
+        if linktype == 'phonenumber':
+            return 'tel:{phone_number}'.format(**obj.glossary)
 
         # otherwise resolve by model
         if linktype == 'cmspage':

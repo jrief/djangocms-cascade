@@ -6,7 +6,7 @@ insert_final_newline = false
 trim_trailing_whitespace = false
 
 # Set default charset
-[*.{js,py,rst,json,yml,html,txt,scss}]
+[*.{js,py,rst,json,yml,html,txt,css,scss}]
 charset = utf-8
 
 [*.{js,py,rst,yml,html,scss}]
@@ -18,7 +18,7 @@ line_length=119
 indent_style = space
 indent_size = 4
 
-[*.{html,js,rst,scss}]
+[*.{html,js,rst,css,scss}]
 indent_style = tab
 indent_size = 4
 

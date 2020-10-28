@@ -1,12 +1,9 @@
 from collections import OrderedDict
-from django import VERSION as DJANGO_VERSION
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 from cmsplugin_cascade.bootstrap4.mixins import BootstrapUtilities
 from .grid import Breakpoint, Bound
-
-assert DJANGO_VERSION >= (1, 11), "djangocms-cascade with Bootstrap-4 requires at least Django-1.11"
 
 
 CASCADE_PLUGINS = ['accordion', 'buttons', 'card', 'carousel', 'container', 'embeds', 'icon', 'image', 'jumbotron',

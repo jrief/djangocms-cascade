@@ -1,7 +1,7 @@
 from django.forms import ChoiceField
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.fields import SizeField, ColorField, BorderChoiceField
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
