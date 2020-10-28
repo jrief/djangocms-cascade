@@ -1,25 +1,24 @@
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+from django.forms import widgets
+from django.forms.fields import BooleanField, CharField, ChoiceField 
 from cmsplugin_cascade.fields import SizeField
 from .plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.bootstrap4.jumbotron import ImageBackgroundMixin, JumbotronFormMixin
-from django.conf import settings
+from cmsplugin_cascade.bootstrap4.jumbotron import ImageBackgroundMixin
 from cmsplugin_cascade.bootstrap4.container import ContainerFormMixin, ContainerGridMixin
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
-
 from cmsplugin_cascade.bootstrap4.container import get_widget_choices, ContainerBreakpointsWidget
 from cmsplugin_cascade.bootstrap4.image import get_image_tags
 from .grid import Breakpoint
 from cmsplugin_cascade.link.config import LinkPluginBase
-from django.forms import widgets
-from django.forms.fields import BooleanField, CharField, ChoiceField 
-
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 from django.core.exceptions import ValidationError
 
 import logging
 logger = logging.getLogger('cascade')
+
 
 class BootstrapNavbarFormMixin(EntangledModelFormMixin):
     OPTION_NAV_COLLAPSE = [(c, c) for c in [ "inherit", "navbar-expand","navbar-expand-sm", "navbar-expand-md","navbar-expand-lg", "navbar-expand-xl"] ]
@@ -145,7 +144,7 @@ class BootstrapNavBrandPlugin(LinkPluginBase):
     def get_child_css_classes(cls, obj):
         child_css_classes = cls.super(BootstrapNavBrandPlugin, cls).get_child_css_classes(obj)
         child_css_classes = obj.glossary.get('child_css_class')
-        if child_css_class:
+        if child_css_classes:
             child_css_classes.append(css_class)
         return css_classes
 
@@ -213,7 +212,7 @@ class BootstrapNavBrandImagePlugin(BootstrapPluginBase):
     def get_child_css_classes(cls, obj):
         child_css_classes = cls.super(BootstrapNavBrandImagePlugin, cls).get_child_css_classes(obj)
         child_css_classes = obj.glossary.get('child_css_class')
-        if child_css_class:
+        if child_css_classes:
             child_css_classes.append(css_class)
         return css_classes
 
