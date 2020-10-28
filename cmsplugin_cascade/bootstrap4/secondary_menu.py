@@ -4,9 +4,9 @@ from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cms.models import Page
+from cms.sitemaps import CMSSitemap
 from cmsplugin_cascade.utils_helpers import CMS_
 from .plugin_base import BootstrapPluginBase
-from cms.sitemaps import CMSSitemap
 
 class SecondaryMenuFormMixin(EntangledModelFormMixin):
     page_id = ChoiceField(
