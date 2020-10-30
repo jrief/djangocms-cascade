@@ -19,7 +19,8 @@ from cms.utils import get_language_from_request
 from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
 from cmsplugin_cascade.clipboard.utils import deserialize_to_clipboard, serialize_from_placeholder
 from cmsplugin_cascade.models import CascadeClipboard
-
+from cmsplugin_cascade.utils_helpers import CMS_
+from cms.utils.plugins import copy_plugins_to_placeholder
 
 class CascadeClipboardPlugin(CMSPluginBase):
     render_plugin = False
@@ -115,22 +116,34 @@ class CascadeClipboardPlugin(CMSPluginBase):
         placeholder = form.cleaned_data['placeholder']
         language = form.cleaned_data['language']
         cascade_clipboard = form.cleaned_data['clipboard']
-        tree_order = placeholder.get_plugin_tree_order(language)
+        if CMS_:
+           tree_order = placeholder.get_plugin_tree_order(language)
+        else:
+           tree_order = list(placeholder.get_plugins().values_list('id', flat=True))
         deserialize_to_clipboard(request, cascade_clipboard.data)
         cascade_clipboard.last_accessed_at = now()
         cascade_clipboard.save(update_fields=['last_accessed_at'])
-
-        # detach plugins from clipboard and reattach them to current placeholder
-        cb_placeholder_plugin = request.toolbar.clipboard.cmsplugin_set.first()
+        cb_placeholder_plugin = request.toolbar.clipboard.cmsplugin_set.filter(plugin_type='PlaceholderPlugin').first()
         cb_placeholder_instance, _ = cb_placeholder_plugin.get_plugin_instance()
         new_plugins = cb_placeholder_instance.placeholder_ref.get_plugins()
-        new_plugins.update(placeholder=placeholder)
+        if CMS_:
+            new_plugins.update(placeholder=placeholder)
 
-        # reorder root plugins in placeholder
-        root_plugins = placeholder.get_plugins(language).filter(parent__isnull=True).order_by('changed_date')
-        for position, plugin in enumerate(root_plugins.iterator()):
-            plugin.update(position=position)
-        placeholder.mark_as_dirty(language, clear_cache=False)
+            # reorder root plugins in placeholder
+            root_plugins = placeholder.get_plugins(language).filter(parent__isnull=True).order_by('changed_date')
+            for position, plugin in enumerate(root_plugins.iterator()):
+                plugin.update(position=position)
+            placeholder.mark_as_dirty(language, clear_cache=False)
+        else:
+            last_plugin_position = placeholder.get_last_plugin_position(language)
+            last_plugin_position = last_plugin_position+1 if last_plugin_position else 1
+
+            copy_plugins_to_placeholder(
+                new_plugins,
+                placeholder=placeholder,
+                language=language,
+                start_positions={language: last_plugin_position},
+            )
 
         # create a list of pasted plugins to be added to the structure view
         all_plugins = placeholder.get_plugins(language)
