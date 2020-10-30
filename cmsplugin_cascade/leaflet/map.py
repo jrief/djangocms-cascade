@@ -7,7 +7,7 @@ from django.contrib.admin import StackedInline
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags, strip_spaces_between_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ngettext_lazy, gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin, EntangledModelForm
 from filer.fields.image import FilerImageField, AdminImageFormField
 from filer.settings import settings as filer_settings
@@ -253,7 +253,7 @@ class LeafletPlugin(WithInlineElementsMixin, CascadePluginBase):
     @classmethod
     def get_identifier(cls, obj):
         num_elems = obj.inline_elements.count()
-        content = ungettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
+        content = ngettext_lazy("with {0} marker", "with {0} markers", num_elems).format(num_elems)
         return mark_safe(content)
 
     @classmethod

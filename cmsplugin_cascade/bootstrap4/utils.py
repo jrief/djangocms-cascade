@@ -1,5 +1,5 @@
 import logging
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,

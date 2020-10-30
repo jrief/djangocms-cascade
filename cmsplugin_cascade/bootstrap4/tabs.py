@@ -1,10 +1,10 @@
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ngettext_lazy, gettext_lazy as _
 from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
-from django.utils.html import format_html
 from django.forms.fields import IntegerField
+
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
@@ -44,7 +44,7 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, instance):
         num_cols = instance.get_num_children()
-        content = ungettext_lazy('with {} tab', 'with {} tabs', num_cols).format(num_cols)
+        content = ngettext_lazy('with {} tab', 'with {} tabs', num_cols).format(num_cols)
         return mark_safe(content)
 
     def save_model(self, request, obj, form, change):

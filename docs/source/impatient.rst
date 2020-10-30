@@ -50,5 +50,5 @@ This brings you into the editor mode for a Bootstrap container. To this containe
 more Bootstrap **Rows**. Inside these rows you may organize the layout using some Bootstrap
 **Columns**.
 
-Please proceed with the detailled explanation on how to use the
+Please proceed with the detailed explanation on how to use the
 :ref:`Bootstrap's grid <bootstrap3/grid>` system within **djangocms-cascade**.
