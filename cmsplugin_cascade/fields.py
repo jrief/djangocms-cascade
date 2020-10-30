@@ -2,17 +2,15 @@ import re
 import json
 import warnings
 
-from django import VERSION as DJANGO_VERSION
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.forms.fields import Field, CharField, ChoiceField, BooleanField, MultiValueField
 from django.forms.utils import ErrorList
-if DJANGO_VERSION >= (2, 0):
-   from django.core.validators import ProhibitNullCharactersValidator
+from django.core.validators import ProhibitNullCharactersValidator
 from django.utils.deconstruct import deconstructible
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, pgettext
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.widgets import ColorPickerWidget, BorderChoiceWidget, MultipleTextInputWidget
 from filer.fields.image import FilerImageField, AdminImageFormField
@@ -156,8 +154,7 @@ class ColorField(MultiValueField):
         kwargs['initial'] = [default_color, inherit_color]
         super().__init__(fields=fields, widget=widget, *args, **kwargs)
         self.validators.append(ColorValidator(with_alpha))
-        if DJANGO_VERSION >= (2, 0):
-            self.validators.append(ProhibitNullCharactersValidator())
+        self.validators.append(ProhibitNullCharactersValidator())
 
     def compress(self, data_list):
         self.run_validators(data_list)
@@ -208,7 +205,7 @@ class SizeUnitValidator():
         try:
             float(match.group(1))
         except (AttributeError, ValueError):
-            allowed_units = " {} ".format(ugettext("or")).join("'{}'".format(u) for u in self.allowed_units)
+            allowed_units = " {} ".format(pgettext('allowed_units', "or")).join("'{}'".format(u) for u in self.allowed_units)
             params = {'value': value, 'allowed_units': allowed_units}
             raise ValidationError(self.message, code=self.code, params=params)
 
@@ -230,8 +227,7 @@ class SizeField(Field):
         self.empty_value = ''
         super().__init__(**kwargs)
         self.validators.append(SizeUnitValidator(allowed_units))
-        if DJANGO_VERSION >= (2, 0):
-            self.validators.append(ProhibitNullCharactersValidator())
+        self.validators.append(ProhibitNullCharactersValidator())
 
     def to_python(self, value):
         """Return a stripped string."""

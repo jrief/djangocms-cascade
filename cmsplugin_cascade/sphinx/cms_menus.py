@@ -3,7 +3,7 @@ import json
 import os
 from django.conf import settings
 from django.urls import reverse_lazy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from cms.menu_bases import CMSAttachMenu
 from menus.base import NavigationNode
 from menus.menu_pool import menu_pool
@@ -12,7 +12,7 @@ from menus.menu_pool import menu_pool
 class DocumentationMenu(CMSAttachMenu):
     name = _("Documentation Menu")  # give the menu a name this is required.
 
-    def get_nodes(self, request):
+    def get_nodes(self, request, root_page):
         """
         This method is used to build the menu tree.
         """

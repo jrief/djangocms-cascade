@@ -1,8 +1,7 @@
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.forms import models
 from django.forms.fields import CharField
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.models import CascadePage

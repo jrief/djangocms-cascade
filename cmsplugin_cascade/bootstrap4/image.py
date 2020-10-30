@@ -1,7 +1,7 @@
 import logging
 from django.forms import widgets, ChoiceField, MultipleChoiceField
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
