@@ -11,7 +11,9 @@ from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin
-
+from collections import defaultdict
+from sekizai.data import UniqueSequence
+from random import randint
 __all__ = ['register_stride', 'StrideContentRenderer']
 
 
@@ -30,6 +32,8 @@ class StrideElementBase(object):
     """
     def __init__(self, plugin, data, children_data, parent=None):
         self.plugin = plugin
+        #pass args radom id
+        data['pk'] = randint(0, 20000)
         self.id = data.get('pk')
         self.glossary = data.get('glossary', {})
         self.sortinline_elements = self.inline_elements = EmulateQuerySet(data.get('inlines', []))
@@ -151,6 +155,10 @@ class StridePluginBase(CascadePluginMixin):
 
         if not template:
             raise TemplateDoesNotExist("plugin {} has no render_template".format(self.__class__))
+
+        if hasattr(instance.plugin, 'render_template_fallback'):
+            template = instance.plugin.render_template_fallback
+
         return template
 
     def in_edit_mode(self, request, placeholder):
@@ -205,7 +213,9 @@ class StrideContentRenderer(object):
         from sekizai.helpers import get_varname as get_sekizai_context_key
 
         sekizai_context_key = get_sekizai_context_key()
+
         if app_settings.CMSPLUGIN_CASCADE['cache_strides'] and getattr(instance.plugin, 'cache', not editable):
+
             cache = caches['default']
             key = 'cascade_element-{}'.format(instance.pk)
             content = cache.get(key)
@@ -218,8 +228,9 @@ class StrideContentRenderer(object):
         context = instance.plugin.render(context, instance, placeholder)
         context = flatten_context(context)
 
-        template = instance.plugin._get_render_template(context, instance, placeholder)
+        template = instance.plugin._get_render_template( context, instance, placeholder)
         template = self.get_cached_template(template)
+
         content = template.render(context)
         if context['cms_cachable_plugins'].value:
             cache.set(key, content)

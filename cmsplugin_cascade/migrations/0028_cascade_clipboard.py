@@ -32,4 +32,16 @@ class Migration(migrations.Migration):
             name='last_accessed_at',
             field=models.DateTimeField(default=None, editable=False, null=True, verbose_name='Last accessed at'),
         ),
+        migrations.CreateModel(
+            name='CascadeClipboardGroup',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.AddField(
+            model_name='cascadeclipboard',
+            name='group',
+            field=models.ManyToManyField(blank=True, to='cmsplugin_cascade.CascadeClipboardGroup'),
+        ),
     ]

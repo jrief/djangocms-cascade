@@ -10,9 +10,9 @@ from django.utils.translation import gettext_lazy as _
 from jsonfield.fields import JSONField
 
 from cms.models.placeholderpluginmodel import PlaceholderReference
+from cms.admin.placeholderadmin import PlaceholderAdminMixin
 from cmsplugin_cascade.clipboard.utils import deserialize_to_clipboard, serialize_from_placeholder
-from cmsplugin_cascade.models import CascadeClipboard
-
+from cmsplugin_cascade.models import CascadeClipboard, CascadeClipboardGroup
 
 class JSONAdminWidget(widgets.Textarea):
     def __init__(self):
@@ -36,10 +36,13 @@ class JSONAdminWidget(widgets.Textarea):
             _("Successfully pasted JSON data"),
             _("Successfully copied JSON data"))
 
+@admin.register(CascadeClipboardGroup)
+class GroupModelAdmin(PlaceholderAdminMixin, admin.ModelAdmin):
+    pass
 
 @admin.register(CascadeClipboard)
 class CascadeClipboardAdmin(admin.ModelAdmin):
-    fields = ['identifier', ('created_by', 'created_at', 'last_accessed_at'), 'save_clipboard', 'restore_clipboard', 'data']
+    fields = ['identifier', 'group', ('created_by', 'created_at', 'last_accessed_at'), 'save_clipboard', 'restore_clipboard', 'data']
     readonly_fields = ['created_by', 'created_at', 'last_accessed_at', 'save_clipboard', 'restore_clipboard']
     formfield_overrides = {
         JSONField: {'widget': JSONAdminWidget},

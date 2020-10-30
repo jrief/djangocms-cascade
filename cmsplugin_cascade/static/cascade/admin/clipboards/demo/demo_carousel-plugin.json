@@ -1,0 +1,232 @@
+{
+    "plugins": [
+        [
+            "BootstrapContainerPlugin",
+            {
+                "glossary": {
+                    "hide_plugin": false,
+                    "breakpoints": [
+                        "xs",
+                        "sm",
+                        "md",
+                        "lg",
+                        "xl"
+                    ],
+                    "fluid": false
+                },
+                "pk": 1295
+            },
+            [
+                [
+                    "BootstrapRowPlugin",
+                    {
+                        "glossary": {
+                            "hide_plugin": false,
+                            "padding_xs": "",
+                            "padding_sm": "",
+                            "padding_md": "",
+                            "padding_lg": "",
+                            "padding_xl": ""
+                        },
+                        "pk": 1296
+                    },
+                    [
+                        [
+                            "BootstrapColumnPlugin",
+                            {
+                                "glossary": {
+                                    "xs-column-width": "col"
+                                },
+                                "pk": 1297
+                            },
+                            [
+                                [
+                                    "BootstrapCarouselPlugin",
+                                    {
+                                        "glossary": {
+                                            "hide_plugin": false,
+                                            "margins_xs": "",
+                                            "margins_sm": "",
+                                            "margins_md": "",
+                                            "margins_lg": "",
+                                            "margins_xl": "",
+                                            "interval": 5,
+                                            "options": [
+                                                "slide",
+                                                "pause",
+                                                "wrap"
+                                            ],
+                                            "container_max_heights": {
+                                                "xs": "100px",
+                                                "sm": "150px",
+                                                "md": "200px",
+                                                "lg": "250px",
+                                                "xl": "300px"
+                                            },
+                                            "resize_options": [
+                                                "upscale",
+                                                "crop",
+                                                "subject_location",
+                                                "high_resolution"
+                                            ]
+                                        },
+                                        "pk": 1316
+                                    },
+                                    [
+                                        [
+                                            "BootstrapCarouselSlidePlugin",
+                                            {
+                                                "glossary": {
+                                                    "hide_plugin": false,
+                                                    "image_file": {
+                                                        "model": "filer.image",
+                                                        "pk": 234
+                                                    },
+                                                    "image_title": "",
+                                                    "alt_tag": "",
+                                                    "image_properties": {
+                                                        "width": 1368,
+                                                        "height": 768,
+                                                        "exif_orientation": 1
+                                                    },
+                                                    "resize_options": [
+                                                        "upscale",
+                                                        "crop",
+                                                        "subject_location",
+                                                        "high_resolution"
+                                                    ],
+                                                    "media_queries": {
+                                                        "xs": {
+                                                            "width": 572,
+                                                            "media": "(max-width: 575.98px)"
+                                                        },
+                                                        "sm": {
+                                                            "width": 540,
+                                                            "media": "(min-width: 576px) and (max-width: 767.98px)"
+                                                        },
+                                                        "md": {
+                                                            "width": 720,
+                                                            "media": "(min-width: 768px) and (max-width: 991.98px)"
+                                                        },
+                                                        "lg": {
+                                                            "width": 960,
+                                                            "media": "(min-width: 992px) and (max-width: 1199.98px)"
+                                                        },
+                                                        "xl": {
+                                                            "width": 1140,
+                                                            "media": "(min-width: 1200px)"
+                                                        }
+                                                    }
+                                                },
+                                                "pk": 1317
+                                            },
+                                            []
+                                        ],
+                                        [
+                                            "BootstrapCarouselSlidePlugin",
+                                            {
+                                                "glossary": {
+                                                    "hide_plugin": false,
+                                                    "image_file": {
+                                                        "model": "filer.image",
+                                                        "pk": 235
+                                                    },
+                                                    "image_title": "",
+                                                    "alt_tag": "",
+                                                    "image_properties": {
+                                                        "width": 1280,
+                                                        "height": 720,
+                                                        "exif_orientation": 1
+                                                    },
+                                                    "resize_options": [
+                                                        "upscale",
+                                                        "crop",
+                                                        "subject_location",
+                                                        "high_resolution"
+                                                    ],
+                                                    "media_queries": {
+                                                        "xs": {
+                                                            "width": 572,
+                                                            "media": "(max-width: 575.98px)"
+                                                        },
+                                                        "sm": {
+                                                            "width": 540,
+                                                            "media": "(min-width: 576px) and (max-width: 767.98px)"
+                                                        },
+                                                        "md": {
+                                                            "width": 720,
+                                                            "media": "(min-width: 768px) and (max-width: 991.98px)"
+                                                        },
+                                                        "lg": {
+                                                            "width": 960,
+                                                            "media": "(min-width: 992px) and (max-width: 1199.98px)"
+                                                        },
+                                                        "xl": {
+                                                            "width": 1140,
+                                                            "media": "(min-width: 1200px)"
+                                                        }
+                                                    }
+                                                },
+                                                "pk": 1318
+                                            },
+                                            []
+                                        ],
+                                        [
+                                            "BootstrapCarouselSlidePlugin",
+                                            {
+                                                "glossary": {
+                                                    "hide_plugin": false,
+                                                    "image_file": {
+                                                        "model": "filer.image",
+                                                        "pk": 236
+                                                    },
+                                                    "image_title": "",
+                                                    "alt_tag": "",
+                                                    "image_properties": {
+                                                        "width": 1367,
+                                                        "height": 344,
+                                                        "exif_orientation": 1
+                                                    },
+                                                    "resize_options": [
+                                                        "upscale",
+                                                        "crop",
+                                                        "subject_location",
+                                                        "high_resolution"
+                                                    ],
+                                                    "media_queries": {
+                                                        "xs": {
+                                                            "width": 572,
+                                                            "media": "(max-width: 575.98px)"
+                                                        },
+                                                        "sm": {
+                                                            "width": 540,
+                                                            "media": "(min-width: 576px) and (max-width: 767.98px)"
+                                                        },
+                                                        "md": {
+                                                            "width": 720,
+                                                            "media": "(min-width: 768px) and (max-width: 991.98px)"
+                                                        },
+                                                        "lg": {
+                                                            "width": 960,
+                                                            "media": "(min-width: 992px) and (max-width: 1199.98px)"
+                                                        },
+                                                        "xl": {
+                                                            "width": 1140,
+                                                            "media": "(min-width: 1200px)"
+                                                        }
+                                                    }
+                                                },
+                                                "pk": 1319
+                                            },
+                                            []
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+}
