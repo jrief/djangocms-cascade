@@ -3,10 +3,19 @@ Release History
 ===============
 
 
+1.3.5
+=====
+* Fix rare error when pasting from clipboard into structure view.
+* Remove empty final line in templates used to render links; they added unwanted whitespace to
+  output.
+* In some JS files: Replace deprecated jQuery `.bind()` call with `.on()`.
+
+
 1.3.4
 =====
 * Fix: Internal Server error raised when deleting content of link to CMS page's form field.
-* When testing external links, use request with `User-Agent: Django-CMS-Cascade` instead of the default.
+* When testing external links, use request with `User-Agent: Django-CMS-Cascade` instead of the
+  default.
 
 
 1.3.3
