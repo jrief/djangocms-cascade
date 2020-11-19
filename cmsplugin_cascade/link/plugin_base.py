@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
+
 from entangled.forms import get_related_object
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from filer.models.filemodels import File as FilerFileModel
@@ -53,7 +54,7 @@ class DefaultLinkPluginBase(LinkPluginBase):
     ring_plugin = 'LinkPluginBase'
 
 
-class LinkElementMixin(object):
+class LinkElementMixin:
     """
     A mixin class to convert a CascadeElement into a proxy model for rendering the ``<a>`` element.
     Note that a Link inside the Text Editor Plugin is rendered using ``str(instance)`` rather

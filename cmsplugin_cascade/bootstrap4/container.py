@@ -5,6 +5,7 @@ from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.text import format_lazy
 from django.utils.translation import ngettext_lazy, gettext_lazy as _
+
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
@@ -57,7 +58,7 @@ class ContainerFormMixin(EntangledModelFormMixin):
         return self.cleaned_data['glossary']
 
 
-class ContainerGridMixin(object):
+class ContainerGridMixin:
     def get_grid_instance(self):
         fluid = self.glossary.get('fluid', False)
         try:
@@ -124,7 +125,7 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         untangled_fields = ['num_children']
 
 
-class RowGridMixin(object):
+class RowGridMixin:
     def get_grid_instance(self):
         row = grid.Bootstrap4Row()
         query = Q(plugin_type='BootstrapContainerPlugin') | Q(plugin_type='BootstrapColumnPlugin') \
@@ -156,7 +157,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
 
-class ColumnGridMixin(object):
+class ColumnGridMixin:
     valid_keys = ['xs-column-width', 'sm-column-width', 'md-column-width', 'lg-column-width', 'xs-column-width',
                   'xs-column-offset', 'sm-column-offset', 'md-column-offset', 'lg-column-offset', 'xs-column-offset']
     def get_grid_instance(self):
@@ -195,7 +196,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 return phrases[1].format(bs4_breakpoints[first].min)
             else:
                 return phrases[2]
-            
+
         if 'parent' in self._cms_initial_attributes:
             container=self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').last().get_bound_plugin()
         else:
