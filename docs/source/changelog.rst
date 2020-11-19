@@ -5,12 +5,13 @@ Release History
 
 1.3.5
 =====
+* In plugins inheriting from ``LinkPluginBase``, refactor validation from method ``clean()`` to
+  ``_post_clean()``, in order to avoid unjustified validation errors.
 * Fix rare error when pasting from clipboard into structure view.
 * Remove empty final line in templates used to render links; they added unwanted whitespace to
   output.
-* In plugins inheriting from ``LinkPluginBase``, refactor validation from method ``clean()`` to
-  ``_post_clean()``, in order to avoid unjustified validation errors.
 * In some JS files: Replace deprecated jQuery `.bind()` call with `.on()`.
+* Removed some legacy code dating back to Python2.
 
 
 1.3.4
