@@ -185,49 +185,49 @@ class LinkForm(EntangledModelFormMixin):
         except (AttributeError, ObjectDoesNotExist):
             pass
 
-    def clean(self):
-        cleaned_data = super().clean()
-        link_type = cleaned_data.get('link_type')
+    def _post_clean(self):
+        super()._post_clean()
         error = None
+        link_type = self.cleaned_data['glossary'].get('link_type')
         if link_type == 'cmspage':
-            if not cleaned_data.get('cms_page'):
-                error = ValidationError(_("CMS page to link to is missing."))
+            if self.cleaned_data['glossary'].get('cms_page') == '':
+                error = ValidationError(_("CMS page to link to is missing."), code='required')
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if not cleaned_data.get('download_file'):
-                error = ValidationError(_("File for download is missing."))
+            if self.cleaned_data['glossary'].get('download_file') == '':
+                error = ValidationError(_("File for download is missing."), code='required')
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
-            ext_url = cleaned_data.get('ext_url')
+            ext_url = self.cleaned_data['glossary'].get('ext_url')
             if ext_url:
                 try:
                     request_headers = {'User-Agent': 'Django-CMS-Cascade'}
                     response = requests.head(ext_url, allow_redirects=True, headers=request_headers)
                     if response.status_code != 200:
-                        error = ValidationError(_("No external page found on {url}.").format(url=ext_url))
+                        error = ValidationError(
+                            _("No external page found on {url}.").format(url=ext_url),
+                            code='invalid',
+                        )
                 except Exception as exc:
-                    error = ValidationError(_("Failed to connect to {url}.").format(url=ext_url))
-            else:
-                error = ValidationError(_("No valid URL provided."))
+                    error = ValidationError(
+                        _("Failed to connect to {url}.").format(url=ext_url),
+                        code='invalid',
+                    )
+            elif ext_url == '':
+                error = ValidationError(_("No valid URL provided."), code='required')
             if error:
                 self.add_error('ext_url', error)
         elif link_type == 'email':
-            mail_to = cleaned_data.get('mail_to')
-            if mail_to:
-                if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
-                    msg = _("'{email}' is not a valid email address.")
-                    error = ValidationError(msg.format(email=mail_to))
-            else:
-                error = ValidationError(_("No email address provided."))
-            if error:
+            if self.cleaned_data['glossary'].get('mail_to') == '':
+                error = ValidationError(_("No email address provided."), code='required')
                 self.add_error('mail_to', error)
         elif link_type == 'phonenumber':
-            phone_number = cleaned_data.get('phone_number')
-            if phone_number:
-                cleaned_data['phone_number'] = str(phone_number)
-        if error:
-            raise error
-        return cleaned_data
+            if self.cleaned_data['glossary'].get('phone_number') == '':
+                error = ValidationError(_("No phone number provided."), code='required')
+                self.add_error('phone_number', error)
+
+    def clean_phone_number(self):
+        return str(self.cleaned_data['phone_number'])
 
     @classmethod
     def unset_required_for(cls, sharable_fields):
