@@ -3,6 +3,11 @@ Release History
 ===============
 
 
+1.3.6
+=====
+* Fix regression on link validation introduced in 1.3.5.
+
+
 1.3.5
 =====
 * In plugins inheriting from ``LinkPluginBase``, refactor validation from method ``clean()`` to
