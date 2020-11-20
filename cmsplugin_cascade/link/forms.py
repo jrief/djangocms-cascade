@@ -188,17 +188,18 @@ class LinkForm(EntangledModelFormMixin):
     def _post_clean(self):
         super()._post_clean()
         error = None
+        empty_fields = [None, '']
         link_type = self.cleaned_data['glossary'].get('link_type')
         if link_type == 'cmspage':
-            if self.cleaned_data['glossary'].get('cms_page') == '':
+            if self.cleaned_data['glossary'].get('cms_page', False) in empty_fields:
                 error = ValidationError(_("CMS page to link to is missing."), code='required')
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if self.cleaned_data['glossary'].get('download_file') == '':
+            if self.cleaned_data['glossary'].get('download_file', False) in empty_fields:
                 error = ValidationError(_("File for download is missing."), code='required')
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
-            ext_url = self.cleaned_data['glossary'].get('ext_url')
+            ext_url = self.cleaned_data['glossary'].get('ext_url', False)
             if ext_url:
                 try:
                     request_headers = {'User-Agent': 'Django-CMS-Cascade'}
@@ -213,16 +214,16 @@ class LinkForm(EntangledModelFormMixin):
                         _("Failed to connect to {url}.").format(url=ext_url),
                         code='invalid',
                     )
-            elif ext_url == '':
+            elif ext_url in empty_fields:
                 error = ValidationError(_("No valid URL provided."), code='required')
             if error:
                 self.add_error('ext_url', error)
         elif link_type == 'email':
-            if self.cleaned_data['glossary'].get('mail_to') == '':
+            if self.cleaned_data['glossary'].get('mail_to', False) in empty_fields:
                 error = ValidationError(_("No email address provided."), code='required')
                 self.add_error('mail_to', error)
         elif link_type == 'phonenumber':
-            if self.cleaned_data['glossary'].get('phone_number') == '':
+            if self.cleaned_data['glossary'].get('phone_number', False) in empty_fields:
                 error = ValidationError(_("No phone number provided."), code='required')
                 self.add_error('phone_number', error)
 
