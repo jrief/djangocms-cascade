@@ -1,4 +1,3 @@
-import re
 import requests
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.admin.sites import site as admin_site
