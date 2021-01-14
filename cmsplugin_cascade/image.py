@@ -1,7 +1,8 @@
 from django.forms.fields import CharField
 from django.utils.translation import gettext_lazy as _
 
-from entangled.forms import EntangledModelFormMixin, EntangledField, get_related_object
+from entangled.forms import EntangledModelFormMixin, EntangledField
+from entangled.utils import get_related_object
 from cmsplugin_cascade.fields import CascadeImageField
 
 
