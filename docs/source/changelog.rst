@@ -2,6 +2,11 @@
 Release History
 ===============
 
+1.3.7
+=====
+* Perform validation of external URL during editing, instead of form validation. Do not reject
+  invalid external URLs, just warn about them.
+
 
 1.3.6
 =====
