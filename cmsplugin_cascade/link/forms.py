@@ -1,4 +1,3 @@
-import requests
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
@@ -11,7 +10,8 @@ from django_select2.forms import HeavySelect2Widget
 
 from cms.utils import get_current_site
 from cms.models import Page
-from entangled.forms import EntangledModelFormMixin, get_related_object
+from entangled.forms import EntangledModelFormMixin
+from entangled.utils import get_related_object
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
 
@@ -199,23 +199,8 @@ class LinkForm(EntangledModelFormMixin):
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
             ext_url = self.cleaned_data['glossary'].get('ext_url', False)
-            if ext_url:
-                try:
-                    request_headers = {'User-Agent': 'Django-CMS-Cascade'}
-                    response = requests.head(ext_url, allow_redirects=True, headers=request_headers)
-                    if response.status_code != 200:
-                        error = ValidationError(
-                            _("No external page found on {url}.").format(url=ext_url),
-                            code='invalid',
-                        )
-                except Exception as exc:
-                    error = ValidationError(
-                        _("Failed to connect to {url}.").format(url=ext_url),
-                        code='invalid',
-                    )
-            elif ext_url in empty_fields:
+            if ext_url in empty_fields:
                 error = ValidationError(_("No valid URL provided."), code='required')
-            if error:
                 self.add_error('ext_url', error)
         elif link_type == 'email':
             if self.cleaned_data['glossary'].get('mail_to', False) in empty_fields:

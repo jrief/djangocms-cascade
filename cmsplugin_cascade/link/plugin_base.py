@@ -16,6 +16,7 @@ class LinkPluginBase(CascadePluginBase):
     html_tag_attributes = {'title': 'title', 'target': 'target'}
 
     class Media:
+        css = {'all': ['cascade/css/admin/linkplugin.css']}
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/linkplugin.js']
 
     @classmethod
