@@ -11,7 +11,6 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
-from jsonfield.fields import JSONField
 from filer.fields.file import FilerFileField
 from cms.extensions import PageExtension
 from cms.extensions.extension_pool import extension_pool
@@ -37,10 +36,10 @@ class SharedGlossary(models.Model):
         unique=True,
     )
 
-    glossary = JSONField(
+    glossary = models.JSONField(
         null=True,
         blank=True,
-        default={},
+        default=dict,
     )
 
     class Meta:
@@ -113,9 +112,9 @@ class InlineCascadeElement(models.Model):
         on_delete=models.CASCADE,
     )
 
-    glossary = JSONField(
+    glossary = models.JSONField(
         blank=True,
-        default={},
+        default=dict,
     )
 
     class Meta:
@@ -129,9 +128,9 @@ class SortableInlineCascadeElement(models.Model):
         on_delete=models.CASCADE,
     )
 
-    glossary = JSONField(
+    glossary = models.JSONField(
         blank=True,
-        default={},
+        default=dict,
     )
 
     order = models.PositiveIntegerField(
@@ -166,16 +165,16 @@ class PluginExtraFields(models.Model):
 
     allow_id_tag = models.BooleanField(default=False)
 
-    css_classes = JSONField(
+    css_classes = models.JSONField(
         null=True,
         blank=True,
-        default={},
+        default=dict,
     )
 
-    inline_styles = JSONField(
+    inline_styles = models.JSONField(
         null=True,
         blank=True,
-        default={},
+        default=dict,
     )
 
     class Meta:
@@ -239,10 +238,10 @@ class CascadeClipboard(models.Model):
         unique=True,
     )
 
-    data = JSONField(
+    data = models.JSONField(
         null=True,
         blank=True,
-        default={},
+        default=dict,
     )
 
     created_by = models.ForeignKey(
@@ -300,7 +299,7 @@ class IconFont(models.Model):
         help_text=_("A unique identifier to distinguish this icon font."),
     )
 
-    config_data = JSONField()
+    config_data = models.JSONField()
 
     zip_file = FilerFileField(
         on_delete=models.CASCADE,
@@ -365,15 +364,15 @@ class CascadePage(PageExtension):
     """
     Keep arbitrary data tightly coupled to the CMS page.
     """
-    settings = JSONField(
+    settings = models.JSONField(
         blank=True,
-        default={},
+        default=dict,
         help_text=_("User editable settings for this page."),
     )
 
-    glossary = JSONField(
+    glossary = models.JSONField(
         blank=True,
-        default={},
+        default=dict,
         help_text=_("Store for arbitrary page data."),
     )
 
