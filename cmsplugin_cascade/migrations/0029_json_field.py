@@ -3,6 +3,10 @@
 from django.db import migrations, models
 
 
+def backwards(apps, schema_editor):
+    print("Migration backward will not restore your `JSONField`s to `CharField`s.")
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -60,4 +64,5 @@ class Migration(migrations.Migration):
             name='glossary',
             field=models.JSONField(blank=True, default=dict),
         ),
+        migrations.RunPython(migrations.RunPython.noop, reverse_code=backwards),
     ]

@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.0
+===
+* Replace all external occurences of ``JSONField`` against Django's new internal ``JSONField``.
+  The migration towards this version shall run smoothly, but you will be unable to migrate back.
+
 1.3.7
 =====
 * Perform validation of external URL during editing, instead of form validation. Do not reject
