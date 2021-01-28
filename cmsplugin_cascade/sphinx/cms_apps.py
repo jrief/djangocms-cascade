@@ -2,13 +2,14 @@ import io
 import mimetypes
 import os
 from django.conf import settings
-from django.conf.urls import url
 from django.core.exceptions import ViewDoesNotExist
 from django.http.response import HttpResponse
 from django.views.generic import TemplateView
+from django.urls import re_path
 from django.utils.cache import patch_cache_control
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+
 from cms.app_base import CMSApp
 from cms.apphook_pool import apphook_pool
 
@@ -45,5 +46,5 @@ class SphinxDocsApp(CMSApp):
 
     def get_urls(self, page=None, language=None, **kwargs):
         return [
-            url(r'^(?P<slug>\S+)/$', SphinxDocsView.as_view(), name='sphinx-documentation'),
+            re_path(r'^(?P<slug>\S+)/$', SphinxDocsView.as_view(), name='sphinx-documentation'),
         ]

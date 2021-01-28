@@ -68,9 +68,9 @@ class EmulateUserAdminMixin:
 
     def get_urls(self):
         return [
-            url(r'^emulate_users/$', self.admin_site.admin_view(self.emulate_users), name='emulate-users'),
-            url(r'^emulate_user/(?P<user_id>\d+)/$', self.admin_site.admin_view(self.emulate_user), name='emulate-user'),
-            url(r'^clear_emulations/$', self.admin_site.admin_view(self.clear_emulations), name='clear-emulations'),
+            re_path(r'^emulate_users/$', self.admin_site.admin_view(self.emulate_users), name='emulate-users'),
+            re_path(r'^emulate_user/(?P<user_id>\d+)/$', self.admin_site.admin_view(self.emulate_user), name='emulate-user'),
+            re_path(r'^clear_emulations/$', self.admin_site.admin_view(self.clear_emulations), name='clear-emulations'),
         ] + super().get_urls()
 
     def emulate_user(self, request, user_id):
