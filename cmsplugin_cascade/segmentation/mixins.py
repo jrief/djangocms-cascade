@@ -1,9 +1,8 @@
-from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
-from django.urls import reverse
+from django.urls import reverse, re_path
 from django.utils.translation import gettext_lazy as _, ngettext
 from django.utils.html import format_html
 
