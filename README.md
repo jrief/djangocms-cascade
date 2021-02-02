@@ -19,7 +19,7 @@ explicitly. This furthermore prevents us to handle all kind of nasty database mi
 
 ## Version 2.0 (released 2021-02-02)
 
-**Version 3.1 only supports Django versions 3.1 and higher.**
+**Version 2.0 only supports Django versions 3.1 and higher.**
 
 Backward compatibility had to be dropped, because version 2.0 now fully supports the native internal
 `JSONField` as offered by Django version 3.1. It hence is not possible to run a version of Cascade
