@@ -207,8 +207,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
         js = ['cascade/js/underscore.js', 'cascade/js/ring.js']
 
-    def __init__(self, model=None, admin_site=None, glossary_fields=None):
-        assert glossary_fields is None, "glossary_fields is deprecated"
+    def __init__(self, model=None, admin_site=None):
         super().__init__(model, admin_site)
 
     def __repr__(self):

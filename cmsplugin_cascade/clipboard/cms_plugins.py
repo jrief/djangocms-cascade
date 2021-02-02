@@ -1,13 +1,12 @@
 import json
 
-from django.conf.urls import url
 from django.contrib.admin import site as default_admin_site
 from django.contrib.admin.helpers import AdminForm
 from django.core.exceptions import PermissionDenied
 from django.forms import CharField, ModelChoiceField
 from django.shortcuts import render
 from django.template.response import TemplateResponse
-from django.urls import reverse
+from django.urls import re_path, reverse
 from django.utils.http import urlencode
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -27,8 +26,8 @@ class CascadeClipboardPlugin(CMSPluginBase):
 
     def get_plugin_urls(self):
         urlpatterns = [
-            url(r'^export-plugins/$', self.export_plugins_view, name='export_clipboard_plugins'),
-            url(r'^import-plugins/$', self.import_plugins_view, name='import_clipboard_plugins'),
+            re_path(r'^export-plugins/$', self.export_plugins_view, name='export_clipboard_plugins'),
+            re_path(r'^import-plugins/$', self.import_plugins_view, name='import_clipboard_plugins'),
         ]
         return urlpatterns
 

@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import models, migrations
-import jsonfield.fields
-import cmsplugin_cascade.mixins
-import cmsplugin_cascade.link.plugin_base
 import django.db.models.deletion
 
 
@@ -20,7 +14,7 @@ class Migration(migrations.Migration):
             name='CascadeElement',
             fields=[
                 ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE)),
-                ('glossary', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('glossary', models.JSONField(default={}, null=True, blank=True)),
             ],
             options={
                 'db_table': 'cmsplugin_cascade_element',
@@ -33,8 +27,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('plugin_type', models.CharField(db_index=True, max_length=50, verbose_name='Plugin Name', choices=[(b'BootstrapButtonPlugin', b'Bootstrap Button'), (b'SimpleWrapperPlugin', b'Bootstrap Simple Wrapper'), (b'BootstrapRowPlugin', b'Bootstrap Row'), (b'BootstrapPicturePlugin', b'Bootstrap Picture'), (b'BootstrapContainerPlugin', b'Bootstrap Container'), (b'BootstrapColumnPlugin', b'Bootstrap Column')])),
                 ('allow_id_tag', models.BooleanField(default=False)),
-                ('css_classes', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
-                ('inline_styles', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('css_classes', models.JSONField(default={}, null=True, blank=True)),
+                ('inline_styles', models.JSONField(default={}, null=True, blank=True)),
                 ('site', models.ForeignKey(verbose_name='Site', to='sites.Site', on_delete=models.CASCADE)),
             ],
             options={
@@ -47,7 +41,7 @@ class Migration(migrations.Migration):
             name='SharableCascadeElement',
             fields=[
                 ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE)),
-                ('glossary', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('glossary', models.JSONField(default={}, null=True, blank=True)),
             ],
             options={
                 'db_table': 'cmsplugin_cascade_sharableelement',
@@ -60,7 +54,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('plugin_type', models.CharField(verbose_name='Plugin Name', max_length=50, editable=False, db_index=True)),
                 ('identifier', models.CharField(unique=True, max_length=50, verbose_name='Identifier')),
-                ('glossary', jsonfield.fields.JSONField(default={}, null=True, blank=True)),
+                ('glossary', models.JSONField(default={}, null=True, blank=True)),
             ],
             options={
                 'verbose_name': 'Shared between Plugins',

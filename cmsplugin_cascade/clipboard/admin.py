@@ -2,12 +2,11 @@ from django.contrib import admin
 from django.contrib import messages
 from django.forms import widgets
 from django.forms.utils import flatatt
+from django.db.models import JSONField
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
-
-from jsonfield.fields import JSONField
 
 from cms.models.placeholderpluginmodel import PlaceholderReference
 from cmsplugin_cascade.clipboard.utils import deserialize_to_clipboard, serialize_from_placeholder

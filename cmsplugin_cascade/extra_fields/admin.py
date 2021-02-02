@@ -1,6 +1,5 @@
 import re
 from django.conf import settings
-from django.conf.urls import url
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.forms import widgets
@@ -8,9 +7,12 @@ from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleCh
 from django.forms.models import ModelForm
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
+from django.urls import re_path
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+
 from entangled.forms import EntangledModelForm
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
@@ -160,7 +162,7 @@ class TextEditorConfigAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         return [
-            url(r'^wysiwig-config\.js$', self.render_texteditor_config,
+            re_path(r'^wysiwig-config\.js$', self.render_texteditor_config,
                 name='cascade_texteditor_config'),
         ] + super().get_urls()
 
