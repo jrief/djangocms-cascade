@@ -17,7 +17,7 @@ all of them. The payload then is stored inside a JSON field instead of declaring
 explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
 
 
-## Version 2.0 (released 2021-01-31)
+## Version 2.0 (released 2021-02-02)
 
 **Version 3.1 only supports Django versions 3.1 and higher.**
 
@@ -26,6 +26,10 @@ Backward compatibility had to be dropped, because version 2.0 now fully supports
 which can switch between those field types.
 
 From a functional point of view, there is no difference to version 1.3.7.
+
+After upgrading, run `./manage.py migrate cmsplugin_cascade`. It will rewrite the field type of
+all `JSONField`s to Django's internal `JSONField` without modifying its content. For safty reasons,
+it is highly recommended to backup the database before migrating. 
 
 
 ### Perfect for nested grid systems
