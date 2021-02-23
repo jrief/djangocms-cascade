@@ -3,7 +3,7 @@
 <ul class="nav{% if css_classes %} {{ css_classes }}{% endif %}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %} role="tablist">
 	{% for pane in instance.child_plugin_instances %}
 	<li class="nav-item">
-		<a class="nav-link{% if forloop.first %} active{% endif %}" href="#cmsplugin_{{ pane.id }}" aria-controls="{{ pane.glossary.tab_title|lower }}" role="tab" data-toggle="tab">
+		<a class="nav-link{% if forloop.first %} active{% endif %}" href="#cmsplugin_{{ pane.id }}" role="tab" data-toggle="tab">
 		{{ pane.glossary.tab_title|safe }}
 		</a>
 	</li>
