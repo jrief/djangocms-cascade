@@ -2,6 +2,12 @@
 Release History
 ===============
 
+2.0.1
+=====
+* Fix #397: Bug with bad tags of ``TextImagePlugin``.
+* Remove useless aria-controls from link in ``TabSetPlugin``.
+
+
 2.0
 ===
 * Replace all external occurences of ``JSONField`` against Django's new internal ``JSONField``.
