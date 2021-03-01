@@ -2,6 +2,7 @@ django.jQuery(function($) {
 	'use strict';
 	var $link_type = $("#id_link_type"), $cmspage_select = $("#id_cms_page");
 	var $link_ext_url = $('#id_ext_url');
+	var $link_type_row = $('.form-row.field-link_type');
 	var $link_target = $(".form-row.field-link_target");
 	var $link_title = $(".form-row.field-link_title");
 
@@ -48,6 +49,11 @@ django.jQuery(function($) {
 			this.linkTypes['phonenumber'] = new this.LinkType('.form-row.field-phone_number');
 		},
 		toggleLinkTypes: function(linkTypeName) {
+			if (linkTypeName) {
+				$link_type_row.removeClass('no-link');
+			} else {
+				$link_type_row.addClass('no-link');
+			}
 			$.each(this.linkTypes, function(name, linkType) {
 				if (name === linkTypeName) {
 					linkType.show();
