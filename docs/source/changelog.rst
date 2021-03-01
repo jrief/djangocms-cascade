@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.0.2
+=====
+* Fix alignment of widget ``CheckboxInput`` and Link-Type.
+
+
 2.0.1
 =====
 * Fix #397: Bug with bad tags of ``TextImagePlugin``.
