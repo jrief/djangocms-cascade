@@ -28,9 +28,11 @@ which can switch between those field types.
 From a functional point of view, there is no difference to version 1.3.7.
 
 After upgrading, run `./manage.py migrate cmsplugin_cascade`. It will rewrite the field type of
-all `JSONField`s to Django's internal `JSONField` without modifying its content. For safty reasons,
+all `JSONField`s to Django's internal `JSONField` without modifying its content. For safety reasons,
 it is highly recommended to backup the database before migrating. 
 
+
+## Features
 
 ### Perfect for nested grid systems
 
