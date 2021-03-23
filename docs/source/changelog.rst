@@ -2,6 +2,12 @@
 Release History
 ===============
 
+2.0.3
+=====
+* Fix ``BootstrapTabSetPlugin``: Add CSS class ``nav-tab`` to outer wrapper.
+* Fix many translation strings in German.
+
+
 2.0.2
 =====
 * Fix alignment of widget ``CheckboxInput`` and Link-Type.
