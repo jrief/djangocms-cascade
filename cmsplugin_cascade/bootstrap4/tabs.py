@@ -40,6 +40,7 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     allow_children = True
     form = TabSetFormMixin
     render_template = 'cascade/bootstrap4/{}tabset.html'
+    default_css_class = 'nav-tabs'
 
     @classmethod
     def get_identifier(cls, instance):
