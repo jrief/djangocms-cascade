@@ -70,7 +70,7 @@ class MarkerForm(CascadeModelForm):
 
     popup_text = HTMLFormField(
         required=False,
-        help_text=_("Optional rich text to display in popup."),
+        help_text=_("Text to display in popup."),
     )
 
     position = HiddenDictField()
