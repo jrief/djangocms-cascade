@@ -7,7 +7,7 @@ from .grid import Breakpoint, Bound
 
 
 CASCADE_PLUGINS = ['accordion', 'buttons', 'card', 'carousel', 'container', 'embeds', 'icon', 'image', 'jumbotron',
-                   'picture', 'tabs']
+                   'picture', 'tabs', 'navbar', 'lists']
 if 'cms_bootstrap' in settings.INSTALLED_APPS:
     CASCADE_PLUGINS.append('secondary_menu')
 
@@ -53,7 +53,9 @@ def set_defaults(config):
     config['plugins_with_extra_mixins'].setdefault('HorizontalRulePlugin', BootstrapUtilities(
         BootstrapUtilities.margins,
     ))
-
+    config['plugins_with_extra_mixins'].setdefault('BootstrapJumbotronPlugin', BootstrapUtilities(
+        BootstrapUtilities.positions,
+    ))
     config['plugins_with_extra_fields'].setdefault('BootstrapTabSetPlugin', PluginExtraFieldsConfig(
         css_classes={
             'multiple': True,
@@ -65,3 +67,25 @@ def set_defaults(config):
         ('cascade/bootstrap4/secmenu-list-group.html', _("List Group")),
         ('cascade/bootstrap4/secmenu-unstyled-list.html', _("Unstyled List"))
     ])
+    config['plugins_with_extra_fields'].setdefault('BootstrapNavbarPlugin', PluginExtraFieldsConfig(
+        inline_styles={
+            'extra_fields:Colors':['color','background-color'],
+        }
+    ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapNavBrandPlugin', BootstrapUtilities(
+        BootstrapUtilities.background_and_color
+    ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapListsPlugin', BootstrapUtilities(
+        BootstrapUtilities.flex_directions, BootstrapUtilities.margins, BootstrapUtilities.paddings, BootstrapUtilities.display_propertys, BootstrapUtilities.background_and_color
+    ))
+    config['plugins_with_extra_fields'].setdefault('BootstrapListsPlugin', PluginExtraFieldsConfig(
+        inline_styles={
+         'extra_fields:Colors':['color','background-color'],
+        },
+    ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapNavbarToogler', BootstrapUtilities(
+        BootstrapUtilities.background_and_color
+    ))
+    config['plugins_with_extra_mixins'].setdefault('BootstrapNavCollapsePlugin', BootstrapUtilities(
+        BootstrapUtilities.justify_content
+    ))

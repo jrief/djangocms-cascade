@@ -20,5 +20,13 @@ class SimpleIconPlugin(IconPluginMixin, LinkPluginBase):
     class Media:
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/iconplugin.js']
 
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = cls.super(SimpleIconPlugin, cls).get_css_classes(obj)
+        if hasattr(obj,'parent') and hasattr(obj.parent,'parent') and hasattr(obj.parent.parent,'plugin_type'):
+            if obj.parent.parent.plugin_type == 'BootstrapNavCollapsePlugin':
+                css_classes.insert(0,'nav-link navbar-text')
+        return css_classes
+
 plugin_pool.register_plugin(SimpleIconPlugin)
 

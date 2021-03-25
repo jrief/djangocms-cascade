@@ -13,6 +13,8 @@ from django.urls import reverse
 from django.template import RequestContext, Template
 from django.test import RequestFactory
 
+from django.contrib.auth.models import AnonymousUser
+
 from cmsplugin_cascade.models import IconFont
 from filer.admin.clipboardadmin import ajax_upload
 
@@ -23,7 +25,8 @@ class StridePluginTest(CascadeTestCase):
     def setUp(self):
         super().setUp()
         request = RequestFactory().get('/')
-        self.context = RequestContext(request, {})
+        request.user = AnonymousUser()
+        self.context = RequestContext(request, {})      
 
     def assertStyleEqual(self, provided, expected):
         styles = dict((pair.split(':')[0].strip(), pair.split(':')[1].strip())
@@ -129,7 +132,14 @@ class StridePluginTest(CascadeTestCase):
         self.assertListEqual(carousel.ol.attrs['class'], ['carousel-indicators'])
         self.assertListEqual(carousel.ol.li.attrs['class'], ['active'])
         slide = carousel.find(class_='carousel-inner')
-        self.assertSetEqual(set(slide.div.attrs['class']), {'carousel-item', 'active'})       
+        self.assertSetEqual(set(slide.div.attrs['class']), {'carousel-item', 'active'})
+
+    def test_navbar_plugin(self):
+        template = Template('{% load cascade_tags %}{% render_cascade "strides/bootstrap-navbar.json" %}')
+        html = template.render(self.context)
+        soup = BeautifulSoup(html, features='lxml')
+        navbar = soup.find(class_='navbar')
+        self.assertSetEqual(set( navbar.attrs['class']), {'navbar', 'navbar-expand-md','navbar-light','bg-transparent' })
 
     def test_button_plugin(self):
         template = Template('{% load cascade_tags %}{% render_cascade "strides/bootstrap-button.json" %}')

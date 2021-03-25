@@ -213,7 +213,7 @@ CMSPLUGIN_CASCADE_PLUGINS = (
 )
 
 CMSPLUGIN_CASCADE = {
-    'alien_plugins': ('TextPlugin', 'TextLinkPlugin',),
+    'alien_plugins': ('TextPlugin', 'TextLinkPlugin','BootstrapListPlugin', 'BootstrapNavMainMemuPlugin'),
     'plugins_with_sharables': {
         'BootstrapImagePlugin': ('image_shapes', 'image_width_responsive', 'image_width_fixed',
                                  'image_height', 'resize_options',),
@@ -225,17 +225,26 @@ CMSPLUGIN_CASCADE = {
     'cache_strides': True,
 }
 
+CASCADE_CLIPS_LIBRARY = True
+
 CMS_PLACEHOLDER_CONF = {
+
+    'Header Content': {
+        'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin','BootstrapNavbarPlugin', 'BootstrapListPlugin', 'BootstrapNavItemsMainMemuPlugin'],
+        'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None, 'BootstrapNavItemsMainMemuPlugin':None},
+
+    },
+
     # this placeholder is used in templates/main.html, it shows how to
     # scaffold a djangoCMS page starting with an empty placeholder
     'Main Content': {
-        'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin'],
-        'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None},
+        'plugins': ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin' , 'BootstrapListPlugin'],
+        'parent_classes': {'BootstrapContainerPlugin': None, 'BootstrapJumbotronPlugin': None , },
     },
     # this placeholder is used in templates/wrapped.html, it shows how to
     # add content to an existing Bootstrap column
     'Bootstrap Column': {
-        'plugins': ['BootstrapRowPlugin', 'TextPlugin', ],
+        'plugins': ['BootstrapRowPlugin', 'TextPlugin','BootstrapListPlugin' ],
         'parent_classes': {'BootstrapRowPlugin': None},
         'require_parent': False,
     },

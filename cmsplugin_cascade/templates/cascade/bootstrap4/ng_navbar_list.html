@@ -1,0 +1,18 @@
+{% load l10n cascade_tags sekizai_tags %}
+{% with instance_css_classes=instance.css_classes instance_inline_styles=instance.inline_styles  child_css_classes=instance.glossary.child_css_classes %}
+{% block navbar-nav-list %}<ul {% if instance_css_classes %} class="{{ instance_css_classes }}"{% endif %}{% if instance_inline_styles %} style="{{ instance_inline_styles }}"{% endif %}>
+{% for child in instance.child_plugin_instances %}
+<li {% if child_css_classes %} class="{{ child_css_classes }}"{% endif %}{% if child_inline_styles %} style="{{ child_inline_styles }}"{% endif %}>
+{% render_plugin child %}
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
+{% endwith %}
+
+<style>
+li p { 
+padding:0px;
+margin:0px;
+}
+</style>

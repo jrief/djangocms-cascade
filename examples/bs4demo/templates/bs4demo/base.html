@@ -11,7 +11,7 @@
 	{% render_block "css" %}
 </head>
 
-<body{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui' %} ng-app="cascadeDemo"{% endif %}>
+<body{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui/' %} ng-app="cascadeDemo"{% endif %}>
 	{% cms_toolbar %}
 	<header id="header">
 		{% block header %}{% endblock %}
@@ -37,12 +37,13 @@
 			</div>
 		</div>
 	</footer>
-	{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui' %}
+	{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui/' %}
 	<script src="{% static 'node_modules/angular/angular.min.js' %}" type="text/javascript"></script>
 	<script src="{% static 'node_modules/angular-animate/angular-animate.min.js' %}" type="text/javascript"></script>
 	<script src="{% static 'node_modules/ui-bootstrap4/dist/ui-bootstrap-tpls.js' %}" type="text/javascript"></script>
+	<script src="{% static 'cms_bootstrap/js/ng-nav-navbar.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
-	angular.module('cascadeDemo', ['ngAnimate', 'ui.bootstrap'])
+	angular.module('cascadeDemo', ['ngAnimate', 'ui.bootstrap', 'django.cms.bootstrap'])
 	</script>
 	<style>
 	.nav, .pagination, .carousel, .card-title a { cursor: pointer; }

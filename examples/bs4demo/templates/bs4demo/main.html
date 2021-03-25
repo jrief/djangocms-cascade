@@ -2,21 +2,25 @@
 {% load static cms_tags bootstrap_tags sekizai_tags sass_tags %}
 
 {% block head %}
-{% addtoblock "css" %}<link rel="stylesheet" href="{% sass_src 'bs4demo/css/main.scss' %}" type="text/css" />{% endaddtoblock %}
+{% addtoblock "css" %}
+<link rel="stylesheet" href="{% sass_src 'bs4demo/css/main.scss' %}" type="text/css" />
+{% endaddtoblock %}
 {% endblock head %}
 
 {% block header %}
-	{% if DJANGO_CLIENT_FRAMEWORK == 'angular-ui' %}
-		{% include "bootstrap4/includes/ng-nav-navbar.html" with navbar_classes="navbar-expand-lg navbar-light bg-light fixed-top" %}
- 	{% else %}
-		{% include "bootstrap4/includes/nav-navbar.html" with navbar_classes="navbar-expand-lg navbar-light bg-light fixed-top" role="navigation" %}
+{% static_placeholder 'Header Content' %}
+{% if request.toolbar and request.toolbar.edit_mode_active %}
+{% addtoblock "js" %}
+<script src="{% static 'cascade/js/admin/placeholder_position.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+	placeholder_position_top('Header Content');
+});
+</script>
+{% endaddtoblock %}
 {% endif %}
 
-{% if cms_version >= "3.5.0" and request.toolbar %}
-	<style>
-	body { padding-top:46px; }
-	.fixed-top {  top: 46px !important;}
-	</style>
+{% if cms_version >= "3.5.0" and request.toolbar  %}
 {% endif %}
 
 {% endblock header %}
