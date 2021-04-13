@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.0.5
+=====
+* Fix Icon Plugin: If icon is optional, nullify initial value for Icon Font.
+
 2.0.4
 =====
 * Fix: Adding a link onto a freshly created page did not work, which was caused by an already
