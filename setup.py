@@ -33,6 +33,7 @@ setup(
         'django-cms>=3.8,<4',
         'django-entangled>=0.4',
         'djangocms-text-ckeditor>=3.7',
+        'django-select2>=7.7',
         'requests',
     ],
     license='MIT',
