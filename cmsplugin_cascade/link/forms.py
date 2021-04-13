@@ -1,7 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
-from django.forms import fields, Media, ModelChoiceField
+from django.forms import fields, Media
+from django.forms.models import ModelChoiceField
 from django.forms.widgets import RadioSelect
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -39,7 +40,7 @@ class PageSelect2Widget(HeavySelect2Widget):
         return Media(css=parent_media._css, js=js)
 
     def render(self, *args, **kwargs):
-        # replace self.choices by an empty list in order to prevent building the whole optgroup
+        # replace self.choices by an empty list to prevent building an optgroup for all pages
         try:
             page = Page.objects.get(pk=kwargs['value'])
         except (Page.DoesNotExist, ValueError, KeyError):
@@ -55,15 +56,15 @@ class LinkSearchField(ModelChoiceField):
     def __init__(self, *args, **kwargs):
         queryset = Page.objects.public()
         try:
-            queryset = queryset.published().on_site(get_current_site())
+            queryset = queryset.published().on_site(get_current_site()).distinct()
         except:
-            choices = []  # can happen if database is not ready yet
-        else:
-            # set a minimal set of choices, otherwise django-select2 builds them for every published page
-            choices = [(index, str(page)) for index, page in enumerate(queryset[:15])]
-        kwargs.setdefault('queryset', queryset.distinct())
+            pass
+        kwargs.setdefault('queryset', queryset)
         super().__init__(*args, **kwargs)
-        self.choices = choices
+
+    def clean(self, value):
+        self.queryset = Page.objects.public().published().on_site(get_current_site())
+        return super().clean(value)
 
 
 class SectionChoiceField(fields.ChoiceField):
@@ -186,7 +187,6 @@ class LinkForm(EntangledModelFormMixin):
 
     def _post_clean(self):
         super()._post_clean()
-        error = None
         empty_fields = [None, '']
         link_type = self.cleaned_data['glossary'].get('link_type')
         if link_type == 'cmspage':
