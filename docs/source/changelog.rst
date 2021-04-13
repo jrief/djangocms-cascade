@@ -2,6 +2,12 @@
 Release History
 ===============
 
+2.0.4
+=====
+* Fix: Adding a link onto a freshly created page did not work, which was caused by an already
+  evaluated queryset.
+
+
 2.0.3
 =====
 * Fix ``BootstrapTabSetPlugin``: Add CSS class ``nav-tab`` to outer wrapper.
