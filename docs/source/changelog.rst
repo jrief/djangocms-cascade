@@ -2,6 +2,12 @@
 Release History
 ===============
 
+2.0.6
+=====
+* Leaflet doesn't quote the content in its `url()` statements in its CSS. This
+  causes some trouble with **django-compressor** which appends a hash value.
+  This fix imports those CSS files locally until Leaflet comes up with a patch.
+
 2.0.5
 =====
 * Fix Icon Plugin: If icon is optional, nullify initial value for Icon Font.
