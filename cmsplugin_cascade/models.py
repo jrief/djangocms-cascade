@@ -3,6 +3,7 @@ import os
 import shutil
 from collections import OrderedDict
 from urllib.parse import urljoin
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -337,7 +338,7 @@ class IconFont(models.Model):
     def get_stylesheet_url(self):
         icon_font_url = os.path.relpath(app_settings.CMSPLUGIN_CASCADE['icon_font_root'], settings.MEDIA_ROOT)
         name = self.config_data.get('name') or 'fontello'
-        parts = (icon_font_url, self.font_folder, 'css/{}.css'.format(name))
+        parts = (icon_font_url, Path(self.font_folder).as_posix(), 'css/{}.css'.format(name))
         return urljoin(settings.MEDIA_URL, '/'.join(parts))
 
     def config_data_as_json(self):
