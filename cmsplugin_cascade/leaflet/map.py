@@ -36,7 +36,7 @@ class MarkerForm(CascadeModelForm):
     title = CharField(
         label=_("Marker Title"),
         widget=widgets.TextInput(attrs={'size': 60}),
-        help_text=_("Please choose a title, then go to the map to set a marker pin")
+        help_text=_("Please choose a title, then go to the map to set a marker pin.")
     )
 
     use_icon = BooleanField(
@@ -48,13 +48,13 @@ class MarkerForm(CascadeModelForm):
     marker_image = AdminImageFormField(
         ManyToOneRel(FilerImageField, Image, 'file_ptr'),
         Image.objects.all(),
-        label=_("Marker Image"),
+        label=_("Icon"),
         required=False,
         to_field_name='image_file',
     )
 
     marker_width = SizeField(
-        label=_("Marker Width"),
+        label=_("Icon Width"),
         allowed_units=['px'],
         required=False,
         help_text=_("Width of the marker icon in pixels."),
@@ -65,7 +65,7 @@ class MarkerForm(CascadeModelForm):
         label=_("Marker Anchor"),
         allowed_units=['px', '%'],
         required=False,
-        help_text=_("The coordinates of the icon's anchor (relative to its top left corner)."),
+        help_text=_("Coordinates of the icon's anchor relative to its top left corner."),
     )
 
     popup_text = HTMLFormField(

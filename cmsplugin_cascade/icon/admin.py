@@ -33,14 +33,14 @@ class UploadIconsForms(ModelForm):
                 zip_ref = zipfile.ZipFile(cleaned_data['zip_file'].file.file, 'r')
                 cleaned_data.update(zip(['font_folder', 'config_data'], unzip_archive(label, zip_ref)))
             except Exception as exc:
-                raise ValidationError(format_lazy(_("Can not unzip uploaded archive {}: {}"), label, exc))
+                raise ValidationError(format_lazy(_("Can not unzip uploaded archive {}: {}."), label, exc))
             finally:
                 zip_ref.close()
             try:
                 css_prefix_text = cleaned_data['config_data']['css_prefix_text']
             except KeyError:
                 raise ValidationError(format_lazy(
-                    _("File does not seem to originate from <a href=\"{url}\" target=\"_blank\">{url}</a>"),
+                    _("File does not seem to originate from <a href=\"{url}\" target=\"_blank\">{url}</a>."),
                     url=fontello_url,
                 ))
             other_icon_fonts = IconFont.objects.all()

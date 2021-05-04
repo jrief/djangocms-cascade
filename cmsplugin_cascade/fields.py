@@ -116,7 +116,7 @@ class SelectOverflowField(ChoiceField):
 
 @deconstructible
 class ColorValidator():
-    message = _("'%(color)s' is not a valid color code. ")
+    message = _("'%(color)s' is not a valid color code.")
     code = 'invalid_color_code'
 
     def __init__(self, with_alpha):

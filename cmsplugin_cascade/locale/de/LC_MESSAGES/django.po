@@ -742,7 +742,7 @@ msgstr ""
 
 #: bootstrap4/jumbotron.py:183
 msgid "You must at least set a background width."
-msgstr ""
+msgstr "Es muss zumindest eine Breite für den Hintergrund angegeben werden."
 
 #: bootstrap4/jumbotron.py:190
 msgid "Jumbotron"
@@ -750,172 +750,162 @@ msgstr ""
 
 #: bootstrap4/jumbotron.py:259
 msgid "Without background image"
-msgstr ""
+msgstr "Ohne Hintergrundbild"
 
 #: bootstrap4/mixins.py:48
 msgid "Primary with white text"
-msgstr ""
+msgstr "Primärfarbe mit weißem Text"
 
 #: bootstrap4/mixins.py:49
 msgid "Secondary with white text"
-msgstr ""
+msgstr "Sekundärfarbe mit weißem Text"
 
 #: bootstrap4/mixins.py:50
 msgid "Success with white text"
-msgstr ""
+msgstr "Erfolg mit weißem Text"
 
 #: bootstrap4/mixins.py:51
 msgid "Danger with white text"
-msgstr ""
+msgstr "Gefahr mit weißem Text"
 
 #: bootstrap4/mixins.py:52
 msgid "Warning with white text"
-msgstr ""
+msgstr "Warnung mit weißem Text"
 
 #: bootstrap4/mixins.py:53
 msgid "Info with white text"
-msgstr ""
+msgstr "Info mit weißem Text"
 
 #: bootstrap4/mixins.py:54
 msgid "Light with dark text"
-msgstr ""
+msgstr "Hell mit dunklem Text"
 
 #: bootstrap4/mixins.py:55
 msgid "Dark with white text"
-msgstr ""
+msgstr "Dunkel mit weißem Text"
 
 #: bootstrap4/mixins.py:56
 msgid "White with dark text"
-msgstr ""
+msgstr "Weiß mit dunklem Text"
 
 #: bootstrap4/mixins.py:57
 msgid "Transparent with dark text"
-msgstr ""
+msgstr "Transparent mit dunklem Text"
 
 #: bootstrap4/mixins.py:58
 msgid "Transparent with white text"
-msgstr ""
+msgstr "Transparent mit weißem Text"
 
 #: bootstrap4/mixins.py:61
 msgid "Background and color"
-msgstr ""
+msgstr "Hintergrund und Farbe"
 
 #: bootstrap4/mixins.py:71
 msgid "4 sided margins ({})"
-msgstr ""
+msgstr "Allseitiger Abstand"
 
 #: bootstrap4/mixins.py:72
 msgid "Horizontal margins ({})"
-msgstr ""
+msgstr "Horizontaler Abstand ({})"
 
 #: bootstrap4/mixins.py:73 bootstrap4/mixins.py:100
 msgid "Vertical margins ({})"
-msgstr ""
+msgstr "Vertikaler Abstand ({})"
 
 #: bootstrap4/mixins.py:74 bootstrap4/mixins.py:101
 msgid "Top margin ({})"
-msgstr ""
+msgstr "Abstand oben ({})"
 
 #: bootstrap4/mixins.py:75
 msgid "Right margin ({})"
-msgstr ""
+msgstr "Abstand rechts ({})"
 
 #: bootstrap4/mixins.py:76 bootstrap4/mixins.py:102
 msgid "Bottom margin ({})"
-msgstr ""
+msgstr "Abstand unten ({})"
 
 #: bootstrap4/mixins.py:77
 msgid "Left margin ({})"
-msgstr ""
+msgstr "Abstand links ({})"
 
 #: bootstrap4/mixins.py:83 bootstrap4/mixins.py:108
 msgid "No Margins"
-msgstr ""
+msgstr "Keine Abstände"
 
 #: bootstrap4/mixins.py:86 bootstrap4/mixins.py:111
-#, fuzzy
-#| msgid "Inherit from above"
 msgid "Inherit margin from {}"
-msgstr "Von oben erben"
+msgstr "Abstand von {} erben"
 
 #: bootstrap4/mixins.py:89 bootstrap4/mixins.py:114
 #, python-brace-format
 msgid "Margins for {breakpoint}"
-msgstr ""
+msgstr "Abstand für {breakpoint}"
 
 #: bootstrap4/mixins.py:125
 msgid "4 sided padding ({})"
-msgstr ""
+msgstr "Allseitiger Innenabstand"
 
 #: bootstrap4/mixins.py:126
 msgid "Horizontal padding ({})"
-msgstr ""
+msgstr "Horizontaler Innenabstand ({})"
 
 #: bootstrap4/mixins.py:127
 msgid "Vertical padding ({})"
-msgstr ""
+msgstr "Vertikaler Innenabstand ({})"
 
 #: bootstrap4/mixins.py:128
 msgid "Top padding ({})"
-msgstr ""
+msgstr "Innenabstand oben ({})"
 
 #: bootstrap4/mixins.py:129
 msgid "Right padding ({})"
-msgstr ""
+msgstr "Innenabstand rechts ({})"
 
 #: bootstrap4/mixins.py:130
 msgid "Bottom padding ({})"
-msgstr ""
+msgstr "Innenabstand unten ({})"
 
 #: bootstrap4/mixins.py:131
 msgid "Left padding ({})"
-msgstr ""
+msgstr "Innenabstand links ({})"
 
 #: bootstrap4/mixins.py:137
 msgid "No Padding"
-msgstr ""
+msgstr "Kein Innenabstand"
 
 #: bootstrap4/mixins.py:140
-#, fuzzy
-#| msgid "Inherit from above"
 msgid "Inherit padding from {}"
-msgstr "Von oben erben"
+msgstr "Innenabstand von {} erben"
 
 #: bootstrap4/mixins.py:143
 #, python-brace-format
 msgid "Padding for {breakpoint}"
-msgstr ""
+msgstr "Innenabstand für {breakpoint}"
 
 #: bootstrap4/mixins.py:154
 msgid "Do not float"
 msgstr "Nich floaten"
 
 #: bootstrap4/mixins.py:155
-#, fuzzy
-#| msgid "Pull left"
 msgid "Float left"
 msgstr "Nach links ausrichten"
 
 #: bootstrap4/mixins.py:156
-#, fuzzy
-#| msgid "Pull right"
 msgid "Float right"
 msgstr "Nach rechts ausrichten"
 
 #: bootstrap4/mixins.py:161
 msgid "Unset"
-msgstr ""
+msgstr "Nicht gesetzt"
 
 #: bootstrap4/mixins.py:164
-#, fuzzy
-#| msgid "Inherit from above"
 msgid "Inherit float from {}"
-msgstr "Von oben erben"
+msgstr "'float' von {} erben"
 
 #: bootstrap4/mixins.py:167
 #, python-brace-format
 msgid "Floats for {breakpoint}"
-msgstr ""
+msgstr "Float für {breakpoint}"
 
 #: bootstrap4/picture.py:19
 msgid "Adapt Picture Heights"
@@ -937,86 +927,77 @@ msgstr ""
 
 #: bootstrap4/picture.py:56
 msgid "Picture"
-msgstr ""
+msgstr "Bild"
 
 #: bootstrap4/picture.py:104
 msgid "No Picture"
-msgstr ""
+msgstr "Kein Bild"
 
 #: bootstrap4/secondary_menu.py:12
 msgid "CMS Page Id"
-msgstr ""
+msgstr "CMS Seiten-ID"
 
 #: bootstrap4/secondary_menu.py:13
 msgid "Select a CMS page with a given unique Id (in advanced settings)."
-msgstr ""
+msgstr "Wähle CMS Seite mit eindeutig gegebener Kennung (in Erweiterten Einstellungen)."
 
 #: bootstrap4/secondary_menu.py:17
-#, fuzzy
-#| msgid "No offset"
 msgid "Offset"
-msgstr "Kein Offste"
+msgstr "Offset"
 
 #: bootstrap4/secondary_menu.py:19
 msgid "Starting from which child menu."
-msgstr ""
+msgstr "Start von welchem Untermenü."
 
 #: bootstrap4/secondary_menu.py:23
 msgid "Limit"
-msgstr ""
+msgstr "Begrenzung"
 
 #: bootstrap4/secondary_menu.py:25
 msgid "Number of child menus."
-msgstr ""
+msgstr "Anzahl der Untermenüs"
 
 #: bootstrap4/secondary_menu.py:42
 msgid "Secondary Menu"
-msgstr ""
+msgstr "Sekundärmenü"
 
 #: bootstrap4/settings.py:65
 msgid "List Group"
-msgstr ""
+msgstr "Listengruppe"
 
 #: bootstrap4/settings.py:66
 msgid "Unstyled List"
-msgstr ""
+msgstr "Ungestylte Liste"
 
 #: bootstrap4/tabs.py:21
 msgid "Tabs"
-msgstr ""
+msgstr "Reiter"
 
 #: bootstrap4/tabs.py:22
-#, fuzzy
-#| msgid "Number of columns to be created with this row."
 msgid "Number of tabs to start with."
-msgstr "Anzahl von Spalten die für diese Zeile erzeugt werden."
+msgstr "Anzahl der Reiter zum starten."
 
 #: bootstrap4/tabs.py:26
 msgid "Justified tabs"
-msgstr ""
+msgstr "Ausgerichtete Reiter"
 
 #: bootstrap4/tabs.py:36
 msgid "Tab Set"
-msgstr ""
+msgstr "Reiter-Serie"
 
 #: bootstrap4/tabs.py:47
-#, fuzzy
-#| msgid "with {0} panel"
-#| msgid_plural "with {0} panels"
 msgid "with {} tab"
 msgid_plural "with {} tabs"
-msgstr[0] "mit {0} Panele"
-msgstr[1] "mit {0} Panelen"
+msgstr[0] "mit {0} Reiter"
+msgstr[1] "mit {0} Reiter"
 
 #: bootstrap4/tabs.py:60
-#, fuzzy
-#| msgid "Panel Title"
 msgid "Tab Title"
-msgstr "Panel-Titel"
+msgstr "Reiter-Titel"
 
 #: bootstrap4/tabs.py:69
 msgid "Tab Pane"
-msgstr ""
+msgstr "Reiter"
 
 #: bootstrap4/utils.py:11 generic/text_image.py:15
 msgid "Upscale image"
@@ -1040,115 +1021,115 @@ msgstr "Responsive"
 
 #: bootstrap4/utils.py:19
 msgid "Rounded"
-msgstr ""
+msgstr "Abgerundet"
 
 #: bootstrap4/utils.py:21
 msgid "Thumbnail"
-msgstr ""
+msgstr "Thumbnail"
 
 #: clipboard/admin.py:34
 msgid "Copy to Clipboard"
-msgstr ""
+msgstr "In den Clipboard kopieren"
 
 #: clipboard/admin.py:35
 msgid "Successfully pasted JSON data"
-msgstr ""
+msgstr "JSON-Inhalt eingefügt."
 
 #: clipboard/admin.py:36
 msgid "Successfully copied JSON data"
-msgstr ""
+msgstr "JSON-Inhalt kopiert."
 
 #: clipboard/admin.py:54
 msgid "Insert Data"
-msgstr ""
+msgstr "Daten einfügen"
 
 #: clipboard/admin.py:55
 msgid "From CMS Clipboard"
-msgstr ""
+msgstr "Vom CMS Clipboard"
 
 #: clipboard/admin.py:59
 msgid "Restore Data"
-msgstr ""
+msgstr "Daten wiederherstellen"
 
 #: clipboard/admin.py:60
 msgid "To CMS Clipboard"
-msgstr ""
+msgstr "Zum CMS Clipboard"
 
 #: clipboard/admin.py:70
-msgid "The CMS clipboard has been persisted into the database."
-msgstr ""
+msgid "The clipboard's content has been persisted for later."
+msgstr "Der Inhalt des Clipboards wurde für später gespeichert."
 
 #: clipboard/admin.py:74
-msgid "Persisted content has been restored to CMS clipboard."
-msgstr ""
+msgid "Persisted content has been restored to the clipboard."
+msgstr "Gespeichere Inhalte wurden im Clipboad abgelegt."
 
 #: clipboard/cms_plugins.py:42 clipboard/cms_plugins.py:150
 msgid "Export to Clipboard"
-msgstr ""
+msgstr "Exportiere ins Clipboard"
 
 #: clipboard/cms_plugins.py:51 clipboard/cms_plugins.py:88
 msgid "Import from Clipboard"
-msgstr ""
+msgstr "Importiere von Clipboard"
 
 #: clipboard/cms_plugins.py:93 clipboard/cms_plugins.py:104
 msgid "Select Clipboard Content"
-msgstr ""
+msgstr "Wähle Cliboard Inhalt"
 
 #: clipboard/forms.py:26
 msgid "This identifier has already been used, please choose another one."
-msgstr ""
+msgstr "Diese Kennung wurde bereits verwendet, bitte wähle eine andere."
 
 #: cms_toolbars.py:21
 msgid "Extra Page Fields"
-msgstr ""
+msgstr "Extra Felder für Seite"
 
 #: extra_fields/admin.py:27
 msgid "CSS class names"
-msgstr ""
+msgstr "CSS-Klassennamen"
 
 #: extra_fields/admin.py:30
 msgid "Freely selectable CSS classnames for this Plugin, separated by commas."
-msgstr ""
+msgstr "Frei wählbare CSS-Klassennamen für dieses Plugin, durch Kommas getrennt."
 
 #: extra_fields/admin.py:34
 msgid "Allow multiple"
-msgstr ""
+msgstr "Mehrfachselektion ermöglichen"
 
 #: extra_fields/admin.py:36
 msgid "Allow to select multiple of the above CSS classes."
-msgstr ""
+msgstr "Mehrfachselektion obiger CSS-Klassen ermöglichen."
 
 #: extra_fields/admin.py:51
 msgid "CSS class '{}' contains invalid characters."
-msgstr ""
+msgstr "CSS-Klasse '{}' enthält ungültige Zeichen."
 
 #: extra_fields/admin.py:59
 msgid "px, em, rem and %"
-msgstr ""
+msgstr "px, em, rem und %"
 
 #: extra_fields/admin.py:60
 msgid "px, em and %"
-msgstr ""
+msgstr "px, em und %"
 
 #: extra_fields/admin.py:61
 msgid "px, rem and em"
-msgstr ""
+msgstr "px, rem und em"
 
 #: extra_fields/admin.py:62
 msgid "px and em"
-msgstr ""
+msgstr "px und em"
 
 #: extra_fields/admin.py:63
 msgid "px, rem and %"
-msgstr ""
+msgstr "px, rem und %"
 
 #: extra_fields/admin.py:64
 msgid "px and %"
-msgstr ""
+msgstr "px und %"
 
 #: extra_fields/admin.py:65
 msgid "px and rem"
-msgstr ""
+msgstr "px und rem"
 
 #: extra_fields/admin.py:66
 msgid "px"
@@ -1156,7 +1137,7 @@ msgstr ""
 
 #: extra_fields/admin.py:67
 msgid "% and rem"
-msgstr ""
+msgstr "% und rem"
 
 #: extra_fields/admin.py:68
 msgid "%"
@@ -1164,132 +1145,122 @@ msgstr ""
 
 #: extra_fields/admin.py:69
 msgid "px, em, rem, % and auto"
-msgstr ""
+msgstr "px, em, rem, % und auto"
 
 #: extra_fields/admin.py:70
 msgid "px, em, % and auto"
-msgstr ""
+msgstr "px, em, % und auto"
 
 #: extra_fields/admin.py:71
 msgid "px, rem, em and auto"
-msgstr ""
+msgstr "px, rem, em und auto"
 
 #: extra_fields/admin.py:72
 msgid "px, em and auto"
-msgstr ""
+msgstr "px, em und auto"
 
 #: extra_fields/admin.py:73
 msgid "px, rem, % and auto"
-msgstr ""
+msgstr "px, rem, % und auto"
 
 #: extra_fields/admin.py:74
 msgid "px, % and auto"
-msgstr ""
+msgstr "px, % und auto"
 
 #: extra_fields/admin.py:75
 msgid "px, rem and auto"
-msgstr ""
+msgstr "px, rem und auto"
 
 #: extra_fields/admin.py:76
 msgid "px and auto"
-msgstr ""
+msgstr "px und auto"
 
 #: extra_fields/admin.py:77
 msgid "%, rem and auto"
-msgstr ""
+msgstr "%, rem und auto"
 
 #: extra_fields/admin.py:78
 msgid "% and auto"
-msgstr ""
+msgstr "% und auto"
 
 #: extra_fields/admin.py:104
 #, python-brace-format
 msgid "Customized {0} fields:"
-msgstr ""
+msgstr "Benutzerdefinierte {0} Felder:"
 
 #: extra_fields/admin.py:108
 msgid "Allow these extra inlines styles for the given plugin type."
-msgstr ""
+msgstr "Extra Inline-Styles für ausgewählten Plugin-Type zulassen."
 
 #: extra_fields/admin.py:112
 #, python-brace-format
 msgid "Units for {0} Fields:"
-msgstr ""
+msgstr "Einheiten für {0} Felder:"
 
 #: extra_fields/admin.py:115
 #, python-brace-format
 msgid "Allow these size units for customized {0} fields."
-msgstr ""
+msgstr "Diese Maßeinheiten für benutzerdefinierte {0} Felder zulassen."
 
 #: extra_fields/admin.py:131
 msgid "Module"
-msgstr ""
+msgstr "Modul"
 
 #: extra_fields/admin.py:137
-#, fuzzy
-#| msgid "Custom CSS classes and styles"
 msgid "Allowed Classes and Styles"
-msgstr "Maßgeschneiderte CSS-Klassen und Styles"
+msgstr "Benutzerdefinierte CSS-Klassen und Styles"
 
 #: extra_fields/admin.py:155
 #, python-format
 msgid "'%s' is not a valid CSS class name."
-msgstr ""
+msgstr "'%s' ist kein gültiger CSS Klassenname."
 
 #: extra_fields/mixins.py:39
 msgid "Named Element ID"
-msgstr ""
+msgstr "Benenne Element-ID"
 
 #: extra_fields/mixins.py:51
 msgid "Customized CSS Classes"
-msgstr ""
+msgstr "Benutzerdefinierte CSS-Klassen"
 
 #: extra_fields/mixins.py:55
 msgid "Customized CSS classes to be added to this element."
-msgstr ""
+msgstr "Füge benutzerdefinierte CSS-Klassen zu diesem Element hinzu."
 
 #: extra_fields/mixins.py:58
 msgid "Select CSS"
-msgstr ""
+msgstr "Wähle CSS aus"
 
 #: extra_fields/mixins.py:60
-#, fuzzy
-#| msgid "Custom CSS classes and styles"
 msgid "Customized CSS Class"
-msgstr "Maßgeschneiderte CSS-Klassen und Styles"
+msgstr "Benutzerdefinierte CSS-Klassen"
 
 #: extra_fields/mixins.py:63
-#, fuzzy
-#| msgid "Custom CSS classes and styles"
 msgid "Customized CSS class to be added to this element."
-msgstr "Maßgeschneiderte CSS-Klassen und Styles"
+msgstr "Benutzerdefinierte CSS-Klassen für dieses Element."
 
 #: fields.py:119
-#, fuzzy, python-format
-#| msgid "In '%(label)s': Value '%(value)s' is not a valid color."
-msgid "'%(color)s' is not a valid color code. "
-msgstr "In '%(label)s': Wert '%(value)s' ist kein gültiger Farbcode."
+msgid "'%(color)s' is not a valid color code."
+msgstr "'%(color)s' ist kein gültiger Farbcode."
 
 #: fields.py:172
 #, python-format
 msgid ""
 "'%(value)s' is not a valid size unit. Allowed units are: %(allowed_units)s."
-msgstr ""
+msgstr "'%(value)s' ist keine gültige Einheit. Gültige Einheiten sind: %(allowed_units)s."
 
 #: fields.py:200
-#, fuzzy
-#| msgid "or"
 msgctxt "allowed_units"
 msgid "or"
 msgstr "oder"
 
 #: generic/custom_snippet.py:14
 msgid "Custom Snippet"
-msgstr ""
+msgstr "Benutzerdefiniertes Schnipsel"
 
 #: generic/heading.py:12
 msgid "Heading {}"
-msgstr ""
+msgstr "Überschrift {}"
 
 #: generic/heading.py:16 generic/simple_wrapper.py:16
 msgid "HTML element tag"
@@ -1300,22 +1271,20 @@ msgid "Choose a tag type for this HTML element."
 msgstr ""
 
 #: generic/heading.py:21
-#, fuzzy
-#| msgid "Heading Size"
 msgid "Heading content"
-msgstr "Überschriftgröße"
+msgstr "Überschrift"
 
 #: generic/horizontal_rule.py:8
 msgid "Horizontal Rule"
-msgstr ""
+msgstr "Horizontale Linie"
 
 #: generic/mixins.py:13
 msgid "Element ID"
-msgstr ""
+msgstr "Element-ID"
 
 #: generic/mixins.py:16
 msgid "A unique identifier for this element."
-msgstr ""
+msgstr "Eindeutige Kennung für dieses Element."
 
 #: generic/mixins.py:41
 msgid "The element ID '{}' is not unique for this page."
@@ -1334,61 +1303,52 @@ msgid "Simple Wrapper"
 msgstr ""
 
 #: generic/text_image.py:22
-#, fuzzy
-#| msgid "Fixed Image Width"
 msgid "Image Width"
-msgstr "Fest Bildbreite"
+msgstr "Bildbreite"
 
 #: generic/text_image.py:25
-#, fuzzy
-#| msgid "Set a fixed image width in pixels."
 msgid "Set the image width in pixels."
-msgstr "Setze eine feste Bildbreite in Pixeln."
+msgstr "Setze eine Bildbreite in Pixeln."
 
 #: generic/text_image.py:29
-#, fuzzy
-#| msgid "Adapt Image Height"
 msgid "Image Height"
-msgstr "Anpassung der Bildhöhe"
+msgstr "Bildhöhe"
 
 #: generic/text_image.py:32
-#, fuzzy
-#| msgid "Set a fixed image width in pixels."
 msgid "Set the image height in pixels."
-msgstr "Setze eine feste Bildbreite in Pixeln."
+msgstr "Setze Bildhöhe in Pixeln."
 
 #: generic/text_image.py:45
 msgid "Alignement"
-msgstr ""
+msgstr "Ausrichtung"
 
 #: generic/text_image.py:46
 msgid "Not aligned"
-msgstr ""
+msgstr "Nicht ausgerichtet"
 
 #: generic/text_image.py:57
-#, fuzzy
-#| msgid "Image Title"
 msgid "Image in text"
-msgstr "Bild Titel"
+msgstr "Bild in Text"
 
 #: hide_plugins.py:11
 msgid "Hide plugin"
-msgstr ""
+msgstr "Verstecke Plugin"
 
 #: hide_plugins.py:13
 msgid "Hide this plugin and all of it's children."
-msgstr ""
+msgstr "Verstecke Plugin mit samt seiner Kinder."
 
 #: icon/admin.py:36
-msgid "Can not unzip uploaded archive {}: {}"
-msgstr ""
+msgid "Can not unzip uploaded archive {}: {}."
+msgstr "Kann hochgeladenes Archiv {}: {} nicht entpacken."
 
 #: icon/admin.py:43
 #, python-brace-format
 msgid ""
 "File does not seem to originate from <a href=\"{url}\" target=\"_blank"
-"\">{url}</a>"
+"\">{url}</a>."
 msgstr ""
+"Diese Datei scheint nicht von <a href=\"{url}\" target=\"_blank\">{url}</a> zu stammen."
 
 #: icon/admin.py:52
 #, python-brace-format
@@ -1397,34 +1357,37 @@ msgid ""
 "reload the font from <a href=\"{url}\" target=\"_blank\">{url}</a> using "
 "another CSS prefix."
 msgstr ""
+"Icon-Font '{icon_font}' verwendet bereits den CSS-Präfix '{css_prefix}'.<br/>Bitte "
+"lade den Font erneut von <a href=\"{url}\" target=\"_blank\">{url}</a>, diesmal mit einem "
+"anderen CSS-Präfix."
 
 #: icon/admin.py:91
 msgid "Preview Icons"
-msgstr ""
+msgstr "Icon-Voransicht"
 
 #: icon/admin.py:98
 msgid "Number of Icons"
-msgstr ""
+msgstr "Anzahl der Icons"
 
 #: icon/admin.py:105
 msgid "CSS prefix"
-msgstr ""
+msgstr "CSS-Präfix"
 
 #: icon/forms.py:17
 msgid "Font"
-msgstr ""
+msgstr "Font"
 
 #: icon/forms.py:23
 msgid "Select Symbol"
-msgstr ""
+msgstr "Wähle Symbol"
 
 #: icon/forms.py:32
 msgid "No Icon"
-msgstr ""
+msgstr "Kein Icon"
 
 #: icon/simpleicon.py:11
 msgid "Simple Icon"
-msgstr ""
+msgstr "Einfaces Icon"
 
 #: icon/texticon.py:14
 msgid "Icon in text"
@@ -1452,40 +1415,36 @@ msgstr ""
 "hinzugefügt wird."
 
 #: leaflet/map.py:37
-#, fuzzy
-#| msgid "Panel Title"
 msgid "Marker Title"
-msgstr "Panel-Titel"
+msgstr "Marker-Titel"
 
 #: leaflet/map.py:39
-msgid "Please choose a title, then go to the map to set a marker pin"
-msgstr ""
+msgid "Please choose a title, then go to the map to set a marker pin."
+msgstr "Bitte Title setzen und anschließend Marker in die Karte pinnen."
 
 #: leaflet/map.py:43
 msgid "Use customized marker icon"
-msgstr ""
+msgstr "Verwende eigenes Marker-Symbol"
 
 #: leaflet/map.py:51
 msgid "Marker Image"
-msgstr ""
+msgstr "Marker-Symbol"
 
 #: leaflet/map.py:57
 msgid "Marker Width"
-msgstr ""
+msgstr "Breite des Markers"
 
 #: leaflet/map.py:60
-#, fuzzy
-#| msgid "Set a fixed image width in pixels."
 msgid "Width of the marker icon in pixels."
-msgstr "Setze eine feste Bildbreite in Pixeln."
+msgstr "Setze Breite des Markers in Pixeln."
 
 #: leaflet/map.py:65
 msgid "Marker Anchor"
-msgstr ""
+msgstr "Marker-Anker"
 
 #: leaflet/map.py:68
 msgid "The coordinates of the icon's anchor (relative to its top left corner)."
-msgstr ""
+msgstr "Die Koordinaten des Icon-Ankers (relativ zu seiner linken oberen Ecke)."
 
 #: leaflet/map.py:73
 msgid "Text to display in popup."
@@ -1493,15 +1452,15 @@ msgstr "Optionaler Text für Popup"
 
 #: leaflet/map.py:109
 msgid "Marker"
-msgstr ""
+msgstr "Marker"
 
 #: leaflet/map.py:110
 msgid "Markers"
-msgstr ""
+msgstr "Marker"
 
 #: leaflet/map.py:116
 msgid "Map Width"
-msgstr ""
+msgstr "Breite der Karte"
 
 #: leaflet/map.py:119
 #, fuzzy
@@ -1516,9 +1475,6 @@ msgid "Adapt Map Height"
 msgstr "Anpassung der Bildhöhe"
 
 #: leaflet/map.py:126
-#, fuzzy
-#| msgid ""
-#| "Set a fixed height in pixels, or percent relative to the image width."
 msgid "Set a fixed height in pixels, or percent relative to the map width."
 msgstr "Setze eine feste Höhe in Pixeln oder Prozent relativ zur Bildbreite."
 
@@ -1530,19 +1486,19 @@ msgstr "Anpassung der Bildhöhe"
 
 #: leaflet/map.py:133
 msgid "Optional, set a minimum height in pixels."
-msgstr ""
+msgstr "Setze minimale Höhe in Pixel (optional)."
 
 #: leaflet/map.py:137
 msgid "Zoom by scrolling wheel"
-msgstr ""
+msgstr "Zoomen mit Scrollrad"
 
 #: leaflet/map.py:140
 msgid "Zoom into map on mouse over by scrolling wheel."
-msgstr ""
+msgstr "Mit Scrollrad hineinzoomen, falls Mauszeiger über der Karte."
 
 #: leaflet/map.py:170
 msgid "Map"
-msgstr ""
+msgstr "Karte"
 
 #: leaflet/map.py:256
 #, fuzzy, python-brace-format
@@ -1555,131 +1511,131 @@ msgstr[1] "mit {0} Panelen"
 
 #: link/forms.py:71
 msgid "Page Root"
-msgstr ""
+msgstr "Seitenanfang"
 
 #: link/forms.py:84 sphinx/link_plugin.py:37
 msgid "CMS Page"
-msgstr ""
+msgstr "CMS-Seite"
 
 #: link/forms.py:85
 msgid "Download File"
-msgstr ""
+msgstr "Datei-Download"
 
 #: link/forms.py:86 sphinx/link_plugin.py:39
 msgid "External URL"
-msgstr ""
+msgstr "Externe URL"
 
 #: link/forms.py:87 sphinx/link_plugin.py:40
 msgid "Mail To"
-msgstr ""
+msgstr "E-Mail an"
 
 #: link/forms.py:90
 msgid "Phone number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: link/forms.py:94
 msgid "Type of link"
-msgstr ""
+msgstr "Art des Links"
 
 #: link/forms.py:100
 msgid "An internal link onto any CMS page of this site"
-msgstr ""
+msgstr "Ein interner Link auf eine beliebige Seite im CMS"
 
 #: link/forms.py:106
 msgid "Page bookmark"
-msgstr ""
+msgstr "Seitenlesezeichen"
 
 #: link/forms.py:114
 msgid "An internal link onto a file from filer"
-msgstr ""
+msgstr "Ein interner Link auf eine Datei in der Mediathek"
 
 #: link/forms.py:119
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: link/forms.py:120
 msgid "Link onto external page"
-msgstr ""
+msgstr "Link auf externe Seite"
 
 #: link/forms.py:125
 msgid "Email"
-msgstr ""
+msgstr "E-Mail"
 
 #: link/forms.py:126
 msgid "Open Email program with this address"
-msgstr ""
+msgstr "Öffne E-Mail Programm mit dieser Adresse"
 
 #: link/forms.py:132
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: link/forms.py:133
 msgid "International phone number, ex. +1 212 555 2368."
-msgstr ""
+msgstr "Internationale Telefonnummer, z.B. +1 212 555 2368."
 
 #: link/forms.py:138
 msgid "Same Window"
-msgstr ""
+msgstr "Selbes Fenster"
 
 #: link/forms.py:139
 msgid "New Window"
-msgstr ""
+msgstr "Neues Fenster"
 
 #: link/forms.py:140
 msgid "Parent Window"
-msgstr ""
+msgstr "Eltern-Fenster"
 
 #: link/forms.py:141
 msgid "Topmost Frame"
-msgstr ""
+msgstr "Äußerster Frame"
 
 #: link/forms.py:143
 msgid "Link Target"
-msgstr ""
+msgstr "Ziel des Links"
 
 #: link/forms.py:146
 msgid "Open Link in other target."
-msgstr ""
+msgstr "Öffne Link in anderem Zielfenster"
 
 #: link/forms.py:150
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #: link/forms.py:152
 msgid "Link's Title"
-msgstr ""
+msgstr "Titel des Links"
 
 #: link/forms.py:164
 msgid "No Link"
-msgstr ""
+msgstr "Kein Link"
 
 #: link/forms.py:194
 msgid "CMS page to link to is missing."
-msgstr ""
+msgstr "Zu verlinkende Seite fehlt im CMS."
 
 #: link/forms.py:198
 msgid "File for download is missing."
-msgstr ""
+msgstr "Datei zum Download fehlt."
 
 #: link/forms.py:203
 msgid "No valid URL provided."
-msgstr ""
+msgstr "Keine gültige URL angegeben."
 
 #: link/forms.py:207
 msgid "No email address provided."
-msgstr ""
+msgstr "Keine E-Mail Adresse angegeben."
 
 #: link/forms.py:211
 msgid "No phone number provided."
-msgstr ""
+msgstr "Keine Telefonnummer angegeben."
 
 #: link/forms.py:231
 msgid "Link Content"
-msgstr ""
+msgstr "Link-Inhalt"
 
 #: link/forms.py:233
 msgid "Content of Link"
-msgstr ""
+msgstr "Inhalt des Links"
 
 #: models.py:27 models.py:155
 msgid "Plugin Name"
@@ -1687,7 +1643,7 @@ msgstr "Name des Plugins"
 
 #: models.py:34 models.py:236 models.py:296
 msgid "Identifier"
-msgstr "Bezeichner"
+msgstr "Kennung"
 
 #: models.py:47
 msgid "Shared between Plugins"
@@ -1695,15 +1651,15 @@ msgstr "Geteilt zwischen plugins"
 
 #: models.py:76
 msgid "Element"
-msgstr ""
+msgstr "Element"
 
 #: models.py:77
 msgid "Elements"
-msgstr ""
+msgstr "Elemente"
 
 #: models.py:137
 msgid "Sort by"
-msgstr ""
+msgstr "Sortiere nach"
 
 #: models.py:162
 msgid "Site"
@@ -1715,25 +1671,25 @@ msgstr "Maßgeschneiderte CSS-Klassen und Styles"
 
 #: models.py:196
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: models.py:201
 msgid "Element Type"
-msgstr ""
+msgstr "Element-Typ"
 
 #: models.py:207
 msgid "CSS classes"
-msgstr ""
+msgstr "CSS-Klassen"
 
 #: models.py:209
 msgid ""
 "Freely selectable CSS classnames for this Text-Editor Style, separated by "
 "spaces."
-msgstr ""
+msgstr "Frei wählbare CSS-Klassennamen für Text-Editor-Style, durch Leerzeichen getrennt."
 
 #: models.py:213
 msgid "Text Editor Config"
-msgstr ""
+msgstr "Konfiguriere Text-Editor"
 
 #: models.py:226 segmentation/cms_toolbars.py:11
 msgid "Segmentation"
@@ -1741,76 +1697,75 @@ msgstr "Segmentierung"
 
 #: models.py:249
 msgid "Created by"
-msgstr ""
+msgstr "Erstellt von"
 
 #: models.py:256
 msgid "Created at"
-msgstr ""
+msgstr "Erstellt am"
 
 #: models.py:262
 msgid "Last accessed at"
-msgstr ""
+msgstr "Letzter Zugriff am"
 
 #: models.py:269
 msgid "Persisted Clipboard Content"
-msgstr ""
+msgstr "Gespeicherter Clipboard-Inhalt"
 
 #: models.py:270
 msgid "Persisted Clipboard Contents"
-msgstr ""
+msgstr "Gespeicherte Clipboard-Inhalte"
 
 #: models.py:299
 msgid "A unique identifier to distinguish this icon font."
-msgstr ""
+msgstr "Eindeutige Kennung, um Icon-Fonts zu unterscheiden."
 
 #: models.py:306
 msgid ""
 "Upload a zip file created on <a href=\"http://fontello.com/\" target=\"_blank"
 "\">Fontello</a> containing fonts."
-msgstr ""
+msgstr "Lade ZIP-Datei mit auf <a href=\"http://fontello.com/\" target=\"_blank"
+"\">Fontello</a> erstellten Fonts hoch."
 
 #: models.py:312
-#, fuzzy
-#| msgid "Default"
 msgid "Default Font"
-msgstr "Standard"
+msgstr "Standard Font"
 
 #: models.py:314
 msgid ""
 "Use this font as default, unless an icon font is set for the current page."
-msgstr ""
+msgstr "Verwende diesen Font als Standard"
 
 #: models.py:318
 msgid "Uploaded Icon Font"
-msgstr ""
+msgstr "Abgelegter Icon-Font"
 
 #: models.py:319
 msgid "Uploaded Icon Fonts"
-msgstr ""
+msgstr "Abgelegte Icon-Fonts"
 
 #: models.py:370
 msgid "User editable settings for this page."
-msgstr ""
+msgstr "Benutzer-Einstellungen für diese Seite."
 
 #: models.py:376
 msgid "Store for arbitrary page data."
-msgstr ""
+msgstr "Ablage für beliebige Seiten-Einstellungen."
 
 #: models.py:384
 msgid "Icon Font"
-msgstr ""
+msgstr "Icon-Font"
 
 #: models.py:388
 msgid "Menu Symbol"
-msgstr ""
+msgstr "Menü-Symbol"
 
 #: models.py:392
 msgid "Symbol to be used with the menu title for this page."
-msgstr ""
+msgstr "Symbol, um den Menü-Titel der Seite anzuzeigen."
 
 #: models.py:397
 msgid "Cascade Page Settings"
-msgstr ""
+msgstr "Cascade Seiten-Einstellungen"
 
 #: render_template.py:11
 msgid "Render template"
@@ -1822,35 +1777,35 @@ msgstr "Verwende alternative Template zum Rendern dieses Plugins"
 
 #: segmentation/cms_plugins.py:25
 msgid "Condition evaluation"
-msgstr ""
+msgstr "Bedingungsauswertung"
 
 #: segmentation/cms_plugins.py:28
 msgid "Evaluation as used in Django's template tags for conditions"
-msgstr ""
+msgstr "Auswertung, wie sie in Django Templates für Bedingungen verwendet wird"
 
 #: segmentation/cms_plugins.py:43
 msgid "The evaluation condition is missing or empty."
-msgstr ""
+msgstr "Die Auswertung der Bedingung fehlt oder ist leer."
 
 #: segmentation/cms_plugins.py:48
 msgid "Unable to evaluate condition: {}"
-msgstr ""
+msgstr "Kann Bedingung nich auswerten: {}"
 
 #: segmentation/cms_plugins.py:60
 msgid "Segment"
-msgstr ""
+msgstr "Segment"
 
 #: segmentation/cms_plugins.py:144
 msgid "if"
-msgstr ""
+msgstr "if"
 
 #: segmentation/cms_plugins.py:148
 msgid "elif"
-msgstr ""
+msgstr "elif"
 
 #: segmentation/cms_plugins.py:148
 msgid "else"
-msgstr ""
+msgstr "else"
 
 #: segmentation/cms_plugins.py:150
 msgid "Condition tag"
@@ -1862,11 +1817,11 @@ msgstr ""
 
 #: segmentation/mixins.py:57
 msgid "Emulate User"
-msgstr ""
+msgstr "Emuliere User"
 
 #: segmentation/mixins.py:62
 msgid "Clear emulations"
-msgstr ""
+msgstr "Lösche Emulation"
 
 #: segmentation/mixins.py:131
 #, python-format
@@ -1878,109 +1833,99 @@ msgstr[1] ""
 #: segmentation/mixins.py:136
 #, python-format
 msgid "0 of %(cnt)s selected"
-msgstr ""
+msgstr "0 von %(cnt)s ausgewählt"
 
 #: segmentation/mixins.py:138
 #, python-format
 msgid "Select %(user_model)s to emulate"
-msgstr ""
+msgstr "Wähle %(user_model)s zum Emulieren"
 
 #: sharable/admin.py:51
 msgid "Change shared settings of '{}' plugin"
-msgstr ""
+msgstr "Ändere gemeinsame Einstellungen von Plugin '{}'"
 
 #: sharable/admin.py:60
 msgid "Used by plugins"
-msgstr ""
+msgstr "Von Plugins verwendet"
 
 #: sharable/admin.py:77
-#, fuzzy
-#| msgid "Plugin Name"
 msgid "Plugin Type"
-msgstr "Name des Plugins"
+msgstr "Plugin-Typ"
 
 #: sharable/fields.py:35
 msgid "An identifier is required to remember these settings."
-msgstr ""
+msgstr "Um diese Einstellungen zu speichern wird eine Kennung benötigt."
 
 #: sharable/forms.py:53
 msgid "Shared Settings"
-msgstr ""
+msgstr "Gemeinsame Einstellungen"
 
 #: sharable/forms.py:56
 msgid "Use individual settings"
-msgstr ""
+msgstr "Verwende individuelle Einstellungen"
 
 #: sharable/forms.py:57
 msgid "Use settings shared with other plugins of this type"
-msgstr ""
+msgstr "Verwende gemeinsame Einstellungen mit anderen Plugins dieses Typs"
 
 #: sharable/forms.py:66
 msgid "Remember these settings as"
-msgstr ""
+msgstr "Merke diese Einstellungen als"
 
 #: sharable/forms.py:75
 msgid "The identifier '{}' has already been used, please choose another name."
-msgstr ""
+msgstr "Die Kennung '{}' wurde bereits verwendet, bitte einen anderen Namen wählen. "
 
 #: sphinx/cms_apps.py:45
-#, fuzzy
-#| msgid "Segmentation"
 msgid "Sphinx Documentation"
-msgstr "Segmentierung"
+msgstr "Dokumentation mittels Sphinx"
 
 #: sphinx/cms_menus.py:13
-#, fuzzy
-#| msgid "Segmentation"
 msgid "Documentation Menu"
-msgstr "Segmentierung"
+msgstr "Dokumentation-Menü"
 
 #: sphinx/link_plugin.py:38
-#, fuzzy
-#| msgid "Segmentation"
 msgid "Documentation"
-msgstr "Segmentierung"
+msgstr "Dokumentation"
 
 #: sphinx/link_plugin.py:48
 msgid "An internal link onto a documentation page"
-msgstr ""
+msgstr "Ein interner Link auf die Dokumentations-Seite"
 
 #: templates/cascade/admin/change_form.html:8
 msgid "There are no further settings for this plugin"
-msgstr ""
+msgstr "Es gibt keine weitere Einstellungen für dieses Plugin"
 
 #: templates/cascade/admin/change_form.html:9
 msgid "Please hit OK to save."
-msgstr ""
+msgstr "Zum Speichern bitte auf OK klicken."
 
 #: templates/cascade/admin/legacy_widgets/panel_types.html:7
 #: templates/cascade/admin/widgets/panel_types.html:7
 msgid "Content"
-msgstr ""
+msgstr "Inhalt"
 
 #: templates/cascade/admin/segmentation_list.html:43
 msgid "Home"
-msgstr ""
+msgstr "Home"
 
 #: templates/cascade/admin/segmentation_list.html:46
 msgid "Add"
-msgstr ""
+msgstr "Hinzufügen"
 
 #: templates/cascade/admin/widgets/colorpicker.html:6
 #: templates/cascade/admin/widgets/inherit_color.html:2
 msgid "Inherit"
-msgstr ""
+msgstr "Erben"
 
 #: utils.py:41
 #, python-brace-format
 msgid "Unable to link onto '{0}'."
-msgstr ""
+msgstr "Kann nicht auf '{0}' verlinken."
 
 #: utils.py:139
-#, fuzzy
-#| msgid "Extra small"
 msgid "Extra Styles"
-msgstr "Extra Klein"
+msgstr "Extra Style"
 
 #: widgets.py:95
 #, python-format
@@ -1988,8 +1933,6 @@ msgid "In '%(label)s': This field is required."
 msgstr "In '%(label)s': Dieses Feld wird benötigt."
 
 #: widgets.py:96
-#, fuzzy, python-format
-#| msgid "In '%(label)s': Value '%(value)s' shall contain a valid number."
 msgid "In '%(label)s': Value '%(value)s' shall contain a valid decimal number."
 msgstr "In '%(label)s': Wert '%(value)s' muss numerisch sein."
 

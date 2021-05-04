@@ -67,11 +67,11 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 obj.data = serialize_from_placeholder(placeholder, self.admin_site)
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
-            messages.add_message(request, messages.INFO, _("The CMS clipboard has been persisted into the database."))
+            messages.add_message(request, messages.INFO, _("The clipboard's content has been persisted for later."))
         if request.POST.get('restore_clipboard'):
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
-            messages.add_message(request, messages.INFO, _("Persisted content has been restored to CMS clipboard."))
+            messages.add_message(request, messages.INFO, _("Persisted content has been restored to the clipboard."))
         if request.POST.get('restore_clipboard'):
             deserialize_to_clipboard(request, obj.data)
             obj.last_accessed_at = now()
