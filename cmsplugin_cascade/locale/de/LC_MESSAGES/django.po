@@ -437,10 +437,8 @@ msgid "Reordering for devices narrower than {:.1f} pixels."
 msgstr "Spaltenreihenfolge für Geräte kleiner als {:.1f} Pixel."
 
 #: bootstrap4/container.py:295
-#, fuzzy
-#| msgid "Column ordering for devices wider than {} pixels."
 msgid "Reordering for devices wider than {:.1f} pixels."
-msgstr "Spaltenreihenfolge für Geräte größer als {} Pixel."
+msgstr "Reihenfolge für Geräte größer als {} Pixel ändern."
 
 #: bootstrap4/container.py:296
 msgid "Reordering for all devices."
@@ -463,10 +461,6 @@ msgid "Responsive utilities for {}"
 msgstr "Responsive Utilities für {}"
 
 #: bootstrap4/container.py:310
-#, fuzzy
-#| msgid ""
-#| "Utility classes for showing and hiding content by devices narrower than "
-#| "{} pixels."
 msgid ""
 "Utility classes for showing and hiding content by devices narrower than "
 "{:.1f} pixels."
@@ -652,14 +646,12 @@ msgid "Set a fixed height in pixels, or percent relative to the image width."
 msgstr "Setze eine feste Höhe in Pixeln oder Prozent relativ zur Bildbreite."
 
 #: bootstrap4/image.py:63
-#, fuzzy
-#| msgid "Image Title"
 msgid "Image Alignment"
-msgstr "Bild Titel"
+msgstr "Bildausrichtung"
 
 #: bootstrap4/image.py:67
 msgid "How to align a non-responsive image."
-msgstr ""
+msgstr "Ausrichtung von nicht-“responsiven” Bildern."
 
 #: bootstrap4/image.py:76 fields.py:286
 msgid "Image"
@@ -667,47 +659,45 @@ msgstr "Bild"
 
 #: bootstrap4/image.py:122
 msgid "No Image"
-msgstr ""
+msgstr "Kein Bild"
 
 #: bootstrap4/jumbotron.py:84
 msgid "Is fluid"
-msgstr ""
+msgstr "Ist “fluid”"
 
 #: bootstrap4/jumbotron.py:87
 msgid "Shall this element occupy the entire horizontal space of its parent."
-msgstr ""
+msgstr "Soll dieses Element die gesamte horizontale Ausdehnung des Elternelementes beanspruchen."
 
 #: bootstrap4/jumbotron.py:95
 msgid "This property specifies the height for each Bootstrap breakpoint."
-msgstr ""
+msgstr "Diese Eigenschaft definiert die Höhe für jeden “Bootstrap breakpoint”."
 
 #: bootstrap4/jumbotron.py:103
-#, fuzzy
-#| msgid "Crop image"
 msgid "Background image"
-msgstr "Bild zuschneiden"
+msgstr "Hintergrundbild"
 
 #: bootstrap4/jumbotron.py:108
 msgid "Background repeat"
-msgstr ""
+msgstr "Hintergrund Wiederholung"
 
 #: bootstrap4/jumbotron.py:113
 msgid "This property specifies how the background image repeates."
-msgstr ""
+msgstr "Diese Eigenschaft definiert wie sich das Hintergrundbild wiederholt."
 
 #: bootstrap4/jumbotron.py:117
 msgid "Background attachment"
-msgstr ""
+msgstr "Hintergrund-Anhang"
 
 #: bootstrap4/jumbotron.py:122
 msgid ""
 "This property specifies how to move the background image relative to the "
 "viewport."
-msgstr ""
+msgstr "Diese Eigenschaft definiert wie sich das Hintergrundbild relativ zum Viewport verschiebt."
 
 #: bootstrap4/jumbotron.py:126
 msgid "Background vertical position"
-msgstr ""
+msgstr "Vertikale Position des Hintergrundes"
 
 #: bootstrap4/jumbotron.py:130
 msgid "This property moves a background image vertically within its container."
@@ -1463,26 +1453,20 @@ msgid "Map Width"
 msgstr "Breite der Karte"
 
 #: leaflet/map.py:119
-#, fuzzy
-#| msgid "Set the image width in percent relative to containing element."
 msgid "Set the map width in percent relative to containing element."
-msgstr "Setze die Bildbreite in Prozent relativ zum enthaltenen Element."
+msgstr "Setze die Kartenbreite in Prozent relativ zum enthaltenen Element."
 
 #: leaflet/map.py:123
-#, fuzzy
-#| msgid "Adapt Image Height"
 msgid "Adapt Map Height"
-msgstr "Anpassung der Bildhöhe"
+msgstr "Anpassung der Kartenhöhe"
 
 #: leaflet/map.py:126
 msgid "Set a fixed height in pixels, or percent relative to the map width."
 msgstr "Setze eine feste Höhe in Pixeln oder Prozent relativ zur Bildbreite."
 
 #: leaflet/map.py:130
-#, fuzzy
-#| msgid "Adapt Image Height"
 msgid "Adapt Map Minimum Height"
-msgstr "Anpassung der Bildhöhe"
+msgstr "Anpassung der minimalen Kartenhöhe"
 
 #: leaflet/map.py:133
 msgid "Optional, set a minimum height in pixels."
@@ -1501,13 +1485,10 @@ msgid "Map"
 msgstr "Karte"
 
 #: leaflet/map.py:256
-#, fuzzy, python-brace-format
-#| msgid "with {0} panel"
-#| msgid_plural "with {0} panels"
 msgid "with {0} marker"
 msgid_plural "with {0} markers"
-msgstr[0] "mit {0} Panele"
-msgstr[1] "mit {0} Panelen"
+msgstr[0] "mit {0} Markierung"
+msgstr[1] "mit {0} Markierungen"
 
 #: link/forms.py:71
 msgid "Page Root"
@@ -1809,11 +1790,11 @@ msgstr "else"
 
 #: segmentation/cms_plugins.py:150
 msgid "Condition tag"
-msgstr ""
+msgstr "Fallunterscheidung"
 
 #: segmentation/cms_plugins.py:152
 msgid "Django's condition tag"
-msgstr ""
+msgstr "Django's Tag zur Fallunterscheidung"
 
 #: segmentation/mixins.py:57
 msgid "Emulate User"
@@ -1827,8 +1808,8 @@ msgstr "Lösche Emulation"
 #, python-format
 msgid "%(total_count)s selected"
 msgid_plural "All %(total_count)s selected"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(total_count)s ausgewählt"
+msgstr[1] "Alle %(total_count)s ausgewählt"
 
 #: segmentation/mixins.py:136
 #, python-format
@@ -1935,111 +1916,3 @@ msgstr "In '%(label)s': Dieses Feld wird benötigt."
 #: widgets.py:96
 msgid "In '%(label)s': Value '%(value)s' shall contain a valid decimal number."
 msgstr "In '%(label)s': Wert '%(value)s' muss numerisch sein."
-
-#~ msgid ""
-#~ "In '%(label)s': Value '%(value)s' shall contain a valid number, ending in "
-#~ "%(endings)s."
-#~ msgstr ""
-#~ "In '%(label)s': Wert '%(value)s' muss numerisch sein und mit %(endings)s "
-#~ "enden."
-
-#~ msgid "In '%(label)s': Field '%(field)s' is required."
-#~ msgstr "In '%(label)s': Feld '%(field)s' wird benötigt."
-
-#~ msgid ""
-#~ "In '%(label)s': Value '%(value)s' for field '%(field)s' shall contain a "
-#~ "valid number, ending in %(endings)s."
-#~ msgstr ""
-#~ "In '%(label)s': Wert '%(value)s' für Feld '%(field)s' muss numerisch sein "
-#~ "und mit %(endings)s enden."
-
-#~ msgid "Panels"
-#~ msgstr "Panelen"
-
-#~ msgid "Number of panels for this panel group."
-#~ msgstr "Anzahl der Panelen für diese Panelen-Gruppe."
-
-#~ msgid "Accordion Panel"
-#~ msgstr "Akkordeon Panele"
-
-#~ msgid "Panel type"
-#~ msgstr "Panelentyp"
-
-#~ msgid "Display Panel using this style."
-#~ msgstr "Zeige die Panele unter Verwendung dieses Styles."
-
-#~ msgid "Large"
-#~ msgstr "Groß"
-
-#~ msgid "Small"
-#~ msgstr "Klein"
-
-#~ msgid "Quick Float"
-#~ msgstr "Quick Float"
-
-#~ msgid "Float the button to the left or right."
-#~ msgstr "Richte den Button nach rechts oder links aus."
-
-#~ msgid "Prepend icon"
-#~ msgstr "Symbol anfügen"
-
-#~ msgid "Prepend a Glyphicon before the content."
-#~ msgstr "Dem Inhalt ein Glyphicon voranstellen."
-
-#~ msgid "Append icon"
-#~ msgstr "Symbol hinzufügen"
-
-#~ msgid "Slide Caption"
-#~ msgstr "Slide Untertitel"
-
-#~ msgid "Caption text to be laid over the backgroud image."
-#~ msgstr "Untertitel Text, der über das Hintergrundbild gelegt wird."
-
-#~ msgid "Tiny (<{sm[0]}px)"
-#~ msgstr "Sehr klein(<{sm[0]}px)"
-
-#~ msgid "Small (≥{sm[0]}px and <{md[0]}px)"
-#~ msgstr "Klein (≥{sm[0]}px and <{md[0]}px)"
-
-#~ msgid "Medium (≥{md[0]}px and <{lg[0]}px)"
-#~ msgstr "Mittel (≥{md[0]}px and <{lg[0]}px)"
-
-#~ msgid "Large (≥{lg[0]}px)"
-#~ msgstr "Groß (≥{lg[0]}px)"
-
-#~ msgid "Number of column units for devices narrower than {} pixels."
-#~ msgstr ""
-#~ "Anzahl von Spalten Einheiten für Geräte die schmaler als {} Pixel sind."
-
-#~ msgid "Number of column units for devices wider than {} pixels."
-#~ msgstr ""
-#~ "Anzahl von Spalten Einheiten für Geräder die breiter als {} Pixel sind."
-
-#~ msgid "Number of column units for all devices."
-#~ msgstr "Anzahl von Spalten für alle Geräte."
-
-#~ msgid "Push {}"
-#~ msgstr "Push {}"
-
-#~ msgid "Pull {}"
-#~ msgstr "Pull {}"
-
-#~ msgid "default width: {0} unit"
-#~ msgid_plural "default width: {0} units"
-#~ msgstr[0] "Default Breite: {0} Einheit"
-#~ msgstr[1] "Default Breite: {0} Einheiten"
-
-#~ msgid "Gallery"
-#~ msgstr "Galerie"
-
-#~ msgid "Image Responsiveness"
-#~ msgstr "Bild Responsivität"
-
-#~ msgid "Thumbnail Width"
-#~ msgstr "Thumbnail Breite"
-
-#~ msgid "Set a fixed thumbnail width in pixels."
-#~ msgstr "Setze eine feste Thumbnail-Breite in Pixeln."
-
-#~ msgid "Thumbnail Height"
-#~ msgstr "Thumbnail Höhe"
