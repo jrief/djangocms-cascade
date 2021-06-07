@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.0.7
+=====
+* Configuration setting `CMSPLUGIN_CASCADE['plugins_with_extra_mixins']` now also accepts
+  a tuple of extra mixin classes, rather than only one.
 2.0.6
 =====
 * Leaflet doesn't quote the content in its `url()` statements in its CSS. This

@@ -91,7 +91,10 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         if name in cls.plugins_with_extra_fields:
             bases = (ExtraFieldsMixin,) + bases
         if name in cls.plugins_with_extra_mixins:
-            bases = (cls.plugins_with_extra_mixins[name],) + bases
+            if isinstance(cls.plugins_with_extra_mixins[name], tuple):
+                bases = cls.plugins_with_extra_mixins[name] + bases
+            else:
+                bases = (cls.plugins_with_extra_mixins[name],) + bases
         if name in cls.plugins_with_bookmark:
             bases = (SectionMixin,) + bases
             model_mixins = (SectionModelMixin,) + model_mixins
