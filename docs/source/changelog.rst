@@ -7,6 +7,8 @@ Release History
 * Configuration setting `CMSPLUGIN_CASCADE['plugins_with_extra_mixins']` now also accepts
   a tuple of extra mixin classes, rather than only one.
 * Updated German translation strings.
+* Fix for windows path signs in icon fonts folder path causing rendering problem during icon
+  plugins addition.
 
 2.0.6
 =====
