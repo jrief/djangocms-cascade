@@ -1,6 +1,6 @@
 {% load l10n static sekizai_tags thumbnail %}
 
-{% addtoblock "css" %}<link href="{% static 'cascade/css/leaflet.css' %}" rel="stylesheet" type="text/css" />{% endaddtoblock %}
+{% addtoblock "css" %}<link href="{% static 'node_modules/leaflet/dist/leaflet.css' %}" rel="stylesheet" type="text/css" />{% endaddtoblock %}
 {% addtoblock "js" %}<script src="{% static 'node_modules/leaflet/dist/leaflet.js' %}" type="text/javascript"></script>{% endaddtoblock %}
 
 {% addtoblock "css" %}{% localize off %}
@@ -10,7 +10,7 @@
 	height: {{ instance.glossary.map_height }};{% with map_min_height=instance.glossary.map_min_height %}{% if map_min_height %}
 	min-height: {{ map_min_height }};{% endif %}{% endwith %}
 }
-</style>
+</style> 
 {% endlocalize %}{% endaddtoblock %}
 
 {% addtoblock "js" %}{% localize off %}
