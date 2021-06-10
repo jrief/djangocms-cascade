@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.0.8
+=====
+* Adopted translation string for German.
+
+
 2.0.7
 =====
 * Configuration setting `CMSPLUGIN_CASCADE['plugins_with_extra_mixins']` now also accepts
