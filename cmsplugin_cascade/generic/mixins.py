@@ -10,10 +10,10 @@ from cmsplugin_cascade.models import CascadePage
 
 class SectionFormMixin(EntangledModelFormMixin):
     element_id = CharField(
-        label=_("Element ID"),
+        label=_("Id"),
         max_length=15,
         required=False,
-        help_text=_("A unique identifier for this element.")
+        help_text=_("A unique identifier for this element (please don't use any special characters, punctuations, etc.) May be used as anchor-link: #id.")
     )
 
     class Meta:

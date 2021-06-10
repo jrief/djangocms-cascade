@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-02 15:23+0100\n"
+"POT-Creation-Date: 2021-06-10 17:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr "Schließe die anderen"
 
 #: bootstrap4/accordion.py:28
 msgid "Open only one card at a time."
-msgstr "Öffne nur jeweils eine Card."
+msgstr "Öffne nur jeweils eine Kachel."
 
 #: bootstrap4/accordion.py:32
 msgid "First open"
@@ -54,19 +54,20 @@ msgstr "Erstes geöffnet"
 
 #: bootstrap4/accordion.py:35
 msgid "Start with the first card open."
-msgstr "Beginne mit der ersten Card geöffnet."
+msgstr "Beginne mit der ersten Kachel geöffnet."
 
 #: bootstrap4/accordion.py:44
 msgid "Accordion"
 msgstr "Akkordeon"
 
 #: bootstrap4/accordion.py:56
+#, python-brace-format
 msgid "with {0} card"
 msgid_plural "with {0} cards"
-msgstr[0] "mit {0} Card"
-msgstr[1] "mit {0} cards"
+msgstr[0] "mit {0} Kachel"
+msgstr[1] "mit {0} Kacheln"
 
-#: bootstrap4/accordion.py:77 generic/heading.py:30
+#: bootstrap4/accordion.py:77 generic/heading.py:29
 msgid "Heading"
 msgstr "Überschrift"
 
@@ -76,7 +77,7 @@ msgstr "Body in Innenabstand"
 
 #: bootstrap4/accordion.py:85
 msgid "Add standard padding to card body."
-msgstr "Füge Innenabstand to Card-Body hinzu"
+msgstr "Füge Innenabstand to Kachelinhalt hinzu"
 
 #: bootstrap4/accordion.py:96
 msgid "Accordion Group"
@@ -115,7 +116,7 @@ msgid "Dark"
 msgstr "Dunkel"
 
 #: bootstrap4/buttons.py:37 bootstrap4/buttons.py:46 link/cms_plugins.py:10
-#: link/forms.py:93
+#: link/forms.py:94
 msgid "Link"
 msgstr "Link"
 
@@ -199,19 +200,19 @@ msgstr "Leer"
 
 #: bootstrap4/card.py:16
 msgid "Card Header"
-msgstr ""
+msgstr "Kachel Kopfzeile"
 
 #: bootstrap4/card.py:23
 msgid "Card Body"
-msgstr ""
+msgstr "Kachelinhalt"
 
 #: bootstrap4/card.py:30
 msgid "Card Footer"
-msgstr ""
+msgstr "Kachel Fusszeile"
 
 #: bootstrap4/card.py:40
 msgid "Card"
-msgstr ""
+msgstr "Kachel"
 
 #: bootstrap4/carousel.py:22
 msgid "Animate"
@@ -255,8 +256,7 @@ msgstr "Höhe des Carousels"
 
 #: bootstrap4/carousel.py:47
 msgid "Heights of Carousel in pixels for distinct Bootstrap's breakpoints."
-msgstr ""
-"Höhe des Carousel in Pixeln für unterschiedliche Bootstrap Breakpoints"
+msgstr "Höhe des Carousel in Pixeln für unterschiedliche Bootstrap Breakpoints"
 
 #: bootstrap4/carousel.py:51 bootstrap4/image.py:54 bootstrap4/picture.py:37
 #: generic/text_image.py:36
@@ -667,7 +667,9 @@ msgstr "Ist “fluid”"
 
 #: bootstrap4/jumbotron.py:87
 msgid "Shall this element occupy the entire horizontal space of its parent."
-msgstr "Soll dieses Element die gesamte horizontale Ausdehnung des Elternelementes beanspruchen."
+msgstr ""
+"Soll dieses Element die gesamte horizontale Ausdehnung des Elternelementes "
+"beanspruchen."
 
 #: bootstrap4/jumbotron.py:95
 msgid "This property specifies the height for each Bootstrap breakpoint."
@@ -693,7 +695,9 @@ msgstr "Hintergrund-Anhang"
 msgid ""
 "This property specifies how to move the background image relative to the "
 "viewport."
-msgstr "Diese Eigenschaft definiert wie sich das Hintergrundbild relativ zum Viewport verschiebt."
+msgstr ""
+"Diese Eigenschaft definiert wie sich das Hintergrundbild relativ zum "
+"Viewport verschiebt."
 
 #: bootstrap4/jumbotron.py:126
 msgid "Background vertical position"
@@ -929,7 +933,9 @@ msgstr "CMS Seiten-ID"
 
 #: bootstrap4/secondary_menu.py:13
 msgid "Select a CMS page with a given unique Id (in advanced settings)."
-msgstr "Wähle CMS Seite mit eindeutig gegebener Kennung (in Erweiterten Einstellungen)."
+msgstr ""
+"Wähle CMS Seite mit eindeutig gegebener Kennung (in Erweiterten "
+"Einstellungen)."
 
 #: bootstrap4/secondary_menu.py:17
 msgid "Offset"
@@ -960,34 +966,34 @@ msgid "Unstyled List"
 msgstr "Ungestylte Liste"
 
 #: bootstrap4/tabs.py:21
-msgid "Tabs"
-msgstr "Reiter"
+msgid "Number of Tabs"
+msgstr "Anzahl der Registerkarten"
 
 #: bootstrap4/tabs.py:22
-msgid "Number of tabs to start with."
-msgstr "Anzahl der Reiter zum starten."
+msgid "Number can be adjusted at any time."
+msgstr "Die Anzahl kann jederzeit angepasst werden."
 
 #: bootstrap4/tabs.py:26
 msgid "Justified tabs"
-msgstr "Ausgerichtete Reiter"
+msgstr "Bündig ausrichten"
 
 #: bootstrap4/tabs.py:36
 msgid "Tab Set"
-msgstr "Reiter-Serie"
+msgstr "Registerkarten"
 
-#: bootstrap4/tabs.py:47
+#: bootstrap4/tabs.py:48
 msgid "with {} tab"
 msgid_plural "with {} tabs"
-msgstr[0] "mit {0} Reiter"
-msgstr[1] "mit {0} Reiter"
+msgstr[0] "mit {0} Registerkarte"
+msgstr[1] "mit {0} Registerkarten"
 
-#: bootstrap4/tabs.py:60
+#: bootstrap4/tabs.py:61
 msgid "Tab Title"
-msgstr "Reiter-Titel"
+msgstr "Beschriftung"
 
-#: bootstrap4/tabs.py:69
+#: bootstrap4/tabs.py:70
 msgid "Tab Pane"
-msgstr "Reiter"
+msgstr "Abschnitt"
 
 #: bootstrap4/utils.py:11 generic/text_image.py:15
 msgid "Upscale image"
@@ -1079,7 +1085,8 @@ msgstr "CSS-Klassennamen"
 
 #: extra_fields/admin.py:30
 msgid "Freely selectable CSS classnames for this Plugin, separated by commas."
-msgstr "Frei wählbare CSS-Klassennamen für dieses Plugin, durch Kommas getrennt."
+msgstr ""
+"Frei wählbare CSS-Klassennamen für dieses Plugin, durch Kommas getrennt."
 
 #: extra_fields/admin.py:34
 msgid "Allow multiple"
@@ -1230,6 +1237,7 @@ msgid "Customized CSS class to be added to this element."
 msgstr "Benutzerdefinierte CSS-Klassen für dieses Element."
 
 #: fields.py:119
+#, python-format
 msgid "'%(color)s' is not a valid color code."
 msgstr "'%(color)s' ist kein gültiger Farbcode."
 
@@ -1237,7 +1245,9 @@ msgstr "'%(color)s' ist kein gültiger Farbcode."
 #, python-format
 msgid ""
 "'%(value)s' is not a valid size unit. Allowed units are: %(allowed_units)s."
-msgstr "'%(value)s' ist keine gültige Einheit. Gültige Einheiten sind: %(allowed_units)s."
+msgstr ""
+"'%(value)s' ist keine gültige Einheit. Gültige Einheiten sind: "
+"%(allowed_units)s."
 
 #: fields.py:200
 msgctxt "allowed_units"
@@ -1252,33 +1262,35 @@ msgstr "Benutzerdefiniertes Schnipsel"
 msgid "Heading {}"
 msgstr "Überschrift {}"
 
-#: generic/heading.py:16 generic/simple_wrapper.py:16
-msgid "HTML element tag"
-msgstr ""
+#: generic/heading.py:16
+msgid "Structure Level"
+msgstr "Gliederungsebene"
 
-#: generic/heading.py:17 generic/simple_wrapper.py:17
-msgid "Choose a tag type for this HTML element."
-msgstr ""
-
-#: generic/heading.py:21
-msgid "Heading content"
-msgstr "Überschrift"
+#: generic/heading.py:20
+#: templates/cascade/admin/legacy_widgets/panel_types.html:7
+#: templates/cascade/admin/widgets/panel_types.html:7
+msgid "Content"
+msgstr "Inhalt"
 
 #: generic/horizontal_rule.py:8
 msgid "Horizontal Rule"
 msgstr "Horizontale Linie"
 
 #: generic/mixins.py:13
-msgid "Element ID"
-msgstr "Element-ID"
+msgid "Id"
+msgstr "Id"
 
 #: generic/mixins.py:16
-msgid "A unique identifier for this element."
-msgstr "Eindeutige Kennung für dieses Element."
+msgid ""
+"A unique identifier for this element (please don't use any special "
+"characters, punctuations, etc.) May be used as anchor-link: #id."
+msgstr ""
+"Eindeutige Bezeichnung des Elements (bitte keine Sonderzeichen, Umlaute, "
+"Interpunktion etc. verwenden). Kann als Ankerlink verwendet werden: #id."
 
 #: generic/mixins.py:41
 msgid "The element ID '{}' is not unique for this page."
-msgstr ""
+msgstr "Die Bezeichnung des Elements '{}' ist nicht eindeutig für diese Seite."
 
 #: generic/simple_wrapper.py:11
 msgid "<{}> – Element"
@@ -1288,9 +1300,17 @@ msgstr ""
 msgid "Naked Wrapper"
 msgstr ""
 
+#: generic/simple_wrapper.py:16
+msgid "HTML element tag"
+msgstr "HTML Element"
+
+#: generic/simple_wrapper.py:17
+msgid "Choose a type for this HTML element."
+msgstr "Wähle Type für dieses HTML-Element"
+
 #: generic/simple_wrapper.py:25
 msgid "Simple Wrapper"
-msgstr ""
+msgstr "Einfacher Wrapper"
 
 #: generic/text_image.py:22
 msgid "Image Width"
@@ -1321,12 +1341,14 @@ msgid "Image in text"
 msgstr "Bild in Text"
 
 #: hide_plugins.py:11
-msgid "Hide plugin"
-msgstr "Verstecke Plugin"
+msgid "Hide element"
+msgstr "Element verbergen"
 
 #: hide_plugins.py:13
-msgid "Hide this plugin and all of it's children."
-msgstr "Verstecke Plugin mit samt seiner Kinder."
+msgid "Hide this element and all of it's descendants from the web-page."
+msgstr ""
+"Dieses Element mitsamt seiner untergeordneten Elemente auf der Webseite "
+"verbergen."
 
 #: icon/admin.py:36
 msgid "Can not unzip uploaded archive {}: {}."
@@ -1338,7 +1360,8 @@ msgid ""
 "File does not seem to originate from <a href=\"{url}\" target=\"_blank"
 "\">{url}</a>."
 msgstr ""
-"Diese Datei scheint nicht von <a href=\"{url}\" target=\"_blank\">{url}</a> zu stammen."
+"Diese Datei scheint nicht von <a href=\"{url}\" target=\"_blank\">{url}</a> "
+"zu stammen."
 
 #: icon/admin.py:52
 #, python-brace-format
@@ -1347,9 +1370,9 @@ msgid ""
 "reload the font from <a href=\"{url}\" target=\"_blank\">{url}</a> using "
 "another CSS prefix."
 msgstr ""
-"Icon-Font '{icon_font}' verwendet bereits den CSS-Präfix '{css_prefix}'.<br/>Bitte "
-"lade den Font erneut von <a href=\"{url}\" target=\"_blank\">{url}</a>, diesmal mit einem "
-"anderen CSS-Präfix."
+"Icon-Font '{icon_font}' verwendet bereits den CSS-Präfix '{css_prefix}'.<br/"
+">Bitte lade den Font erneut von <a href=\"{url}\" target=\"_blank\">{url}</"
+"a>, diesmal mit einem anderen CSS-Präfix."
 
 #: icon/admin.py:91
 msgid "Preview Icons"
@@ -1381,17 +1404,17 @@ msgstr "Einfaces Icon"
 
 #: icon/texticon.py:14
 msgid "Icon in text"
-msgstr ""
+msgstr "Icon in Text"
 
 #: image.py:13
 msgid "Image Title"
-msgstr "Bild Titel"
+msgstr "Bildtitel"
 
 #: image.py:15
 msgid "Caption text added to the 'title' attribute of the <img> element."
 msgstr ""
-"Untertitel Text der zum 'title' Attribut des <img> Elementes hinzugefügt "
-"wird."
+"Beschriftung des Bildes welches zum 'title' Attribut des <img> Elementes "
+"hinzugefügt wird."
 
 #: image.py:19
 msgid "Alternative Description"
@@ -1417,12 +1440,12 @@ msgid "Use customized marker icon"
 msgstr "Verwende eigenes Marker-Symbol"
 
 #: leaflet/map.py:51
-msgid "Marker Image"
-msgstr "Marker-Symbol"
+msgid "Icon"
+msgstr "Icon"
 
 #: leaflet/map.py:57
-msgid "Marker Width"
-msgstr "Breite des Markers"
+msgid "Icon Width"
+msgstr "Bildbreite"
 
 #: leaflet/map.py:60
 msgid "Width of the marker icon in pixels."
@@ -1433,8 +1456,8 @@ msgid "Marker Anchor"
 msgstr "Marker-Anker"
 
 #: leaflet/map.py:68
-msgid "The coordinates of the icon's anchor (relative to its top left corner)."
-msgstr "Die Koordinaten des Icon-Ankers (relativ zu seiner linken oberen Ecke)."
+msgid "Coordinates of the icon's anchor relative to its top left corner."
+msgstr "Die Koordinaten des Icon-Ankers relativ zu seiner linken oberen Ecke."
 
 #: leaflet/map.py:73
 msgid "Text to display in popup."
@@ -1485,108 +1508,109 @@ msgid "Map"
 msgstr "Karte"
 
 #: leaflet/map.py:256
+#, python-brace-format
 msgid "with {0} marker"
 msgid_plural "with {0} markers"
 msgstr[0] "mit {0} Markierung"
 msgstr[1] "mit {0} Markierungen"
 
-#: link/forms.py:71
+#: link/forms.py:72
 msgid "Page Root"
 msgstr "Seitenanfang"
 
-#: link/forms.py:84 sphinx/link_plugin.py:37
+#: link/forms.py:85 sphinx/link_plugin.py:37
 msgid "CMS Page"
 msgstr "CMS-Seite"
 
-#: link/forms.py:85
+#: link/forms.py:86
 msgid "Download File"
 msgstr "Datei-Download"
 
-#: link/forms.py:86 sphinx/link_plugin.py:39
+#: link/forms.py:87 sphinx/link_plugin.py:39
 msgid "External URL"
 msgstr "Externe URL"
 
-#: link/forms.py:87 sphinx/link_plugin.py:40
+#: link/forms.py:88 sphinx/link_plugin.py:40
 msgid "Mail To"
 msgstr "E-Mail an"
 
-#: link/forms.py:90
+#: link/forms.py:91
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: link/forms.py:94
+#: link/forms.py:95
 msgid "Type of link"
 msgstr "Art des Links"
 
-#: link/forms.py:100
+#: link/forms.py:101
 msgid "An internal link onto any CMS page of this site"
 msgstr "Ein interner Link auf eine beliebige Seite im CMS"
 
-#: link/forms.py:106
+#: link/forms.py:107
 msgid "Page bookmark"
 msgstr "Seitenlesezeichen"
 
-#: link/forms.py:114
+#: link/forms.py:115
 msgid "An internal link onto a file from filer"
 msgstr "Ein interner Link auf eine Datei in der Mediathek"
 
-#: link/forms.py:119
+#: link/forms.py:120
 msgid "URL"
 msgstr "URL"
 
-#: link/forms.py:120
+#: link/forms.py:121
 msgid "Link onto external page"
 msgstr "Link auf externe Seite"
 
-#: link/forms.py:125
+#: link/forms.py:126
 msgid "Email"
 msgstr "E-Mail"
 
-#: link/forms.py:126
+#: link/forms.py:127
 msgid "Open Email program with this address"
 msgstr "Öffne E-Mail Programm mit dieser Adresse"
 
-#: link/forms.py:132
+#: link/forms.py:133
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#: link/forms.py:133
+#: link/forms.py:134
 msgid "International phone number, ex. +1 212 555 2368."
 msgstr "Internationale Telefonnummer, z.B. +1 212 555 2368."
 
-#: link/forms.py:138
+#: link/forms.py:139
 msgid "Same Window"
 msgstr "Selbes Fenster"
 
-#: link/forms.py:139
+#: link/forms.py:140
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#: link/forms.py:140
+#: link/forms.py:141
 msgid "Parent Window"
 msgstr "Eltern-Fenster"
 
-#: link/forms.py:141
+#: link/forms.py:142
 msgid "Topmost Frame"
 msgstr "Äußerster Frame"
 
-#: link/forms.py:143
+#: link/forms.py:144
 msgid "Link Target"
 msgstr "Ziel des Links"
 
-#: link/forms.py:146
+#: link/forms.py:147
 msgid "Open Link in other target."
 msgstr "Öffne Link in anderem Zielfenster"
 
-#: link/forms.py:150
+#: link/forms.py:151
 msgid "Title"
 msgstr "Titel"
 
-#: link/forms.py:152
+#: link/forms.py:153
 msgid "Link's Title"
 msgstr "Titel des Links"
 
-#: link/forms.py:164
+#: link/forms.py:165
 msgid "No Link"
 msgstr "Kein Link"
 
@@ -1618,133 +1642,136 @@ msgstr "Link-Inhalt"
 msgid "Content of Link"
 msgstr "Inhalt des Links"
 
-#: models.py:27 models.py:155
+#: models.py:28 models.py:156
 msgid "Plugin Name"
 msgstr "Name des Plugins"
 
-#: models.py:34 models.py:236 models.py:296
+#: models.py:35 models.py:237 models.py:297
 msgid "Identifier"
 msgstr "Kennung"
 
-#: models.py:47
+#: models.py:48
 msgid "Shared between Plugins"
 msgstr "Geteilt zwischen plugins"
 
-#: models.py:76
+#: models.py:77
 msgid "Element"
 msgstr "Element"
 
-#: models.py:77
+#: models.py:78
 msgid "Elements"
 msgstr "Elemente"
 
-#: models.py:137
+#: models.py:138
 msgid "Sort by"
 msgstr "Sortiere nach"
 
-#: models.py:162
+#: models.py:163
 msgid "Site"
 msgstr "Site"
 
-#: models.py:181
+#: models.py:182
 msgid "Custom CSS classes and styles"
 msgstr "Maßgeschneiderte CSS-Klassen und Styles"
 
-#: models.py:196
+#: models.py:197
 msgid "Name"
 msgstr "Name"
 
-#: models.py:201
+#: models.py:202
 msgid "Element Type"
 msgstr "Element-Typ"
 
-#: models.py:207
+#: models.py:208
 msgid "CSS classes"
 msgstr "CSS-Klassen"
 
-#: models.py:209
+#: models.py:210
 msgid ""
 "Freely selectable CSS classnames for this Text-Editor Style, separated by "
 "spaces."
-msgstr "Frei wählbare CSS-Klassennamen für Text-Editor-Style, durch Leerzeichen getrennt."
+msgstr ""
+"Frei wählbare CSS-Klassennamen für Text-Editor-Style, durch Leerzeichen "
+"getrennt."
 
-#: models.py:213
+#: models.py:214
 msgid "Text Editor Config"
 msgstr "Konfiguriere Text-Editor"
 
-#: models.py:226 segmentation/cms_toolbars.py:11
+#: models.py:227 segmentation/cms_toolbars.py:11
 msgid "Segmentation"
 msgstr "Segmentierung"
 
-#: models.py:249
+#: models.py:250
 msgid "Created by"
 msgstr "Erstellt von"
 
-#: models.py:256
+#: models.py:257
 msgid "Created at"
 msgstr "Erstellt am"
 
-#: models.py:262
+#: models.py:263
 msgid "Last accessed at"
 msgstr "Letzter Zugriff am"
 
-#: models.py:269
+#: models.py:270
 msgid "Persisted Clipboard Content"
 msgstr "Gespeicherter Clipboard-Inhalt"
 
-#: models.py:270
+#: models.py:271
 msgid "Persisted Clipboard Contents"
 msgstr "Gespeicherte Clipboard-Inhalte"
 
-#: models.py:299
+#: models.py:300
 msgid "A unique identifier to distinguish this icon font."
 msgstr "Eindeutige Kennung, um Icon-Fonts zu unterscheiden."
 
-#: models.py:306
+#: models.py:307
 msgid ""
 "Upload a zip file created on <a href=\"http://fontello.com/\" target=\"_blank"
 "\">Fontello</a> containing fonts."
-msgstr "Lade ZIP-Datei mit auf <a href=\"http://fontello.com/\" target=\"_blank"
+msgstr ""
+"Lade ZIP-Datei mit auf <a href=\"http://fontello.com/\" target=\"_blank"
 "\">Fontello</a> erstellten Fonts hoch."
 
-#: models.py:312
+#: models.py:313
 msgid "Default Font"
 msgstr "Standard Font"
 
-#: models.py:314
+#: models.py:315
 msgid ""
 "Use this font as default, unless an icon font is set for the current page."
 msgstr "Verwende diesen Font als Standard"
 
-#: models.py:318
+#: models.py:319
 msgid "Uploaded Icon Font"
 msgstr "Abgelegter Icon-Font"
 
-#: models.py:319
+#: models.py:320
 msgid "Uploaded Icon Fonts"
 msgstr "Abgelegte Icon-Fonts"
 
-#: models.py:370
+#: models.py:371
 msgid "User editable settings for this page."
 msgstr "Benutzer-Einstellungen für diese Seite."
 
-#: models.py:376
+#: models.py:377
 msgid "Store for arbitrary page data."
 msgstr "Ablage für beliebige Seiten-Einstellungen."
 
-#: models.py:384
+#: models.py:385
 msgid "Icon Font"
 msgstr "Icon-Font"
 
-#: models.py:388
+#: models.py:389
 msgid "Menu Symbol"
 msgstr "Menü-Symbol"
 
-#: models.py:392
+#: models.py:393
 msgid "Symbol to be used with the menu title for this page."
 msgstr "Symbol, um den Menü-Titel der Seite anzuzeigen."
 
-#: models.py:397
+#: models.py:398
 msgid "Cascade Page Settings"
 msgstr "Cascade Seiten-Einstellungen"
 
@@ -1855,7 +1882,8 @@ msgstr "Merke diese Einstellungen als"
 
 #: sharable/forms.py:75
 msgid "The identifier '{}' has already been used, please choose another name."
-msgstr "Die Kennung '{}' wurde bereits verwendet, bitte einen anderen Namen wählen. "
+msgstr ""
+"Die Kennung '{}' wurde bereits verwendet, bitte einen anderen Namen wählen. "
 
 #: sphinx/cms_apps.py:45
 msgid "Sphinx Documentation"
@@ -1880,11 +1908,6 @@ msgstr "Es gibt keine weitere Einstellungen für dieses Plugin"
 #: templates/cascade/admin/change_form.html:9
 msgid "Please hit OK to save."
 msgstr "Zum Speichern bitte auf OK klicken."
-
-#: templates/cascade/admin/legacy_widgets/panel_types.html:7
-#: templates/cascade/admin/widgets/panel_types.html:7
-msgid "Content"
-msgstr "Inhalt"
 
 #: templates/cascade/admin/segmentation_list.html:43
 msgid "Home"
@@ -1914,5 +1937,12 @@ msgid "In '%(label)s': This field is required."
 msgstr "In '%(label)s': Dieses Feld wird benötigt."
 
 #: widgets.py:96
+#, python-format
 msgid "In '%(label)s': Value '%(value)s' shall contain a valid decimal number."
 msgstr "In '%(label)s': Wert '%(value)s' muss numerisch sein."
+
+#~ msgid "Marker Image"
+#~ msgstr "Marker-Symbol"
+
+#~ msgid "Marker Width"
+#~ msgstr "Breite des Markers"

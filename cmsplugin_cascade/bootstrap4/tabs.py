@@ -18,8 +18,8 @@ class TabSetFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         min_value=1,
         initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
-        label=_("Tabs"),
-        help_text=_("Number of tabs to start with."),
+        label=_("Number of Tabs"),
+        help_text=_("Number can be adjusted at any time."),
     )
 
     justified = BooleanField(

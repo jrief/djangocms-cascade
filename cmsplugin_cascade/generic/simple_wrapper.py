@@ -14,7 +14,7 @@ class SimpleWrapperFormMixin(EntangledModelFormMixin):
     tag_type = ChoiceField(
         choices=TAG_CHOICES,
         label=_("HTML element tag"),
-        help_text=_('Choose a tag type for this HTML element.')
+        help_text=_('Choose a type for this HTML element.')
     )
 
     class Meta:
