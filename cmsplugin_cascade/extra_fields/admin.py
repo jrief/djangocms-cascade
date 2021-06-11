@@ -124,7 +124,8 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
         """
         Only if at least one plugin uses the class ExtraFieldsMixin, allow to add an instance.
         """
-        return len(self.plugins_for_site) > 0
+        has_permission = super().has_add_permission(request)
+        return has_permission and len(self.plugins_for_site) > 0
 
     def module(self, obj):
         return plugin_pool.get_plugin(obj.plugin_type).module
