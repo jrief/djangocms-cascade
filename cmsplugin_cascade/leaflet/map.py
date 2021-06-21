@@ -63,6 +63,7 @@ class MarkerForm(CascadeModelForm):
     marker_anchor = MultiSizeField(
         ['left', 'top'],
         label=_("Marker Anchor"),
+        sublabels=[_("Left"), _("Top")],
         allowed_units=['px', '%'],
         required=False,
         help_text=_("Coordinates of the icon's anchor relative to its top left corner."),
