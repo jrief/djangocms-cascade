@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.1
+===
+* ``MultiSizeField`` accepts ``sublabels`` for all of its sub-fields.
+
+
 2.0.8
 =====
 * Adopted translation string for German.
