@@ -46,7 +46,7 @@ django.jQuery(function($) {
 				lis.push('<li title="' + icon + '"><i class="' + css_prefix_text + icon + '"></i></li>');
 			});
 			$symbol.before('<ul id="fonticon_symbols" class="font-family">' + lis.join('') + '</ul>');
-			$('#fonticon_search_query').bind('keyup paste', function(event) {
+			$('#fonticon_search_query').on('keyup paste', function(event) {
 				var fonticon_symbols = $('#fonticon_symbols').find('li'), re;
 				if (event.target.value) {
 					re = new RegExp(event.target.value, 'i');

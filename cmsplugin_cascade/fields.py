@@ -11,13 +11,14 @@ from django.forms.utils import ErrorList
 from django.core.validators import ProhibitNullCharactersValidator
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _, pgettext
+
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.widgets import ColorPickerWidget, BorderChoiceWidget, MultipleTextInputWidget
 from filer.fields.image import FilerImageField, AdminImageFormField
 from filer.settings import settings as filer_settings
 
 
-class GlossaryField(object):
+class GlossaryField:
     """
     Deprecated.
     Behave similar to django.forms.Field, encapsulating a partial dictionary, stored as

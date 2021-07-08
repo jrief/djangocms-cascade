@@ -22,17 +22,16 @@ def migrate_link(glossary):
         elif link['type'] == 'exturl':
             glossary.update({
                 'link_type': 'exturl',
-                'ext_url': foreign_key(),
+                'ext_url': link['url'],
             })
         elif link['type'] == 'email':
             glossary.update({
                 'link_type': 'email',
-                'mail_to': foreign_key(),
+                'mail_to': link['mail_to'],
             })
         elif link['type'] and link['type'] != 'none':
             glossary.update({
                 'link_type': link['type'],
-                link['type']: foreign_key(),
             })
         else:
             glossary.update({

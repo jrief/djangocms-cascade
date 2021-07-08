@@ -4,6 +4,7 @@ from functools import reduce
 import itertools
 from operator import add
 import re
+
 from django.utils.translation import gettext_lazy as _
 
 
@@ -74,7 +75,7 @@ class Breakpoint(Enum):
         ][self.value]
 
 
-class Bound(object):
+class Bound:
     def __init__(self, min, max):
         self.min = float(min)
         self.max = float(max)
@@ -122,7 +123,7 @@ fluid_bounds = {
 }
 
 
-class Break(object):
+class Break:
     def __init__(self, breakpoint, classes, narrower=None):
         self.breakpoint = breakpoint
         self.fixed_units = 0

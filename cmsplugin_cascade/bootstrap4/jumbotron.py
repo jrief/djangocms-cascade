@@ -4,6 +4,7 @@ from django.forms import widgets, BooleanField, ChoiceField
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import ColorField, MultiSizeField, CascadeImageField
@@ -16,7 +17,7 @@ from cmsplugin_cascade.bootstrap4.picture import get_picture_elements
 logger = logging.getLogger('cascade')
 
 
-class ImageBackgroundMixin(object):
+class ImageBackgroundMixin:
     @property
     def element_heights(self):
         element_heights = self.glossary.get('element_heights', {})
@@ -220,7 +221,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
                     'CSS_PREFIXES': app_settings.CSS_PREFIXES,
                 })
             except Exception as exc:
-                logger.warning("Unable generate picture elements. Reason: {}".format(exc))        
+                logger.warning("Unable generate picture elements. Reason: {}".format(exc))
         return self.super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
 
     @classmethod

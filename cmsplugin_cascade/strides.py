@@ -15,7 +15,7 @@ from cmsplugin_cascade.mixins import CascadePluginMixin
 __all__ = ['register_stride', 'StrideContentRenderer']
 
 
-class EmulateQuerySet(object):
+class EmulateQuerySet:
     def __init__(self, elements):
         self.elements = elements
 
@@ -24,7 +24,7 @@ class EmulateQuerySet(object):
             yield type(str('StrideInlineElement'), (object,), {'id': id, 'glossary': glossary})()
 
 
-class StrideElementBase(object):
+class StrideElementBase:
     """
     Emulate a CascadeElement to be used by the CascadeContentRenderer instead of the CMSContentRenderer.
     """
@@ -91,7 +91,7 @@ class StrideElementBase(object):
         return ''
 
 
-class TextStrideElement(object):
+class TextStrideElement:
     def __init__(self, plugin, data, children_data, parent=None):
         self.plugin = plugin
         self.pk = data.get('pk')
@@ -181,7 +181,7 @@ class TextStridePlugin(StridePluginBase):
         return context
 
 
-class StrideContentRenderer(object):
+class StrideContentRenderer:
     def __init__(self, request):
         self.request = request
         self.language = get_language_from_request(request)
