@@ -6,10 +6,11 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _, ngettext
 from django.utils.html import format_html
+
 from cms.constants import REFRESH_PAGE
 
 
-class SegmentPluginModelMixin(object):
+class SegmentPluginModelMixin:
     """
     TODO: whenever cmsplugin_cascade drops support for django-CMS < 3.4, this mixin class
     shall be added to the plugin rather than to the model
@@ -47,7 +48,7 @@ class EmulateUserModelMixin(SegmentPluginModelMixin):
         return context_override
 
 
-class EmulateUserAdminMixin(object):
+class EmulateUserAdminMixin:
     UserModel = get_user_model()
 
     @staticmethod

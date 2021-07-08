@@ -121,7 +121,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
         cascade_clipboard.save(update_fields=['last_accessed_at'])
 
         # detach plugins from clipboard and reattach them to current placeholder
-        cb_placeholder_plugin = request.toolbar.clipboard.cmsplugin_set.first()
+        cb_placeholder_plugin = request.toolbar.clipboard.cmsplugin_set.filter(plugin_type='PlaceholderPlugin').first()
         cb_placeholder_instance, _ = cb_placeholder_plugin.get_plugin_instance()
         new_plugins = cb_placeholder_instance.placeholder_ref.get_plugins()
         new_plugins.update(placeholder=placeholder)

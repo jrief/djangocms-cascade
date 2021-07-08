@@ -1,5 +1,5 @@
 
-class AppSettings(object):
+class AppSettings:
 
     def _setting(self, name, default=None):
         from django.conf import settings

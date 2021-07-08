@@ -1,4 +1,6 @@
 from urllib.parse import urlparse
+import requests
+
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.sites.shortcuts import get_current_site
@@ -7,6 +9,7 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.urls import reverse
 from django.utils.translation import get_language_from_request
+
 from cms.models.pagemodel import Page
 from cms.extensions import PageExtensionAdmin
 from cms.utils.page import get_page_from_path
@@ -33,12 +36,14 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def get_urls(self):
         urls = [
-            url(r'^get_page_sections/$', lambda: None, name='get_page_sections'),  # just to reverse
+            url(r'^get_page_sections/$', lambda _: JsonResponse({'element_ids': []}),
+                name='get_page_sections'),  # just to reverse
             url(r'^get_page_sections/(?P<page_pk>\d+)$',
                 self.admin_site.admin_view(self.get_page_sections)),
             url(r'^published_pages/$', self.get_published_pagelist, name='get_published_pagelist'),
             url(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
             url(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
+            url(r'^validate_exturl/$', self.validate_exturl, name='validate_exturl'),
         ]
         urls.extend(super().get_urls())
         return urls
@@ -107,6 +112,19 @@ class CascadePageAdmin(PageExtensionAdmin):
             data.pop('glyphs', None)
             data['families'] = icon_font.get_icon_families()
             return JsonResponse(data)
+
+    def validate_exturl(self, request):
+        """
+        Perform a GET request onto the given external URL and return its status.
+        """
+        exturl = request.GET.get('exturl')
+        request_headers = {'User-Agent': 'Django-CMS-Cascade'}
+        try:
+            response = requests.get(exturl, allow_redirects=True, headers=request_headers)
+        except Exception:
+            return JsonResponse({'status_code': 500})
+        else:
+            return JsonResponse({'status_code': response.status_code})
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
         extra_context = dict(extra_context or {}, icon_fonts=IconFont.objects.all())

@@ -2,6 +2,51 @@
 Release History
 ===============
 
+1.3.7
+=====
+* Perform validation of external URL during editing, instead of form validation. Do not reject
+  invalid external URLs, just warn about them.
+
+
+1.3.6
+=====
+* Fix regression on link validation introduced in 1.3.5.
+
+
+1.3.5
+=====
+* In plugins inheriting from ``LinkPluginBase``, refactor validation from method ``clean()`` to
+  ``_post_clean()``, in order to avoid unjustified validation errors.
+* Fix rare error when pasting from clipboard into structure view.
+* Remove empty final line in templates used to render links; they added unwanted whitespace to
+  output.
+* In some JS files: Replace deprecated jQuery `.bind()` call with `.on()`.
+* Removed some legacy code dating back to Python2.
+
+
+1.3.4
+=====
+* Fix: Internal Server error raised when deleting content of link to CMS page's form field.
+* When testing external links, use request with `User-Agent: Django-CMS-Cascade` instead of the
+  default.
+
+
+1.3.3
+=====
+* Fix: Deletion of markers in map plugin failed.
+
+
+1.3.2
+=====
+* Fix migration ``0027_version_1.py`` to migrate links from version<1 upwards.
+
+
+1.3.1
+=====
+* Fix external requiremnts.
+* Replace deprecated ugettext against gettext.
+
+
 1.3
 ===
 * Drop support for Python 2.
@@ -183,7 +228,7 @@ Release History
   whatever is parsable.
 * Add ``role="button"`` to the **ButtonPlugin**.
 * Optionally add CSS class ``stretched-link`` introduced in Bootstrap-4.3 to ``<a href="...">``.
-* Fix: We can not see the SVG file, if the image file existed and was not found, specifically 
+* Fix: We can not see the SVG file, if the image file existed and was not found, specifically
   when copying a Persisted clipboard.
 * Fix: If jsonfield is serialized as string, convert and reload as JSON.
 * Fix: **ImagePlugin** / **PicturePlugin** can't be copied by clipboard CMS.

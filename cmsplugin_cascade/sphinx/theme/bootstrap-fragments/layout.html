@@ -1,13 +1,5 @@
 {% set bootstrap_version, navbar_version = "3.3.7", "" %}
 
-{% set script_files = script_files + [
-    '_static/js/jquery-1.11.0.min.js',
-    '_static/js/jquery-fix.js',
-    '_static/bootstrap-' + bootstrap_version + '/js/bootstrap.min.js',
-    '_static/bootstrap-sphinx.js'
-  ]
-%}
-
 {%- set render_sidebar = (not embedded) and (not theme_nosidebar|tobool) and sidebars %}
 
 {%- set bs_content_width = render_sidebar and "9" or "12"%}
@@ -35,13 +27,12 @@
 {% block sidebarsourcelink %}{% endblock %}
 
 {%- block content %}
-<div class="container">
-  <div class="row">
-    {%- block sidebar1 %}{{ bsidebar() }}{%- endblock %}
-    <div class="col-md-{{ bs_content_width }} content" role="main">
-      {% block body %}{% endblock %}
-    </div>
-  </div>
+<div class="row">
+	{%- block sidebar1 %}{%- endblock %}
+	<div class="col-md-{{ bs_content_width }} content" role="main">
+	{% block body %}{% endblock %}
+	</div>
+	{%- block sidebar2 %}{{ bsidebar() }}{%- endblock %}
 </div>
 {%- endblock %}
 

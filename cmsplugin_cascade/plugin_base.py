@@ -127,7 +127,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         return super().__new__(cls, name, bases, attrs)
 
 
-class TransparentWrapper(object):
+class TransparentWrapper:
     """
     Add this mixin class to other Cascade plugins, wishing to be added transparently between other
     plugins restricting parent-children relationships.
