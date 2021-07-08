@@ -13,7 +13,7 @@ class LinkPluginBase(CascadePluginBase):
     require_parent = False
     ring_plugin = 'LinkPluginBase'
     raw_id_fields = ['download_file']
-    html_tag_attributes = {'title': 'title', 'target': 'target'}
+    html_tag_attributes = {'link_title': 'title', 'link_target': 'target'}
 
     class Media:
         css = {'all': ['cascade/css/admin/linkplugin.css']}
