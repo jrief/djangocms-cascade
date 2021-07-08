@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import models, migrations
-import jsonfield.fields
 
 
 class Migration(migrations.Migration):
@@ -27,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cascadeelement',
             name='glossary',
-            field=jsonfield.fields.JSONField(default={}, blank=True),
+            field=models.JSONField(default={}, blank=True),
             preserve_default=True,
         ),
         migrations.AlterField(
@@ -39,7 +35,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='sharablecascadeelement',
             name='glossary',
-            field=jsonfield.fields.JSONField(default={}, blank=True),
+            field=models.JSONField(default={}, blank=True),
             preserve_default=True,
         ),
     ]

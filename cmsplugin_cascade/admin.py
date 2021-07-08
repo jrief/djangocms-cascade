@@ -1,13 +1,12 @@
 from urllib.parse import urlparse
 import requests
 
-from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.sites.shortcuts import get_current_site
 from django.forms import Media, widgets
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
-from django.urls import reverse
+from django.urls import re_path, reverse
 from django.utils.translation import get_language_from_request
 
 from cms.models.pagemodel import Page
@@ -36,14 +35,14 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def get_urls(self):
         urls = [
-            url(r'^get_page_sections/$', lambda _: JsonResponse({'element_ids': []}),
+            re_path(r'^get_page_sections/$', lambda _: JsonResponse({'element_ids': []}),
                 name='get_page_sections'),  # just to reverse
-            url(r'^get_page_sections/(?P<page_pk>\d+)$',
+            re_path(r'^get_page_sections/(?P<page_pk>\d+)$',
                 self.admin_site.admin_view(self.get_page_sections)),
-            url(r'^published_pages/$', self.get_published_pagelist, name='get_published_pagelist'),
-            url(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
-            url(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
-            url(r'^validate_exturl/$', self.validate_exturl, name='validate_exturl'),
+            re_path(r'^published_pages/$', self.get_published_pagelist, name='get_published_pagelist'),
+            re_path(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
+            re_path(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
+            re_path(r'^validate_exturl/$', self.validate_exturl, name='validate_exturl'),
         ]
         urls.extend(super().get_urls())
         return urls

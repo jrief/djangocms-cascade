@@ -2,6 +2,62 @@
 Release History
 ===============
 
+2.1
+===
+* ``MultiSizeField`` accepts ``sublabels`` for all of its sub-fields.
+
+
+2.0.8
+=====
+* Adopted translation string for German.
+
+
+2.0.7
+=====
+* Configuration setting `CMSPLUGIN_CASCADE['plugins_with_extra_mixins']` now also accepts
+  a tuple of extra mixin classes, rather than only one.
+* Updated German translation strings.
+* Fix for windows path signs in icon fonts folder path causing rendering problem during icon
+  plugins addition.
+
+2.0.6
+=====
+* Leaflet doesn't quote the content in its `url()` statements in its CSS. This
+  causes some trouble with **django-compressor** which appends a hash value.
+  This fix imports those CSS files locally until Leaflet comes up with a patch.
+
+2.0.5
+=====
+* Fix Icon Plugin: If icon is optional, nullify initial value for Icon Font.
+
+2.0.4
+=====
+* Fix: Adding a link onto a freshly created page did not work, which was caused by an already
+  evaluated queryset.
+
+
+2.0.3
+=====
+* Fix ``BootstrapTabSetPlugin``: Add CSS class ``nav-tab`` to outer wrapper.
+* Fix many translation strings in German.
+
+
+2.0.2
+=====
+* Fix alignment of widget ``CheckboxInput`` and Link-Type.
+
+
+2.0.1
+=====
+* Fix #397: Bug with bad tags of ``TextImagePlugin``.
+* Remove useless aria-controls from link in ``TabSetPlugin``.
+
+
+2.0
+===
+* Replace all external occurences of ``JSONField`` against Django's new internal ``JSONField``.
+  The migration towards this version shall run smoothly, but you will be unable to migrate back.
+
 1.3.7
 =====
 * Perform validation of external URL during editing, instead of form validation. Do not reject

@@ -116,7 +116,7 @@ class SelectOverflowField(ChoiceField):
 
 @deconstructible
 class ColorValidator():
-    message = _("'%(color)s' is not a valid color code. ")
+    message = _("'%(color)s' is not a valid color code.")
     code = 'invalid_color_code'
 
     def __init__(self, with_alpha):
@@ -235,7 +235,7 @@ class MultiSizeField(MultiValueField):
     Some size input fields must be specified per Bootstrap breakpoint. Use this multiple
     input field to handle this.
     """
-    def __init__(self, properties, *args, **kwargs):
+    def __init__(self, properties, sublabels=None, *args, **kwargs):
         required = kwargs.pop('required', False)
         require_all_fields = kwargs.pop('require_all_fields', required)
         initial = kwargs.pop('initial', None)
@@ -247,7 +247,9 @@ class MultiSizeField(MultiValueField):
             initial = {prop: initial for prop in properties}
         allowed_units = kwargs.pop('allowed_units', None)
         fields = [SizeField(required=required, allowed_units=allowed_units)] * len(properties)
-        widget = MultipleTextInputWidget(properties)
+        if sublabels is None:
+            sublabels = properties
+        widget = MultipleTextInputWidget(sublabels)
         super().__init__(fields=fields, widget=widget, required=required,
                          require_all_fields=require_all_fields, initial=initial, *args, **kwargs)
         self.properties = list(properties)

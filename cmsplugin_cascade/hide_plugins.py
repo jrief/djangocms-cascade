@@ -8,9 +8,9 @@ from entangled.forms import EntangledModelFormMixin
 
 class HidePluginFormMixin(EntangledModelFormMixin):
     hide_plugin = BooleanField(
-        label=_("Hide plugin"),
+        label=_("Hide element"),
         required=False,
-        help_text=_("Hide this plugin and all of it's children.")
+        help_text=_("Hide this element and all of it's descendants from the web-page.")
     )
 
     class Meta:

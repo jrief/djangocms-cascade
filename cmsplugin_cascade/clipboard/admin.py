@@ -2,12 +2,11 @@ from django.contrib import admin
 from django.contrib import messages
 from django.forms import widgets
 from django.forms.utils import flatatt
+from django.db.models import JSONField
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
-
-from jsonfield.fields import JSONField
 
 from cms.models.placeholderpluginmodel import PlaceholderReference
 from cmsplugin_cascade.clipboard.utils import deserialize_to_clipboard, serialize_from_placeholder
@@ -68,11 +67,11 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
                 obj.data = serialize_from_placeholder(placeholder, self.admin_site)
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
-            messages.add_message(request, messages.INFO, _("The CMS clipboard has been persisted into the database."))
+            messages.add_message(request, messages.INFO, _("The clipboard's content has been persisted for later."))
         if request.POST.get('restore_clipboard'):
             request.POST = request.POST.copy()
             request.POST['_continue'] = True
-            messages.add_message(request, messages.INFO, _("Persisted content has been restored to CMS clipboard."))
+            messages.add_message(request, messages.INFO, _("Persisted content has been restored to the clipboard."))
         if request.POST.get('restore_clipboard'):
             deserialize_to_clipboard(request, obj.data)
             obj.last_accessed_at = now()
