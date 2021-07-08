@@ -63,7 +63,8 @@ class TextImagePlugin(LinkPluginBase):
     allow_children = False
     require_parent = False
     form = type('TextImageForm', (LinkFormMixin, TextImageFormMixin), {'require_link': False})
-    html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
+    html_tag_attributes = {}
+    html_tag_attributes.update({'image_title': 'title', 'alt_tag': 'alt'})
     html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
 
     class Media:
