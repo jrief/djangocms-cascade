@@ -2,21 +2,22 @@ from django.core.exceptions import ImproperlyConfigured
 from django.forms.fields import BooleanField
 from django.utils.translation import gettext_lazy as _
 from django.template import engines
+
 from entangled.forms import EntangledModelFormMixin
 
 
 class HidePluginFormMixin(EntangledModelFormMixin):
     hide_plugin = BooleanField(
-        label=_("Hide plugin"),
+        label=_("Hide element"),
         required=False,
-        help_text=_("Hide this plugin and all of it's children.")
+        help_text=_("Hide this element and all of it's descendants from the web-page.")
     )
 
     class Meta:
         entangled_fields = {'glossary': ['hide_plugin']}
 
 
-class HidePluginMixin(object):
+class HidePluginMixin:
     """
     This mixin class adds a checkbox to each named plugin, which if checked hides that
     plugin during the rendering phase.

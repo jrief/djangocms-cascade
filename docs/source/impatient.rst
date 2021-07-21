@@ -18,7 +18,7 @@ Dependency packaging to made easy with Pipenv or Poetry.
 .. code-block:: bash
 
 	$ git clone --depth=1 https://github.com/jrief/djangocms-cascade.git
-	$ cd djangocms-cascade/examples/
+	$ cd djangocms-cascade/examples/bs4demo
 	$ python -m venv .venv 
 	$ poetry shell
 	$ poetry update
@@ -27,7 +27,7 @@ Initialize the database, create a superuser and start the development server:
 
 .. code-block:: bash
 
-	$ cd examples
+	$ cd djangocms-cascade/examples/bs4demo
 	$ npm install
 	$ ./manage.py migrate
 	$ ./manage.py createsuperuser

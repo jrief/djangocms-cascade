@@ -17,14 +17,22 @@ all of them. The payload then is stored inside a JSON field instead of declaring
 explicitly. This furthermore prevents us to handle all kind of nasty database migration problems.
 
 
-## Version 1.3 (released 2020-05-08)
+## Version 2.0 (released 2021-02-02)
 
-Version 1.3 now supports Django versions: 3.0, 2.2 and 2.1.
+**Version 2.0 only supports Django versions 3.1 and higher.**
 
-Nice new feature: The content of a placeholder can be pasted directly to the Clipboard.
-It now is possible to paste any item from the Clipboard, directly in the structure view of a
-placeholder.
+Backward compatibility had to be dropped, because version 2.0 now fully supports the native internal
+`JSONField` as offered by Django version 3.1. It hence is not possible to run a version of Cascade
+which can switch between those field types.
 
+From a functional point of view, there is no difference to version 1.3.7.
+
+After upgrading, run `./manage.py migrate cmsplugin_cascade`. It will rewrite the field type of
+all `JSONField`s to Django's internal `JSONField` without modifying its content. For safety reasons,
+it is highly recommended to backup the database before migrating. 
+
+
+## Features
 
 ### Perfect for nested grid systems
 

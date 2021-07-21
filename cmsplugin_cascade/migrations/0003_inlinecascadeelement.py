@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import models, migrations
-import jsonfield.fields
 
 
 class Migration(migrations.Migration):
@@ -16,7 +12,7 @@ class Migration(migrations.Migration):
             name='InlineCascadeElement',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('glossary', jsonfield.fields.JSONField(default={}, blank=True)),
+                ('glossary', models.JSONField(default={}, blank=True)),
                 ('cascade_element', models.ForeignKey(related_name='inline_elements', to='cmsplugin_cascade.CascadeElement', on_delete=models.CASCADE)),
             ],
             options={

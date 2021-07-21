@@ -18,8 +18,8 @@ class TabSetFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         min_value=1,
         initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
-        label=_("Tabs"),
-        help_text=_("Number of tabs to start with."),
+        label=_("Number of Tabs"),
+        help_text=_("Number can be adjusted at any time."),
     )
 
     justified = BooleanField(
@@ -40,6 +40,7 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     allow_children = True
     form = TabSetFormMixin
     render_template = 'cascade/bootstrap4/{}tabset.html'
+    default_css_class = 'nav-tabs'
 
     @classmethod
     def get_identifier(cls, instance):

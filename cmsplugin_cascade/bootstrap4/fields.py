@@ -9,4 +9,5 @@ class BootstrapMultiSizeField(MultiSizeField):
     """
     def __init__(self, *args, **kwargs):
         properties = [bp.name for bp in Breakpoint]
+        kwargs['sublabels'] = [bp.label for bp in Breakpoint]
         super().__init__(properties, *args, **kwargs)

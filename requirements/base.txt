@@ -11,4 +11,3 @@ djangocms-bootstrap
 djangocms-text-ckeditor
 easy-thumbnails
 html5lib
-jsonfield

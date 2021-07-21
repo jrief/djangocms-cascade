@@ -31,6 +31,7 @@
 		'{{ icof.id }}': '{{ icof.get_stylesheet_url }}'{% if not forloop.last %},{% endif %}{% endfor %}
 	};
 	django.cascade.fetch_fonticons_url = "{% url 'admin:fetch_fonticons' %}";
+	django.cascade.validate_exturl_url = "{% url 'admin:validate_exturl' %}";
 	{% endif %}
 	</script>
 {% endblock %}

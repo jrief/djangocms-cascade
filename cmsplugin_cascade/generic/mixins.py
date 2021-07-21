@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.forms.fields import CharField
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.models import CascadePage
@@ -9,10 +10,10 @@ from cmsplugin_cascade.models import CascadePage
 
 class SectionFormMixin(EntangledModelFormMixin):
     element_id = CharField(
-        label=_("Element ID"),
+        label=_("Id"),
         max_length=15,
         required=False,
-        help_text=_("A unique identifier for this element.")
+        help_text=_("A unique identifier for this element (please don't use any special characters, punctuations, etc.) May be used as anchor-link: #id.")
     )
 
     class Meta:
@@ -41,7 +42,7 @@ class SectionFormMixin(EntangledModelFormMixin):
                         raise ValidationError(msg.format(element_id))
 
 
-class SectionModelMixin(object):
+class SectionModelMixin:
     def element_id(self):
         id_attr = self.glossary.get('element_id')
         if id_attr:
@@ -57,7 +58,7 @@ class SectionModelMixin(object):
         super().delete(*args, **kwargs)
 
 
-class SectionMixin(object):
+class SectionMixin:
     def get_form(self, request, obj=None, **kwargs):
         form = kwargs.get('form', self.form)
         assert issubclass(form, EntangledModelFormMixin), "Form must inherit from EntangledModelFormMixin"

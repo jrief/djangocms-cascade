@@ -1,15 +1,15 @@
-from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
-from django.urls import reverse
+from django.urls import reverse, re_path
 from django.utils.translation import gettext_lazy as _, ngettext
 from django.utils.html import format_html
+
 from cms.constants import REFRESH_PAGE
 
 
-class SegmentPluginModelMixin(object):
+class SegmentPluginModelMixin:
     """
     TODO: whenever cmsplugin_cascade drops support for django-CMS < 3.4, this mixin class
     shall be added to the plugin rather than to the model
@@ -47,7 +47,7 @@ class EmulateUserModelMixin(SegmentPluginModelMixin):
         return context_override
 
 
-class EmulateUserAdminMixin(object):
+class EmulateUserAdminMixin:
     UserModel = get_user_model()
 
     @staticmethod
@@ -67,9 +67,9 @@ class EmulateUserAdminMixin(object):
 
     def get_urls(self):
         return [
-            url(r'^emulate_users/$', self.admin_site.admin_view(self.emulate_users), name='emulate-users'),
-            url(r'^emulate_user/(?P<user_id>\d+)/$', self.admin_site.admin_view(self.emulate_user), name='emulate-user'),
-            url(r'^clear_emulations/$', self.admin_site.admin_view(self.clear_emulations), name='clear-emulations'),
+            re_path(r'^emulate_users/$', self.admin_site.admin_view(self.emulate_users), name='emulate-users'),
+            re_path(r'^emulate_user/(?P<user_id>\d+)/$', self.admin_site.admin_view(self.emulate_user), name='emulate-user'),
+            re_path(r'^clear_emulations/$', self.admin_site.admin_view(self.clear_emulations), name='clear-emulations'),
         ] + super().get_urls()
 
     def emulate_user(self, request, user_id):

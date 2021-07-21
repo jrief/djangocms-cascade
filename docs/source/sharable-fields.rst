@@ -30,7 +30,7 @@ options among each other.
 	CMSPLUGIN_CASCADE = {
 	    ...
 	    'plugins_with_sharables': {
-	        'BootstrapImagePlugin': ('image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options',),
+	        'BootstrapImagePlugin': ['image-shapes', 'image-width-responsive', 'image-width-fixed', 'image-height', 'resize-options'],
 	    },
 	    ...
 	}
@@ -57,7 +57,7 @@ type, a select box appears on the top of the editor:
 By choosing a previously named shared settings, the configured fields are disabled for input and
 replaced by their shared field's counterparts.
 
-In order to edit these shared fields in the administration backend, one must access 
+In order to edit these shared fields in the administration backend, one must access
 **Home › Cmsplugin_cascade › Shared between Plugins**. By choosing a named shared setting, one can
 enter into the shared field's editor. This editor auto adopts to the fields declared as shared,
 hence will change from entity to entity. For the above example, it may look like this:
