@@ -9,12 +9,11 @@ license = "MIT"
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
-django = "3.1.*"
-django-cms = { git = "https://github.com/django-cms/django-cms", branch="release/4.0.x" }
+
+django-cms = { git = "https://github.com/haricot/django-cms", branch="release/4.0.x" }
 djangocms-alias =  { git = "https://github.com/divio/djangocms-alias", branch="master" }
 djangocms-text-ckeditor = { git = "https://github.com/django-cms/djangocms-text-ckeditor", branch="support/4.0.x" }
 djangocms-cascade =  "*"
-django-cms = "3.8.*"
 django-treebeard = "4.4.*"
 django-compressor = "*"
 django-filer =  "*"
