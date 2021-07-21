@@ -2,11 +2,89 @@
 Release History
 ===============
 
+2.1
+===
+* ``MultiSizeField`` accepts ``sublabels`` for all of its sub-fields.
+
+
+2.0.8
+=====
+* Adopted translation string for German.
+
+
+2.0.7
+=====
+* Configuration setting `CMSPLUGIN_CASCADE['plugins_with_extra_mixins']` now also accepts
+  a tuple of extra mixin classes, rather than only one.
+* Updated German translation strings.
+* Fix for windows path signs in icon fonts folder path causing rendering problem during icon
+  plugins addition.
+
+2.0.6
+=====
+* Leaflet doesn't quote the content in its `url()` statements in its CSS. This
+  causes some trouble with **django-compressor** which appends a hash value.
+  This fix imports those CSS files locally until Leaflet comes up with a patch.
+
+2.0.5
+=====
+* Fix Icon Plugin: If icon is optional, nullify initial value for Icon Font.
+
+2.0.4
+=====
+* Fix: Adding a link onto a freshly created page did not work, which was caused by an already
+  evaluated queryset.
+
+
+2.0.3
+=====
+* Fix ``BootstrapTabSetPlugin``: Add CSS class ``nav-tab`` to outer wrapper.
+* Fix many translation strings in German.
+
+
+2.0.2
+=====
+* Fix alignment of widget ``CheckboxInput`` and Link-Type.
+
+
+2.0.1
+=====
+* Fix #397: Bug with bad tags of ``TextImagePlugin``.
+* Remove useless aria-controls from link in ``TabSetPlugin``.
+
+
+2.0
+===
+* Replace all external occurences of ``JSONField`` against Django's new internal ``JSONField``.
+  The migration towards this version shall run smoothly, but you will be unable to migrate back.
+
+1.3.7
+=====
+* Perform validation of external URL during editing, instead of form validation. Do not reject
+  invalid external URLs, just warn about them.
+
+
+1.3.6
+=====
+* Fix regression on link validation introduced in 1.3.5.
+
+
+1.3.5
+=====
+* In plugins inheriting from ``LinkPluginBase``, refactor validation from method ``clean()`` to
+  ``_post_clean()``, in order to avoid unjustified validation errors.
+* Fix rare error when pasting from clipboard into structure view.
+* Remove empty final line in templates used to render links; they added unwanted whitespace to
+  output.
+* In some JS files: Replace deprecated jQuery `.bind()` call with `.on()`.
+* Removed some legacy code dating back to Python2.
+
 
 1.3.4
 =====
 * Fix: Internal Server error raised when deleting content of link to CMS page's form field.
-* When testing external links, use request with `User-Agent: Django-CMS-Cascade` instead of the default.
+* When testing external links, use request with `User-Agent: Django-CMS-Cascade` instead of the
+  default.
 
 
 1.3.3

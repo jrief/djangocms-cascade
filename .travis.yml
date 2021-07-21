@@ -2,19 +2,11 @@ dist: focal
 language: python
 
 python:
-  - 3.8
+  - 3.9
 
 env:
-
-  - DJANGOVER=django22 CMSVER=cms37
-  - DJANGOVER=django30 CMSVER=cms37
-  - DJANGOVER=django22 CMSVER=cms40
-  - DJANGOVER=django30 CMSVER=cms40
-
-matrix:
-  allow_failures:
-    - python: 3.8
-      env: DJANGOVER=django30 CMSVER=cms37
+  - DJANGOVER=django31 CMSVER=cms40
+  - DJANGOVER=django31 CMSVER=cms38
 
 install:
   - pip install tox

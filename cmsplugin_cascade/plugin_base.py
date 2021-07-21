@@ -92,7 +92,10 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         if name in cls.plugins_with_extra_fields:
             bases = (ExtraFieldsMixin,) + bases
         if name in cls.plugins_with_extra_mixins:
-            bases = (cls.plugins_with_extra_mixins[name],) + bases
+            if isinstance(cls.plugins_with_extra_mixins[name], tuple):
+                bases = cls.plugins_with_extra_mixins[name] + bases
+            else:
+                bases = (cls.plugins_with_extra_mixins[name],) + bases
         if name in cls.plugins_with_bookmark:
             bases = (SectionMixin,) + bases
             model_mixins = (SectionModelMixin,) + model_mixins
@@ -128,7 +131,7 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
         return super().__new__(cls, name, bases, attrs)
 
 
-class TransparentWrapper(object):
+class TransparentWrapper:
     """
     Add this mixin class to other Cascade plugins, wishing to be added transparently between other
     plugins restricting parent-children relationships.
@@ -208,8 +211,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
         js = ['cascade/js/underscore.js', 'cascade/js/ring.js']
 
-    def __init__(self, model=None, admin_site=None, glossary_fields=None):
-        assert glossary_fields is None, "glossary_fields is deprecated"
+    def __init__(self, model=None, admin_site=None):
         super().__init__(model, admin_site)
 
     def __repr__(self):
@@ -403,7 +405,8 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             context.update(
                 ring_plugin=self.ring_plugin,
             )
-        context['empty_form'] = not context['adminform'].form._meta.entangled_fields.get('glossary')
+        context['empty_form'] = not (context['adminform'].form._meta.entangled_fields.get('glossary') or
+                                     context['adminform'].form._meta.untangled_fields)
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def in_edit_mode(self, request, placeholder):

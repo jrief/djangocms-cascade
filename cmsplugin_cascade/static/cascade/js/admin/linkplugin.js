@@ -1,6 +1,8 @@
 django.jQuery(function($) {
 	'use strict';
 	var $link_type = $("#id_link_type"), $cmspage_select = $("#id_cms_page");
+	var $link_ext_url = $('#id_ext_url');
+	var $link_type_row = $('.form-row.field-link_type');
 	var $link_target = $(".form-row.field-link_target");
 	var $link_title = $(".form-row.field-link_title");
 
@@ -34,6 +36,9 @@ django.jQuery(function($) {
 			$cmspage_select.change(function(evt) {
 				self.toggleCMSPage(evt.target.value);
 			});
+			$link_ext_url.on('blur', function(evt) {
+				self.validateExtUrl(evt.target.value);
+			});
 			this.refreshChangeForm();
 		},
 		initializeLinkTypes: function() {
@@ -44,6 +49,11 @@ django.jQuery(function($) {
 			this.linkTypes['phonenumber'] = new this.LinkType('.form-row.field-phone_number');
 		},
 		toggleLinkTypes: function(linkTypeName) {
+			if (linkTypeName) {
+				$link_type_row.removeClass('no-link');
+			} else {
+				$link_type_row.addClass('no-link');
+			}
 			$.each(this.linkTypes, function(name, linkType) {
 				if (name === linkTypeName) {
 					linkType.show();
@@ -73,8 +83,20 @@ django.jQuery(function($) {
 				$selSection.val(null);
 			});
 		},
+		validateExtUrl: function(exturl) {
+			$.get(django.cascade.validate_exturl_url, {
+				exturl: exturl,
+			}, function(response) {
+				if (response.status_code === 200) {
+					$link_ext_url.addClass('valid').removeClass('invalid');
+				} else {
+					$link_ext_url.addClass('invalid').removeClass('valid');
+				}
+			});
+		},
 		refreshChangeForm: function() {
 			this.toggleLinkTypes($link_type.val());
+			this.validateExtUrl($link_ext_url.val());
 			this.$super && this.$super();
 		}
 	});

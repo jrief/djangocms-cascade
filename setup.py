@@ -13,12 +13,10 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
-    'Framework :: Django :: 2.1',
-    'Framework :: Django :: 2.2',
-    'Framework :: Django :: 3.0',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Framework :: Django :: 3.1',
 ]
 
 setup(
@@ -30,12 +28,12 @@ setup(
     url='https://github.com/jrief/djangocms-cascade',
     packages=find_packages(exclude=['examples', 'docs', 'tests']),
     install_requires=[
-        'django>=2.1,<3.1',
+        'django>=3.1',
         'django-classy-tags>=1.0',
-        'django-cms>=3.5',
-        'django-entangled',
+        'django-cms',
+        'django-entangled>=0.4',
         'djangocms-text-ckeditor>=3.7',
-        'jsonfield',
+        'django-select2>=7.7',
         'requests',
     ],
     license='MIT',

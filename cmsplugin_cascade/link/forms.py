@@ -1,9 +1,8 @@
-import re
-import requests
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
-from django.forms import fields, Media, ModelChoiceField
+from django.forms import fields, Media
+from django.forms.models import ModelChoiceField
 from django.forms.widgets import RadioSelect
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -12,8 +11,11 @@ from django_select2.forms import HeavySelect2Widget
 
 from cms.utils import get_current_site
 from cms.models import Page
+
 from cmsplugin_cascade.utils_helpers import get_qs_pages_public
-from entangled.forms import EntangledModelFormMixin, get_related_object
+from entangled.forms import EntangledModelFormMixin
+from entangled.utils import get_related_object
+
 from filer.models.filemodels import File as FilerFileModel
 from filer.fields.file import AdminFileWidget, FilerFileField
 
@@ -41,7 +43,7 @@ class PageSelect2Widget(HeavySelect2Widget):
         return Media(css=parent_media._css, js=js)
 
     def render(self, *args, **kwargs):
-        # replace self.choices by an empty list in order to prevent building the whole optgroup
+        # replace self.choices by an empty list to prevent building an optgroup for all pages
         try:
             page = Page.objects.get(pk=kwargs['value'])
         except (Page.DoesNotExist, ValueError, KeyError):
@@ -57,15 +59,15 @@ class LinkSearchField(ModelChoiceField):
     def __init__(self, *args, **kwargs):
         queryset = get_qs_pages_public()
         try:
-            queryset = queryset.published().on_site(get_current_site())
+            queryset = queryset.published().on_site(get_current_site()).distinct()
         except:
-            choices = []  # can happen if database is not ready yet
-        else:
-            # set a minimal set of choices, otherwise django-select2 builds them for every published page
-            choices = [(index, str(page)) for index, page in enumerate(queryset[:15])]
-        kwargs.setdefault('queryset', queryset.distinct())
+            pass
+        kwargs.setdefault('queryset', queryset)
         super().__init__(*args, **kwargs)
-        self.choices = choices
+
+    def clean(self, value):
+        self.queryset = Page.objects.public().published().on_site(get_current_site())
+        return super().clean(value)
 
 
 class SectionChoiceField(fields.ChoiceField):
@@ -186,49 +188,34 @@ class LinkForm(EntangledModelFormMixin):
         except (AttributeError, ObjectDoesNotExist):
             pass
 
-    def clean(self):
-        cleaned_data = super().clean()
-        link_type = cleaned_data.get('link_type')
-        error = None
+    def _post_clean(self):
+        super()._post_clean()
+        empty_fields = [None, '']
+        link_type = self.cleaned_data['glossary'].get('link_type')
         if link_type == 'cmspage':
-            if not cleaned_data.get('cms_page'):
-                error = ValidationError(_("CMS page to link to is missing."))
+            if self.cleaned_data['glossary'].get('cms_page', False) in empty_fields:
+                error = ValidationError(_("CMS page to link to is missing."), code='required')
                 self.add_error('cms_page', error)
         elif link_type == 'download':
-            if not cleaned_data.get('download_file'):
-                error = ValidationError(_("File for download is missing."))
+            if self.cleaned_data['glossary'].get('download_file', False) in empty_fields:
+                error = ValidationError(_("File for download is missing."), code='required')
                 self.add_error('download_file', error)
         elif link_type == 'exturl':
-            ext_url = cleaned_data.get('ext_url')
-            if ext_url:
-                try:
-                    request_headers = {'User-Agent': 'Django-CMS-Cascade'}
-                    response = requests.head(ext_url, allow_redirects=True, headers=request_headers)
-                    if response.status_code != 200:
-                        error = ValidationError(_("No external page found on {url}.").format(url=ext_url))
-                except Exception as exc:
-                    error = ValidationError(_("Failed to connect to {url}.").format(url=ext_url))
-            else:
-                error = ValidationError(_("No valid URL provided."))
-            if error:
+            ext_url = self.cleaned_data['glossary'].get('ext_url', False)
+            if ext_url in empty_fields:
+                error = ValidationError(_("No valid URL provided."), code='required')
                 self.add_error('ext_url', error)
         elif link_type == 'email':
-            mail_to = cleaned_data.get('mail_to')
-            if mail_to:
-                if not re.match(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)', mail_to):
-                    msg = _("'{email}' is not a valid email address.")
-                    error = ValidationError(msg.format(email=mail_to))
-            else:
-                error = ValidationError(_("No email address provided."))
-            if error:
+            if self.cleaned_data['glossary'].get('mail_to', False) in empty_fields:
+                error = ValidationError(_("No email address provided."), code='required')
                 self.add_error('mail_to', error)
         elif link_type == 'phonenumber':
-            phone_number = cleaned_data.get('phone_number')
-            if phone_number:
-                cleaned_data['phone_number'] = str(phone_number)
-        if error:
-            raise error
-        return cleaned_data
+            if self.cleaned_data['glossary'].get('phone_number', False) in empty_fields:
+                error = ValidationError(_("No phone number provided."), code='required')
+                self.add_error('phone_number', error)
+
+    def clean_phone_number(self):
+        return str(self.cleaned_data['phone_number'])
 
     @classmethod
     def unset_required_for(cls, sharable_fields):

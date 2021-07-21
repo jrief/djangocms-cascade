@@ -13,12 +13,11 @@ class HeadingFormMixin(EntangledModelFormMixin):
 
     tag_type = ChoiceField(
         choices=TAG_TYPES,
-        label=_("HTML element tag"),
-        help_text=_('Choose a tag type for this HTML element.')
+        label=_("Structure Level"),
     )
 
     content = CharField(
-        label=_("Heading content"),
+        label=_("Content"),
         widget=widgets.TextInput(attrs={'style': 'width: 100%; padding-right: 0; font-weight: bold; font-size: 125%;'}),
     )
 

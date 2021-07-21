@@ -150,6 +150,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     background_width_height = MultiSizeField(
         ['width', 'height'],
         label=_("Background width/height"),
+        sublabels=[_("Width"), _("Height")],
         allowed_units=['px', '%'],
         required=False,
         help_text=_("This property specifies the width and height of a background image in px or %."),

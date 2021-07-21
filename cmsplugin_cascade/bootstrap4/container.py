@@ -5,6 +5,7 @@ from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.text import format_lazy
 from django.utils.translation import ngettext_lazy, gettext_lazy as _
+
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
@@ -57,7 +58,7 @@ class ContainerFormMixin(EntangledModelFormMixin):
         return self.cleaned_data['glossary']
 
 
-class ContainerGridMixin(object):
+class ContainerGridMixin:
     def get_grid_instance(self):
         fluid = self.glossary.get('fluid', False)
         try:
@@ -126,7 +127,7 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         untangled_fields = ['num_children']
 
 
-class RowGridMixin(object):
+class RowGridMixin:
     def get_grid_instance(self):
         row = grid.Bootstrap4Row()
         class_ancestor_name = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
@@ -157,7 +158,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
 
-class ColumnGridMixin(object):
+class ColumnGridMixin:
     valid_keys = ['xs-column-width', 'sm-column-width', 'md-column-width', 'lg-column-width', 'xs-column-width',
                   'xs-column-offset', 'sm-column-offset', 'md-column-offset', 'lg-column-offset', 'xs-column-offset']
     def get_grid_instance(self):
@@ -197,6 +198,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             else:
                 return phrases[2]
 
+
         container = get_ancestor(['BootstrapContainerPlugin','BootstrapJumbotronPlugin'],
                                  _cms_initial_attributes=self._cms_initial_attributes,
                                  plugin=obj
@@ -207,6 +209,18 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         elif 'media_queries' in container.glossary:
             #Case Jumbotron is first, its not has ancestor container
             breakpoints = list(container.glossary['media_queries'].keys())
+        """
+        if 'parent' in self._cms_initial_attributes:
+            container=self._cms_initial_attributes['parent'].get_ancestors().order_by('depth').last().get_bound_plugin()
+        else:
+            containers=obj.get_ancestors().filter(plugin_type='BootstrapContainerPlugin')
+            if containers:
+                container=containers.order_by('depth').last().get_bound_plugin()
+            else:
+                jumbotrons=obj.get_ancestors().filter(plugin_type='BootstrapJumbotronPlugin')
+                container=jumbotrons.order_by('depth').last().get_bound_plugin()
+        breakpoints = container.glossary['breakpoints']
+        """
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
         units = [ngettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
