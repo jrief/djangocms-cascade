@@ -2,6 +2,12 @@
 Release History
 ===============
 
+2.1.1
+=====
+* Bugfix: ``LinkSearchField`` sometimes raised a ``MultipleObjectsReturned`` exception, because
+  of duplicates in queryset.
+
+
 2.1
 ===
 * ``MultiSizeField`` accepts ``sublabels`` for all of its sub-fields.

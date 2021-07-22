@@ -63,7 +63,7 @@ class LinkSearchField(ModelChoiceField):
         super().__init__(*args, **kwargs)
 
     def clean(self, value):
-        self.queryset = Page.objects.public().published().on_site(get_current_site())
+        self.queryset = Page.objects.public().distinct().published().on_site(get_current_site())
         return super().clean(value)
 
 
