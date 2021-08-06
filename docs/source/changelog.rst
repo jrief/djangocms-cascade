@@ -2,6 +2,12 @@
 Release History
 ===============
 
+2.1.2
+=====
+* For staff users, the menu item "Segmentation" only appears in the CMS toolbar, if the proper
+  permissions are set. Please refer to the documentation for details.
+
+
 2.1.1
 =====
 * Bugfix: ``LinkSearchField`` sometimes raised a ``MultipleObjectsReturned`` exception, because
