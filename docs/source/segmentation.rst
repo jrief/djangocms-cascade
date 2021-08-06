@@ -3,8 +3,8 @@ Segmentation of the DOM
 =======================
 
 The **SegmentationPlugin** allows to personalize the DOM structure, depending on the context used to
-render the corresponding page. Since **djangoCMS** always uses a RequestContext_ while rendering its
-pages, we always have access onto the request object. Some use cases are:
+render the corresponding page. Since **django-CMS** always uses a RequestContext_ while rendering
+its pages, we always have access onto the request object. Some use cases are:
 
 * Depending on the user, show a different portion of the DOM, if he is a certain user or not logged
   in at all.
@@ -79,10 +79,16 @@ when the Segmentation plugin evaluates conditions such as ``user.username == "jo
 
 Emulating Users
 ===============
-As of version 0.5.0, in **djangocms-cascade** a staff user or administrator can emulate the
-currently logged in user. If this plugin is activated, in the CMS toolbar a new menu tag appears
-named “Segmentation”. Here a staff user can select another user. All evaluation conditions then
-evaluate against this selected user, instead of the currently logged in user.
+
+Only staff users or administrators can emulate the currently logged in user. Staff-only users must
+possess the four permissions `cmsplugin_cascade.add_segmentation`,
+`cmsplugin_cascade.change_segmentation`, `cmsplugin_cascade.delete_segmentation` and
+`cmsplugin_cascade.view_segmentation`.
+
+If this plugin is activated and the permissions are set, then in the CMS toolbar a new menu
+tag appears named “Segmentation”. Here the currently logged in staff user can select another user.
+All evaluation conditions then evaluate against this selected user, instead of the currently logged
+in user.
 
 It is quite simple to add other overriding emulations. Have a look at the class
 ``cmsplugin_cascade.segmentation.mixins.EmulateUserMixin``. This class then has to be added to
