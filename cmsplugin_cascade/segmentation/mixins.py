@@ -53,16 +53,22 @@ class EmulateUserAdminMixin:
     @staticmethod
     def populate_toolbar(segmentation_menu, request):
         active = 'emulate_user_id' in request.session
+        disabled = not request.user.has_perms([
+            'cmsplugin_cascade.add_segmentation',
+            'cmsplugin_cascade.change_segmentation',
+            'cmsplugin_cascade.delete_segmentation',
+        ])
         segmentation_menu.add_sideframe_item(
             _("Emulate User"),
             url=reverse('admin:emulate-users'),
             active=active,
+            disabled=disabled,
         )
         segmentation_menu.add_ajax_item(
             _("Clear emulations"),
             action=reverse('admin:clear-emulations'),
             on_success=REFRESH_PAGE,
-            disabled=not active,
+            disabled=disabled or not active,
         )
 
     def get_urls(self):

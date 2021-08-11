@@ -11,9 +11,6 @@ class SegmentationToolbar(CMSToolbar):
         if not self.request.user.has_perm('cmsplugin_cascade.view_segmentation'):
             return
         menu = self.toolbar.get_or_create_menu('segmentation', _("Segmentation"))
-        if not self.request.user.has_perms(['cmsplugin_cascade.add_segmentation',
-            'cmsplugin_cascade.change_segmentation', 'cmsplugin_cascade.delete_segmentation']):
-            menu.disabled = True
         for sgm in app_settings.CMSPLUGIN_CASCADE['segmentation_mixins']:
             SegmentationMixin = import_string(sgm[1])
             populate_handler = getattr(SegmentationMixin, 'populate_toolbar', None)
