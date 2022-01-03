@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 17:01+0200\n"
+"POT-Creation-Date: 2022-01-03 10:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -574,6 +574,7 @@ msgid "Do not align"
 msgstr "Nicht ausrichten"
 
 #: bootstrap4/icon.py:22 bootstrap4/image.py:19 generic/text_image.py:46
+#: leaflet/map.py:66
 msgid "Left"
 msgstr "Links"
 
@@ -653,7 +654,7 @@ msgstr "Bildausrichtung"
 msgid "How to align a non-responsive image."
 msgstr "Ausrichtung von nicht-“responsiven” Bildern."
 
-#: bootstrap4/image.py:76 fields.py:286
+#: bootstrap4/image.py:76 fields.py:288
 msgid "Image"
 msgstr "Bild"
 
@@ -728,21 +729,29 @@ msgstr ""
 msgid "Background width/height"
 msgstr ""
 
-#: bootstrap4/jumbotron.py:155
+#: bootstrap4/jumbotron.py:153
+msgid "Width"
+msgstr "Breite"
+
+#: bootstrap4/jumbotron.py:153
+msgid "Height"
+msgstr "Höhe"
+
+#: bootstrap4/jumbotron.py:156
 msgid ""
 "This property specifies the width and height of a background image in px or "
 "%."
-msgstr ""
+msgstr "Setzt die Breite und Höhe des Hintergrundbildes in px oder %."
 
-#: bootstrap4/jumbotron.py:183
+#: bootstrap4/jumbotron.py:184
 msgid "You must at least set a background width."
 msgstr "Es muss zumindest eine Breite für den Hintergrund angegeben werden."
 
-#: bootstrap4/jumbotron.py:190
+#: bootstrap4/jumbotron.py:191
 msgid "Jumbotron"
 msgstr ""
 
-#: bootstrap4/jumbotron.py:259
+#: bootstrap4/jumbotron.py:260
 msgid "Without background image"
 msgstr "Ohne Hintergrundbild"
 
@@ -878,7 +887,7 @@ msgstr "Innenabstand für {breakpoint}"
 
 #: bootstrap4/mixins.py:154
 msgid "Do not float"
-msgstr "Nich floaten"
+msgstr "Nicht floaten"
 
 #: bootstrap4/mixins.py:155
 msgid "Float left"
@@ -903,12 +912,12 @@ msgstr "Float für {breakpoint}"
 
 #: bootstrap4/picture.py:19
 msgid "Adapt Picture Heights"
-msgstr ""
+msgstr "Setze Höhe des Bildes"
 
 #: bootstrap4/picture.py:24
 msgid ""
 "Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."
-msgstr ""
+msgstr "Höhe des Bildes in Prozent oder Pixel für gewählten Bootstrap Breakpoint."
 
 #: bootstrap4/picture.py:28
 msgid "Adapt Picture Zoom"
@@ -1199,15 +1208,15 @@ msgstr "Einheiten für {0} Felder:"
 msgid "Allow these size units for customized {0} fields."
 msgstr "Diese Maßeinheiten für benutzerdefinierte {0} Felder zulassen."
 
-#: extra_fields/admin.py:131
+#: extra_fields/admin.py:132
 msgid "Module"
 msgstr "Modul"
 
-#: extra_fields/admin.py:137
+#: extra_fields/admin.py:138
 msgid "Allowed Classes and Styles"
 msgstr "Benutzerdefinierte CSS-Klassen und Styles"
 
-#: extra_fields/admin.py:155
+#: extra_fields/admin.py:156
 #, python-format
 msgid "'%s' is not a valid CSS class name."
 msgstr "'%s' ist kein gültiger CSS Klassenname."
@@ -1298,7 +1307,7 @@ msgstr ""
 
 #: generic/simple_wrapper.py:12
 msgid "Naked Wrapper"
-msgstr ""
+msgstr "Wrapper ohne Hülle"
 
 #: generic/simple_wrapper.py:16
 msgid "HTML element tag"
@@ -1433,7 +1442,7 @@ msgstr "Marker-Titel"
 
 #: leaflet/map.py:39
 msgid "Please choose a title, then go to the map to set a marker pin."
-msgstr "Bitte Title setzen und anschließend Marker in die Karte pinnen."
+msgstr "Bitte Titel wählen und anschließend Marker in die Karte setzen."
 
 #: leaflet/map.py:43
 msgid "Use customized marker icon"
@@ -1455,59 +1464,63 @@ msgstr "Setze Breite des Markers in Pixeln."
 msgid "Marker Anchor"
 msgstr "Marker-Anker"
 
-#: leaflet/map.py:68
+#: leaflet/map.py:66
+msgid "Top"
+msgstr "Oben"
+
+#: leaflet/map.py:69
 msgid "Coordinates of the icon's anchor relative to its top left corner."
 msgstr "Die Koordinaten des Icon-Ankers relativ zu seiner linken oberen Ecke."
 
-#: leaflet/map.py:73
+#: leaflet/map.py:74
 msgid "Text to display in popup."
 msgstr "Optionaler Text für Popup"
 
-#: leaflet/map.py:109
+#: leaflet/map.py:110
 msgid "Marker"
 msgstr "Marker"
 
-#: leaflet/map.py:110
+#: leaflet/map.py:111
 msgid "Markers"
 msgstr "Marker"
 
-#: leaflet/map.py:116
+#: leaflet/map.py:117
 msgid "Map Width"
 msgstr "Breite der Karte"
 
-#: leaflet/map.py:119
+#: leaflet/map.py:120
 msgid "Set the map width in percent relative to containing element."
 msgstr "Setze die Kartenbreite in Prozent relativ zum enthaltenen Element."
 
-#: leaflet/map.py:123
+#: leaflet/map.py:124
 msgid "Adapt Map Height"
 msgstr "Anpassung der Kartenhöhe"
 
-#: leaflet/map.py:126
+#: leaflet/map.py:127
 msgid "Set a fixed height in pixels, or percent relative to the map width."
 msgstr "Setze eine feste Höhe in Pixeln oder Prozent relativ zur Bildbreite."
 
-#: leaflet/map.py:130
+#: leaflet/map.py:131
 msgid "Adapt Map Minimum Height"
 msgstr "Anpassung der minimalen Kartenhöhe"
 
-#: leaflet/map.py:133
+#: leaflet/map.py:134
 msgid "Optional, set a minimum height in pixels."
 msgstr "Setze minimale Höhe in Pixel (optional)."
 
-#: leaflet/map.py:137
+#: leaflet/map.py:138
 msgid "Zoom by scrolling wheel"
 msgstr "Zoomen mit Scrollrad"
 
-#: leaflet/map.py:140
+#: leaflet/map.py:141
 msgid "Zoom into map on mouse over by scrolling wheel."
 msgstr "Mit Scrollrad hineinzoomen, falls Mauszeiger über der Karte."
 
-#: leaflet/map.py:170
+#: leaflet/map.py:171
 msgid "Map"
 msgstr "Karte"
 
-#: leaflet/map.py:256
+#: leaflet/map.py:257
 #, python-brace-format
 msgid "with {0} marker"
 msgid_plural "with {0} markers"
@@ -1698,7 +1711,7 @@ msgstr ""
 msgid "Text Editor Config"
 msgstr "Konfiguriere Text-Editor"
 
-#: models.py:227 segmentation/cms_toolbars.py:11
+#: models.py:227 segmentation/cms_toolbars.py:13
 msgid "Segmentation"
 msgstr "Segmentierung"
 
@@ -1823,27 +1836,27 @@ msgstr "Fallunterscheidung"
 msgid "Django's condition tag"
 msgstr "Django's Tag zur Fallunterscheidung"
 
-#: segmentation/mixins.py:57
+#: segmentation/mixins.py:62
 msgid "Emulate User"
 msgstr "Emuliere User"
 
-#: segmentation/mixins.py:62
+#: segmentation/mixins.py:68
 msgid "Clear emulations"
 msgstr "Lösche Emulation"
 
-#: segmentation/mixins.py:131
+#: segmentation/mixins.py:137
 #, python-format
 msgid "%(total_count)s selected"
 msgid_plural "All %(total_count)s selected"
 msgstr[0] "%(total_count)s ausgewählt"
 msgstr[1] "Alle %(total_count)s ausgewählt"
 
-#: segmentation/mixins.py:136
+#: segmentation/mixins.py:142
 #, python-format
 msgid "0 of %(cnt)s selected"
 msgstr "0 von %(cnt)s ausgewählt"
 
-#: segmentation/mixins.py:138
+#: segmentation/mixins.py:144
 #, python-format
 msgid "Select %(user_model)s to emulate"
 msgstr "Wähle %(user_model)s zum Emulieren"
@@ -1940,9 +1953,3 @@ msgstr "In '%(label)s': Dieses Feld wird benötigt."
 #, python-format
 msgid "In '%(label)s': Value '%(value)s' shall contain a valid decimal number."
 msgstr "In '%(label)s': Wert '%(value)s' muss numerisch sein."
-
-#~ msgid "Marker Image"
-#~ msgstr "Marker-Symbol"
-
-#~ msgid "Marker Width"
-#~ msgstr "Breite des Markers"
