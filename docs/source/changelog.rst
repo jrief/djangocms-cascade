@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.1.3
+=====
+* Update some misstranslations in German.
+
+
 2.1.2
 =====
 * For staff users, the menu item "Segmentation" only appears in the CMS toolbar, if the proper
