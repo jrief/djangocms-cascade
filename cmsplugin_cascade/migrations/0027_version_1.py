@@ -76,7 +76,7 @@ def forwards(apps, schema_editor):
         if cascade_element.plugin_type in ICON_PLUGINS:
             changed = migrate_icon(cascade_element.glossary) or changed
         if cascade_element.plugin_type in IMAGE_PLUGINS:
-            changed = migrate_icon(cascade_element.glossary) or changed
+            changed = migrate_image(cascade_element.glossary) or changed
         if changed:
             cascade_element.save()
 
