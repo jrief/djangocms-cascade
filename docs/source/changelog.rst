@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.1.4
+=====
+* Editor for LinkPlugin offered anchors to empty ``id``-attributes. This has been fixed.
+
+
 2.1.3
 =====
 * Update some misstranslations in German.
