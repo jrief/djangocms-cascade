@@ -22,12 +22,12 @@ django.jQuery(function($) {
 		e.preventDefault();
 		json_data = (e.originalEvent || e).clipboardData.getData('text/plain');
 		try {
-			$.parseJSON(json_data);
+			json_data = JSON.parse(json_data);
 		} catch (err) {
 			alert("Pasted data does not seem to be valid JSON");
 			return;
 		}
-		$(this).text(json_data);
+		$(this).val(JSON.stringify(json_data, null, 2));
 		$pasted_success.fadeIn(100).delay(2500).fadeOut(400);
 	});
 
