@@ -41,10 +41,14 @@ class LinkPluginBase(CascadePluginBase):
                 except (KeyError, ObjectDoesNotExist):
                     pass
                 return href
+            else:
+                return 'javascript:void(0)'
         elif linktype == 'download':
             relobj = get_related_object(obj.glossary, 'download_file')
             if isinstance(relobj, FilerFileModel):
                 return relobj.url
+            else:
+                return 'javascript:void(0)'
         return linktype
 
 
