@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.1.5
+=====
+* Links of type "CMS-page" and "Download" pointing onto a remove page or file, ie. "broken links"
+  are now dysfunctional. This prevents linking onto non-existing pages.
+
 2.1.4
 =====
 * Editor for LinkPlugin offered anchors to empty ``id``-attributes. This has been fixed.
