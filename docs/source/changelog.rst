@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.1.6
+=====
+* Fix: In the Clipboard admin, pasting of JSON copied from another field sometimes was impossible.
+
 2.1.5
 =====
 * Links of type "CMS-page" and "Download" pointing onto a remove page or file, ie. "broken links"
