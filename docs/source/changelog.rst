@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.1.7
+=====
+* Second fix (see 2.1.4): Editor for LinkPlugin offered anchors to empty ``id``-attributes.
+
+
 2.1.6
 =====
 * Fix: In the Clipboard admin, pasting of JSON copied from another field sometimes was impossible.
