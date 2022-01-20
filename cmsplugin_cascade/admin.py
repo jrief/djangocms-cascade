@@ -49,9 +49,11 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def get_page_sections(self, request, page_pk=None):
         choices = []
+        language = get_language_from_request(request, check_path=True)
         try:
-            extended_glossary = self.model.objects.get(extended_object_id=page_pk).glossary
-            for key, val in extended_glossary['element_ids'].items():
+            cascade_page = self.model.objects.get(extended_object_id=page_pk)
+            extended_glossary = cascade_page.glossary
+            for key, val in extended_glossary['element_ids'][language].items():
                 if val:
                     choices.append((key, val))
         except (self.model.DoesNotExist, KeyError):
@@ -65,7 +67,7 @@ class CascadePageAdmin(PageExtensionAdmin):
         if not request.is_ajax():
             return HttpResponseForbidden()
         data = {'results': []}
-        language = get_language_from_request(request)
+        language = get_language_from_request(request, check_path=True)
         query_term = request.GET.get('term')
         if not query_term:
             return JsonResponse(data)

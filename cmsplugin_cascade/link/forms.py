@@ -180,10 +180,10 @@ class LinkForm(EntangledModelFormMixin):
         self.base_fields['section'].choices = self.base_fields['section'].choices[:1]
         try:
             cascade_page = get_related_object(instance.glossary, 'cms_page').cascadepage
-            for key, val in cascade_page.glossary.get('element_ids', {}).items():
+            for key, val in cascade_page.glossary['element_ids'][instance.language].items():
                 if val:
                     self.base_fields['section'].choices.append((key, val))
-        except (AttributeError, ObjectDoesNotExist):
+        except (AttributeError, KeyError, ObjectDoesNotExist):
             pass
 
     def _post_clean(self):
