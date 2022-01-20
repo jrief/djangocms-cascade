@@ -52,7 +52,8 @@ class CascadePageAdmin(PageExtensionAdmin):
         try:
             extended_glossary = self.model.objects.get(extended_object_id=page_pk).glossary
             for key, val in extended_glossary['element_ids'].items():
-                choices.append((key, val))
+                if val:
+                    choices.append((key, val))
         except (self.model.DoesNotExist, KeyError):
             pass
         return JsonResponse({'element_ids': choices})
