@@ -1,8 +1,9 @@
+import html
+
 from django.core.exceptions import ValidationError
 from django.forms.fields import CharField, ChoiceField
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
-from django.utils.text import unescape_entities
 from django.template import engines, TemplateSyntaxError, Template as DjangoTemplate, Context as TemplateContext
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
@@ -42,7 +43,7 @@ class SegmentFormMixin(EntangledModelFormMixin):
             if not cleaned_data['condition']:
                 raise ValidationError(_("The evaluation condition is missing or empty."))
             try:
-                condition = unescape_entities(cleaned_data['condition'])
+                condition = html.unescape(cleaned_data['condition'])
                 engines['django'].from_string(self.eval_template_string.format(condition))
             except TemplateSyntaxError as err:
                 raise ValidationError(_("Unable to evaluate condition: {}").format(str(err)))
@@ -82,7 +83,7 @@ class SegmentPlugin(TransparentContainer, CascadePluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         def conditionally_eval():
-            condition = unescape_entities(instance.glossary['condition'])
+            condition = html.unescape(instance.glossary['condition'])
             evaluated_to = False
             template_error_message = None
             try:

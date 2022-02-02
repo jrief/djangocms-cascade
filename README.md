@@ -1,10 +1,10 @@
 # djangocms-cascade
 
-[![Build Status](https://travis-ci.org/jrief/djangocms-cascade.png?branch=master)](https://travis-ci.org/jrief/djangocms-cascade)
+[![Build Status](https://github.com/jrief/djangocms-cascade/actions/workflows/tests.yml/badge.svg)](https://github.com/jrief/djangocms-cascade/actions)
+[![PyPI version](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
+[![Django versions](https://img.shields.io/pypi/djversions/djangocms-cascade)](https://pypi.python.org/pypi/djangocms-cascade)
 [![Python versions](https://img.shields.io/pypi/pyversions/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
-[![Software license](https://img.shields.io/pypi/l/djangocms-cascade.svg)](https://github.com/jrief/djangocms-cascade/blob/master/LICENSE-MIT)
-[![Gitter chat room](https://badges.gitter.im/jrief/djangocms-cascade.svg)](https://gitter.im/awesto/djangocms-cascade)
-[![Latest version on PyPI](https://img.shields.io/pypi/v/djangocms-cascade.svg)](https://pypi.python.org/pypi/djangocms-cascade)
+[![Software license](https://img.shields.io/pypi/l/djangocms-cascade.svg)](https://github.com/jrief/djangocms-cascade/blob/master/LICENSE)
 
 The Swiss army knife for working with Django-CMS plugins.
 
@@ -61,30 +61,28 @@ before upgrading from an older version.
 ### It's pluggable
 
 **DjangoCMS-Cascade** is very modular, keeping its CMS modules in functional groups. These groups
-have to be activated independently in the project's `settings.py`. It also is possible to activate only
-certain plugins out of a group. Currently there are two such groups, `cmsplugin_cascade.bootstrap3` and
-`cmsplugin_cascade.bootstrap4`, but this list could be extended by say, **Foundation**,
-**Angular Material** or whatever other CSS framework you prefer.
-
+have to be activated independently in the project's `settings.py`. It also is possible to activate
+only certain plugins out of a group. Currently Bootstrap-4 is implemented, but this app could
+easily be extended for other CSS frameworks.
 
 ### Configurable individually
 
 Each **Cascade** plugin can be styled individually. The site-administrator can specify which CSS
-styles and CSS classes can be added to each plugin. Then the page-editor can pick one of the allowed
-styles to adopt his elements accordingly.
+styles and CSS classes can be added to each plugin. Then the page-editor can pick one of the
+allowed styles to adopt his elements accordingly.
 
 
 ### Reuse your data
 
-Each **Cascade** plugin can be configured by the site-administrator to share some or all of its data
-fields. This for instance is handy, to keep references onto external URLs in a central place. Or is
-can be used to resize all images sharing a cetrain property in one go.
+Each **Cascade** plugin can be configured by the site-administrator to share some or all of its
+data fields. This for instance is handy, to keep references onto external URLs in a central place.
+Or is can be used to resize all images sharing a cetrain property in one go.
 
 
 ### Segment the DOM
 
-It is even possible to group plugins into seperate evaluation contexts. This for instance is used to
-render different Plugins, depending on whether a user is authenticated or anonymous.
+It is even possible to group plugins into seperate evaluation contexts. This for instance is used
+to render different Plugins, depending on whether a user is authenticated or anonymous.
 
 
 ### Responsive Images
@@ -123,8 +121,8 @@ displays.
   templates.
 * Since all the data is stored in JSON, no database migration is required if a field is added,
   modified or removed from the plugin.
-* Currently **Bootstrap-3** and **Bootstrap-4** is supported, but other CSS frameworks can be
-  easily added in a pluggable manner.
+* Currently **Bootstrap-4** is supported, but other CSS frameworks can be easily added in a
+  pluggable manner.
 * It follows the "batteries included" philosophy, but still remains very modular.
 
 In addition to easily implement any kind of plugin, **DjangoCMS-Cascade** makes it possible to add
@@ -140,9 +138,12 @@ reusable helpers. Such a helper enriches a plugin with an additional, configurab
   even on a foreign site. This for instance is useful to transfer pages from the staging site to production.
 
 
-### Help needed
+### Help appreciated
 
-If someone wants to start a subproject for a CSS framework, other than Bootstrap-3/4.
+If someone wants to start a subproject for a CSS framework, other than Bootstrap-4/5.
 
 If you are a native English speaker, please check the documentation for spelling mistakes and
 grammar, since English is not my mother tongue.
+
+
+[![Twitter](https://img.shields.io/twitter/follow/jacobrief?style=social)](https://twitter.com/jacobrief)

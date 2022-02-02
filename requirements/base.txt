@@ -1,13 +1,15 @@
 Pillow
 argparse
+requests
 django-admin-sortable2
 django-classy-tags
 django-mptt
 django-sass-processor
 django-sekizai
+django-entangled
 django-filer
+django-select2
 django-treebeard
 djangocms-bootstrap
 djangocms-text-ckeditor
 easy-thumbnails
-html5lib
