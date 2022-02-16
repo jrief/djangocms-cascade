@@ -68,7 +68,7 @@ class CascadePageAdmin(PageExtensionAdmin):
             return HttpResponseForbidden()
         data = {'results': []}
         language = get_language_from_request(request, check_path=True)
-        query_term = request.GET.get('term')
+        query_term = request.GET.get('term').strip()
         if not query_term:
             return JsonResponse(data)
 
