@@ -1,5 +1,6 @@
-from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
 from cmsplugin_cascade.link.forms import TextLinkFormMixin
