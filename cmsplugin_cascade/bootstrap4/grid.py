@@ -99,7 +99,7 @@ class Bound:
         )
 
     def __repr__(self):
-        return "{}(min={}, max={})".format(self.__class__.__name__, self.min, self.max)
+        return "<{}: min={}, max={}>".format(self.__class__.__name__, self.min, self.max)
 
     def extend(self, other):
         self.min = min(self.min, other.min)
@@ -183,7 +183,7 @@ class Break:
         return newone
 
     def __repr__(self):
-        return "{}({}: fixed={}, flex={}, auto={})".format(
+        return "<{}[{}]: fixed={}, flex={}, auto={}>".format(
             self.__class__.__name__, self.breakpoint.name, self.fixed_units, self.flex_column, self.auto_column)
 
 
@@ -199,7 +199,7 @@ class Bootstrap4Container(list):
             self.bounds = bounds
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ', '.join([repr(o) for o in self]))
+        return "<{}: {}>".format(self.__class__.__name__, ', '.join([repr(o) for o in self]))
 
     def add_row(self, row):
         if isinstance(row.parent, (Bootstrap4Container, Bootstrap4Column)):
@@ -222,7 +222,7 @@ class Bootstrap4Row(list):
     bounds = None
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ', '.join([repr(o) for o in self]))
+        return "<{}: {}>".format(self.__class__.__name__, ', '.join([repr(o) for o in self]))
 
     def add_column(self, column):
         if isinstance(column.parent, Bootstrap4Row):
@@ -288,7 +288,7 @@ class Bootstrap4Column(list):
             narrower = self.breaks[bp]
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ', '.join([repr(self.breaks[bp]) for bp in Breakpoint]))
+        return "<{}: {}>".format(self.__class__.__name__, ', '.join([repr(self.breaks[bp]) for bp in Breakpoint]))
 
     def __copy__(self):
         newone = type(self)()
