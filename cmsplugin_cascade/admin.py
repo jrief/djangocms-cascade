@@ -7,11 +7,11 @@ from django.forms import Media, widgets
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.urls import re_path, reverse
-from django.utils.translation import get_language_from_request
+from django.utils.translation import get_language_from_request, get_language_from_path
 
 from cms.models.pagemodel import Page
 from cms.extensions import PageExtensionAdmin
-from cms.utils.page import get_page_from_path
+from cms.utils.page import get_pages_from_path
 from cmsplugin_cascade.models import CascadePage, IconFont
 from cmsplugin_cascade.link.forms import format_page_link
 
@@ -76,10 +76,13 @@ class CascadePageAdmin(PageExtensionAdmin):
         parse_result = urlparse(query_term)
         if parse_result.netloc.split(':')[0] == request.META['HTTP_HOST'].split(':')[0]:
             site = get_current_site(request)
-            path = parse_result.path.lstrip(reverse('pages-root')).rstrip('/')
-            page = get_page_from_path(site, path)
-            if page:
+            path = parse_result.path.strip('/')
+            if get_language_from_path(parse_result.path):
+                path = '/'.join(path.split('/')[1:])
+            pages = get_pages_from_path(site, path)
+            for page in pages:
                 data['results'].append(self.get_result_set(language, page))
+            if len(data['results']) > 0:
                 return JsonResponse(data)
 
         # otherwise resolve by search term
