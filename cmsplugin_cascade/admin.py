@@ -64,7 +64,7 @@ class CascadePageAdmin(PageExtensionAdmin):
         """
         This view is used by the SearchLinkField as the user types to feed the autocomplete drop-down.
         """
-        if not request.is_ajax():
+        if request.headers.get('x-requested-with') != 'XMLHttpRequest':
             return HttpResponseForbidden()
         data = {'results': []}
         language = get_language_from_request(request, check_path=True)
