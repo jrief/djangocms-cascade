@@ -18,7 +18,7 @@ class HeadingFormMixin(EntangledModelFormMixin):
 
     content = CharField(
         label=_("Content"),
-        widget=widgets.TextInput(attrs={'style': 'width: 100%; padding-right: 0; font-weight: bold; font-size: 125%;'}),
+        widget=widgets.TextInput(attrs={'style': 'width: calc(100% - 12em); padding-right: 0; font-weight: bold; font-size: 125%;'}),
     )
 
     class Meta:
