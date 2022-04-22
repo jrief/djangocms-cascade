@@ -12,9 +12,10 @@ Release History
 * Change ``__repr__`` method for better readability.
 * Fix major bug: Plugins allowing anchor-IDs, can now share the same ID on the same page for each
   language.
-* Drop support for Django-3.1 and Python-3.7.
-* Add support for Django-4.0 and Python 3.10.
-* Add support for django-CMS 3.10.
+* Drop support for Python-3.7.
+* Drop support for Django-3.1.
+* Add support for Python-3.10.
+* Add support for django-CMS-3.10.
 
 2.1.7
 =====

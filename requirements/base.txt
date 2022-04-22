@@ -1,7 +1,6 @@
 Pillow
 argparse
 requests
-django-admin-sortable2
 django-classy-tags
 django-sekizai
 django-entangled
