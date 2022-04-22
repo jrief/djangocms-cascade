@@ -7,7 +7,7 @@ django-mptt
 django-sass-processor
 django-sekizai
 django-entangled
-django-filer>2.1
+django-filer
 django-select2
 django-treebeard
 djangocms-bootstrap
