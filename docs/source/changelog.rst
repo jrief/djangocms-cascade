@@ -2,6 +2,17 @@
 Release History
 ===============
 
+2.2
+===
+* In HeadingPlugin, reduce width of content input field.
+* Refactor legacy code to be compatible with Django-4.
+* In Ajax request ``get_published_pagelist``:
+  * Make querying link by path language independent.
+  * Strip whitespace from query term.
+* Change ``__repr__`` method for better readability.
+* Fix major bug: Plugins allowing anchor-IDs, can now share the same ID on the same page for each
+  language.
+
 2.1.7
 =====
 * Second fix (see 2.1.4): Editor for LinkPlugin offered anchors to empty ``id``-attributes.
