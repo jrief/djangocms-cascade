@@ -29,7 +29,7 @@ setup(
     url='https://github.com/jrief/djangocms-cascade',
     packages=find_packages(exclude=['examples', 'docs', 'tests']),
     install_requires=[
-        'django>=3.2,<5',
+        'django>=3.2,<4',
         'django-classy-tags>=1.0',
         'django-cms>=3.10,<4',
         'django-entangled>=0.5',
