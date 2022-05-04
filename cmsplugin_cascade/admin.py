@@ -6,7 +6,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.forms import Media, widgets
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
-from django.urls import re_path, reverse
+from django.urls import re_path
 from django.utils.translation import get_language_from_request, get_language_from_path
 
 from cms.models.pagemodel import Page
