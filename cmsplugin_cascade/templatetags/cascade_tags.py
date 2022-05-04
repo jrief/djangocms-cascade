@@ -1,7 +1,10 @@
 import io
 import json
 import os
+
 from cms.toolbar.utils import get_toolbar_from_request
+from cms.plugin_rendering import StructureRenderer
+
 from django import template
 from django.conf import settings
 from django.core.cache import caches
@@ -85,12 +88,14 @@ class RenderPlugin(Tag):
             content_renderer = context['cms_content_renderer']
         else:
             content_renderer = toolbar.content_renderer
-        content = content_renderer.render_plugin(
-            instance=plugin,
-            context=context,
-            editable=toolbar.edit_mode_active,
-        )
-        return content
+        if isinstance(content_renderer, StructureRenderer):
+            return content_renderer.render_plugin(plugin)
+        else:
+            return content_renderer.render_plugin(
+                instance=plugin,
+                context=context,
+                editable=toolbar.edit_mode_active,
+            )
 
 register.tag('render_plugin', RenderPlugin)
 
