@@ -3,7 +3,7 @@ from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import fields, Media
 from django.forms.models import ModelChoiceField
-from django.forms.widgets import RadioSelect
+from django.forms.widgets import RadioSelect, URLInput
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -119,6 +119,7 @@ class LinkForm(EntangledModelFormMixin):
         required=False,
         label=_("URL"),
         help_text=_("Link onto external page"),
+        widget=URLInput(attrs={'size': 100}),
     )
 
     mail_to = fields.EmailField(
