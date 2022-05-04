@@ -2,6 +2,14 @@
 Release History
 ===============
 
+2.2.1
+=====
+* Fix: Always add ``admin:validate_exturl`` to the JS context in the plugin's
+  ``change_form`` template.
+* Increase width of URL input field to 100 characters.
+* Fix: Method ``cms.plugin_rendering.StructureRenderer.render_plugin`` has a signature incompatible
+  to other renderers. There is a check now.
+
 2.2
 ===
 * In HeadingPlugin, reduce width of content input field.
