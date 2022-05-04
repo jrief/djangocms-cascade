@@ -77,19 +77,19 @@ class RenderPlugin(Tag):
 
         request = context['request']
         toolbar = get_toolbar_from_request(request)
-        kwargs = {'instance': plugin}
         if 'cms_content_renderer' in context and isinstance(context['cms_content_renderer'], StrideContentRenderer):
             content_renderer = context['cms_content_renderer']
-            kwargs.update(context=context, editable=toolbar.edit_mode_active)
         elif 'cms_renderer' in context:
             content_renderer = context['cms_renderer']
-            kwargs.update(context=context, editable=toolbar.edit_mode_active)
         elif 'cms_content_renderer' in context:
             content_renderer = context['cms_content_renderer']
         else:
             content_renderer = toolbar.content_renderer
-            kwargs.update(context=context, editable=toolbar.edit_mode_active)
-        content = content_renderer.render_plugin(**kwargs)
+        content = content_renderer.render_plugin(
+            instance=plugin,
+            context=context,
+            editable=toolbar.edit_mode_active,
+        )
         return content
 
 register.tag('render_plugin', RenderPlugin)
