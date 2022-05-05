@@ -4,14 +4,12 @@ import requests
 from django.contrib import admin
 from django.contrib.sites.shortcuts import get_current_site
 from django.forms import Media, widgets
-from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.urls import re_path, reverse
 from django.utils.translation import get_language_from_request
 
-from cms.models.pagemodel import Page
 from cms.extensions import PageExtensionAdmin
-from cms.utils.page import get_page_from_path
+from cmsplugin_cascade.utils_helpers import get_page_from_path, get_matching_published_pages
 from cmsplugin_cascade.models import CascadePage, IconFont
 from cmsplugin_cascade.link.forms import format_page_link
 
@@ -81,12 +79,7 @@ class CascadePageAdmin(PageExtensionAdmin):
                 return JsonResponse(data)
 
         # otherwise resolve by search term
-        matching_published_pages = Page.objects.published().public().filter(
-            Q(title_set__title__icontains=query_term, title_set__language=language)
-            | Q(title_set__path__icontains=query_term, title_set__language=language)
-            | Q(title_set__menu_title__icontains=query_term, title_set__language=language)
-            | Q(title_set__page_title__icontains=query_term, title_set__language=language)
-        ).distinct().order_by('title_set__title').iterator()
+        matching_published_pages = get_matching_published_pages(query_term,language)
 
         for page in matching_published_pages:
             data['results'].append(self.get_result_set(language, page))

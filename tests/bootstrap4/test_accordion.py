@@ -2,7 +2,7 @@ import pytest
 from django.template.context import RequestContext
 from cms.api import add_plugin
 from cms.plugin_rendering import ContentRenderer
-from cms.utils.plugins import build_plugin_tree
+from cmsplugin_cascade.utils_helpers import get_plugins_as_layered_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.accordion import BootstrapAccordionGroupPlugin, BootstrapAccordionPlugin
 
@@ -34,7 +34,7 @@ def bootstrap_accordion(rf, admin_site, bootstrap_column):
 def test_edit_accordion_group(rf, admin_site, bootstrap_accordion):
     request = rf.get('/')
     accordion_plugin, accordion_model = bootstrap_accordion
-    first_group = accordion_model.get_first_child()
+    first_group = accordion_model.get_children().first()
     group_model, group_plugin = first_group.get_plugin_instance(admin_site)
     data = {'heading': "Hello", 'body_padding': 'on'}
     ModelForm = group_plugin.get_form(request, group_model)
@@ -45,7 +45,7 @@ def test_edit_accordion_group(rf, admin_site, bootstrap_accordion):
     assert group_model.glossary['body_padding'] is True
 
     # render the plugin
-    build_plugin_tree([accordion_model, group_model])
+    get_plugins_as_layered_tree([accordion_model, group_model])
     context = RequestContext(request)
     content_renderer = ContentRenderer(request)
     html = content_renderer.render_plugin(accordion_model, context).strip()

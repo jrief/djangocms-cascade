@@ -30,7 +30,7 @@ setup(
     install_requires=[
         'django>=3.1',
         'django-classy-tags>=1.0',
-        'django-cms>=3.8,<4',
+        'django-cms',
         'django-entangled>=0.4',
         'djangocms-text-ckeditor>=3.7',
         'django-select2>=7.7',

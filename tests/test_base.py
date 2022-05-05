@@ -9,7 +9,7 @@ from django.template.context import Context
 from cms.api import create_page
 from cms.test_utils.testcases import CMSTestCase
 from cmsplugin_cascade.models import CascadePage
-
+from cmsplugin_cascade.utils_helpers import CMS_
 
 class CascadeTestCase(CMSTestCase):
     home_page = None
@@ -20,9 +20,10 @@ class CascadeTestCase(CMSTestCase):
             # >= Django CMS v3.5.x
             self.home_page.set_as_homepage()
         CascadePage.assure_relation(self.home_page)
-
-        self.placeholder = self.home_page.placeholders.get(slot='Main Content')
-
+        if CMS_:
+            self.placeholder = self.home_page.placeholders.get(slot='Main Content')
+        else:
+            self.placeholder = self.home_page.get_placeholders(self.home_page.languages).get(slot='Main Content')
         self.request = self.get_request(self.home_page, 'en')
         self.admin_site = admin.sites.AdminSite()
 

@@ -2,7 +2,7 @@ import pytest
 from bs4 import BeautifulSoup
 from django.utils.html import strip_spaces_between_tags
 from cms.plugin_rendering import ContentRenderer
-from cms.utils.plugins import build_plugin_tree
+from cmsplugin_cascade.utils_helpers import get_plugins_as_layered_tree
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.bootstrap4.container import BootstrapColumnPlugin
 
@@ -42,7 +42,7 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     plugin_list = [container_model, row_model]
 
     # we now should have three columns attached to the row
-    assert row_model.get_descendant_count() == 3
+    assert len(row_model.get_descendants().values_list('id')) == 3
     for cms_plugin in row_model.get_descendants():
         column_model, column_plugin = cms_plugin.get_plugin_instance()
         assert isinstance(column_model, CascadeElement)
@@ -76,7 +76,7 @@ def test_edit_bootstrap_row(rf, bootstrap_row):
     row_model.parent.child_plugin_instances
     for plugin in plugin_list:
         plugin.refresh_from_db()
-    build_plugin_tree(plugin_list)
+    get_plugins_as_layered_tree(plugin_list)
     html = content_renderer.render_plugin(container_model, context)
     html = strip_spaces_between_tags(html).strip()
     assert html == '<div class="container"><div class="row"><div class="col col-sm-3 offset-sm-1">' \
