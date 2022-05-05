@@ -121,6 +121,8 @@ class AppSettings:
         config.setdefault('allow_plugin_hiding', False)
 
         config.setdefault('cache_strides', True)
+        
+        config.setdefault('merge_extra_fields',True)
 
         config.setdefault('register_page_editor', True)
 

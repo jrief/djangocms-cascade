@@ -30,6 +30,21 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
         except ObjectDoesNotExist:
             extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields'].get(clsname)
 
+        if hasattr(extra_fields, 'id') and app_settings.CMSPLUGIN_CASCADE['merge_extra_fields'] :
+            settings_extra_fields = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_fields']
+            if clsname in settings_extra_fields.keys():
+                for key_style, value_style in settings_extra_fields[clsname].inline_styles.items():
+                    extra_fields.inline_styles.update({key_style:extra_fields.inline_styles[key_style] + value_style})
+                for key_css_classes, value_css_classes in settings_extra_fields[clsname].css_classes.items():
+                    if value_css_classes == '':
+                        value_css_classes = extra_fields.css_classes[key_css_classes]
+                    elif type(value_css_classes) == list:
+                        list_extra_fields = extra_fields.css_classes[key_css_classes].replace(' ', '').split(",")
+                        list_css_classes = list(dict.fromkeys(list_extra_fields + value_css_classes))
+                        value_css_classes = ','.join(list_css_classes)
+                    extra_fields.css_classes.update({ key_css_classes:value_css_classes})
+                extra_fields.save()
+
         if isinstance(extra_fields, (PluginExtraFields, PluginExtraFieldsConfig)):
             form_fields = {}
 
