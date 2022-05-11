@@ -4,7 +4,7 @@ pluggy
 py
 pytest
 pytest-django
-tox
+coverage
 django-reversion
 factory-boy
 pytest-factoryboy

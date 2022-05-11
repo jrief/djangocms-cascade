@@ -9,12 +9,11 @@ from django.template.response import TemplateResponse
 from django.urls import re_path, reverse
 from django.utils.http import urlencode
 from django.utils.timezone import now
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, get_language_from_request
 
 from cms.plugin_base import CMSPluginBase, PluginMenuItem
 from cms.plugin_pool import plugin_pool
 from cms.toolbar.utils import get_plugin_tree_as_json
-from cms.utils import get_language_from_request
 from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
 from cmsplugin_cascade.clipboard.utils import deserialize_to_clipboard, serialize_from_placeholder
 from cmsplugin_cascade.models import CascadeClipboard
@@ -35,7 +34,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
     def get_extra_placeholder_menu_items(cls, request, placeholder):
         data = urlencode({
             'placeholder': placeholder.pk,
-            'language': get_language_from_request(request),
+            'language': get_language_from_request(request, check_path=True),
         })
         return [
             PluginMenuItem(

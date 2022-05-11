@@ -2,6 +2,34 @@
 Release History
 ===============
 
+2.2.2
+=====
+* Ignore empty field when validating URL and add a timeout value of 5 seconds when fetching remote
+  URLs.
+
+2.2.1
+=====
+* Fix: Always add ``admin:validate_exturl`` to the JS context in the plugin's
+  ``change_form`` template.
+* Increase width of URL input field to 100 characters.
+* Fix: Method ``cms.plugin_rendering.StructureRenderer.render_plugin`` has a signature incompatible
+  to other renderers. There is a check now.
+
+2.2
+===
+* In HeadingPlugin, reduce width of content input field.
+* Refactor legacy code to be compatible with Django-4.
+* In Ajax request ``get_published_pagelist``:
+  * Make querying link by path language independent.
+  * Strip whitespace from query term.
+* Change ``__repr__`` method for better readability.
+* Fix major bug: Plugins allowing anchor-IDs, can now share the same ID on the same page for each
+  language.
+* Drop support for Python-3.7.
+* Drop support for Django-3.1.
+* Add support for Python-3.10.
+* Add support for django-CMS-3.10.
+
 2.1.7
 =====
 * Second fix (see 2.1.4): Editor for LinkPlugin offered anchors to empty ``id``-attributes.

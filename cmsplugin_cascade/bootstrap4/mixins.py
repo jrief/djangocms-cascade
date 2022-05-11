@@ -77,6 +77,7 @@ class BootstrapUtilities:
             ('ml-{}{}', _("Left margin ({})")),
         ]
         sizes = list(range(0, 6)) + ['auto']
+        previous_label = ''
         for bp in Breakpoint:
             if bp == Breakpoint.xs:
                 choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
@@ -102,6 +103,7 @@ class BootstrapUtilities:
             ('mb-{}{}', _("Bottom margin ({})")),
         ]
         sizes = list(range(0, 6)) + ['auto']
+        previous_label = ''
         for bp in Breakpoint:
             if bp == Breakpoint.xs:
                 choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
@@ -131,6 +133,7 @@ class BootstrapUtilities:
             ('pl-{}{}', _("Left padding ({})")),
         ]
         sizes = range(0, 6)
+        previous_label = ''
         for bp in Breakpoint:
             if bp == Breakpoint.xs:
                 choices = [(c.format('', s), format_lazy(l, s)) for c, l in choices_format for s in sizes]
@@ -155,6 +158,7 @@ class BootstrapUtilities:
             ('float-{}left', _("Float left")),
             ('float-{}right', _("Float right")),
         ]
+        previous_label = ''
         for bp in Breakpoint:
             if bp == Breakpoint.xs:
                 choices = [(c.format(''), l) for c, l in choices_format]

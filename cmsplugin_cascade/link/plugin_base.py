@@ -35,7 +35,7 @@ class LinkPluginBase(CascadePluginBase):
             if relobj:
                 href = relobj.get_absolute_url()
                 try:
-                    element_ids = relobj.cascadepage.glossary['element_ids']
+                    element_ids = relobj.cascadepage.glossary['element_ids'][obj.language]
                     section = obj.glossary['section']
                     href = '{}#{}'.format(href, element_ids[section])
                 except (KeyError, ObjectDoesNotExist):

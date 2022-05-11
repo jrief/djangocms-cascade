@@ -6,12 +6,12 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.forms import Media, widgets
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
-from django.urls import re_path, reverse
-from django.utils.translation import get_language_from_request
+from django.urls import re_path
+from django.utils.translation import get_language_from_request, get_language_from_path
 
 from cms.models.pagemodel import Page
 from cms.extensions import PageExtensionAdmin
-from cms.utils.page import get_page_from_path
+from cms.utils.page import get_pages_from_path
 from cmsplugin_cascade.models import CascadePage, IconFont
 from cmsplugin_cascade.link.forms import format_page_link
 
@@ -49,9 +49,11 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def get_page_sections(self, request, page_pk=None):
         choices = []
+        language = get_language_from_request(request, check_path=True)
         try:
-            extended_glossary = self.model.objects.get(extended_object_id=page_pk).glossary
-            for key, val in extended_glossary['element_ids'].items():
+            cascade_page = self.model.objects.get(extended_object_id=page_pk)
+            extended_glossary = cascade_page.glossary
+            for key, val in extended_glossary['element_ids'][language].items():
                 if val:
                     choices.append((key, val))
         except (self.model.DoesNotExist, KeyError):
@@ -62,11 +64,11 @@ class CascadePageAdmin(PageExtensionAdmin):
         """
         This view is used by the SearchLinkField as the user types to feed the autocomplete drop-down.
         """
-        if not request.is_ajax():
+        if request.headers.get('x-requested-with') != 'XMLHttpRequest':
             return HttpResponseForbidden()
         data = {'results': []}
-        language = get_language_from_request(request)
-        query_term = request.GET.get('term')
+        language = get_language_from_request(request, check_path=True)
+        query_term = request.GET.get('term').strip()
         if not query_term:
             return JsonResponse(data)
 
@@ -74,10 +76,13 @@ class CascadePageAdmin(PageExtensionAdmin):
         parse_result = urlparse(query_term)
         if parse_result.netloc.split(':')[0] == request.META['HTTP_HOST'].split(':')[0]:
             site = get_current_site(request)
-            path = parse_result.path.lstrip(reverse('pages-root')).rstrip('/')
-            page = get_page_from_path(site, path)
-            if page:
+            path = parse_result.path.strip('/')
+            if get_language_from_path(parse_result.path):
+                path = '/'.join(path.split('/')[1:])
+            pages = get_pages_from_path(site, path)
+            for page in pages:
                 data['results'].append(self.get_result_set(language, page))
+            if len(data['results']) > 0:
                 return JsonResponse(data)
 
         # otherwise resolve by search term
@@ -118,9 +123,11 @@ class CascadePageAdmin(PageExtensionAdmin):
         Perform a GET request onto the given external URL and return its status.
         """
         exturl = request.GET.get('exturl')
+        if not exturl:
+            return JsonResponse({})
         request_headers = {'User-Agent': 'Django-CMS-Cascade'}
         try:
-            response = requests.get(exturl, allow_redirects=True, headers=request_headers)
+            response = requests.get(exturl, allow_redirects=True, headers=request_headers, timeout=5.0)
         except Exception:
             return JsonResponse({'status_code': 500})
         else:

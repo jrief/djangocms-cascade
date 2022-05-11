@@ -19,6 +19,7 @@
 	<script type="text/javascript">
 	django.cascade = django.cascade || {};
 	django.cascade.page_sections_url = "{% url 'admin:get_page_sections' %}";
+	django.cascade.validate_exturl_url = "{% url 'admin:validate_exturl' %}";
 	django.cascade.ring_plugin_bases = {{% for key, bases in ring_plugin_bases.items %}
 		{{ key }}: "[{{ bases|join:", " }}]"{% if not forloop.last %},{% endif %}{% endfor %}
 	};
@@ -31,7 +32,6 @@
 		'{{ icof.id }}': '{{ icof.get_stylesheet_url }}'{% if not forloop.last %},{% endif %}{% endfor %}
 	};
 	django.cascade.fetch_fonticons_url = "{% url 'admin:fetch_fonticons' %}";
-	django.cascade.validate_exturl_url = "{% url 'admin:validate_exturl' %}";
 	{% endif %}
 	</script>
 {% endblock %}

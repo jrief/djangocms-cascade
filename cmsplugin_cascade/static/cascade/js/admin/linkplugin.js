@@ -84,10 +84,16 @@ django.jQuery(function($) {
 			});
 		},
 		validateExtUrl: function(exturl) {
+			if (!exturl) {
+				$link_ext_url.removeClass('valid').removeClass('invalid');
+				return;
+			}
 			$.get(django.cascade.validate_exturl_url, {
 				exturl: exturl,
 			}, function(response) {
-				if (response.status_code === 200) {
+				if (!response.status_code) {
+					$link_ext_url.removeClass('valid').removeClass('invalid');
+				} else if (response.status_code === 200) {
 					$link_ext_url.addClass('valid').removeClass('invalid');
 				} else {
 					$link_ext_url.addClass('invalid').removeClass('valid');

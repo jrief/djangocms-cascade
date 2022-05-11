@@ -1,10 +1,10 @@
 from django.contrib.admin import site as default_admin_site
 from django.contrib import messages
+from django.utils.translation import get_language_from_request
 
 from cms.api import add_plugin
 from cms.models.placeholderpluginmodel import PlaceholderReference
 from cms.plugin_pool import plugin_pool
-from cms.utils import get_language_from_request
 
 from djangocms_text_ckeditor.models import Text
 from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin_tags
@@ -73,7 +73,7 @@ def deserialize_to_clipboard(request, data):
                 instance.body = replace_plugin_tags(instance.body, id_dict)
                 instance.save()
 
-    language = get_language_from_request(request)
+    language = get_language_from_request(request, check_path=True)
 
     clipboard = request.toolbar.clipboard
     ref_plugin = clipboard.cmsplugin_set.first()

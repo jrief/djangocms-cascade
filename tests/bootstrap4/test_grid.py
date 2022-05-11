@@ -257,4 +257,4 @@ def test_repr():
     row = container.add_row(Bootstrap4Row())
     row.add_column(Bootstrap4Column('col'))
     row.compute_column_bounds()
-    assert repr(container) == 'Bootstrap4Container(Bootstrap4Row(Bootstrap4Column(Break(xs: fixed=0, flex=True, auto=False), Break(sm: fixed=0, flex=True, auto=False), Break(md: fixed=0, flex=True, auto=False), Break(lg: fixed=0, flex=True, auto=False), Break(xl: fixed=0, flex=True, auto=False))))'
+    assert repr(container) == '<Bootstrap4Container: <Bootstrap4Row: <Bootstrap4Column: <Break[xs]: fixed=0, flex=True, auto=False>, <Break[sm]: fixed=0, flex=True, auto=False>, <Break[md]: fixed=0, flex=True, auto=False>, <Break[lg]: fixed=0, flex=True, auto=False>, <Break[xl]: fixed=0, flex=True, auto=False>>>>'

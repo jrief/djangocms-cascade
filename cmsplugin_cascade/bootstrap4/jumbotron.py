@@ -1,8 +1,10 @@
 import logging
+
 from django.core.exceptions import ValidationError
 from django.forms import widgets, BooleanField, ChoiceField
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+
 from entangled.forms import EntangledModelFormMixin
 
 from cms.plugin_pool import plugin_pool

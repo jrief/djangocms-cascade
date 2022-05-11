@@ -210,6 +210,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
         units = [ngettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
+        previous_devices, previous_label = '', ''
         for bp in breakpoints:
             try:
                 last = getattr(grid.Breakpoint, breakpoints[breakpoints.index(bp)])

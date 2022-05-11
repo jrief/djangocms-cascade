@@ -3,7 +3,7 @@ from django.contrib.admin.sites import site as admin_site
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import fields, Media
 from django.forms.models import ModelChoiceField
-from django.forms.widgets import RadioSelect
+from django.forms.widgets import RadioSelect, URLInput
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -119,6 +119,7 @@ class LinkForm(EntangledModelFormMixin):
         required=False,
         label=_("URL"),
         help_text=_("Link onto external page"),
+        widget=URLInput(attrs={'size': 100}),
     )
 
     mail_to = fields.EmailField(
@@ -180,10 +181,10 @@ class LinkForm(EntangledModelFormMixin):
         self.base_fields['section'].choices = self.base_fields['section'].choices[:1]
         try:
             cascade_page = get_related_object(instance.glossary, 'cms_page').cascadepage
-            for key, val in cascade_page.glossary.get('element_ids', {}).items():
+            for key, val in cascade_page.glossary['element_ids'][instance.language].items():
                 if val:
                     self.base_fields['section'].choices.append((key, val))
-        except (AttributeError, ObjectDoesNotExist):
+        except (AttributeError, KeyError, ObjectDoesNotExist):
             pass
 
     def _post_clean(self):

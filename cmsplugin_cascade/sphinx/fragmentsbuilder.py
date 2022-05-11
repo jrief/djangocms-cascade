@@ -1,6 +1,6 @@
 import json, os
 from docutils import nodes
-from sphinx.builders.html import DirectoryHTMLBuilder
+from sphinx.builders.dirhtml import DirectoryHTMLBuilder
 from sphinx.environment.adapters.toctree import TocTree
 
 
@@ -40,7 +40,7 @@ class FragmentsBuilder(DirectoryHTMLBuilder):
             self.globalcontext['toctree'] = lambda **kw: self._get_local_toctree(docname, **kw)
 
     def _get_local_toctree(self, docname, collapse=True, **kwds):
-        # type: (unicode, bool, Any) -> unicode
+        # type: (str, bool, Any) -> str
         if 'includehidden' not in kwds:
             kwds['includehidden'] = False
         partials = TocTree(self.env).get_toctree_for(docname, self, collapse, **kwds)

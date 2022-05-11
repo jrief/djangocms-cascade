@@ -65,8 +65,8 @@ class StrideElementBase:
             return self.parent.get_complete_glossary()
         return {}
         # TODO: use self.placeholder.glossary as the starting dictionary
-        template = self.placeholder.page.template if self.placeholder.page else None
-        return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
+        # template = self.placeholder.page.template if self.placeholder.page else None
+        # return get_placeholder_conf('glossary', self.placeholder.slot, template=template, default={})
 
     @property
     def tag_type(self):
