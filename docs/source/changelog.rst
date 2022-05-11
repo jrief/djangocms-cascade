@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.2.2
+=====
+* Ignore empty field when validating URL and add a timeout value of 5 seconds when fetching remote
+  URLs.
+
 2.2.1
 =====
 * Fix: Always add ``admin:validate_exturl`` to the JS context in the plugin's
