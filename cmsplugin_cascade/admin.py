@@ -123,9 +123,11 @@ class CascadePageAdmin(PageExtensionAdmin):
         Perform a GET request onto the given external URL and return its status.
         """
         exturl = request.GET.get('exturl')
+        if not exturl:
+            return JsonResponse({})
         request_headers = {'User-Agent': 'Django-CMS-Cascade'}
         try:
-            response = requests.get(exturl, allow_redirects=True, headers=request_headers)
+            response = requests.get(exturl, allow_redirects=True, headers=request_headers, timeout=5.0)
         except Exception:
             return JsonResponse({'status_code': 500})
         else:
