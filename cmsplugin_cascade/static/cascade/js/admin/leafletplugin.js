@@ -102,7 +102,7 @@ django.jQuery(function($) {
 			}
 			if (event.target.value.length < 3 || event.type === 'keypress' && event.which !== 13)
 				return;
-			fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + event.target.value)
+			fetch(django.cascade.leaflet_settings.addressLookupURL + '?format=json&q=' + event.target.value)
 				.then(response => response.json())
 				.then(body => event.data.renderLookupResults(body, divWrapper));
 			event.preventDefault();

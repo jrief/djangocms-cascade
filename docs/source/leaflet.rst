@@ -170,7 +170,35 @@ your main area of interest is Germany, than these coordinates are a good setting
 	CMSPLUGIN_CASCADE = {
 	    ...
 	    'leaflet': {
+	        ...
 	        'default_position': {'lat': 50.0, 'lng': 12.0, 'zoom': 6},
+	    }
+	    ...
+	}
+
+
+Address Lookup
+==============
+
+Since version 2.3 it is possible to search for a location, using the `OSM Nominatim`_ lookup
+service.
+
+.. _OSM Nominatim: https://nominatim.org/
+
+When adding or editing a marker, there is a field named **Address lookup**. Entering an address
+into that field and pressing the "Enter" key, generates a list of possible locations. Choose one
+from that list and the marker will be placed at the specified coordinates.
+
+In case you want to override the address lookup service with one compatible the Nominatim's API,
+change the URL in the Django settings:
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'leaflet': {
+	        ...
+	        'addressLookupURL': 'https://my-nominatim.example.org/search',
 	    }
 	    ...
 	}

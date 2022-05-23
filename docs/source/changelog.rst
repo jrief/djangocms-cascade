@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.3
+===
+* In ``LeafletPlugin`` inlined markers, add an address lookup field. Entering an address creates a
+  list with possible coordinates.
+
 2.2.2
 =====
 * Ignore empty field when validating URL and add a timeout value of 5 seconds when fetching remote
