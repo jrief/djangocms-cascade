@@ -2,9 +2,9 @@ name: Test djangocms-cascade
 
 on:
   push:
-    branches: [ "main", "releases/*" ]
+    branches: [ "master", "releases/*" ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
