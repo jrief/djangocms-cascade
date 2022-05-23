@@ -17,7 +17,8 @@ django.jQuery(function($) {
 			$('#inline_elements-group .add-row a').on('click', this, this.addInlineElement);
 			$('#inline_elements-group .field-use_icon input').on('change', this, this.changeUseIcon);
 			$.each($('#inline_elements-group .inline-related'), this.changeUseIcon);
-			this.editMap.on('drag', this.onMapDrag, this);
+			$('#inline_elements-group .field-address_lookup input').on('blur keypress', this, this.addressLookup);
+			this.editMap.on('drag zoom', this.onMapDrag, this);
 		},
 		resetCenter: function(event) {
 			var self = event ? event.options : this;
@@ -33,20 +34,23 @@ django.jQuery(function($) {
 		},
 		setMarkers: function() {
 			var self = this;
-			$.each($('#inline_elements-group .inline-related.has_original'), function() {
+			$.each($('#inline_elements-group .inline-related.has_original'), function(index) {
 				var title = $(this).find('.field-title input').val();
 				var inputField = $(this).find('.field-position input');
-				var marker = L.marker(JSON.parse(inputField.val()), {draggable: true});
+				var marker = L.marker(JSON.parse(inputField.val()), {draggable: true, markerId: index});
 				marker.addTo(self.editMap);
 				marker.bindTooltip(title);
 				marker.on('dragend', self.dragMarker, inputField);
 			});
 		},
-		addMarker: function(event) {
+		addMarker: function(latlng, markerId) {
 			var element = $('#inline_elements-group .inline-related.last-related.dynamic-inline_elements:last');
 			var title = element.find('.field-title input').val();
 			var inputField = element.find('.field-position input');
-			var marker = L.marker(event.latlng, {draggable: true});
+			if (typeof markerId === 'undefined') {
+				markerId = element.index('.inline-related');
+			}
+			var marker = L.marker(latlng, {draggable: true, markerId: markerId});
 			inputField.val(JSON.stringify(marker.getLatLng()));
 			marker.addTo(this.editMap);
 			marker.bindTooltip(title);
@@ -67,7 +71,7 @@ django.jQuery(function($) {
 				$this.removeClass('disable-click');
 			});
 			$('#leaflet_edit_map').addClass('leaflet-crosshair');
-			event.data.editMap.on('click', event.data.addMarker, event.data);
+			event.data.editMap.on('click', evt => event.data.addMarker(evt.latlng), event.data);
 		},
 		changeUseIcon: function(event) {
 			var checkbox, markerImage;
@@ -87,6 +91,50 @@ django.jQuery(function($) {
 			} else {
 				markerImage.hide();
 			}
+		},
+		addressLookup: function(event) {
+			const divWrapper = event.target.closest('div');
+			if (!divWrapper)
+				throw new Error("<div> wrapper missing");
+			const ulElement = divWrapper.querySelector('ul');
+			if (ulElement) {
+				divWrapper.removeChild(ulElement);
+			}
+			if (event.target.value.length < 3 || event.type === 'keypress' && event.which !== 13)
+				return;
+			fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + event.target.value)
+				.then(response => response.json())
+				.then(body => event.data.renderLookupResults(body, divWrapper));
+			event.preventDefault();
+		},
+		renderLookupResults: function(data, divWrapper) {
+			const ulElement = document.createElement('ul');
+			divWrapper.appendChild(ulElement);
+			data.forEach(address => {
+				const liElement = document.createElement('li');
+				liElement.setAttribute('data-lng', address.lon);
+				liElement.setAttribute('data-lat', address.lat);
+				liElement.innerText = address.display_name;
+				liElement.addEventListener('click', evt => this.moveMarkerIcon(evt.target, divWrapper.closest('.inline-related')));
+				ulElement.appendChild(liElement);
+			});
+		},
+		moveMarkerIcon: function(resultElement, inlineElement) {
+			const latlng = [resultElement.getAttribute('data-lat'), resultElement.getAttribute('data-lng')];
+			const index = $(inlineElement).index('.inline-related');
+			const markers = [];
+			$.each(this.editMap._layers, function() {
+				if (this.options && this.options.markerId === index) {
+					markers.push(this);
+				}
+			});
+			if (markers.length === 0) {
+				this.addMarker(latlng, index);
+			} else {
+				markers[0].setLatLng(latlng);
+				$(inlineElement).find('.field-position input').val(JSON.stringify(markers[0].getLatLng()));
+			}
+			document.getElementById('leaflet_edit_map').scrollIntoView({behavior: 'smooth'});
 		}
 	});
 

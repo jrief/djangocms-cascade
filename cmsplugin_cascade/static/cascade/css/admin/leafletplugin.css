@@ -20,3 +20,5 @@
 .field-marker_anchor div.sibling-field label { padding-left: 5px; }
 .field-marker_anchor div.sibling-field input[type="text"] { display: block; width: 8em; margin: 0; }
 .field-marker_anchor h4 { margin-top: 10px !important; margin-bottom: 10px !important; }
+.field-address_lookup ul li { cursor: pointer; color: var(--link-fg); }
+.field-address_lookup ul li:hover { text-decoration: underline; background-color: var(--darkened-bg); }

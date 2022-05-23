@@ -76,6 +76,13 @@ class MarkerForm(CascadeModelForm):
 
     position = HiddenDictField()
 
+    address_lookup = CharField(
+        label=_("Address lookup"),
+        required=False,
+        help_text=_("Search for an address"),
+        widget=widgets.TextInput(attrs={'size': 100}),
+    )
+
     class Meta:
         entangled_fields = {'glossary': ['title', 'use_icon', 'marker_image', 'marker_width', 'marker_anchor',
                                          'popup_text', 'position']}
