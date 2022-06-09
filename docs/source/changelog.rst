@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.3.1
+=====
+* Allow Django version 4.0 as requirement.
+
 2.3
 ===
 * In ``LeafletPlugin`` inlined markers, add an address lookup field. Entering an address creates a
