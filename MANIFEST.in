@@ -8,4 +8,4 @@ recursive-include cmsplugin_cascade *.py
 recursive-include cmsplugin_cascade/sphinx/static *
 recursive-include cmsplugin_cascade/sphinx/theme *
 recursive-exclude tests *
-recursive-exclude .*
+recursive-exclude * *.pyc
