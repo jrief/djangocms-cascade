@@ -56,6 +56,7 @@ class YoutubeFormMixin(EntangledModelFormMixin):
     rel = BooleanField(
         label=_("Show related"),
         required=False,
+        help_text=_("Show videos suggested by YouTube at the end."),
     )
 
     class Meta:
