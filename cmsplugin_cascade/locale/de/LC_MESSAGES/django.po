@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-03 10:16+0100\n"
+"POT-Creation-Date: 2022-06-28 12:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,13 +60,6 @@ msgstr "Beginne mit der ersten Kachel geöffnet."
 msgid "Accordion"
 msgstr "Akkordeon"
 
-#: bootstrap4/accordion.py:56
-#, python-brace-format
-msgid "with {0} card"
-msgid_plural "with {0} cards"
-msgstr[0] "mit {0} Kachel"
-msgstr[1] "mit {0} Kacheln"
-
 #: bootstrap4/accordion.py:77 generic/heading.py:29
 msgid "Heading"
 msgstr "Überschrift"
@@ -115,7 +108,7 @@ msgstr "Hell"
 msgid "Dark"
 msgstr "Dunkel"
 
-#: bootstrap4/buttons.py:37 bootstrap4/buttons.py:46 link/cms_plugins.py:10
+#: bootstrap4/buttons.py:37 bootstrap4/buttons.py:46 link/cms_plugins.py:11
 #: link/forms.py:94
 msgid "Link"
 msgstr "Link"
@@ -352,115 +345,115 @@ msgid_plural "{} units"
 msgstr[0] "{} Einheit"
 msgstr[1] "{} Einheiten"
 
-#: bootstrap4/container.py:223 bootstrap4/container.py:227
+#: bootstrap4/container.py:224 bootstrap4/container.py:228
 msgid "Flex column"
 msgstr "Flex-Spalte"
 
-#: bootstrap4/container.py:224 bootstrap4/container.py:228
+#: bootstrap4/container.py:225 bootstrap4/container.py:229
 msgid "{} fixed column"
 msgstr "{} fixe Spalten"
 
-#: bootstrap4/container.py:225 bootstrap4/container.py:229
+#: bootstrap4/container.py:226 bootstrap4/container.py:230
 msgid "Auto column"
 msgstr "Auto-Spalte"
 
-#: bootstrap4/container.py:235 bootstrap4/container.py:249
+#: bootstrap4/container.py:236 bootstrap4/container.py:250
 msgid "Column width for {}"
 msgstr "Spaltenbreite für {}"
 
-#: bootstrap4/container.py:238
+#: bootstrap4/container.py:239
 msgid "Column width for devices narrower than {:.1f} pixels."
 msgstr "Spaltenreihenfolge für Geräte kleiner als {} Pixel."
 
-#: bootstrap4/container.py:239
+#: bootstrap4/container.py:240
 msgid "Column width for devices wider than {:.1f} pixels."
 msgstr "Spaltenbreite für Geräte größer als {:.1f} Pixel."
 
-#: bootstrap4/container.py:240
+#: bootstrap4/container.py:241
 msgid "Column width for all devices."
 msgstr "Spaltenbreite für alle Geräte"
 
-#: bootstrap4/container.py:245
+#: bootstrap4/container.py:246
 msgid "Inherit column width from {}"
 msgstr "Erbe Spaltenbreite für {}"
 
-#: bootstrap4/container.py:253
+#: bootstrap4/container.py:254
 msgid "Override column width for devices narrower than {:.1f} pixels."
 msgstr "Überschreibe die Spatenbreite für Geräte schmäler als {} Pixel."
 
-#: bootstrap4/container.py:254
+#: bootstrap4/container.py:255
 msgid "Override column width for devices wider than {:.1f} pixels."
 msgstr "Überschreibte Spaltenbreite für Geräte breiter als {:.1f} Pixel."
 
-#: bootstrap4/container.py:255
+#: bootstrap4/container.py:256
 msgid "Override column width for all devices."
 msgstr "Überschreibe Spaltenbreite für alle Geräte."
 
-#: bootstrap4/container.py:262
+#: bootstrap4/container.py:263
 msgid "No offset"
 msgstr "Kein Offste"
 
-#: bootstrap4/container.py:265
+#: bootstrap4/container.py:266
 msgid "Inherit offset from {}"
 msgstr "Erbe Offset von {}"
 
-#: bootstrap4/container.py:272
+#: bootstrap4/container.py:273
 msgid "Offset for {}"
 msgstr "Offset für {}"
 
-#: bootstrap4/container.py:274
+#: bootstrap4/container.py:275
 msgid "Offset width for devices narrower than {:.1f} pixels."
 msgstr "Offsetbreite für Geräte schmäler als {:.1f} Pixel."
 
-#: bootstrap4/container.py:275
+#: bootstrap4/container.py:276
 msgid "Offset width for devices wider than {:.1f} pixels."
 msgstr "Offsetbreite für Geräte breiter als {:.1f} Pixel."
 
-#: bootstrap4/container.py:276
+#: bootstrap4/container.py:277
 msgid "Offset width for all devices."
 msgstr "Offsetbreite für alle Geräte."
 
-#: bootstrap4/container.py:287
+#: bootstrap4/container.py:288
 msgid "No reordering"
 msgstr "Keine Sortierung"
 
-#: bootstrap4/container.py:289 bootstrap4/container.py:291
+#: bootstrap4/container.py:290 bootstrap4/container.py:292
 msgid "Reorder by {}"
 msgstr "Sortiere nach {}"
 
-#: bootstrap4/container.py:292
+#: bootstrap4/container.py:293
 msgid "Reordering for {}"
 msgstr "Spaltenreihenfolge für {}"
 
-#: bootstrap4/container.py:294
+#: bootstrap4/container.py:295
 msgid "Reordering for devices narrower than {:.1f} pixels."
 msgstr "Spaltenreihenfolge für Geräte kleiner als {:.1f} Pixel."
 
-#: bootstrap4/container.py:295
+#: bootstrap4/container.py:296
 msgid "Reordering for devices wider than {:.1f} pixels."
 msgstr "Reihenfolge für Geräte größer als {} Pixel ändern."
 
-#: bootstrap4/container.py:296
+#: bootstrap4/container.py:297
 msgid "Reordering for all devices."
 msgstr "Spaltenreihenfolge für alle Geräte"
 
-#: bootstrap4/container.py:307 bootstrap4/mixins.py:47
+#: bootstrap4/container.py:308 bootstrap4/mixins.py:47
 msgid "Default"
 msgstr "Standard"
 
-#: bootstrap4/container.py:307
+#: bootstrap4/container.py:308
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: bootstrap4/container.py:307
+#: bootstrap4/container.py:308
 msgid "Hidden"
 msgstr "Versteckt"
 
-#: bootstrap4/container.py:308
+#: bootstrap4/container.py:309
 msgid "Responsive utilities for {}"
 msgstr "Responsive Utilities für {}"
 
-#: bootstrap4/container.py:310
+#: bootstrap4/container.py:311
 msgid ""
 "Utility classes for showing and hiding content by devices narrower than "
 "{:.1f} pixels."
@@ -468,7 +461,7 @@ msgstr ""
 "Utility Klassen zum Anzeigen und Verstecken von Inhalten für Geräte schmäler "
 "als {:.1f} Pixel."
 
-#: bootstrap4/container.py:311
+#: bootstrap4/container.py:312
 msgid ""
 "Utility classes for showing and hiding content by devices wider than {:.1f} "
 "pixels."
@@ -476,16 +469,16 @@ msgstr ""
 "Utility Klassen zum Anzeigen und Verstecken von Inhalten für Geräte breiter "
 "als {:.1f} Pixel."
 
-#: bootstrap4/container.py:312
+#: bootstrap4/container.py:313
 msgid "Utility classes for showing and hiding content for all devices."
 msgstr ""
 "Utility Klassen zum Anzeigen und Verstecken von Ihnalten für alle Geräte."
 
-#: bootstrap4/container.py:353
+#: bootstrap4/container.py:354
 msgid "widths: {}"
 msgstr "Breite: {}"
 
-#: bootstrap4/container.py:355
+#: bootstrap4/container.py:356
 msgid "unknown width"
 msgstr "Unbekannte Breite"
 
@@ -515,29 +508,33 @@ msgstr "Seitenverhältnis"
 
 #: bootstrap4/embeds.py:36
 msgid "Allow Fullscreen"
-msgstr "Erlaube Vollbildschirm"
+msgstr "Vollbildschirm erlauben"
 
 #: bootstrap4/embeds.py:42
 msgid "Autoplay"
-msgstr ""
+msgstr "Autoplay"
 
 #: bootstrap4/embeds.py:47
 msgid "Display Controls"
-msgstr "Anzeigesteuerung"
+msgstr "Bedienelemente anzeigen"
 
 #: bootstrap4/embeds.py:52
 msgid "Enable Looping"
-msgstr "Erlaube Wiederholungsschleife"
+msgstr "Endlos wiederholen"
 
 #: bootstrap4/embeds.py:57
 msgid "Show related"
 msgstr "Zeige zugehörige"
 
-#: bootstrap4/embeds.py:89
+#: bootstrap4/embeds.py:59
+msgid "Show videos suggested by YouTube at the end."
+msgstr "Von YouTube empfohlene Videos am Ende anzeigen."
+
+#: bootstrap4/embeds.py:90
 msgid "Please enter a valid YouTube URL"
 msgstr "Bitte eine gültige YouTube URL eingeben"
 
-#: bootstrap4/embeds.py:96
+#: bootstrap4/embeds.py:97
 msgid "You Tube"
 msgstr ""
 
@@ -594,7 +591,7 @@ msgstr "Icongröße"
 msgid "Icon color"
 msgstr "Iconfarbe"
 
-#: bootstrap4/icon.py:38 bootstrap4/jumbotron.py:99
+#: bootstrap4/icon.py:38 bootstrap4/jumbotron.py:101
 msgid "Background color"
 msgstr "Hintergrundfarbe"
 
@@ -662,37 +659,37 @@ msgstr "Bild"
 msgid "No Image"
 msgstr "Kein Bild"
 
-#: bootstrap4/jumbotron.py:84
+#: bootstrap4/jumbotron.py:86
 msgid "Is fluid"
 msgstr "Ist “fluid”"
 
-#: bootstrap4/jumbotron.py:87
+#: bootstrap4/jumbotron.py:89
 msgid "Shall this element occupy the entire horizontal space of its parent."
 msgstr ""
 "Soll dieses Element die gesamte horizontale Ausdehnung des Elternelementes "
 "beanspruchen."
 
-#: bootstrap4/jumbotron.py:95
+#: bootstrap4/jumbotron.py:97
 msgid "This property specifies the height for each Bootstrap breakpoint."
 msgstr "Diese Eigenschaft definiert die Höhe für jeden “Bootstrap breakpoint”."
 
-#: bootstrap4/jumbotron.py:103
+#: bootstrap4/jumbotron.py:105
 msgid "Background image"
 msgstr "Hintergrundbild"
 
-#: bootstrap4/jumbotron.py:108
+#: bootstrap4/jumbotron.py:110
 msgid "Background repeat"
 msgstr "Hintergrund Wiederholung"
 
-#: bootstrap4/jumbotron.py:113
+#: bootstrap4/jumbotron.py:115
 msgid "This property specifies how the background image repeates."
 msgstr "Diese Eigenschaft definiert wie sich das Hintergrundbild wiederholt."
 
-#: bootstrap4/jumbotron.py:117
+#: bootstrap4/jumbotron.py:119
 msgid "Background attachment"
 msgstr "Hintergrund-Anhang"
 
-#: bootstrap4/jumbotron.py:122
+#: bootstrap4/jumbotron.py:124
 msgid ""
 "This property specifies how to move the background image relative to the "
 "viewport."
@@ -700,58 +697,58 @@ msgstr ""
 "Diese Eigenschaft definiert wie sich das Hintergrundbild relativ zum "
 "Viewport verschiebt."
 
-#: bootstrap4/jumbotron.py:126
+#: bootstrap4/jumbotron.py:128
 msgid "Background vertical position"
 msgstr "Vertikale Position des Hintergrundes"
 
-#: bootstrap4/jumbotron.py:130
+#: bootstrap4/jumbotron.py:132
 msgid "This property moves a background image vertically within its container."
 msgstr ""
 
-#: bootstrap4/jumbotron.py:134
+#: bootstrap4/jumbotron.py:136
 msgid "Background horizontal position"
 msgstr ""
 
-#: bootstrap4/jumbotron.py:138
+#: bootstrap4/jumbotron.py:140
 msgid ""
 "This property moves a background image horizontally within its container."
 msgstr ""
 
-#: bootstrap4/jumbotron.py:142
+#: bootstrap4/jumbotron.py:144
 msgid "Background size"
 msgstr ""
 
-#: bootstrap4/jumbotron.py:147
+#: bootstrap4/jumbotron.py:149
 msgid "This property specifies how the background image is sized."
 msgstr ""
 
-#: bootstrap4/jumbotron.py:152
+#: bootstrap4/jumbotron.py:154
 msgid "Background width/height"
 msgstr ""
 
-#: bootstrap4/jumbotron.py:153
+#: bootstrap4/jumbotron.py:155
 msgid "Width"
 msgstr "Breite"
 
-#: bootstrap4/jumbotron.py:153
+#: bootstrap4/jumbotron.py:155
 msgid "Height"
 msgstr "Höhe"
 
-#: bootstrap4/jumbotron.py:156
+#: bootstrap4/jumbotron.py:158
 msgid ""
 "This property specifies the width and height of a background image in px or "
 "%."
 msgstr "Setzt die Breite und Höhe des Hintergrundbildes in px oder %."
 
-#: bootstrap4/jumbotron.py:184
+#: bootstrap4/jumbotron.py:186
 msgid "You must at least set a background width."
 msgstr "Es muss zumindest eine Breite für den Hintergrund angegeben werden."
 
-#: bootstrap4/jumbotron.py:191
+#: bootstrap4/jumbotron.py:193
 msgid "Jumbotron"
 msgstr ""
 
-#: bootstrap4/jumbotron.py:260
+#: bootstrap4/jumbotron.py:262
 msgid "Without background image"
 msgstr "Ohne Hintergrundbild"
 
@@ -811,11 +808,11 @@ msgstr "Allseitiger Abstand"
 msgid "Horizontal margins ({})"
 msgstr "Horizontaler Abstand ({})"
 
-#: bootstrap4/mixins.py:73 bootstrap4/mixins.py:100
+#: bootstrap4/mixins.py:73 bootstrap4/mixins.py:101
 msgid "Vertical margins ({})"
 msgstr "Vertikaler Abstand ({})"
 
-#: bootstrap4/mixins.py:74 bootstrap4/mixins.py:101
+#: bootstrap4/mixins.py:74 bootstrap4/mixins.py:102
 msgid "Top margin ({})"
 msgstr "Abstand oben ({})"
 
@@ -823,7 +820,7 @@ msgstr "Abstand oben ({})"
 msgid "Right margin ({})"
 msgstr "Abstand rechts ({})"
 
-#: bootstrap4/mixins.py:76 bootstrap4/mixins.py:102
+#: bootstrap4/mixins.py:76 bootstrap4/mixins.py:103
 msgid "Bottom margin ({})"
 msgstr "Abstand unten ({})"
 
@@ -831,81 +828,81 @@ msgstr "Abstand unten ({})"
 msgid "Left margin ({})"
 msgstr "Abstand links ({})"
 
-#: bootstrap4/mixins.py:83 bootstrap4/mixins.py:108
+#: bootstrap4/mixins.py:84 bootstrap4/mixins.py:110
 msgid "No Margins"
 msgstr "Keine Abstände"
 
-#: bootstrap4/mixins.py:86 bootstrap4/mixins.py:111
+#: bootstrap4/mixins.py:87 bootstrap4/mixins.py:113
 msgid "Inherit margin from {}"
 msgstr "Abstand von {} erben"
 
-#: bootstrap4/mixins.py:89 bootstrap4/mixins.py:114
+#: bootstrap4/mixins.py:90 bootstrap4/mixins.py:116
 #, python-brace-format
 msgid "Margins for {breakpoint}"
 msgstr "Abstand für {breakpoint}"
 
-#: bootstrap4/mixins.py:125
+#: bootstrap4/mixins.py:127
 msgid "4 sided padding ({})"
 msgstr "Allseitiger Innenabstand"
 
-#: bootstrap4/mixins.py:126
+#: bootstrap4/mixins.py:128
 msgid "Horizontal padding ({})"
 msgstr "Horizontaler Innenabstand ({})"
 
-#: bootstrap4/mixins.py:127
+#: bootstrap4/mixins.py:129
 msgid "Vertical padding ({})"
 msgstr "Vertikaler Innenabstand ({})"
 
-#: bootstrap4/mixins.py:128
+#: bootstrap4/mixins.py:130
 msgid "Top padding ({})"
 msgstr "Innenabstand oben ({})"
 
-#: bootstrap4/mixins.py:129
+#: bootstrap4/mixins.py:131
 msgid "Right padding ({})"
 msgstr "Innenabstand rechts ({})"
 
-#: bootstrap4/mixins.py:130
+#: bootstrap4/mixins.py:132
 msgid "Bottom padding ({})"
 msgstr "Innenabstand unten ({})"
 
-#: bootstrap4/mixins.py:131
+#: bootstrap4/mixins.py:133
 msgid "Left padding ({})"
 msgstr "Innenabstand links ({})"
 
-#: bootstrap4/mixins.py:137
+#: bootstrap4/mixins.py:140
 msgid "No Padding"
 msgstr "Kein Innenabstand"
 
-#: bootstrap4/mixins.py:140
+#: bootstrap4/mixins.py:143
 msgid "Inherit padding from {}"
 msgstr "Innenabstand von {} erben"
 
-#: bootstrap4/mixins.py:143
+#: bootstrap4/mixins.py:146
 #, python-brace-format
 msgid "Padding for {breakpoint}"
 msgstr "Innenabstand für {breakpoint}"
 
-#: bootstrap4/mixins.py:154
+#: bootstrap4/mixins.py:157
 msgid "Do not float"
 msgstr "Nicht floaten"
 
-#: bootstrap4/mixins.py:155
+#: bootstrap4/mixins.py:158
 msgid "Float left"
 msgstr "Nach links ausrichten"
 
-#: bootstrap4/mixins.py:156
+#: bootstrap4/mixins.py:159
 msgid "Float right"
 msgstr "Nach rechts ausrichten"
 
-#: bootstrap4/mixins.py:161
+#: bootstrap4/mixins.py:165
 msgid "Unset"
 msgstr "Nicht gesetzt"
 
-#: bootstrap4/mixins.py:164
+#: bootstrap4/mixins.py:168
 msgid "Inherit float from {}"
 msgstr "'float' von {} erben"
 
-#: bootstrap4/mixins.py:167
+#: bootstrap4/mixins.py:171
 #, python-brace-format
 msgid "Floats for {breakpoint}"
 msgstr "Float für {breakpoint}"
@@ -917,7 +914,8 @@ msgstr "Setze Höhe des Bildes"
 #: bootstrap4/picture.py:24
 msgid ""
 "Heights of picture in percent or pixels for distinct Bootstrap's breakpoints."
-msgstr "Höhe des Bildes in Prozent oder Pixel für gewählten Bootstrap Breakpoint."
+msgstr ""
+"Höhe des Bildes in Prozent oder Pixel für gewählten Bootstrap Breakpoint."
 
 #: bootstrap4/picture.py:28
 msgid "Adapt Picture Zoom"
@@ -1068,15 +1066,15 @@ msgstr "Der Inhalt des Clipboards wurde für später gespeichert."
 msgid "Persisted content has been restored to the clipboard."
 msgstr "Gespeichere Inhalte wurden im Clipboad abgelegt."
 
-#: clipboard/cms_plugins.py:42 clipboard/cms_plugins.py:150
+#: clipboard/cms_plugins.py:41 clipboard/cms_plugins.py:149
 msgid "Export to Clipboard"
 msgstr "Exportiere ins Clipboard"
 
-#: clipboard/cms_plugins.py:51 clipboard/cms_plugins.py:88
+#: clipboard/cms_plugins.py:50 clipboard/cms_plugins.py:87
 msgid "Import from Clipboard"
 msgstr "Importiere von Clipboard"
 
-#: clipboard/cms_plugins.py:93 clipboard/cms_plugins.py:104
+#: clipboard/cms_plugins.py:92 clipboard/cms_plugins.py:103
 msgid "Select Clipboard Content"
 msgstr "Wähle Cliboard Inhalt"
 
@@ -1088,135 +1086,135 @@ msgstr "Diese Kennung wurde bereits verwendet, bitte wähle eine andere."
 msgid "Extra Page Fields"
 msgstr "Extra Felder für Seite"
 
-#: extra_fields/admin.py:27
+#: extra_fields/admin.py:28
 msgid "CSS class names"
 msgstr "CSS-Klassennamen"
 
-#: extra_fields/admin.py:30
+#: extra_fields/admin.py:31
 msgid "Freely selectable CSS classnames for this Plugin, separated by commas."
 msgstr ""
 "Frei wählbare CSS-Klassennamen für dieses Plugin, durch Kommas getrennt."
 
-#: extra_fields/admin.py:34
+#: extra_fields/admin.py:35
 msgid "Allow multiple"
 msgstr "Mehrfachselektion ermöglichen"
 
-#: extra_fields/admin.py:36
+#: extra_fields/admin.py:37
 msgid "Allow to select multiple of the above CSS classes."
 msgstr "Mehrfachselektion obiger CSS-Klassen ermöglichen."
 
-#: extra_fields/admin.py:51
+#: extra_fields/admin.py:52
 msgid "CSS class '{}' contains invalid characters."
 msgstr "CSS-Klasse '{}' enthält ungültige Zeichen."
 
-#: extra_fields/admin.py:59
+#: extra_fields/admin.py:60
 msgid "px, em, rem and %"
 msgstr "px, em, rem und %"
 
-#: extra_fields/admin.py:60
+#: extra_fields/admin.py:61
 msgid "px, em and %"
 msgstr "px, em und %"
 
-#: extra_fields/admin.py:61
+#: extra_fields/admin.py:62
 msgid "px, rem and em"
 msgstr "px, rem und em"
 
-#: extra_fields/admin.py:62
+#: extra_fields/admin.py:63
 msgid "px and em"
 msgstr "px und em"
 
-#: extra_fields/admin.py:63
+#: extra_fields/admin.py:64
 msgid "px, rem and %"
 msgstr "px, rem und %"
 
-#: extra_fields/admin.py:64
+#: extra_fields/admin.py:65
 msgid "px and %"
 msgstr "px und %"
 
-#: extra_fields/admin.py:65
+#: extra_fields/admin.py:66
 msgid "px and rem"
 msgstr "px und rem"
 
-#: extra_fields/admin.py:66
+#: extra_fields/admin.py:67
 msgid "px"
 msgstr ""
 
-#: extra_fields/admin.py:67
+#: extra_fields/admin.py:68
 msgid "% and rem"
 msgstr "% und rem"
 
-#: extra_fields/admin.py:68
+#: extra_fields/admin.py:69
 msgid "%"
 msgstr ""
 
-#: extra_fields/admin.py:69
+#: extra_fields/admin.py:70
 msgid "px, em, rem, % and auto"
 msgstr "px, em, rem, % und auto"
 
-#: extra_fields/admin.py:70
+#: extra_fields/admin.py:71
 msgid "px, em, % and auto"
 msgstr "px, em, % und auto"
 
-#: extra_fields/admin.py:71
+#: extra_fields/admin.py:72
 msgid "px, rem, em and auto"
 msgstr "px, rem, em und auto"
 
-#: extra_fields/admin.py:72
+#: extra_fields/admin.py:73
 msgid "px, em and auto"
 msgstr "px, em und auto"
 
-#: extra_fields/admin.py:73
+#: extra_fields/admin.py:74
 msgid "px, rem, % and auto"
 msgstr "px, rem, % und auto"
 
-#: extra_fields/admin.py:74
+#: extra_fields/admin.py:75
 msgid "px, % and auto"
 msgstr "px, % und auto"
 
-#: extra_fields/admin.py:75
+#: extra_fields/admin.py:76
 msgid "px, rem and auto"
 msgstr "px, rem und auto"
 
-#: extra_fields/admin.py:76
+#: extra_fields/admin.py:77
 msgid "px and auto"
 msgstr "px und auto"
 
-#: extra_fields/admin.py:77
+#: extra_fields/admin.py:78
 msgid "%, rem and auto"
 msgstr "%, rem und auto"
 
-#: extra_fields/admin.py:78
+#: extra_fields/admin.py:79
 msgid "% and auto"
 msgstr "% und auto"
 
-#: extra_fields/admin.py:104
+#: extra_fields/admin.py:105
 #, python-brace-format
 msgid "Customized {0} fields:"
 msgstr "Benutzerdefinierte {0} Felder:"
 
-#: extra_fields/admin.py:108
+#: extra_fields/admin.py:109
 msgid "Allow these extra inlines styles for the given plugin type."
 msgstr "Extra Inline-Styles für ausgewählten Plugin-Type zulassen."
 
-#: extra_fields/admin.py:112
+#: extra_fields/admin.py:113
 #, python-brace-format
 msgid "Units for {0} Fields:"
 msgstr "Einheiten für {0} Felder:"
 
-#: extra_fields/admin.py:115
+#: extra_fields/admin.py:116
 #, python-brace-format
 msgid "Allow these size units for customized {0} fields."
 msgstr "Diese Maßeinheiten für benutzerdefinierte {0} Felder zulassen."
 
-#: extra_fields/admin.py:132
+#: extra_fields/admin.py:133
 msgid "Module"
 msgstr "Modul"
 
-#: extra_fields/admin.py:138
+#: extra_fields/admin.py:139
 msgid "Allowed Classes and Styles"
 msgstr "Benutzerdefinierte CSS-Klassen und Styles"
 
-#: extra_fields/admin.py:156
+#: extra_fields/admin.py:157
 #, python-format
 msgid "'%s' is not a valid CSS class name."
 msgstr "'%s' ist kein gültiger CSS Klassenname."
@@ -1297,7 +1295,7 @@ msgstr ""
 "Eindeutige Bezeichnung des Elements (bitte keine Sonderzeichen, Umlaute, "
 "Interpunktion etc. verwenden). Kann als Ankerlink verwendet werden: #id."
 
-#: generic/mixins.py:41
+#: generic/mixins.py:42
 msgid "The element ID '{}' is not unique for this page."
 msgstr "Die Bezeichnung des Elements '{}' ist nicht eindeutig für diese Seite."
 
@@ -1476,51 +1474,59 @@ msgstr "Die Koordinaten des Icon-Ankers relativ zu seiner linken oberen Ecke."
 msgid "Text to display in popup."
 msgstr "Optionaler Text für Popup"
 
-#: leaflet/map.py:110
+#: leaflet/map.py:80
+msgid "Address lookup"
+msgstr ""
+
+#: leaflet/map.py:82
+msgid "Search for an address"
+msgstr ""
+
+#: leaflet/map.py:117
 msgid "Marker"
 msgstr "Marker"
 
-#: leaflet/map.py:111
+#: leaflet/map.py:118
 msgid "Markers"
 msgstr "Marker"
 
-#: leaflet/map.py:117
+#: leaflet/map.py:124
 msgid "Map Width"
 msgstr "Breite der Karte"
 
-#: leaflet/map.py:120
+#: leaflet/map.py:127
 msgid "Set the map width in percent relative to containing element."
 msgstr "Setze die Kartenbreite in Prozent relativ zum enthaltenen Element."
 
-#: leaflet/map.py:124
+#: leaflet/map.py:131
 msgid "Adapt Map Height"
 msgstr "Anpassung der Kartenhöhe"
 
-#: leaflet/map.py:127
+#: leaflet/map.py:134
 msgid "Set a fixed height in pixels, or percent relative to the map width."
 msgstr "Setze eine feste Höhe in Pixeln oder Prozent relativ zur Bildbreite."
 
-#: leaflet/map.py:131
+#: leaflet/map.py:138
 msgid "Adapt Map Minimum Height"
 msgstr "Anpassung der minimalen Kartenhöhe"
 
-#: leaflet/map.py:134
+#: leaflet/map.py:141
 msgid "Optional, set a minimum height in pixels."
 msgstr "Setze minimale Höhe in Pixel (optional)."
 
-#: leaflet/map.py:138
+#: leaflet/map.py:145
 msgid "Zoom by scrolling wheel"
 msgstr "Zoomen mit Scrollrad"
 
-#: leaflet/map.py:141
+#: leaflet/map.py:148
 msgid "Zoom into map on mouse over by scrolling wheel."
 msgstr "Mit Scrollrad hineinzoomen, falls Mauszeiger über der Karte."
 
-#: leaflet/map.py:171
+#: leaflet/map.py:178
 msgid "Map"
 msgstr "Karte"
 
-#: leaflet/map.py:257
+#: leaflet/map.py:264
 #, python-brace-format
 msgid "with {0} marker"
 msgid_plural "with {0} markers"
@@ -1575,83 +1581,83 @@ msgstr "URL"
 msgid "Link onto external page"
 msgstr "Link auf externe Seite"
 
-#: link/forms.py:126
+#: link/forms.py:127
 msgid "Email"
 msgstr "E-Mail"
 
-#: link/forms.py:127
+#: link/forms.py:128
 msgid "Open Email program with this address"
 msgstr "Öffne E-Mail Programm mit dieser Adresse"
 
-#: link/forms.py:133
+#: link/forms.py:134
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#: link/forms.py:134
+#: link/forms.py:135
 msgid "International phone number, ex. +1 212 555 2368."
 msgstr "Internationale Telefonnummer, z.B. +1 212 555 2368."
 
-#: link/forms.py:139
+#: link/forms.py:140
 msgid "Same Window"
 msgstr "Selbes Fenster"
 
-#: link/forms.py:140
+#: link/forms.py:141
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#: link/forms.py:141
+#: link/forms.py:142
 msgid "Parent Window"
 msgstr "Eltern-Fenster"
 
-#: link/forms.py:142
+#: link/forms.py:143
 msgid "Topmost Frame"
 msgstr "Äußerster Frame"
 
-#: link/forms.py:144
+#: link/forms.py:145
 msgid "Link Target"
 msgstr "Ziel des Links"
 
-#: link/forms.py:147
+#: link/forms.py:148
 msgid "Open Link in other target."
 msgstr "Öffne Link in anderem Zielfenster"
 
-#: link/forms.py:151
+#: link/forms.py:152
 msgid "Title"
 msgstr "Titel"
 
-#: link/forms.py:153
+#: link/forms.py:154
 msgid "Link's Title"
 msgstr "Titel des Links"
 
-#: link/forms.py:165
+#: link/forms.py:166
 msgid "No Link"
 msgstr "Kein Link"
 
-#: link/forms.py:194
+#: link/forms.py:196
 msgid "CMS page to link to is missing."
 msgstr "Zu verlinkende Seite fehlt im CMS."
 
-#: link/forms.py:198
+#: link/forms.py:200
 msgid "File for download is missing."
 msgstr "Datei zum Download fehlt."
 
-#: link/forms.py:203
+#: link/forms.py:205
 msgid "No valid URL provided."
 msgstr "Keine gültige URL angegeben."
 
-#: link/forms.py:207
+#: link/forms.py:209
 msgid "No email address provided."
 msgstr "Keine E-Mail Adresse angegeben."
 
-#: link/forms.py:211
+#: link/forms.py:213
 msgid "No phone number provided."
 msgstr "Keine Telefonnummer angegeben."
 
-#: link/forms.py:231
+#: link/forms.py:233
 msgid "Link Content"
 msgstr "Link-Inhalt"
 
-#: link/forms.py:233
+#: link/forms.py:235
 msgid "Content of Link"
 msgstr "Inhalt des Links"
 
@@ -1796,43 +1802,43 @@ msgstr "Render Template"
 msgid "Use alternative template for rendering this plugin."
 msgstr "Verwende alternative Template zum Rendern dieses Plugins"
 
-#: segmentation/cms_plugins.py:25
+#: segmentation/cms_plugins.py:26
 msgid "Condition evaluation"
 msgstr "Bedingungsauswertung"
 
-#: segmentation/cms_plugins.py:28
+#: segmentation/cms_plugins.py:29
 msgid "Evaluation as used in Django's template tags for conditions"
 msgstr "Auswertung, wie sie in Django Templates für Bedingungen verwendet wird"
 
-#: segmentation/cms_plugins.py:43
+#: segmentation/cms_plugins.py:44
 msgid "The evaluation condition is missing or empty."
 msgstr "Die Auswertung der Bedingung fehlt oder ist leer."
 
-#: segmentation/cms_plugins.py:48
+#: segmentation/cms_plugins.py:49
 msgid "Unable to evaluate condition: {}"
 msgstr "Kann Bedingung nich auswerten: {}"
 
-#: segmentation/cms_plugins.py:60
+#: segmentation/cms_plugins.py:61
 msgid "Segment"
 msgstr "Segment"
 
-#: segmentation/cms_plugins.py:144
+#: segmentation/cms_plugins.py:145
 msgid "if"
 msgstr "if"
 
-#: segmentation/cms_plugins.py:148
+#: segmentation/cms_plugins.py:149
 msgid "elif"
 msgstr "elif"
 
-#: segmentation/cms_plugins.py:148
+#: segmentation/cms_plugins.py:149
 msgid "else"
 msgstr "else"
 
-#: segmentation/cms_plugins.py:150
+#: segmentation/cms_plugins.py:151
 msgid "Condition tag"
 msgstr "Fallunterscheidung"
 
-#: segmentation/cms_plugins.py:152
+#: segmentation/cms_plugins.py:153
 msgid "Django's condition tag"
 msgstr "Django's Tag zur Fallunterscheidung"
 
@@ -1953,3 +1959,9 @@ msgstr "In '%(label)s': Dieses Feld wird benötigt."
 #, python-format
 msgid "In '%(label)s': Value '%(value)s' shall contain a valid decimal number."
 msgstr "In '%(label)s': Wert '%(value)s' muss numerisch sein."
+
+#, python-brace-format
+#~ msgid "with {0} card"
+#~ msgid_plural "with {0} cards"
+#~ msgstr[0] "mit {0} Kachel"
+#~ msgstr[1] "mit {0} Kacheln"
