@@ -118,6 +118,11 @@ django.jQuery(function($) {
 				liElement.addEventListener('click', evt => this.moveMarkerIcon(evt.target, divWrapper.closest('.inline-related')));
 				ulElement.appendChild(liElement);
 			});
+			if (data.length === 0) {
+				const liElement = document.createElement('li');
+				liElement.innerText = django.cascade.no_results;
+				ulElement.appendChild(liElement);
+			}
 		},
 		moveMarkerIcon: function(resultElement, inlineElement) {
 			const latlng = [resultElement.getAttribute('data-lat'), resultElement.getAttribute('data-lng')];
