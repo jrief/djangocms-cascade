@@ -70,7 +70,7 @@ class SectionMixin:
     def get_identifier(cls, instance):
         try:
             element_id = instance.glossary['element_id'][instance.language]
-        except KeyError:
+        except (KeyError, TypeError):
             pass
         else:
             if element_id:
