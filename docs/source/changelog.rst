@@ -2,6 +2,12 @@
 Release History
 ===============
 
+2.3.3
+=====
+* In ``LeafletPlugin``: Render empty search result list, if service Nominatim does not find any
+  address.
+
+
 2.3.2
 =====
 * Add helptext to options in YouTube-plugin.
