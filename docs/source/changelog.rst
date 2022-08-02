@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.3.4
+=====
+* Add HTML elements ``<ol>`` and ``<ul>`` to the choices in ``TextEditorConfigFields``.
+
 2.3.3
 =====
 * In ``LeafletPlugin``: Render empty search result list, if service Nominatim does not find any
