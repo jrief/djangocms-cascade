@@ -8,4 +8,4 @@ django-entangled
 django-filer
 django-select2
 djangocms-text-ckeditor
-easy-thumbnails
+easy-thumbnails[svg]
