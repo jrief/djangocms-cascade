@@ -2,10 +2,13 @@
 Release History
 ===============
 
-2.3.5
+2.3.6
 =====
 * Slightly larger Select2 Element for chosing ``Page`` object from CMS.
 
+2.3.5
+=====
+* Don't use this version!
 
 2.3.4
 =====
