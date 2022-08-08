@@ -2,10 +2,9 @@ form input:disabled, form textarea:disabled, form select:disabled { color: #888;
 form .form-row.field-link_type { min-height: 30px; }
 form .form-row.field-link_type { border-bottom: none; }
 form .form-row.field-link_type.no-link { border-bottom: 1px solid #eee; }
-form .form-row.field-link_type label { font-size: 120%; }
 form .form-row.field-link_type input { margin-top: 0; }
 form .form-row.field-link_type .field-link_type .help { margin-left: 160px; }
-form .form-row.field-cms_page { height: 75px; float: left; }
+form .form-row.field-cms_page { height: 75px; width: 565px; float: left; }
 form .form-row.field-section { height: 75px; }
 form .form-row.field-section::after { content: "."; display: block; clear: both; visibility: hidden; height: 0; }
 form .field-download_file { width: 100%; }

@@ -90,6 +90,13 @@ class LinkForm(EntangledModelFormMixin):
     if PhoneNumberField:
         LINK_TYPE_CHOICES.append(('phonenumber', _("Phone number")))
 
+    LINK_TARGETS = [
+        ('', _("Same Window")),
+        ('_blank', _("New Window")),
+        ('_parent', _("Parent Window")),
+        ('_top', _("Topmost Frame")),
+    ]
+
     link_type = fields.ChoiceField(
         label=_("Link"),
         help_text=_("Type of link"),
@@ -136,12 +143,7 @@ class LinkForm(EntangledModelFormMixin):
         )
 
     link_target = fields.ChoiceField(
-        choices=[
-            ('', _("Same Window")),
-            ('_blank', _("New Window")),
-            ('_parent', _("Parent Window")),
-            ('_top', _("Topmost Frame")),
-        ],
+        choices=LINK_TARGETS,
         label=_("Link Target"),
         widget=RadioSelect,
         required=False,
