@@ -1,7 +1,7 @@
 from django.forms import widgets, BooleanField, CharField
 from django.forms.fields import IntegerField
-from django.utils.translation import ungettext_lazy, gettext_lazy as _
-from django.utils.safestring import mark_safe 
+from django.utils.translation import ngettext_lazy, gettext_lazy as _
+from django.utils.safestring import mark_safe
 from django.utils.text import Truncator
 from django.utils.html import escape
 from entangled.forms import EntangledModelFormMixin
@@ -53,7 +53,7 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         num_cards = obj.get_num_children()
-        content = ungettext_lazy('with {0} card', 'with {0} cards', num_cards).format(num_cards)
+        content = ngettext_lazy('with {0} card', 'with {0} cards', num_cards).format(num_cards)
         return mark_safe(content)
 
     def render(self, context, instance, placeholder):
