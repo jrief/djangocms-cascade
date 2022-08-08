@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.3.5
+=====
+* Slightly larger Select2 Element for chosing ``Page`` object from CMS.
+
+
 2.3.4
 =====
 * Add HTML elements ``<ol>`` and ``<ul>`` to the choices in ``TextEditorConfigFields``.
