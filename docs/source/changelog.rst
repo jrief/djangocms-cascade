@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.3.7
+=====
+* Add German translations for labels on extra inline styles.
+
+
 2.3.6
 =====
 * Slightly larger Select2 Element for chosing ``Page`` object from CMS.
