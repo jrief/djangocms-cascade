@@ -10,7 +10,7 @@ from django.http.response import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import re_path
 from django.utils.functional import cached_property
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, gettext
 
 from entangled.forms import EntangledModelForm
 
@@ -101,8 +101,9 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
             'plugin_type': ChoiceField(choices=self.plugins_for_site),
         }
         for style, choices_tuples in app_settings.CMSPLUGIN_CASCADE['extra_inline_styles'].items():
+            translated_style = gettext(style)
             form_fields['extra_fields:{0}'.format(style)] = MultipleChoiceField(
-                label=_("Customized {0} fields:").format(style),
+                label=_("Customized {0}:").format(translated_style),
                 choices=[(c, c) for c in choices_tuples[0]],
                 required=False,
                 widget=widgets.CheckboxSelectMultiple,
@@ -110,10 +111,10 @@ class PluginExtraFieldsAdmin(admin.ModelAdmin):
             )
             if issubclass(choices_tuples[1], SizeField):
                 form_fields['extra_units:{0}'.format(style)] = ChoiceField(
-                    label=_("Units for {0} Fields:").format(style),
+                    label=_("Units for {0}:").format(translated_style),
                     choices=self.DISTANCE_UNITS,
                     required=False,
-                    help_text=_("Allow these size units for customized {0} fields.").format(style),
+                    help_text=_("Allow these size units for customized {0} fields.").format(translated_style),
                 )
         inline_styles_fields = list(form_fields.keys())
         form = type('PluginExtraFieldsForm', (PluginExtraFieldsForm,), form_fields)

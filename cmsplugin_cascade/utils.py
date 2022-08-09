@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.forms.fields import MultipleChoiceField
 from django.forms.widgets import CheckboxSelectMultiple, MediaDefiningClass
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, gettext_noop
 
 from entangled.forms import EntangledModelFormMixin
 
@@ -151,3 +151,16 @@ class NamedCSSClasses:
         }
         utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), attrs)
         return type('NamedCSSClassesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})
+
+
+gettext_noop("Margins")
+gettext_noop("Paddings")
+gettext_noop("Widths")
+gettext_noop("Heights")
+gettext_noop("Text Alignement")
+gettext_noop("Font Size")
+gettext_noop("Line Height")
+gettext_noop("Colors")
+gettext_noop("Border")
+gettext_noop("Border Radius")
+gettext_noop("Overflow")

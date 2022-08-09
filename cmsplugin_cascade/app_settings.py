@@ -67,37 +67,48 @@ class AppSettings:
         extra_inline_styles = config['extra_inline_styles']
         extra_inline_styles.setdefault(
             'Margins',
-            (['margin-top', 'margin-right', 'margin-bottom', 'margin-left'], SizeField))
+            (['margin-top', 'margin-right', 'margin-bottom', 'margin-left'], SizeField)
+        )
         extra_inline_styles.setdefault(
             'Paddings',
-            (['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], SizeField))
+            (['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], SizeField)
+        )
         extra_inline_styles.setdefault(
             'Widths',
-            (['min-width', 'width', 'max-width'], SizeField))
+            (['min-width', 'width', 'max-width'], SizeField)
+        )
         extra_inline_styles.setdefault(
             'Heights',
-            (['min-height', 'height', 'max-height'], SizeField))
+            (['min-height', 'height', 'max-height'], SizeField)
+        )
         extra_inline_styles.setdefault(
             'Text Alignement',
-            (['text-align'], SelectTextAlignField))
+            (['text-align'], SelectTextAlignField)
+        )
         extra_inline_styles.setdefault(
             'Font Size',
-            (['font-size'], SizeField))
+            (['font-size'], SizeField)
+        )
         extra_inline_styles.setdefault(
             'Line Height',
-            (['line-height'], NumberInput))
+            (['line-height'], NumberInput)
+        )
         extra_inline_styles.setdefault(
             'Colors',
-            (['color', 'background-color'], ColorField))
+            (['color', 'background-color'], ColorField)
+        )
         extra_inline_styles.setdefault(
             'Border',
-            (['border', 'border-top', 'border-right', 'border-bottom', 'border-left'], BorderChoiceField))
+            (['border', 'border-top', 'border-right', 'border-bottom', 'border-left'], BorderChoiceField)
+        )
         extra_inline_styles.setdefault(
             'Border Radius',
-            (['border-radius'], SizeField))
+            (['border-radius'], SizeField)
+        )
         extra_inline_styles.setdefault(
             'Overflow',
-            (['overflow', 'overflow-x', 'overflow-y'], SelectOverflowField))
+            (['overflow', 'overflow-x', 'overflow-y'], SelectOverflowField)
+        )
 
         if 'cmsplugin_cascade.segmentation' in INSTALLED_APPS:
             config.setdefault('segmentation_mixins', [

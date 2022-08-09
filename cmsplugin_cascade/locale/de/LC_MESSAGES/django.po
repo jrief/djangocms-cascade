@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-28 12:00+0200\n"
+"POT-Creation-Date: 2022-08-09 13:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: app_settings.py:114 app_settings.py:118
+#: app_settings.py:125 app_settings.py:129
 msgid "default"
 msgstr "Standard"
 
-#: app_settings.py:115
+#: app_settings.py:126
 msgid "with line break"
 msgstr "mit Zeilenumbruch"
 
-#: app_settings.py:119
+#: app_settings.py:130
 msgid "Google Map"
 msgstr ""
 
@@ -59,6 +59,13 @@ msgstr "Beginne mit der ersten Kachel geöffnet."
 #: bootstrap4/accordion.py:44
 msgid "Accordion"
 msgstr "Akkordeon"
+
+#: bootstrap4/accordion.py:56
+#, python-brace-format
+msgid "with {0} card"
+msgid_plural "with {0} cards"
+msgstr[0] "mit {0} Kachel"
+msgstr[1] "mit {0} Kacheln"
 
 #: bootstrap4/accordion.py:77 generic/heading.py:29
 msgid "Heading"
@@ -109,7 +116,7 @@ msgid "Dark"
 msgstr "Dunkel"
 
 #: bootstrap4/buttons.py:37 bootstrap4/buttons.py:46 link/cms_plugins.py:11
-#: link/forms.py:94
+#: link/forms.py:101
 msgid "Link"
 msgstr "Link"
 
@@ -1187,34 +1194,32 @@ msgstr "%, rem und auto"
 msgid "% and auto"
 msgstr "% und auto"
 
-#: extra_fields/admin.py:105
-#, python-brace-format
-msgid "Customized {0} fields:"
-msgstr "Benutzerdefinierte {0} Felder:"
+#: extra_fields/admin.py:106
+msgid "Customized {0}:"
+msgstr "Benutzerdefinierte {0}:"
 
-#: extra_fields/admin.py:109
+#: extra_fields/admin.py:110
 msgid "Allow these extra inlines styles for the given plugin type."
 msgstr "Extra Inline-Styles für ausgewählten Plugin-Type zulassen."
 
-#: extra_fields/admin.py:113
-#, python-brace-format
-msgid "Units for {0} Fields:"
-msgstr "Einheiten für {0} Felder:"
+#: extra_fields/admin.py:114
+msgid "Units for {0}:"
+msgstr "Einheiten für {0}:"
 
-#: extra_fields/admin.py:116
+#: extra_fields/admin.py:117
 #, python-brace-format
 msgid "Allow these size units for customized {0} fields."
 msgstr "Diese Maßeinheiten für benutzerdefinierte {0} Felder zulassen."
 
-#: extra_fields/admin.py:133
+#: extra_fields/admin.py:134
 msgid "Module"
 msgstr "Modul"
 
-#: extra_fields/admin.py:139
+#: extra_fields/admin.py:140
 msgid "Allowed Classes and Styles"
 msgstr "Benutzerdefinierte CSS-Klassen und Styles"
 
-#: extra_fields/admin.py:157
+#: extra_fields/admin.py:158
 #, python-format
 msgid "'%s' is not a valid CSS class name."
 msgstr "'%s' ist kein gültiger CSS Klassenname."
@@ -1557,107 +1562,107 @@ msgstr "E-Mail an"
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: link/forms.py:95
-msgid "Type of link"
-msgstr "Art des Links"
-
-#: link/forms.py:101
-msgid "An internal link onto any CMS page of this site"
-msgstr "Ein interner Link auf eine beliebige Seite im CMS"
-
-#: link/forms.py:107
-msgid "Page bookmark"
-msgstr "Seitenlesezeichen"
-
-#: link/forms.py:115
-msgid "An internal link onto a file from filer"
-msgstr "Ein interner Link auf eine Datei in der Mediathek"
-
-#: link/forms.py:120
-msgid "URL"
-msgstr "URL"
-
-#: link/forms.py:121
-msgid "Link onto external page"
-msgstr "Link auf externe Seite"
-
-#: link/forms.py:127
-msgid "Email"
-msgstr "E-Mail"
-
-#: link/forms.py:128
-msgid "Open Email program with this address"
-msgstr "Öffne E-Mail Programm mit dieser Adresse"
-
-#: link/forms.py:134
-msgid "Phone Number"
-msgstr "Telefonnummer"
-
-#: link/forms.py:135
-msgid "International phone number, ex. +1 212 555 2368."
-msgstr "Internationale Telefonnummer, z.B. +1 212 555 2368."
-
-#: link/forms.py:140
+#: link/forms.py:94
 msgid "Same Window"
 msgstr "Selbes Fenster"
 
-#: link/forms.py:141
+#: link/forms.py:95
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#: link/forms.py:142
+#: link/forms.py:96
 msgid "Parent Window"
 msgstr "Eltern-Fenster"
 
-#: link/forms.py:143
+#: link/forms.py:97
 msgid "Topmost Frame"
 msgstr "Äußerster Frame"
 
-#: link/forms.py:145
+#: link/forms.py:102
+msgid "Type of link"
+msgstr "Art des Links"
+
+#: link/forms.py:108
+msgid "An internal link onto any CMS page of this site"
+msgstr "Ein interner Link auf eine beliebige Seite im CMS"
+
+#: link/forms.py:114
+msgid "Page bookmark"
+msgstr "Seitenlesezeichen"
+
+#: link/forms.py:122
+msgid "An internal link onto a file from filer"
+msgstr "Ein interner Link auf eine Datei in der Mediathek"
+
+#: link/forms.py:127
+msgid "URL"
+msgstr "URL"
+
+#: link/forms.py:128
+msgid "Link onto external page"
+msgstr "Link auf externe Seite"
+
+#: link/forms.py:134
+msgid "Email"
+msgstr "E-Mail"
+
+#: link/forms.py:135
+msgid "Open Email program with this address"
+msgstr "Öffne E-Mail Programm mit dieser Adresse"
+
+#: link/forms.py:141
+msgid "Phone Number"
+msgstr "Telefonnummer"
+
+#: link/forms.py:142
+msgid "International phone number, ex. +1 212 555 2368."
+msgstr "Internationale Telefonnummer, z.B. +1 212 555 2368."
+
+#: link/forms.py:147
 msgid "Link Target"
 msgstr "Ziel des Links"
 
-#: link/forms.py:148
+#: link/forms.py:150
 msgid "Open Link in other target."
 msgstr "Öffne Link in anderem Zielfenster"
 
-#: link/forms.py:152
+#: link/forms.py:154
 msgid "Title"
 msgstr "Titel"
 
-#: link/forms.py:154
+#: link/forms.py:156
 msgid "Link's Title"
 msgstr "Titel des Links"
 
-#: link/forms.py:166
+#: link/forms.py:168
 msgid "No Link"
 msgstr "Kein Link"
 
-#: link/forms.py:196
+#: link/forms.py:198
 msgid "CMS page to link to is missing."
 msgstr "Zu verlinkende Seite fehlt im CMS."
 
-#: link/forms.py:200
+#: link/forms.py:202
 msgid "File for download is missing."
 msgstr "Datei zum Download fehlt."
 
-#: link/forms.py:205
+#: link/forms.py:207
 msgid "No valid URL provided."
 msgstr "Keine gültige URL angegeben."
 
-#: link/forms.py:209
+#: link/forms.py:211
 msgid "No email address provided."
 msgstr "Keine E-Mail Adresse angegeben."
 
-#: link/forms.py:213
+#: link/forms.py:215
 msgid "No phone number provided."
 msgstr "Keine Telefonnummer angegeben."
 
-#: link/forms.py:233
+#: link/forms.py:235
 msgid "Link Content"
 msgstr "Link-Inhalt"
 
-#: link/forms.py:235
+#: link/forms.py:237
 msgid "Content of Link"
 msgstr "Inhalt des Links"
 
@@ -1665,7 +1670,7 @@ msgstr "Inhalt des Links"
 msgid "Plugin Name"
 msgstr "Name des Plugins"
 
-#: models.py:35 models.py:237 models.py:297
+#: models.py:35 models.py:239 models.py:299
 msgid "Identifier"
 msgstr "Kennung"
 
@@ -1693,19 +1698,19 @@ msgstr "Site"
 msgid "Custom CSS classes and styles"
 msgstr "Maßgeschneiderte CSS-Klassen und Styles"
 
-#: models.py:197
+#: models.py:199
 msgid "Name"
 msgstr "Name"
 
-#: models.py:202
+#: models.py:204
 msgid "Element Type"
 msgstr "Element-Typ"
 
-#: models.py:208
+#: models.py:210
 msgid "CSS classes"
 msgstr "CSS-Klassen"
 
-#: models.py:210
+#: models.py:212
 msgid ""
 "Freely selectable CSS classnames for this Text-Editor Style, separated by "
 "spaces."
@@ -1713,39 +1718,39 @@ msgstr ""
 "Frei wählbare CSS-Klassennamen für Text-Editor-Style, durch Leerzeichen "
 "getrennt."
 
-#: models.py:214
+#: models.py:216
 msgid "Text Editor Config"
 msgstr "Konfiguriere Text-Editor"
 
-#: models.py:227 segmentation/cms_toolbars.py:13
+#: models.py:229 segmentation/cms_toolbars.py:13
 msgid "Segmentation"
 msgstr "Segmentierung"
 
-#: models.py:250
+#: models.py:252
 msgid "Created by"
 msgstr "Erstellt von"
 
-#: models.py:257
+#: models.py:259
 msgid "Created at"
 msgstr "Erstellt am"
 
-#: models.py:263
+#: models.py:265
 msgid "Last accessed at"
 msgstr "Letzter Zugriff am"
 
-#: models.py:270
+#: models.py:272
 msgid "Persisted Clipboard Content"
 msgstr "Gespeicherter Clipboard-Inhalt"
 
-#: models.py:271
+#: models.py:273
 msgid "Persisted Clipboard Contents"
 msgstr "Gespeicherte Clipboard-Inhalte"
 
-#: models.py:300
+#: models.py:302
 msgid "A unique identifier to distinguish this icon font."
 msgstr "Eindeutige Kennung, um Icon-Fonts zu unterscheiden."
 
-#: models.py:307
+#: models.py:309
 msgid ""
 "Upload a zip file created on <a href=\"http://fontello.com/\" target=\"_blank"
 "\">Fontello</a> containing fonts."
@@ -1753,44 +1758,44 @@ msgstr ""
 "Lade ZIP-Datei mit auf <a href=\"http://fontello.com/\" target=\"_blank"
 "\">Fontello</a> erstellten Fonts hoch."
 
-#: models.py:313
+#: models.py:315
 msgid "Default Font"
 msgstr "Standard Font"
 
-#: models.py:315
+#: models.py:317
 msgid ""
 "Use this font as default, unless an icon font is set for the current page."
 msgstr "Verwende diesen Font als Standard"
 
-#: models.py:319
+#: models.py:321
 msgid "Uploaded Icon Font"
 msgstr "Abgelegter Icon-Font"
 
-#: models.py:320
+#: models.py:322
 msgid "Uploaded Icon Fonts"
 msgstr "Abgelegte Icon-Fonts"
 
-#: models.py:371
+#: models.py:373
 msgid "User editable settings for this page."
 msgstr "Benutzer-Einstellungen für diese Seite."
 
-#: models.py:377
+#: models.py:379
 msgid "Store for arbitrary page data."
 msgstr "Ablage für beliebige Seiten-Einstellungen."
 
-#: models.py:385
+#: models.py:387
 msgid "Icon Font"
 msgstr "Icon-Font"
 
-#: models.py:389
+#: models.py:391
 msgid "Menu Symbol"
 msgstr "Menü-Symbol"
 
-#: models.py:393
+#: models.py:395
 msgid "Symbol to be used with the menu title for this page."
 msgstr "Symbol, um den Menü-Titel der Seite anzuzeigen."
 
-#: models.py:398
+#: models.py:400
 msgid "Cascade Page Settings"
 msgstr "Cascade Seiten-Einstellungen"
 
@@ -1928,6 +1933,10 @@ msgstr "Es gibt keine weitere Einstellungen für dieses Plugin"
 msgid "Please hit OK to save."
 msgstr "Zum Speichern bitte auf OK klicken."
 
+#: templates/cascade/admin/leaflet_plugin_change_form.html:9
+msgid "no results"
+msgstr ""
+
 #: templates/cascade/admin/segmentation_list.html:43
 msgid "Home"
 msgstr "Home"
@@ -1950,6 +1959,50 @@ msgstr "Kann nicht auf '{0}' verlinken."
 msgid "Extra Styles"
 msgstr "Extra Style"
 
+#: utils.py:156
+msgid "Margins"
+msgstr "Abstände"
+
+#: utils.py:157
+msgid "Paddings"
+msgstr "Innenabstände"
+
+#: utils.py:158
+msgid "Widths"
+msgstr "Breiten"
+
+#: utils.py:159
+msgid "Heights"
+msgstr "Höhen"
+
+#: utils.py:160
+msgid "Text Alignement"
+msgstr "Textausrichtung"
+
+#: utils.py:161
+msgid "Font Size"
+msgstr "Font-Größe"
+
+#: utils.py:162
+msgid "Line Height"
+msgstr "Linie-Höhe"
+
+#: utils.py:163
+msgid "Colors"
+msgstr "Farben"
+
+#: utils.py:164
+msgid "Border"
+msgstr "Rand"
+
+#: utils.py:165
+msgid "Border Radius"
+msgstr "Randradius"
+
+#: utils.py:166
+msgid "Overflow"
+msgstr "Überlauf"
+
 #: widgets.py:95
 #, python-format
 msgid "In '%(label)s': This field is required."
@@ -1959,9 +2012,3 @@ msgstr "In '%(label)s': Dieses Feld wird benötigt."
 #, python-format
 msgid "In '%(label)s': Value '%(value)s' shall contain a valid decimal number."
 msgstr "In '%(label)s': Wert '%(value)s' muss numerisch sein."
-
-#, python-brace-format
-#~ msgid "with {0} card"
-#~ msgid_plural "with {0} cards"
-#~ msgstr[0] "mit {0} Kachel"
-#~ msgstr[1] "mit {0} Kacheln"
