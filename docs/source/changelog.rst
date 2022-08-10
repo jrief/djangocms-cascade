@@ -2,10 +2,14 @@
 Release History
 ===============
 
+2.3.8
+=====
+* Fix some German translations.
+* Allow to override the default marker icon in the Leaflet **MapPlugin**.
+
 2.3.7
 =====
 * Add German translations for labels on extra inline styles.
-
 
 2.3.6
 =====
