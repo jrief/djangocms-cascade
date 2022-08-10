@@ -1935,7 +1935,7 @@ msgstr "Zum Speichern bitte auf OK klicken."
 
 #: templates/cascade/admin/leaflet_plugin_change_form.html:9
 msgid "no results"
-msgstr ""
+msgstr "keine Ergebnisse"
 
 #: templates/cascade/admin/segmentation_list.html:43
 msgid "Home"
@@ -1985,7 +1985,7 @@ msgstr "Font-Größe"
 
 #: utils.py:162
 msgid "Line Height"
-msgstr "Linie-Höhe"
+msgstr "Zeilenabstand"
 
 #: utils.py:163
 msgid "Colors"
@@ -1997,11 +1997,11 @@ msgstr "Rand"
 
 #: utils.py:165
 msgid "Border Radius"
-msgstr "Randradius"
+msgstr "Randradien"
 
 #: utils.py:166
 msgid "Overflow"
-msgstr "Überlauf"
+msgstr "Überlaufe"
 
 #: widgets.py:95
 #, python-format
