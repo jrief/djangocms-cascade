@@ -11,6 +11,9 @@ django.jQuery(function($) {
 				django.cascade.leaflet_settings.tilesURL,
 				django.cascade.leaflet_settings
 			).addTo(this.editMap);
+			if (django.cascade.leaflet_settings.defaultMarkerIcon) {
+				L.Marker.prototype.options.icon = L.icon(django.cascade.leaflet_settings.defaultMarkerIcon);
+			}
 			L.easyButton('<span class="map-button" title="Center">&target;</span>', this.resetCenter, this).addTo(this.editMap);
 			this.resetCenter();
 			this.setMarkers();

@@ -177,6 +177,33 @@ your main area of interest is Germany, than these coordinates are a good setting
 	}
 
 
+Default Marker Icon
+===================
+
+In case you don't like the default marker icon, you can replace it with your own one.
+Simply add to the configuration
+
+.. code-block:: python
+
+	CMSPLUGIN_CASCADE = {
+	    ...
+	    'leaflet': {
+	        ...
+	        'defaultMarkerIcon': {
+	            'iconUrl': STATIC_URL + 'my_project/icons/marker.svg',
+	            'iconSize': (25, 41),
+	            'iconAnchor': (13, 41),
+	            ...
+	        },
+	    }
+	    ...
+	}
+
+For details about all the possible options for a marker icon, refer to the `Leaflet documentation`_.
+
+.. _Leaflet documentation: https://leafletjs.com/reference.html#icon
+
+
 Address Lookup
 ==============
 
