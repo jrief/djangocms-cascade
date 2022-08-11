@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.3.9
+=====
+* Fix option "justified" in **BootstrapTabSetPlugin**.
+
 2.3.8
 =====
 * Fix some German translations.

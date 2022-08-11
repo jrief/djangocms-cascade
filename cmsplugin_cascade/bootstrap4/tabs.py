@@ -48,6 +48,13 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
         content = ngettext_lazy('with {} tab', 'with {} tabs', num_cols).format(num_cols)
         return mark_safe(content)
 
+    @classmethod
+    def get_css_classes(cls, obj):
+        css_classes = super().get_css_classes(obj)
+        if obj.glossary.get('justified'):
+            css_classes.append('nav-fill')
+        return css_classes
+
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super().save_model(request, obj, form, change)
