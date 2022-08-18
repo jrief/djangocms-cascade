@@ -1,6 +1,8 @@
 from django.forms import widgets, CharField, ModelChoiceField
 from django.utils.translation import gettext_lazy as _
+
 from cmsplugin_cascade.models import IconFont
+
 from entangled.forms import EntangledModelFormMixin
 
 
