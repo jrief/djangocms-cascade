@@ -1,5 +1,6 @@
 django.jQuery(function($) {
 	'use strict';
+	var $document = $(document);
 	var $link_type = $("#id_link_type"), $cmspage_select = $("#id_cms_page");
 	var $link_ext_url = $('#id_ext_url');
 	var $link_type_row = $('.form-row.field-link_type');
@@ -18,6 +19,7 @@ django.jQuery(function($) {
 					$link_target.show();
 				}
 				$link_title.show();
+				this.$element.find('input').focus();
 			},
 			hide: function() {
 				this.$element.hide();
@@ -28,6 +30,10 @@ django.jQuery(function($) {
 			this.linkTypes = {};
 			this.$super();
 			this.initializeLinkTypes();
+
+			$document.on('select2:open', function() {
+				$('.select2-search__field').get(0).focus();
+			});
 
 			// register event handlers on changing link_type and cms_page select boxes
 			$link_type.change(function(evt) {
