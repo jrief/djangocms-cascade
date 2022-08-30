@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.3.10
+======
+* In LinkPlugin editor, set focus to input field after changing link type.
+
 2.3.9
 =====
 * Fix option "justified" in **BootstrapTabSetPlugin**.
