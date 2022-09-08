@@ -27,7 +27,13 @@ form label[for=id_section] { width: 0; }
 #id_condition, #id_link_content { width: calc(100% - 20px); }
 
 form .form-row .select2-selection { height: 36px; }
-form .form-row .django-select2 { width: calc(100% - 200px) !important; }
+form .form-row .django-select2 {
+  width: calc(100% - 200px) !important;
+}
+
+form .form-row .select2.select2-container {
+  min-width: 150px;
+}
 
 form .aligned .vCheckboxLabel {
   float: left;
