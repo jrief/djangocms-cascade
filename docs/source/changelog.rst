@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.3.11
+======
+* Set minimum width on select2 widget to 150px.
+
 2.3.10
 ======
 * In LinkPlugin editor, set focus to input field after changing link type.
