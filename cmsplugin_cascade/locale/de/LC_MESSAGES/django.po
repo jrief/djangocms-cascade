@@ -993,7 +993,7 @@ msgstr "Bündig ausrichten"
 
 #: bootstrap4/tabs.py:36
 msgid "Tab Set"
-msgstr "Registerkarten"
+msgstr "Registermenü"
 
 #: bootstrap4/tabs.py:48
 msgid "with {} tab"
@@ -1007,7 +1007,7 @@ msgstr "Beschriftung"
 
 #: bootstrap4/tabs.py:70
 msgid "Tab Pane"
-msgstr "Abschnitt"
+msgstr "Registerkarte"
 
 #: bootstrap4/utils.py:11 generic/text_image.py:15
 msgid "Upscale image"
