@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.3.12
+======
+* Fix some German translations.
+
 2.3.11
 ======
 * Set minimum width on select2 widget to 150px.
