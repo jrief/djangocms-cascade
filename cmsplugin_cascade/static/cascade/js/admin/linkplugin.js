@@ -77,8 +77,13 @@ django.jQuery(function($) {
 		toggleCMSPage: function(page_id) {
 			const url = django.cascade.page_sections_url + page_id;
 			const $selSection = $('#id_section');
-			const $searchValue = $('.select2-search__field').val();
-			const lookupUrl = $searchValue ? new URL($searchValue) : null;
+			const lookupUrl = (function() {
+				try {
+					return new URL($('.select2-search__field').val());
+				} catch (e) {
+					return null;
+				}
+			})();
 
 			$.get(url, function(response) {
 				let preselected = null;
