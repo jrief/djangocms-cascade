@@ -75,18 +75,23 @@ django.jQuery(function($) {
 			}
 		},
 		toggleCMSPage: function(page_id) {
-			var url = django.cascade.page_sections_url + page_id,
-			    $selSection = $('#id_section');
+			const url = django.cascade.page_sections_url + page_id;
+			const $selSection = $('#id_section');
+			const $searchValue = $('.select2-search__field').val();
+			const lookupUrl = $searchValue ? new URL($searchValue) : null;
 
 			$.get(url, function(response) {
-				var k, val;
-
+				let preselected = null;
 				$selSection.children('option:gt(0)').remove();
-				for (k = 0; k < response.element_ids.length; k++) {
-					val = response.element_ids[k];
-					$selSection.append($("<option></option>").attr("value", val[0]).text(val[1]));
+				for (let k = 0; k < response.element_ids.length; k++) {
+					const val = response.element_ids[k];
+					const option = $("<option></option>").attr("value", val[0]).text(val[1]);
+					if (lookupUrl && '#' + val[1] === lookupUrl.hash) {
+						preselected = val[0];
+					}
+					$selSection.append(option);
 				}
-				$selSection.val(null);
+				$selSection.val(preselected);
 			});
 		},
 		validateExtUrl: function(exturl) {
