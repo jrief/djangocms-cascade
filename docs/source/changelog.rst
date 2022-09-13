@@ -2,6 +2,11 @@
 Release History
 ===============
 
+2.3.13
+======
+* When linking onto a CMS page using a URL with a hash for lookup, now the select box for section
+  is be preset with that hash value.
+
 2.3.12
 ======
 * Fix some German translations.
