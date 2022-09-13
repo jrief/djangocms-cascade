@@ -2,6 +2,10 @@
 Release History
 ===============
 
+2.3.14
+======
+* Fix regression introduced in 2.3.13.
+
 2.3.13
 ======
 * When linking onto a CMS page using a URL with a hash for lookup, now the select box for section
