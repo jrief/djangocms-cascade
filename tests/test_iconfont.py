@@ -14,6 +14,7 @@ from cms.plugin_rendering import ContentRenderer
 from cmsplugin_cascade.models import CascadeElement, IconFont
 from cmsplugin_cascade.icon.forms import IconFormMixin
 from cmsplugin_cascade.icon.simpleicon import SimpleIconPlugin
+from cmsplugin_cascade.link.forms import LinkForm
 from .conftest import UserFactory
 
 
@@ -82,7 +83,7 @@ def test_iconfont_change_view(admin_client, icon_font):
 @pytest.mark.django_db
 def simple_icon(admin_site, cms_placeholder, icon_font):
     """Create and edit a SimpleIconPlugin"""
-    class IconFontForm(IconFormMixin, ModelForm):
+    class IconFontForm(IconFormMixin, LinkForm, ModelForm):
         class Meta(IconFormMixin.Meta):
             model = CascadeElement
 
@@ -91,7 +92,8 @@ def simple_icon(admin_site, cms_placeholder, icon_font):
     assert isinstance(simple_icon_model, CascadeElement)
 
     # edit simple icon plugin
-    data = {'icon_font': str(icon_font.id), 'symbol': 'icon-skiing'}
+    data = {'icon_font': str(icon_font.id), 'symbol': 'icon-skiing',
+            'link_type': 'exturl', 'ext_url': 'http://test.ru/test', 'link_target': '_blank', 'link_title': 'test title'}
     form = IconFontForm(data=data, instance=simple_icon_model)
     assert form.is_valid()
     simple_icon_model = form.save()
@@ -110,4 +112,4 @@ def test_simple_icon(rf, simple_icon):
     context = RequestContext(request)
     content_renderer = ContentRenderer(request)
     html = content_renderer.render_plugin(simple_icon_model, context).strip()
-    assert html == '<i class="icon-icon-skiing"></i>'
+    assert html == '<a href="http://test.ru/test" title="test title" target="_blank"><i class="icon-icon-skiing"></i></a>'
