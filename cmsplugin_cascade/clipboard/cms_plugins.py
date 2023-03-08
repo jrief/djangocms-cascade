@@ -168,7 +168,7 @@ class CascadeClipboardPlugin(CMSPluginBase):
         placeholder = form.cleaned_data['placeholder']
         language = form.cleaned_data['language']
         identifier = form.cleaned_data['identifier']
-        data = serialize_from_placeholder(placeholder)
+        data = serialize_from_placeholder(placeholder,language=language)
         CascadeClipboard.objects.create(
             identifier=identifier,
             data=data,
