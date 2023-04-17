@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.models import CascadePage
+from cmsplugin_cascade.models import CascadePage, CascadeElement
 
 
 class SectionFormMixin(EntangledModelFormMixin):
@@ -37,6 +37,21 @@ class SectionFormMixin(EntangledModelFormMixin):
         except (AttributeError, KeyError, ObjectDoesNotExist):
             return
         else:
+            draft_page = instance.placeholder.page.get_draft_object()
+            page_element_ids, update_element_ids = {}, False
+            for key, value in element_ids.items():
+                try:
+                    elem_page = CascadeElement.objects.get(cmsplugin_ptr_id=key).placeholder.page.get_draft_object()
+                    if elem_page.id == draft_page.id:
+                        page_element_ids[key] = value
+                    else:
+                        update_element_ids = True
+                except CascadeElement.DoesNotExist:
+                    continue
+            if update_element_ids:
+                instance.placeholder.page.cascadepage.glossary['element_ids'][instance.language] = page_element_ids
+                instance.placeholder.page.cascadepage.save(update_fields=['glossary'])
+                element_ids = page_element_ids
             for key, value in element_ids.items():
                 if str(key) != str(instance.pk) and element_id == value:
                     msg = _("The element ID '{}' is not unique for this page.")
