@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.forms.fields import CharField
+from django.forms.fields import RegexField
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
@@ -9,9 +9,10 @@ from cmsplugin_cascade.models import CascadePage, CascadeElement
 
 
 class SectionFormMixin(EntangledModelFormMixin):
-    element_id = CharField(
+    element_id = RegexField(
+        r'^[0-9A-Za-z_.~-]+$',
         label=_("Id"),
-        max_length=15,
+        max_length=30,
         required=False,
         help_text=_("A unique identifier for this element (please don't use any special characters, punctuations, etc.) May be used as anchor-link: #id.")
     )
