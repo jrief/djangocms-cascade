@@ -360,6 +360,16 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
             except model.DoesNotExist:
                 continue
 
+    @classmethod
+    def get_position(cls, obj):
+        """
+        returns the 1-indexed position of ``obj`` relative to its siblings
+        """
+        for position, sibling in enumerate(obj.get_siblings(), 1):
+            if obj.id == sibling.id:
+                return position
+        raise RuntimeError(f"{obj} does not find itself in its list of siblings")
+
     def get_previous_instance(self, obj):
         """
         Return the previous plugin instance for the given object.
