@@ -9,9 +9,9 @@ from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFoun
 from django.urls import re_path
 from django.utils.translation import get_language_from_request, get_language_from_path
 
-from cms.models.pagemodel import Page
+from cms.models.contentmodels import PageContent
+from cms.models.pagemodel import PageUrl
 from cms.extensions import PageExtensionAdmin
-from cms.utils.page import get_pages_from_path
 from cmsplugin_cascade.models import CascadePage, IconFont
 from cmsplugin_cascade.link.forms import format_page_link
 
@@ -79,14 +79,13 @@ class CascadePageAdmin(PageExtensionAdmin):
             path = parse_result.path.strip('/')
             if get_language_from_path(parse_result.path):
                 path = '/'.join(path.split('/')[1:])
-            pages = get_pages_from_path(site, path)
-            for page in pages:
+            for page_url in PageUrl.objects.filter(path=path):
                 data['results'].append(self.get_result_set(language, page))
             if len(data['results']) > 0:
                 return JsonResponse(data)
 
         # otherwise resolve by search term
-        matching_published_pages = Page.objects.published().public().filter(
+        matching_published_pages = self.model.objects.filter(
             Q(title_set__title__icontains=query_term, title_set__language=language)
             | Q(title_set__path__icontains=query_term, title_set__language=language)
             | Q(title_set__menu_title__icontains=query_term, title_set__language=language)
@@ -99,12 +98,11 @@ class CascadePageAdmin(PageExtensionAdmin):
                 break
         return JsonResponse(data)
 
-    def get_result_set(self, language, page):
-        title = page.get_title(language=language)
-        path = page.get_absolute_url(language=language)
+    def get_result_set(self, language, page_content):
+        path = page_content.page.get_absolute_url(language=language)
         return {
-            'id': page.pk,
-            'text': format_page_link(title, path),
+            'id': page_content.page.pk,
+            'text': format_page_link(page_content.title, path),
         }
 
     def fetch_fonticons(self, request, iconfont_id=None):

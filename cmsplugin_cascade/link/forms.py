@@ -54,16 +54,20 @@ class LinkSearchField(ModelChoiceField):
     widget = PageSelect2Widget()
 
     def __init__(self, *args, **kwargs):
-        queryset = Page.objects.public()
+        queryset = Page.objects.all()
         try:
-            queryset = queryset.published().on_site(get_current_site()).distinct()
+            queryset = queryset.on_site(get_current_site()).distinct()
         except:
             pass
         kwargs.setdefault('queryset', queryset)
         super().__init__(*args, **kwargs)
 
     def clean(self, value):
-        self.queryset = Page.objects.public().distinct().published().on_site(get_current_site())
+        queryset = Page.objects.all()
+        try:
+            self.queryset = queryset.on_site(get_current_site()).distinct()
+        except:
+            self.queryset = queryset
         return super().clean(value)
 
 

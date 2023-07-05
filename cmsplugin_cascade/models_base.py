@@ -60,14 +60,16 @@ class CascadeModelBase(CMSPlugin):
             except model.DoesNotExist:
                 continue
         # in case our plugin is the child of a TextPlugin, return its grandparent
-        parent = self.get_parent()
-        if parent and parent.plugin_type == 'TextPlugin':
-            grandparent_id = self.get_parent().parent_id
+        if self.parent and self.parent.plugin_type == 'TextPlugin':
+            grandparent_id = self.parent.parent_id
             for model in CascadeModelBase._get_cascade_elements():
                 try:
                     return model.objects.get(id=grandparent_id)
                 except model.DoesNotExist:
                     continue
+
+    def get_siblings(self):
+        return self._meta.model.objects.filter(parent=self.parent).order_by('position')
 
     def get_parent_glossary(self):
         """
@@ -126,7 +128,7 @@ class CascadeModelBase(CMSPlugin):
         sanitized = self.plugin_class.sanitize_model(self)
         if sanitize_only:
             if sanitized:
-                super().save(no_signals=True)
+                super().save()
         else:
             super().save(*args, **kwargs)
 
