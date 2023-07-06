@@ -18,6 +18,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.10',
     'Framework :: Django :: 3.2',
     'Framework :: Django :: 4.0',
+    'Framework :: Django :: 4.1',
 ]
 
 setup(
@@ -31,7 +32,7 @@ setup(
     install_requires=[
         'django>=3.2,<5',
         'django-classy-tags>=1.0',
-        'django-cms>=3.10,<4',
+        'django-cms>=4',
         'django-entangled>=0.5.3',
         'djangocms-text-ckeditor>=4.0',
         'django-select2>=7.7',
