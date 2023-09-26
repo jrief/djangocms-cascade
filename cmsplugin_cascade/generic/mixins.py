@@ -8,12 +8,23 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.models import CascadePage
 
 
+def identifier_validator(value):
+    if not value:
+        return
+    valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+    for c in value:
+        if c not in valid_chars:
+            msg = _("The element ID '{}' contains invalid characters.")
+            raise ValidationError(msg.format(value))
+
+
 class SectionFormMixin(EntangledModelFormMixin):
     element_id = CharField(
         label=_("Id"),
         max_length=15,
         required=False,
-        help_text=_("A unique identifier for this element (please don't use any special characters, punctuations, etc.) May be used as anchor-link: #id.")
+        help_text=_("A unique identifier for this element (please don't use any special characters, punctuations, etc.) May be used as anchor-link: #id."),
+        validators=[identifier_validator],
     )
 
     class Meta:
