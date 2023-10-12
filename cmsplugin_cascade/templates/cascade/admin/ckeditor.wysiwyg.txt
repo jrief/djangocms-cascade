@@ -4,6 +4,7 @@
 		{{ text_editor_config.get_config|safe }}{% if not forloop.last %},{% endif %}{% spaceless %}
 {% endspaceless %}{% endfor %}
 	]);{% for icon_font in icon_fonts %}
-	CMS.CKEditor.editor.addContentsCss('{{ icon_font.get_stylesheet_url }}');{% spaceless %}
+	{# CMS.CKEditor.editor.addContentsCss('{{ icon_font.get_stylesheet_url }}'); #}
+	CKEDITOR.addCss('{{ icon_font.get_stylesheet_url }}');{% spaceless %}
 {% endspaceless %}{% endfor %}
 })();
