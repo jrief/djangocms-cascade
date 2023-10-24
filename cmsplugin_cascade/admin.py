@@ -68,28 +68,28 @@ class CascadePageAdmin(PageExtensionAdmin):
             return HttpResponseForbidden()
         data = {'results': []}
         language = get_language_from_request(request, check_path=True)
-        query_term = request.GET.get('term').strip()
-        if not query_term:
+        search_term = request.GET.get('term').strip()
+        if not search_term:
             return JsonResponse(data)
 
         # first, try to resolve by URL if it points to a local resource
-        parse_result = urlparse(query_term)
+        parse_result = urlparse(search_term)
         if parse_result.netloc.split(':')[0] == request.META['HTTP_HOST'].split(':')[0]:
-            site = get_current_site(request)
             path = parse_result.path.strip('/')
             if get_language_from_path(parse_result.path):
                 path = '/'.join(path.split('/')[1:])
             for page_url in PageUrl.objects.filter(path=path):
-                data['results'].append(self.get_result_set(language, page))
+                page_content = page_url.page.get_content_obj(language)
+                data['results'].append(self.get_result_set(language, page_content))
             if len(data['results']) > 0:
                 return JsonResponse(data)
 
         # otherwise resolve by search term
         matching_published_pages = self.model.objects.filter(
-            Q(title_set__title__icontains=query_term, title_set__language=language)
-            | Q(title_set__path__icontains=query_term, title_set__language=language)
-            | Q(title_set__menu_title__icontains=query_term, title_set__language=language)
-            | Q(title_set__page_title__icontains=query_term, title_set__language=language)
+            Q(title_set__title__icontains=search_term, title_set__language=language)
+            | Q(title_set__path__icontains=search_term, title_set__language=language)
+            | Q(title_set__menu_title__icontains=search_term, title_set__language=language)
+            | Q(title_set__page_title__icontains=search_term, title_set__language=language)
         ).distinct().order_by('title_set__title').iterator()
 
         for page in matching_published_pages:
