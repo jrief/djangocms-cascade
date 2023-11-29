@@ -1,12 +1,12 @@
 # djangocms-cascade
-# Copyright (C) 2021 Jacob Rief
+# Copyright (C) 2023 Jacob Rief
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-09 13:24+0200\n"
+"POT-Creation-Date: 2023-11-29 14:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -116,7 +116,7 @@ msgid "Dark"
 msgstr "Dunkel"
 
 #: bootstrap4/buttons.py:37 bootstrap4/buttons.py:46 link/cms_plugins.py:11
-#: link/forms.py:101
+#: link/forms.py:105
 msgid "Link"
 msgstr "Link"
 
@@ -398,7 +398,7 @@ msgstr "Überschreibe Spaltenbreite für alle Geräte."
 
 #: bootstrap4/container.py:263
 msgid "No offset"
-msgstr "Kein Offste"
+msgstr "Kein Offset"
 
 #: bootstrap4/container.py:266
 msgid "Inherit offset from {}"
@@ -547,11 +547,11 @@ msgstr ""
 
 #: bootstrap4/grid.py:60
 msgid "Portrait Phones"
-msgstr ""
+msgstr "Smartphones im Hochformat"
 
 #: bootstrap4/grid.py:61
 msgid "Landscape Phones"
-msgstr ""
+msgstr "Smartphones im Querformat"
 
 #: bootstrap4/grid.py:62
 msgid "Tablets"
@@ -563,11 +563,11 @@ msgstr ""
 
 #: bootstrap4/grid.py:64
 msgid "Large Desktops"
-msgstr ""
+msgstr "Breite Desktops"
 
 #: bootstrap4/icon.py:16
 msgid "Square"
-msgstr ""
+msgstr "Quadrat"
 
 #: bootstrap4/icon.py:18 bootstrap4/utils.py:20
 msgid "Circle"
@@ -624,7 +624,7 @@ msgstr "Icon mit Rahmen"
 
 #: bootstrap4/image.py:25 bootstrap4/picture.py:45
 msgid "Image Shapes"
-msgstr ""
+msgstr "Bildformen"
 
 #: bootstrap4/image.py:32
 msgid "Responsive Image Width"
@@ -710,11 +710,11 @@ msgstr "Vertikale Position des Hintergrundes"
 
 #: bootstrap4/jumbotron.py:132
 msgid "This property moves a background image vertically within its container."
-msgstr ""
+msgstr "Diese Eigenschaft verschiebt ein Hintergrundbild vertikal innerhalb seines Containers."
 
 #: bootstrap4/jumbotron.py:136
 msgid "Background horizontal position"
-msgstr ""
+msgstr "Horizontale Position des Hintergrundes"
 
 #: bootstrap4/jumbotron.py:140
 msgid ""
@@ -723,15 +723,15 @@ msgstr ""
 
 #: bootstrap4/jumbotron.py:144
 msgid "Background size"
-msgstr ""
+msgstr "Hintergrundgröße"
 
 #: bootstrap4/jumbotron.py:149
 msgid "This property specifies how the background image is sized."
-msgstr ""
+msgstr "Diese Eigenschaft definiert wie sich das Hintergrundbild verhält."
 
 #: bootstrap4/jumbotron.py:154
 msgid "Background width/height"
-msgstr ""
+msgstr "Hintergrundbreite/-höhe"
 
 #: bootstrap4/jumbotron.py:155
 msgid "Width"
@@ -926,12 +926,12 @@ msgstr ""
 
 #: bootstrap4/picture.py:28
 msgid "Adapt Picture Zoom"
-msgstr ""
+msgstr "Setze Zoom des Bildes"
 
 #: bootstrap4/picture.py:33
 msgid ""
 "Magnification of picture in percent for distinct Bootstrap's breakpoints."
-msgstr ""
+msgstr "Vergrößerung des Bildes in Prozent für gewählten Bootstrap Breakpoint."
 
 #: bootstrap4/picture.py:56
 msgid "Picture"
@@ -1001,11 +1001,11 @@ msgid_plural "with {} tabs"
 msgstr[0] "mit {0} Registerkarte"
 msgstr[1] "mit {0} Registerkarten"
 
-#: bootstrap4/tabs.py:61
+#: bootstrap4/tabs.py:68
 msgid "Tab Title"
 msgstr "Beschriftung"
 
-#: bootstrap4/tabs.py:70
+#: bootstrap4/tabs.py:77
 msgid "Tab Pane"
 msgstr "Registerkarte"
 
@@ -1195,6 +1195,7 @@ msgid "% and auto"
 msgstr "% und auto"
 
 #: extra_fields/admin.py:106
+#, python-brace-format
 msgid "Customized {0}:"
 msgstr "Benutzerdefinierte {0}:"
 
@@ -1203,6 +1204,7 @@ msgid "Allow these extra inlines styles for the given plugin type."
 msgstr "Extra Inline-Styles für ausgewählten Plugin-Type zulassen."
 
 #: extra_fields/admin.py:114
+#, python-brace-format
 msgid "Units for {0}:"
 msgstr "Einheiten für {0}:"
 
@@ -1288,11 +1290,15 @@ msgstr "Inhalt"
 msgid "Horizontal Rule"
 msgstr "Horizontale Linie"
 
-#: generic/mixins.py:13
+#: generic/mixins.py:17
+msgid "The element ID '{}' contains invalid characters."
+msgstr "Die Bezeichnung des Elements '{}' enthält ungültige Zeichen."
+
+#: generic/mixins.py:23
 msgid "Id"
 msgstr "Id"
 
-#: generic/mixins.py:16
+#: generic/mixins.py:26
 msgid ""
 "A unique identifier for this element (please don't use any special "
 "characters, punctuations, etc.) May be used as anchor-link: #id."
@@ -1300,7 +1306,7 @@ msgstr ""
 "Eindeutige Bezeichnung des Elements (bitte keine Sonderzeichen, Umlaute, "
 "Interpunktion etc. verwenden). Kann als Ankerlink verwendet werden: #id."
 
-#: generic/mixins.py:42
+#: generic/mixins.py:53
 msgid "The element ID '{}' is not unique for this page."
 msgstr "Die Bezeichnung des Elements '{}' ist nicht eindeutig für diese Seite."
 
@@ -1398,15 +1404,15 @@ msgstr "Anzahl der Icons"
 msgid "CSS prefix"
 msgstr "CSS-Präfix"
 
-#: icon/forms.py:17
+#: icon/forms.py:19
 msgid "Font"
 msgstr "Font"
 
-#: icon/forms.py:23
+#: icon/forms.py:25
 msgid "Select Symbol"
 msgstr "Wähle Symbol"
 
-#: icon/forms.py:32
+#: icon/forms.py:34
 msgid "No Icon"
 msgstr "Kein Icon"
 
@@ -1479,190 +1485,190 @@ msgstr "Die Koordinaten des Icon-Ankers relativ zu seiner linken oberen Ecke."
 msgid "Text to display in popup."
 msgstr "Optionaler Text für Popup"
 
-#: leaflet/map.py:80
+#: leaflet/map.py:81
 msgid "Address lookup"
-msgstr ""
+msgstr "Adresssuche"
 
-#: leaflet/map.py:82
+#: leaflet/map.py:83
 msgid "Search for an address"
-msgstr ""
+msgstr "Suche nach einer Adresse"
 
-#: leaflet/map.py:117
+#: leaflet/map.py:118
 msgid "Marker"
 msgstr "Marker"
 
-#: leaflet/map.py:118
+#: leaflet/map.py:119
 msgid "Markers"
 msgstr "Marker"
 
-#: leaflet/map.py:124
+#: leaflet/map.py:130
 msgid "Map Width"
 msgstr "Breite der Karte"
 
-#: leaflet/map.py:127
+#: leaflet/map.py:133
 msgid "Set the map width in percent relative to containing element."
 msgstr "Setze die Kartenbreite in Prozent relativ zum enthaltenen Element."
 
-#: leaflet/map.py:131
+#: leaflet/map.py:137
 msgid "Adapt Map Height"
 msgstr "Anpassung der Kartenhöhe"
 
-#: leaflet/map.py:134
+#: leaflet/map.py:140
 msgid "Set a fixed height in pixels, or percent relative to the map width."
 msgstr "Setze eine feste Höhe in Pixeln oder Prozent relativ zur Bildbreite."
 
-#: leaflet/map.py:138
+#: leaflet/map.py:144
 msgid "Adapt Map Minimum Height"
 msgstr "Anpassung der minimalen Kartenhöhe"
 
-#: leaflet/map.py:141
+#: leaflet/map.py:147
 msgid "Optional, set a minimum height in pixels."
 msgstr "Setze minimale Höhe in Pixel (optional)."
 
-#: leaflet/map.py:145
+#: leaflet/map.py:151
 msgid "Zoom by scrolling wheel"
 msgstr "Zoomen mit Scrollrad"
 
-#: leaflet/map.py:148
+#: leaflet/map.py:154
 msgid "Zoom into map on mouse over by scrolling wheel."
 msgstr "Mit Scrollrad hineinzoomen, falls Mauszeiger über der Karte."
 
-#: leaflet/map.py:178
+#: leaflet/map.py:184
 msgid "Map"
 msgstr "Karte"
 
-#: leaflet/map.py:264
+#: leaflet/map.py:270
 #, python-brace-format
 msgid "with {0} marker"
 msgid_plural "with {0} markers"
 msgstr[0] "mit {0} Markierung"
 msgstr[1] "mit {0} Markierungen"
 
-#: link/forms.py:72
+#: link/forms.py:76
 msgid "Page Root"
 msgstr "Seitenanfang"
 
-#: link/forms.py:85 sphinx/link_plugin.py:37
+#: link/forms.py:89 sphinx/link_plugin.py:37
 msgid "CMS Page"
 msgstr "CMS-Seite"
 
-#: link/forms.py:86
+#: link/forms.py:90
 msgid "Download File"
 msgstr "Datei-Download"
 
-#: link/forms.py:87 sphinx/link_plugin.py:39
+#: link/forms.py:91 sphinx/link_plugin.py:39
 msgid "External URL"
 msgstr "Externe URL"
 
-#: link/forms.py:88 sphinx/link_plugin.py:40
+#: link/forms.py:92 sphinx/link_plugin.py:40
 msgid "Mail To"
 msgstr "E-Mail an"
 
-#: link/forms.py:91
+#: link/forms.py:95
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: link/forms.py:94
+#: link/forms.py:98
 msgid "Same Window"
 msgstr "Selbes Fenster"
 
-#: link/forms.py:95
+#: link/forms.py:99
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#: link/forms.py:96
+#: link/forms.py:100
 msgid "Parent Window"
 msgstr "Eltern-Fenster"
 
-#: link/forms.py:97
+#: link/forms.py:101
 msgid "Topmost Frame"
 msgstr "Äußerster Frame"
 
-#: link/forms.py:102
+#: link/forms.py:106
 msgid "Type of link"
 msgstr "Art des Links"
 
-#: link/forms.py:108
+#: link/forms.py:112
 msgid "An internal link onto any CMS page of this site"
 msgstr "Ein interner Link auf eine beliebige Seite im CMS"
 
-#: link/forms.py:114
+#: link/forms.py:118
 msgid "Page bookmark"
 msgstr "Seitenlesezeichen"
 
-#: link/forms.py:122
+#: link/forms.py:126
 msgid "An internal link onto a file from filer"
 msgstr "Ein interner Link auf eine Datei in der Mediathek"
 
-#: link/forms.py:127
+#: link/forms.py:131
 msgid "URL"
 msgstr "URL"
 
-#: link/forms.py:128
+#: link/forms.py:132
 msgid "Link onto external page"
 msgstr "Link auf externe Seite"
 
-#: link/forms.py:134
+#: link/forms.py:138
 msgid "Email"
 msgstr "E-Mail"
 
-#: link/forms.py:135
+#: link/forms.py:139
 msgid "Open Email program with this address"
 msgstr "Öffne E-Mail Programm mit dieser Adresse"
 
-#: link/forms.py:141
+#: link/forms.py:145
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#: link/forms.py:142
+#: link/forms.py:146
 msgid "International phone number, ex. +1 212 555 2368."
 msgstr "Internationale Telefonnummer, z.B. +1 212 555 2368."
 
-#: link/forms.py:147
+#: link/forms.py:151
 msgid "Link Target"
 msgstr "Ziel des Links"
 
-#: link/forms.py:150
+#: link/forms.py:154
 msgid "Open Link in other target."
 msgstr "Öffne Link in anderem Zielfenster"
 
-#: link/forms.py:154
+#: link/forms.py:158
 msgid "Title"
 msgstr "Titel"
 
-#: link/forms.py:156
+#: link/forms.py:160
 msgid "Link's Title"
 msgstr "Titel des Links"
 
-#: link/forms.py:168
+#: link/forms.py:172
 msgid "No Link"
 msgstr "Kein Link"
 
-#: link/forms.py:198
+#: link/forms.py:202
 msgid "CMS page to link to is missing."
 msgstr "Zu verlinkende Seite fehlt im CMS."
 
-#: link/forms.py:202
+#: link/forms.py:206
 msgid "File for download is missing."
 msgstr "Datei zum Download fehlt."
 
-#: link/forms.py:207
+#: link/forms.py:211
 msgid "No valid URL provided."
 msgstr "Keine gültige URL angegeben."
 
-#: link/forms.py:211
+#: link/forms.py:215
 msgid "No email address provided."
 msgstr "Keine E-Mail Adresse angegeben."
 
-#: link/forms.py:215
+#: link/forms.py:219
 msgid "No phone number provided."
 msgstr "Keine Telefonnummer angegeben."
 
-#: link/forms.py:235
+#: link/forms.py:239
 msgid "Link Content"
 msgstr "Link-Inhalt"
 
-#: link/forms.py:237
+#: link/forms.py:241
 msgid "Content of Link"
 msgstr "Inhalt des Links"
 
@@ -1829,15 +1835,15 @@ msgstr "Segment"
 
 #: segmentation/cms_plugins.py:145
 msgid "if"
-msgstr "if"
+msgstr ""
 
 #: segmentation/cms_plugins.py:149
 msgid "elif"
-msgstr "elif"
+msgstr ""
 
 #: segmentation/cms_plugins.py:149
 msgid "else"
-msgstr "else"
+msgstr ""
 
 #: segmentation/cms_plugins.py:151
 msgid "Condition tag"
