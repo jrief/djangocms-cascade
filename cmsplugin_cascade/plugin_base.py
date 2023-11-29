@@ -305,6 +305,12 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         Hook to add a reference pointing onto an existing SharedGlossary instance.
         """
 
+    @classmethod
+    def translate(cls, translator, instance, target_language, source_language=None):
+        """
+        Hook to translate the given instance.
+        """
+
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
         """
         Extend the number of children so that the parent object contains wanted children.
