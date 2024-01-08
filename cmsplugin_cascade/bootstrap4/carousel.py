@@ -3,7 +3,7 @@ import logging
 from django.forms import widgets
 from django.forms.fields import IntegerField, MultipleChoiceField
 from django.utils.safestring import mark_safe
-from django.utils.translation import ngettext_lazy, gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _, ngettext
 
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
@@ -73,7 +73,7 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         num_cols = obj.get_num_children()
-        content = ngettext_lazy('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
+        content = ngettext('with {0} slide', 'with {0} slides', num_cols).format(num_cols)
         return mark_safe(content)
 
     @classmethod
@@ -172,7 +172,7 @@ class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
         try:
             content = obj.image.name or obj.image.original_filename
         except AttributeError:
-            content = _("Empty Slide")
+            content = gettext("Empty Slide")
         return mark_safe(content)
 
 plugin_pool.register_plugin(BootstrapCarouselSlidePlugin)

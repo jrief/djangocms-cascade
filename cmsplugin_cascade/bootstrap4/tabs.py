@@ -1,6 +1,6 @@
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField
-from django.utils.translation import ngettext_lazy, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, ngettext
 from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.forms.fields import IntegerField
@@ -45,7 +45,7 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, instance):
         num_cols = instance.get_num_children()
-        content = ngettext_lazy('with {} tab', 'with {} tabs', num_cols).format(num_cols)
+        content = ngettext('with {} tab', 'with {} tabs', num_cols).format(num_cols)
         return mark_safe(content)
 
     @classmethod

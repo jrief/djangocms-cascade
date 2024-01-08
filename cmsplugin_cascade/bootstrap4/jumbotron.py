@@ -3,7 +3,7 @@ import logging
 from django.core.exceptions import ValidationError
 from django.forms import widgets, BooleanField, ChoiceField
 from django.utils.html import format_html
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from entangled.forms import EntangledModelFormMixin
 
@@ -259,7 +259,7 @@ class BootstrapJumbotronPlugin(BootstrapPluginBase):
         try:
             content = obj.image.name or obj.image.original_filename
         except AttributeError:
-            content = _("Without background image")
+            content = gettext("Without background image")
         return format_html('{0}{1}', identifier, content)
 
 plugin_pool.register_plugin(BootstrapJumbotronPlugin)

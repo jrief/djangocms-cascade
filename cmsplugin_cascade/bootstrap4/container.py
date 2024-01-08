@@ -4,7 +4,7 @@ from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.text import format_lazy
-from django.utils.translation import ngettext_lazy, gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _, ngettext
 
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
@@ -90,7 +90,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         if breakpoints:
             BREAKPOINTS = app_settings.CMSPLUGIN_CASCADE['bootstrap4']['fluid_bounds']
             devices = ', '.join([str(bp.label) for bp in BREAKPOINTS if bp.name in breakpoints])
-            content = _("{0}for {1}").format(content, devices)
+            content = gettext("{0}for {1}").format(content, devices)
         return mark_safe(content)
 
     @classmethod
@@ -145,7 +145,7 @@ class BootstrapRowPlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         num_cols = obj.get_num_children()
-        content = ngettext_lazy("with {0} column", "with {0} columns", num_cols).format(num_cols)
+        content = ngettext("with {0} column", "with {0} columns", num_cols).format(num_cols)
         return mark_safe(content)
 
     def save_model(self, request, obj, form, change):
@@ -351,9 +351,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             if width:
                 widths.append(width)
         if len(widths) > 0:
-            content = _("widths: {}").format(' / '.join(widths))
+            content = gettext("widths: {}").format(' / '.join(widths))
         else:
-            content = _("unknown width")
+            content = gettext("unknown width")
         return mark_safe(content)
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)

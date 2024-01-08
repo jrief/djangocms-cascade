@@ -1,7 +1,7 @@
 import logging
 from django.forms import widgets, MultipleChoiceField
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap4.grid import Breakpoint
@@ -38,7 +38,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
         choices=IMAGE_RESIZE_OPTIONS,
         widget=widgets.CheckboxSelectMultiple,
         initial=['subject_location', 'high_resolution'],
-        help_text = _("Options to use when resizing the image."),
+        help_text=_("Options to use when resizing the image."),
     )
 
     image_shapes = MultipleChoiceField(
@@ -101,7 +101,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
         try:
             content = str(obj.image)
         except AttributeError:
-            content = _("No Picture")
+            content = gettext("No Picture")
         return mark_safe(content)
 
     @classmethod
@@ -124,7 +124,7 @@ class BootstrapPicturePlugin(LinkPluginBase):
                     sanitized = True
         else:
             logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
-            return 
+            return
         return sanitized
 
 plugin_pool.register_plugin(BootstrapPicturePlugin)

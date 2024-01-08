@@ -1,7 +1,7 @@
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
@@ -159,7 +159,7 @@ class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
                 button_types = dict(ButtonFormMixin.BUTTON_TYPES)
                 content = str(button_types[instance.glossary['button_type']])
             except KeyError:
-                content = _("Empty")
+                content = gettext("Empty")
         return content
 
     @classmethod
