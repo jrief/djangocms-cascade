@@ -72,6 +72,7 @@ class MarkerForm(CascadeModelForm):
     popup_text = HTMLFormField(
         required=False,
         help_text=_("Text to display in popup."),
+        configuration='CKEDITOR_MARKER_POPUP_TEXT',
     )
 
     position = HiddenDictField()
