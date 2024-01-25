@@ -3,8 +3,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms import MediaDefiningClass, widgets
 from django.forms.fields import CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+
 from entangled.forms import EntangledModelFormMixin
+
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import SizeField
 
@@ -72,7 +74,7 @@ class ExtraFieldsMixin(metaclass=MediaDefiningClass):
                 for inline_style in inline_styles:
                     key = 'extra_inline_styles:{0}'.format(inline_style)
                     field_kwargs = {
-                        'label': '{0}: {1}'.format(style, inline_style),
+                        'label': '{0}: {1}'.format(gettext(style), inline_style),
                         'required': False,
                     }
                     if issubclass(Field, SizeField):

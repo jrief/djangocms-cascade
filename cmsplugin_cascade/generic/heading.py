@@ -40,6 +40,17 @@ class HeadingPlugin(CascadePluginBase):
             return format_html('<code>{0}</code>: {1}', tag_type, content)
         return content
 
+    @classmethod
+    def translate(cls, translator, instance, target_language, source_language=None):
+        if content := instance.glossary.get('content'):
+            result = translator.translate_text(
+                content,
+                source_lang=source_language,
+                target_lang=target_language,
+            )
+            instance.glossary['content'] = result.text
+            instance.save(update_fields=['glossary'])
+
     def render(self, context, instance, placeholder):
         context = self.super(HeadingPlugin, self).render(context, instance, placeholder)
         context.update({'content': mark_safe(instance.glossary.get('content', ''))})

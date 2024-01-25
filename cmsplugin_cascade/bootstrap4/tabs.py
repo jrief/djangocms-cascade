@@ -88,4 +88,16 @@ class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
             content = Truncator(content).words(3, truncate=' ...')
         return mark_safe(content)
 
+    @classmethod
+    def translate(cls, translator, instance, target_language, source_language=None):
+        if tab_title := instance.glossary.get('tab_title'):
+            result = translator.translate_text(
+                tab_title,
+                source_lang=source_language,
+                target_lang=target_language,
+            )
+            instance.glossary['tab_title'] = result.text
+            instance.save(update_fields=['glossary'])
+
+
 plugin_pool.register_plugin(BootstrapTabPanePlugin)
