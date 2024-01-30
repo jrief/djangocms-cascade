@@ -49,11 +49,11 @@ class SectionFormMixin(EntangledModelFormMixin):
         except (AttributeError, KeyError, ObjectDoesNotExist):
             return
         else:
-            draft_page = instance.placeholder.page.get_draft_object()
+            draft_page = instance.placeholder.page
             page_element_ids, update_element_ids = {}, False
             for key, value in element_ids.items():
                 try:
-                    elem_page = CascadeElement.objects.get(cmsplugin_ptr_id=key).placeholder.page.get_draft_object()
+                    elem_page = CascadeElement.objects.get(cmsplugin_ptr_id=key).placeholder.page
                     if elem_page.id == draft_page.id:
                         page_element_ids[key] = value
                     else:
