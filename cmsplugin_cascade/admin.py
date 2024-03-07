@@ -48,6 +48,9 @@ class CascadePageAdmin(PageExtensionAdmin):
         return urls
 
     def get_page_sections(self, request, page_pk=None):
+        """
+        This view is used to populate the select box nearby the CMS page's link field.
+        """
         choices = []
         language = get_language_from_request(request, check_path=True)
         try:
@@ -80,26 +83,27 @@ class CascadePageAdmin(PageExtensionAdmin):
                 path = '/'.join(path.split('/')[1:])
             for page_url in PageUrl.objects.filter(path=path):
                 page_content = page_url.page.get_content_obj(language)
-                data['results'].append(self.get_result_set(language, page_content))
-            if len(data['results']) > 0:
-                return JsonResponse(data)
+                data['results'].append(self.get_result_set(page_content))
+            return JsonResponse(data)
 
         # otherwise resolve by search term
-        matching_published_pages = self.model.objects.filter(
-            Q(title_set__title__icontains=search_term, title_set__language=language)
-            | Q(title_set__path__icontains=search_term, title_set__language=language)
-            | Q(title_set__menu_title__icontains=search_term, title_set__language=language)
-            | Q(title_set__page_title__icontains=search_term, title_set__language=language)
-        ).distinct().order_by('title_set__title').iterator()
+        matching_page_contents = PageContent.objects.filter(
+            Q(language=language) & (
+                Q(title__icontains=search_term)
+              | Q(page__urls__path__icontains=search_term)
+              | Q(menu_title__icontains=search_term)
+              | Q(page_title__icontains=search_term)
+            )
+        ).distinct().order_by('title').iterator()
 
-        for page in matching_published_pages:
-            data['results'].append(self.get_result_set(language, page))
+        for page_content in matching_page_contents:
+            data['results'].append(self.get_result_set(page_content))
             if len(data['results']) > 15:
                 break
         return JsonResponse(data)
 
-    def get_result_set(self, language, page_content):
-        path = page_content.page.get_absolute_url(language=language)
+    def get_result_set(self, page_content):
+        path = page_content.get_absolute_url()
         return {
             'id': page_content.page.pk,
             'text': format_page_link(page_content.title, path),
