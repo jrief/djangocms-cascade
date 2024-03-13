@@ -40,7 +40,7 @@ django.jQuery(function($) {
 				self.toggleLinkTypes(evt.target.value);
 			});
 			$cmspage_select.change(function(evt) {
-				self.toggleCMSPage(evt.target.value);
+				self.toggleCMSPage(evt.target.value, evt.target.lang);
 			});
 			$link_ext_url.on('blur', function(evt) {
 				self.validateExtUrl(evt.target.value);
@@ -74,8 +74,8 @@ django.jQuery(function($) {
 				$link_title.hide();
 			}
 		},
-		toggleCMSPage: function(page_id) {
-			const url = django.cascade.page_sections_url + page_id;
+		toggleCMSPage: function(page_id, language_code) {
+			const url = django.cascade.page_sections_url + page_id + '/?language=' + language_code;
 			const $selSection = $('#id_section');
 			const lookupUrl = (function() {
 				try {

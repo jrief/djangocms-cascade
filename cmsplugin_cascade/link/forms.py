@@ -78,7 +78,7 @@ class SectionChoiceField(fields.ChoiceField):
 
     def valid_value(self, value):
         """
-        The optgroup is adjusted dynamically accroding to the selected cms_page, so always returns True
+        The optgroup is adjusted dynamically according to the selected cms_page, so always returns True
         and let `LinkForm` validate this value.
         """
         return True
@@ -186,10 +186,11 @@ class LinkForm(EntangledModelFormMixin):
         """
         self.base_fields['section'].choices = self.base_fields['section'].choices[:1]
         try:
-            cascade_page = get_related_object(instance.glossary, 'cms_page').cascadepage
-            for key, val in cascade_page.glossary['element_ids'][instance.language].items():
+            cms_page = get_related_object(instance.glossary, 'cms_page')
+            cascade_page_content = cms_page.get_content_obj(instance.language).cascadepagecontent
+            for val in cascade_page_content.glossary['element_ids'].values():
                 if val:
-                    self.base_fields['section'].choices.append((key, val))
+                    self.base_fields['section'].choices.append((val, val))
         except (AttributeError, KeyError, ObjectDoesNotExist):
             pass
 

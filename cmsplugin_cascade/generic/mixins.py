@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.models import CascadePage, CascadeElement
+from cmsplugin_cascade.models import CascadePageContent
 
 
 def identifier_validator(value):
@@ -45,25 +45,11 @@ class SectionFormMixin(EntangledModelFormMixin):
         if not element_id:
             return
         try:
-            element_ids = instance.placeholder.page.cascadepage.glossary['element_ids'][instance.language]
-        except (AttributeError, KeyError, ObjectDoesNotExist):
+            page_content = instance.placeholder.content_type.get_object_for_this_type(pk=instance.placeholder.object_id)
+            element_ids = page_content.cascadepagecontent.glossary['element_ids']
+        except (AttributeError, KeyError, CascadePageContent.DoesNotExist):
             return
         else:
-            draft_page = instance.placeholder.page
-            page_element_ids, update_element_ids = {}, False
-            for key, value in element_ids.items():
-                try:
-                    elem_page = CascadeElement.objects.get(cmsplugin_ptr_id=key).placeholder.page
-                    if elem_page.id == draft_page.id:
-                        page_element_ids[key] = value
-                    else:
-                        update_element_ids = True
-                except CascadeElement.DoesNotExist:
-                    continue
-            if update_element_ids:
-                instance.placeholder.page.cascadepage.glossary['element_ids'][instance.language] = page_element_ids
-                instance.placeholder.page.cascadepage.save(update_fields=['glossary'])
-                element_ids = page_element_ids
             for key, value in element_ids.items():
                 if str(key) != str(instance.pk) and element_id == value:
                     msg = _("The element ID '{}' is not unique for this page.")
@@ -76,13 +62,30 @@ class SectionModelMixin:
         if id_attr:
             return '{bookmark_prefix}{0}'.format(id_attr, **app_settings.CMSPLUGIN_CASCADE)
 
-    def delete(self, *args, **kwargs):
+    def copy_relations(self, oldinstance):
         try:
-            self.placeholder.page.cascadepage.glossary['element_ids'][self.language].pop(str(self.pk))
+            old_placeholder = oldinstance.placeholder
+            old_page_content = old_placeholder.content_type.get_object_for_this_type(pk=old_placeholder.object_id)
+            element_ids = old_page_content.cascadepagecontent.glossary['element_ids']
+            page_content = self.placeholder.content_type.get_object_for_this_type(pk=self.placeholder.object_id)
+            cascade_page_content = CascadePageContent.assure_relation(page_content)
+            element_id = element_ids.pop(str(oldinstance.pk))
         except (AttributeError, KeyError, ObjectDoesNotExist):
             pass
         else:
-            self.placeholder.page.cascadepage.save()
+            cascade_page_content.glossary.setdefault('element_ids', {})
+            cascade_page_content.glossary['element_ids'][str(self.pk)] = element_id
+            cascade_page_content.save()
+        super().copy_relations(oldinstance)
+
+    def delete(self, *args, **kwargs):
+        try:
+            page_content = self.placeholder.content_type.get_object_for_this_type(pk=self.placeholder.object_id)
+            page_content.cascadepagecontent.glossary['element_ids'].pop(str(self.pk))
+        except (AttributeError, KeyError, ObjectDoesNotExist):
+            pass
+        else:
+            page_content.cascadepagecontent.save(update_fields=['glossary'])
         super().delete(*args, **kwargs)
 
 
@@ -108,7 +111,8 @@ class SectionMixin:
         super().save_model(request, obj, form, change)
         element_id = obj.glossary['element_id']
         if not change:
-            # when adding a new element, `element_id` can not be validated for uniqueness
+            # when adding a new element, `element_id` can not be validated for uniqueness in
+            # SectionFormMixin.clean_element_id(), so we have to do it here
             postfix = 0
             # check if form simplewrapper has function check_unique_element_id
             if not 'check_unique_element_id' in dir(form):
@@ -119,6 +123,7 @@ class SectionMixin:
                 try:
                     form_.check_unique_element_id(obj, element_id)
                 except ValidationError:
+                    # but since we can't raise a ValidationError while saving, we must invent a unique element_id
                     postfix += 1
                     element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
                 else:
@@ -127,11 +132,8 @@ class SectionMixin:
                 obj.glossary['element_id'] = element_id
                 obj.save()
 
-        cms_page = obj.placeholder.page
-        if cms_page:
-            # storing the element_id on a placholder only makes sense, if it is non-static
-            CascadePage.assure_relation(cms_page)
-            cms_page.cascadepage.glossary.setdefault('element_ids', {})
-            cms_page.cascadepage.glossary['element_ids'].setdefault(obj.language, {})
-            cms_page.cascadepage.glossary['element_ids'][obj.language][str(obj.pk)] = element_id
-            cms_page.cascadepage.save()
+        page_content = obj.placeholder.content_type.get_object_for_this_type(pk=obj.placeholder.object_id)
+        cascade_page_content = CascadePageContent.assure_relation(page_content)
+        cascade_page_content.glossary.setdefault('element_ids', {})
+        cascade_page_content.glossary['element_ids'][str(obj.pk)] = element_id
+        cascade_page_content.save()

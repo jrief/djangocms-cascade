@@ -1,8 +1,8 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 
 from entangled.utils import get_related_object
+from cms.models.contentmodels import PageContent
 from cmsplugin_cascade.plugin_base import CascadePluginBase
 from filer.models.filemodels import File as FilerFileModel
 
@@ -31,18 +31,14 @@ class LinkPluginBase(CascadePluginBase):
 
         # otherwise resolve by model
         if linktype == 'cmspage':
-            relobj = get_related_object(obj.glossary, 'cms_page')
-            if relobj:
-                href = relobj.get_absolute_url()
-                try:
-                    element_ids = relobj.cascadepage.glossary['element_ids'][obj.language]
-                    section = obj.glossary['section']
-                    href = '{}#{}'.format(href, element_ids[section])
-                except (KeyError, ObjectDoesNotExist):
-                    pass
-                return href
-            else:
-                return 'javascript:void(0)'
+            href = 'javascript:void(0)'
+            if cms_page := get_related_object(obj.glossary, 'cms_page'):
+                page_content = cms_page.get_content_obj(obj.language)
+                if isinstance(page_content, PageContent):
+                    href = page_content.get_absolute_url()
+                    if section := obj.glossary.get('section'):
+                        href = f'{href}#{section}'
+            return href
         elif linktype == 'download':
             relobj = get_related_object(obj.glossary, 'download_file')
             if isinstance(relobj, FilerFileModel):
@@ -68,7 +64,7 @@ class LinkElementMixin:
     def __str__(self):
         return self.plugin_class.get_identifier(self)
 
-    @property
+    @cached_property
     def link(self):
         return self.plugin_class.get_link(self)
 

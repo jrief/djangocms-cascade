@@ -13,7 +13,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from filer.fields.file import FilerFileField
-from cms.extensions import PageExtension
+from cms.extensions import PageContentExtension, PageExtension
 from cms.extensions.extension_pool import extension_pool
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models_base import CascadeModelBase
@@ -423,3 +423,55 @@ class CascadePage(PageExtension):
 
 extension_pool.register(CascadePage)
 models.signals.pre_delete.connect(CascadePage.delete_cascade_element, dispatch_uid='delete_cascade_element')
+
+
+class CascadePageContent(PageContentExtension):
+    """
+    Keep arbitrary data tightly coupled to the CMS page.
+    """
+    glossary = models.JSONField(
+        blank=True,
+        default=dict,
+        help_text=_("Store for arbitrary page data."),
+    )
+
+    class Meta:
+        db_table = 'cmsplugin_cascade_pagecontent'
+        verbose_name = verbose_name_plural = _("Cascade Page Settings")
+
+    def __str__(self):
+        return self.extended_object.title
+
+    def copy(self, target, language=None):
+        if self.extended_object:
+            return self
+        return super().copy(target, language)
+
+    def copy_relations(self, oldinstance):
+        """
+        Copy the glossary from the old instance to the new instance.
+        """
+        self.glossary = dict(oldinstance.glossary)
+        self.save()
+
+    @classmethod
+    def assure_relation(cls, page_content):
+        """
+        Assure that we have a foreign key relation, pointing from CascadePage onto CMSPage.
+        """
+        try:
+            return page_content.cascadepagecontent
+        except cls.DoesNotExist:
+            return cls.objects.create(extended_object=page_content)
+
+    @classmethod
+    def delete_cascade_element(cls, instance=None, **kwargs):
+        if isinstance(instance, CascadeModelBase):
+            try:
+                instance.placeholder.page.cascadepage.glossary['element_ids'][instance.language].pop(str(instance.pk))
+                instance.placeholder.page.cascadepage.save()
+            except (AttributeError, KeyError):
+                pass
+
+extension_pool.register(CascadePageContent)
+models.signals.pre_delete.connect(CascadePageContent.delete_cascade_element, dispatch_uid='delete_cascade_element')
