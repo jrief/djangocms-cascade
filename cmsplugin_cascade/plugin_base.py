@@ -208,7 +208,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
 
     class Media:
         css = {'all': ['cascade/css/admin/partialfields.css', 'cascade/css/admin/editplugin.css']}
-        js = ['cascade/js/underscore.js', 'cascade/js/ring.js']
+        js = []
 
     def __init__(self, model=None, admin_site=None):
         super().__init__(model, admin_site)

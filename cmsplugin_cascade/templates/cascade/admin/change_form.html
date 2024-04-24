@@ -16,6 +16,8 @@
 
 {% block after_field_sets %}
 	{{ block.super }}
+	<script src="{{ STATIC_URL }}cascade/js/underscore.js"></script>
+	<script src="{{ STATIC_URL }}cascade/js/ring.js"></script>
 	<script type="text/javascript">
 	django.cascade = django.cascade || {};
 	django.cascade.page_sections_url = "{% url 'admin:get_page_sections' %}";
@@ -33,5 +35,6 @@
 	};
 	django.cascade.fetch_fonticons_url = "{% url 'admin:fetch_fonticons' %}";
 	{% endif %}
+	_.noConflict();
 	</script>
 {% endblock %}
