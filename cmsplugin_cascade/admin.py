@@ -143,9 +143,9 @@ class CascadePageContentAdmin(PageContentExtensionAdmin):
         try:
             page_content = page.get_content_obj(language, fallback=True)
             element_ids = page_content.cascadepagecontent.glossary['element_ids']
-            for key, val in element_ids.items():
+            for val in element_ids.values():
                 if val:
-                    choices.append((key, val))
+                    choices.append((val, val))
         except (PageContent.DoesNotExist, self.model.DoesNotExist, KeyError):
             pass
         return JsonResponse({'element_ids': choices})
