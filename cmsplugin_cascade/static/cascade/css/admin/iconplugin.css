@@ -1,3 +1,6 @@
+.form-row.field-symbol .flex-container {
+	flex-direction: column;
+}
 .form-row.field-symbol h2 {
 	margin: 16px 0 8px;
 }
