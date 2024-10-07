@@ -69,7 +69,7 @@ class CascadeModelBase(CMSPlugin):
                     continue
 
     def get_siblings(self):
-        return self._meta.model.objects.filter(parent=self.parent).order_by('position')
+        return self._meta.model.objects.filter(placeholder=self.placeholder, parent=self.parent).order_by('position')
 
     def get_parent_glossary(self):
         """
