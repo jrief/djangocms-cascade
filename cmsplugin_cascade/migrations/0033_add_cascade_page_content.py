@@ -44,7 +44,6 @@ def forwards(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0035_auto_20230822_2208'),
         ('cmsplugin_cascade', '0032_alter_cascadeclipboard_id_alter_cascadepage_id_and_more'),
     ]
 
