@@ -274,12 +274,6 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         return SafeText()
 
     @classmethod
-    def translate(cls, translator, instance, target_language, source_language=None):
-        """
-        Hook to translate the plugin's content into a different language using a translator.
-        """
-
-    @classmethod
     def sanitize_model(cls, instance):
         """
         This method is called, before the model is written to the database. It can be overloaded
@@ -314,7 +308,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
     @classmethod
     def translate(cls, translator, instance, target_language, source_language=None):
         """
-        Hook to translate the given instance.
+        Hook to translate the plugin's content into a different language using a translator.
         """
 
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
