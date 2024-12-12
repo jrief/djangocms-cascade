@@ -124,11 +124,8 @@ class CascadeClipboardPlugin(CMSPluginBase):
         new_plugins = cb_placeholder_instance.placeholder_ref.get_plugins()
         new_plugins.update(placeholder=placeholder)
 
-        # reorder root plugins in placeholder
-        root_plugins = placeholder.get_plugins(language).filter(parent__isnull=True).order_by('changed_date')
-        for position, plugin in enumerate(root_plugins.iterator()):
-            plugin.update(position=position)
-        placeholder.mark_as_dirty(language, clear_cache=False)
+        # until CMS3 root plugins in placeholder were reordered by their changed_date
+        # this functionality does not work in CMS4 anymore, and has been removed
 
         # create a list of pasted plugins to be added to the structure view
         all_plugins = placeholder.get_plugins(language)
