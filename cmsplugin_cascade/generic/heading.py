@@ -41,12 +41,12 @@ class HeadingPlugin(CascadePluginBase):
         return content
 
     @classmethod
-    def translate(cls, translator, instance, target_language, source_language=None):
+    def translate(cls, translator, instance, target_language, **extra_kwargs):
         if content := instance.glossary.get('content'):
             result = translator.translate_text(
                 content,
-                source_lang=source_language,
                 target_lang=target_language,
+                **extra_kwargs,
             )
             instance.glossary['content'] = result.text
             instance.save(update_fields=['glossary'])

@@ -306,7 +306,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         """
 
     @classmethod
-    def translate(cls, translator, instance, target_language, source_language=None):
+    def translate(cls, translator, instance, target_language, **extra_kwargs):
         """
         Hook to translate the plugin's content into a different language using a translator.
         """

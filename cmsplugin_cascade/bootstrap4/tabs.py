@@ -89,12 +89,12 @@ class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
         return mark_safe(content)
 
     @classmethod
-    def translate(cls, translator, instance, target_language, source_language=None):
+    def translate(cls, translator, instance, target_language, **extra_kwargs):
         if tab_title := instance.glossary.get('tab_title'):
             result = translator.translate_text(
                 tab_title,
-                source_lang=source_language,
                 target_lang=target_language,
+                **extra_kwargs,
             )
             instance.glossary['tab_title'] = result.text
             instance.save(update_fields=['glossary'])
