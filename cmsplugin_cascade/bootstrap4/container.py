@@ -4,7 +4,7 @@ from django.forms import widgets
 from django.forms.fields import BooleanField, ChoiceField, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.text import format_lazy
-from django.utils.translation import gettext, gettext_lazy as _, ngettext
+from django.utils.translation import gettext, gettext_lazy as _, ngettext, ngettext_lazy
 
 from cms.plugin_pool import plugin_pool
 from entangled.forms import EntangledModelFormMixin
@@ -209,7 +209,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         breakpoints = container.glossary['breakpoints']
 
         width_fields, offset_fields, reorder_fields, responsive_fields = {}, {}, {}, {}
-        units = [ngettext_lazy("{} unit", "{} units", i).format(i) for i in range(0, 13)]
+        units = [ngettext("{} unit", "{} units", i).format(i) for i in range(0, 13)]
         previous_devices, previous_label = '', ''
         for bp in breakpoints:
             try:
