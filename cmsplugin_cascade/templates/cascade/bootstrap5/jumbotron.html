@@ -1,0 +1,41 @@
+{% load l10n cascade_tags thumbnail sekizai_tags %}
+
+{% addtoblock "css" %}{% localize off %}
+<style>
+{% for elem in instance.element_heights %}
+@media{{ elem.media }} {
+	#cascadeelement_id-{{ instance.pk }} {
+		height: {{ elem.height }};
+	}
+}
+{% endfor %}
+#cascadeelement_id-{{ instance.pk }} {
+	{{ instance.background_color }}{% if instance.image %}
+	{{ instance.background_attachment }}
+	{{ instance.background_position }}
+	{{ instance.background_repeat }}
+	{{ instance.background_size }}{% endif %}
+	{{ instance.inline_styles }}
+}
+{% if instance.image %}
+	{% for elem in elements %}
+		{% thumbnail instance.image elem.size crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
+			{% if elem.size2 %}{% thumbnail instance.image elem.size2 zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb2 %}{% endif %}
+@media{{ elem.media }} {
+	#cascadeelement_id-{{ instance.pk }} {
+		background-image: url({{ thumb.url }});{% if thumb2 %}{% for imgage_set in CSS_PREFIXES.image_set %}
+		background-image: {{ imgage_set }}(url({{ thumb.url }}) 1x, url({{ thumb2.url }}) 2x);{% endfor %}{% endif %}
+	}
+}
+	{% endfor %}
+{% endif %}
+</style>
+{% endlocalize %}{% endaddtoblock %}
+
+{% localize off %}{% spaceless %}
+<div id="cascadeelement_id-{{ instance.pk }}" class="{{ instance.css_classes }}">
+	{% for plugin in instance.child_plugin_instances %}
+		{% render_plugin plugin %}
+	{% endfor %}
+</div>  
+{% endspaceless %}{% endlocalize %}

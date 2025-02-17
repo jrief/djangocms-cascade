@@ -1,0 +1,8 @@
+{% load cascade_tags %}{% spaceless %}
+{% with inline_styles=instance.inline_styles %}
+<div class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
+{% for child in instance.child_plugin_instances %}
+	{% render_plugin child %}
+{% endfor %}
+</div>
+{% endwith %}{% endspaceless %}

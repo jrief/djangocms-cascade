@@ -1,0 +1,11 @@
+{% load sekizai_tags %}
+{% if stylesheet_url %}{% addtoblock "css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}{% endif %}
+{% spaceless %}
+{% with instance_link=instance.link tag_type=instance.tag_type css_classes=instance.css_classes inline_styles=instance.inline_styles %}
+{% if instance_link %}<a href="{{ instance_link }}" {{ link_html_tag_attributes }}>{% endif %}
+{% if tag_type %}<{{ tag_type }}{% if css_classes %} class="{{ css_classes }}"{% endif %}{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>{% endif %}
+	<span {{ icon_font_attrs }}></span>
+{% if tag_type %}</{{ tag_type }}>{% endif %}
+{% if instance_link %}</a>{% endif %}
+{% endwith %}
+{% endspaceless %}
