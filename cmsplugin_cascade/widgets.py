@@ -91,7 +91,7 @@ class JSONMultiWidget(widgets.MultiWidget):
 
 
 class NumberInputWidget(widgets.NumberInput):
-    validation_pattern = re.compile('^-?\d+(\.\d{1,2})?$')
+    validation_pattern = re.compile(r'^-?\d+(\.\d{1,2})?$')
     required_message = _("In '%(label)s': This field is required.")
     invalid_message = _("In '%(label)s': Value '%(value)s' shall contain a valid decimal number.")
 
@@ -122,7 +122,7 @@ class AColorPickerMixin:
 
     @classmethod
     def rgb2hex(cls, val):
-        match = re.search('rgb[a]?\((\d+),\s*(\d+),\s*(\d+)[^)]*\)', val)
+        match = re.search(r'rgb[a]?\((\d+),\s*(\d+),\s*(\d+)[^)]*\)', val)
         if match:
             val = "#{:02x}{:02x}{:02x}".format(*[int(m) for m in match.groups()])
         return val
