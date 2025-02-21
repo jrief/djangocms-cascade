@@ -1,4 +1,4 @@
-from cmsplugin_cascade.bootstrap5.grid import Breakpoint
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.fields import MultiSizeField
 
 

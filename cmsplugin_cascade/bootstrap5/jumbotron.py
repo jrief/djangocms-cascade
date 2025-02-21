@@ -12,7 +12,7 @@ from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.fields import ColorField, MultiSizeField, CascadeImageField
 from cmsplugin_cascade.image import ImagePropertyMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.bootstrap5.container import ContainerGridMixin
+# from cmsplugin_cascade.bootstrap5.container import ContainerGridMixin
 from cmsplugin_cascade.bootstrap5.fields import BootstrapMultiSizeField
 from cmsplugin_cascade.bootstrap5.picture import get_picture_elements
 
@@ -86,13 +86,13 @@ class JumbotronFormMixin(EntangledModelFormMixin):
         ('text-bg-light', _("Light with contrasting color")),
         ('text-bg-dark', _("Dark with contrasting color")),
     ]
-    
-    style = ChoiceField(
-        label=_("Style"),
-        choices=JUMBOTRON_STYLE_CHOICES,
-        initial=JUMBOTRON_STYLE_CHOICES[0][0],
-    )
-    
+
+    # style = ChoiceField(
+    #     label=_("Style"),
+    #     choices=JUMBOTRON_STYLE_CHOICES,
+    #     initial=JUMBOTRON_STYLE_CHOICES[0][0],
+    # )
+
     fluid = BooleanField(
         label=_("Is fluid"),
         initial=True,
@@ -170,10 +170,13 @@ class JumbotronFormMixin(EntangledModelFormMixin):
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['style', 'fluid', 'background_color', 'element_heights', 'image_file',
-                                         'background_repeat', 'background_attachment',
-                                         'background_vertical_position', 'background_horizontal_position',
-                                         'background_size', 'background_width_height']}
+        entangled_fields = {
+            'glossary': [
+                'fluid', 'background_color', 'element_heights', 'image_file', 'background_repeat',
+                'background_attachment', 'background_vertical_position', 'background_horizontal_position',
+                'background_size', 'background_width_height'
+            ]
+        }
 
     def validate_optional_field(self, name):
         field = self.fields[name]
@@ -203,7 +206,7 @@ class JumbotronFormMixin(EntangledModelFormMixin):
 class BootstrapJumbotronPlugin(BootstrapPluginBase):
     name = _("Jumbotron")
     default_css_class = 'p-3'
-    model_mixins = (ContainerGridMixin, ImagePropertyMixin, ImageBackgroundMixin)
+    model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
     require_parent = False
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     allow_children = True

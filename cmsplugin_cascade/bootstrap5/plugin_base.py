@@ -23,3 +23,11 @@ class BootstrapPluginBase(CascadePluginBase):
                 template = render_template.format('')
                 return os.path.normpath(template)
         return render_template
+
+    @classmethod
+    def get_breakpoints(cls, instance):
+        """
+        Return the list of applied breakpoints defined in the parent container.
+        """
+        container, _ = instance.get_ancestors().filter(plugin_type='BootstrapContainerPlugin').first().get_plugin_instance()
+        return container.glossary.get('breakpoints', []) if container else []

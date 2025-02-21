@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.bootstrap5.grid import Breakpoint
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.bootstrap5.utils import get_image_tags, IMAGE_RESIZE_OPTIONS, IMAGE_SHAPE_CHOICES
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
 from cmsplugin_cascade.fields import SizeField

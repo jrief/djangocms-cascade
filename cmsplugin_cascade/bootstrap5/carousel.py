@@ -8,7 +8,7 @@ from django.utils.translation import gettext, gettext_lazy as _, ngettext
 from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.fields import BootstrapMultiSizeField
-from cmsplugin_cascade.bootstrap5.grid import Breakpoint
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.bootstrap5.picture import get_picture_elements
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap5.utils import IMAGE_RESIZE_OPTIONS
@@ -43,7 +43,7 @@ class CarouselSlidesFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
     container_max_heights = BootstrapMultiSizeField(
         label=_("Carousel heights"),
         allowed_units=['px'],
-        initial=['100px', '150px', '200px', '250px', '300px'],
+        initial=['100px', '150px', '200px', '250px', '300px', '350px'],
         help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
     )
 

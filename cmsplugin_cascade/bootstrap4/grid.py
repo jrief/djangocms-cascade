@@ -190,7 +190,7 @@ class Break:
 class Bootstrap4Container(list):
     """
     Abstracts a Bootstrap-4 container element, such as ``<div class="container">...</div>``, so that the minimum and
-    maximum widths each each child row can be computed.
+    maximum widths for each each child row can be computed.
     Each container object is a list of one to many ``Bootstrap4Row`` instances.
     In order to model a "fluid" container, use ``fluid_bounds`` during construction.
     """

@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.bootstrap5.grid import Breakpoint
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.bootstrap5.utils import get_picture_elements, IMAGE_RESIZE_OPTIONS, IMAGE_SHAPE_CHOICES
 from cmsplugin_cascade.bootstrap5.fields import BootstrapMultiSizeField
 from cmsplugin_cascade.image import ImageFormMixin, ImagePropertyMixin
@@ -29,7 +29,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
         required=False,
         require_all_fields=False,
         allowed_units=['%'],
-        initial=['0%', '0%', '0%', '0%', '0%'],
+        initial=['0%', '0%', '0%', '0%', '0%', '0%'],
         help_text=_("Magnification of picture in percent for distinct Bootstrap's breakpoints."),
     )
 

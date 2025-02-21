@@ -3,7 +3,7 @@ from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade.utils import CascadeUtilitiesMixin
-from cmsplugin_cascade.bootstrap5.grid import Breakpoint
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 
 
 class BootstrapUtilities:

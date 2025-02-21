@@ -29,7 +29,7 @@ def get_widget_choices():
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
-    template_name = 'cascade/admin/widgets/container_breakpoints.html'
+    template_name = 'cascade/admin/widgets/bs4_container_breakpoints.html'
 
 
 class ContainerFormMixin(EntangledModelFormMixin):
