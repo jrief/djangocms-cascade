@@ -44,46 +44,38 @@ def get_image_tags(instance):
     else:
         subject_location = None
     tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
-    if is_responsive:
-        image_width = parse_responsive_length(instance.glossary.get('image_width_responsive') or '100%')
-        assert(image_width[1]), "The given image has no valid width"
-        if image_width[1] != 1.0:
-            tags['extra_styles'].update({'max-width': '{:.0f}%'.format(100 * image_width[1])})
-    else:
-        image_width = parse_responsive_length(instance.glossary['image_width_fixed'])
-        if not image_width[0]:
-            image_width = (instance.image.width, image_width[1])
+    # if is_responsive:
+    #     image_width = parse_responsive_length(instance.glossary.get('image_width_responsive') or '100%')
+    #     assert(image_width[1]), "The given image has no valid width"
+    #     if image_width[1] != 1.0:
+    #         tags['extra_styles'].update({'max-width': '{:.0f}%'.format(100 * image_width[1])})
+    # else:
+    #     image_width = parse_responsive_length(instance.glossary['image_width_fixed'])
+    #     if not image_width[0]:
+    #         image_width = (instance.image.width, image_width[1])
     try:
         image_height = parse_responsive_length(instance.glossary['image_height'])
     except KeyError:
         image_height = (None, None)
-    if is_responsive:
-        column_bounds_min = instance.glossary['column_bounds']['min']
-        if 'high_resolution' in resize_options:
-            column_bounds_max = 2 * instance.glossary['column_bounds']['max']
-        else:
-            column_bounds_max = instance.glossary['column_bounds']['max']
-        num_steps = min(int((column_bounds_max - column_bounds_min) / app_settings.RESPONSIVE_IMAGE_STEP_SIZE),
-                        app_settings.RESPONSIVE_IMAGE_MAX_STEPS)
-        step_width, max_width = (column_bounds_max - column_bounds_min) / num_steps, 0
-        for step in range(0, num_steps + 1):
-            width = round(column_bounds_min + step_width * step)
-            max_width = max(max_width, width)
+    #if is_responsive:
+        for width in app_settings.RESPONSIVE_IMAGE_WIDTHS:
             size = get_image_size(width, image_height, aspect_ratio)
             key = '{0}w'.format(*size)
-            tags['srcsets'][key] = {'size': size, 'crop': crop, 'upscale': upscale,
-                                    'subject_location': subject_location}
+            tags['srcsets'][key] = {
+                'size': size,
+                'crop': crop,
+                'upscale': upscale,
+                'subject_location': subject_location,
+            }
         tags['sizes'] = instance.glossary['media_queries'].values()
         # use an existing image as fallback for the <img ...> element
-        if not max_width > 0:
-            logger.warning('image tags: image max width is zero')
-        size = (int(round(max_width)), int(round(max_width * aspect_ratio)))
-    else:
-        size = get_image_size(image_width[0], image_height, aspect_ratio)
-        if 'high_resolution' in resize_options:
-            tags['srcsets']['1x'] = {'size': size, 'crop': crop, 'upscale': upscale,
-                                     'subject_location': subject_location}
-            tags['srcsets']['2x'] = dict(tags['srcsets']['1x'], size=(size[0] * 2, size[1] * 2))
+        size = (int(round(width)), int(round(width * aspect_ratio)))
+    # else:
+    #     size = get_image_size(width, image_height, aspect_ratio)
+    #     if 'high_resolution' in resize_options:
+    #         tags['srcsets']['1x'] = {'size': size, 'crop': crop, 'upscale': upscale,
+    #                                  'subject_location': subject_location}
+    #         tags['srcsets']['2x'] = dict(tags['srcsets']['1x'], size=(size[0] * 2, size[1] * 2))
     tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
     return tags
 

@@ -1,0 +1,6 @@
+{% load i18n admin_urls %}
+<div class="submit-row">
+{% block submit-row %}
+{% if show_save %}<button type="button" class="button default" form="{{ form.form_id }}">{% translate 'Save' %}</button>{% endif %}
+{% endblock %}
+</div>

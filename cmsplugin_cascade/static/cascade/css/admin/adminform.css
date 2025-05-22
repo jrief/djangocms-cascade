@@ -1,0 +1,15 @@
+django-formset .form-row {
+  display: flex;
+  flex-direction: column;
+}
+django-formset .form-row label {
+  width: auto;
+  padding: 4px 0;
+}
+django-formset .form-row div.help {
+  margin-left: unset;
+  padding-left: unset;
+}
+django-formset .aligned .dj-field-errors {
+  margin-left: 0;
+}

@@ -2,17 +2,21 @@ import re
 
 from django.core.exceptions import ValidationError
 from django.forms import widgets
-from django.forms.fields import ChoiceField, MultipleChoiceField
+from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _, ngettext, ngettext_lazy
 
 from cms.models import CMSPlugin
 from cms.plugin_pool import plugin_pool
-from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+
+from formset.forms import ModelForm
+from formset.widgets import Selectize
+
 from .plugin_base import BootstrapPluginBase
+from ..models import CascadeElement
 
 
 def get_widget_choices():
@@ -36,7 +40,33 @@ class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
         return context
 
 
-class ContainerFormMixin(EntangledModelFormMixin):
+class GridModelForm(ModelForm):
+    title_attribute = CharField(
+        label=_("Container Title"),
+        required=False,
+        help_text=_("Caption text added to the 'title' attribute of this container element."),
+    )
+    show_title = BooleanField(
+        label=_("Show Title Attribute"),
+        required=False,
+        help_text=_("Show the container title as a heading element."),
+    )
+
+    class Meta:
+        model = CascadeElement
+        fields = '__all__'
+        widgets = {
+            'shared_glossary': Selectize(search_lookup='identifier__icontains')
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data['show_title'] and not cleaned_data['title_attribute']:
+            self.add_error('title_attribute', _("The title must be set, if the title attribute is shown."))
+        return cleaned_data
+
+
+class ContainerForm(GridModelForm):
     breakpoints = MultipleChoiceField(
         label=_("Available Breakpoints"),
         choices=get_widget_choices(),
@@ -59,10 +89,11 @@ class ContainerFormMixin(EntangledModelFormMixin):
         help_text=_(
             "Add <code>.container-*</code> class to set the most basic layout element in Bootstrap."
         ),
+        widget=Selectize(),
     )
 
-    class Meta:
-        entangled_fields = {'glossary': ['breakpoints', 'layout']}
+    class Meta(GridModelForm.Meta):
+        fields_map = {'glossary': ['title_attribute', 'show_title', 'breakpoints', 'layout']}
 
     def clean_layout(self):
         pattern = re.compile(r'^container-(sm|md|lg|xl|xxl)$')
@@ -76,7 +107,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
     parent_classes = None
     require_parent = False
-    form = ContainerFormMixin
+    form = ContainerForm
     footnote_html = """<p>
     For more information about this <strong>Container</strong> component please refer to the
     <a href="https://getbootstrap.com/docs/5.3/layout/containers/" target="_new">Bootstrap documentation</a>.
@@ -84,11 +115,10 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        breakpoints = obj.glossary.get('breakpoints', [])
+        if title_attribute := obj.glossary.get('title_attribute'):
+            return title_attribute
         layout = obj.glossary.get('layout', '')
-        devices = ', '.join([str(bp.name) for bp in Breakpoint if bp.name in breakpoints])
-        content = gettext("{0} for {1}").format(layout, devices)
-        return mark_safe(content)
+        return mark_safe(f"<code>{layout}</code>")
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -106,10 +136,12 @@ plugin_pool.register_plugin(BootstrapContainerPlugin)
 class SelectColumnsWidget(widgets.Select):
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
-        if value:
+        try:
             # disable all options for number of columns less than the current number
-            for k in range(0, value - 1):
+            for k in range(0, int(value) - 1):
                 context['widget']['optgroups'][k][1][0]['attrs'].setdefault('disabled', True)
+        except (TypeError, ValueError):
+            pass
         return context
 
 
@@ -125,7 +157,7 @@ class ColumnsChoiceField(ChoiceField):
         super().__init__(*args, choices=choices, **kwargs)
 
 
-class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+class BootstrapRowForm(ManageChildrenFormMixin, GridModelForm):
     """
     Form class to add non-materialized field to count the number of children.
     """
@@ -145,16 +177,16 @@ class BootstrapRowFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         help_text=_("Add <code>.row-cols-*</code> class to set the number of columns that best render the content (default breakpoint).")
     )
 
-    class Meta:
-        entangled_fields = {'glossary': ['row_columns']}
-        untangled_fields = ['num_children']
+    class Meta(GridModelForm.Meta):
+        fields = '__all__'
+        fields_map = {'glossary': ['title_attribute', 'show_title', 'row_columns']}
 
 
 class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
-    form = BootstrapRowFormMixin
+    form = BootstrapRowForm
     footnote_html = """<p>
     For more information about this <strong>Row</strong> component please refer to the
     <a href="https://getbootstrap.com/docs/5.3/layout/grid/" target="_new">Bootstrap documentation</a>.
@@ -162,9 +194,10 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
+        if title_attribute := obj.glossary.get('title_attribute'):
+            return title_attribute
         num_cols = obj.get_num_children()
-        content = ngettext("with {0} column", "with {0} columns", num_cols).format(num_cols)
-        return mark_safe(content)
+        return ngettext("with {0} column", "with {0} columns", num_cols).format(num_cols)
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -180,18 +213,19 @@ class BootstrapRowPlugin(BootstrapPluginBase):
             css_classes.append(f'justify-content-{justify_content}')
         return css_classes
 
-    def get_form(self, request, obj=None, **kwargs):
-        if obj:
-            breakpoints = self.get_breakpoints(obj)
-        elif 'plugin_parent' in request.GET:
-            breakpoints = self.get_breakpoints(CMSPlugin.objects.get(pk=request.GET['plugin_parent']))
+    def get_model_form(self):
+        if self.object:
+            breakpoints = self.get_breakpoints(self.object)
+        elif 'plugin_parent' in self.request.GET:
+            breakpoints = self.get_breakpoints(CMSPlugin.objects.get(pk=self.request.GET['plugin_parent']))
         else:
             breakpoints = []
         attrs, glossary_fields = {}, []
 
         # define the Row Columns fields
         for bp in breakpoints:
-            assert bp != 'xs', "Default breakpoint not expected here"
+            if bp == 'xs':
+                continue
             field_name = f'row_columns_{bp}'
             attrs[field_name] = ColumnsChoiceField(
                 label=_("Row Columns for {}").format(Breakpoint[bp].label),
@@ -237,16 +271,14 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         )
         glossary_fields.append('justify_content')
 
-        attrs['Meta'] = type('Meta', (), {
-            'entangled_fields': {'glossary': glossary_fields},
-            'untangled_fields': ['num_children'],
+        model_form = super().get_model_form()
+        attrs['Meta'] = type('Meta', (model_form.Meta,), {
+            'fields_map': {'glossary': glossary_fields},
         })
-
-        form = type(self.form.__name__, self.form.__mro__, attrs)
-        form = super().get_form(request, obj, form=form, **kwargs)
-        if obj:
-            form.base_fields['num_children'].initial = obj.get_num_children()
-        return form
+        model_form = type(model_form.__name__, model_form.__mro__, attrs)
+        if self.object:
+            model_form.base_fields['num_children'].initial = self.object.get_num_children()
+        return model_form
 
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
@@ -262,6 +294,7 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     parent_classes = ['BootstrapRowPlugin']
     child_classes = ['BootstrapJumbotronPlugin']
     alien_child_classes = True
+    form = GridModelForm
     footnote_html = """<p>
     For more information about this <strong>Column</strong> component, please refer to the
     <a href="https://getbootstrap.com/docs/5.3/layout/columns/" target="_new">Bootstrap documentation</a>.
@@ -269,14 +302,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, obj):
-        return "… to be defined …"
-
-        width = obj.glossary.get('column_width')
-        if len(width) > 0:
-            content = gettext("width: {}").format(width)
-        else:
-            content = gettext("unknown width")
-        return mark_safe(content)
+        if title_attribute := obj.glossary.get('title_attribute'):
+            return title_attribute
+        return mark_safe(gettext("<code>col-{}</code>").format(obj.glossary.get('column_width', '')))
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -302,11 +330,11 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             css_classes.append(f'align-self-{align_self}')
         return css_classes
 
-    def get_form(self, request, obj=None, **kwargs):
-        if obj:
-            breakpoints = self.get_breakpoints(obj)
-        elif 'plugin_parent' in request.GET:
-            breakpoints = self.get_breakpoints(CMSPlugin.objects.get(pk=request.GET['plugin_parent']))
+    def get_model_form(self):
+        if self.object:
+            breakpoints = self.get_breakpoints(self.object)
+        elif 'plugin_parent' in self.request.GET:
+            breakpoints = self.get_breakpoints(CMSPlugin.objects.get(pk=self.request.GET['plugin_parent']))
         else:
             breakpoints = []
         attrs, glossary_fields = {}, []
@@ -411,10 +439,12 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         )
         glossary_fields.append('align_self')
 
-        attrs['Meta'] = type('Meta', (), {'entangled_fields': {'glossary': glossary_fields}})
-        form = type(self.form.__name__, (EntangledModelFormMixin,), attrs)
-        form = super().get_form(request, obj, form=form, **kwargs)
-        return form
+        model_form = super().get_model_form()
+        attrs['Meta'] = type('Meta', (model_form.Meta,), {
+            'fields_map': {'glossary': glossary_fields},
+        })
+        model_form = type(model_form.__name__, model_form.__mro__, attrs)
+        return model_form
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

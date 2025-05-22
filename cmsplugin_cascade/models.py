@@ -30,13 +30,11 @@ class SharedGlossary(models.Model):
         db_index=True,
         editable=False,
     )
-
     identifier = models.CharField(
         _("Identifier"),
         max_length=50,
         unique=True,
     )
-
     glossary = models.JSONField(
         null=True,
         blank=True,

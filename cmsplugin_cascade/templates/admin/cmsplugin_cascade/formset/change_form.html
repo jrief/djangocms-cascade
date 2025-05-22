@@ -1,0 +1,28 @@
+{% extends "admin/cms/usersettings/change_form.html" %}
+{# extends "admin/formset/change_form.html" #}
+{% load i18n admin_urls static formset_admin %}
+
+{% block extrahead %}
+	{{ block.super }}
+	<script src="{% url 'admin:jsi18n' %}"></script>
+	<script type="module" src="{% static 'formset/js/django-formset.js' %}"></script>
+	<script>window.parent.CMS.cascade = {...window.parent.CMS.cascade ?? {}, form_id: "{{ form.form_id }}"};</script>
+	{{ media }}
+{% endblock %}
+
+{% block content %}<div id="content-main">
+	{% block object-tools %}
+		{% if change and not is_popup %}
+	<ul class="object-tools">
+			{% block object-tools-items %}
+				{% change_form_object_tools %}
+			{% endblock %}
+	</ul>
+		{% endif %}
+	{% endblock %}
+	<django-formset endpoint="{{ request.path }}" csrf-token="{{ csrf_token }}" force-submission>
+		{{ form }}
+	{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+	</django-formset>
+</div>
+{% endblock %}
