@@ -54,10 +54,7 @@ class GridModelForm(ModelForm):
 
     class Meta:
         model = CascadeElement
-        fields = '__all__'
-        widgets = {
-            'shared_glossary': Selectize(search_lookup='identifier__icontains')
-        }
+        exclude = ['shared_glossary']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -181,16 +178,18 @@ class BootstrapRowForm(ManageChildrenFormMixin, GridModelForm):
         fields = '__all__'
         fields_map = {'glossary': ['title_attribute', 'show_title', 'row_columns']}
 
+    def save(self):
+        super().save()
+        child_glossary = {'column_width': '1'}
+        self.extend_children(BootstrapColumnPlugin, child_glossary=child_glossary)
+        return self.instance
+
 
 class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
     form = BootstrapRowForm
-    footnote_html = """<p>
-    For more information about this <strong>Row</strong> component please refer to the
-    <a href="https://getbootstrap.com/docs/5.3/layout/grid/" target="_new">Bootstrap documentation</a>.
-    </p>"""
 
     @classmethod
     def get_identifier(cls, obj):
@@ -276,15 +275,9 @@ class BootstrapRowPlugin(BootstrapPluginBase):
             'fields_map': {'glossary': glossary_fields},
         })
         model_form = type(model_form.__name__, model_form.__mro__, attrs)
-        if self.object:
+        if self.object and self.object.pk:
             model_form.base_fields['num_children'].initial = self.object.get_num_children()
         return model_form
-
-    def save_model(self, request, obj, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
-        super().save_model(request, obj, form, change)
-        child_glossary = {'xs-column-width': 'col'}
-        self.extend_children(obj, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
 

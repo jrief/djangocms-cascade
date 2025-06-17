@@ -10,7 +10,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			if (response?.ok) {
 				const innerHTML = await response.text();
 				document.body.setHTMLUnsafe(innerHTML);
-				document.defaultView.frameElement?.dispatchEvent(new Event('load'));
+				const Window = window.parent || window;
+				// the dataBridge is used to access plugin information from different resources
+				Window.CMS.API.Helpers.dataBridge = JSON.parse(document.getElementById('data-bridge').textContent);
+				// make sure we're doing after the "modal" mechanism kicked in
+				setTimeout(()=> {
+					// save current plugin
+					Window.CMS.API.Helpers.onPluginSave();
+					document.defaultView.frameElement?.dispatchEvent(new Event('load'));
+				}, 100); // eslint-disable-line no-magic-numbers
 			} else {
 				document.defaultView.frameElement.style.display = 'block';
 			}

@@ -1,26 +1,38 @@
+from typing import Optional
+
 from django.forms import widgets, BooleanField, CharField
 from django.forms.fields import IntegerField
-from django.utils.translation import gettext_lazy as _, ngettext
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import Truncator
-from django.utils.html import escape
-from entangled.forms import EntangledModelFormMixin
+from django.utils.translation import gettext, gettext_lazy as _, ngettext
+
+from cms.models import Page, CMSPlugin
+from formset.forms import ModelForm
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
+
 from .plugin_base import BootstrapPluginBase
+from ..models import CascadeElement
 
 
-class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+class AccordionForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(
         min_value=1,
         initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
-        label=_("Groups"),
-        help_text=_("Number of groups for this accordion."),
+        label=_("Items"),
+        help_text=_("Number of items for this accordion."),
     )
-
+    first_is_open = BooleanField(
+         label=_("First open"),
+         initial=True,
+         required=False,
+         help_text=_("Start with the first item open.")
+    )
     close_others = BooleanField(
          label=_("Close others"),
          initial=True,
@@ -28,27 +40,27 @@ class AccordionFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
          help_text=_("Open only one item at a time.")
     )
 
-    first_is_open = BooleanField(
-         label=_("First open"),
-         initial=True,
-         required=False,
-         help_text=_("Start with the first item open.")
-    )
-
     class Meta:
-        untangled_fields = ['num_children']
-        entangled_fields = {'glossary': ['close_others', 'first_is_open']}
+        model = CascadeElement
+        exclude = ['shared_glossary']
+        fields_map = {'glossary': ['first_is_open', 'close_others']}
+
+    def save(self):
+        super().save()
+        child_glossary = {'heading': gettext("Extra Accordion")}
+        self.extend_children(BootstrapAccordionItemPlugin, child_glossary=child_glossary)
+        return self.instance
 
 
 class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     name = _("Accordion")
     default_css_class = 'accordion'
     require_parent = True
-    parent_classes = ['BootstrapColumnPlugin']
-    direct_child_classes = ['BootstrapAccordionGroupPlugin']
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
+    direct_child_classes = child_classes = ['BootstrapAccordionItemPlugin']
     allow_children = True
-    form = AccordionFormMixin
-    render_template = 'cascade/bootstrap5/{}accordion.html'
+    form = AccordionForm
+    render_template = 'cascade/bootstrap5/accordion.html'
 
     @classmethod
     def get_identifier(cls, obj):
@@ -64,40 +76,32 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
         })
         return context
 
-    def save_model(self, request, obj, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
-        super().save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, BootstrapAccordionGroupPlugin)
-
 plugin_pool.register_plugin(BootstrapAccordionPlugin)
 
 
-class AccordionGroupFormMixin(EntangledModelFormMixin):
+class AccordionItemForm(ModelForm):
     heading = CharField(
         label=_("Heading"),
         widget=widgets.TextInput(attrs={'size': 80}),
     )
 
-    body_padding = BooleanField(
-         label=_("Body with padding"),
-         initial=True,
-         required=False,
-         help_text=_("Add standard padding to item body."),
-    )
-
     class Meta:
-        entangled_fields = {'glossary': ['heading', 'body_padding']}
+        model = CascadeElement
+        exclude = ['shared_glossary']
+        fields_map = {'glossary': ['heading']}
 
     def clean_heading(self):
         return escape(self.cleaned_data['heading'])
 
 
-class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
-    name = _("Accordion Group")
+class BootstrapAccordionItemPlugin(TransparentContainer, BootstrapPluginBase):
+    name = _("Accordion Item")
     direct_parent_classes = parent_classes = ['BootstrapAccordionPlugin']
-    render_template = 'cascade/generic/naked.html'
+    child_classes = None
+    allow_children = True
+    render_template = 'cascade/bootstrap5/accordion-item.html'
     require_parent = True
-    form = AccordionGroupFormMixin
+    form = AccordionItemForm
     alien_child_classes = True
 
     @classmethod
@@ -105,12 +109,17 @@ class BootstrapAccordionGroupPlugin(TransparentContainer, BootstrapPluginBase):
         heading = instance.glossary.get('heading', '')
         return Truncator(heading).words(3, truncate=' ...')
 
+    @classmethod
+    def get_child_classes(cls, slot, page: Optional[Page] = None, instance: Optional[CMSPlugin] = None):
+        child_classes = super(BootstrapAccordionItemPlugin, cls).get_child_classes(slot, page, instance)
+        return child_classes
+
     def render(self, context, instance, placeholder):
-        context = self.super(BootstrapAccordionGroupPlugin, self).render(context, instance, placeholder)
+        context = self.super(BootstrapAccordionItemPlugin, self).render(context, instance, placeholder)
         context.update({
             'heading': mark_safe(instance.glossary.get('heading', '')),
             'no_body_padding': not instance.glossary.get('body_padding', True),
         })
         return context
 
-plugin_pool.register_plugin(BootstrapAccordionGroupPlugin)
+plugin_pool.register_plugin(BootstrapAccordionItemPlugin)

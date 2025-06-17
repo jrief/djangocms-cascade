@@ -1,0 +1,18 @@
+{% load l10n cascade_tags %}
+
+{% localize off %}{% spaceless %}{% with inline_styles=instance.inline_styles parent_id=instance.parent.id plugin_id=instance.id %}
+<div class="accordion-item">
+	<h2 class="accordion-header">
+		<button class="accordion-button{% if not expanded %} collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#cmsplugin_{{ plugin_id }}" aria-expanded="{{ expanded|yesno:"true,false" }}" aria-controls="cmsplugin_{{ instance.id }}">
+			{{ heading }}
+		</button>
+	</h2>
+	<div id="cmsplugin_{{ plugin_id }}" class="accordion-collapse collapse{% if expanded %} show{% endif %}"{% if close_others %} data-bs-parent="#cmsplugin_{{ parent_id }}"{% endif %}>
+		<div class="accordion-body">
+{% for child_plugin in instance.child_plugin_instances %}
+	{% render_plugin child_plugin %}
+{% endfor %}
+		</div>
+	</div>
+</div>
+{% endwith %}{% endspaceless %}{% endlocalize %}

@@ -1,6 +1,8 @@
 import os
 
 from django.template.loader import get_template, TemplateDoesNotExist
+
+from cms.models import Placeholder
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.conf import get_cms_setting
 
@@ -45,19 +47,6 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
                 template = render_template.format('')
                 return os.path.normpath(template)
         return render_template
-
-    def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
-        """
-        Extend the number of children so that the parent object contains wanted children.
-        No child will be removed if wanted_children is smaller than the current number of children.
-        """
-        from cms.api import add_plugin
-        current_children = parent.get_num_children()
-        for _ in range(current_children, wanted_children):
-            child = add_plugin(parent.placeholder, child_class, parent.language, target=parent)
-            if isinstance(child_glossary, dict):
-                child.glossary.update(child_glossary)
-            child.save()
 
     @classmethod
     def get_breakpoints(cls, instance):
@@ -110,4 +99,21 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def render_success_response(self):
-        return self.render_close_frame(self.request, self.object, False)  # TODO: check value of `add`
+        add = 'plugin_type' in self.request.GET
+        return self.render_close_frame(self.request, self.object, add)
+
+    def _update_collection_view(self, view_kwargs):
+        instance = view_kwargs['instance']
+        if instance.pk is None:
+            initial = view_kwargs['initial']
+            instance.plugin_type = initial['plugin_type']
+            instance.language = initial['plugin_language']
+            instance.parent_id = initial.get('plugin_parent')
+            instance.placeholder = Placeholder.objects.get(id=initial['placeholder_id'])
+            instance.position = instance.placeholder.get_next_plugin_position(
+                language=initial['plugin_language'],
+                parent=instance.parent,
+                insert_order='last',
+            )
+            instance.placeholder.add_plugin(instance)
+        return super()._update_collection_view(view_kwargs)

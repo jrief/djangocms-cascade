@@ -11,7 +11,7 @@ from django.core.cache import caches
 from django.template.exceptions import TemplateDoesNotExist
 from django.contrib.staticfiles import finders
 from django.utils.safestring import mark_safe
-from classytags.arguments import Argument
+from classytags.arguments import Argument, MultiKeywordArgument
 from classytags.core import Options, Tag
 from cmsplugin_cascade.strides import StrideContentRenderer
 
@@ -71,10 +71,11 @@ class RenderPlugin(Tag):
     """
     name = 'render_plugin'
     options = Options(
-        Argument('plugin')
+        Argument('plugin'),
+        MultiKeywordArgument('kwargs', required=False, default={}),
     )
 
-    def render_tag(self, context, plugin):
+    def render_tag(self, context, plugin, kwargs):
         if not plugin:
             return ''
 
@@ -91,6 +92,7 @@ class RenderPlugin(Tag):
         if isinstance(content_renderer, StructureRenderer):
             return content_renderer.render_plugin(plugin)
         else:
+            context.update(kwargs)
             return content_renderer.render_plugin(
                 instance=plugin,
                 context=context,
