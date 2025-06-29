@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from filer.fields.file import FilerFileField
 from cms.extensions import PageContentExtension, PageExtension
 from cms.extensions.extension_pool import extension_pool
+from cms.models.pluginmodel import CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models_base import CascadeModelBase
 from cmsplugin_cascade import app_settings
@@ -440,17 +441,30 @@ class CascadePageContent(PageContentExtension):
     def __str__(self):
         return self.extended_object.title
 
-    def copy(self, target, language=None):
+    def Xcopy(self, target, language=None):
         if self.extended_object:
             return self
         return super().copy(target, language)
 
     def copy_relations(self, oldinstance):
         """
-        Copy the glossary from the old instance to the new instance.
+        Copy glossary and related anchors from the old instance to the new instance.
         """
         self.glossary = dict(oldinstance.glossary)
         self.save()
+        for anchor in oldinstance.anchors.all():
+            anchor.pk = None
+            anchor.content = self
+            # Update the anchor's CMSPlugin ID to point to the new instance
+            placeholder = self.extended_object.placeholders.get(slot=anchor.cms_plugin.placeholder.slot)
+            for plugin in placeholder.get_plugins():
+                plugin_instance, _ = plugin.get_plugin_instance()
+                if not isinstance(plugin_instance, CascadeElement):
+                    continue
+                if plugin_instance.glossary.get('element_id') == anchor.identifier:
+                    anchor.cms_plugin_id = plugin.id
+                    anchor.save()
+                    break
 
     @classmethod
     def assure_relation(cls, page_content):
@@ -462,14 +476,36 @@ class CascadePageContent(PageContentExtension):
         except cls.DoesNotExist:
             return cls.objects.create(extended_object=page_content)
 
-    @classmethod
-    def delete_cascade_element(cls, instance=None, **kwargs):
-        if isinstance(instance, CascadeModelBase):
-            try:
-                instance.placeholder.page.cascadepage.glossary['element_ids'][instance.language].pop(str(instance.pk))
-                instance.placeholder.page.cascadepage.save()
-            except (AttributeError, KeyError):
-                pass
-
 extension_pool.register(CascadePageContent)
-models.signals.pre_delete.connect(CascadePageContent.delete_cascade_element, dispatch_uid='delete_cascade_element')
+
+
+class PageContentAnchor(models.Model):
+    content = models.ForeignKey(
+        CascadePageContent,
+        related_name='anchors',
+        on_delete=models.CASCADE,
+    )
+    cms_plugin = models.OneToOneField(
+        CMSPlugin,
+        on_delete=models.CASCADE,
+        help_text=_("The CMS plugin this anchor is associated with."),
+    )
+    identifier = models.CharField(
+        _("Identifier"),
+        max_length=100,
+        help_text=_("A unique identifier for this anchor, used in the URL to link to this position."),
+    )
+
+    class Meta:
+        db_table = 'cmsplugin_cascade_anchor'
+        verbose_name = _("Page Content Anchor")
+        verbose_name_plural = _("Page Content Anchors")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content', 'identifier'],
+                name='unique_page_content_anchor',
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.content.extended_object.get_absolute_url()}#{self.identifier}"

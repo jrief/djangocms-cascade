@@ -1,6 +1,7 @@
 import os
 
 from django.template.loader import get_template, TemplateDoesNotExist
+from django.utils.safestring import SafeText
 
 from cms.models import Placeholder
 from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
@@ -68,6 +69,13 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
         >>> cls.super(MyPlugin, self).a_method()
         """
         return super(klass, instance)
+
+    @classmethod
+    def get_identifier(cls, instance):
+        """
+        Hook to return a description for the current model.
+        """
+        return SafeText()
 
     @classmethod
     def sanitize_model(cls, instance):

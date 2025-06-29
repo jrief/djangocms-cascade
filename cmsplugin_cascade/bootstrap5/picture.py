@@ -53,7 +53,7 @@ class BootstrapPictureFormMixin(ImageFormMixin):
 
 
 class BootstrapPicturePlugin(LinkPluginBase):
-    name = _("Picture")
+    name = _("Picture <picture>")
     module = 'Bootstrap'
     parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
     require_parent = True

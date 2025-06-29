@@ -10,17 +10,15 @@ class ImageFormMixin(EntangledModelFormMixin):
     image_file = CascadeImageField()
 
     image_title = CharField(
-        label=_('Image Title'),
+        label=_("Image Title"),
         required=False,
         help_text=_("Caption text added to the 'title' attribute of the <img> element."),
     )
-
     alt_tag = CharField(
-        label=_('Alternative Description'),
+        label=_("Alternative Description"),
         required=False,
         help_text=_("Textual description of the image added to the 'alt' tag of the <img> element."),
     )
-
     _image_properties = EntangledField()
 
     class Meta:

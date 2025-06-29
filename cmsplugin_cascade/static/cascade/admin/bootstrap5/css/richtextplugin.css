@@ -1,0 +1,29 @@
+.popup #content {
+  padding: 0;
+  height: 100%;
+}
+#content-main {
+  height: 100%;
+}
+#content-main .module {
+  height: 100%;
+  margin: 0;
+}
+#content-main .module > fieldset {
+  border: none;
+  height: 100%;
+}
+#content-main .module .dj-richtext-wrapper {
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  outline: none;
+}
+#content-main .module textarea[is=django-richtext] {
+  resize: none;
+}
+.form-row.field-body {
+  border: none;
+  padding: 0;
+  height: 100%;
+}

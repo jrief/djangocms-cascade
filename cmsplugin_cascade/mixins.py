@@ -87,4 +87,7 @@ class WithSortableInlineElementsMixin:
     def add_inline_elements(cls, instance, inlines):
         for order, inline_glossary in enumerate(inlines, 1):
             SortableInlineCascadeElement.objects.create(
-                cascade_element=instance, glossary=inline_glossary, order=order)
+                cascade_element=instance,
+                glossary=inline_glossary,
+                order=order,
+            )
