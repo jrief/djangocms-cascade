@@ -18,7 +18,27 @@ from finder.models.file import FileModel as FinderFileModel
 
 from formset.fieldsmapping import get_related_object
 from formset.forms import ModelForm
-from formset.widgets import Selectize
+from formset.widgets import PhoneNumberInput, Selectize
+
+
+class LinkTypeChoiceField(ChoiceField):
+    LINK_TYPE_CHOICES = [
+        ('cmspage', _("CMS Page")),
+        ('exturl', _("External URL")),
+        ('download', _("Download File")),
+        ('email', _("Mail To")),
+        ('phone', _("Phone Number")),
+    ]
+    widget = RadioSelect()
+
+    def __init__(self, *args, **kwargs):
+        link_type_choices = []
+        if kwargs.get('required') is False:
+            link_type_choices.append(('', _("No Link")))
+        link_type_choices.extend(self.LINK_TYPE_CHOICES)
+        kwargs.setdefault('label', _("Link Type"))
+        kwargs.setdefault('initial', link_type_choices[0][0])
+        super().__init__(choices=link_type_choices, *args, **kwargs)
 
 
 class PageChoiceField(ModelChoiceField):
@@ -52,7 +72,10 @@ class AnchorFieldFilterSet(FilterSet):
 class AnchorChoiceField(ModelChoiceField):
     widget = Selectize(
         use_filter_set=AnchorFieldFilterSet,
-        attrs={'df-show': "link_type === 'cmspage'"},
+        attrs={
+            'df-show': "link_type === 'cmspage'",
+            'df-require': "link_type === 'cmspage'",
+        },
     )
 
     def __init__(self, *args, **kwargs):
@@ -63,62 +86,79 @@ class AnchorChoiceField(ModelChoiceField):
 
 
 class TextLinkForm(ModelForm):
-    LINK_TYPE_CHOICES = [
-        ('cmspage', _("CMS Page")),
-        ('download', _("Download File")),
-        ('exturl', _("External URL")),
-        ('email', _("Mail To")),
-    ]
-
     link_content = CharField(
-        required=False,
         label=_("Link Content"),
         widget=TextInput(attrs={'size': 50}),
     )
-    link_type = ChoiceField(
-        label=_("Link"),
-        help_text=_("Type of link"),
-        widget=RadioSelect(),
-    )
+    link_type = LinkTypeChoiceField()
     cms_page = PageChoiceField(
-        required=False,
         label='',
+        required=False,
         help_text=_("An internal link onto any CMS page of this site"),
         widget=Selectize(
             search_lookup='page__title__icontains',
-            attrs={'placeholder': _("CMS-Page"), 'df-show': "link_type === 'cmspage'"},
+            attrs={
+                'placeholder': _("CMS-Page"),
+                'df-show': "link_type === 'cmspage'",
+                'df-require': "link_type === 'cmspage'",
+            },
         ),
     )
     anchor = AnchorChoiceField(
-        required=False,
         label='',
+        required=False,
         empty_label=_("Page Root"),
         help_text=_("Page bookmark"),
     )
     ext_url = URLField(
-        required=False,
         label='',
+        required=False,
         help_text=_("An external link to any URL outside of this site"),
-        widget=URLInput(attrs={'size': 50, 'placeholder': "https://example.com", 'df-show': "link_type === 'exturl'"}),
+        widget=URLInput(attrs={
+            'size': 50,
+            'placeholder': "https://example.com",
+            'df-show': "link_type === 'exturl'",
+            'df-require': "link_type === 'exturl'"
+        }),
     )
     download_file = FinderFileField(
-        required=False,
         label='',
+        required=False,
         help_text=_("A link to a downloadable file"),
-        widget=FinderFileSelect(attrs={'df-show': "link_type === 'download'"}),
+        widget=FinderFileSelect(attrs={
+            'df-show': "link_type === 'download'",
+            'df-require': "link_type === 'download'",
+        }),
     )
-    email = EmailField(
-        required=False,
+    mail_to = EmailField(
         label='',
+        required=False,
         help_text=_("A link to an email address"),
-        widget=EmailInput(attrs={'size': 50, 'placeholder': "john@example.org", 'df-show': "link_type === 'email'"}),
+        widget=EmailInput(attrs={
+            'size': 50,
+            'placeholder': "john@example.org",
+            'df-show': "link_type === 'email'",
+            'df-require': "link_type === 'email'",
+        }),
+    )
+    phone_number = CharField(
+        label='',
+        required=False,
+        help_text=_("A phone number link"),
+        widget=PhoneNumberInput(attrs={
+            'df-show': "link_type === 'phone'",
+            'df-require': "link_type === 'phone'",
+        }),
     )
 
     class Meta:
         model = CascadeElement
         exclude = ['shared_glossary']
         fields_map = {
-            'glossary': ['link_content', 'link_type', 'cms_page', 'anchor', 'ext_url', 'download_file', 'email'],
+            'glossary': [
+                'link_content', 'link_type',
+                'cms_page', 'anchor', 'ext_url', 'download_file', 'mail_to', 'phone_number',
+            ],
         }
 
     def __init__(self, *args, **kwargs):
@@ -126,9 +166,9 @@ class TextLinkForm(ModelForm):
         if not getattr(self, 'require_link', True):
             link_type_choices.append(('', _("No Link")))
             self.declared_fields['link_type'].required = False
-        link_type_choices.extend(self.LINK_TYPE_CHOICES)
-        self.declared_fields['link_type'].choices = link_type_choices
-        self.declared_fields['link_type'].initial = link_type_choices[0][0]
+        # link_type_choices.extend(self.LINK_TYPE_CHOICES)
+        # self.declared_fields['link_type'].choices = link_type_choices
+        # self.declared_fields['link_type'].initial = link_type_choices[0][0]
         instance = kwargs.get('instance')
         # if instance and instance.glossary.get('link_type') == 'cmspage':
         #     self._preset_section(instance)
@@ -140,7 +180,7 @@ class TextLinkPlugin(BootstrapPluginBase):
     require_parent = True
     parent_classes = ['BootstrapColumnPlugin']
     allow_children = False
-    render_template = 'cascade/bootstrap5/link.html'
+    render_template = 'cascade/bootstrap5/hyperlink.html'
     form = TextLinkForm
     model_mixins = (LinkElementMixin,)
 
@@ -161,26 +201,23 @@ class TextLinkPlugin(BootstrapPluginBase):
             return '{ext_url}'.format(**obj.glossary)
         if linktype == 'email':
             return 'mailto:{mail_to}'.format(**obj.glossary)
-        if linktype == 'phonenumber':
+        if linktype == 'phone':
             return 'tel:{phone_number}'.format(**obj.glossary)
 
         # otherwise resolve by model
+        href = 'javascript:void(0)'
         if linktype == 'cmspage':
-            href = 'javascript:void(0)'
             if cms_page := get_related_object(obj.glossary, 'cms_page'):
                 page_content = cms_page.get_content_obj(obj.language)
                 if isinstance(page_content, PageContent):
                     href = page_content.get_absolute_url()
                     if anchor := get_related_object(obj.glossary, 'anchor'):
                         href = f'{href}#{anchor.identifier}'
-            return href
         elif linktype == 'download':
             if file_uuid := obj.glossary.get('download_file'):
                 download_file = FinderFileModel.objects.get_inode(id=file_uuid, is_folder=False)
-                return download_file.get_download_url()
-            else:
-                return 'javascript:void(0)'
-        return linktype
+                href = download_file.get_download_url()
+        return href
 
 
 plugin_pool.register_plugin(TextLinkPlugin)

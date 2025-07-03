@@ -5,7 +5,7 @@ from cmsplugin_cascade.bootstrap5.mixins import BootstrapUtilities
 
 
 CASCADE_PLUGINS = [
-    'accordion', 'container', 'card', 'heading', 'link', 'richtext',
+    'accordion', 'container', 'card', 'heading', 'hyperlink', 'richtext',
 ]
 
 # CASCADE_PLUGINS = [

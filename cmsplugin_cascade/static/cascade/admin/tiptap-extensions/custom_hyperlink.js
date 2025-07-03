@@ -11,6 +11,9 @@
 			cms_page: {
 				default: null,
 			},
+			anchor: {
+				default: null,
+			},
 			download_file: {
 				default: null,
 			},
@@ -24,4 +27,22 @@
 	renderHTML({HTMLAttributes}) {
 		return ['a', HTMLAttributes, 0];
 	},
+
+	// called by richtext.HyperlinkDialogForm.link_type
+	change_link_type(inputElement, attributes) {
+		if (attributes.cms_page && inputElement.value === "cmspage") {
+			inputElement.checked = true;
+		} else if (attributes.href && inputElement.value === "exturl") {
+			inputElement.checked = true;
+		} else if (attributes.download_file && inputElement.value === "download") {
+			inputElement.checked = true;
+		} else if (attributes.phone_number && inputElement.value === "phone") {
+			inputElement.checked = true;
+		} else if (attributes.mail_to && inputElement.value === "email") {
+			inputElement.checked = true;
+		} else {
+			inputElement.checked = false;
+		}
+	},
+
 }

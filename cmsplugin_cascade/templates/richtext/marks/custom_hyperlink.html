@@ -1,2 +1,7 @@
-{% load page_url from cascade_richtext %}
-<a href="{% if attrs.page_id %}{% page_url attrs.page_id %}{% else %}{{ attrs.href }}{% endif %}">{{ text }}</a>
+{% load page_url from cms_tags %}{% spaceless %}
+{% if attrs.page_id %}
+<a href="{% page_url attrs.page_id %}">{{ text }}</a>
+{% elif attrs.url %}
+<a href="{{ attrs.url }}">{{ text }}</a>
+{% endif %}
+{% endspaceless %}

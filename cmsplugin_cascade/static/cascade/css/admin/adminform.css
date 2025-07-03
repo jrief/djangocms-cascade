@@ -13,3 +13,6 @@ django-formset .form-row div.help {
 django-formset .aligned .dj-field-errors {
   margin-left: 0;
 }
+django-formset .form-row [is^=django-selectize] + .shadow-wrapper {
+  width: 100%;
+}
