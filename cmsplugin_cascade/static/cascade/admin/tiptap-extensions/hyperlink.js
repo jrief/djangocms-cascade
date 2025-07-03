@@ -1,5 +1,5 @@
 {
-	name: 'custom_hyperlink',
+	name: 'hyperlink',
 	priority: 1000,
 	keepOnSplit: false,
 

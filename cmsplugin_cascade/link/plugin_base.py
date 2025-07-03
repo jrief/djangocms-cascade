@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from entangled.utils import get_related_object
 from cms.models.contentmodels import PageContent
 from cmsplugin_cascade.plugin_base import CascadePluginBase
-from filer.models.filemodels import File as FilerFileModel
+from finder.models.file import FileModel
 
 
 class LinkPluginBase(CascadePluginBase):
@@ -26,7 +26,7 @@ class LinkPluginBase(CascadePluginBase):
             return '{ext_url}'.format(**obj.glossary)
         if linktype == 'email':
             return 'mailto:{mail_to}'.format(**obj.glossary)
-        if linktype == 'phonenumber':
+        if linktype == 'phone':
             return 'tel:{phone_number}'.format(**obj.glossary)
 
         # otherwise resolve by model
@@ -74,8 +74,9 @@ class LinkElementMixin:
 
     @cached_property
     def download_name(self):
-        link_type = self.glossary.get('link_type')
-        if link_type == 'download':
-            relobj = get_related_object(self.glossary, 'download_file')
-            if isinstance(relobj, FilerFileModel):
-                return mark_safe(relobj.original_filename)
+        if self.glossary.get('link_type') == 'download':
+            if file_uuid := self.glossary.get('download_file'):
+                try:
+                    return FileModel.objects.get_inode(id=file_uuid, is_folder=False).name
+                except FileModel.DoesNotExist:
+                    pass

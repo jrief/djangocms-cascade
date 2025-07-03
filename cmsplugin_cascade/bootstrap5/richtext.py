@@ -20,12 +20,12 @@ from formset.widgets.richtext import RichTextarea
 from cmsplugin_cascade.bootstrap5.hyperlink import AnchorChoiceField, AnchorFieldFilterSet, LinkTypeChoiceField, PageChoiceField
 
 
-class CustomHyperlinkDialogForm(dialogs.RichtextDialogForm):
+class HyperlinkDialogForm(dialogs.RichtextDialogForm):
     title = _("Edit Link")
-    extension = 'custom_hyperlink'
-    extension_script = 'cascade/admin/tiptap-extensions/custom_hyperlink.js'
+    extension = 'hyperlink'
+    extension_script = 'cascade/admin/tiptap-extensions/hyperlink.js'
     plugin_type = 'mark'
-    prefix = 'custom_hyperlink_dialog'
+    prefix = 'hyperlink_dialog'
 
     link_content = CharField(
         label=_("Link Content"),
@@ -38,7 +38,8 @@ class CustomHyperlinkDialogForm(dialogs.RichtextDialogForm):
         widget=RadioSelect(attrs={'richtext-map-from': 'change_link_type()'}),
     )
     cms_page = PageChoiceField(
-        label="Internal Page",
+        label=_("CMS Page"),
+        required=False,
         widget=Selectize(attrs={
             'richtext-map-to': '{cms_page: elements.link_type.value == "cmspage" ? elements.cms_page.value : ""}',
             'richtext-map-from': 'cms_page',
@@ -57,12 +58,12 @@ class CustomHyperlinkDialogForm(dialogs.RichtextDialogForm):
                 'richtext-map-to': '{anchor: elements.link_type.value == "cmspage" ? elements.anchor.value : ""}',
                 'richtext-map-from': '{value: parseInt(attributes.anchor)}',  # a numeric value forces Selectize to refetch its options
                 'df-show': ".link_type === 'cmspage'",
-                'df-require': ".link_type === 'cmspage'",
             },
         ),
     )
     ext_url = URLField(
-        label="External URL",
+        label=_("External URL"),
+        required=False,
         widget=URLInput(attrs={
             'size': 35,
             'richtext-map-to': '{href: elements.link_type.value == "exturl" ? elements.ext_url.value : ""}',
@@ -72,8 +73,8 @@ class CustomHyperlinkDialogForm(dialogs.RichtextDialogForm):
         }),
     )
     download_file = FinderFileField(
+        label=_("Downloadable File"),
         required=False,
-        label='',
         help_text=_("A link to a downloadable file"),
         widget=FinderFileSelect(attrs={
             'richtext-map-to': '{download_file: elements.link_type.value == "download" ? elements.download_file.value : ""}',
@@ -83,7 +84,7 @@ class CustomHyperlinkDialogForm(dialogs.RichtextDialogForm):
         }),
     )
     mail_to = EmailField(
-        label='',
+        label=_("Email Address"),
         required=False,
         help_text=_("A link to an email address"),
         widget=EmailInput(attrs={
@@ -96,7 +97,7 @@ class CustomHyperlinkDialogForm(dialogs.RichtextDialogForm):
         }),
     )
     phone_number = CharField(
-        label='',
+        label=_("Phone Number"),
         required=False,
         help_text=_("A phone number link"),
         widget=PhoneNumberInput(attrs={
@@ -118,7 +119,7 @@ class RichtextForm(ModelForm):
                 controls.Italic(),
                 controls.BulletList(),
                 controls.DialogControl(
-                    CustomHyperlinkDialogForm(),
+                    HyperlinkDialogForm(),
                     icon='formset/icons/link.svg',
                 ),
                 controls.HorizontalRule(),
@@ -174,7 +175,7 @@ class RichtextPlugin(BootstrapPluginBase):
         return context
 
     def get_field(self, field_path):
-        if field_path == 'custom_hyperlink_dialog.anchor':
+        if field_path == 'hyperlink_dialog.anchor':
             return AnchorChoiceField()
         return super().get_field(field_path)
 
