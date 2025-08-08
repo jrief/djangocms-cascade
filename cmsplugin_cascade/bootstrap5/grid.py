@@ -1,15 +1,15 @@
 import re
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _, ngettext, ngettext_lazy
 
-from cms.models import CMSPlugin
+from cms.models import CMSPlugin, Page
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint, get_widget_choices
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 
 from formset.forms import ModelForm
@@ -19,15 +19,17 @@ from .plugin_base import BootstrapPluginBase
 from ..models import CascadeElement
 
 
-def get_widget_choices():
-    return [
-        (Breakpoint.xs.name, format_html("&ensp;<strong>{}</strong><br>{} (<{}px)", "Extra small", Breakpoint.xs.label, 576)),
-        (Breakpoint.sm.name, format_html("&ensp;<strong>{}</strong><br>{} (≥{}px, <{}px)", "Small", Breakpoint.sm.label, 576, 768)),
-        (Breakpoint.md.name, format_html("&ensp;<strong>{}</strong><br>{} (≥{}px, <{}px)","Medium ", Breakpoint.md.label, 768, 992)),
-        (Breakpoint.lg.name, format_html("&ensp;<strong>{}</strong><br>{} (≥{}px, <{}px)","Large", Breakpoint.lg.label, 992, 1200)),
-        (Breakpoint.xl.name, format_html("&ensp;<strong>{}</strong><br>{} (≥{}px, <{}px)", "Extra large", Breakpoint.xl.label, 1200, 1400)),
-        (Breakpoint.xxl.name, format_html("&ensp;<strong>{}</strong><br>{} (>{}px)", "XXL", Breakpoint.xxl.label, 1400)),
-    ]
+class GridModelForm(ModelForm):
+    title_attribute = CharField(
+        label=_("Internal Title"),
+        required=False,
+        help_text=_("Internal title attribute to organize components in the structure editor."),
+    )
+
+    class Meta:
+        model = CascadeElement
+        exclude = ['shared_glossary']
+        fields_map = {'glossary': ['title_attribute']}
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
@@ -38,29 +40,6 @@ class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
         context['widget']['optgroups'][0][1][0]['attrs']['checked'] = True
         context['widget']['optgroups'][0][1][0]['attrs']['disabled'] = True
         return context
-
-
-class GridModelForm(ModelForm):
-    title_attribute = CharField(
-        label=_("Container Title"),
-        required=False,
-        help_text=_("Caption text added to the 'title' attribute of this container element."),
-    )
-    show_title = BooleanField(
-        label=_("Show Title Attribute"),
-        required=False,
-        help_text=_("Show the container title as a heading element."),
-    )
-
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        if cleaned_data['show_title'] and not cleaned_data['title_attribute']:
-            self.add_error('title_attribute', _("The title must be set, if the title attribute is shown."))
-        return cleaned_data
 
 
 class ContainerForm(GridModelForm):
@@ -90,7 +69,7 @@ class ContainerForm(GridModelForm):
     )
 
     class Meta(GridModelForm.Meta):
-        fields_map = {'glossary': ['title_attribute', 'show_title', 'breakpoints', 'layout']}
+        fields_map = {'glossary': ['title_attribute', 'breakpoints', 'layout']}
 
     def clean_layout(self):
         pattern = re.compile(r'^container-(sm|md|lg|xl|xxl)$')
@@ -124,6 +103,7 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         return css_classes
 
     def save_model(self, request, obj, form, change):
+        raise NotImplementedError("Can not reach this method, use `save` on Form instead.")
         super().save_model(request, obj, form, change)
         obj.sanitize_children()
 
@@ -149,8 +129,9 @@ class ColumnsChoiceField(ChoiceField):
         choices = [
             (i, ngettext_lazy("{0} column", "{0} columns", i).format(i)) for i in self.ROW_NUM_COLUMNS
         ]
+        empty_label = kwargs.pop('empty_label', gettext("undefined"))
         if kwargs.get('required') is False:
-            choices.insert(0, (None, gettext("undefined")))
+            choices.insert(0, (None, empty_label))
         super().__init__(*args, choices=choices, **kwargs)
 
 
@@ -169,14 +150,15 @@ class BootstrapRowForm(ManageChildrenFormMixin, GridModelForm):
         help_text=_("Number of columns to be created with this row."),
     )
     row_columns = ColumnsChoiceField(
-        label=_("Row Columns"),
+        label=_("Row Columns for ‘{}’").format(Breakpoint.xs.label),
         required=False,
+        empty_label=_("Unset"),
         help_text=_("Add <code>.row-cols-*</code> class to set the number of columns that best render the content (default breakpoint).")
     )
 
     class Meta(GridModelForm.Meta):
         fields = '__all__'
-        fields_map = {'glossary': ['title_attribute', 'show_title', 'row_columns']}
+        fields_map = {'glossary': ['title_attribute', 'row_columns']}
 
     def save(self):
         super().save()
@@ -219,7 +201,10 @@ class BootstrapRowPlugin(BootstrapPluginBase):
             breakpoints = self.get_breakpoints(CMSPlugin.objects.get(pk=self.request.GET['plugin_parent']))
         else:
             breakpoints = []
-        attrs, glossary_fields = {}, []
+
+        model_form = super().get_model_form()
+        glossary_fields = list(model_form._meta.fields_map['glossary'])
+        attrs, prev_bp = {}, 'xs'
 
         # define the Row Columns fields
         for bp in breakpoints:
@@ -227,13 +212,15 @@ class BootstrapRowPlugin(BootstrapPluginBase):
                 continue
             field_name = f'row_columns_{bp}'
             attrs[field_name] = ColumnsChoiceField(
-                label=_("Row Columns for {}").format(Breakpoint[bp].label),
+                label=_("Row Columns for ‘{}’").format(Breakpoint[bp].label),
                 required=False,
+                empty_label=_("Inherit from “Row Columns for ‘{}’”").format(Breakpoint[prev_bp].label),
                 help_text=gettext(
                     "Add <code>.row-cols-{}-*</code> class to set the number of columns that best render the content."
                 ).format(bp),
             )
             glossary_fields.append(field_name)
+            prev_bp = bp
 
         # define the align-items-* content field
         align_items_choices = [
@@ -270,7 +257,6 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         )
         glossary_fields.append('justify_content')
 
-        model_form = super().get_model_form()
         attrs['Meta'] = type('Meta', (model_form.Meta,), {
             'fields_map': {'glossary': glossary_fields},
         })
@@ -282,12 +268,65 @@ class BootstrapRowPlugin(BootstrapPluginBase):
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
 
+class BootstrapColumnForm(GridModelForm):
+    column_width = ColumnsChoiceField(
+        label=_("Column Width"),
+        required=False,
+        empty_label=_("Auto"),
+        help_text=gettext("Set the column width using <code>col-*</code> (default breakpoint)."),
+    )
+    ORDERING_CHOICES = [
+        (None, _("No reordering")),
+        ('last', _("Reorder to last")),
+        ('first', _("Reorder to first")),
+        *((str(i), gettext("Reorder to {}").format(i)) for i in range(1, 6))
+    ]
+    column_ordering = ChoiceField(
+        label=_("Column ordering"),
+        choices=ORDERING_CHOICES,
+        required=False,
+        help_text=gettext(
+            "Control the ordering of columns using the <code>.order-*</code> class (default breakpoint)."),
+    )
+    MARGIN_CHOICES = [
+        (None, gettext("No margin")),
+        ('ms', gettext("From previous")),
+        ('me', gettext("Till next")),
+    ]
+    margin_utility = ChoiceField(
+        label=gettext("Auto Margin"),
+        choices=MARGIN_CHOICES,
+        required=False,
+        help_text=gettext(
+            "Add margin utility <code>.*-auto</code> to force sibling columns away from one another (default breakpoint)."
+        ),
+    )
+    ALIGN_SELF_CHOICES = [
+        (None, gettext("No alignment")),
+        ('start', gettext("Start")),
+        ('center', gettext("Center")),
+        ('end', gettext("End")),
+    ]
+    align_self = ChoiceField(
+        label=gettext("Align Self"),
+        choices=ALIGN_SELF_CHOICES,
+        required=False,
+        help_text=mark_safe(
+            gettext("Change the vertical alignment with the responsive <code>align-self-*</code> classes.")),
+    )
+
+    class Meta(GridModelForm.Meta):
+        fields = '__all__'
+        fields_map = {'glossary': [
+            'title_attribute', 'column_width', 'column_ordering', 'margin_utility', 'align_self',
+        ]}
+
+
 class BootstrapColumnPlugin(BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
-    child_classes = ['BootstrapJumbotronPlugin']
     alien_child_classes = True
-    form = GridModelForm
+    form = BootstrapColumnForm
     footnote_html = """<p>
     For more information about this <strong>Column</strong> component, please refer to the
     <a href="https://getbootstrap.com/docs/5.3/layout/columns/" target="_new">Bootstrap documentation</a>.
@@ -297,7 +336,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
     def get_identifier(cls, obj):
         if title_attribute := obj.glossary.get('title_attribute'):
             return title_attribute
-        return mark_safe(gettext("<code>col-{}</code>").format(obj.glossary.get('column_width', '')))
+        col = 'col-{column_width}'.format(**obj.glossary) if obj.glossary.get('column_width') else 'col'
+        return mark_safe(gettext("with <code>{}</code>").format(col))
 
     @classmethod
     def get_css_classes(cls, obj):
@@ -324,61 +364,57 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         return css_classes
 
     def get_model_form(self):
-        if self.object:
+        if self.object and self.object.pk:
             breakpoints = self.get_breakpoints(self.object)
         elif 'plugin_parent' in self.request.GET:
             breakpoints = self.get_breakpoints(CMSPlugin.objects.get(pk=self.request.GET['plugin_parent']))
         else:
             breakpoints = []
-        attrs, glossary_fields = {}, []
+
+        if 'xs' in breakpoints:
+            breakpoints.remove('xs')
+        model_form = super().get_model_form()
+        glossary_fields = list(model_form._meta.fields_map['glossary'])
+        attrs = {}
 
         # define the width fields
-        attrs['column_width'] = ColumnsChoiceField(
-            label=_("Column width"),
-            help_text=gettext("Set the column width using <code>col-*</code> (default breakpoint)."),
-        )
-        glossary_fields.append('column_width')
-        for bp in breakpoints:
+        prev_bp = 'xs'
+        for index, bp in enumerate(breakpoints, glossary_fields.index('column_width') + 1):
             field_name = f'column_width_{bp}'
             attrs[field_name] = ColumnsChoiceField(
-                label=_("Column width for {}").format(Breakpoint[bp].label),
+                label=_("Column Width for ‘{}’").format(Breakpoint[bp].label),
                 required=False,
+                empty_label=_("Inherit from “Column Width for ‘{}’”").format(Breakpoint[prev_bp].label),
                 help_text=gettext("Set the column width using <code>col-{}-*</code>.").format(bp),
             )
-            glossary_fields.append(field_name)
+            glossary_fields.insert(index, field_name)
+            prev_bp = bp
 
-        # define the reordering fields
-        ordering_choices = [
-            (None, _("No reordering")),
-            ('last', _("Reorder to last")),
-            ('first', _("Reorder to first")),
-            *((str(i), gettext("Reorder to {}").format(i)) for i in range(1, 6))
-        ]
-        attrs['column_ordering'] = ChoiceField(
-            label=_("Column ordering"),
-            choices=ordering_choices,
-            required=False,
-            help_text=gettext("Control the ordering of columns using the <code>.order-*</code> class (default breakpoint)."),
-        )
-        glossary_fields.append('column_ordering')
-        for bp in breakpoints:
+        # add reordering fields for extra breakpoints
+        prev_bp = 'xs'
+        for index, bp in enumerate(breakpoints, glossary_fields.index('column_ordering') + 1):
             field_name = f'column_ordering_{bp}'
+            ordering_choices = BootstrapColumnForm.ORDERING_CHOICES.copy()
+            ordering_choices[0] = (
+                None, gettext("Inherit from “Column Ordering for ‘{}’”").format(Breakpoint[prev_bp].label)
+            )
             attrs[field_name] = ChoiceField(
-                label=_("Column ordering for {}").format(Breakpoint[bp].label),
+                label=gettext("Column Ordering for ‘{}’").format(Breakpoint[bp].label),
                 choices=ordering_choices,
                 required=False,
                 help_text=gettext(
                     "Control the ordering of columns using the <code>.order-{}-*</code> class."
                 ).format(bp),
             )
-            glossary_fields.append(field_name)
+            glossary_fields.insert(index, field_name)
+            prev_bp = bp
 
-        # define the offsetting fields
+        # add offsetting fields for extra breakpoints
         offset_choices = [
             (None, _("No offset")),
             *((str(i), gettext("Offset to {}").format(i)) for i in range(0, 10))
         ]
-        for bp in breakpoints:
+        for index, bp in enumerate(breakpoints, index + 1):
             field_name = f'column_offset_{bp}'
             attrs[field_name] = ChoiceField(
                 label=_("Column offset for {}").format(Breakpoint[bp].label),
@@ -386,28 +422,14 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                 required=False,
                 help_text=gettext("Move columns to the right using <code>.offset-{}-*</code> classes.").format(bp),
             )
-            glossary_fields.append(field_name)
+            glossary_fields.insert(index, field_name)
 
         # define the margin utility fields
-        margin_choices = [
-            (None, gettext("No margin")),
-            ('ms', gettext("From previous")),
-            ('me', gettext("Till next")),
-        ]
-        attrs['margin_utility'] = ChoiceField(
-            label=gettext("Auto Margin"),
-            choices=margin_choices,
-            required=False,
-            help_text=gettext(
-                "Add margin utility <code>.*-auto</code> to force sibling columns away from one another (default breakpoint)."
-            ),
-        )
-        glossary_fields.append('margin_utility')
-        for bp in breakpoints:
+        for index, bp in enumerate(breakpoints, glossary_fields.index('margin_utility') + 1):
             field_name = f'margin_utility_{bp}'
             attrs[field_name] = ChoiceField(
                 label=gettext("Auto Margin for {}").format(Breakpoint[bp].label),
-                choices=margin_choices,
+                choices=BootstrapColumnForm.MARGIN_CHOICES,
                 required=False,
                 help_text=mark_safe(
                     gettext(
@@ -415,37 +437,17 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
                     ).format(bp)
                 ),
             )
-            glossary_fields.append(field_name)
+            glossary_fields.insert(index, field_name)
 
-        # define the align-self-* content field
-        align_self_choices = [
-            (None, gettext("No alignment")),
-            ('start', gettext("Start")),
-            ('center', gettext("Center")),
-            ('end', gettext("End")),
-        ]
-        attrs['align_self'] = ChoiceField(
-            label=gettext("Align Self"),
-            choices=align_self_choices,
-            required=False,
-            help_text=mark_safe(gettext("Change the vertical alignment with the responsive <code>align-self-*</code> classes.")),
-        )
-        glossary_fields.append('align_self')
-
-        model_form = super().get_model_form()
         attrs['Meta'] = type('Meta', (model_form.Meta,), {
             'fields_map': {'glossary': glossary_fields},
         })
         model_form = type(model_form.__name__, model_form.__mro__, attrs)
         return model_form
 
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        obj.sanitize_children()
-
     @classmethod
-    def sanitize_model(cls, obj):
-        sanitized = super().sanitize_model(obj)
-        return sanitized
+    def get_child_classes(cls, slot, page: Optional[Page] = None, instance: Optional[CMSPlugin] = None):
+        child_classes = cls.super(BootstrapColumnPlugin, cls).get_child_classes(slot, page, instance)
+        return child_classes
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)
