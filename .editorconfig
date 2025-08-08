@@ -14,13 +14,16 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 [*.py]
-max_line_length =   119
+max_line_length = 119
 indent_style = space
 indent_size = 4
 
 [*.{html,js,rst,css,scss}]
 indent_style = tab
 indent_size = 4
+
+[*.html]
+insert_final_newline = false
 
 [*.rst]
 max_line_length = 100
