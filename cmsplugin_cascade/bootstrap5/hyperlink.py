@@ -85,22 +85,18 @@ class AnchorChoiceField(ModelChoiceField):
         return f"#{obj.identifier}"
 
 
-class TextLinkForm(ModelForm):
-    link_content = CharField(
-        label=_("Link Content"),
-        widget=TextInput(attrs={'size': 50}),
-    )
+class HyperlinkForm(ModelForm):
     link_type = LinkTypeChoiceField()
     cms_page = PageChoiceField(
-        label='',
+        label=_("CMS Page"),
         required=False,
         help_text=_("An internal link onto any CMS page of this site"),
         widget=Selectize(
             search_lookup='page__title__icontains',
             attrs={
                 'placeholder': _("CMS-Page"),
-                'df-show': "link_type === 'cmspage'",
-                'df-require': "link_type === 'cmspage'",
+                'df-show': ".link_type === 'cmspage'",
+                'df-require': ".link_type === 'cmspage'",
             },
         ),
     )
@@ -111,43 +107,43 @@ class TextLinkForm(ModelForm):
         help_text=_("Page bookmark"),
     )
     ext_url = URLField(
-        label='',
+        label=_("External URL"),
         required=False,
         help_text=_("An external link to any URL outside of this site"),
         widget=URLInput(attrs={
             'size': 50,
             'placeholder': "https://example.com",
-            'df-show': "link_type === 'exturl'",
-            'df-require': "link_type === 'exturl'"
+            'df-show': ".link_type === 'exturl'",
+            'df-require': ".link_type === 'exturl'"
         }),
     )
     download_file = FinderFileField(
-        label='',
+        label=_("Downloadable File"),
         required=False,
         help_text=_("A link to a downloadable file"),
         widget=FinderFileSelect(attrs={
-            'df-show': "link_type === 'download'",
-            'df-require': "link_type === 'download'",
+            'df-show': ".link_type === 'download'",
+            'df-require': ".link_type === 'download'",
         }),
     )
     mail_to = EmailField(
-        label='',
+        label=_("Email Address"),
         required=False,
         help_text=_("A link to an email address"),
         widget=EmailInput(attrs={
             'size': 50,
             'placeholder': "john@example.org",
-            'df-show': "link_type === 'email'",
-            'df-require': "link_type === 'email'",
+            'df-show': ".link_type === 'email'",
+            'df-require': ".link_type === 'email'",
         }),
     )
     phone_number = CharField(
-        label='',
+        label=_("Phone Number"),
         required=False,
         help_text=_("A phone number link"),
         widget=PhoneNumberInput(attrs={
-            'df-show': "link_type === 'phone'",
-            'df-require': "link_type === 'phone'",
+            'df-show': ".link_type === 'phone'",
+            'df-require': ".link_type === 'phone'",
         }),
     )
 
@@ -155,10 +151,7 @@ class TextLinkForm(ModelForm):
         model = CascadeElement
         exclude = ['shared_glossary']
         fields_map = {
-            'glossary': [
-                'link_content', 'link_type',
-                'cms_page', 'anchor', 'ext_url', 'download_file', 'mail_to', 'phone_number',
-            ],
+            'glossary': ['link_type', 'cms_page', 'anchor', 'ext_url', 'download_file', 'mail_to', 'phone_number'],
         }
 
     def __init__(self, *args, **kwargs):
@@ -175,6 +168,18 @@ class TextLinkForm(ModelForm):
         super().__init__(*args, **kwargs)
 
 
+class TextLinkForm(HyperlinkForm):
+    link_content = CharField(
+        label=_("Link Content"),
+        widget=TextInput(attrs={'size': 50}),
+    )
+
+    class Meta(HyperlinkForm.Meta):
+        fields_map = {
+            'glossary': ['link_content'] + HyperlinkForm.Meta.fields_map['glossary']
+        }
+
+
 class TextLinkPlugin(BootstrapPluginBase):
     name = _("Link")
     require_parent = True
@@ -185,7 +190,7 @@ class TextLinkPlugin(BootstrapPluginBase):
     model_mixins = (LinkElementMixin,)
 
     class Media:
-        css = {'all': ['cascade/admin/bootstrap5/css/linkplugin.css']}
+        css = {'all': ['cascade/admin/bootstrap5/css/hyperlinkplugin.css']}
 
     @classmethod
     def get_identifier(cls, instance):
