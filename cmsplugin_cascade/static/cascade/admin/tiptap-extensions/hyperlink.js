@@ -17,6 +17,12 @@
 			download_file: {
 				default: null,
 			},
+			mail_to: {
+				default: null,
+			},
+			phone_number: {
+				default: null,
+			},
 		};
 	},
 
@@ -30,6 +36,7 @@
 
 	// called by richtext.HyperlinkDialogForm.link_type
 	change_link_type(inputElement, attributes) {
+		console.log('change_link_type', inputElement, attributes);
 		if (attributes.cms_page && inputElement.value === "cmspage") {
 			inputElement.checked = true;
 		} else if (attributes.href && inputElement.value === "exturl") {
