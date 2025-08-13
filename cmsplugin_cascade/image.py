@@ -56,8 +56,3 @@ class ImagePropertyMixin:
         if not hasattr(self, '_image_file'):
             self._image_file = get_related_object(self.glossary, 'image_file')
         return self._image_file
-
-    def post_copy(self, old_instance, new_old_ziplist):
-        # by saving this model after the full tree has been copied, ``<Any>ImagePlugin.sanitize_model()``
-        # is invoked a second time with the now complete information of all column siblings.
-        self.save(sanitize_only=True)

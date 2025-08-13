@@ -2,6 +2,7 @@ import logging
 from django.utils.translation import gettext_lazy as _
 
 from cmsplugin_cascade import app_settings
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse_responsive_length,
    compute_aspect_ratio_with_glossary)
 
@@ -78,70 +79,3 @@ def get_image_tags(instance):
     #         tags['srcsets']['2x'] = dict(tags['srcsets']['1x'], size=(size[0] * 2, size[1] * 2))
     tags['src'] = {'size': size, 'crop': crop, 'upscale': upscale, 'subject_location': subject_location}
     return tags
-
-
-def get_picture_elements(instance):
-    """
-    Create a context, used to render a <picture> together with all its ``<source>`` elements:
-    It returns a list of HTML elements, each containing the information to render a ``<source>``
-    element.
-    The purpose of this HTML entity is to display images with art directions. For normal images use
-    the ``<img>`` element.
-    """
-
-    if hasattr(instance, 'image') and hasattr(instance.image, 'exif'):
-        aspect_ratio = compute_aspect_ratio(instance.image)
-    elif 'image' in instance.glossary and 'width' in instance.glossary['image']:
-        aspect_ratio = compute_aspect_ratio_with_glossary(instance.glossary)
-    else:
-        # if accessing the image file fails or fake image fails, abort here
-        logger.warning("Unable to compute aspect ratio of image '{}'".format(instance.image))
-        return
-
-    # container_max_heights = instance.glossary.get('container_max_heights', {})
-    resize_options = instance.glossary.get('resize_options', {})
-    crop = 'crop' in resize_options
-    upscale = 'upscale' in resize_options
-    if 'subject_location' in resize_options and hasattr(instance.image, 'subject_location'):
-        subject_location = instance.image.subject_location
-    else:
-        subject_location = None
-    max_width = 0
-    max_zoom = 0
-    elements = []
-    for bp, media_query in instance.glossary['media_queries'].items():
-        width, media = media_query['width'], media_query['media']
-        max_width = max(max_width, width)
-        size = None
-        try:
-            image_height = parse_responsive_length(instance.glossary['responsive_heights'][bp])
-        except KeyError:
-            image_height = (None, None)
-        if image_height[0]:  # height was given in px
-            size = (int(width), image_height[0])
-        elif image_height[1]:  # height was given in %
-            size = (int(width), int(round(width * aspect_ratio * image_height[1])))
-        try:
-            zoom = int(
-                instance.glossary['responsive_zoom'][bp].strip().rstrip('%')
-            )
-        except (AttributeError, KeyError, ValueError):
-            zoom = 0
-        max_zoom = max(max_zoom, zoom)
-        if size is None:
-            # as fallback, adopt height to current width
-            size = (int(width), int(round(width * aspect_ratio)))
-        elem = {'tag': 'source', 'size': size, 'zoom': zoom, 'crop': crop,
-                'upscale': upscale, 'subject_location': subject_location, 'media': media}
-        if 'high_resolution' in resize_options:
-            elem['size2'] = (size[0] * 2, size[1] * 2)
-        elements.append(elem)
-
-    # add a fallback image for old browsers which can't handle the <source> tags inside a <picture> element
-    if image_height[1]:
-        size = (int(max_width), int(round(max_width * aspect_ratio * image_height[1])))
-    else:
-        size = (int(max_width), int(round(max_width * aspect_ratio)))
-    elements.append({'tag': 'img', 'size': size, 'zoom': max_zoom, 'crop': crop,
-                     'upscale': upscale, 'subject_location': subject_location})
-    return elements
