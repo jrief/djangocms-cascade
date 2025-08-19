@@ -1,4 +1,5 @@
 import logging
+from math import sqrt
 
 from django.core.files.storage import default_storage
 from django.forms import fields, widgets, MultipleChoiceField
@@ -211,55 +212,62 @@ class BootstrapPicturePlugin(BootstrapPluginBase):
             logger.warning("Unable generate picture context. Reason: {}".format(exc))
         return thumbnail_path
 
-    def estimate_thumbnail_size(self, original_size, orig_w, orig_h, thumb_w, thumb_h, compression_factor=1):
-        pixel_ratio = (round(thumb_w) * round(thumb_h)) / (orig_w * orig_h)
-        return int(original_size * pixel_ratio * compression_factor)
-
     def render(self, context, instance, placeholder):
+        def estimate_compression_factor(thumb_w, thumb_h, thumb_size):
+            upper_image_area = upper_image_width * upper_image_height
+            pixel_ratio = round(thumb_w) * round(thumb_h) / upper_image_area
+            factor = upper_image_size * pixel_ratio / thumb_size
+            return upper_image_area * (1 - (1 - factor) / 2)
+
         # image shall be rendered in a responsive context using the picture element
         context = self.super(BootstrapPicturePlugin, self).render(context, instance, placeholder)
         sources = self.get_picture_context(instance)
         for source in sources:
             # create images for srcset in steps separated by `step_size_bytes`
-            lower_thumbnail_path = self.get_or_create_thumbnail(
-                instance.image, source['lower_bound']['width'], source['lower_bound']['height']
-            )
-            source['src'] = default_storage.url(lower_thumbnail_path)
-            lower_image_size = default_storage.size(lower_thumbnail_path)
-            upper_thumbnail_path = self.get_or_create_thumbnail(
-                instance.image, source['upper_bound']['width'], source['upper_bound']['height']
-            )
+            upper_image_width, upper_image_height = source['upper_bound']['width'], source['upper_bound']['height']
+            upper_thumbnail_path = self.get_or_create_thumbnail(instance.image, upper_image_width, upper_image_height)
             upper_image_size = default_storage.size(upper_thumbnail_path)
+            lower_image_width, lower_image_height = source['lower_bound']['width'], source['lower_bound']['height']
+            lower_thumbnail_path = self.get_or_create_thumbnail(instance.image, lower_image_width, lower_image_height)
+            lower_image_size = default_storage.size(lower_thumbnail_path)
+            source['src'] = default_storage.url(lower_thumbnail_path)
             num_steps = int((upper_image_size - lower_image_size) / self.step_size_bytes) + 1
-            if source['upper_bound']['width'] > source['upper_bound']['height']:
-                mult = (source['upper_bound']['width'] / source['lower_bound']['width']) ** (1 / num_steps)
+            if upper_image_width > upper_image_height:
+                mult = (upper_image_width / lower_image_width) ** (1 / num_steps)
                 landscape = True
             else:
-                mult = (source['upper_bound']['height'] / source['lower_bound']['height']) ** (1 / num_steps)
+                mult = (upper_image_height / lower_image_height) ** (1 / num_steps)
                 landscape = False
-            source['srcsets'] = []
+            source['srcsets'] = [{
+                'url': default_storage.url(lower_thumbnail_path),
+                'width': round(lower_image_width),
+                'height': round(lower_image_height),
+            }]
             print("=======================================================================")
-            for step in range(num_steps):
+            width, height, image_size = lower_image_width, lower_image_height, lower_image_size
+            for step in range(1 - num_steps, 0):
+                wanted_image_size = upper_image_size + step * self.step_size_bytes
+                compression_factor = estimate_compression_factor(width, height, image_size)
                 if landscape:
-                    width = source['lower_bound']['width'] * mult ** step
+                    width = sqrt(wanted_image_size / upper_image_size * source['aspect_ratio'] * compression_factor)
                     height = round(width / source['aspect_ratio'])
                 else:
-                    height = source['lower_bound']['height'] * mult ** step
+                    height = sqrt(wanted_image_size / upper_image_size / source['aspect_ratio'] * compression_factor)
                     width = round(height * source['aspect_ratio'])
                 thumbnail_path = self.get_or_create_thumbnail(instance.image, width, height)
-                estimated = self.estimate_thumbnail_size(upper_image_size, source['upper_bound']['width'], source['upper_bound']['height'], width, height)
-                print(f"Thumbnail to {round(width)}x{round(height)}. Estimated size: {estimated}. Real size: {default_storage.size(thumbnail_path)}")
+                image_size = default_storage.size(thumbnail_path)
+                print(f"{num_steps + step} Thumbnail to {round(width)}x{round(height)}. Wanted size: {wanted_image_size}. Real size: {image_size}. Ratio: {wanted_image_size / image_size}.")
                 source['srcsets'].append({
                     'url': default_storage.url(thumbnail_path),
-                    'width': int(width),
-                    'height': int(height),
+                    'width': round(width),
+                    'height': round(height),
                 })
             if mult > 1.01:
                 # if the step size is too small, we only use the lower bound
                 source['srcsets'].append({
                     'url': default_storage.url(upper_thumbnail_path),
-                    'width': source['upper_bound']['width'],
-                    'height': source['upper_bound']['height'],
+                    'width': round(upper_image_width),
+                    'height': round(upper_image_height),
                 })
 
         context.update({
