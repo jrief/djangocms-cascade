@@ -103,6 +103,7 @@ class BootstrapPicturePlugin(BootstrapPluginBase):
     step_size_bytes = 25 * 1024  # thumbnail images in steps of 25kB
     min_thumbnail_width = 306
     max_thumbnail_width = 1920
+    real_to_wanted_ratio = (0.9, 1.1)  # acceptable ratio between wanted and real thumbnail size
     fallback_image = static('cascade/fallback.svg')
     # html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     # html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
@@ -214,10 +215,8 @@ class BootstrapPicturePlugin(BootstrapPluginBase):
 
     def render(self, context, instance, placeholder):
         def estimate_compression_factor(thumb_w, thumb_h, thumb_size):
-            upper_image_area = upper_image_width * upper_image_height
             pixel_ratio = round(thumb_w) * round(thumb_h) / upper_image_area
-            factor = upper_image_size * pixel_ratio / thumb_size
-            return upper_image_area * (1 - (1 - factor) / 2)
+            return upper_image_size * pixel_ratio / thumb_size
 
         # image shall be rendered in a responsive context using the picture element
         context = self.super(BootstrapPicturePlugin, self).render(context, instance, placeholder)
@@ -227,6 +226,7 @@ class BootstrapPicturePlugin(BootstrapPluginBase):
             upper_image_width, upper_image_height = source['upper_bound']['width'], source['upper_bound']['height']
             upper_thumbnail_path = self.get_or_create_thumbnail(instance.image, upper_image_width, upper_image_height)
             upper_image_size = default_storage.size(upper_thumbnail_path)
+            upper_image_area = upper_image_width * upper_image_height
             lower_image_width, lower_image_height = source['lower_bound']['width'], source['lower_bound']['height']
             lower_thumbnail_path = self.get_or_create_thumbnail(instance.image, lower_image_width, lower_image_height)
             lower_image_size = default_storage.size(lower_thumbnail_path)
@@ -244,19 +244,25 @@ class BootstrapPicturePlugin(BootstrapPluginBase):
                 'height': round(lower_image_height),
             }]
             print("=======================================================================")
-            width, height, image_size = lower_image_width, lower_image_height, lower_image_size
+            compression_factor = estimate_compression_factor(lower_image_width, lower_image_height, lower_image_size)
             for step in range(1 - num_steps, 0):
                 wanted_image_size = upper_image_size + step * self.step_size_bytes
-                compression_factor = estimate_compression_factor(width, height, image_size)
-                if landscape:
-                    width = sqrt(wanted_image_size / upper_image_size * source['aspect_ratio'] * compression_factor)
-                    height = round(width / source['aspect_ratio'])
-                else:
-                    height = sqrt(wanted_image_size / upper_image_size / source['aspect_ratio'] * compression_factor)
-                    width = round(height * source['aspect_ratio'])
-                thumbnail_path = self.get_or_create_thumbnail(instance.image, width, height)
-                image_size = default_storage.size(thumbnail_path)
-                print(f"{num_steps + step} Thumbnail to {round(width)}x{round(height)}. Wanted size: {wanted_image_size}. Real size: {image_size}. Ratio: {wanted_image_size / image_size}.")
+                for attempt in range(3):
+                    if landscape:
+                        width = sqrt(wanted_image_size / upper_image_size * source['aspect_ratio'] * compression_factor * upper_image_area)
+                        height = round(width / source['aspect_ratio'])
+                    else:
+                        height = sqrt(wanted_image_size / upper_image_size / source['aspect_ratio'] * compression_factor * upper_image_area)
+                        width = round(height * source['aspect_ratio'])
+                    thumbnail_path = self.get_or_create_thumbnail(instance.image, width, height)
+                    image_size = default_storage.size(thumbnail_path)
+                    real_to_wanted_ratio = wanted_image_size / image_size
+                    print(f"{num_steps + step} Thumbnail to {round(width)}x{round(height)}. Wanted size: {wanted_image_size}. Real size: {image_size}. Ratio: {real_to_wanted_ratio}. Compression factor: {compression_factor}")
+                    if real_to_wanted_ratio >= self.real_to_wanted_ratio[0] and real_to_wanted_ratio <= self.real_to_wanted_ratio[1]:
+                        compression_factor = estimate_compression_factor(width, height, image_size) * real_to_wanted_ratio ** 4
+                        break
+                    # other attempt to find a thumbnail in the wanted size
+                    compression_factor = estimate_compression_factor(width, height, image_size)
                 source['srcsets'].append({
                     'url': default_storage.url(thumbnail_path),
                     'width': round(width),
