@@ -1,20 +1,20 @@
 {% load l10n static cascade_tags sekizai_tags %}
 {% addtoblock "js" %}<script src="{% static 'node_modules/lazysizes/lazysizes.min.js' %}" type="text/javascript"></script>{% endaddtoblock %}
-{% localize off %}{% spaceless %}
-<picture{{ instance.html_tag_attributes }}>
-{% for source in picture.sources %}
-	{% with min_width=source.min_width max_width=source.max_width %}
-	<source
-		srcset="{{ source.src }}"  {# source.src is the smallest image shown as default #}
-		data-srcset="{% for srcset in source.srcsets %}{{ srcset.url }} {{ srcset.width }}w{% if not forloop.last %}, {% endif %}{% endfor %}"
-		{% if source.min_width and source.max_width %} media="(min-width: {{ min_width }}) and (max-width: {{ max_width }})"{% elif source.min_width %} media="(min-width: {{ min_width }})"{% elif source.max_width %} media="(max-width: {{ max_width }})"{% endif %}
-	/>
-	{% endwith %}
-{% endfor %}
-	<img
-		src="{{ picture.fallback_image }}"
-		data-sizes="auto"
-		class="lazyload {{ instance.css_classes }}"
-		style="background-color:light-dark(lightgray,darkgrey);width:100%;" />
-</picture>
-{% endspaceless %}{% endlocalize %}
+{% localize off %}{% spaceless %}{% with instance_link=instance.link %}
+{% if instance_link %}<a href="{{ instance_link }}">{% endif %}
+{% if picture.sources|length > 1 %}
+	<picture{{ instance.html_tag_attributes }}>
+	{% for source in picture.sources %}{% with min_width=source.min_width max_width=source.max_width %}
+		<source
+			srcset="{{ source.src }}"  {# source.src is the smallest image shown as default #}
+			data-srcset="{% for srcset in source.srcsets %}{{ srcset.url }} {{ srcset.width }}w{% if not forloop.last %}, {% endif %}{% endfor %}"
+			{% if source.min_width and source.max_width %} media="(min-width: {{ min_width }}) and (max-width: {{ max_width }})"{% elif source.min_width %} media="(min-width: {{ min_width }})"{% elif source.max_width %} media="(max-width: {{ max_width }})"{% endif %}
+		/>
+	{% endwith %}{% endfor %}
+		<img src="{{ picture.sources.0.src }}" data-sizes="auto" class="{{ instance.css_classes }}"{{ instance.html_tag_attributes }} />
+	</picture>
+{% else %}{% with source=picture.sources.0 %}
+	<img data-srcset="{% for srcset in source.srcsets %}{{ srcset.url }} {{ srcset.width }}w{% if not forloop.last %}, {% endif %}{% endfor %}" src="{{ source.src }}" data-sizes="auto" class="{{ instance.css_classes }}"{{ instance.html_tag_attributes }} />
+{% endwith %}{% endif %}
+{% if instance_link %}</a>{% endif %}
+{% endwith %}{% endspaceless %}{% endlocalize %}

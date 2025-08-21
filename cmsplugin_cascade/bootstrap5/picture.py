@@ -254,14 +254,16 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
                     thumbnail_path = self.get_or_create_thumbnail(instance.image, width, height)
                     thumbnail_image_size = default_storage.size(thumbnail_path)
                     real_to_wanted_ratio = wanted_image_size / thumbnail_image_size
-                    print(f"{num_steps + step} Thumbnail to {round(width)}x{round(height)}. Wanted size: {wanted_image_size}. Real size: {thumbnail_image_size}. Ratio: {real_to_wanted_ratio}. Compression factor: {compression_factor}.")
+                    print(f"{num_steps + step} Thumbnail to {round(width)}x{round(height)}. Wanted/Real size: {wanted_image_size}/{thumbnail_image_size} = {real_to_wanted_ratio:.3f}. Compression factor: {compression_factor:.4f}.", end="")
                     if real_to_wanted_ratio >= self.real_to_wanted_ratio[0] and real_to_wanted_ratio <= self.real_to_wanted_ratio[1]:
                         # generated thumbnail is within the bounds for the wanted size
                         compression_factor = estimate_compression_factor(width, height, thumbnail_image_size) * real_to_wanted_ratio ** 4
+                        print(" USED")
                         break
                     # other attempt to find a thumbnail in the wanted size
                     compression_factor = estimate_compression_factor(width, height, thumbnail_image_size)
-                    default_storage.delete(thumbnail_path)
+                    ## we must keep this information: default_storage.delete(thumbnail_path)
+                    print(" NOT USED")
                 if width < upper_image_width and height < upper_image_height:
                     source['srcsets'].append({
                         'url': default_storage.url(thumbnail_path),

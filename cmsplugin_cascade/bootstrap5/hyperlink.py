@@ -180,28 +180,15 @@ class TextLinkForm(HyperlinkForm):
         }
 
 
-class TextLinkPlugin(BootstrapPluginBase):
-    name = _("Link")
-    require_parent = True
-    parent_classes = ['BootstrapColumnPlugin']
-    allow_children = False
-    render_template = 'cascade/bootstrap5/hyperlink.html'
-    form = TextLinkForm
-    model_mixins = (LinkElementMixin,)
-
+class HyperlinkPluginMixin:
     class Media:
         css = {'all': ['cascade/admin/bootstrap5/css/hyperlinkplugin.css']}
 
     @classmethod
-    def get_identifier(cls, instance):
-        try:
-            return instance.content
-        except AttributeError:
-            return ''
-
-    @classmethod
     def get_link(cls, obj):
         linktype = obj.glossary.get('link_type')
+        if not linktype:
+            return ''
         if linktype == 'exturl':
             return '{ext_url}'.format(**obj.glossary)
         if linktype == 'email':
@@ -223,6 +210,23 @@ class TextLinkPlugin(BootstrapPluginBase):
                 download_file = FinderFileModel.objects.get_inode(id=file_uuid, is_folder=False)
                 href = download_file.get_download_url()
         return href
+
+
+class TextLinkPlugin(HyperlinkPluginMixin, BootstrapPluginBase):
+    name = _("Link")
+    require_parent = True
+    parent_classes = ['BootstrapColumnPlugin']
+    allow_children = False
+    render_template = 'cascade/bootstrap5/textlink.html'
+    form = TextLinkForm
+    model_mixins = (LinkElementMixin,)
+
+    @classmethod
+    def get_identifier(cls, instance):
+        try:
+            return instance.content
+        except AttributeError:
+            return ''
 
 
 plugin_pool.register_plugin(TextLinkPlugin)
