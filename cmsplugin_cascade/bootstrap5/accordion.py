@@ -12,11 +12,11 @@ from formset.forms import ModelForm
 
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 
 from .plugin_base import BootstrapPluginBase
-from ..models import CascadeElement
 
 
 class AccordionForm(ManageChildrenFormMixin, ModelForm):
@@ -56,7 +56,7 @@ class BootstrapAccordionPlugin(TransparentWrapper, BootstrapPluginBase):
     name = _("Accordion")
     default_css_class = 'accordion'
     require_parent = True
-    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
+    parent_classes = ['BootstrapRowPlugin', 'BootstrapColumnPlugin']
     direct_child_classes = child_classes = ['BootstrapAccordionItemPlugin']
     allow_children = True
     form = AccordionForm

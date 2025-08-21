@@ -1,7 +1,16 @@
+from django.forms.models import ModelForm
 from django.utils.translation import gettext_lazy as _
+
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.plugin_base import TransparentContainer, TransparentWrapper
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.models import CascadeElement
+
+
+class CardChildForm(ModelForm):
+    class Meta:
+        model = CascadeElement
+        exclude = ['shared_glossary', 'glossary']
 
 
 class CardChildBase(BootstrapPluginBase):
@@ -10,6 +19,7 @@ class CardChildBase(BootstrapPluginBase):
     allow_children = True
     render_template = 'cascade/generic/wrapper.html'
     child_classes = ['BootstrapCardHeaderPlugin', 'BootstrapCardBodyPlugin', 'BootstrapCardFooterPlugin']
+    form = CardChildForm
 
 
 class BootstrapCardHeaderPlugin(TransparentContainer, CardChildBase):
@@ -39,7 +49,7 @@ class BootstrapCardPlugin(TransparentWrapper, BootstrapPluginBase):
     """
     name = _("Card")
     default_css_class = 'card'
-    require_parent = False
+    require_parent = True
     parent_classes = ['BootstrapColumnPlugin']
     allow_children = True
     render_template = 'cascade/bootstrap5/card.html'
@@ -50,7 +60,7 @@ class BootstrapCardPlugin(TransparentWrapper, BootstrapPluginBase):
             return instance.card_header or instance.card_footer
         except AttributeError:
             pass
-        return super().get_identifier(instance)
+        return ''
 
     @classmethod
     def get_child_classes(cls, slot, page, instance=None):

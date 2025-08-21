@@ -370,9 +370,9 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             breakpoints = self.get_breakpoints(CMSPlugin.objects.get(pk=self.request.GET['plugin_parent']))
         else:
             breakpoints = []
-
         if 'xs' in breakpoints:
             breakpoints.remove('xs')
+
         model_form = super().get_model_form()
         glossary_fields = list(model_form._meta.fields_map['glossary'])
         attrs = {}
