@@ -8,18 +8,10 @@ from cmsplugin_cascade.utils import (compute_aspect_ratio, get_image_size, parse
 
 logger = logging.getLogger('cascade')
 
-IMAGE_RESIZE_OPTIONS = [
-    ('upscale', _("Upscale image")),
-    ('crop', _("Crop image")),
-    ('subject_location', _("With subject location")),
-    ('high_resolution', _("Optimized for Retina")),
-]
-
 IMAGE_SHAPE_CHOICES = [
-    ('img-fluid', _("Responsive")),
-    ('rounded', _('Rounded')),
-    ('rounded-circle', _('Circle')),
-    ('img-thumbnail', _('Thumbnail')),
+    ('rounded', _("Rounded")),
+    ('rounded-circle', _("Circle")),
+    ('img-thumbnail', _("Thumbnail")),
 ]
 
 
@@ -36,7 +28,6 @@ def get_image_tags(instance):
         # if accessing the image file fails or fake image fails, abort here
         raise FileNotFoundError("Unable to compute aspect ratio of image")
 
-    is_responsive = 'img-fluid' in instance.glossary.get('image_shapes', [])
     resize_options = instance.glossary.get('resize_options', {})
     crop = 'crop' in resize_options
     upscale = 'upscale' in resize_options
@@ -44,7 +35,7 @@ def get_image_tags(instance):
         subject_location = instance.image.subject_location
     else:
         subject_location = None
-    tags = {'sizes': [], 'srcsets': {}, 'is_responsive': is_responsive, 'extra_styles': {}}
+    tags = {'sizes': [], 'srcsets': {}, 'extra_styles': {}}
     # if is_responsive:
     #     image_width = parse_responsive_length(instance.glossary.get('image_width_responsive') or '100%')
     #     assert(image_width[1]), "The given image has no valid width"
