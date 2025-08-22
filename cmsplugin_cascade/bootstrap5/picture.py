@@ -157,6 +157,8 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
     def get_sources_bounds(self, instance):
         """
         Determine the lower and upper bounds for each ``<source>`` in the ``<picture>`` element.
+        """
+
         allowed_breakpoints = self.get_breakpoints(instance)
         sources = []
         source_element = prev_aspect_ratio = None
@@ -203,22 +205,13 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
             logger.warning("Unable generate picture context. Reason: {}".format(exc))
         return thumbnail_path
 
-    def render(self, context, instance, placeholder):
-        """
-        Create a context, used to render a <picture> together with all its ``<source>`` elements:
-        It returns a list of HTML elements, each containing the information to render a ``<source>``
-        element.
-        The purpose of this HTML entity is to display images with art directions. For normal images use
-        the ``<img>`` element.
-        """
-
+    def get_picture_sources(self, instance):
         def estimate_compression_factor(thumb_w, thumb_h, thumb_size):
             pixel_ratio = round(thumb_w) * round(thumb_h) / upper_image_area
             return upper_image_size * pixel_ratio / thumb_size
 
         # image shall be rendered in a responsive context using the picture element
-        context = self.super(BootstrapPicturePlugin, self).render(context, instance, placeholder)
-        sources = self.get_picture_sources(instance)
+        sources = self.get_sources_bounds(instance)
         for source in sources:
             # create images for srcset in steps separated by `step_size_bytes`
             upper_image_width, upper_image_height = source['upper_bound']['width'], source['upper_bound']['height']
@@ -256,7 +249,7 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
                     thumbnail_path = self.get_or_create_thumbnail(instance.image, width, height)
                     thumbnail_image_size = default_storage.size(thumbnail_path)
                     real_to_wanted_ratio = wanted_image_size / thumbnail_image_size
-                    print(f"{num_steps + step} Thumbnail to {round(width)}x{round(height)}. Wanted/Real size: {wanted_image_size}/{thumbnail_image_size} = {real_to_wanted_ratio:.3f}. Compression factor: {compression_factor:.4f}.", end="")
+                    print(f"{num_steps + step} Thumbnail to {round(width)}x{round(height)}. Wanted/Real size: {wanted_image_size}/{thumbnail_image_size} = {100*real_to_wanted_ratio:.0f}%. Compression factor: {compression_factor:.4f}.", end="")
                     if real_to_wanted_ratio >= self.real_to_wanted_ratio[0] and real_to_wanted_ratio <= self.real_to_wanted_ratio[1]:
                         # generated thumbnail is within the bounds for the wanted size
                         compression_factor = estimate_compression_factor(width, height, thumbnail_image_size) * real_to_wanted_ratio ** 4
@@ -264,7 +257,7 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
                         break
                     # other attempt to find a thumbnail in the wanted size
                     compression_factor = estimate_compression_factor(width, height, thumbnail_image_size)
-                    ## we must keep this information: default_storage.delete(thumbnail_path)
+                    default_storage.delete(thumbnail_path)
                     print(" NOT USED")
                 if width < upper_image_width and height < upper_image_height:
                     source['srcsets'].append({
@@ -280,8 +273,28 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
                     'height': round(upper_image_height),
                 })
 
+        return sources
+
+    def render(self, context, instance, placeholder):
+        """
+        Create a context, used to render a <picture> together with all its ``<source>`` elements:
+        It returns a list of HTML elements, each containing the information to render a ``<source>``
+        element. If no art direction is required, the rendered HTML element collapses to a simple
+        ``<img>`` with ``srcset`` and ``sizes`` attributes.
+        """
+
+        if not (sources := instance.glossary.get('cached_sources')):
+            sources = self.get_picture_sources(instance)
+            instance.glossary['cached_sources'] = sources
+            instance.save(update_fields=['glossary'])
+
+        context = self.super(BootstrapPicturePlugin, self).render(context, instance, placeholder)
         context.update({'picture': {'sources': sources, 'fallback_image': self.fallback_image}})
         return context
+
+    def save_model(self, request, obj, form, change):
+        obj.glossary.pop('cached_sources', None)
+        return super().save_model(request, obj, form, change)
 
 
 plugin_pool.register_plugin(BootstrapPicturePlugin)
