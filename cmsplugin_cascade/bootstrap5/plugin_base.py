@@ -110,9 +110,9 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
         add = 'plugin_type' in self.request.GET
         return self.render_close_frame(self.request, self.object, add)
 
-    def _update_collection_view(self, view_kwargs):
+    def _update_collection_view(self, view_kwargs, add=False):
         instance = view_kwargs['instance']
-        if instance.pk is None:
+        if add:
             initial = view_kwargs['initial']
             instance.plugin_type = initial['plugin_type']
             instance.language = initial['plugin_language']
@@ -124,4 +124,4 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
                 insert_order='last',
             )
             instance.placeholder.add_plugin(instance)
-        return super()._update_collection_view(view_kwargs)
+        return super()._update_collection_view(view_kwargs, add=add)

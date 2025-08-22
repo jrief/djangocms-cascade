@@ -21,7 +21,7 @@ class SharedGlossaryAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         """
         Creates a temporary form with an identifier and the fields declared as sharables for the
-        corresponding plugin model. Additionally it adds dynamic fields to edit the content inside
+        corresponding plugin model. Aditionally it adds dynamic fields to edit the content inside
         the model field `glossary`. The layout, validation and media files for these dynamic fields
         are borrowed from the corresponding plugin.
         """

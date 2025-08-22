@@ -154,7 +154,9 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
         model_form = type(model_form.__name__, model_form.__mro__, attrs)
         return model_form
 
-    def get_picture_sources(self, instance):
+    def get_sources_bounds(self, instance):
+        """
+        Determine the lower and upper bounds for each ``<source>`` in the ``<picture>`` element.
         allowed_breakpoints = self.get_breakpoints(instance)
         sources = []
         source_element = prev_aspect_ratio = None
