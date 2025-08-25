@@ -1,4 +1,4 @@
-{% load page_url from cms_tags %}{% spaceless %}
+{% load page_url from cms_tags %}{% load finder_tags %}{% spaceless %}
 {% if attrs.cms_page %}
 <a href="{% page_url attrs.cms_page %}">{{ text }}</a>
 {% elif attrs.href %}
@@ -8,6 +8,6 @@
 {% elif attrs.phone_number %}
 <a href="tel:{{ attrs.phone_number }}">{{ text }}</a>
 {% elif attrs.download_file %}
-<a href="{{ attrs.download_file }}" download>{{ text }}</a>
+<a href="{% download_url attrs.download_file %}" download>{{ text }}</a>
 {% endif %}
 {% endspaceless %}

@@ -1,5 +1,5 @@
-from django.forms.fields import CharField, EmailField, URLField
-from django.forms.widgets import EmailInput, RadioSelect, TextInput, URLInput
+from django.forms.fields import CharField, EmailField, IntegerField, URLField
+from django.forms.widgets import EmailInput, NumberInput, RadioSelect, TextInput, URLInput
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -109,6 +109,38 @@ class HyperlinkDialogForm(dialogs.RichtextDialogForm):
     )
 
 
+class InlineImageDialogForm(dialogs.RichtextDialogForm):
+    title = _("Edit Image")
+    extension = 'inline_image'
+    extension_script = 'cascade/admin/tiptap-extensions/inlineimage.js'
+    plugin_type = 'node'
+    icon = 'formset/icons/image.svg'
+    prefix = 'image_dialog'
+
+    image_file = FinderFileField(
+        label=_("Image"),
+        required=False,
+        widget = FinderFileSelect(attrs={
+            'richtext-map-to': 'insert_image_file()',
+            'richtext-map-from': 'dataset.file_id',
+        })
+    )
+    width = IntegerField(
+        label=_("Width"),
+        required=False,
+        initial=300,
+        help_text=_("The width of the image in pixels."),
+        widget=NumberInput(attrs={'richtext-bidirectional': True})
+    )
+    height = IntegerField(
+        label=_("Height"),
+        required=False,
+        initial=200,
+        help_text=_("The height of the image in pixels."),
+        widget=NumberInput(attrs={'richtext-bidirectional': True})
+    )
+
+
 class RichtextForm(ModelForm):
     body = RichTextField(
         label='',
@@ -121,6 +153,10 @@ class RichtextForm(ModelForm):
                 controls.DialogControl(
                     HyperlinkDialogForm(),
                     icon='formset/icons/link.svg',
+                ),
+                controls.DialogControl(
+                    InlineImageDialogForm(),
+                    icon='formset/icons/image.svg',
                 ),
                 controls.HorizontalRule(),
                 controls.Separator(),
