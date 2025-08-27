@@ -194,83 +194,98 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
 
         return sources
 
-    def get_or_create_thumbnail(self, image, width, height):
+    def get_or_create_cropped(self, image, width, height):
         width, height = min(round(width), image.width), min(round(height), image.height)
-        thumbnail_path = image.get_thumbnail_path(width, height)
-        if default_storage.exists(thumbnail_path):
-            return thumbnail_path
+        cropped_path = image.get_cropped_path(width, height)
+        if default_storage.exists(cropped_path):
+            return cropped_path
         try:
-            image.crop(thumbnail_path, width, height)
+            image.crop(cropped_path, width, height)
         except Exception as exc:
             logger.warning("Unable generate picture context. Reason: {}".format(exc))
-        return thumbnail_path
+        return cropped_path
 
     def get_picture_sources(self, instance):
-        def estimate_compression_factor(thumb_w, thumb_h, thumb_size):
-            pixel_ratio = round(thumb_w) * round(thumb_h) / upper_image_area
-            return upper_image_size * pixel_ratio / thumb_size
+        def estimate_compression_factor(crop_width, crop_height, crop_size):
+            pixel_ratio = round(crop_width) * round(crop_height) / largest_image_area
+            return largest_image_size * pixel_ratio / crop_size
 
         # image shall be rendered in a responsive context using the picture element
         sources = self.get_sources_bounds(instance)
         for source in sources:
             # create images for srcset in steps separated by `step_size_bytes`
-            upper_image_width, upper_image_height = source['upper_bound']['width'], source['upper_bound']['height']
-            upper_thumbnail_path = self.get_or_create_thumbnail(instance.image, upper_image_width, upper_image_height)
-            upper_image_size = default_storage.size(upper_thumbnail_path)
-            upper_image_area = upper_image_width * upper_image_height
-            lower_image_width, lower_image_height = source['lower_bound']['width'], source['lower_bound']['height']
-            lower_thumbnail_path = self.get_or_create_thumbnail(instance.image, lower_image_width, lower_image_height)
-            lower_image_size = default_storage.size(lower_thumbnail_path)
-            source['src'] = default_storage.url(lower_thumbnail_path)
-            num_steps = int((upper_image_size - lower_image_size) / self.step_size_bytes) + 1
-            step_size_bytes = round((upper_image_size - lower_image_size) / num_steps)
-            if upper_image_width > upper_image_height:
-                mult = (upper_image_width / lower_image_width) ** (1 / num_steps)
+            largest_image_width, largest_image_height = source['upper_bound']['width'], source['upper_bound']['height']
+            largest_image_path = self.get_or_create_cropped(instance.image, largest_image_width, largest_image_height)
+            largest_image_size = default_storage.size(largest_image_path)
+            largest_image_area = largest_image_width * largest_image_height
+            smallest_image_width, smallest_image_height = source['lower_bound']['width'], source['lower_bound']['height']
+            smallest_image_path = self.get_or_create_cropped(instance.image, smallest_image_width, smallest_image_height)
+            smallest_image_size = default_storage.size(smallest_image_path)
+            source['src'] = default_storage.url(smallest_image_path)
+            num_steps = int((largest_image_size - smallest_image_size) / self.step_size_bytes) + 1
+            step_size_bytes = round((largest_image_size - smallest_image_size) / num_steps)
+            if largest_image_width > largest_image_height:
+                mult = (largest_image_width / smallest_image_width) ** (1 / num_steps)
                 landscape = True
             else:
-                mult = (upper_image_height / lower_image_height) ** (1 / num_steps)
+                mult = (largest_image_height / smallest_image_height) ** (1 / num_steps)
                 landscape = False
             source['srcsets'] = [{
-                'url': default_storage.url(lower_thumbnail_path),
-                'width': round(lower_image_width),
-                'height': round(lower_image_height),
+                'url': default_storage.url(smallest_image_path),
+                'width': round(smallest_image_width),
+                'height': round(smallest_image_height),
             }]
-            print(f"============ Num steps : {num_steps}. Step size: {step_size_bytes} ============")
-            compression_factor = estimate_compression_factor(lower_image_width, lower_image_height, lower_image_size)
+            logger.debug(
+                "==== Num steps : {num_steps}. Step size: {step_size_bytes}",
+                num_steps=num_steps,
+                step_size_bytes=step_size_bytes,
+            )
+            compression_factor = estimate_compression_factor(smallest_image_width, smallest_image_height, smallest_image_size)
+
+            # create a set of images in different files sizes, guess width and height to find the right size
             for step in range(1 - num_steps, 0):
-                wanted_image_size = upper_image_size + step * step_size_bytes
+                wanted_image_size = largest_image_size + step * step_size_bytes
                 for attempt in range(3):
                     if landscape:
-                        width = sqrt(wanted_image_size / upper_image_size * source['aspect_ratio'] * compression_factor * upper_image_area)
+                        width = sqrt(wanted_image_size / largest_image_size * source['aspect_ratio'] * compression_factor * largest_image_area)
                         height = round(width / source['aspect_ratio'])
                     else:
-                        height = sqrt(wanted_image_size / upper_image_size / source['aspect_ratio'] * compression_factor * upper_image_area)
+                        height = sqrt(wanted_image_size / largest_image_size / source['aspect_ratio'] * compression_factor * largest_image_area)
                         width = round(height * source['aspect_ratio'])
-                    thumbnail_path = self.get_or_create_thumbnail(instance.image, width, height)
-                    thumbnail_image_size = default_storage.size(thumbnail_path)
-                    real_to_wanted_ratio = wanted_image_size / thumbnail_image_size
-                    print(f"{num_steps + step} Thumbnail to {round(width)}x{round(height)}. Wanted/Real size: {wanted_image_size}/{thumbnail_image_size} = {100*real_to_wanted_ratio:.0f}%. Compression factor: {compression_factor:.4f}.", end="")
+                    cropped_image_path = self.get_or_create_cropped(instance.image, width, height)
+                    cropped_image_size = default_storage.size(cropped_image_path)
+                    real_to_wanted_ratio = wanted_image_size / cropped_image_size
+                    logger.debug(
+                        " - {step_num} Thumbnail to {width}x{height}. "
+                        "Wanted/Real size: {wanted_image_size}/{cropped_image_size} = {real_to_wanted_ratio:.0f}%. "
+                        "Compression factor: {compression_factor:.4f}.",
+                        step_num=num_steps + step,
+                        width=round(width),
+                        height=round(height),
+                        wanted_image_size=wanted_image_size,
+                        cropped_image_size=cropped_image_size,
+                        real_to_wanted_ratio=100 * real_to_wanted_ratio,
+                        compression_factor=compression_factor,
+                    )
                     if real_to_wanted_ratio >= self.real_to_wanted_ratio[0] and real_to_wanted_ratio <= self.real_to_wanted_ratio[1]:
                         # generated thumbnail is within the bounds for the wanted size
-                        compression_factor = estimate_compression_factor(width, height, thumbnail_image_size) * real_to_wanted_ratio ** 4
-                        print(" USED")
+                        compression_factor = estimate_compression_factor(width, height, cropped_image_size) * real_to_wanted_ratio ** 4
                         break
                     # other attempt to find a thumbnail in the wanted size
-                    compression_factor = estimate_compression_factor(width, height, thumbnail_image_size)
-                    default_storage.delete(thumbnail_path)
-                    print(" NOT USED")
-                if width < upper_image_width and height < upper_image_height:
+                    compression_factor = estimate_compression_factor(width, height, cropped_image_size)
+                    default_storage.delete(cropped_image_path)
+                if width < largest_image_width and height < largest_image_height:
                     source['srcsets'].append({
-                        'url': default_storage.url(thumbnail_path),
+                        'url': default_storage.url(cropped_image_path),
                         'width': round(width),
                         'height': round(height),
                     })
             if mult > 1.01:
                 # if the step size is too small, we only use the lower bound
                 source['srcsets'].append({
-                    'url': default_storage.url(upper_thumbnail_path),
-                    'width': round(upper_image_width),
-                    'height': round(upper_image_height),
+                    'url': default_storage.url(largest_image_path),
+                    'width': round(largest_image_width),
+                    'height': round(largest_image_height),
                 })
 
         return sources
