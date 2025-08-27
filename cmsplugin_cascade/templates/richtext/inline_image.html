@@ -1,1 +1,1 @@
-<img src="{{ node.attrs.src }}" width="{{ node.attrs.width }}" height="{{ node.attrs.height }}" />
+<img src="{{ node.attrs.src }}" width="{{ node.attrs.width }}" height="{{ node.attrs.height }}"{% if node.attrs.alt %} alt="{{ node.attrs.alt }}"{% endif %} />
