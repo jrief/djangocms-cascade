@@ -139,10 +139,10 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
         help_text=_("The height of the image in pixels."),
         widget=NumberInput(attrs={'richtext-bidirectional': True})
     )
-    alt_text = CharField(
+    alt = CharField(
         label=_("Alternative Text"),
         required=False,
-        # widget=TextInput(attrs={'richtext-map-from': 'alt', 'size': 50})
+        widget=TextInput(attrs={'richtext-map-to': 'alt', 'richtext-map-from': 'extract_alt_text()', 'size': 50})
     )
 
 
