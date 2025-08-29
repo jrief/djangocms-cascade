@@ -69,36 +69,39 @@
 		});
 	},
 
-	// map the document state back to the dialog form.
-	extract_alt_text(inputElement, attributes) {
-		if (attributes.alt) {
-			inputElement.value = attributes.alt;
-		} else {
-			const imageFileField = inputElement.form.elements.image_file;
-			const setAltText = () => {
-				const selectedFile = JSON.parse(imageFileField.dataset.selected_file ?? '{}');
-				if (selectedFile.meta_data?.alt_text) {
-					inputElement.value = selectedFile.meta_data.alt_text;
-				}
-			};
+	fetch_thumbnail_image(inputElement, attributes) {
+		console.log('fetch_thumbnail_image', inputElement, attributes);
+		const altInputElement = inputElement.form.elements.alt;
 
-			// if no alt text was stored in the document, try to retrieve it from the selected file's meta data
-			// wait for the data-selected_file attribute to be set on the input element
-			const observer = new MutationObserver(mutations => {
-				for (const mutation of mutations) {
-					if (mutation.type === 'attributes' && mutation.attributeName === 'data-selected_file') {
-						setAltText();
-						observer.disconnect();
-						break;
+		// if no alt text was stored in the document, try to retrieve it from the selected file's meta data
+		// wait for the data-selected_file attribute to be set on the input element
+		const observer = new MutationObserver(mutations => {
+			for (const mutation of mutations) {
+				if (mutation.type === 'attributes' && mutation.attributeName === 'data-selected_file') {
+					const selectedFile = JSON.parse(inputElement.dataset.selected_file ?? '{}');
+					if (!altInputElement.dataset.alt_text_changed) {
+						altInputElement.value = selectedFile.meta_data.alt_text;
 					}
+					break;
 				}
-			});
-			setAltText();
-			observer.observe(imageFileField, {attributes: true});
+			}
+		});
+		const altInputChanged = event => altInputElement.dataset.alt_text_changed = true;
+		altInputElement.addEventListener('change', altInputChanged);
+		inputElement.form.closest('dialog').addEventListener('close', event => {
+			console.log('Dialog closed, disconnecting observer');
+			observer.disconnect();
+			altInputElement.removeEventListener('change', altInputChanged);
+		}, {once: true});
+		observer.observe(inputElement, {attributes: true});
 
-			// if no alt text was provided, disconnect observer anyway to prevent memory leaks
-			setTimeout(() => observer.disconnect(), 1000);
-		}
+		inputElement.value = attributes.dataset?.file_id ?? '';
+		inputElement.dispatchEvent(new Event('change'));
+	},
+
+	// map the document state back to the dialog form.
+	map_from_alt_text(inputElement, attributes) {
+		inputElement.value = attributes.alt;
 	},
 
 }

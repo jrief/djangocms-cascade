@@ -122,27 +122,31 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
         required=False,
         widget = FinderFileSelect(attrs={
             'richtext-map-to': 'insert_cropped_image()',
-            'richtext-map-from': 'dataset.file_id',
-        })
+            'richtext-map-from': 'fetch_thumbnail_image()',
+        }),
     )
     width = IntegerField(
         label=_("Width"),
         required=False,
         initial=300,
         help_text=_("The width of the image in pixels."),
-        widget=NumberInput(attrs={'richtext-bidirectional': True})
+        widget=NumberInput(attrs={'richtext-bidirectional': True}),
     )
     height = IntegerField(
         label=_("Height"),
         required=False,
         initial=200,
         help_text=_("The height of the image in pixels."),
-        widget=NumberInput(attrs={'richtext-bidirectional': True})
+        widget=NumberInput(attrs={'richtext-bidirectional': True}),
     )
     alt = CharField(
         label=_("Alternative Text"),
         required=False,
-        widget=TextInput(attrs={'richtext-map-to': 'alt', 'richtext-map-from': 'extract_alt_text()', 'size': 50})
+        widget=TextInput(attrs={
+            'richtext-map-to': 'alt',
+            'richtext-map-from': 'map_from_alt_text()',
+            'size': 50,
+        }),
     )
 
 
