@@ -1,4 +1,4 @@
-from django.forms.fields import CharField, EmailField, IntegerField, URLField
+from django.forms.fields import CharField, ChoiceField, EmailField, IntegerField, URLField
 from django.forms.widgets import EmailInput, NumberInput, RadioSelect, TextInput, URLInput
 from django.templatetags.static import static
 from django.utils.html import format_html
@@ -122,7 +122,7 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
         required=False,
         widget = FinderFileSelect(attrs={
             'richtext-map-to': 'insert_cropped_image()',
-            'richtext-map-from': 'fetch_thumbnail_image()',
+            'richtext-map-from': 'dataset.file_id',
         }),
     )
     width = IntegerField(
@@ -139,14 +139,16 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
         help_text=_("The height of the image in pixels."),
         widget=NumberInput(attrs={'richtext-bidirectional': True}),
     )
-    alt = CharField(
-        label=_("Alternative Text"),
+    alignment = ChoiceField(
+        label=_("Image alignment"),
+        choices=[
+            ('image-align-left', _("Left")),
+            ('image-align-center', _("Center")),
+            ('image-align-right', _("Right")),
+        ],
         required=False,
-        widget=TextInput(attrs={
-            'richtext-map-to': 'alt',
-            'richtext-map-from': 'map_from_alt_text()',
-            'size': 50,
-        }),
+        initial='image-align-center',
+        widget=RadioSelect(attrs={'richtext-map-from': 'align_image()'}),
     )
 
 
@@ -193,7 +195,14 @@ class RichtextPlugin(BootstrapPluginBase):
     render_template = 'cascade/bootstrap5/richtext.html'
 
     class Media:
-        css = {'all': ['cascade/admin/bootstrap5/css/richtextplugin.css', 'finder/css/finder-select.css', 'formset/css/bootstrap5-extra.css']}
+        css = {
+            'all': [
+                'cascade/admin/bootstrap5/css/richtextplugin.css',
+                'cascade/css/richtext.css',
+                'finder/css/finder-select.css',
+                'formset/css/bootstrap5-extra.css',
+            ]
+        }
         js = [format_html(
             '<script type="module" src="{}"></script>',
             static('finder/js/finder-select.js')

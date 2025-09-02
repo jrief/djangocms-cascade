@@ -13,6 +13,9 @@
 			alt: {
 				default: null,
 			},
+			['class']: {
+				default: null,
+			},
 			width: {
 				default: null,
 			},
@@ -51,13 +54,18 @@
 					method: 'POST',
 					headers: headers,
 					body: formData,
-				}).then(response => response.json()).then(body => {
-					resolve({
-						src: body.cropped_image_url,
-						alt: body.alt_text,
-						width: body.width,
-						height: body.height,
-						dataset: {file_id: body.image_id},
+				}).then(response => {
+					const contentLanguage = response.headers.get('Content-Language') ?? '';
+					response.json().then(body => {
+						const altText = body.meta_data['alt_text_' + contentLanguage] ?? body.meta_data.alt_text ?? '';
+						resolve({
+							src: body.cropped_image_url,
+							width: body.width,
+							height: body.height,
+							alt: altText,
+							['class']: elements.alignment.value,
+							dataset: {file_id: body.image_id, ...body.meta_data},
+						});
 					});
 				}).catch(error => {
 					console.error("Error while fetching from: " + url, error);
@@ -69,39 +77,8 @@
 		});
 	},
 
-	fetch_thumbnail_image(inputElement, attributes) {
-		console.log('fetch_thumbnail_image', inputElement, attributes);
-		const altInputElement = inputElement.form.elements.alt;
-
-		// if no alt text was stored in the document, try to retrieve it from the selected file's meta data
-		// wait for the data-selected_file attribute to be set on the input element
-		const observer = new MutationObserver(mutations => {
-			for (const mutation of mutations) {
-				if (mutation.type === 'attributes' && mutation.attributeName === 'data-selected_file') {
-					const selectedFile = JSON.parse(inputElement.dataset.selected_file ?? '{}');
-					if (!altInputElement.dataset.alt_text_changed) {
-						altInputElement.value = selectedFile.meta_data.alt_text;
-					}
-					break;
-				}
-			}
-		});
-		const altInputChanged = event => altInputElement.dataset.alt_text_changed = true;
-		altInputElement.addEventListener('change', altInputChanged);
-		inputElement.form.closest('dialog').addEventListener('close', event => {
-			console.log('Dialog closed, disconnecting observer');
-			observer.disconnect();
-			altInputElement.removeEventListener('change', altInputChanged);
-		}, {once: true});
-		observer.observe(inputElement, {attributes: true});
-
-		inputElement.value = attributes.dataset?.file_id ?? '';
-		inputElement.dispatchEvent(new Event('change'));
-	},
-
-	// map the document state back to the dialog form.
-	map_from_alt_text(inputElement, attributes) {
-		inputElement.value = attributes.alt;
+	align_image(inputElement, attributes) {
+		inputElement.checked = (attributes['class'] === inputElement.value);
 	},
 
 }

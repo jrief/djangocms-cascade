@@ -1,3 +1,3 @@
-{% load richtext %}
-
+{% load static richtext sekizai_tags %}
+{% addtoblock "css" %}<link href="{% static 'cascade/css/richtext.css' %}" rel="stylesheet" type="text/css" />{% endaddtoblock %}
 {% render_richtext body %}
