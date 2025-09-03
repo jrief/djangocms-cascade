@@ -14,7 +14,7 @@
 		<img data-sizes="auto" src="{{ picture.sources.0.src|default:picture.fallback_image }}" class="{{ instance.css_classes }}"{{ instance.html_tag_attributes }} />
 	</picture>
 {% else %}{% with source=picture.sources.0 %}
-	<img data-srcset="{% for srcset in source.srcsets %}{{ srcset.url }} {{ srcset.width }}w{% if not forloop.last %}, {% endif %}{% endfor %}" data-sizes="auto" src="{{ source.src|default:picture.fallback_image }}" class="{{ instance.css_classes }}"{{ instance.html_tag_attributes }} />
+	<img data-srcset="{% for srcset in source.srcsets %}{{ srcset.url }} {{ srcset.width }}w{% if not forloop.last %}, {% endif %}{% endfor %}" data-sizes="auto" src="{{ source.src|default:picture.fallback_image }}" alt="{{ picture.alt }}" class="{{ instance.css_classes }}"{{ instance.html_tag_attributes }} />
 {% endwith %}{% endif %}
 {% if instance_link %}</a>{% endif %}
 {% endwith %}{% endspaceless %}{% endlocalize %}

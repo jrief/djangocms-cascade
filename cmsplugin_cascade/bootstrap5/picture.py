@@ -304,7 +304,9 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
             instance.save(update_fields=['glossary'])
 
         context = self.super(BootstrapPicturePlugin, self).render(context, instance, placeholder)
-        context.update({'picture': {'sources': sources, 'fallback_image': self.fallback_image}})
+        if not (alt_text := instance.image.meta_data.get(f'alt_text_{instance.language}')):
+            alt_text = instance.image.meta_data.get('alt_text', instance.image.name)
+        context.update({'picture': {'sources': sources, 'fallback_image': self.fallback_image, 'alt': alt_text}})
         return context
 
     def save_model(self, request, obj, form, change):
