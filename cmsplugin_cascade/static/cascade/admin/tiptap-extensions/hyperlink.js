@@ -36,7 +36,6 @@
 
 	// map richtext document state back to the dialog form using attribute `richtext-map-from` on field `link_type`
 	change_link_type(inputElement, attributes) {
-		console.log('change_link_type', inputElement, attributes);
 		if (attributes.cms_page && inputElement.value === "cmspage") {
 			inputElement.checked = true;
 		} else if (attributes.href && inputElement.value === "exturl") {
