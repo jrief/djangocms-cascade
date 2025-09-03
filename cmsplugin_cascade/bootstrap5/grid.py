@@ -102,11 +102,6 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         css_classes.append(obj.glossary.get('layout', 'container'))
         return css_classes
 
-    def save_model(self, request, obj, form, change):
-        raise NotImplementedError("Can not reach this method, use `save` on Form instead.")
-        super().save_model(request, obj, form, change)
-        obj.sanitize_children()
-
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
