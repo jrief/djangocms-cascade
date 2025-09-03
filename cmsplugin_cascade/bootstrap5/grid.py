@@ -387,7 +387,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
 
         # add reordering fields for extra breakpoints
         prev_bp = 'xs'
-        for index, bp in enumerate(breakpoints, glossary_fields.index('column_ordering') + 1):
+        index = glossary_fields.index('column_ordering')
+        for index, bp in enumerate(breakpoints, index + 1):
             field_name = f'column_ordering_{bp}'
             ordering_choices = BootstrapColumnForm.ORDERING_CHOICES.copy()
             ordering_choices[0] = (
@@ -420,7 +421,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
             glossary_fields.insert(index, field_name)
 
         # define the margin utility fields
-        for index, bp in enumerate(breakpoints, glossary_fields.index('margin_utility') + 1):
+        index = glossary_fields.index('margin_utility')
+        for index, bp in enumerate(breakpoints, index + 1):
             field_name = f'margin_utility_{bp}'
             attrs[field_name] = ChoiceField(
                 label=gettext("Auto Margin for {}").format(Breakpoint[bp].label),
