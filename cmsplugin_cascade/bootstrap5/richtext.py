@@ -142,9 +142,11 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
     alignment = ChoiceField(
         label=_("Image alignment"),
         choices=[
-            ('image-align-left', _("Left")),
-            ('image-align-center', _("Center")),
-            ('image-align-right', _("Right")),
+            ('image-align-left', _("Align left")),
+            ('image-align-center', _("Centered")),
+            ('image-align-right', _("Align right")),
+            ('image-float-left', _("Float left")),
+            ('image-float-right', _("Float right")),
         ],
         required=False,
         initial='image-align-center',
