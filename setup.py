@@ -20,6 +20,8 @@ CLASSIFIERS = [
     'Framework :: Django :: 3.2',
     'Framework :: Django :: 4.0',
     'Framework :: Django :: 4.1',
+    'Framework :: Django :: 4.2',
+    'Framework :: Django :: 5.0',
     'Framework :: Django CMS :: 4.0',
     'Framework :: Django CMS :: 4.1',
 ]
@@ -33,10 +35,10 @@ setup(
     url='https://github.com/jrief/djangocms-cascade',
     packages=find_packages(exclude=['examples', 'docs', 'tests']),
     install_requires=[
-        'django>=3.2,<5',
+        'django>=3.2,<5.1',
         'django-classy-tags>=1.0',
         'django-cms>=4',
-        'django-entangled>=0.5.3',
+        'django-entangled>=0.6',
         'djangocms-text-ckeditor>=4.0',
         'django-select2>=7.7',
         'requests',
