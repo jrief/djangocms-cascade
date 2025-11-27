@@ -1,5 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.fields import BooleanField
+from django.template.loader import get_template
+from django.template.loader_tags import BlockNode
 from django.utils.translation import gettext_lazy as _
 from django.template import engines
 
@@ -19,12 +21,21 @@ class HidePluginFormMixin(EntangledModelFormMixin):
 
 class HidePluginMixin:
     """
-    This mixin class adds a checkbox to each named plugin, which if checked hides that
+    This mixin class adds a checkbox to each named plugin, that if checked, hides that
     plugin during the rendering phase.
     """
-    suppress_template = engines['django'].from_string('')
-    hiding_template_string = '''
+
+    # template string used to render the plugin in published mode
+    suppress_template_string = '''{{% extends "{base_template}" %}}
+{{% block always-visible %}}{{{{ block.super }}}}{{% endblock %}}
+{{% block main-component %}}{{% endblock %}}
+'''
+
+    # template string used to render the plugin in edit mode
+    hiding_template_string = '''{{% extends "{base_template}" %}}
 {{% load cms_tags %}}
+{{% block always-visible %}}{{{{ block.super }}}}{{% endblock %}}
+{{% block main-component %}}
 <div style="display: none;">
 {{% for plugin in instance.child_plugin_instances %}}{{% render_plugin plugin %}}{{% endfor %}}
 </div>
@@ -36,6 +47,7 @@ background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px
 background-size: contain;
 }}
 </style>
+{{% endblock %}}
 '''
 
     def get_form(self, request, obj=None, **kwargs):
@@ -45,22 +57,29 @@ background-size: contain;
         return super().get_form(request, obj, **kwargs)
 
     def get_render_template(self, context, instance, placeholder):
+        super_self = super(HidePluginMixin, self)
+        if hasattr(super_self, 'get_render_template'):
+            template_name = super_self.get_render_template(context, instance, placeholder)
+        else:
+            template_name = getattr(self, 'render_template', None)
+        if not template_name:
+            raise ImproperlyConfigured("Plugin {} has no attribute `render_template`.".format(self.__class__))
+
         if instance.glossary.get('hide_plugin'):
+            for node in get_template(template_name).template.nodelist:
+                if isinstance(node, BlockNode) and node.name == 'main-component':
+                    break
+            else:
+                template_name = 'cascade/generic/hide_plugin.html'
             if self.in_edit_mode(context['request'], placeholder):
                 # in edit mode we actually must render the children, otherwise they won't show
                 # up in Structure Mode
-                template_string = self.hiding_template_string.format(plugin_id=instance.pk)
-                return engines['django'].from_string(template_string)
+                template_string = self.hiding_template_string.format(
+                    base_template=template_name,
+                    plugin_id=instance.pk,
+                )
             else:
-                return self.suppress_template
+                template_string = self.suppress_template_string.format(base_template=template_name)
+            return engines['django'].from_string(template_string)
 
-        super_self = super(HidePluginMixin, self)
-        if hasattr(super_self, 'get_render_template'):
-            template = super_self.get_render_template(context, instance, placeholder)
-        elif getattr(self, 'render_template', False):
-            template = getattr(self, 'render_template', False)
-        else:
-            template = None
-        if not template:
-            raise ImproperlyConfigured("Plugin {} has no render_template.".format(self.__class__))
-        return template
+        return template_name
