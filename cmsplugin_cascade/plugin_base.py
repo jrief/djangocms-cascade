@@ -80,13 +80,19 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
     plugins_with_bookmark = list(app_settings.CMSPLUGIN_CASCADE['plugins_with_bookmark'])
     plugins_with_sharables = dict(app_settings.CMSPLUGIN_CASCADE['plugins_with_sharables'])
     plugins_with_extra_render_templates = app_settings.CMSPLUGIN_CASCADE['plugins_with_extra_render_templates'].keys()
+    plugins_allowed_to_hide = list(app_settings.CMSPLUGIN_CASCADE['plugins_allowed_to_hide'])
     allow_plugin_hiding = app_settings.CMSPLUGIN_CASCADE['allow_plugin_hiding']
     exclude_hiding_plugin = list(app_settings.CMSPLUGIN_CASCADE['exclude_hiding_plugin'])
 
     def __new__(cls, name, bases, attrs):
         model_mixins = attrs.pop('model_mixins', ())
-        if (cls.allow_plugin_hiding and name not in cls.exclude_hiding_plugin and 'name' in attrs and
-            not attrs.get('text_enabled')):
+        if name in cls.plugins_with_extra_render_templates:
+            bases = (RenderTemplateMixin,) + bases
+        if (
+            'name' in attrs and not attrs.get('text_enabled') and
+            (cls.allow_plugin_hiding and name not in cls.exclude_hiding_plugin) or
+            name in cls.plugins_allowed_to_hide
+        ):
             bases = (HidePluginMixin,) + bases
         if name in cls.plugins_with_extra_fields:
             bases = (ExtraFieldsMixin,) + bases
@@ -104,8 +110,6 @@ class CascadePluginBaseMetaclass(CascadePluginMixinMetaclass, CMSPluginBaseMetac
             base_model = SharableCascadeElement
         else:
             base_model = CascadeElement
-        if name in cls.plugins_with_extra_render_templates:
-            bases = (RenderTemplateMixin,) + bases
         if name == 'SegmentPlugin':
             # SegmentPlugin shall additionally inherit from configured mixin classes
             model_mixins += tuple(import_string(mc[0]) for mc in app_settings.CMSPLUGIN_CASCADE['segmentation_mixins'])

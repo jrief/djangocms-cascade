@@ -130,6 +130,7 @@ class AppSettings:
              ('cascade/plugins/googlemap.html', gettext_lazy("Google Map")),])
 
         config.setdefault('allow_plugin_hiding', False)
+        config.setdefault('plugins_allowed_to_hide', [])
 
         config.setdefault('cache_strides', True)
 
