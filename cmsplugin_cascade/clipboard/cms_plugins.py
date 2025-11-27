@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _, get_language_from_reques
 
 from cms.plugin_base import CMSPluginBase, PluginMenuItem
 from cms.plugin_pool import plugin_pool
-from cms.toolbar.utils import get_plugin_tree_as_json
+from cms.toolbar.utils import get_plugin_tree
 from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
 from cmsplugin_cascade.clipboard.utils import deserialize_to_clipboard, serialize_from_placeholder
 from cmsplugin_cascade.models import CascadeClipboard
@@ -131,8 +131,8 @@ class CascadeClipboardPlugin(CMSPluginBase):
         all_plugins = placeholder.get_plugins(language)
         if all_plugins.exists():
             new_plugins = placeholder.get_plugins(language).exclude(pk__in=tree_order)
-            data = json.loads(get_plugin_tree_as_json(request, list(new_plugins)))
-            data['plugin_order'] = tree_order + ['__COPY__']
+            data = get_plugin_tree(request, list(new_plugins))
+            # data['plugin_order'] = tree_order + ['__COPY__']
         else:
             return render(request, 'cascade/admin/clipboard_reload_page.html')
         data['target_placeholder_id'] = placeholder.pk
