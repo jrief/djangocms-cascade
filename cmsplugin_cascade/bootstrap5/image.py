@@ -19,7 +19,7 @@ class BootstrapImageFormMixin(ImageFormMixin):
         label=_("Image Shapes"),
         choices=IMAGE_SHAPE_CHOICES,
         widget=widgets.CheckboxSelectMultiple,
-        initial=['img-fluid']
+        required=False,
     )
     image_height = SizeField(
         label=_("Adapt Image Height"),

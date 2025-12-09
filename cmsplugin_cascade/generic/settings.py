@@ -1,6 +1,7 @@
-CASCADE_PLUGINS = ['custom_snippet', 'heading', 'horizontal_rule', 'simple_wrapper', 'text_image']
+# CASCADE_PLUGINS = ['custom_snippet', 'heading', 'horizontal_rule', 'simple_wrapper', 'text_image']
+CASCADE_PLUGINS = ['horizontal_rule']
 
-def set_defaults(config):
+def XXXset_defaults(config):
     from cmsplugin_cascade.extra_fields.config import PluginExtraFieldsConfig
 
     config.setdefault('plugins_with_extra_fields', {})

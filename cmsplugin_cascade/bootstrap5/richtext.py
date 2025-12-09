@@ -128,15 +128,13 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
     width = IntegerField(
         label=_("Width"),
         required=False,
-        initial=300,
-        help_text=_("The width of the image in pixels."),
+        help_text=_("Leave empty to adapt to aspect ratio."),
         widget=NumberInput(attrs={'richtext-bidirectional': True}),
     )
     height = IntegerField(
         label=_("Height"),
         required=False,
-        initial=200,
-        help_text=_("The height of the image in pixels."),
+        help_text=_("Leave empty to adapt to aspect ratio."),
         widget=NumberInput(attrs={'richtext-bidirectional': True}),
     )
     alignment = ChoiceField(
@@ -153,6 +151,21 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
         widget=RadioSelect(attrs={'richtext-map-from': 'align_image()'}),
     )
 
+    def clean_content(self, richtext_field, attributes):
+        width, height = attributes.get('width'), attributes.get('height')
+        width = int(width) if str(width).isdigit() else None
+        height = int(height) if str(height).isdigit() else None
+        dataset = attributes.get('dataset', {})
+        orig_width, orig_height = dataset.get('orig_width', 1), dataset.get('orig_height', 1)
+        if width is None and height is None:
+            width, height = self.initial.get('width'), self.initial.get('height')
+        elif width is None:
+            width = round(height * orig_width / orig_height)
+        elif height is None:
+            height = round(width / orig_width * orig_height)
+        attributes['width'] = width
+        attributes['height'] = height
+
 
 class RichtextForm(ModelForm):
     body = RichTextField(
@@ -168,7 +181,7 @@ class RichtextForm(ModelForm):
                     icon='formset/icons/link.svg',
                 ),
                 controls.DialogControl(
-                    InlineImageDialogForm(),
+                    InlineImageDialogForm(initial={'width': 300, 'height': 200}),
                     icon='formset/icons/image.svg',
                 ),
                 controls.HorizontalRule(),

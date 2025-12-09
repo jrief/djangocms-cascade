@@ -1,7 +1,8 @@
 import logging
 from math import sqrt
 
-from django.core.files.storage import default_storage
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ObjectDoesNotExist
 from django.forms import fields, widgets, MultipleChoiceField
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
@@ -18,6 +19,7 @@ from cmsplugin_cascade.bootstrap5.hyperlink import HyperlinkForm, HyperlinkPlugi
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap5.utils import IMAGE_SHAPE_CHOICES
 from finder.forms.fields import FinderFileField
+from finder.models.realm import RealmModel
 
 logger = logging.getLogger('cascade.bootstrap5')
 
@@ -58,6 +60,7 @@ class BootstrapPictureForm(HyperlinkForm):
         label=_("Image Shapes"),
         choices=IMAGE_SHAPE_CHOICES,
         widget=widgets.CheckboxSelectMultiple,
+        required=False,
     )
     link_type = LinkTypeChoiceField(required=False)
 
@@ -80,9 +83,9 @@ class ImageElementMixin:
     @property
     def image(self):
         if not hasattr(self, '_image_file'):
-            if file_uuid := self.glossary.get('image'):
-                self._image_instance = FinderFileModel.objects.get_inode(id=file_uuid, is_folder=False)
-            else:
+            try:
+                self._image_instance = FinderFileModel.objects.get_inode(id=self.glossary['image'], is_folder=False)
+            except (KeyError, FinderFileModel.DoesNotExist):
                 self._image_instance = None
         return self._image_instance
 
@@ -123,6 +126,13 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
         except AttributeError:
             content = gettext("No Picture")
         return mark_safe(content)
+
+    def _get_realm(self, request, slug):
+        try:
+            site = get_current_site(request)
+            return RealmModel.objects.get(site=site, slug=slug)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExist(f"Realm named {slug} not found for current site.")
 
     def get_model_form(self):
         if self.object:
@@ -194,18 +204,19 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
 
         return sources
 
-    def get_or_create_cropped(self, image, width, height):
+    def get_or_create_cropped(self, realm, image, width, height):
         width, height = min(round(width), image.width), min(round(height), image.height)
-        cropped_path = image.get_cropped_path(width, height)
-        if default_storage.exists(cropped_path):
-            return cropped_path
-        try:
-            image.crop(cropped_path, width, height)
-        except Exception as exc:
-            logger.warning("Unable generate picture context. Reason: {}".format(exc))
-        return cropped_path
+        cropped_filename = image.get_cropped_filename(width, height)
+        thumbnail_path = f'{image.id}/{cropped_filename}'
+        if not realm.sample_storage.exists(thumbnail_path):
+            try:
+                image.crop(realm, thumbnail_path, width, height)
+            except Exception as exception:
+                logger.warning(f"Thumbnail generation failed for image {self.pk}: {exception}")
+                return self.fallback_thumbnail_url
+        return thumbnail_path
 
-    def get_picture_sources(self, instance):
+    def get_picture_sources(self, realm, instance):
         def estimate_compression_factor(crop_width, crop_height, crop_size):
             pixel_ratio = round(crop_width) * round(crop_height) / largest_image_area
             return largest_image_size * pixel_ratio / crop_size
@@ -215,13 +226,13 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
         for source in sources:
             # create images for srcset in steps separated by `step_size_bytes`
             largest_image_width, largest_image_height = source['upper_bound']['width'], source['upper_bound']['height']
-            largest_image_path = self.get_or_create_cropped(instance.image, largest_image_width, largest_image_height)
-            largest_image_size = default_storage.size(largest_image_path)
+            largest_image_path = self.get_or_create_cropped(realm, instance.image, largest_image_width, largest_image_height)
+            largest_image_size = realm.sample_storage.size(largest_image_path)
             largest_image_area = largest_image_width * largest_image_height
             smallest_image_width, smallest_image_height = source['lower_bound']['width'], source['lower_bound']['height']
-            smallest_image_path = self.get_or_create_cropped(instance.image, smallest_image_width, smallest_image_height)
-            smallest_image_size = default_storage.size(smallest_image_path)
-            source['src'] = default_storage.url(smallest_image_path)
+            smallest_image_path = self.get_or_create_cropped(realm, instance.image, smallest_image_width, smallest_image_height)
+            smallest_image_size = realm.sample_storage.size(smallest_image_path)
+            source['src'] = realm.sample_storage.url(smallest_image_path)
             num_steps = int((largest_image_size - smallest_image_size) / self.step_size_bytes) + 1
             step_size_bytes = round((largest_image_size - smallest_image_size) / num_steps)
             if largest_image_width > largest_image_height:
@@ -231,7 +242,7 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
                 mult = (largest_image_height / smallest_image_height) ** (1 / num_steps)
                 landscape = False
             source['srcsets'] = [{
-                'url': default_storage.url(smallest_image_path),
+                'url': realm.sample_storage.url(smallest_image_path),
                 'width': round(smallest_image_width),
                 'height': round(smallest_image_height),
             }]
@@ -252,8 +263,8 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
                     else:
                         height = sqrt(wanted_image_size / largest_image_size / source['aspect_ratio'] * compression_factor * largest_image_area)
                         width = round(height * source['aspect_ratio'])
-                    cropped_image_path = self.get_or_create_cropped(instance.image, width, height)
-                    cropped_image_size = default_storage.size(cropped_image_path)
+                    cropped_image_path = self.get_or_create_cropped(realm, instance.image, width, height)
+                    cropped_image_size = realm.sample_storage.size(cropped_image_path)
                     real_to_wanted_ratio = wanted_image_size / cropped_image_size
                     logger.debug(
                         " - {step_num} Thumbnail to {width}x{height}. "
@@ -273,17 +284,17 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
                         break
                     # other attempt to find a thumbnail in the wanted size
                     compression_factor = estimate_compression_factor(width, height, cropped_image_size)
-                    default_storage.delete(cropped_image_path)
+                    realm.sample_storage.delete(cropped_image_path)
                 if width < largest_image_width and height < largest_image_height:
                     source['srcsets'].append({
-                        'url': default_storage.url(cropped_image_path),
+                        'url': realm.sample_storage.url(cropped_image_path),
                         'width': round(width),
                         'height': round(height),
                     })
             if mult > 1.01:
                 # if the step size is too small, we only use the lower bound
                 source['srcsets'].append({
-                    'url': default_storage.url(largest_image_path),
+                    'url': realm.sample_storage.url(largest_image_path),
                     'width': round(largest_image_width),
                     'height': round(largest_image_height),
                 })
@@ -298,14 +309,18 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, BootstrapPluginBase):
         ``<img>`` with ``srcset`` and ``sizes`` attributes.
         """
 
+        realm = self._get_realm(context['request'], 'admin')  # TODO: 'admin' is hard coded here, fix this
         if not (sources := instance.glossary.get('cached_sources')):
-            sources = self.get_picture_sources(instance)
+            sources = self.get_picture_sources(realm, instance)
             instance.glossary['cached_sources'] = sources
             instance.save(update_fields=['glossary'])
 
         context = self.super(BootstrapPicturePlugin, self).render(context, instance, placeholder)
-        if not (alt_text := instance.image.meta_data.get(f'alt_text_{instance.language}')):
-            alt_text = instance.image.meta_data.get('alt_text', instance.image.name)
+        if instance.image:
+            if not (alt_text := instance.image.meta_data.get(f'alt_text_{instance.language}')):
+                alt_text = instance.image.meta_data.get('alt_text', instance.image.name)
+        else:
+            alt_text = ""
         context.update({'picture': {'sources': sources, 'fallback_image': self.fallback_image, 'alt': alt_text}})
         return context
 
