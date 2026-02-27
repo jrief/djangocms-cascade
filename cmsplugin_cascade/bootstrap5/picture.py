@@ -1,8 +1,6 @@
 import logging
 from math import sqrt
 
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.exceptions import ObjectDoesNotExist
 from django.forms import fields, widgets, MultipleChoiceField
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
