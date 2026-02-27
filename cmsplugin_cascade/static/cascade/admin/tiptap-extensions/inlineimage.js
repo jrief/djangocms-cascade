@@ -39,7 +39,7 @@
 	// map the dialog form values to the richtext document state using attribute `richtext-map-to` on field `image_file`
 	insert_cropped_image(elements) {
 		const headers = new Headers();
-		const match = document.cookie.match(/csrftoken=([0-9a-zA-Z]+);/);
+		const match = document.cookie.match(/csrftoken=([0-9a-zA-Z]+)/);
 		headers.append('X-CSRFToken', match ? match[1] : 'force2fail');
 		const formData = new FormData();
 		formData.append('width', elements.width.value);
