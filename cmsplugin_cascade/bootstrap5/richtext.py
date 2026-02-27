@@ -25,7 +25,6 @@ class HyperlinkDialogForm(dialogs.RichtextDialogForm):
     extension = 'hyperlink'
     extension_script = 'cascade/admin/tiptap-extensions/hyperlink.js'
     plugin_type = 'mark'
-    prefix = 'hyperlink_dialog'
 
     link_content = CharField(
         label=_("Link Content"),
@@ -115,7 +114,6 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
     extension_script = 'cascade/admin/tiptap-extensions/inlineimage.js'
     plugin_type = 'node'
     icon = 'formset/icons/image.svg'
-    prefix = 'image_dialog'
 
     image_file = FinderFileField(
         label=_("Image"),
@@ -152,6 +150,7 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
     )
 
     def clean_content(self, richtext_field, attributes):
+        super().clean_content(richtext_field, attributes)
         width, height = attributes.get('width'), attributes.get('height')
         width = int(width) if str(width).isdigit() else None
         height = int(height) if str(height).isdigit() else None
