@@ -227,7 +227,7 @@ class TextEditorConfigFields(models.Model):
 class Segmentation(models.Model):
     class Meta:
         verbose_name = _("Segmentation")
-        managed = False  # it's a dummy model
+        managed = False  # it's a fake model
         db_table = None
 
 
