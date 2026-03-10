@@ -91,3 +91,26 @@ class WithSortableInlineElementsMixin:
                 glossary=inline_glossary,
                 order=order,
             )
+
+
+class ManageChildrenMixin:
+    """
+    Classes derived from ``CascadePluginBase`` can optionally add this mixin class to their form,
+    offering the input field ``num_children`` in their plugin editor. The content of this field is
+    not persisted in the plugin's model.
+    It allows the client to modify the number of children attached to this plugin.
+    """
+
+    def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
+        """
+        Extend the number of children so that the parent object contains wanted children.
+        No child will be removed if wanted_children is smaller than the current number of children.
+        """
+        from cms.api import add_plugin
+
+        current_children = parent.get_num_children()
+        for _ in range(current_children, wanted_children):
+            child = add_plugin(parent.placeholder, child_class, parent.language, target=parent)
+            if isinstance(child_glossary, dict):
+                child.glossary.update(child_glossary)
+            child.save()

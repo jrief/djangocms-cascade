@@ -1,73 +1,82 @@
-import re
 import logging
+
 from django.forms import widgets
-from django.forms.fields import IntegerField, MultipleChoiceField
+from django.forms.fields import IntegerField, MultipleChoiceField, BooleanField
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _, ngettext
 
-from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.bootstrap5.fields import BootstrapMultiSizeField
 from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
-from cmsplugin_cascade.bootstrap5.picture import get_picture_elements
+from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
+from cmsplugin_cascade.bootstrap5.mixins import AspectRatioChoicesMixin
+from cmsplugin_cascade.bootstrap5.picture import LazySizesPictureMixin, ImageElementMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.bootstrap5.utils import IMAGE_RESIZE_OPTIONS
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
-from cmsplugin_cascade.image import ImagePropertyMixin, ImageFormMixin
+from cmsplugin_cascade.mixins import ManageChildrenMixin
+from cmsplugin_cascade.models import CascadeElement
+from cmsplugin_cascade.widgets import NumberInputWidget
+
+from finder.forms.fields import FinderFileField
+from formset.forms import ModelForm
 
 logger = logging.getLogger('cascade')
 
 
-class CarouselSlidesFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
-    OPTION_CHOICES = [('fade', _("Fade transition")), ('wrap', _("Wrap"))]
+class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
+    OPTION_CHOICES = [
+        ('fade', _("Fade transition")),
+        ('wrap', _("Wrap")),
+        ('ride', _("Autoplays")),
+        ('pause', _("Pause on hover")),
+    ]
 
-    num_children = IntegerField(min_value=1, initial=1,
-        label=_('Slides'),
-        help_text=_('Number of slides for this carousel.'),
+    num_children = IntegerField(
+        label=_("Items"),
+        min_value=1,
+        initial=1,
+        widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
+        help_text=_("Number of slides for this carousel."),
     )
-
+    aspect_ratio = AspectRatioChoiceField(Breakpoint.xs)
     interval = IntegerField(
         label=_("Interval"),
+        min_value=1,
         initial=5,
+        widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
         help_text=_("Change slide after this number of seconds."),
     )
-
     options = MultipleChoiceField(
-        label=_('Options'),
+        label=_("Options"),
         choices=OPTION_CHOICES,
         widget=widgets.CheckboxSelectMultiple,
-        initial=['slide', 'wrap'],
-        help_text=_("Adjust interval for the carousel."),
+        initial=['wrap'],
+        required=False,
+        help_text=_("Set options for this Carousel."),
     )
-
-    container_max_heights = BootstrapMultiSizeField(
-        label=_("Carousel heights"),
-        allowed_units=['px'],
-        initial=['100px', '150px', '200px', '250px', '300px', '350px'],
-        help_text=_("Heights of Carousel in pixels for distinct Bootstrap's breakpoints."),
+    add_controls = BooleanField(
+        label=_("Add controls"),
+        required=False,
+        initial=True,
     )
-
-    resize_options = MultipleChoiceField(
-        label=_("Resize Options"),
-        choices=IMAGE_RESIZE_OPTIONS,
-        widget=widgets.CheckboxSelectMultiple,
-        help_text=_("Options to use when resizing the image."),
-        initial=['upscale', 'crop', 'subject_location', 'high_resolution'],
+    add_indicators = BooleanField(
+        label=_("Add indicators"),
+        required=False,
+        initial=True,
     )
 
     class Meta:
-        untangled_fields = ['num_children']
-        entangled_fields = {'glossary': ['interval', 'options', 'container_max_heights', 'resize_options']}
+        model = CascadeElement
+        exclude = ['shared_glossary']
+        fields_map = {'glossary': ['aspect_ratio', 'interval', 'options', 'add_controls', 'add_indicators']}
 
 
-class BootstrapCarouselPlugin(BootstrapPluginBase):
+class BootstrapCarouselPlugin(ManageChildrenMixin, AspectRatioChoicesMixin, BootstrapPluginBase):
     name = _("Carousel")
-    default_css_class = 'carousel'
-    default_css_attributes = ['options']
+    default_css_class = 'carousel slide'
     parent_classes = ['BootstrapColumnPlugin']
     render_template = 'cascade/bootstrap5/{}carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
-    form = CarouselSlidesFormMixin
+    form = CarouselSlidesForm
     DEFAULT_CAROUSEL_ATTRIBUTES = {'data-ride': 'carousel'}
 
     @classmethod
@@ -77,94 +86,68 @@ class BootstrapCarouselPlugin(BootstrapPluginBase):
         return mark_safe(content)
 
     @classmethod
-    def get_css_classes(cls, obj):
-        css_classes = cls.super(BootstrapCarouselPlugin, cls).get_css_classes(obj)
-        if 'fade' in obj.glossary.get('options', []):
+    def get_css_classes(cls, instance):
+        css_classes = cls.super(BootstrapCarouselPlugin, cls).get_css_classes(instance)
+        options = instance.glossary.get('options', [])
+        if 'fade' in options:
             css_classes.append('carousel-fade')
         return css_classes
 
     @classmethod
-    def get_html_tag_attributes(cls, obj):
-        attributes = cls.super(BootstrapCarouselPlugin, cls).get_html_tag_attributes(obj)
+    def get_html_tag_attributes(cls, instance):
+        attributes = cls.super(BootstrapCarouselPlugin, cls).get_html_tag_attributes(instance)
         attributes.update(cls.DEFAULT_CAROUSEL_ATTRIBUTES)
-        attributes['data-interval'] = 1000 * int(obj.glossary.get('interval', 5))
-        options = obj.glossary.get('options', [])
-        attributes['data-wrap'] = 'wrap' in options and 'true' or 'false'
+        options = instance.glossary.get('options', [])
+        attributes['data-bs-pause'] = 'pause' in options and 'hover' or 'false'
+        attributes['data-bs-ride'] = 'ride' in options and 'carousel' or 'false'
+        attributes['data-bs-wrap'] = 'wrap' in options and 'true' or 'false'
         return attributes
 
-    def save_model(self, request, obj, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
-        super().save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, BootstrapCarouselSlidePlugin)
-        obj.sanitize_children()
+    def render(self, context, instance, placeholder):
+        context = self.super(BootstrapCarouselPlugin, self).render(context, instance, placeholder)
+        context['show_controls'] = instance.glossary.get('add_controls', True)
+        context['show_indicators'] = instance.glossary.get('add_indicators', True)
+        return context
 
-    @classmethod
-    def sanitize_model(cls, obj):
-        sanitized = super().sanitize_model(obj)
-        complete_glossary = obj.get_complete_glossary()
-        # fill all invalid heights for this container to a meaningful value
-        max_height = max(obj.glossary['container_max_heights'].values())
-        pattern = re.compile(r'^(\d+)px$')
-        for bp in complete_glossary.get('breakpoints', ()):
-            if not pattern.match(obj.glossary['container_max_heights'].get(bp, '')):
-                obj.glossary['container_max_heights'][bp] = max_height
-        return sanitized
+    def save_model(self, request, instance, form, change):
+        wanted_children = int(form.cleaned_data.get('num_children'))
+        super().save_model(request, instance, form, change)
+        self.extend_children(instance, wanted_children, BootstrapCarouselSlidePlugin)
+        keys = ['aspect_ratio' if bp == 'xs' else f'aspect_ratio_{bp}' for bp in self.get_breakpoints(instance)]
+        if any(key in form.changed_data for key in keys):
+            for model in CascadeElement._get_cascade_elements():
+                # execute query to not iterate over SELECT ... FROM while updating other models
+                children = list(model.objects.filter(parent_id=instance.id))
+                for child in children:
+                    child.glossary.pop('cached_sources', None)
+                    child.save(update_fields=['glossary'])
+
 
 plugin_pool.register_plugin(BootstrapCarouselPlugin)
 
 
-class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
+class BootstrapSlideForm(ModelForm):
+    image = FinderFileField(
+        accept_mime_types=['image/*'],
+        label=_("Image"),
+    )
+
+    class Meta:
+        model = CascadeElement
+        exclude = ['shared_glossary']
+        fields_map = {'glossary': ['image']}
+
+
+class BootstrapCarouselSlidePlugin(LazySizesPictureMixin, BootstrapPluginBase):
     name = _("Slide")
-    model_mixins = (ImagePropertyMixin,)
+    model_mixins = (ImageElementMixin,)
     default_css_class = 'img-fluid'
     parent_classes = ['BootstrapCarouselPlugin']
-    raw_id_fields = ['image_file']
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     render_template = 'cascade/bootstrap5/carousel-slide.html'
-    form = ImageFormMixin
+    default_css_class = 'lazyload text-bg-light img-fluid w-100'
+    form = BootstrapSlideForm
     alien_child_classes = True
-
-    def render(self, context, instance, placeholder):
-        context = self.super(BootstrapCarouselSlidePlugin, self).render(context, instance, placeholder)
-        # slide image shall be rendered in a responsive context using the ``<picture>`` element
-        try:
-            parent_glossary = instance.parent.get_bound_plugin().glossary
-            instance.glossary.update(responsive_heights=parent_glossary['container_max_heights'])
-            elements = get_picture_elements(instance)
-        except Exception as exc:
-            logger.warning("Unable generate picture elements. Reason: {}".format(exc))
-        else:
-            context.update({
-                'is_fluid': False,
-                'elements': elements,
-            })
-        return context
-
-    @classmethod
-    def sanitize_model(cls, obj):
-        sanitized = super().sanitize_model(obj)
-        resize_options = obj.get_parent_glossary().get('resize_options', [])
-        if obj.glossary.get('resize_options') != resize_options:
-            obj.glossary.update(resize_options=resize_options)
-            sanitized = True
-        parent = obj.parent
-        while parent.plugin_type != 'BootstrapColumnPlugin':
-            parent = parent.parent
-            if parent is None:
-                logger.warning("PicturePlugin(pk={}) has no ColumnPlugin as ancestor.".format(obj.pk))
-                return
-        grid_column = parent.get_bound_plugin().get_grid_instance()
-        obj.glossary.setdefault('media_queries', {})
-        for bp in Breakpoint:
-            obj.glossary['media_queries'].setdefault(bp.name, {})
-            width = round(grid_column.get_bound(bp).max)
-            if obj.glossary['media_queries'][bp.name].get('width') != width:
-                obj.glossary['media_queries'][bp.name]['width'] = width
-                sanitized = True
-            if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
-                obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
-                sanitized = True
-        return sanitized
 
     @classmethod
     def get_identifier(cls, obj):
@@ -173,5 +156,37 @@ class BootstrapCarouselSlidePlugin(BootstrapPluginBase):
         except AttributeError:
             content = gettext("Empty Slide")
         return mark_safe(content)
+
+    @classmethod
+    def get_html_tag_attributes(cls, instance):
+        attributes = cls.super(BootstrapCarouselSlidePlugin, cls).get_html_tag_attributes(instance)
+        parent_glossary = instance.get_parent_glossary()
+        attributes['data-bs-interval'] = 1000 * int(parent_glossary.get('interval', 5))
+        return attributes
+
+    def render(self, context, instance, placeholder):
+        if not (sources := instance.glossary.get('cached_sources')):
+            if instance.image:
+                allowed_breakpoints = self.get_breakpoints(instance)
+                parent_glossary = instance.get_parent_glossary()
+                for bp in allowed_breakpoints:
+                    key = 'aspect_ratio' if bp == 'xs' else f'aspect_ratio_{bp}'
+                    instance.glossary[key] = parent_glossary.get(key, '')
+                sources = self.get_picture_sources(instance)
+                instance.glossary['cached_sources'] = sources
+                instance.save(update_fields=['glossary'])
+
+        context = self.super(BootstrapCarouselSlidePlugin, self).render(context, instance, placeholder)
+        if instance.image:
+            if not (alt_text := instance.image.meta_data.get(f'alt_text_{instance.language}')):
+                alt_text = instance.image.meta_data.get('alt_text', instance.image.name)
+        else:
+            alt_text = ""
+        context.update({'picture': {'sources': sources, 'fallback_image': self.fallback_image, 'alt': alt_text}})
+        return context
+
+    def save_model(self, request, obj, form, change):
+        obj.glossary.pop('cached_sources', None)
+        return super().save_model(request, obj, form, change)
 
 plugin_pool.register_plugin(BootstrapCarouselSlidePlugin)

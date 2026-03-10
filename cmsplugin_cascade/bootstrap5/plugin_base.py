@@ -79,8 +79,6 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
 
     @classmethod
     def sanitize_model(cls, instance):
-        # TODO: probably not required anymore
-
         """
         This method is called, before the model is written to the database. It can be overloaded
         to sanitize the current models, in case a parent model changed in a way, which might

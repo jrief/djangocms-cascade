@@ -1,9 +1,13 @@
 from django.forms.fields import ChoiceField
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
-from entangled.forms import EntangledModelFormMixin
-from cmsplugin_cascade.utils import CascadeUtilitiesMixin
+
+from formset.forms import ModelFormMixin
+
+from cms.models.pluginmodel import CMSPlugin
 from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
+from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
+from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 
 
 class BootstrapUtilities:
@@ -36,9 +40,9 @@ class BootstrapUtilities:
                 form_fields.update(arg.fget(cls))
 
         class Meta:
-            entangled_fields = {'glossary': list(form_fields.keys())}
+            fields_map = {'glossary': list(form_fields.keys())}
 
-        utility_form_mixin = type('UtilitiesFormMixin', (EntangledModelFormMixin,), dict(form_fields, Meta=Meta))
+        utility_form_mixin = type('UtilitiesFormMixin', (ModelFormMixin,), dict(form_fields, Meta=Meta))
         return type('BootstrapUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})
 
     @property
@@ -174,3 +178,41 @@ class BootstrapUtilities:
                 initial='',
             )
         return form_fields
+
+
+class AspectRatioChoicesMixin:
+    """
+    A mixin class to be added to a plugin inheriting from ``BootstrapPluginBase``. It extends the plugin's editor
+    form with aspect ratio choices for each breakpoint defined in the plugin's glossary.
+    """
+
+    def get_model_form(self):
+        if self.object:
+            breakpoints = self.get_breakpoints(self.object)
+        elif 'plugin_parent' in self.request.GET:
+            breakpoints = self.get_breakpoints(CMSPlugin.objects.get(pk=self.request.GET['plugin_parent']))
+        else:
+            breakpoints = []
+        if 'xs' in breakpoints:
+            breakpoints.remove('xs')
+
+        model_form = super().get_model_form()
+        glossary_fields = list(model_form.Meta.fields_map['glossary'])
+        attrs, prev_bp = {}, 'xs'
+        for index, bp in enumerate(breakpoints, glossary_fields.index('aspect_ratio') + 1):
+            if bp == 'xs':
+                continue
+            field_name = f'aspect_ratio_{bp}'
+            attrs[field_name] = AspectRatioChoiceField(
+                Breakpoint[bp],
+                required=False,
+                add_original=model_form.base_fields['aspect_ratio'].add_original,
+                empty_label=_("Inherit from “Aspect Ratio for ‘{}’”").format(Breakpoint[prev_bp].label),
+            )
+            glossary_fields.insert(index, field_name)
+
+        attrs['Meta'] = type('Meta', (model_form.Meta,), {
+            'fields_map': {'glossary': glossary_fields},
+        })
+        model_form = type(model_form.__name__, model_form.__mro__, attrs)
+        return model_form
