@@ -24,7 +24,7 @@ CLASSIFIERS = [
 setup(
     name='djangocms-cascade',
     version=__version__,
-    description='Build Single Page Applications using the Django-CMS plugin system',
+    description='Ecosystem of plugins for Django-CMS optimized for Bootstrap-5',
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     url='https://github.com/jrief/djangocms-cascade',
