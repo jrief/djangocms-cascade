@@ -35,6 +35,9 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
         css = {'all': ['formset/css/adminform.css', 'cascade/css/admin/adminform.css']}
         js = ['cascade/admin/bootstrap5/js/cascadeplugin.js']
 
+    def __repr__(self):
+        return f'<{self.__class__.__name__}>'
+
     def get_render_template(self, context, instance, placeholder):
         render_template = getattr(self, 'render_template', None)
         if render_template and '{}' in render_template:

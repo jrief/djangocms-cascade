@@ -2,48 +2,41 @@ from django.forms.fields import ChoiceField
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
-from formset.forms import ModelFormMixin
-
 from cms.models.pluginmodel import CMSPlugin
 from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
+from cmsplugin_cascade.bootstrap5.plugin_base import CascadePluginMetaclass
 from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
-from cmsplugin_cascade.utils import CascadeUtilitiesMixin
 
 
-class BootstrapUtilities:
+class BootstrapUtilities(CascadePluginMetaclass):
     """
     Factory for building a class ``BootstrapUtilitiesMixin``. This class then is used as a mixin to
-    all sorts of Bootstrap-5 plugins. Various Bootstrap-5 plugins are shipped using this mixin class
-    in different configurations. These configurations can be overridden through the project's
-    settings using:
-    ```
-    CMSPLUGIN_CASCADE['plugins_with_extra_mixins'] = {
-        'Bootstrap<ANY>Plugin': BootstrapUtilities(
-            BootstrapUtilities.background_and_color,
-            BootstrapUtilities.margins,
-            BootstrapUtilities.paddings,
-            …
-        ),
-        …
-    }
-    ```
-
-    The class ``BootstrapUtilities`` offers a bunch of property methods which return a list of
-    input fields and/or select boxes. They then can be added to the plugin's editor. This is
-    specially useful to add CSS classes from the utilities section of Bootstrap-5, such as
-    margins, borders, colors, etc.
+    all sorts of Bootstrap-5 plugins. Add this utility class to any plugin class by inheriting from
+    BootstrapUtilities(…) while declaring the plugin class.
     """
+
     def __new__(cls, *args):
-        form_fields = {}
-        for arg in args:
-            if isinstance(arg, property):
-                form_fields.update(arg.fget(cls))
+        class BootstrapUtilitiesMixin:
+            def get_model_form(self, **kwargs):
+                class Meta(self.form.Meta):
+                    fields_map = {
+                        **self.form.Meta.fields_map,
+                        'glossary': [*self.form.Meta.fields_map['glossary'], *form_fields.keys()],
+                    }
 
-        class Meta:
-            fields_map = {'glossary': list(form_fields.keys())}
+                form_class = type(self.form.__name__, (self.form,), {**form_fields, 'Meta': Meta})
+                return super().get_model_form(form_class=form_class)
 
-        utility_form_mixin = type('UtilitiesFormMixin', (ModelFormMixin,), dict(form_fields, Meta=Meta))
-        return type('BootstrapUtilitiesMixin', (CascadeUtilitiesMixin,), {'utility_form_mixin': utility_form_mixin})
+            @classmethod
+            def get_css_classes(cls, instance):
+                css_classes = super().get_css_classes(instance)
+                for key in form_fields.keys():
+                    if value := instance.glossary.get(key):
+                        css_classes.append(value)
+                return css_classes
+
+        form_fields = {k: v for arg in args if isinstance(arg, property) for k, v in arg.fget(cls).items()}
+        return BootstrapUtilitiesMixin
 
     @property
     def background_and_color(cls):
