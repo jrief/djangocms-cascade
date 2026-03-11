@@ -11,6 +11,7 @@ from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
 from cmsplugin_cascade.bootstrap5.mixins import AspectRatioChoicesMixin
 from cmsplugin_cascade.bootstrap5.picture import LazySizesPictureMixin, ImageElementMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.bootstrap5.richtext import HyperlinkDialogForm
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ManageChildrenMixin
 from cmsplugin_cascade.models import CascadeElement
@@ -18,6 +19,8 @@ from cmsplugin_cascade.widgets import NumberInputWidget
 
 from finder.forms.fields import FinderFileField
 from formset.forms import ModelForm
+from formset.formfields.richtext import RichTextarea, RichTextField
+from formset.richtext import controls, dialogs
 
 logger = logging.getLogger('cascade')
 
@@ -74,6 +77,7 @@ class BootstrapCarouselPlugin(ManageChildrenMixin, AspectRatioChoicesMixin, Boot
     name = _("Carousel")
     default_css_class = 'carousel slide'
     parent_classes = ['BootstrapColumnPlugin']
+    direct_child_classes = child_classes = ['BootstrapCarouselSlidePlugin']
     render_template = 'cascade/bootstrap5/{}carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
     form = CarouselSlidesForm
@@ -131,23 +135,39 @@ class BootstrapSlideForm(ModelForm):
         accept_mime_types=['image/*'],
         label=_("Image"),
     )
+    caption = RichTextField(
+        label=_("Caption"),
+        widget=RichTextarea(
+            control_elements=[
+                controls.Heading(),
+                controls.Bold(),
+                controls.Italic(),
+                controls.DialogControl(
+                    HyperlinkDialogForm(),
+                    icon='formset/icons/link.svg',
+                ),
+                controls.ClearFormat(),
+            ],
+        )
+    )
 
     class Meta:
         model = CascadeElement
         exclude = ['shared_glossary']
-        fields_map = {'glossary': ['image']}
+        fields_map = {'glossary': ['image', 'caption']}
 
 
 class BootstrapCarouselSlidePlugin(LazySizesPictureMixin, BootstrapPluginBase):
-    name = _("Slide")
+    name = _("Carousel Slide")
     model_mixins = (ImageElementMixin,)
     default_css_class = 'img-fluid'
-    parent_classes = ['BootstrapCarouselPlugin']
+    direct_parent_classes = parent_classes = ['BootstrapCarouselPlugin']
+    child_classes = []
+    allow_children = False
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     render_template = 'cascade/bootstrap5/carousel-slide.html'
     default_css_class = 'lazyload text-bg-light img-fluid w-100'
     form = BootstrapSlideForm
-    alien_child_classes = True
 
     @classmethod
     def get_identifier(cls, obj):
@@ -182,7 +202,10 @@ class BootstrapCarouselSlidePlugin(LazySizesPictureMixin, BootstrapPluginBase):
                 alt_text = instance.image.meta_data.get('alt_text', instance.image.name)
         else:
             alt_text = ""
-        context.update({'picture': {'sources': sources, 'fallback_image': self.fallback_image, 'alt': alt_text}})
+        context.update({
+            'picture': {'sources': sources, 'fallback_image': self.fallback_image, 'alt': alt_text},
+            'caption': instance.glossary.get('caption', ''),
+        })
         return context
 
     def save_model(self, request, obj, form, change):

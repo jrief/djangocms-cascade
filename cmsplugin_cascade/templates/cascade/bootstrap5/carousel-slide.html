@@ -1,7 +1,7 @@
 {% include "cascade/bootstrap5/picture.html" %}
-{% load cascade_tags %}
-{% if instance.num_children %}
-    <div class="carousel-caption d-none d-md-block">
-        {% for child in instance.child_plugin_instances %}{% render_plugin child %}{% endfor %}
-    </div>
+{% load richtext %}
+{% if caption %}
+<div class="carousel-caption d-none d-md-block">
+	{% render_richtext caption %}
+</div>
 {% endif %}
