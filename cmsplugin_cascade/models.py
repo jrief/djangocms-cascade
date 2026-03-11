@@ -1,7 +1,6 @@
 import json
 import os
 import shutil
-from collections import OrderedDict
 from urllib.parse import urljoin
 from pathlib import Path
 
@@ -12,7 +11,6 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
-from filer.fields.file import FilerFileField
 from cms.extensions import PageContentExtension, PageExtension
 from cms.extensions.extension_pool import extension_pool
 from cms.models.pluginmodel import CMSPlugin
@@ -300,16 +298,11 @@ class IconFont(models.Model):
         unique=True,
         help_text=_("A unique identifier to distinguish this icon font."),
     )
-
     config_data = models.JSONField()
-
-    zip_file = FilerFileField(
-        on_delete=models.CASCADE,
-        help_text=_('Upload a zip file created on <a href="http://fontello.com/" target="_blank">Fontello</a> containing fonts.')
+    font_folder = FilePathField(
+        allow_files=False,
+        allow_folders=True,
     )
-
-    font_folder = FilePathField(allow_files=False, allow_folders=True)
-
     is_default = models.BooleanField(
         _("Default Font"),
         default=False,
@@ -327,7 +320,7 @@ class IconFont(models.Model):
         """
         Return an ordered dict of css classes required to render these icons
         """
-        families = OrderedDict()
+        families = {}
         for glyph in self.config_data['glyphs']:
             src = glyph.pop('src', 'default')
             families.setdefault(src, [])

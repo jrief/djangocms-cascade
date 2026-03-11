@@ -1,16 +1,26 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.forms import Media
+from django.forms.fields import FileField
 from django.forms.models import ModelForm
+from django.forms.widgets import FileInput
 from django.utils.html import format_html, format_html_join
 from django.utils.text import format_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+
 from cmsplugin_cascade.models import IconFont
 from cmsplugin_cascade.icon.utils import zipfile, unzip_archive
 
 
 class UploadIconsForms(ModelForm):
+    zip_file = FileField(
+        label=_("Icon Font Zip File"),
+        help_text=_("Upload a zip file exported from <a href=\"http://fontello.com/\" target=\"_blank\">fontello.com</a>."),
+        required=False,
+        widget=FileInput(attrs={'accept': 'application/zip,application/x-zip-compressed'}),
+    )
+
     class Meta:
         fields = ['identifier', 'zip_file', 'is_default']
 
@@ -29,8 +39,8 @@ class UploadIconsForms(ModelForm):
         cleaned_data = super().clean()
         if 'zip_file' in self.changed_data:
             try:
-                label = cleaned_data['zip_file'].label
-                zip_ref = zipfile.ZipFile(cleaned_data['zip_file'].file.file, 'r')
+                label = cleaned_data['zip_file'].name
+                zip_ref = zipfile.ZipFile(cleaned_data['zip_file'].file, 'r')
                 cleaned_data.update(zip(['font_folder', 'config_data'], unzip_archive(label, zip_ref)))
             except Exception as exc:
                 raise ValidationError(format_lazy(_("Can not unzip uploaded archive {}: {}."), label, exc))
