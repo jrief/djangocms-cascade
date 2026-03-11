@@ -1,13 +1,13 @@
 {% load page_url from cms_tags %}{% load finder_tags %}{% spaceless %}
 {% if attrs.cms_page %}
-<a href="{% page_url attrs.cms_page %}">{{ text }}</a>
+<a href="{% page_url attrs.cms_page %}">{% include "richtext/mark.html" %}</a>
 {% elif attrs.href %}
-<a href="{{ attrs.href }}">{{ text }}</a>
+<a href="{{ attrs.href }}">{% include "richtext/mark.html" %}</a>
 {% elif attrs.mail_to %}
-<a href="mailto:{{ attrs.mail_to }}">{{ text }}</a>
+<a href="mailto:{{ attrs.mail_to }}">{% include "richtext/mark.html" %}</a>
 {% elif attrs.phone_number %}
-<a href="tel:{{ attrs.phone_number }}">{{ text }}</a>
+<a href="tel:{{ attrs.phone_number }}">{% include "richtext/mark.html" %}</a>
 {% elif attrs.download_file %}
-<a href="{% download_url attrs.download_file %}" download>{{ text }}</a>
+<a href="{% download_url attrs.download_file %}" download>{% include "richtext/mark.html" %}</a>
 {% endif %}
 {% endspaceless %}
