@@ -5,11 +5,11 @@ from cmsplugin_cascade.bootstrap5.mixins import BootstrapUtilities
 
 
 CASCADE_PLUGINS = [
-    'accordion', 'card', 'carousel', 'grid', 'heading', 'hyperlink', 'richtext', 'picture',
+    'accordion', 'buttons', 'card', 'carousel', 'grid', 'heading', 'hyperlink', 'richtext', 'picture',
 ]
 
 # CASCADE_PLUGINS = [
-#     'accordion', 'buttons', 'card', 'carousel', 'container', 'embeds', 'icon', 'image', 'jumbotron', 'picture', 'tabs',
+#     'buttons', 'embeds', 'icon', 'jumbotron', 'picture', 'tabs',
 # ]
 # if 'cms_bootstrap' in settings.INSTALLED_APPS:
 #     CASCADE_PLUGINS.append('secondary_menu')

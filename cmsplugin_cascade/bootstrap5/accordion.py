@@ -8,8 +8,6 @@ from django.utils.text import Truncator
 from django.utils.translation import gettext, gettext_lazy as _, ngettext
 
 from cms.models import Page, CMSPlugin
-from formset.forms import ModelForm
-
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.mixins import BootstrapUtilities
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
@@ -17,6 +15,8 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
+
+from formset.forms import ModelForm
 
 
 class AccordionForm(ManageChildrenFormMixin, ModelForm):

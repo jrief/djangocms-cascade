@@ -1,13 +1,16 @@
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
-from entangled.forms import EntangledModelFormMixin
+
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.icon.plugin_base import IconPluginMixin
-from cmsplugin_cascade.icon.forms import IconFormMixin
-from cmsplugin_cascade.link.config import LinkPluginBase, LinkFormMixin
+from cmsplugin_cascade.bootstrap5.hyperlink import HyperlinkForm, HyperlinkPluginMixin
+from cmsplugin_cascade.bootstrap5.icon import GlyphIconForm
+from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+
+from formset.fieldsmapping import get_related_object
 
 
 class ButtonTypeWidget(widgets.RadioSelect):
@@ -24,7 +27,7 @@ class ButtonSizeWidget(widgets.RadioSelect):
     template_name = 'cascade/admin/widgets/button_sizes.html'
 
 
-class ButtonFormMixin(EntangledModelFormMixin):
+class BootstrapButtonForm(GlyphIconForm, HyperlinkForm):
     BUTTON_TYPES = [
         ('btn-primary', _("Primary")),
         ('btn-secondary', _("Secondary")),
@@ -57,7 +60,6 @@ class ButtonFormMixin(EntangledModelFormMixin):
         label=_("Button Content"),
         widget=widgets.TextInput(attrs={'size': 50}),
     )
-
     button_type = ChoiceField(
         label=_("Button Type"),
         widget=ButtonTypeWidget(choices=BUTTON_TYPES),
@@ -65,7 +67,6 @@ class ButtonFormMixin(EntangledModelFormMixin):
         initial='btn-primary',
         help_text=_("Display Link using this Button Style")
     )
-
     button_size = ChoiceField(
         label=_("Button Size"),
         widget=ButtonSizeWidget(choices=BUTTON_SIZES),
@@ -74,7 +75,6 @@ class ButtonFormMixin(EntangledModelFormMixin):
         required=False,
         help_text=_("Display Link using this Button Size")
     )
-
     button_options = MultipleChoiceField(
         label=_("Button Options"),
         choices=[
@@ -83,14 +83,14 @@ class ButtonFormMixin(EntangledModelFormMixin):
         required=False,
         widget=widgets.CheckboxSelectMultiple,
     )
-
     stretched_link = BooleanField(
         label=_("Stretched link"),
         required=False,
-        help_text=_("Stretched-link utility to make any anchor the size of it’s nearest position: " \
-                    "relative parent, perfect for entirely clickable cards!")
+        help_text=_(
+            "Stretched-link utility to make any anchor the size of it’s nearest position: "
+            "relative parent, perfect for entirely clickable cards!"
+        ),
     )
-
     icon_align = ChoiceField(
         label=_("Icon alignment"),
         choices=[
@@ -102,80 +102,84 @@ class ButtonFormMixin(EntangledModelFormMixin):
         help_text=_("Add an Icon before or after the button content."),
     )
 
-    class Meta:
-        entangled_fields = {'glossary': ['link_content', 'button_type', 'button_size', 'button_options', 'icon_align',
-                                         'stretched_link']}
+    class Meta(HyperlinkForm.Meta):
+        fields_map = {
+            'glossary': [
+                'link_content', 'button_type', 'button_size', 'button_options', 'icon_align', 'stretched_link',
+                *HyperlinkForm.Meta.fields_map['glossary'], 'icon_font', 'glyph',
+            ],
+        }
+
+    class Media:
+        css = {'all': ['node_modules/bootstrap/dist/css/bootstrap.css']}
+
+    field_order = [
+        'link_content', *HyperlinkForm.Meta.fields, 'stretched_link', 'button_type', 'button_size', 'button_options',
+        'icon_align',
+    ]
 
 
-class BootstrapButtonMixin(IconPluginMixin):
+class BootstrapButtonPlugin(HyperlinkPluginMixin, BootstrapPluginBase):
+    name = _("Button")
+    model_mixins = (LinkElementMixin,)
+    form = BootstrapButtonForm
     require_parent = True
-    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
-    render_template = 'cascade/bootstrap5/button.html'
+    parent_classes = ['BootstrapRowPlugin', 'BootstrapColumnPlugin']
     allow_children = False
     default_css_class = 'btn'
     default_css_attributes = ['button_type', 'button_size', 'button_options', 'stretched_link']
-    ring_plugin = 'ButtonMixin'
+    render_template = 'cascade/bootstrap5/button.html'
 
-    class Media:
-        css = {'all': ['cascade/css/admin/iconplugin.css']}
-        js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonmixin.js']
-
-    def render(self, context, instance, placeholder):
-        context = super().render(context, instance, placeholder)
-        if 'icon_font_class' in context:
-            mini_template = '{0}<i class="{1} {2}" aria-hidden="true"></i>{3}'
-            icon_align = instance.glossary.get('icon_align')
-            if icon_align == 'icon-left':
-                context['icon_left'] = format_html(mini_template, '', context['icon_font_class'], 'cascade-icon-left',
-                                                   ' ')
-            elif icon_align == 'icon-right':
-                context['icon_right'] = format_html(mini_template, ' ', context['icon_font_class'],
-                                                    'cascade-icon-right', '')
-        return context
-
-
-class BootstrapButtonFormMixin(LinkFormMixin, IconFormMixin, ButtonFormMixin):
-    require_link = False
-    require_icon = False
-
-
-class BootstrapButtonPlugin(BootstrapButtonMixin, LinkPluginBase):
-    module = 'Bootstrap'
-    name = _("Button")
-    model_mixins = (LinkElementMixin,)
-    form = BootstrapButtonFormMixin
-    ring_plugin = 'ButtonPlugin'
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 
     class Media:
-        js = ['admin/js/jquery.init.js', 'cascade/js/admin/buttonplugin.js']
+        css = {'all': ['cascade/css/admin/iconplugin.css']}
 
     @classmethod
     def get_identifier(cls, instance):
         content = instance.glossary.get('link_content')
         if not content:
             try:
-                button_types = dict(ButtonFormMixin.BUTTON_TYPES)
+                button_types = dict(BootstrapButtonForm.BUTTON_TYPES)
                 content = str(button_types[instance.glossary['button_type']])
             except KeyError:
                 content = gettext("Empty")
         return content
 
     @classmethod
-    def get_css_classes(cls, obj):
-        css_classes = cls.super(BootstrapButtonPlugin, cls).get_css_classes(obj)
-        if obj.glossary.get('stretched_link'):
+    def get_css_classes(cls, instance):
+        css_classes = cls.super(BootstrapButtonPlugin, cls).get_css_classes(instance)
+        if instance.glossary.get('stretched_link'):
             css_classes.append('stretched_link')
         return css_classes
 
     @classmethod
-    def get_html_tag_attributes(cls, obj):
-        attributes = cls.super(BootstrapButtonPlugin, cls).get_html_tag_attributes(obj)
+    def get_html_tag_attributes(cls, instance):
+        attributes = cls.super(BootstrapButtonPlugin, cls).get_html_tag_attributes(instance)
         attributes.update(cls.DEFAULT_BUTTON_ATTRIBUTES)
         return attributes
 
     def render(self, context, instance, placeholder):
-        context = self.super(BootstrapButtonPlugin, self).render(context, instance, placeholder)
+        context = super().render(context, instance, placeholder)
+        icon_font = get_related_object(instance.glossary, 'icon_font')
+        glyph = instance.glossary.get('glyph')
+        if icon_font and glyph:
+            prefix = icon_font.config_data.get('css_prefix_text', 'icon-')
+            context.update({
+                'stylesheet_url': icon_font.get_stylesheet_url(),
+                'icon_font_class': mark_safe('{}{}'.format(prefix, glyph)),
+            })
+            mini_template = '{0}<i class="{1} {2}" aria-hidden="true"></i>{3}'
+            icon_align = instance.glossary.get('icon_align')
+            if icon_align == 'icon-left':
+                context['icon_left'] = format_html(
+                    mini_template, '', context['icon_font_class'], 'cascade-icon-left', ' '
+                )
+            elif icon_align == 'icon-right':
+                context['icon_right'] = format_html(
+                    mini_template, ' ', context['icon_font_class'], 'cascade-icon-right', ''
+                )
         return context
+
 
 plugin_pool.register_plugin(BootstrapButtonPlugin)

@@ -18,12 +18,10 @@ build
 env*
 dist
 htmlcov
-bower_components/
+cmsplugin_cascade/static/cascade/admin/bootstrap5/js/formset-extensions.js*
+cmsplugin_cascade/static/cascade/admin/bootstrap5/js/formset/*
 node_modules/
 workdir/
-filer_public/
-filer_public_thumbnails/
-examples/bs3demo/private_settings.py
 .venv
 package-lock.json
 poetry.lock

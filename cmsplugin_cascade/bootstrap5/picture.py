@@ -39,9 +39,11 @@ class BootstrapPictureForm(HyperlinkForm):
     link_type = LinkTypeChoiceField(required=False)
 
     class Meta(HyperlinkForm.Meta):
-        model = CascadeElement
-        exclude = ['shared_glossary']
-        fields_map = {'glossary': ['image', 'aspect_ratio', 'image_shapes'] + HyperlinkForm.Meta.fields_map['glossary']}
+        fields_map = {
+            'glossary': [
+                'image', 'aspect_ratio', 'image_shapes', *HyperlinkForm.Meta.fields_map['glossary'],
+            ],
+        }
 
 
 class ImageElementMixin:

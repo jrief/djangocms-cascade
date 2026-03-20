@@ -1,0 +1,28 @@
+{
+  "name": "djangocms-cascade",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "esbuild": "node client/esbuild.config.mjs",
+    "compilescss": "sass --load-path=. client/scss:cmsplugin_cascade/static/cascade/css"
+  },
+  "devDependencies": {
+    "esbuild-sass-plugin": "^3.7.0",
+    "@types/lodash.template": "^4.5.3",
+    "esbuild": "^0.27.4",
+    "lodash.capitalize": "^4.2.1",
+    "lodash.template": "^4.5.0",
+    "sass": "1.77.8",
+    "tslib": "^2.8.1",
+    "ts-loader": "9.5.2",
+    "typescript": "5.9.3",
+    "yargs-parser": "21.1.1"
+  },
+  "jshintConfig": {
+    "node": false,
+    "esversion": 8,
+    "undef": true,
+    "unused": true,
+    "supernew": false
+  }
+}

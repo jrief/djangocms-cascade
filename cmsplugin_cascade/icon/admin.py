@@ -94,10 +94,16 @@ class IconFontAdmin(admin.ModelAdmin):
     def preview_icons(self, obj):
         families = obj.get_icon_families()
         format_string = '<li title="{{0}}"><i class="{css_prefix_text}{{0}}"></i></li>'.format(**obj.config_data)
-        return format_html('<div class="preview-iconfont">{}</div>',
-            format_html_join('\n', '<h2>{}</h2><ul>{}</ul>',
-                 ((src.title(), format_html_join('', format_string, ((g,) for g in glyphs)))
-                 for src, glyphs in families.items())))
+        return format_html(
+            '<div class="preview-iconfont">{}</div>',
+            format_html_join(
+                '\n',
+                 '<h2>{}</h2><ul>{}</ul>', (
+                    (src.title(), format_html_join('', format_string, ((g,) for g in glyphs)))
+                    for src, glyphs in families.items()
+                )
+            )
+        )
     preview_icons.short_description = _("Preview Icons")
 
     def num_icons(self, obj):

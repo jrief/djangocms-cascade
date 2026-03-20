@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.forms import Media, widgets
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
-from django.urls import path, re_path
+from django.urls import path
 from django.utils.translation import get_language_from_request, get_language_from_path
 
 from cms.models.contentmodels import PageContent
@@ -35,10 +35,10 @@ class CascadePageAdmin(PageExtensionAdmin):
 
     def get_urls(self):
         urls = [
-            re_path(r'^published_pages/$', self.get_published_pagelist, name='get_published_pagelist'),
-            re_path(r'^fetch_fonticons/(?P<iconfont_id>[0-9]+)$', self.fetch_fonticons),
-            re_path(r'^fetch_fonticons/$', self.fetch_fonticons, name='fetch_fonticons'),
-            re_path(r'^validate_exturl/$', self.validate_exturl, name='validate_exturl'),
+            path('published_pages/', self.get_published_pagelist, name='get_published_pagelist'),
+            path('fetch_fonticons/<int:iconfont_id>', self.fetch_fonticons),
+            path('fetch_fonticons/', self.fetch_fonticons, name='fetch_fonticons'),
+            path('validate_exturl/', self.validate_exturl, name='validate_exturl'),
         ]
         urls.extend(super().get_urls())
         return urls
@@ -98,6 +98,7 @@ class CascadePageAdmin(PageExtensionAdmin):
             data = dict(icon_font.config_data)
             data.pop('glyphs', None)
             data['families'] = icon_font.get_icon_families()
+            data['css_source'] = icon_font.get_stylesheet_url()
             return JsonResponse(data)
 
     def validate_exturl(self, request):
