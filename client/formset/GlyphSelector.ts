@@ -1,6 +1,6 @@
 import capitalize from 'lodash.capitalize';
 import template from 'lodash.template';
-import './GlyphSelector.scss';
+import '../../assets/scss/iconfont.scss';
 
 
 class GlyphSelector {
@@ -14,7 +14,7 @@ class GlyphSelector {
 			'<h2><%= capitalize(family) %></h2>',
 			'<ul>',
 			'<% glyphs.forEach(glyph => { %>',
-				'<li title="<%= glyph %>">',
+				'<li title="<%= glyph %>" data-font_id="<%= font_id %>" data-prefix="<%= css_prefix_text %>">',
 					'<i class="<%= css_prefix_text %><%= glyph %>"></i>',
 				'</li>',
 			'<% }); %>',
@@ -42,6 +42,7 @@ class GlyphSelector {
 
 	public async connectedCallback() {
 		await this.loadIconFont(this.fontIconField.value);
+		this.element.addEventListener('change', this.handleGlyphChanged);
 		this.fontIconField.addEventListener('change', this.handleFontChanged);
 		this.element.form.addEventListener('submit', this.handleSubmit);
 	}
@@ -51,6 +52,16 @@ class GlyphSelector {
 		this.previewElement.querySelectorAll('ul > li').forEach(liElement => liElement.removeEventListener('click', this.handleSelectGlyph));
 		this.element.form?.removeEventListener('submit', this.handleSubmit);
 	}
+
+	private handleGlyphChanged = (event: Event) => {
+		if (event.target !== this.element)
+			return;
+		this.previewElement.querySelectorAll('ul > li').forEach(liElement => liElement.ariaSelected = null);
+		const preselected = this.previewElement.querySelector(`ul > li[title="${this.element.value}"]`);
+		if (preselected instanceof HTMLLIElement) {
+			preselected.ariaSelected = 'true';
+		}
+	};
 
 	private handleFontChanged = async (event: Event) => {
 		if (event.target instanceof HTMLSelectElement) {
@@ -66,6 +77,7 @@ class GlyphSelector {
 			this.previewElement.querySelectorAll('ul > li').forEach(liElement => liElement.ariaSelected = null);
 			liElement.ariaSelected = 'true';
 			this.element.value = liElement.getAttribute('title');
+			this.element.dataset.prefix = liElement.dataset.prefix;
 			this.element.dispatchEvent(new Event('change', {bubbles: true}));
 		}
 	};
@@ -98,11 +110,7 @@ class GlyphSelector {
 }
 
 export class CascadeGlyphInputElement extends HTMLInputElement {
-	#selector: GlyphSelector;  // hides internal implementation
-
-	constructor() {
-		super();
-	}
+	#selector: GlyphSelector;
 
 	connectedCallback() {
 		this.#selector = new GlyphSelector(this);

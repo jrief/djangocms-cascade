@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "esbuild": "node client/esbuild.config.mjs",
-    "compilescss": "sass --load-path=. client/scss:cmsplugin_cascade/static/cascade/css"
+    "compilescss": "sass --load-path=. assets/scss:cmsplugin_cascade/static/cascade/css"
   },
   "devDependencies": {
     "esbuild-sass-plugin": "^3.7.0",

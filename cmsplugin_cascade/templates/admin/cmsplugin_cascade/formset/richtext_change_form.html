@@ -3,3 +3,8 @@
 
 {% block content_title %}{% endblock %}
 {% block content_subtitle %}{% endblock %}
+
+{% block extrahead %}
+	{{ block.super }}
+	{% for stylesheet_url in stylesheet_urls %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endfor %}
+{% endblock %}

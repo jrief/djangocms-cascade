@@ -1,12 +1,17 @@
 from django.forms.fields import CharField, ChoiceField, EmailField, IntegerField, URLField
-from django.forms.widgets import EmailInput, NumberInput, RadioSelect, TextInput, URLInput
+from django.forms.widgets import EmailInput, NumberInput, RadioSelect, Select, TextInput, URLInput
 from django.templatetags.static import static
+from django.urls import reverse_lazy
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.bootstrap5.hyperlink import (
+    AnchorChoiceField, AnchorFieldFilterSet, LinkTypeChoiceField, PageChoiceField
+)
+from cmsplugin_cascade.bootstrap5.icon import IconFontChoiceField, extract_stylesheet_urls
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.models import CascadeElement
+from cmsplugin_cascade.models import CascadeElement, IconFont
 
 from finder.forms.fields import FinderFileField
 from finder.forms.widgets import FinderFileSelect
@@ -16,8 +21,6 @@ from formset.formfields.richtext import RichTextField
 from formset.richtext import controls, dialogs
 from formset.widgets import PhoneNumberInput, Selectize
 from formset.widgets.richtext import RichTextarea
-
-from cmsplugin_cascade.bootstrap5.hyperlink import AnchorChoiceField, AnchorFieldFilterSet, LinkTypeChoiceField, PageChoiceField
 
 
 class HyperlinkDialogForm(dialogs.RichtextDialogForm):
@@ -166,6 +169,32 @@ class InlineImageDialogForm(dialogs.RichtextDialogForm):
         attributes['height'] = height
 
 
+class GlyphDialogForm(dialogs.RichtextDialogForm):
+    title = _("Edit Glyph")
+    extension = 'glyph'
+    extension_script = 'cascade/admin/tiptap-extensions/glyph.js'
+    plugin_type = 'node'
+
+    icon_font = IconFontChoiceField(
+        label=_("Icon-Font"),
+        widget=Select(attrs={
+            'style': 'width: 100%;',
+            'richtext-map-from': 'change_icon_font()',
+        }),
+    )
+    glyph = CharField(
+        label=_("Glyph"),
+        widget=TextInput(attrs={
+            'is': 'cascade-select-glyph',
+            'fonticon-field': 'icon_font',
+            'fonticon-endpoint': reverse_lazy('admin:fetch_fonticons'),
+            'richtext-map-to': '{class: elements.glyph.dataset.prefix + elements.glyph.value, dataset: {font_id: elements.icon_font.value, value: elements.glyph.value}}',
+            'richtext-map-from': 'dataset.value',
+        }),
+        help_text=_("Select specific glyph from list of the selected icon font."),
+    )
+
+
 class RichtextForm(ModelForm):
     body = RichTextField(
         label='',
@@ -182,6 +211,10 @@ class RichtextForm(ModelForm):
                 controls.DialogControl(
                     InlineImageDialogForm(initial={'width': 300, 'height': 200}),
                     icon='formset/icons/image.svg',
+                ),
+                controls.DialogControl(
+                    GlyphDialogForm(),
+                    icon='formset/icons/omega.svg',
                 ),
                 controls.HorizontalRule(),
                 controls.Separator(),
@@ -218,8 +251,8 @@ class RichtextPlugin(BootstrapPluginBase):
             ]
         }
         js = [format_html(
-            '<script type="module" src="{}"></script>',
-            static('finder/js/finder-select.js')
+            '<script type="module" src="{src}"></script>',
+            src=static('finder/js/finder-select.js'),
         )]
 
     @classmethod
@@ -237,9 +270,19 @@ class RichtextPlugin(BootstrapPluginBase):
             instance.glossary['body'] = result.text
             instance.save(update_fields=['body'])
 
+    def render_change_form(
+        self, request, context, add=False, change=False, form_url="", obj=None
+    ):
+        context.update(stylesheet_urls=extract_stylesheet_urls(obj.glossary['body']['content']))
+        return super().render_change_form(request, context, add, change, form_url, obj)
+
     def render(self, context, instance, placeholder):
         context = self.super(RichtextPlugin, self).render(context, instance, placeholder)
-        context.update({'body': instance.glossary.get('body', '')})
+        body = instance.glossary.get('body', {'type': 'doc', 'content': []})
+        context.update({
+            'body': body,
+            'stylesheet_urls': extract_stylesheet_urls(body['content']),
+        })
         return context
 
     def get_field(self, field_path):

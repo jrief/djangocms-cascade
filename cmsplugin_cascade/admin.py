@@ -95,10 +95,13 @@ class CascadePageAdmin(PageExtensionAdmin):
         except IconFont.DoesNotExist:
             return HttpResponseNotFound("IconFont with id={} does not exist".format(iconfont_id))
         else:
-            data = dict(icon_font.config_data)
+            data = {
+                'font_id': icon_font.id,
+                'families': icon_font.get_icon_families(),
+                'css_source': icon_font.get_stylesheet_url(),
+                **icon_font.config_data,
+            }
             data.pop('glyphs', None)
-            data['families'] = icon_font.get_icon_families()
-            data['css_source'] = icon_font.get_stylesheet_url()
             return JsonResponse(data)
 
     def validate_exturl(self, request):

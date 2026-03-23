@@ -16,3 +16,7 @@
 .preview-iconfont ul li:hover {
 	border-color: #880000;
 }
+.preview-iconfont ul li[aria-selected] {
+	background-color: #cccc00;
+	border-color: #880000;
+}
