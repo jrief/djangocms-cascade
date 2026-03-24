@@ -28,6 +28,8 @@ class ButtonSizeWidget(widgets.RadioSelect):
 
 
 class BootstrapButtonForm(GlyphIconForm, HyperlinkForm):
+    require_icon = False
+
     BUTTON_TYPES = [
         ('btn-primary', _("Primary")),
         ('btn-secondary', _("Secondary")),

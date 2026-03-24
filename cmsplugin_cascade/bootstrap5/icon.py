@@ -35,7 +35,6 @@ class GlyphIconForm(ModelForm):
     def __init__(self, *args, **kwargs):
         if not getattr(self, 'require_icon', True):
             self.declared_fields['icon_font'].required = False
-            self.declared_fields['icon_font'].empty_label = _("No Icon")
             self.declared_fields['icon_font'].initial = None
             self.declared_fields['glyph'].required = False
         super().__init__(*args, **kwargs)

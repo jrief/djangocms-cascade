@@ -66,7 +66,12 @@ class GlyphSelector {
 	private handleFontChanged = async (event: Event) => {
 		if (event.target instanceof HTMLSelectElement) {
 			this.previewElement.querySelectorAll('ul > li').forEach(liElement => liElement.removeEventListener('click', this.handleSelectGlyph));
-			await this.loadIconFont(event.target.value);
+			if (event.target.value) {
+				await this.loadIconFont(event.target.value);
+			} else {
+				this.previewElement.innerHTML = '';
+				this.cssLinkElement.setAttribute('href', '');
+			}
 		}
 	};
 

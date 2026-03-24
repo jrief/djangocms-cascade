@@ -1,7 +1,6 @@
 from django.forms import fields
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext
 
-from cms.models.pluginmodel import CMSPlugin
 from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.fields import MultiSizeField
 
@@ -11,6 +10,7 @@ class BootstrapMultiSizeField(MultiSizeField):
     Some size input fields must be specified per Bootstrap breakpoint. Use this multiple
     input field to handle this.
     """
+
     def __init__(self, *args, **kwargs):
         properties = [bp.name for bp in Breakpoint]
         kwargs['sublabels'] = [bp.label for bp in Breakpoint]
