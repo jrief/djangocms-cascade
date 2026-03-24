@@ -3,6 +3,8 @@ from django.forms.widgets import EmailInput, NumberInput, RadioSelect, Select, T
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.utils.text import Truncator
 from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
@@ -19,6 +21,7 @@ from finder.forms.widgets import FinderFileSelect
 from formset.forms import ModelForm
 from formset.formfields.richtext import RichTextField
 from formset.richtext import controls, dialogs
+from formset.templatetags.richtext import render_richtext
 from formset.widgets import PhoneNumberInput, Selectize
 from formset.widgets.richtext import RichTextarea
 
@@ -232,6 +235,12 @@ class RichtextForm(ModelForm):
             'glossary': ['body'],
         }
 
+    def full_clean(self):
+        super().full_clean()
+        if self.is_bound:
+            rendered_html = render_richtext(self.cleaned_data['glossary']['body'])
+            self.cleaned_data['glossary']['sample_text'] = Truncator(rendered_html).words(3, truncate=' ...')
+
 
 class RichtextPlugin(BootstrapPluginBase):
     name = _("Richtext")
@@ -257,7 +266,7 @@ class RichtextPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, instance):
-        return format_html('Some content')
+        return mark_safe(instance.glossary.get('sample_text', ''))
 
     @classmethod
     def translate(cls, translator, instance, target_language, **extra_kwargs):
@@ -289,5 +298,8 @@ class RichtextPlugin(BootstrapPluginBase):
         if field_path == 'hyperlink_dialog.anchor':
             return AnchorChoiceField()
         return super().get_field(field_path)
+
+    # def save_model(self, request, obj, form, change):
+    #     sample_text = form.cleaned_data['body']
 
 plugin_pool.register_plugin(RichtextPlugin)
