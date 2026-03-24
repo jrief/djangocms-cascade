@@ -11,13 +11,7 @@ class IconFontChoiceField(ModelChoiceField):
     def __init__(self, **kwargs):
         kwargs.setdefault('queryset', IconFont.objects.all())
         kwargs.setdefault('empty_label', _("No Icon"))
-        try:
-            initial = IconFont.objects.get(is_default=True).id
-        except IconFont.DoesNotExist:
-            initial = ''
-        kwargs.setdefault('initial', initial)
         super().__init__(**kwargs)
-
 
 
 class GlyphIconForm(ModelForm):
@@ -45,6 +39,14 @@ class GlyphIconForm(ModelForm):
             self.declared_fields['icon_font'].initial = None
             self.declared_fields['glyph'].required = False
         super().__init__(*args, **kwargs)
+
+    def get_initial_for_field(self, field, field_name):
+        if field == 'icon_font':
+            try:
+                return IconFont.objects.get(is_default=True)
+            except IconFont.DoesNotExist:
+                pass
+        return super().get_initial_for_field(field, field_name)
 
 
 def extract_stylesheet_urls(content):
