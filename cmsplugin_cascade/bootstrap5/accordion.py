@@ -9,9 +9,10 @@ from django.utils.translation import gettext, gettext_lazy as _, ngettext
 
 from cms.models import Page, CMSPlugin
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.bootstrap5.mixins import BootstrapUtilities
+from cmsplugin_cascade.bootstrap5.mixins import VerticalMarginsMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.mixins import ManageChildrenMixin
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
@@ -45,17 +46,9 @@ class AccordionForm(ManageChildrenFormMixin, ModelForm):
         exclude = ['shared_glossary']
         fields_map = {'glossary': ['first_is_open', 'close_others']}
 
-    def save(self):
-        super().save()
-        child_glossary = {'heading': gettext("Extra Accordion")}
-        self.extend_children(BootstrapAccordionItemPlugin, child_glossary=child_glossary)
-        return self.instance
 
 
-VerticalMarginsMixin = BootstrapUtilities(BootstrapUtilities.vertical_margins)
-
-
-class BootstrapAccordionPlugin(VerticalMarginsMixin, TransparentWrapper, BootstrapPluginBase):
+class BootstrapAccordionPlugin(VerticalMarginsMixin, TransparentWrapper, ManageChildrenMixin, BootstrapPluginBase):
     name = _("Accordion")
     default_css_class = 'accordion'
     require_parent = True
@@ -78,6 +71,12 @@ class BootstrapAccordionPlugin(VerticalMarginsMixin, TransparentWrapper, Bootstr
             'first_is_open': instance.glossary.get('first_is_open', True),
         })
         return context
+
+    def save_model(self, request, instance, form, change):
+        wanted_children = int(form.cleaned_data.get('num_children'))
+        super().save_model(request, instance, form, change)
+        child_glossary = {'heading': gettext("Extra Accordion")}
+        self.extend_children(instance, wanted_children, BootstrapAccordionItemPlugin, child_glossary=child_glossary)
 
 plugin_pool.register_plugin(BootstrapAccordionPlugin)
 

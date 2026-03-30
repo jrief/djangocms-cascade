@@ -16,3 +16,12 @@ django-formset .aligned .dj-field-errors {
 django-formset .form-row [is^=django-selectize] + .shadow-wrapper {
   width: 100%;
 }
+django-formset django-form-collection .collection-siblings django-form-collection[sibling-position]:not(:first-child) {
+  margin-top: 5px;
+}
+django-formset django-form-collection .collection-siblings django-form-collection[sibling-position] .remove-collection {
+  top: 0;
+}
+django-formset django-form-collection .collection-siblings .module.aligned fieldset {
+  border-top: none;
+}

@@ -1,75 +1,170 @@
-from django.forms.models import ModelForm
+from django.forms.fields import CharField
+from django.forms.forms import Form
+from django.forms.widgets import TextInput
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.plugin_base import TransparentContainer, TransparentWrapper
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
+from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
+from cmsplugin_cascade.bootstrap5.hyperlink import HyperlinkForm, HyperlinkPluginMixin, LinkTypeChoiceField
+from cmsplugin_cascade.bootstrap5.icon import extract_stylesheet_urls
+from cmsplugin_cascade.bootstrap5.picture import AspectRatioChoicesMixin, ImageElementMixin, LazySizesPictureMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.models import CascadeElement
+from cmsplugin_cascade.bootstrap5.richtext import GlyphDialogForm, HyperlinkDialogForm
+from cmsplugin_cascade.link.plugin_base import LinkElementMixin
+
+from finder.forms.fields import FinderFileField
+
+from formset.collection import AddSiblingActivator, FormCollection
+from formset.formfields.collection import CollectionField
+from formset.formfields.richtext import RichTextField
+from formset.renderers.bootstrap import richtext_attributes
+from formset.richtext import controls
+from formset.widgets.richtext import RichTextarea
 
 
-class CardChildForm(ModelForm):
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary', 'glossary']
+class ListItemForm(Form):
+    content = CharField(
+        label=_("Item Content"),
+        widget=TextInput(attrs={'style': 'width: 100%;'}),
+    )
 
 
-class CardChildBase(BootstrapPluginBase):
-    require_parent = True
-    parent_classes = ['BootstrapCardPlugin']
-    allow_children = True
-    render_template = 'cascade/generic/wrapper.html'
-    child_classes = ['BootstrapCardHeaderPlugin', 'BootstrapCardBodyPlugin', 'BootstrapCardFooterPlugin']
-    form = CardChildForm
+class ListGroupCollection(FormCollection):
+    legend = _("List Group")
+    min_siblings = 0
+    max_siblings = 10
+    is_sortable = True
+    list_item_form = ListItemForm()
+    induce_add_sibling = '.add_list_item:active'
+    ignore_marked_for_removal = True
+    add_list_item = AddSiblingActivator(_("Add List Item"))
 
 
-class BootstrapCardHeaderPlugin(TransparentContainer, CardChildBase):
-    name = _("Card Header")
-    default_css_class = 'card-header'
+class CardForm(HyperlinkForm):
+    image = FinderFileField(
+        label=_("Image"),
+        required=False,
+        accept_mime_types=['image/*'],
+        help_text=_("Optional image for this card."),
+    )
+    aspect_ratio = AspectRatioChoiceField(Breakpoint.xs, add_original=True)
+    title = CharField(
+        label=_("Title"),
+        required=False,
+        help_text=_("Optional title for this card."),
+        widget=TextInput(attrs={'style': 'width: 100%;'}),
+    )
+    subtitle = CharField(
+        label=_("Subtitle"),
+        required=False,
+        help_text=_("Optional subtitle for this card."),
+        widget=TextInput(attrs={'style': 'width: 100%;'}),
+    )
+    body = RichTextField(
+        label='',
+        widget=RichTextarea(
+            control_elements=[
+                controls.Heading(),
+                controls.Bold(),
+                controls.Italic(),
+                controls.BulletList(),
+                controls.DialogControl(
+                    HyperlinkDialogForm(),
+                    icon='formset/icons/link.svg',
+                ),
+                controls.DialogControl(
+                    GlyphDialogForm(),
+                    icon='formset/icons/omega.svg',
+                ),
+                controls.HorizontalRule(),
+                controls.Separator(),
+                controls.ClearFormat(),
+                controls.Undo(),
+                controls.Redo(),
+            ]
+        ),
+    )
+    list_group = CollectionField(ListGroupCollection)
+    link_type = LinkTypeChoiceField(required=False)
+    link_content = CharField(
+        label=_("Link Content"),
+        required=False,
+        widget=TextInput(attrs={
+            'df-show': ".link_type !== ''",
+            'style': 'width: 100%;',
+        }),
+    )
 
-plugin_pool.register_plugin(BootstrapCardHeaderPlugin)
+    class Meta(HyperlinkForm.Meta):
+        fields_map = {
+            'glossary': [
+                'image', 'aspect_ratio', 'title', 'subtitle', 'body', 'list_group',
+                *HyperlinkForm.Meta.fields_map['glossary'], 'link_content'
+            ],
+        }
 
 
-class BootstrapCardBodyPlugin(TransparentContainer, CardChildBase):
-    name = _("Card Body")
-    default_css_class = 'card-body'
-
-plugin_pool.register_plugin(BootstrapCardBodyPlugin)
-
-
-class BootstrapCardFooterPlugin(TransparentContainer, CardChildBase):
-    name = _("Card Footer")
-    default_css_class = 'card-footer'
-
-plugin_pool.register_plugin(BootstrapCardFooterPlugin)
-
-
-class BootstrapCardPlugin(TransparentWrapper, BootstrapPluginBase):
+class BootstrapCardPlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySizesPictureMixin, BootstrapPluginBase):
     """
     Use this plugin to display a card with optional card-header and card-footer.
     """
+
     name = _("Card")
     default_css_class = 'card'
     require_parent = True
     parent_classes = ['BootstrapColumnPlugin']
-    allow_children = True
+    allow_children = False
+    child_classes = []
+    model_mixins = (LinkElementMixin, ImageElementMixin)
+    change_form_template = 'admin/cmsplugin_cascade/formset/richtext_change_form.html'
     render_template = 'cascade/bootstrap5/card.html'
+    form = CardForm
+
+    class Media:
+        css = {
+            'all': [
+                'cascade/css/richtext.css',
+                'formset/css/bootstrap5-extra.css',
+            ]
+        }
 
     @classmethod
     def get_identifier(cls, instance):
-        try:
-            return instance.card_header or instance.card_footer
-        except AttributeError:
-            pass
-        return ''
+        return instance.glossary.get('title', '')
 
-    @classmethod
-    def get_child_classes(cls, slot, page, instance=None):
-        """Restrict child classes of Card to one of each: Header, Body and Footer"""
-        child_classes = super().get_child_classes(slot, page, instance)
-        # allow only one child of type Header, Body, Footer
-        for child in instance.get_children():
-            if child.plugin_type in child_classes:
-                child_classes.remove(child.plugin_type)
-        return child_classes
+    def render_change_form(
+        self, request, context, add=False, change=False, form_url="", obj=None
+    ):
+        try:
+            context.update(stylesheet_urls=extract_stylesheet_urls(obj.glossary['body']['content']))
+        except KeyError:
+            pass
+        return super().render_change_form(request, context, add, change, form_url, obj)
+
+    def render(self, context, instance, placeholder):
+        if not (sources := instance.glossary.get('cached_sources')):
+            sources = self.get_picture_sources(instance)
+            instance.glossary['cached_sources'] = sources
+            instance.save(update_fields=['glossary'])
+
+        context = self.super(BootstrapCardPlugin, self).render(context, instance, placeholder)
+        body = instance.glossary.get('body', {'type': 'doc', 'content': []})
+        context.update({
+            'picture': {'sources': sources, 'fallback_image': self.fallback_image},
+            'title': instance.glossary.get('title'),
+            'subtitle': instance.glossary.get('subtitle'),
+            'stylesheet_urls': extract_stylesheet_urls(body['content']),
+            'body': body,
+            'list_group': instance.glossary.get('list_group'),
+        })
+        return context
 
 plugin_pool.register_plugin(BootstrapCardPlugin)
+
+
+def custom_richtext_attributes(node):
+    if node['type'] == 'paragraph':
+        return mark_safe(' class="card-text"')
+    return richtext_attributes(node)

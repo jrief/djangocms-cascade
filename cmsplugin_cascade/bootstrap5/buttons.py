@@ -7,6 +7,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.hyperlink import HyperlinkForm, HyperlinkPluginMixin
 from cmsplugin_cascade.bootstrap5.icon import GlyphIconForm
+from cmsplugin_cascade.bootstrap5.mixins import VerticalMarginsMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 
@@ -121,7 +122,7 @@ class BootstrapButtonForm(GlyphIconForm, HyperlinkForm):
     ]
 
 
-class BootstrapButtonPlugin(HyperlinkPluginMixin, BootstrapPluginBase):
+class BootstrapButtonPlugin(VerticalMarginsMixin, HyperlinkPluginMixin, BootstrapPluginBase):
     name = _("Button")
     model_mixins = (LinkElementMixin,)
     form = BootstrapButtonForm

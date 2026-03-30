@@ -16,7 +16,6 @@ from cmsplugin_cascade.bootstrap5.hyperlink import HyperlinkForm, HyperlinkPlugi
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap5.utils import IMAGE_SHAPE_CHOICES
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
-from cmsplugin_cascade.models import CascadeElement
 
 from finder.forms.fields import FinderFileField
 from finder.models.file import FileModel as FinderFileModel
@@ -236,9 +235,9 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, Lazy
     model_mixins = (LinkElementMixin, ImageElementMixin)
     admin_preview = False
     form = BootstrapPictureForm
-    render_template = 'cascade/bootstrap5/picture.html'
+    render_template = 'cascade/bootstrap5/picturelink.html'
     default_css_attributes = ['image_shapes']
-    default_css_class = 'lazyload text-bg-light img-fluid w-100'
+    default_css_class = 'lazyload w-100'
     # html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     # html_tag_attributes.update(LinkPluginBase.html_tag_attributes)
 

@@ -2,7 +2,7 @@ from django.forms.fields import CharField, ChoiceField, EmailField, IntegerField
 from django.forms.widgets import EmailInput, NumberInput, RadioSelect, Select, TextInput, URLInput
 from django.templatetags.static import static
 from django.urls import reverse_lazy
-from django.utils.html import format_html
+from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.text import Truncator
 from django.utils.translation import gettext_lazy as _
@@ -13,7 +13,7 @@ from cmsplugin_cascade.bootstrap5.hyperlink import (
 )
 from cmsplugin_cascade.bootstrap5.icon import IconFontChoiceField, extract_stylesheet_urls
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.models import CascadeElement, IconFont
+from cmsplugin_cascade.models import CascadeElement
 
 from finder.forms.fields import FinderFileField
 from finder.forms.widgets import FinderFileSelect
@@ -239,11 +239,11 @@ class RichtextForm(ModelForm):
         super().full_clean()
         if self.is_bound:
             rendered_html = render_richtext(self.cleaned_data['glossary']['body'])
-            self.cleaned_data['glossary']['sample_text'] = Truncator(rendered_html).words(3, truncate=' ...')
+            self.cleaned_data['glossary']['sample_text'] = Truncator(rendered_html).words(10)
 
 
 class RichtextPlugin(BootstrapPluginBase):
-    name = _("Richtext")
+    name = _("Text")
     parent_classes = None
     allow_children = False
     form = RichtextForm
@@ -266,7 +266,7 @@ class RichtextPlugin(BootstrapPluginBase):
 
     @classmethod
     def get_identifier(cls, instance):
-        return mark_safe(instance.glossary.get('sample_text', ''))
+        return mark_safe(strip_tags(instance.glossary.get('sample_text', '')))
 
     @classmethod
     def translate(cls, translator, instance, target_language, **extra_kwargs):
@@ -282,7 +282,10 @@ class RichtextPlugin(BootstrapPluginBase):
     def render_change_form(
         self, request, context, add=False, change=False, form_url="", obj=None
     ):
-        context.update(stylesheet_urls=extract_stylesheet_urls(obj.glossary['body']['content']))
+        try:
+            context.update(stylesheet_urls=extract_stylesheet_urls(obj.glossary['body']['content']))
+        except KeyError:
+            pass
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def render(self, context, instance, placeholder):
@@ -299,7 +302,5 @@ class RichtextPlugin(BootstrapPluginBase):
             return AnchorChoiceField()
         return super().get_field(field_path)
 
-    # def save_model(self, request, obj, form, change):
-    #     sample_text = form.cleaned_data['body']
 
 plugin_pool.register_plugin(RichtextPlugin)

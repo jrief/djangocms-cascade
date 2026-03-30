@@ -1,4 +1,4 @@
-{% include "cascade/bootstrap5/picture.html" %}
+{% with css_classes=instance.css_classes %}{% include "cascade/bootstrap5/picture.html" %}{%endwith %}
 {% load richtext %}
 {% if caption %}
 <div class="carousel-caption d-none d-md-block">

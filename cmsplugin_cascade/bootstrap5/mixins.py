@@ -209,3 +209,6 @@ class AspectRatioChoicesMixin:
         })
         model_form = type(model_form.__name__, model_form.__mro__, attrs)
         return model_form
+
+
+VerticalMarginsMixin = BootstrapUtilities(BootstrapUtilities.vertical_margins)

@@ -1,0 +1,34 @@
+.image-align-left {
+	display: block;
+	margin-right: auto;
+}
+.image-align-right {
+	display: block;
+	margin-left: auto;
+}
+.image-align-center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+.image-float-left {
+	float: left;
+	margin-right: 1em;
+}
+.image-float-right {
+	float: right;
+	margin-left: 1em;
+}
+.dj-richtext-wrapper {
+	dialog {
+		padding: 0;
+		word-wrap: break-word;
+		background-color: var(--body-bg);
+		border: 1px solid var(--border-color);
+		border-radius: 5px;
+		box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+		max-height: calc(100vh - 40px);
+		max-width: calc(100vw - 50px);
+		overflow-y: auto;
+	}
+}

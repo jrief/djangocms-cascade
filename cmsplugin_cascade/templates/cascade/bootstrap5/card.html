@@ -1,8 +1,21 @@
-{% load cascade_tags %}{% spaceless %}
+{% load richtext sekizai_tags %}
+{% for stylesheet_url in stylesheet_urls %}{% addtoblock "css" %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endaddtoblock %}{% endfor %}
+{% spaceless %}
 {% with inline_styles=instance.inline_styles %}
 <div class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
-{% for child in instance.child_plugin_instances %}
-	{% render_plugin child %}
-{% endfor %}
+	{% if picture %}{% include "cascade/bootstrap5/picture.html" with css_classes="card-img-top lazyload" %}{% endif %}
+	{% if title or subtitle or body %}<div class="card-body">
+		{% if title %}<h5 class="card-title">{{ title }}</h5>{% endif %}
+		{% if subtitle %}<h6 class="card-subtitle mb-2 text-muted">{{ subtitle }}</h6>{% endif %}
+		{% if body %}{% render_richtext body richtext_attributes="cmsplugin_cascade.bootstrap5.card.custom_richtext_attributes" %}{% endif %}
+	</div>{% endif %}
+	{% if list_group %}<ul class="list-group list-group-flush">
+		{% for item in list_group %}
+		<li class="list-group-item">{{ item.list_item_form.content }}</li>
+		{% endfor %}
+	</ul>{% endif %}
+	{% if instance.link %}
+	<div class="card-body">{% include "cascade/bootstrap5/textlink.html" with css_classes="card-link" %}</div>
+	{% endif %}
 </div>
 {% endwith %}{% endspaceless %}

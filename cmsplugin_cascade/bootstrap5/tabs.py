@@ -1,19 +1,22 @@
 from django.forms import widgets
 from django.forms.fields import BooleanField, CharField
-from django.utils.translation import gettext_lazy as _, ngettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.forms.fields import IntegerField
 
-from entangled.forms import EntangledModelFormMixin
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.mixins import ManageChildrenMixin
+from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
-from .plugin_base import BootstrapPluginBase
+
+from formset.forms import ModelForm
 
 
-class TabSetFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
+class TabSetForm(ManageChildrenFormMixin, ModelForm):
     num_children = IntegerField(
         min_value=1,
         initial=1,
@@ -21,25 +24,25 @@ class TabSetFormMixin(ManageChildrenFormMixin, EntangledModelFormMixin):
         label=_("Number of Tabs"),
         help_text=_("Number can be adjusted at any time."),
     )
-
     justified = BooleanField(
         label=_("Justified tabs"),
         required=False,
     )
 
     class Meta:
-        untangled_fields = ['num_children']
-        entangled_fields = {'glossary': ['justified']}
+        model = CascadeElement
+        exclude = ['shared_glossary']
+        fields_map = {'glossary': ['justified']}
 
 
-class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
+class BootstrapTabSetPlugin(ManageChildrenMixin, TransparentWrapper, BootstrapPluginBase):
     name = _("Tab Set")
     parent_classes = ['BootstrapColumnPlugin']
     direct_child_classes = ['BootstrapTabPanePlugin']
     require_parent = True
     allow_children = True
-    form = TabSetFormMixin
-    render_template = 'cascade/bootstrap5/{}tabset.html'
+    form = TabSetForm
+    render_template = 'cascade/bootstrap5/tabset.html'
     default_css_class = 'nav-tabs'
 
     @classmethod
@@ -58,19 +61,22 @@ class BootstrapTabSetPlugin(TransparentWrapper, BootstrapPluginBase):
     def save_model(self, request, obj, form, change):
         wanted_children = int(form.cleaned_data.get('num_children'))
         super().save_model(request, obj, form, change)
-        self.extend_children(obj, wanted_children, BootstrapTabPanePlugin)
+        child_glossary = {'tab_title': gettext("Extra Tab")}
+        self.extend_children(obj, wanted_children, BootstrapTabPanePlugin, child_glossary=child_glossary)
 
 plugin_pool.register_plugin(BootstrapTabSetPlugin)
 
 
-class TabPaneFormMixin(EntangledModelFormMixin):
+class TabPaneForm(ModelForm):
     tab_title = CharField(
         label=_("Tab Title"),
         widget=widgets.TextInput(attrs={'size': 80}),
     )
 
     class Meta:
-        entangled_fields = {'glossary': ['tab_title']}
+        model = CascadeElement
+        exclude = ['shared_glossary']
+        fields_map = {'glossary': ['tab_title']}
 
 
 class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
@@ -79,7 +85,7 @@ class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
     require_parent = True
     allow_children = True
     alien_child_classes = True
-    form = TabPaneFormMixin
+    form = TabPaneForm
 
     @classmethod
     def get_identifier(cls, obj):

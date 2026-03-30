@@ -20,7 +20,7 @@ from cmsplugin_cascade.widgets import NumberInputWidget
 from finder.forms.fields import FinderFileField
 from formset.forms import ModelForm
 from formset.formfields.richtext import RichTextarea, RichTextField
-from formset.richtext import controls, dialogs
+from formset.richtext import controls
 
 logger = logging.getLogger('cascade')
 
@@ -166,7 +166,7 @@ class BootstrapCarouselSlidePlugin(LazySizesPictureMixin, BootstrapPluginBase):
     allow_children = False
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     render_template = 'cascade/bootstrap5/carousel-slide.html'
-    default_css_class = 'lazyload text-bg-light img-fluid w-100'
+    default_css_class = 'lazyload text-bg-light w-100'
     form = BootstrapSlideForm
 
     @classmethod

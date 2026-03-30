@@ -8,7 +8,7 @@ from cms.plugin_base import CMSPluginBaseMetaclass, CMSPluginBase
 from cms.utils.conf import get_cms_setting
 
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.form_renderer import CascadeFormRenderer
+from cmsplugin_cascade.bootstrap5.form_renderer import CascadeFormRenderer
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.plugin_base import CascadePluginMixin, create_proxy_model
 
