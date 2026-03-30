@@ -24,8 +24,8 @@ class BootstrapUtilities(CascadePluginMetaclass):
                         'glossary': [*self.form.Meta.fields_map['glossary'], *form_fields.keys()],
                     }
 
-                form_class = type(self.form.__name__, (self.form,), {**form_fields, 'Meta': Meta})
-                return super().get_model_form(form_class=form_class)
+                kwargs['form_class'] = type(self.form.__name__, (self.form,), {**form_fields, 'Meta': Meta})
+                return super().get_model_form(**kwargs)
 
             @classmethod
             def get_css_classes(cls, instance):
@@ -179,7 +179,7 @@ class AspectRatioChoicesMixin:
     form with aspect ratio choices for each breakpoint defined in the plugin's glossary.
     """
 
-    def get_model_form(self):
+    def get_model_form(self, **kwargs):
         if self.object:
             breakpoints = self.get_breakpoints(self.object)
         elif 'plugin_parent' in self.request.GET:
@@ -189,7 +189,7 @@ class AspectRatioChoicesMixin:
         if 'xs' in breakpoints:
             breakpoints.remove('xs')
 
-        model_form = super().get_model_form()
+        model_form = super().get_model_form(**kwargs)
         glossary_fields = list(model_form.Meta.fields_map['glossary'])
         attrs, prev_bp = {}, 'xs'
         for index, bp in enumerate(breakpoints, glossary_fields.index('aspect_ratio') + 1):

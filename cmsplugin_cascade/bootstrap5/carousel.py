@@ -8,7 +8,7 @@ from django.utils.translation import gettext, gettext_lazy as _, ngettext
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
-from cmsplugin_cascade.bootstrap5.mixins import AspectRatioChoicesMixin
+from cmsplugin_cascade.bootstrap5.mixins import AspectRatioChoicesMixin, VerticalMarginsMixin
 from cmsplugin_cascade.bootstrap5.picture import LazySizesPictureMixin, ImageElementMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.bootstrap5.richtext import HyperlinkDialogForm
@@ -73,7 +73,7 @@ class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
         fields_map = {'glossary': ['aspect_ratio', 'interval', 'options', 'add_controls', 'add_indicators']}
 
 
-class BootstrapCarouselPlugin(ManageChildrenMixin, AspectRatioChoicesMixin, BootstrapPluginBase):
+class BootstrapCarouselPlugin(ManageChildrenMixin, VerticalMarginsMixin, AspectRatioChoicesMixin, BootstrapPluginBase):
     name = _("Carousel")
     default_css_class = 'carousel slide'
     parent_classes = ['BootstrapColumnPlugin']
