@@ -229,7 +229,7 @@ class LazySizesPictureMixin:
 class BootstrapPicturePlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySizesPictureMixin, BootstrapPluginBase):
     name = _("Picture")
     module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin', 'SimpleWrapperPlugin']
+    parent_classes = ['BootstrapAccordionItemPlugin', 'BootstrapColumnPlugin', 'SimpleWrapperPlugin']
     require_parent = True
     allow_children = False
     model_mixins = (LinkElementMixin, ImageElementMixin)
