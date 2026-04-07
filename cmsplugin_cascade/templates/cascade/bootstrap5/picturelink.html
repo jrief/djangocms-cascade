@@ -1,3 +1,3 @@
 {% with instance_link=instance.link tag_attributes=instance.html_tag_attributes css_classes=instance.css_classes %}
-{% if instance_link %}<a href="{{ instance_link }}">{% include "cascade/bootstrap5/picture.html" %}{% else %}{% include "cascade/bootstrap5/picture.html" %}{% endif %}
+{% if instance_link %}<a href="{{ instance_link }}">{% include "cascade/bootstrap5/picture.html" %}</a>{% else %}{% include "cascade/bootstrap5/picture.html" %}{% endif %}
 {% endwith %}
