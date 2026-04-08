@@ -298,7 +298,7 @@ class IconFont(models.Model):
         unique=True,
         help_text=_("A unique identifier to distinguish this icon font."),
     )
-    config_data = models.JSONField()
+    config_data = models.JSONField(default={})
     font_folder = FilePathField(
         allow_files=False,
         allow_folders=True,
