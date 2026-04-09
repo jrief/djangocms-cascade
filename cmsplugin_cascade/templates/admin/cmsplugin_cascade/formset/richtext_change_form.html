@@ -6,5 +6,5 @@
 
 {% block extrahead %}
 	{{ block.super }}
-	{% for stylesheet_url in stylesheet_urls %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" />{% endfor %}
+	{% for stylesheet_url in stylesheet_urls %}<link href="{{ stylesheet_url }}" rel="stylesheet" type="text/css" crossorigin="anonymous" />{% endfor %}
 {% endblock %}

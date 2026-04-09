@@ -4,7 +4,7 @@ window.djangoFormsetComponents = window.djangoFormsetComponents || [];
 window.djangoFormsetComponents.push({
 	selector: 'input[is="cascade-select-glyph"]',
 	loader: (fragmentRoot) => new Promise((resolve, reject) => {
-		import('./formset/GlyphSelector').then(({CascadeGlyphInputElement}) => {
+		import('./formset-extensions/GlyphSelector').then(({CascadeGlyphInputElement}) => {
 			if (!window.customElements.get('cascade-select-glyph')) {
 				window.customElements.define('cascade-select-glyph', CascadeGlyphInputElement, {extends: 'input'});
 			}

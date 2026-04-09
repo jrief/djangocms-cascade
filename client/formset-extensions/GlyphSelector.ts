@@ -66,7 +66,7 @@ class GlyphSelector {
 	private handleFontChanged = async (event: Event) => {
 		if (event.target instanceof HTMLSelectElement) {
 			this.previewElement.querySelectorAll('ul > li').forEach(liElement => liElement.removeEventListener('click', this.handleSelectGlyph));
-			if (event.target.value) {
+			if (!isNaN(Number(event.target.value))) {
 				await this.loadIconFont(event.target.value);
 			} else {
 				this.previewElement.innerHTML = '';
@@ -96,6 +96,8 @@ class GlyphSelector {
 	};
 
 	private async loadIconFont(value: string) {
+		if (isNaN(Number(value)))
+			return;
 		const response = await fetch(this.endpoint + value);
 		if (response.ok) {
 			const data = await response.json();

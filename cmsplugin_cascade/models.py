@@ -1,12 +1,8 @@
 import json
-import os
-import shutil
-from urllib.parse import urljoin
-from pathlib import Path
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
+from django.core.files.storage import storages
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -273,21 +269,6 @@ class CascadeClipboard(models.Model):
         return self.identifier
 
 
-class FilePathField(models.FilePathField):
-    """
-    Implementation of `models.FilePathField` which configures the `path` argument by default
-    to avoid the creation of a migration file for each change in local settings.
-    """
-    def __init__(self, **kwargs):
-        kwargs.setdefault('path', app_settings.CMSPLUGIN_CASCADE['icon_font_root'])
-        super().__init__(**kwargs)
-
-    def deconstruct(self):
-        name, path, args, kwargs = super().deconstruct()
-        del kwargs['path']
-        return name, path, args, kwargs
-
-
 class IconFont(models.Model):
     """
     Instances of uploaded icon fonts, such as FontAwesone, MaterialIcons, etc.
@@ -298,8 +279,8 @@ class IconFont(models.Model):
         unique=True,
         help_text=_("A unique identifier to distinguish this icon font."),
     )
-    config_data = models.JSONField(default={})
-    font_folder = FilePathField(
+    config_data = models.JSONField(default=dict)
+    font_folder = models.FilePathField(
         allow_files=False,
         allow_folders=True,
     )
@@ -330,10 +311,10 @@ class IconFont(models.Model):
         return families
 
     def get_stylesheet_url(self):
-        icon_font_url = os.path.relpath(app_settings.CMSPLUGIN_CASCADE['icon_font_root'], settings.MEDIA_ROOT)
+        icon_font_storage = app_settings.CMSPLUGIN_CASCADE['icon_font_storage']
+        storage = storages[icon_font_storage]
         name = self.config_data.get('name') or 'fontello'
-        parts = (icon_font_url, Path(self.font_folder).as_posix(), 'css/{}.css'.format(name))
-        return urljoin(settings.MEDIA_URL, '/'.join(parts))
+        return storage.url(f'{self.font_folder}/css/{name}.css')
 
     def config_data_as_json(self):
         data = dict(self.config_data)
@@ -343,14 +324,29 @@ class IconFont(models.Model):
 
     @classmethod
     def delete_icon_font(cls, instance=None, **kwargs):
-        if isinstance(instance, cls):
-            font_folder = os.path.join(app_settings.CMSPLUGIN_CASCADE['icon_font_root'], instance.font_folder)
-            shutil.rmtree(font_folder, ignore_errors=True)
+        def delete_directory(dir_path):
+            dir_path = dir_path.rstrip('/')
             try:
-                temp_folder = os.path.abspath(os.path.join(font_folder, os.path.pardir))
-                os.rmdir(temp_folder)
+                child_folders, child_files = storage.listdir(dir_path)
+            except FileNotFoundError:
+                return
+            for name in child_files:
+                try:
+                    storage.delete(f'{dir_path}/{name}')
+                except FileNotFoundError:
+                    pass
+            for name in child_folders:
+                delete_directory(f'{dir_path}/{name}')
+            try:
+                storage.delete(dir_path)
             except FileNotFoundError:
                 pass
+
+        if isinstance(instance, cls):
+            icon_font_storage = app_settings.CMSPLUGIN_CASCADE['icon_font_storage']
+            storage = storages[icon_font_storage]
+            delete_directory(instance.font_folder)
+
 
 models.signals.pre_delete.connect(IconFont.delete_icon_font, dispatch_uid='delete_icon_font')
 

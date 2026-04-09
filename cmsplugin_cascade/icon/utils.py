@@ -1,33 +1,30 @@
-import os, io, json, shutil
-from django.core.exceptions import SuspiciousFileOperation
+import os, json
+
+from django.core.exceptions import ImproperlyConfigured, SuspiciousFileOperation
+from django.core.files.storage import storages
+
 from cmsplugin_cascade import app_settings
 
-import tempfile
 try:
     import czipfile as zipfile
 except ImportError:
     import zipfile
 
 
-def unzip_archive(label, zip_ref):
+def unzip_archive(filename, zip_ref):
+    icon_font_storage = app_settings.CMSPLUGIN_CASCADE['icon_font_storage']
+    if icon_font_storage not in storages.backends:
+        raise ImproperlyConfigured("Missing storage backend {} for icon fonts".format(icon_font_storage))
+    storage = storages[icon_font_storage]
     common_prefix = os.path.commonprefix(zip_ref.namelist())
     if not common_prefix:
-        raise SuspiciousFileOperation("The zip archive {} is not packed correctly".format(label))
-    icon_font_root = app_settings.CMSPLUGIN_CASCADE['icon_font_root']
-    try:
-        try:
-            os.makedirs(icon_font_root)
-        except os.error:
-            pass  # the directory exists already
-        temp_folder = tempfile.mkdtemp(prefix='', dir=icon_font_root)
-        for member in zip_ref.infolist():
-            zip_ref.extract(member, temp_folder)
-        font_folder = os.path.join(temp_folder, common_prefix)
-
-        # this is specific to fontello
-        with io.open(os.path.join(font_folder, 'config.json'), 'r') as fh:
-            config_data = json.load(fh)
-    except Exception as exc:
-        shutil.rmtree(temp_folder, ignore_errors=True)
-        raise SuspiciousFileOperation("Can not unzip uploaded archive {}: {}".format(label, exc))
-    return os.path.relpath(font_folder, icon_font_root), config_data
+        raise SuspiciousFileOperation("The zip archive {} is not packed correctly".format(filename))
+    common_prefix = common_prefix.rstrip('/')
+    for zip_info in zip_ref.infolist():
+        if zip_info.is_dir():
+            continue
+        with zip_ref.open(zip_info.filename) as zip_entry:
+            storage.save(f'font_icons/{zip_info.filename}', zip_entry)
+    with storage.open(f'font_icons/{common_prefix}/config.json', 'r') as fh:
+        config_data = json.load(fh)
+    return f'font_icons/{common_prefix}', config_data

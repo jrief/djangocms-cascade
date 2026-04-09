@@ -19,7 +19,6 @@ class IconFormMixin(EntangledModelFormMixin):
         label=_("Font"),
         initial=get_default_icon_font,
     )
-
     symbol = CharField(
         widget=widgets.HiddenInput(),
         label=_("Select Symbol"),

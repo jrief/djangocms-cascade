@@ -115,9 +115,7 @@ class AppSettings:
                 ('cmsplugin_cascade.segmentation.mixins.EmulateUserModelMixin',
                  'cmsplugin_cascade.segmentation.mixins.EmulateUserAdminMixin')])
 
-        config.setdefault(
-            'icon_font_root',
-            os.path.abspath(os.path.join(self._setting('MEDIA_ROOT'), 'icon_fonts')))
+        config.setdefault('icon_font_storage', 'icon_fonts')
 
         config.setdefault('plugins_with_extra_render_templates', {})
         config['plugins_with_extra_render_templates'].setdefault(

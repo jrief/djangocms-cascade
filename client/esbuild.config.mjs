@@ -9,7 +9,7 @@ const buildOptions = parser(process.argv.slice(2), {
 build({
   entryPoints: [
     'client/formset-extensions.ts',
-    'client/formset/GlyphSelector.ts',
+    'client/formset-extensions/GlyphSelector.ts',
   ],
   bundle: true,
   minify: !buildOptions.debug,

@@ -39,11 +39,11 @@ class UploadIconsForms(ModelForm):
         cleaned_data = super().clean()
         if 'zip_file' in self.changed_data:
             try:
-                label = cleaned_data['zip_file'].name
+                file_name = cleaned_data['zip_file'].name
                 zip_ref = zipfile.ZipFile(cleaned_data['zip_file'].file, 'r')
-                cleaned_data.update(zip(['font_folder', 'config_data'], unzip_archive(label, zip_ref)))
+                cleaned_data.update(zip(['font_folder', 'config_data'], unzip_archive(file_name, zip_ref)))
             except Exception as exc:
-                raise ValidationError(format_lazy(_("Can not unzip uploaded archive {}: {}."), label, exc))
+                raise ValidationError(format_lazy(_("Can not unzip uploaded archive {}: {}."), file_name, exc))
             finally:
                 zip_ref.close()
             try:

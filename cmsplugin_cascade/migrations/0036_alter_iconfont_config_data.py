@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='iconfont',
             name='config_data',
-            field=models.JSONField(default={}),
+            field=models.JSONField(default=dict),
         ),
     ]
