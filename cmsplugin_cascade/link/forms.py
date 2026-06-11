@@ -105,19 +105,16 @@ class LinkForm(EntangledModelFormMixin):
         label=_("Link"),
         help_text=_("Type of link"),
     )
-
     cms_page = LinkSearchField(
         required=False,
         label='',
         help_text=_("An internal link onto any CMS page of this site"),
     )
-
     section = SectionChoiceField(
         required=False,
         label='',
         help_text=_("Page bookmark"),
     )
-
     download_file = ModelChoiceField(
         label='',
         queryset=FilerFileModel.objects.all(),
@@ -125,14 +122,12 @@ class LinkForm(EntangledModelFormMixin):
         required=False,
         help_text=_("An internal link onto a file from filer"),
     )
-
     ext_url = fields.URLField(
         required=False,
         label=_("URL"),
         help_text=_("Link onto external page"),
         widget=URLInput(attrs={'size': 100}),
     )
-
     mail_to = fields.EmailField(
         required=False,
         label=_("Email"),
@@ -153,7 +148,6 @@ class LinkForm(EntangledModelFormMixin):
         required=False,
         help_text=_("Open Link in other target."),
     )
-
     link_title = fields.CharField(
         label=_("Title"),
         required=False,
@@ -184,15 +178,16 @@ class LinkForm(EntangledModelFormMixin):
         Field ``cms_page`` may refer onto any CMS page, which itself may contain bookmarks. This method
         creates the list of bookmarks.
         """
-        self.base_fields['section'].choices = self.base_fields['section'].choices[:1]
+        choices = self.base_fields['section'].choices[:1]
         try:
             cms_page = get_related_object(instance.glossary, 'cms_page')
             cascade_page_content = cms_page.get_content_obj(instance.language).cascadepagecontent
             for val in cascade_page_content.glossary['element_ids'].values():
                 if val:
-                    self.base_fields['section'].choices.append((val, val))
+                    choices.append((val, val))
         except (AttributeError, KeyError, ObjectDoesNotExist):
             pass
+        self.base_fields['section'].widget.choices = self.base_fields['section'].choices = choices
 
     def _post_clean(self):
         super()._post_clean()
