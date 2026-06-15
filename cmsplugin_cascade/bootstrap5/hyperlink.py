@@ -72,10 +72,7 @@ class AnchorFieldFilterSet(FilterSet):
 class AnchorChoiceField(ModelChoiceField):
     widget = Selectize(
         use_filter_set=AnchorFieldFilterSet,
-        attrs={
-            'df-show': "link_type === 'cmspage'",
-            'df-require': "link_type === 'cmspage'",
-        },
+        attrs={'df-show': "link_type === 'cmspage'"},
     )
 
     def __init__(self, *args, **kwargs):

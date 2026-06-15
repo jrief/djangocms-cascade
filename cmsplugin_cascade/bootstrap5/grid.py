@@ -443,8 +443,8 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         return model_form
 
     @classmethod
-    def get_child_classes(cls, slot, page: Optional[Page] = None, instance: Optional[CMSPlugin] = None):
-        child_classes = cls.super(BootstrapColumnPlugin, cls).get_child_classes(slot, page, instance)
+    def get_child_classes(cls, slot, page: Optional[Page] = None, instance: Optional[CMSPlugin] = None, only_uncached: bool = False):
+        child_classes = cls.super(BootstrapColumnPlugin, cls).get_child_classes(slot, page, instance, only_uncached)
         return child_classes
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)

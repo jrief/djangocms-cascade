@@ -144,17 +144,17 @@ class TransparentWrapper:
     parent_plugins_cache = False
 
     @classmethod
-    def get_child_classes(cls, slot, page, instance=None):
+    def get_child_classes(cls, slot, page, instance=None, only_uncached=False):
         if hasattr(cls, 'direct_child_classes'):
             return cls.direct_child_classes
-        child_classes = set(super().get_child_classes(slot, page, instance))
+        child_classes = set(super().get_child_classes(slot, page, instance, only_uncached))
         while True:
             instance = instance.get_parent_instance() if instance and instance.parent else None
             if instance is None:
-                child_classes.update(super().get_child_classes(slot, page, instance))
+                child_classes.update(super().get_child_classes(slot, page, instance, only_uncached))
                 return list(child_classes)
             if not issubclass(instance.plugin_class, TransparentWrapper):
-                child_classes.update(instance.plugin_class.get_child_classes(slot, page, instance))
+                child_classes.update(instance.plugin_class.get_child_classes(slot, page, instance, only_uncached))
                 return list(child_classes)
 
     @classmethod
@@ -243,7 +243,7 @@ class CascadePluginBase(metaclass=CascadePluginBaseMetaclass):
         return list(parent_classes)
 
     @classmethod
-    def get_child_classes(cls, slot, page, instance=None):
+    def get_child_classes(cls, slot, page, instance=None, only_uncached=False):
         plugin_type = cls.__name__
         child_classes = set()
         for child_class in cls.get_child_plugin_candidates(slot, page):

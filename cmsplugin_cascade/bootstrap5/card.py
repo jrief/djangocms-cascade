@@ -101,7 +101,7 @@ class CardForm(HyperlinkForm):
         fields_map = {
             'glossary': [
                 'image', 'aspect_ratio', 'title', 'subtitle', 'body', 'list_group',
-                *HyperlinkForm.Meta.fields_map['glossary'], 'link_content'
+                'link_content', *HyperlinkForm.Meta.fields_map['glossary'],
             ],
         }
 

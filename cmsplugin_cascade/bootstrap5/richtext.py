@@ -298,7 +298,7 @@ class RichtextPlugin(BootstrapPluginBase):
         return context
 
     def get_field(self, field_path):
-        if field_path == 'hyperlink_dialog.anchor':
+        if field_path.endswith('.dialog_hyperlink.anchor'):
             return AnchorChoiceField()
         return super().get_field(field_path)
 

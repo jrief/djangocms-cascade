@@ -135,7 +135,7 @@ class LazySizesPictureMixin:
                 image.crop(ambit, thumbnail_path, width, height)
             except Exception as exception:
                 logger.warning(f"Thumbnail generation failed for image {image}: {exception}")
-                return cls.fallback_thumbnail_url
+                return None
         return thumbnail_path
 
     @classmethod
@@ -151,10 +151,12 @@ class LazySizesPictureMixin:
             # create images for srcset in steps separated by `step_size_bytes`
             largest_image_width, largest_image_height = source['upper_bound']['width'], source['upper_bound']['height']
             largest_image_path = cls.get_or_create_cropped(ambit, instance.image, largest_image_width, largest_image_height)
-            largest_image_size = ambit.sample_storage.size(largest_image_path)
-            largest_image_area = largest_image_width * largest_image_height
             smallest_image_width, smallest_image_height = source['lower_bound']['width'], source['lower_bound']['height']
             smallest_image_path = cls.get_or_create_cropped(ambit, instance.image, smallest_image_width, smallest_image_height)
+            if not largest_image_path or not smallest_image_path:
+                continue
+            largest_image_size = ambit.sample_storage.size(largest_image_path)
+            largest_image_area = largest_image_width * largest_image_height
             smallest_image_size = ambit.sample_storage.size(smallest_image_path)
             source['src'] = ambit.sample_storage.url(smallest_image_path)
             num_steps = int((largest_image_size - smallest_image_size) / cls.step_size_bytes) + 1

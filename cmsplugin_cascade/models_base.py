@@ -27,9 +27,9 @@ class CascadeModelBase(CMSPlugin):
     def __str__(self):
         return self.plugin_class.get_identifier(self)
 
-    @cached_property
-    def plugin_class(self):
-        return self.get_plugin_class()
+    # @cached_property
+    # def plugin_class(self):
+    #     return self.get_plugin_class()
 
     @property
     def tag_type(self):
