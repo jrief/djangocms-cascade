@@ -15,7 +15,6 @@ class AppSettings:
 
     @property
     def CMSPLUGIN_CASCADE(self):
-        import os
         from collections import OrderedDict
         from importlib import import_module
         from django.forms.fields import NumberInput

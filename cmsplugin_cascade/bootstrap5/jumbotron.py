@@ -205,12 +205,11 @@ class JumbotronFormMixin(EntangledModelFormMixin):
 
 class BootstrapJumbotronPlugin(BootstrapPluginBase):
     name = _("Jumbotron")
+    parent_classes = []
+    require_parent = False
+    allow_children = True
     default_css_class = 'p-3'
     model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
-    require_parent = False
-    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
-    allow_children = True
-    alien_child_classes = True
     form = JumbotronFormMixin
     raw_id_fields = ['image_file']
     render_template = 'cascade/bootstrap5/jumbotron.html'

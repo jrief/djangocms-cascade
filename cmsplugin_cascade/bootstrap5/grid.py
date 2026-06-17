@@ -1,9 +1,8 @@
 import re
-from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.forms import widgets
-from django.forms.fields import BooleanField, CharField, ChoiceField, MultipleChoiceField
+from django.forms.fields import CharField, ChoiceField, MultipleChoiceField
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _, ngettext, ngettext_lazy
 
@@ -15,8 +14,9 @@ from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from formset.forms import ModelForm
 from formset.widgets import Selectize
 
-from .plugin_base import BootstrapPluginBase
-from ..models import CascadeElement
+from cmsplugin_cascade.bootstrap5.mixins import HidePluginMixin
+from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.models import CascadeElement
 
 
 class GridModelForm(ModelForm):
@@ -81,7 +81,7 @@ class ContainerForm(GridModelForm):
 
 class BootstrapContainerPlugin(BootstrapPluginBase):
     name = _("Container")
-    parent_classes = None
+    parent_classes = []
     require_parent = False
     form = ContainerForm
     footnote_html = """<p>
@@ -165,7 +165,7 @@ class BootstrapRowForm(ManageChildrenFormMixin, GridModelForm):
 class BootstrapRowPlugin(BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
-    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin', 'BootstrapJumbotronPlugin']
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin']
     form = BootstrapRowForm
 
     @classmethod
@@ -317,10 +317,9 @@ class BootstrapColumnForm(GridModelForm):
         ]}
 
 
-class BootstrapColumnPlugin(BootstrapPluginBase):
+class BootstrapColumnPlugin(HidePluginMixin, BootstrapPluginBase):
     name = _("Column")
     parent_classes = ['BootstrapRowPlugin']
-    alien_child_classes = True
     form = BootstrapColumnForm
     footnote_html = """<p>
     For more information about this <strong>Column</strong> component, please refer to the
@@ -442,9 +441,5 @@ class BootstrapColumnPlugin(BootstrapPluginBase):
         model_form = type(model_form.__name__, model_form.__mro__, attrs)
         return model_form
 
-    @classmethod
-    def get_child_classes(cls, slot, page: Optional[Page] = None, instance: Optional[CMSPlugin] = None, only_uncached: bool = False):
-        child_classes = cls.super(BootstrapColumnPlugin, cls).get_child_classes(slot, page, instance, only_uncached)
-        return child_classes
 
 plugin_pool.register_plugin(BootstrapColumnPlugin)

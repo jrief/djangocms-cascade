@@ -127,8 +127,7 @@ class BootstrapButtonPlugin(VerticalMarginsMixin, HyperlinkPluginMixin, Bootstra
     model_mixins = (LinkElementMixin,)
     form = BootstrapButtonForm
     require_parent = True
-    parent_classes = ['BootstrapRowPlugin', 'BootstrapColumnPlugin']
-    allow_children = False
+    parent_classes = ['BootstrapColumnPlugin']
     default_css_class = 'btn'
     default_css_attributes = ['button_type', 'button_size', 'button_options', 'stretched_link']
     render_template = 'cascade/bootstrap5/button.html'

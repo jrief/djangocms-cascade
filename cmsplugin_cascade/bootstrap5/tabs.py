@@ -6,11 +6,10 @@ from django.utils.safestring import mark_safe
 from django.forms.fields import IntegerField
 
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase, logger
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ManageChildrenMixin
 from cmsplugin_cascade.models import CascadeElement
-from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 
 from formset.forms import ModelForm
@@ -35,12 +34,11 @@ class TabSetForm(ManageChildrenFormMixin, ModelForm):
         fields_map = {'glossary': ['justified']}
 
 
-class BootstrapTabSetPlugin(ManageChildrenMixin, TransparentWrapper, BootstrapPluginBase):
+class BootstrapTabSetPlugin(ManageChildrenMixin, BootstrapPluginBase):
     name = _("Tab Set")
-    parent_classes = ['BootstrapColumnPlugin']
-    direct_child_classes = ['BootstrapTabPanePlugin']
     require_parent = True
-    allow_children = True
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
+    # child_classes = ['BootstrapTabPanePlugin']
     form = TabSetForm
     render_template = 'cascade/bootstrap5/tabset.html'
     default_css_class = 'nav-tabs'
@@ -79,12 +77,11 @@ class TabPaneForm(ModelForm):
         fields_map = {'glossary': ['tab_title']}
 
 
-class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
+class BootstrapTabPanePlugin(BootstrapPluginBase):
     name = _("Tab Pane")
-    direct_parent_classes = parent_classes = ['BootstrapTabSetPlugin']
+    parent_classes = ['BootstrapTabSetPlugin']
+    cache_child_classes = False
     require_parent = True
-    allow_children = True
-    alien_child_classes = True
     form = TabPaneForm
 
     @classmethod
@@ -93,5 +90,17 @@ class BootstrapTabPanePlugin(TransparentContainer, BootstrapPluginBase):
         if content:
             content = Truncator(content).words(3, truncate=' ...')
         return mark_safe(content)
+
+    @classmethod
+    def get_child_classes(cls, slot, page=None, instance=None, only_uncached=False):
+        child_classes = super().get_child_classes(slot, page, instance, only_uncached)
+        if isinstance(instance.parent, BootstrapTabSetPlugin.model):
+            if instance.parent.parent:
+                _, plugin_class = instance.parent.parent.get_plugin_instance()
+                child_classes.extend(plugin_class.get_child_classes(slot, page, instance.parent, only_uncached))
+        else:
+            logger.error(f"Could not find parent of type {BootstrapTabPanePlugin.model} for instance {instance}")
+        return child_classes
+
 
 plugin_pool.register_plugin(BootstrapTabPanePlugin)

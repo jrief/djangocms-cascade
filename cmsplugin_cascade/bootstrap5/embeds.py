@@ -1,4 +1,6 @@
+import random
 import re
+import string
 from urllib.parse import urlparse, urlunparse, ParseResult
 
 from django.core.exceptions import ValidationError
@@ -7,12 +9,14 @@ from django.forms.fields import BooleanField, ChoiceField, URLField, CharField
 from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.bootstrap5.mixins import VerticalMarginsMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.models import CascadeElement
 
 from formset.forms import ModelForm
 
 
-class YoutubeFormMixin(ModelForm):
+class YoutubeForm(ModelForm):
     ASPECT_RATIO_CHOICES = [
         ('ratio-21x9', _("Responsive 21:9")),
         ('ratio-16x9', _("Responsive 16:9")),
@@ -20,65 +24,55 @@ class YoutubeFormMixin(ModelForm):
         ('ratio-1x1', _("Responsive 1:1")),
     ]
 
-    videoid = CharField(widget=widgets.HiddenInput())
-
+    videoid = CharField(
+        required=False,
+        widget=widgets.HiddenInput(),
+    )
     url = URLField(
         label=_("YouTube URL"),
         widget=widgets.URLInput(attrs={'size': 50}),
     )
-
     aspect_ratio = ChoiceField(
         label=_("Aspect Ratio"),
         choices=ASPECT_RATIO_CHOICES,
         widget=widgets.RadioSelect,
         initial=ASPECT_RATIO_CHOICES[1][0],
     )
-
     allow_fullscreen = BooleanField(
         label=_("Allow Fullscreen"),
         required=False,
         initial=True,
     )
-
     autoplay = BooleanField(
         label=_("Autoplay"),
         required=False,
     )
-
     controls = BooleanField(
         label=_("Display Controls"),
         required=False,
     )
-
     loop = BooleanField(
         label=_("Enable Looping"),
         required=False,
     )
-
     rel = BooleanField(
         label=_("Show related"),
         required=False,
         help_text=_("Show videos suggested by YouTube at the end."),
     )
+    field_order = ['url', 'aspect_ratio', 'autoplay', 'controls', 'loop', 'rel']
 
     class Meta:
-        untangled_fields = ['url']
-        entangled_fields = {'glossary': ['videoid', 'aspect_ratio', 'allow_fullscreen', 'autoplay',
-                                         'controls', 'loop', 'rel']}
-
-    # def __init__(self, *args, **kwargs):
-    #     instance = kwargs.get('instance')
-    #     if instance:
-    #         videoid = instance.glossary.get('videoid')
-    #         if videoid:
-    #             parts = ParseResult('https', 'youtu.be', videoid, '', '', '')
-    #             initial = {'url': urlunparse(parts)}
-    #             kwargs.update(initial=initial)
-    #     super().__init__(*args, **kwargs)
+        model = CascadeElement
+        exclude = ['shared_glossary']
+        fields_map = {'glossary': [
+            'videoid', 'aspect_ratio', 'allow_fullscreen', 'autoplay', 'controls', 'loop', 'rel'
+        ]}
 
     def get_initial_for_field(self, field, field_name):
-        if field == 'videoid':
-            return self.instance.glossary.get('videoid')
+        if field_name == 'url':
+            videoid = self.instance.glossary.get('videoid', 'X')
+            return urlunparse(ParseResult('https', 'youtu.be', videoid, '', '', ''))
         return super().get_initial_for_field(field, field_name)
 
     def clean(self):
@@ -94,25 +88,25 @@ class YoutubeFormMixin(ModelForm):
         raise ValidationError(_("Please enter a valid YouTube URL"))
 
 
-class BootstrapYoutubePlugin(BootstrapPluginBase):
+class BootstrapYoutubePlugin(VerticalMarginsMixin, BootstrapPluginBase):
     """
-    Use this plugin to display a YouTube video.
+    Use this plugin to embed a YouTube video into a Bootstrap column.
     """
+
     name = "YouTube"
-    require_parent = False
     parent_classes = ['BootstrapColumnPlugin']
-    child_classes = None
     render_template = 'cascade/bootstrap5/youtube.html'
-    form = YoutubeFormMixin
+    form = YoutubeForm
 
     def render(self, context, instance, placeholder):
         context = self.super(BootstrapYoutubePlugin, self).render(context, instance, placeholder)
         query_params = ['autoplay', 'controls', 'loop', 'rel']
         if videoid := instance.glossary.get('videoid'):
-            query = ['{}=1'.format(key) for key in query_params if instance.glossary.get(key)]
-            parts = ParseResult('https', 'www.youtube.com', '/embed/' + videoid, '', '&'.join(query), '')
+            tracking_id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+            parts = ParseResult('https', 'www.youtube.com', '/embed/' + videoid, '', f'si={tracking_id}', '')
             context.update({
                 'youtube_url': urlunparse(parts),
+                'allow': '; '.join(key for key in query_params if instance.glossary.get(key)),
                 'allowfullscreen': 'allowfullscreen' if instance.glossary.get('allow_fullscreen') else '',
             })
         return context
@@ -129,5 +123,6 @@ class BootstrapYoutubePlugin(BootstrapPluginBase):
     @classmethod
     def get_identifier(cls, obj):
         return obj.glossary.get('videoid', '')
+
 
 plugin_pool.register_plugin(BootstrapYoutubePlugin)

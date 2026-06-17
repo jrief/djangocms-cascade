@@ -3,12 +3,11 @@ from django.forms.models import ModelChoiceField
 from django.forms.widgets import EmailInput, RadioSelect, TextInput, URLInput
 from django.utils.translation import gettext_lazy as _, get_language, get_language_from_path
 
-from cms.models.contentmodels import PageContent
 from cms.models.pagemodel import Page
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
-from cmsplugin_cascade.models import CascadeElement, CascadePage, PageContentAnchor
+from cmsplugin_cascade.models import CascadeElement, CascadePage, PageAnchor
 
 from django_filters import FilterSet, ModelChoiceFilter
 
@@ -42,8 +41,15 @@ class LinkTypeChoiceField(ChoiceField):
 
 
 class PageChoiceField(ModelChoiceField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(Page.objects.all(), *args, **kwargs)
+    def __init__(self, queryset=None, widget=None, *args, **kwargs):
+        if queryset is None:
+            queryset = Page.objects.all()
+        if widget is None:
+            widget = Selectize(
+                search_lookup='page__title__icontains',
+                attrs={'placeholder': _("CMS-Page")},
+            )
+        super().__init__(queryset, widget=widget, *args, **kwargs)
 
     def label_from_instance(self, obj):
         language = get_language()
@@ -64,8 +70,8 @@ class AnchorFieldFilterSet(FilterSet):
         if cms_page_id := self.request.GET.get('filter-cms_page'):
             cms_page = Page.objects.get(pk=cms_page_id)
             language = get_language_from_path(self.request.GET.get('cms_path'))
-            page_content = cms_page.get_content_obj(language=language)
-            return parent_qs.filter(content__extended_object=page_content)
+            page_url = cms_page.get_url_obj(language=language)
+            return parent_qs.filter(page_url=page_url)
         return parent_qs.none()
 
 
@@ -76,7 +82,7 @@ class AnchorChoiceField(ModelChoiceField):
     )
 
     def __init__(self, *args, **kwargs):
-        super().__init__(queryset=PageContentAnchor.objects.all(), *args, **kwargs)
+        super().__init__(queryset=PageAnchor.objects.all(), *args, **kwargs)
 
     def label_from_instance(self, obj):
         return f"#{obj.identifier}"
@@ -156,12 +162,6 @@ class HyperlinkForm(ModelForm):
         if not getattr(self, 'require_link', True):
             link_type_choices.append(('', _("No Link")))
             self.declared_fields['link_type'].required = False
-        # link_type_choices.extend(self.LINK_TYPE_CHOICES)
-        # self.declared_fields['link_type'].choices = link_type_choices
-        # self.declared_fields['link_type'].initial = link_type_choices[0][0]
-        instance = kwargs.get('instance')
-        # if instance and instance.glossary.get('link_type') == 'cmspage':
-        #     self._preset_section(instance)
         super().__init__(*args, **kwargs)
 
 
@@ -197,11 +197,13 @@ class HyperlinkPluginMixin:
         href = 'javascript:void(0)'
         if linktype == 'cmspage':
             if cms_page := get_related_object(obj.glossary, 'cms_page'):
-                page_content = cms_page.get_content_obj(obj.language)
-                if isinstance(page_content, PageContent):
-                    href = page_content.get_absolute_url()
-                    if anchor := get_related_object(obj.glossary, 'anchor'):
-                        href = f'{href}#{anchor.identifier}'
+                if page_url := cms_page.get_url_obj(obj.language):
+                    href = page_url.get_absolute_url()
+                    try:
+                        anchor = page_url.anchors.get(id=obj.glossary['anchor']['pk'])
+                        href += f'#{anchor.identifier}'
+                    except (PageAnchor.DoesNotExist, TypeError, KeyError):
+                        pass
         elif linktype == 'download':
             if file_uuid := obj.glossary.get('download_file'):
                 download_file = FinderFileModel.objects.get_inode(id=file_uuid, is_folder=False)
@@ -213,7 +215,6 @@ class TextLinkPlugin(HyperlinkPluginMixin, BootstrapPluginBase):
     name = _("Link")
     require_parent = True
     parent_classes = ['BootstrapColumnPlugin']
-    allow_children = False
     render_template = 'cascade/bootstrap5/textlink.html'
     form = TextLinkForm
     model_mixins = (LinkElementMixin,)

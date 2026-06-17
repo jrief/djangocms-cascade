@@ -8,10 +8,45 @@ class CascadePluginMixin:
     """
 
     @classmethod
+    def XXXget_child_classes(cls, slot, page, instance=None, only_uncached=False):
+        child_classes = super().get_child_classes(slot, page, instance, only_uncached)
+        print(f"{cls.__name__}(id={instance.pk}).get_child_classes: {child_classes}")
+        return child_classes
+
+        plugin_type = cls.__name__
+        for child_class in cls.get_child_plugin_candidates(slot, page):
+            if issubclass(child_class, CascadePluginMixin):
+                child_parent_classes = child_class._get_parent_classes_transparent(slot, page, instance)
+                if isinstance(child_parent_classes, (list, tuple)) and plugin_type in child_parent_classes:
+                    child_classes.add(child_class)
+                elif plugin_type in own_child_classes:
+                    child_classes.add(child_class)
+                elif child_parent_classes is None:
+                    child_classes.add(child_class)
+            # else:
+            #     if cls.alien_child_classes and child_class.__name__ in app_settings.CMSPLUGIN_CASCADE['alien_plugins']:
+            #         child_classes.add(child_class)
+
+        return list(cc.__name__ for cc in child_classes)
+
+    @classmethod
+    def XXXget_parent_classes(cls, slot, page, instance=None):
+        parent_classes = super().get_parent_classes(slot, page, instance)
+        print(f"{cls.__name__}.get_parent_classes: {parent_classes}")
+        return parent_classes
+
+        if parent_classes is None:
+            if cls.get_require_parent(slot, page) is False:
+                return
+            parent_classes = []
+        return parent_classes
+
+    @classmethod
     def get_tag_type(self, instance):
         """
         Return the tag_type used to render this plugin.
         """
+
         return instance.glossary.get('tag_type', getattr(self, 'tag_type', 'div'))
 
     @classmethod
@@ -19,6 +54,7 @@ class CascadePluginMixin:
         """
         Returns a list of CSS classes to be added as class="..." to the current HTML tag.
         """
+
         css_classes = []
         if hasattr(cls, 'default_css_class'):
             css_classes.append(cls.default_css_class)
@@ -36,6 +72,7 @@ class CascadePluginMixin:
         """
         Returns a dictionary of CSS attributes to be added as style="..." to the current HTML tag.
         """
+
         inline_styles = getattr(cls, 'default_inline_styles', {})
         css_style = instance.glossary.get('inline_styles')
         if css_style:
@@ -50,6 +87,7 @@ class CascadePluginMixin:
         which enriches the HTML tag with those attributes converted to a list as
         ``attr1="val1" attr2="val2" ...``.
         """
+
         attributes = getattr(cls, 'html_tag_attributes', {})
         return dict((attr, instance.glossary.get(key, '')) for key, attr in attributes.items())
 

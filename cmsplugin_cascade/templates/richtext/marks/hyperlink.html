@@ -1,6 +1,6 @@
-{% load page_url from cms_tags %}{% load finder_tags %}{% spaceless %}
+{% load page_url from cascade_tags %}{% load finder_tags %}{% spaceless %}
 {% if attrs.cms_page %}
-<a href="{% page_url attrs.cms_page %}">{% include "richtext/mark.html" %}</a>
+<a href="{% page_url attrs.cms_page attrs.anchor %}">{% include "richtext/mark.html" %}</a>
 {% elif attrs.href %}
 <a href="{{ attrs.href }}">{% include "richtext/mark.html" %}</a>
 {% elif attrs.mail_to %}

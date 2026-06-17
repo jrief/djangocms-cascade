@@ -1,5 +1,7 @@
 from django.forms.fields import CharField, ChoiceField, EmailField, IntegerField, URLField
 from django.forms.widgets import EmailInput, NumberInput, RadioSelect, Select, TextInput, URLInput
+from django.template.loader import get_template
+from django.utils.html import strip_spaces_between_tags
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.html import format_html, strip_tags
@@ -238,14 +240,16 @@ class RichtextForm(ModelForm):
     def full_clean(self):
         super().full_clean()
         if self.is_bound:
-            rendered_html = render_richtext(self.cleaned_data['glossary']['body'])
-            self.cleaned_data['glossary']['sample_text'] = Truncator(rendered_html).words(10)
+            template = get_template('richtext/doc.html')
+            context = {'node': self.cleaned_data['glossary']['body']}
+            html = template.render(context).replace('\t', '').replace('\n', '')
+            self.cleaned_data['glossary']['sample_text'] = Truncator(html).words(10)
 
 
 class RichtextPlugin(BootstrapPluginBase):
     name = _("Text")
-    parent_classes = None
-    allow_children = False
+    parent_classes = ['BootstrapColumnPlugin']
+    # allow_children = False
     form = RichtextForm
     change_form_template = 'admin/cmsplugin_cascade/formset/richtext_change_form.html'
     render_template = 'cascade/bootstrap5/richtext.html'

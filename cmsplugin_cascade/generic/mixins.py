@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 from entangled.forms import EntangledModelFormMixin
 from cmsplugin_cascade import app_settings
-from cmsplugin_cascade.models import CascadePageContent
 
 
 def identifier_validator(value):

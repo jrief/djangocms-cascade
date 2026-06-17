@@ -1,5 +1,3 @@
-import logging
-
 from django.forms import widgets
 from django.forms.fields import IntegerField, MultipleChoiceField, BooleanField
 from django.utils.safestring import mark_safe
@@ -10,7 +8,7 @@ from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
 from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
 from cmsplugin_cascade.bootstrap5.mixins import AspectRatioChoicesMixin, VerticalMarginsMixin
 from cmsplugin_cascade.bootstrap5.picture import LazySizesPictureMixin, ImageElementMixin
-from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase, logger
 from cmsplugin_cascade.bootstrap5.richtext import HyperlinkDialogForm
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ManageChildrenMixin
@@ -21,8 +19,6 @@ from finder.forms.fields import FinderFileField
 from formset.forms import ModelForm
 from formset.formfields.richtext import RichTextarea, RichTextField
 from formset.richtext import controls
-
-logger = logging.getLogger('cascade')
 
 
 class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
@@ -76,8 +72,8 @@ class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
 class BootstrapCarouselPlugin(ManageChildrenMixin, VerticalMarginsMixin, AspectRatioChoicesMixin, BootstrapPluginBase):
     name = _("Carousel")
     default_css_class = 'carousel slide'
-    parent_classes = ['BootstrapColumnPlugin']
-    direct_child_classes = child_classes = ['BootstrapCarouselSlidePlugin']
+    require_parent = True
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     render_template = 'cascade/bootstrap5/{}carousel.html'
     default_inline_styles = {'overflow': 'hidden'}
     form = CarouselSlidesForm
@@ -161,9 +157,7 @@ class BootstrapCarouselSlidePlugin(LazySizesPictureMixin, BootstrapPluginBase):
     name = _("Carousel Slide")
     model_mixins = (ImageElementMixin,)
     default_css_class = 'img-fluid'
-    direct_parent_classes = parent_classes = ['BootstrapCarouselPlugin']
-    child_classes = []
-    allow_children = False
+    parent_classes = ['BootstrapCarouselPlugin']
     html_tag_attributes = {'image_title': 'title', 'alt_tag': 'tag'}
     render_template = 'cascade/bootstrap5/carousel-slide.html'
     default_css_class = 'lazyload text-bg-light w-100'
@@ -211,5 +205,6 @@ class BootstrapCarouselSlidePlugin(LazySizesPictureMixin, BootstrapPluginBase):
     def save_model(self, request, obj, form, change):
         obj.glossary.pop('cached_sources', None)
         return super().save_model(request, obj, form, change)
+
 
 plugin_pool.register_plugin(BootstrapCarouselSlidePlugin)

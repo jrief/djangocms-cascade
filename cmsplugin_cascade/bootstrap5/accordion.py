@@ -10,11 +10,10 @@ from django.utils.translation import gettext, gettext_lazy as _, ngettext
 from cms.models import Page, CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.mixins import VerticalMarginsMixin
-from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase, logger
 from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ManageChildrenMixin
 from cmsplugin_cascade.models import CascadeElement
-from cmsplugin_cascade.plugin_base import TransparentWrapper, TransparentContainer
 from cmsplugin_cascade.widgets import NumberInputWidget
 
 from formset.forms import ModelForm
@@ -48,13 +47,11 @@ class AccordionForm(ManageChildrenFormMixin, ModelForm):
 
 
 
-class BootstrapAccordionPlugin(VerticalMarginsMixin, TransparentWrapper, ManageChildrenMixin, BootstrapPluginBase):
+class BootstrapAccordionPlugin(VerticalMarginsMixin, ManageChildrenMixin, BootstrapPluginBase):
     name = _("Accordion")
     default_css_class = 'accordion'
     require_parent = True
-    parent_classes = ['BootstrapRowPlugin', 'BootstrapColumnPlugin']
-    direct_child_classes = child_classes = ['BootstrapAccordionItemPlugin']
-    allow_children = True
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     form = AccordionForm
     render_template = 'cascade/bootstrap5/accordion.html'
 
@@ -96,15 +93,13 @@ class AccordionItemForm(ModelForm):
         return escape(self.cleaned_data['heading'])
 
 
-class BootstrapAccordionItemPlugin(TransparentContainer, BootstrapPluginBase):
+class BootstrapAccordionItemPlugin(BootstrapPluginBase):
     name = _("Accordion Item")
-    direct_parent_classes = parent_classes = ['BootstrapAccordionPlugin']
-    child_classes = None
-    allow_children = True
+    parent_classes = ['BootstrapAccordionPlugin']
+    cache_child_classes = False
     render_template = 'cascade/bootstrap5/accordion-item.html'
     require_parent = True
     form = AccordionItemForm
-    alien_child_classes = True
 
     @classmethod
     def get_identifier(cls, instance):
@@ -113,7 +108,13 @@ class BootstrapAccordionItemPlugin(TransparentContainer, BootstrapPluginBase):
 
     @classmethod
     def get_child_classes(cls, slot, page: Optional[Page] = None, instance: Optional[CMSPlugin] = None, only_uncached: bool = False):
-        child_classes = super(BootstrapAccordionItemPlugin, cls).get_child_classes(slot, page, instance, only_uncached)
+        child_classes = super().get_child_classes(slot, page, instance, only_uncached)
+        if isinstance(instance.parent, BootstrapAccordionPlugin.model):
+            if instance.parent.parent:
+                _, plugin_class = instance.parent.parent.get_plugin_instance()
+                child_classes.extend(plugin_class.get_child_classes(slot, page, instance.parent, only_uncached))
+        else:
+            logger.error(f"Could not find parent of type {BootstrapAccordionPlugin.model} for instance {instance}")
         return child_classes
 
     def render(self, context, instance, placeholder):
@@ -123,5 +124,6 @@ class BootstrapAccordionItemPlugin(TransparentContainer, BootstrapPluginBase):
             'no_body_padding': not instance.glossary.get('body_padding', True),
         })
         return context
+
 
 plugin_pool.register_plugin(BootstrapAccordionItemPlugin)

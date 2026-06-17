@@ -1,3 +1,4 @@
+import logging
 import os
 
 from django.template.loader import get_template, TemplateDoesNotExist
@@ -14,6 +15,8 @@ from cmsplugin_cascade.plugin_base import CascadePluginMixin, create_proxy_model
 
 from formset.admin import ModelAdminMixin
 
+logger = logging.getLogger('cascade')
+
 
 class CascadePluginMetaclass(CMSPluginBaseMetaclass):
 
@@ -27,6 +30,7 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
     change_form_template = 'admin/cmsplugin_cascade/formset/change_form.html'
     module = 'Bootstrap'
     require_parent = True
+    child_classes = 'auto'
     allow_children = True
     render_template = 'cascade/generic/wrapper.html'
     form_renderer_class = CascadeFormRenderer
@@ -37,6 +41,18 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
 
     def __repr__(self):
         return f'<{self.__class__.__name__}>'
+
+    # @classmethod
+    # def get_child_classes(cls, slot, page, instance=None, only_uncached=False):
+    #     child_classes = super().get_child_classes(slot, page, instance, only_uncached)
+    #     # for installed_plugin in cls.get_child_plugin_candidates(slot, page):
+    #     #     if (
+    #     #         cls.__name__ in (getattr(installed_plugin, 'parent_classes') or ())
+    #     #         and installed_plugin.__name__ not in child_classes
+    #     #     ):
+    #     #         child_classes.append(installed_plugin.__name__)
+    #     print(f"{cls.__name__}: {child_classes}")
+    #     return child_classes
 
     def get_render_template(self, context, instance, placeholder):
         render_template = getattr(self, 'render_template', None)
@@ -108,8 +124,8 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def render_success_response(self):
-        add = 'plugin_type' in self.request.GET
-        return self.render_close_frame(self.request, self.object, add)
+        action = 'add' if 'plugin_type' in self.request.GET else 'edit'
+        return self.render_close_frame(self.request, self.object, action=action)
 
     def _update_collection_view(self, view_kwargs, add=False):
         instance = view_kwargs['instance']

@@ -115,8 +115,6 @@ class BootstrapCardPlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySiz
     default_css_class = 'card'
     require_parent = True
     parent_classes = ['BootstrapColumnPlugin']
-    allow_children = False
-    child_classes = []
     model_mixins = (LinkElementMixin, ImageElementMixin)
     change_form_template = 'admin/cmsplugin_cascade/formset/richtext_change_form.html'
     render_template = 'cascade/bootstrap5/card.html'

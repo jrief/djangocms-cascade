@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from cms.extensions import PageContentExtension, PageExtension
 from cms.extensions.extension_pool import extension_pool
+from cms.models.pagemodel import PageUrl
 from cms.models.pluginmodel import CMSPlugin
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.models_base import CascadeModelBase
@@ -413,71 +414,11 @@ extension_pool.register(CascadePage)
 models.signals.pre_delete.connect(CascadePage.delete_cascade_element, dispatch_uid='delete_cascade_element')
 
 
-class CascadePageContent(PageContentExtension):
-    """
-    Keep arbitrary data tightly coupled to the CMS page.
-    """
-    glossary = models.JSONField(
-        blank=True,
-        default=dict,
-        help_text=_("Store for arbitrary page data."),
-    )
-
-    class Meta:
-        db_table = 'cmsplugin_cascade_pagecontent'
-        verbose_name = verbose_name_plural = _("Cascade Page Settings")
-
-    def __str__(self):
-        return self.extended_object.title
-
-    def Xcopy(self, target, language=None):
-        if self.extended_object:
-            return self
-        return super().copy(target, language)
-
-    def copy_relations(self, oldinstance):
-        """
-        Copy glossary and related anchors from the old instance to the new instance.
-        """
-        self.glossary = dict(oldinstance.glossary)
-        self.save()
-        for anchor in oldinstance.anchors.all():
-            anchor.pk = None
-            anchor.content = self
-            # Update the anchor's CMSPlugin ID to point to the new instance
-            placeholder = self.extended_object.placeholders.get(slot=anchor.cms_plugin.placeholder.slot)
-            for plugin in placeholder.get_plugins():
-                plugin_instance, _ = plugin.get_plugin_instance()
-                if not isinstance(plugin_instance, CascadeElement):
-                    continue
-                if plugin_instance.glossary.get('element_id') == anchor.identifier:
-                    anchor.cms_plugin_id = plugin.id
-                    anchor.save()
-                    break
-
-    @classmethod
-    def assure_relation(cls, page_content):
-        """
-        Assure that we have a foreign key relation, pointing from CascadePage onto CMSPage.
-        """
-        try:
-            return page_content.cascadepagecontent
-        except cls.DoesNotExist:
-            return cls.objects.create(extended_object=page_content)
-
-extension_pool.register(CascadePageContent)
-
-
-class PageContentAnchor(models.Model):
-    content = models.ForeignKey(
-        CascadePageContent,
+class PageAnchor(models.Model):
+    page_url = models.ForeignKey(
+        PageUrl,
         related_name='anchors',
         on_delete=models.CASCADE,
-    )
-    cms_plugin = models.OneToOneField(
-        CMSPlugin,
-        on_delete=models.CASCADE,
-        help_text=_("The CMS plugin this anchor is associated with."),
     )
     identifier = models.CharField(
         _("Identifier"),
@@ -486,15 +427,15 @@ class PageContentAnchor(models.Model):
     )
 
     class Meta:
-        db_table = 'cmsplugin_cascade_anchor'
-        verbose_name = _("Page Content Anchor")
-        verbose_name_plural = _("Page Content Anchors")
+        db_table = 'cmsplugin_cascade_pageanchor'
+        verbose_name = _("Page Anchor")
+        verbose_name_plural = _("Page Anchors")
         constraints = [
             models.UniqueConstraint(
-                fields=['content', 'identifier'],
-                name='unique_page_content_anchor',
+                fields=['page_url', 'identifier'],
+                name='unique_page_anchor',
             )
         ]
 
     def __str__(self):
-        return f"{self.content.extended_object.get_absolute_url()}#{self.identifier}"
+        return f"/{self.page_url.language}/{self.page_url.path or self.page_url.slug}#{self.identifier}"

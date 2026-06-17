@@ -1,5 +1,5 @@
 {% with inline_styles=instance.inline_styles %}
 <div class="{{ instance.css_classes }}"{% if inline_styles %} style="{{ inline_styles }}"{% endif %}>
-	<iframe src="{{ youtube_url }}" {{ allowfullscreen }}></iframe>
+	<iframe src="{{ youtube_url }}" frameborder="0" allow="{{ allow }}" referrerpolicy="strict-origin-when-cross-origin" {{ allowfullscreen }}></iframe>
 </div>
 {% endwith %}

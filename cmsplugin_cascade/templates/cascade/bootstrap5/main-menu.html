@@ -1,0 +1,53 @@
+{% load menu_tags %}
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+{% for child in children %}
+	{% comment %}
+       <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+        </li>
+	{% endcomment %}
+	{% if child.children %}
+	<li class="nav-item dropdown">
+		<a class="nav-link{% if child.selected %} active{% endif %} d-inline-block pe-0" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
+			{{ child.get_menu_title }}
+		</a>
+		<button type="button" class="nav-link dropdown-toggle d-inline-block ps-0" data-bs-toggle="dropdown" aria-expanded="false">
+			<span class="visually-hidden">Toggle Dropdown</span>
+		</button>
+		<ul class="dropdown-menu">
+		{% for child in child.children %}
+			<li>
+				<a class="dropdown-item{% if child.selected %} active{% endif %}" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">
+					{{ child.get_menu_title }}
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+	</li>
+	{% else %}
+	<li class="nav-item">
+		<a class="nav-link{% if child.selected %} active{% endif %}" href="{# { child.attr.redirect_url|default:child.get_absolute_url } #}">
+			{{ child.get_menu_title }}
+		</a>
+	</li>
+	{% endif %}
+{% endfor %}
+</ul>

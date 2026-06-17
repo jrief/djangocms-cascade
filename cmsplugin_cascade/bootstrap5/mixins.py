@@ -1,4 +1,6 @@
-from django.forms.fields import ChoiceField
+from django.core.exceptions import ImproperlyConfigured
+from django.forms.fields import BooleanField, ChoiceField
+from django.template import engines
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -212,3 +214,71 @@ class AspectRatioChoicesMixin:
 
 
 VerticalMarginsMixin = BootstrapUtilities(BootstrapUtilities.vertical_margins)
+
+
+class HidePluginMixin:
+    """
+    Add this mixin class to make other plugins hidable.
+
+    Their editor then offer an additional checkbox, which if checked hides that plugin during the rendering phase.
+    """
+    suppress_template = engines['django'].from_string('')
+    hiding_template_string = '''
+{{% load cms_tags %}}
+<div style="display: none;">
+{{% for plugin in instance.child_plugin_instances %}}{{% render_plugin plugin %}}{{% endfor %}}
+</div>
+<style>
+div.cms .cms-structure .cms-draggable-{plugin_id} .cms-dragitem {{
+color: gray;
+background-color: lightgray;
+background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(255,255,255,.5) 4px, rgba(255,255,255,.5) 8px);
+background-size: contain;
+}}
+</style>
+'''
+
+    def get_model_form(self, **kwargs):
+        model_form = super().get_model_form(**kwargs)
+        attrs = {
+            'hide_plugin': BooleanField(
+                label=_("Hide element"),
+                required=False,
+                help_text=_("Hide this element and all of its descendants from the web-page."),
+            ),
+            'Meta': type('Meta', (model_form.Meta,), {
+                'fields_map': {'glossary': [*model_form.Meta.fields_map['glossary'], 'hide_plugin']},
+            }),
+        }
+        return type(model_form.__name__, model_form.__mro__, attrs)
+
+    def in_edit_mode(self, request, placeholder):
+        """
+        Returns True, if the plugin is in "edit mode".
+        """
+        toolbar = getattr(request, 'toolbar', None)
+        edit_mode = getattr(toolbar, 'edit_mode_active', False) and getattr(placeholder, 'is_editable', True)
+        if edit_mode:
+            edit_mode = placeholder.has_change_permission(request.user)
+        return edit_mode
+
+    def get_render_template(self, context, instance, placeholder):
+        if instance.glossary.get('hide_plugin'):
+            if self.in_edit_mode(context['request'], placeholder):
+                # in edit mode we actually must render the children, otherwise they won't show
+                # up in Structure Mode
+                template_string = self.hiding_template_string.format(plugin_id=instance.pk)
+                return engines['django'].from_string(template_string)
+            else:
+                return self.suppress_template
+
+        super_self = super(HidePluginMixin, self)
+        if hasattr(super_self, 'get_render_template'):
+            template = super_self.get_render_template(context, instance, placeholder)
+        elif getattr(self, 'render_template', False):
+            template = getattr(self, 'render_template', False)
+        else:
+            template = None
+        if not template:
+            raise ImproperlyConfigured("Plugin {} has no render_template.".format(self.__class__))
+        return template

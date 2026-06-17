@@ -14,13 +14,19 @@ from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
 from cmsplugin_cascade.bootstrap5.mixins import AspectRatioChoicesMixin
 from cmsplugin_cascade.bootstrap5.hyperlink import HyperlinkForm, HyperlinkPluginMixin, LinkTypeChoiceField
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.bootstrap5.utils import IMAGE_SHAPE_CHOICES
 from cmsplugin_cascade.link.plugin_base import LinkElementMixin
 
 from finder.forms.fields import FinderFileField
 from finder.models.file import FileModel as FinderFileModel
 
 logger = logging.getLogger('cascade.bootstrap5')
+
+
+IMAGE_SHAPE_CHOICES = [
+    ('rounded', _("Rounded")),
+    ('rounded-circle', _("Circle")),
+    ('img-thumbnail', _("Thumbnail")),
+]
 
 
 class BootstrapPictureForm(HyperlinkForm):
@@ -231,9 +237,7 @@ class LazySizesPictureMixin:
 class BootstrapPicturePlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySizesPictureMixin, BootstrapPluginBase):
     name = _("Picture")
     module = 'Bootstrap'
-    parent_classes = ['BootstrapAccordionItemPlugin', 'BootstrapColumnPlugin', 'SimpleWrapperPlugin']
-    require_parent = True
-    allow_children = False
+    parent_classes = ['BootstrapColumnPlugin']
     model_mixins = (LinkElementMixin, ImageElementMixin)
     admin_preview = False
     form = BootstrapPictureForm

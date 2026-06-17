@@ -1,21 +1,23 @@
 import io
 import json
-import os
-
-from cms.toolbar.utils import get_toolbar_from_request
-from cms.plugin_rendering import StructureRenderer
 
 from django import template
-from django.conf import settings
 from django.core.cache import caches
-from django.template.exceptions import TemplateDoesNotExist
 from django.contrib.staticfiles import finders
-from django.utils.safestring import mark_safe
+from django.urls import NoReverseMatch
+
+from cms.cache.page import get_page_url_cache, set_page_url_cache
+from cms.templatetags.cms_tags import PageUrl as BasePageUrl, _get_page_by_untyped_arg
+from cms.toolbar.utils import get_toolbar_from_request
+from cms.plugin_rendering import StructureRenderer
+from cms.utils import get_current_site, get_language_from_request
+from cms.utils.conf import get_site_id
+
 from classytags.arguments import Argument, MultiKeywordArgument
 from classytags.core import Options, Tag
-from cmsplugin_cascade.strides import StrideContentRenderer
 
-register = template.Library()
+from cmsplugin_cascade.models import PageAnchor
+from cmsplugin_cascade.strides import StrideContentRenderer
 
 
 class StrideRenderer(Tag):
@@ -61,8 +63,6 @@ class StrideRenderer(Tag):
                     context[sekizai_context_key][name] = SEKIZAI_CONTENT_HOLDER[name]
         return content
 
-register.tag('render_cascade', StrideRenderer)
-
 
 class RenderPlugin(Tag):
     """
@@ -99,21 +99,49 @@ class RenderPlugin(Tag):
                 editable=toolbar.edit_mode_active,
             )
 
+
+class PageUrl(BasePageUrl):
+    options = Options(
+        Argument('page_lookup'),
+        Argument('anchor'),
+        Argument('lang', required=False, default=None),
+        Argument('site', required=False, default=None),
+        "as",
+        Argument('varname', required=False, resolve=False),
+    )
+
+    def get_value(self, context, page_lookup, anchor, lang, site):
+        if isinstance(page_lookup, str) and page_lookup.isnumeric():
+            page_lookup = int(page_lookup)
+        if isinstance(anchor, str) and anchor.isnumeric():
+            anchor = int(anchor)
+
+        request = context.get('request', False)
+        if not request:
+            return ""
+        if lang is None:
+            lang = get_language_from_request(request)
+        site_id = get_site_id(site) if site else get_current_site(request).pk
+
+        if page := _get_page_by_untyped_arg(page_lookup, request, site_id):
+            try:
+                url = page.get_absolute_url(language=lang)
+                if not url:
+                    return ""  # Return empty string if Title object is missing
+                # set_page_url_cache(page_lookup, lang, site_id, url)
+            except NoReverseMatch:
+                return ""  # Suppress NoReverseMatch error
+            else:
+                page_url = page.get_url_obj(language=lang)
+                try:
+                    url += f'#{page_url.anchors.get(id=anchor).identifier}'
+                except (PageAnchor.DoesNotExist, ValueError):
+                    pass
+                return url
+        return ""
+
+
+register = template.Library()
 register.tag('render_plugin', RenderPlugin)
-
-
-@register.filter
-def is_valid_image(image):
-    try:
-        return image.file.file
-    except:
-        return False
-
-
-@register.simple_tag
-def sphinx_docs_include(path):
-    filename = os.path.join(settings.SPHINX_DOCS_ROOT, path)
-    if not os.path.exists(filename):
-        raise TemplateDoesNotExist("'{path}' does not exist".format(path=path))
-    with io.open(filename) as fh:
-        return mark_safe(fh.read())
+register.tag('page_url', PageUrl)
+register.tag('render_cascade', StrideRenderer)

@@ -9,10 +9,10 @@ from django.urls import path
 from django.utils.translation import get_language_from_request, get_language_from_path
 
 from cms.models.contentmodels import PageContent
-from cms.models.pagemodel import Page, PageUrl
-from cms.extensions import PageContentExtensionAdmin, PageExtensionAdmin
+from cms.models.pagemodel import PageUrl
+from cms.extensions import PageExtensionAdmin
 
-from cmsplugin_cascade.models import CascadePage, CascadePageContent, IconFont
+from cmsplugin_cascade.models import CascadePage, IconFont
 from cmsplugin_cascade.link.forms import format_page_link
 
 
@@ -125,31 +125,31 @@ class CascadePageAdmin(PageExtensionAdmin):
              request, object_id=object_id, form_url=form_url, extra_context=extra_context)
 
 
-@admin.register(CascadePageContent)
-class CascadePageContentAdmin(PageContentExtensionAdmin):
-    def get_urls(self):
-        urls = [
-            path('get_page_sections/', lambda _: JsonResponse({'element_ids': []}),
-                name='get_page_sections'),  # just to reverse
-            path('get_page_sections/<int:page_id>/',
-                self.admin_site.admin_view(self.get_page_sections)),
-        ]
-        urls.extend(super().get_urls())
-        return urls
-
-    def get_page_sections(self, request, page_id=None):
-        """
-        This view is used to populate the select box nearby the CMS page's link field.
-        """
-        page = Page.objects.get(id=page_id)
-        language = request.GET.get('language')
-        choices = []
-        try:
-            page_content = page.get_content_obj(language, fallback=True)
-            element_ids = page_content.cascadepagecontent.glossary['element_ids']
-            for val in element_ids.values():
-                if val:
-                    choices.append((val, val))
-        except (PageContent.DoesNotExist, self.model.DoesNotExist, KeyError):
-            pass
-        return JsonResponse({'element_ids': choices})
+# @admin.register(CascadePageContent)
+# class CascadePageContentAdmin(PageContentExtensionAdmin):
+#     def get_urls(self):
+#         urls = [
+#             path('get_page_sections/', lambda _: JsonResponse({'element_ids': []}),
+#                 name='get_page_sections'),  # just to reverse
+#             path('get_page_sections/<int:page_id>/',
+#                 self.admin_site.admin_view(self.get_page_sections)),
+#         ]
+#         urls.extend(super().get_urls())
+#         return urls
+#
+#     def get_page_sections(self, request, page_id=None):
+#         """
+#         This view is used to populate the select box nearby the CMS page's link field.
+#         """
+#         page = Page.objects.get(id=page_id)
+#         language = request.GET.get('language')
+#         choices = []
+#         try:
+#             page_content = page.get_content_obj(language, fallback=True)
+#             element_ids = page_content.cascadepagecontent.glossary['element_ids']
+#             for val in element_ids.values():
+#                 if val:
+#                     choices.append((val, val))
+#         except (PageContent.DoesNotExist, self.model.DoesNotExist, KeyError):
+#             pass
+#         return JsonResponse({'element_ids': choices})
