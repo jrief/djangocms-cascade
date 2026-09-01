@@ -1,12 +1,13 @@
 {% load menu_tags %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      {% show_menu 0 1 1 1 "cascade/bootstrap5/main-menu.html" %}
-    </div>
-  </div>
+	<div class="container">
+		<a class="navbar-brand" href="#">Navbar</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			{% show_menu 0 1 1 1 "cascade/bootstrap5/main-menu.html" %}
+			{% language_chooser "cascade/bootstrap5/language-chooser.html" %}
+		</div>
+	</div>
 </nav>

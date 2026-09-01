@@ -178,9 +178,6 @@ class TextLinkForm(HyperlinkForm):
 
 
 class HyperlinkPluginMixin:
-    class Media:
-        css = {'all': ['cascade/admin/bootstrap5/css/hyperlinkplugin.css']}
-
     @classmethod
     def get_link(cls, obj):
         linktype = obj.glossary.get('link_type')

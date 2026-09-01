@@ -115,6 +115,8 @@ class PageUrl(BasePageUrl):
             page_lookup = int(page_lookup)
         if isinstance(anchor, str) and anchor.isnumeric():
             anchor = int(anchor)
+        elif not isinstance(anchor, int):
+            anchor = None
 
         request = context.get('request', False)
         if not request:

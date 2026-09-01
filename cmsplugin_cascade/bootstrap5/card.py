@@ -72,11 +72,11 @@ class CardForm(HyperlinkForm):
                 controls.BulletList(),
                 controls.DialogControl(
                     HyperlinkDialogForm(),
-                    icon='formset/icons/link.svg',
+                    icon='formset/richtext/icons/link.svg',
                 ),
                 controls.DialogControl(
                     GlyphDialogForm(),
-                    icon='formset/icons/omega.svg',
+                    icon='formset/richtext/icons/omega.svg',
                 ),
                 controls.HorizontalRule(),
                 controls.Separator(),
@@ -143,7 +143,7 @@ class BootstrapCardPlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySiz
 
     def render(self, context, instance, placeholder):
         if not (sources := instance.glossary.get('cached_sources')):
-            sources = self.get_picture_sources(instance)
+            sources, complete = self.get_picture_sources(instance)
             instance.glossary['cached_sources'] = sources
             instance.save(update_fields=['glossary'])
 

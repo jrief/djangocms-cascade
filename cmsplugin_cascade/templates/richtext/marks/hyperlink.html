@@ -2,7 +2,7 @@
 {% if attrs.cms_page %}
 <a href="{% page_url attrs.cms_page attrs.anchor %}">{% include "richtext/mark.html" %}</a>
 {% elif attrs.href %}
-<a href="{{ attrs.href }}">{% include "richtext/mark.html" %}</a>
+<a href="{{ attrs.href }}" rel="external">{% include "richtext/mark.html" %}</a>
 {% elif attrs.mail_to %}
 <a href="mailto:{{ attrs.mail_to }}">{% include "richtext/mark.html" %}</a>
 {% elif attrs.phone_number %}

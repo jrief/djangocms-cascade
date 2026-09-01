@@ -140,7 +140,7 @@ class BootstrapSlideForm(ModelForm):
                 controls.Italic(),
                 controls.DialogControl(
                     HyperlinkDialogForm(),
-                    icon='formset/icons/link.svg',
+                    icon='formset/richtext/icons/link.svg',
                 ),
                 controls.ClearFormat(),
             ],
@@ -186,7 +186,7 @@ class BootstrapCarouselSlidePlugin(LazySizesPictureMixin, BootstrapPluginBase):
                 for bp in allowed_breakpoints:
                     key = 'aspect_ratio' if bp == 'xs' else f'aspect_ratio_{bp}'
                     instance.glossary[key] = parent_glossary.get(key, '')
-                sources = self.get_picture_sources(instance)
+                sources, complete = self.get_picture_sources(instance)
                 instance.glossary['cached_sources'] = sources
                 instance.save(update_fields=['glossary'])
 

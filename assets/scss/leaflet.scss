@@ -1,0 +1,13 @@
+.leaflet-map {
+	position: absolute;
+	inset: 0;
+}
+.dj-geomap-wrapper {
+	dialog {
+		word-wrap: break-word;
+		background-color: var(--body-bg);
+		border: 1px solid var(--border-color);
+		border-radius: 5px;
+		box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+	}
+}

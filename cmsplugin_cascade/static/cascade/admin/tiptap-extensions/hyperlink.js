@@ -23,6 +23,9 @@
 			phone_number: {
 				default: null,
 			},
+			rel: {
+				default: null,
+			},
 		};
 	},
 

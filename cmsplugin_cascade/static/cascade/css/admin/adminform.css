@@ -25,3 +25,6 @@ django-formset django-form-collection .collection-siblings django-form-collectio
 django-formset django-form-collection .collection-siblings .module.aligned fieldset {
   border-top: none;
 }
+django-formset [role="form"] {
+  margin: 0;
+}

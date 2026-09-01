@@ -1,0 +1,14 @@
+{% load i18n menu_tags %}
+
+{% if languages|length > 1 %}
+<div class="dropdown">
+	<button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+		{% translate "Choose language " %}
+	</button>
+	<ul class="dropdown-menu">{% for language in languages %}
+		<li class="lang{% if current_language == language.0 %} active{% endif %}">
+			<a class="dropdown-item" href="{% page_language_url language.0 %}" title="{% trans "Change to language:" %} {{ language.1 }}">{{ language.1 }}</a>
+		</li>
+	{% endfor %}</ul>
+</div>
+{% endif %}

@@ -113,9 +113,6 @@ class BootstrapButtonForm(GlyphIconForm, HyperlinkForm):
             ],
         }
 
-    class Media:
-        css = {'all': ['node_modules/bootstrap/dist/css/bootstrap.css']}
-
     field_order = [
         'link_content', *HyperlinkForm.Meta.fields, 'stretched_link', 'button_type', 'button_size', 'button_options',
         'icon_align',
@@ -135,7 +132,10 @@ class BootstrapButtonPlugin(VerticalMarginsMixin, HyperlinkPluginMixin, Bootstra
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 
     class Media:
-        css = {'all': ['cascade/css/admin/iconplugin.css']}
+        css = {'all': [
+            'cascade/css/buttons.css',
+            'cascade/css/admin/iconplugin.css',
+        ]}
 
     @classmethod
     def get_identifier(cls, instance):

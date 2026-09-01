@@ -104,7 +104,7 @@ class LazySizesPictureMixin:
 
             if aspect_ratio == 'orig':
                 computed_aspect_ratio = instance.image.width / instance.image.height
-            elif aspect_ratio :
+            elif aspect_ratio:
                 computed_aspect_ratio = float(eval(aspect_ratio))
             else:
                 aspect_ratio = prev_aspect_ratio
@@ -136,16 +136,35 @@ class LazySizesPictureMixin:
         width, height = min(round(width), image.width), min(round(height), image.height)
         cropped_filename = image.get_cropped_filename(width, height)
         thumbnail_path = f'{image.id}/{cropped_filename}'
-        if not ambit.sample_storage.exists(thumbnail_path):
-            try:
-                image.crop(ambit, thumbnail_path, width, height)
-            except Exception as exception:
-                logger.warning(f"Thumbnail generation failed for image {image}: {exception}")
-                return None
-        return thumbnail_path
+        if ambit.sample_storage.exists(thumbnail_path):
+            return thumbnail_path, False
+        try:
+            image.crop(ambit, thumbnail_path, width, height)
+        except Exception as exception:
+            logger.warning(f"Thumbnail generation failed for image {image}: {exception}")
+            return None, None
+        return thumbnail_path, True
 
     @classmethod
     def get_picture_sources(cls, instance):
+        """
+        Generates picture sources for responsive image rendering using the <picture> element.
+
+        This method calculates the appropriate image sizes and paths required for various image outputs.
+        It creates variations of images in multiple resolutions and sizes, suited for different device
+        screen dimensions. The process involves determining compression factors, calculating step sizes,
+        and estimating widths and heights iteratively to generate intermediate image sizes.
+
+        Since it may take a long time to generate all thumbnailed images, this method only generates the next
+        non-existing thumbnail in its ``srcset``. Only if all srcsets are complete, the method returns
+        ``complete=True``.
+
+        :param instance: The instance containing the image and its metadata required to generate sources.
+        :type instance: object
+        :return: A tuple containing a list of sources with image paths and metadata, and a boolean indicating
+            whether the process completed successfully.
+        :rtype: tuple[list[dict], bool]
+        """
         def estimate_compression_factor(crop_width, crop_height, crop_size):
             pixel_ratio = round(crop_width) * round(crop_height) / largest_image_area
             return largest_image_size * pixel_ratio / crop_size
@@ -153,12 +172,17 @@ class LazySizesPictureMixin:
         # image shall be rendered in a responsive context using the picture element
         ambit = instance.image.folder.get_ambit()
         sources = cls.get_sources_bounds(instance)
+        complete = True
         for source in sources:
             # create images for srcset in steps separated by `step_size_bytes`
             largest_image_width, largest_image_height = source['upper_bound']['width'], source['upper_bound']['height']
-            largest_image_path = cls.get_or_create_cropped(ambit, instance.image, largest_image_width, largest_image_height)
+            largest_image_path, largest_created = cls.get_or_create_cropped(
+                ambit, instance.image, largest_image_width, largest_image_height
+            )
             smallest_image_width, smallest_image_height = source['lower_bound']['width'], source['lower_bound']['height']
-            smallest_image_path = cls.get_or_create_cropped(ambit, instance.image, smallest_image_width, smallest_image_height)
+            smallest_image_path, smallest_created = cls.get_or_create_cropped(
+                ambit, instance.image, smallest_image_width, smallest_image_height
+            )
             if not largest_image_path or not smallest_image_path:
                 continue
             largest_image_size = ambit.sample_storage.size(largest_image_path)
@@ -195,7 +219,7 @@ class LazySizesPictureMixin:
                     else:
                         height = sqrt(wanted_image_size / largest_image_size / source['aspect_ratio'] * compression_factor * largest_image_area)
                         width = round(height * source['aspect_ratio'])
-                    cropped_image_path = cls.get_or_create_cropped(ambit, instance.image, width, height)
+                    cropped_image_path, created_cropped = cls.get_or_create_cropped(ambit, instance.image, width, height)
                     cropped_image_size = ambit.sample_storage.size(cropped_image_path)
                     real_to_wanted_ratio = wanted_image_size / cropped_image_size
                     logger.debug(
@@ -231,7 +255,7 @@ class LazySizesPictureMixin:
                     'height': round(largest_image_height),
                 })
 
-        return sources
+        return sources, complete
 
 
 class BootstrapPicturePlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySizesPictureMixin, BootstrapPluginBase):
@@ -272,7 +296,7 @@ class BootstrapPicturePlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, Lazy
         """
 
         if not (sources := instance.glossary.get('cached_sources')):
-            sources = self.get_picture_sources(instance)
+            sources, complete = self.get_picture_sources(instance)
             instance.glossary['cached_sources'] = sources
             instance.save(update_fields=['glossary'])
 

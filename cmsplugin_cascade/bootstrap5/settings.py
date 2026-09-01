@@ -17,6 +17,7 @@ CASCADE_PLUGINS = [
     'richtext',
     'picture',
     'tabs',
+    'leaflet',
 ]
 
 # CASCADE_PLUGINS = [

@@ -96,18 +96,24 @@ class GlyphSelector {
 	};
 
 	private async loadIconFont(value: string) {
-		if (isNaN(Number(value)))
-			return;
-		const response = await fetch(this.endpoint + value);
-		if (response.ok) {
-			const data = await response.json();
-			this.renderSymbols(data);
-			const preselected = this.previewElement.querySelector(`ul > li[title="${this.element.value}"]`);
-			if (preselected instanceof HTMLLIElement) {
-				preselected.ariaSelected = 'true';
+		const fontId = Number(value);
+		if (Number.isFinite(fontId) && fontId > 0) {
+			const response = await fetch(this.endpoint + value);
+			if (response.ok) {
+				const data = await response.json();
+				this.renderSymbols(data);
+				const preselected = this.previewElement.querySelector(`ul > li[title="${this.element.value}"]`);
+				if (preselected instanceof HTMLLIElement) {
+					preselected.ariaSelected = 'true';
+				}
+				this.previewElement.querySelectorAll('ul > li').forEach(liElement => liElement.addEventListener('click', this.handleSelectGlyph));
 			}
-			this.previewElement.querySelectorAll('ul > li').forEach(liElement => liElement.addEventListener('click', this.handleSelectGlyph));
+		} else {
+			this.cssLinkElement.setAttribute('href', '');
+			this.previewElement.innerHTML = '';
 		}
+		// emulate a click on the dialog header to reposition the dialog
+		this.element.closest('dialog')?.querySelector('.dialog-header')?.dispatchEvent(new PointerEvent('pointerdown', {pointerId: 1}));
 	}
 
 	private renderSymbols(data: any) {

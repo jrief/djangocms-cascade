@@ -73,7 +73,7 @@ class HyperlinkDialogForm(dialogs.RichtextDialogForm):
         required=False,
         widget=URLInput(attrs={
             'size': 35,
-            'richtext-map-to': '{href: elements.link_type.value == "exturl" ? elements.ext_url.value : ""}',
+            'richtext-map-to': '{href: elements.link_type.value == "exturl" ? elements.ext_url.value : "", rel: "external"}',
             'richtext-map-from': 'href',
             'df-show': ".link_type == 'exturl'",
             'df-require': ".link_type == 'exturl'",
@@ -204,6 +204,7 @@ class RichtextForm(ModelForm):
     body = RichTextField(
         label='',
         widget=RichTextarea(
+            {'style': 'height:100%'},
             control_elements=[
                 controls.Heading(),
                 controls.Bold(),
@@ -211,22 +212,22 @@ class RichtextForm(ModelForm):
                 controls.BulletList(),
                 controls.DialogControl(
                     HyperlinkDialogForm(),
-                    icon='formset/icons/link.svg',
+                    icon='formset/richtext/icons/link.svg',
                 ),
                 controls.DialogControl(
                     InlineImageDialogForm(initial={'width': 300, 'height': 200}),
-                    icon='formset/icons/image.svg',
+                    icon='formset/richtext/icons/image.svg',
                 ),
                 controls.DialogControl(
                     GlyphDialogForm(),
-                    icon='formset/icons/omega.svg',
+                    icon='formset/richtext/icons/omega.svg',
                 ),
                 controls.HorizontalRule(),
                 controls.Separator(),
                 controls.ClearFormat(),
                 controls.Undo(),
                 controls.Redo(),
-            ]
+            ],
         ),
     )
 
@@ -257,7 +258,7 @@ class RichtextPlugin(BootstrapPluginBase):
     class Media:
         css = {
             'all': [
-                'cascade/admin/bootstrap5/css/richtextplugin.css',
+                # 'cascade/admin/bootstrap5/css/richtextplugin.css',
                 'cascade/css/richtext.css',
                 'finder/css/finder-select.css',
                 'formset/css/bootstrap5-extra.css',
