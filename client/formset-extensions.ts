@@ -25,19 +25,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			const response = await formsetElement.submit({name: '_save'});
 			if (response?.ok) {
 				const innerHTML = await response.text();
+				// replace body with <script> containing the data-bridge
 				document.body.setHTMLUnsafe(innerHTML);
-				const Window = window.parent || window;
-				// the dataBridge is used to access plugin information from different resources
-				Window.CMS.API.Helpers.dataBridge = JSON.parse(document.getElementById('data-bridge').textContent);
-				// make sure we're doing after the "modal" mechanism kicked in
-				setTimeout(()=> {
-					// save current plugin
-					Window.CMS.API.Helpers.onPluginSave();
-					document.defaultView.frameElement?.dispatchEvent(new Event('load'));
-				}, 100); // eslint-disable-line no-magic-numbers
+				document.defaultView.frameElement?.dispatchEvent(new Event('load'));
 			} else {
+				// prevent closing the iframe in order to show the error message(s)
 				document.defaultView.frameElement.style.display = 'block';
 			}
 		});
+		event.preventDefault();
+		event.stopPropagation();
 	});
 });
