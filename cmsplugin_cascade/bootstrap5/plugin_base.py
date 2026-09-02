@@ -140,5 +140,7 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
                 parent=instance.parent,
                 insert_order='last',
             )
+        response = super()._update_collection_view(view_kwargs, add=add)
+        if add and response.status_code == 200:
             instance.placeholder.add_plugin(instance)
-        return super()._update_collection_view(view_kwargs, add=add)
+        return response
