@@ -2,6 +2,7 @@
 
 {% addtoblock "css" %}{% localize off %}
 <style>
+{% comment %}
 {% for elem in instance.element_heights %}
 @media{{ elem.media }} {
 	#cascadeelement_id-{{ instance.pk }} {
@@ -9,6 +10,8 @@
 	}
 }
 {% endfor %}
+{% endcomment %}
+
 #cascadeelement_id-{{ instance.pk }} {
 	{{ instance.background_color }}{% if instance.image %}
 	{{ instance.background_attachment }}
@@ -17,6 +20,7 @@
 	{{ instance.background_size }}{% endif %}
 	{{ instance.inline_styles }}
 }
+{% comment %}
 {% if instance.image %}
 	{% for elem in elements %}
 		{% thumbnail instance.image elem.size crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
@@ -29,6 +33,7 @@
 }
 	{% endfor %}
 {% endif %}
+{% endcomment %}
 </style>
 {% endlocalize %}{% endaddtoblock %}
 
@@ -37,5 +42,5 @@
 	{% for plugin in instance.child_plugin_instances %}
 		{% render_plugin plugin %}
 	{% endfor %}
-</div>  
+</div>
 {% endspaceless %}{% endlocalize %}

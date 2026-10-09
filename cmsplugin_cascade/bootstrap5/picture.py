@@ -61,7 +61,7 @@ class ImageElementMixin:
         except AttributeError:
             return str(self.image)
 
-    @cached_property
+    @property
     def image(self):
         if not hasattr(self, '_image_file'):
             try:
@@ -261,7 +261,7 @@ class LazySizesPictureMixin:
 class BootstrapPicturePlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySizesPictureMixin, BootstrapPluginBase):
     name = _("Picture")
     module = 'Bootstrap'
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     model_mixins = (LinkElementMixin, ImageElementMixin)
     admin_preview = False
     form = BootstrapPictureForm

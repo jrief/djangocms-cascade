@@ -1,3 +1,4 @@
+
 django-formset .form-row {
   display: flex;
   flex-direction: column;
@@ -9,6 +10,9 @@ django-formset .form-row label {
 django-formset .form-row div.help {
   margin-left: unset;
   padding-left: unset;
+}
+django-formset .aligned fieldset > div {
+  width: initial;
 }
 django-formset .aligned .dj-field-errors {
   margin-left: 0;

@@ -42,19 +42,6 @@ class BookmarkFormMixin(metaclass=ModelFormMetaclass):
                         msg = _("The element ID '{}' is not unique for this page.")
                         raise ValidationError(msg.format(identifier))
 
-    def XXXsave(self):  # performed in BookmarkPluginMixin.save_model(…)
-        super().save()
-        placeholder = self.instance.placeholder
-        page_content = placeholder.content_type.get_object_for_this_type(pk=placeholder.object_id)
-        cascade_page_content = CascadePageContent.assure_relation(page_content)
-        if element_id := self.instance.glossary.get('element_id'):
-            PageContentAnchor.objects.update_or_create(
-                content=cascade_page_content,
-                cms_plugin=self.instance,
-                defaults={'identifier': element_id},
-            )
-        return self.instance
-
 
 class BookmarkPluginMixin:
     def get_model_form(self, form_class=None):
@@ -95,29 +82,6 @@ class BookmarkPluginMixin:
                 page_url=page_url,
                 identifier=element_id,
             )
-
-        # if not change:
-        #     # when adding a new element, `element_id` can not be validated for uniqueness in
-        #     # BookmarkFormMixin.clean_element_id(), so we have to do it here
-        #     postfix = 0
-        #     while True:
-        #         try:
-        #             form.check_unique_element_id(obj, element_id)
-        #         except ValidationError:
-        #             # but since we can't raise a ValidationError while saving, we must invent a unique element_id
-        #             postfix += 1
-        #             element_id = '{element_id}_{0}'.format(postfix, **obj.glossary)
-        #         else:
-        #             break
-        #     if postfix:
-        #         obj.glossary['element_id'] = element_id
-        #         obj.save()
-
-
-        # cascade_page_content = CascadePageContent.assure_relation(page_content)
-        # cascade_page_content.glossary.setdefault('element_ids', {})
-        # cascade_page_content.glossary['element_ids'][str(obj.pk)] = element_id
-        # cascade_page_content.save()
 
 
 class BookmarkModelMixin:

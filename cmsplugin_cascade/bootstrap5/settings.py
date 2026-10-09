@@ -13,6 +13,7 @@ CASCADE_PLUGINS = [
     'embeds',
     'heading',
     'hyperlink',
+    'jumbotron',
     'navigation',
     'richtext',
     'picture',

@@ -17,6 +17,7 @@ from finder.models.file import FileModel as FinderFileModel
 
 from formset.fieldsmapping import get_related_object
 from formset.forms import ModelForm
+from formset.richtext.dialogs import RichtextDialogForm
 from formset.widgets import PhoneNumberInput, Selectize
 
 
@@ -204,7 +205,8 @@ class HyperlinkPluginMixin:
         elif linktype == 'download':
             if file_uuid := obj.glossary.get('download_file'):
                 download_file = FinderFileModel.objects.get_inode(id=file_uuid, is_folder=False)
-                href = download_file.get_download_url()
+                ambit = download_file.parent.ambit
+                href = download_file.get_download_url(ambit)
         return href
 
 
@@ -225,3 +227,92 @@ class TextLinkPlugin(HyperlinkPluginMixin, BootstrapPluginBase):
 
 
 plugin_pool.register_plugin(TextLinkPlugin)
+
+
+class HyperlinkDialogForm(RichtextDialogForm):
+    title = _("Edit Link")
+    extension = 'hyperlink'
+    extension_script = 'cascade/admin/tiptap-extensions/hyperlink.js'
+    plugin_type = 'mark'
+    icon = 'formset/richtext/icons/link.svg'
+
+    link_content = CharField(
+        label=_("Link Content"),
+        widget=TextInput(attrs={
+            'richtext-selection': True,
+            'size': 50,
+        })
+    )
+    link_type = LinkTypeChoiceField(
+        widget=RadioSelect(attrs={'richtext-map-from': 'change_link_type()'}),
+    )
+    cms_page = PageChoiceField(
+        label=_("CMS Page"),
+        required=False,
+        widget=Selectize(attrs={
+            'richtext-map-to': '{cms_page: elements.link_type.value == "cmspage" ? elements.cms_page.value : ""}',
+            'richtext-map-from': 'cms_page',
+            'df-show': ".link_type == 'cmspage'",
+            'df-require': ".link_type == 'cmspage'",
+        }),
+    )
+    anchor = AnchorChoiceField(
+        label='',
+        required=False,
+        empty_label=_("Page Root"),
+        help_text=_("Page bookmark"),
+        widget=Selectize(
+            use_filter_set=AnchorFieldFilterSet,
+            attrs={
+                'richtext-map-to': '{anchor: elements.link_type.value == "cmspage" ? elements.anchor.value : ""}',
+                'richtext-map-from': '{value: parseInt(attributes.anchor)}',  # a numeric value forces Selectize to refetch its options
+                'df-show': ".link_type === 'cmspage'",
+            },
+        ),
+    )
+    ext_url = URLField(
+        label=_("External URL"),
+        required=False,
+        widget=URLInput(attrs={
+            'size': 35,
+            'richtext-map-to': '{href: elements.link_type.value == "exturl" ? elements.ext_url.value : "", rel: "external"}',
+            'richtext-map-from': 'href',
+            'df-show': ".link_type == 'exturl'",
+            'df-require': ".link_type == 'exturl'",
+        }),
+    )
+    download_file = FinderFileField(
+        label=_("Downloadable File"),
+        required=False,
+        help_text=_("A link to a downloadable file"),
+        widget=FinderFileSelect(attrs={
+            'richtext-map-to': '{download_file: elements.link_type.value == "download" ? elements.download_file.value : ""}',
+            'richtext-map-from': 'download_file',
+            'df-show': ".link_type === 'download'",
+            'df-require': ".link_type == 'download'",
+        }),
+    )
+    mail_to = EmailField(
+        label=_("Email Address"),
+        required=False,
+        help_text=_("A link to an email address"),
+        widget=EmailInput(attrs={
+            'size': 35,
+            'placeholder': "john@example.org",
+            'richtext-map-to': '{mail_to: elements.link_type.value == "email" ? elements.mail_to.value : ""}',
+            'richtext-map-from': 'mail_to',
+            'df-show': ".link_type === 'email'",
+            'df-require': ".link_type === 'email'",
+        }),
+    )
+    phone_number = CharField(
+        label=_("Phone Number"),
+        required=False,
+        help_text=_("A phone number link"),
+        widget=PhoneNumberInput(attrs={
+            'richtext-map-to': '{phone_number: elements.link_type.value == "phone" ? elements.phone_number.value : ""}',
+            'richtext-map-from': 'phone_number',
+            'df-show': ".link_type === 'phone'",
+            'df-require': ".link_type === 'phone'",
+        }),
+    )

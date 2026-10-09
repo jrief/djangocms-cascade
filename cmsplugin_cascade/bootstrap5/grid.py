@@ -140,7 +140,7 @@ class BootstrapRowForm(ManageChildrenFormMixin, GridModelForm):
             (i, ngettext_lazy("{0} column", "{0} columns", i).format(i))
             for i in ColumnsChoiceField.ROW_NUM_COLUMNS
         ],
-        initial=3,
+        initial=1,
         widget=SelectColumnsWidget,
         help_text=_("Number of columns to be created with this row."),
     )

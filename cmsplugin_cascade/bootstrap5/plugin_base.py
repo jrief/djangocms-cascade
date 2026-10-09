@@ -37,7 +37,9 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
 
     class Media:
         css = {'all': ['formset/css/adminform.css', 'cascade/css/admin/adminform.css']}
-        js = ['cascade/admin/bootstrap5/js/formset-extensions.js']
+        js = [
+            'cascade/admin/bootstrap5/js/formset-extensions.js',
+        ]
 
     def __repr__(self):
         return f'<{self.__class__.__name__}>'

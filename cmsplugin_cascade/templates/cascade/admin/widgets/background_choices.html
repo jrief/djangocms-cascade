@@ -1,0 +1,21 @@
+{% load static %}{% spaceless %}
+<div class="form-row">
+{% for group, options, index in widget.optgroups %}{% with widget=options.0 %}
+	<div class="fieldBox">
+		<div class="mb-2 rounded
+			{% if widget.name == 'background_color' %} {{ widget.value }}{% endif %}
+			{% if widget.name == 'background_repeat' or widget.name == 'background_attachment' %} border border-2{% endif %}"
+			{% if widget.name == 'background_repeat' %} style="background-image: url({% static 'cascade/admin/lightpattern.png' %}); background-size: 99px; background-position: center; background-repeat: {{ widget.value }};"{% endif %}
+			{% if widget.name == 'background_attachment' %} style="background-image: url({% static 'cascade/admin/lightpattern.png' %}); background-size: 99px; background-position: center; background-repeat: repeat; background-attachment: {{ widget.value }};"{% endif %}
+		>
+			<label{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %} class="ms-3">
+				<strong class="ps-3 pt-3 fs-5 d-inline-block">{{ widget.label }}</strong>
+				<p class="p-3 pt-1">
+					{% include "django/forms/widgets/input.html" %}
+					<span class="ms-2">{% lorem 15 w %}.</span>
+				</p>
+			</label>
+		</div>
+	</div>
+{% endwith %}{% endfor %}</div>
+{% endspaceless %}

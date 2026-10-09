@@ -36,7 +36,7 @@ class HeadingForm(ModelForm):
 
 class HeadingPlugin(BookmarkPluginMixin, BootstrapPluginBase):  # TODO: inherit in CascadePluginBaseMetaclass.__new__()
     name = _("Heading")
-    parent_classes = ['BootstrapColumnPlugin']
+    parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
     form = HeadingForm
     model_mixins = (BookmarkModelMixin,)
     render_template = 'cascade/generic/heading.html'
