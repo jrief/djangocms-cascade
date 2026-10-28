@@ -1,0 +1,28 @@
+.image-align-left {
+	display: block;
+	margin-right: auto;
+}
+.image-align-right {
+	display: block;
+	margin-left: auto;
+}
+.image-align-center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+.image-float-left {
+	float: left;
+	margin-right: 1em;
+}
+.image-float-right {
+	float: right;
+	margin-left: 1em;
+}
+a[rel="external"]::after {
+	content: "➚";
+	font-size: 0.75em;
+	margin-left: 0.2em;
+	display: inline-block;
+	vertical-align: top;
+}

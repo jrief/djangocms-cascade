@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.forms import fields
 from django.utils.translation import gettext
 
@@ -18,21 +20,23 @@ class BootstrapMultiSizeField(MultiSizeField):
 
 
 class AspectRatioChoiceField(fields.ChoiceField):
+    CHOICES = [
+        ('16/9', "16:9"),
+        ('4/3', "4:3"),
+        ('1/1', "1:1"),
+        ('2/1', "2:1"),
+        ('21/9', "21:9"),
+        ('3/2', "3:2"),
+        ('2/3', "2:3"),
+        ('3/4', "3:4"),
+        ('9/16', "9:16"),
+        ('9/21', "9:21"),
+        ('1/2', "1:2"),
+    ]
+
     def __init__(self, breakpoint, *args, **kwargs):
         kwargs.setdefault('label', gettext("Aspect Ratio for ‘{}’").format(breakpoint.label))
-        choices = [
-            ('16/9', "16:9"),
-            ('4/3', "4:3"),
-            ('1/1', "1:1"),
-            ('2/1', "2:1"),
-            ('21/9', "21:9"),
-            ('3/2', "3:2"),
-            ('2/3', "2:3"),
-            ('3/4', "3:4"),
-            ('9/16', "9:16"),
-            ('9/21', "9:21"),
-            ('1/2', "1:2"),
-        ]
+        choices = deepcopy(self.CHOICES)
         self.add_original = kwargs.pop('add_original', False)
         if self.add_original:
             choices.insert(0, ('orig', gettext("Original")))

@@ -6,5 +6,5 @@ from cms.toolbar_pool import toolbar_pool
 class CascadeClipboardToolbar(CMSToolbar):
     class Media:
         css = {
-            'all': ['cascade/css/admin/clipboard.css']
+            'all': ['cascade/css/admin/cms.toolbar.css']
         }

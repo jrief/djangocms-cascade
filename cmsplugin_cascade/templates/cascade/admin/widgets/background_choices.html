@@ -2,11 +2,14 @@
 <div class="form-row">
 {% for group, options, index in widget.optgroups %}{% with widget=options.0 %}
 	<div class="fieldBox">
-		<div class="mb-2 rounded
-			{% if widget.name == 'background_color' %} {{ widget.value }}{% endif %}
-			{% if widget.name == 'background_repeat' or widget.name == 'background_attachment' %} border border-2{% endif %}"
-			{% if widget.name == 'background_repeat' %} style="background-image: url({% static 'cascade/admin/lightpattern.png' %}); background-size: 99px; background-position: center; background-repeat: {{ widget.value }};"{% endif %}
-			{% if widget.name == 'background_attachment' %} style="background-image: url({% static 'cascade/admin/lightpattern.png' %}); background-size: 99px; background-position: center; background-repeat: repeat; background-attachment: {{ widget.value }};"{% endif %}
+		<div
+			{% if widget.name == 'background_color' %}class="mb-2 rounded {{ widget.value }}"{% endif %}
+			{% if widget.name == 'background_repeat' or widget.name == 'background_attachment' %}class="mb-2 rounded border border-2"{% endif %}
+			{% if widget.name == 'background_repeat' %}class="mb-2 rounded" style="background-image: url({% static 'cascade/admin/lightpattern.png' %}); background-size: 99px; background-position: center; background-repeat: {{ widget.value }};"{% endif %}
+			{% if widget.name == 'background_attachment' %}class="mb-2 rounded" style="background-image: url({% static 'cascade/admin/lightpattern.png' %}); background-size: 99px; background-position: center; background-repeat: repeat; background-attachment: {{ widget.value }};"{% endif %}
+			{% if widget.name == 'border_color' %}class="mb-2 rounded{% if widget.value %} border border-2 {{ widget.value }}{% endif %}"{% endif %}
+			{% if widget.name == 'border_width' %}class="mb-2 rounded{% if widget.value %} border border-2 {{ widget.value }}{% endif %}"{% endif %}
+			{% if widget.name == 'rounded_corder' %}class="mb-2 border border-2{% if widget.value %} {{ widget.value }}{% endif %}"{% endif %}
 		>
 			<label{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %} class="ms-3">
 				<strong class="ps-3 pt-3 fs-5 d-inline-block">{{ widget.label }}</strong>

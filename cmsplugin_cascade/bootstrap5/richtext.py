@@ -190,7 +190,7 @@ class RichtextPlugin(BootstrapPluginBase):
     class Media:
         css = {
             'all': [
-                'cascade/css/richtext.css',
+                'cascade/css/admin/richtext.css',
                 'finder/css/finder-select.css',
                 'formset/css/bootstrap5-extra.css',
             ]

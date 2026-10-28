@@ -20,13 +20,15 @@ class BootstrapUtilities(CascadePluginMetaclass):
     def __new__(cls, *args):
         class BootstrapUtilitiesMixin:
             def get_model_form(self, **kwargs):
-                class Meta(self.form.Meta):
+                form_class = kwargs.get('form_class', self.form)
+
+                class Meta(form_class.Meta):
                     fields_map = {
-                        **self.form.Meta.fields_map,
-                        'glossary': [*self.form.Meta.fields_map['glossary'], *form_fields.keys()],
+                        **form_class.Meta.fields_map,
+                        'glossary': [*form_class.Meta.fields_map['glossary'], *form_fields.keys()],
                     }
 
-                kwargs['form_class'] = type(self.form.__name__, (self.form,), {**form_fields, 'Meta': Meta})
+                kwargs['form_class'] = type(self.form.__name__, (form_class,), {**form_fields, 'Meta': Meta})
                 return super().get_model_form(**kwargs)
 
             @classmethod
@@ -203,6 +205,7 @@ class AspectRatioChoicesMixin:
                 required=False,
                 add_original=model_form.base_fields['aspect_ratio'].add_original,
                 empty_label=_("Inherit from “Aspect Ratio for ‘{}’”").format(Breakpoint[prev_bp].label),
+                widget=model_form.base_fields['aspect_ratio'].widget,
             )
             glossary_fields.insert(index, field_name)
 
@@ -214,6 +217,7 @@ class AspectRatioChoicesMixin:
 
 
 VerticalMarginsMixin = BootstrapUtilities(BootstrapUtilities.vertical_margins)
+PaddingsMixin = BootstrapUtilities(BootstrapUtilities.paddings)
 
 
 class HidePluginMixin:
