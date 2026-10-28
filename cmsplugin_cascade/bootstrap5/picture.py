@@ -3,7 +3,6 @@ from math import sqrt
 
 from django.forms import widgets, MultipleChoiceField
 from django.templatetags.static import static
-from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 
@@ -65,7 +64,8 @@ class ImageElementMixin:
     def image(self):
         if not hasattr(self, '_image_file'):
             try:
-                self._image_instance = FinderFileModel.objects.get_inode(id=self.glossary['image'], is_folder=False)
+                image_id = self.glossary['image']
+                self._image_instance = FinderFileModel.objects.get_inode(id=image_id, mime_types='image/*')
             except (KeyError, FinderFileModel.DoesNotExist):
                 self._image_instance = None
         return self._image_instance
@@ -98,13 +98,14 @@ class LazySizesPictureMixin:
         source_element = prev_aspect_ratio = None
         for breakpoint in Breakpoint:
             if breakpoint == Breakpoint.xs:
-                aspect_ratio = instance.glossary['aspect_ratio']
+                aspect_ratio = instance.glossary.get('aspect_ratio', 'orig')
             elif breakpoint.name in allowed_breakpoints:
                 aspect_ratio = instance.glossary.get(f'aspect_ratio_{breakpoint.name}')
 
             if aspect_ratio == 'orig':
                 computed_aspect_ratio = instance.image.width / instance.image.height
             elif aspect_ratio:
+                assert aspect_ratio in dict(AspectRatioChoiceField.CHOICES)  # security check since eval is used
                 computed_aspect_ratio = float(eval(aspect_ratio))
             else:
                 aspect_ratio = prev_aspect_ratio
@@ -113,6 +114,7 @@ class LazySizesPictureMixin:
                 width = min(cls.min_thumbnail_width, instance.image.width)
                 height = min(width / computed_aspect_ratio, instance.image.height)
                 source_element = {
+                    'breakpoint': breakpoint.name,
                     'aspect_ratio': computed_aspect_ratio,
                     'min_width': f"{breakpoint.min_width}px" if breakpoint.min_width else None,
                     'lower_bound': {'width': width, 'height': height},
@@ -146,7 +148,7 @@ class LazySizesPictureMixin:
         return thumbnail_path, True
 
     @classmethod
-    def get_picture_sources(cls, instance):
+    def get_picture_sources(cls, instance, max_num_steps=None):
         """
         Generates picture sources for responsive image rendering using the <picture> element.
 
@@ -161,6 +163,10 @@ class LazySizesPictureMixin:
 
         :param instance: The instance containing the image and its metadata required to generate sources.
         :type instance: object
+        :param max_num_steps: The maximum number of steps to generate between the smallest and largest images.
+            It can be used to limit the number of generated images for performance reasons. If not provided,
+            thumbnails will be generated in sizes approximately `step_size_bytes` apart.
+        :type max_num_steps: int, optional
         :return: A tuple containing a list of sources with image paths and metadata, and a boolean indicating
             whether the process completed successfully.
         :rtype: tuple[list[dict], bool]
@@ -171,15 +177,20 @@ class LazySizesPictureMixin:
 
         # image shall be rendered in a responsive context using the picture element
         ambit = instance.image.folder.get_ambit()
+        if not ambit.original_storage.exists(instance.image.file_path):
+            logger.warning(f"Image file {instance.image.file_path} does not exist in storage.")
+            return [], False
         sources = cls.get_sources_bounds(instance)
         complete = True
         for source in sources:
             # create images for srcset in steps separated by `step_size_bytes`
-            largest_image_width, largest_image_height = source['upper_bound']['width'], source['upper_bound']['height']
+            largest_image_width = source['upper_bound']['width']
+            largest_image_height = source['upper_bound']['height']
             largest_image_path, largest_created = cls.get_or_create_cropped(
                 ambit, instance.image, largest_image_width, largest_image_height
             )
-            smallest_image_width, smallest_image_height = source['lower_bound']['width'], source['lower_bound']['height']
+            smallest_image_width = source['lower_bound']['width']
+            smallest_image_height = source['lower_bound']['height']
             smallest_image_path, smallest_created = cls.get_or_create_cropped(
                 ambit, instance.image, smallest_image_width, smallest_image_height
             )
@@ -190,13 +201,13 @@ class LazySizesPictureMixin:
             smallest_image_size = ambit.sample_storage.size(smallest_image_path)
             source['src'] = ambit.sample_storage.url(smallest_image_path)
             num_steps = int((largest_image_size - smallest_image_size) / cls.step_size_bytes) + 1
+            if max_num_steps and num_steps > max_num_steps:
+                num_steps = max_num_steps
             step_size_bytes = round((largest_image_size - smallest_image_size) / num_steps)
-            if largest_image_width > largest_image_height:
+            if landscape := largest_image_width > largest_image_height:
                 mult = (largest_image_width / smallest_image_width) ** (1 / num_steps)
-                landscape = True
             else:
                 mult = (largest_image_height / smallest_image_height) ** (1 / num_steps)
-                landscape = False
             source['srcsets'] = [{
                 'url': ambit.sample_storage.url(smallest_image_path),
                 'width': round(smallest_image_width),
@@ -207,19 +218,24 @@ class LazySizesPictureMixin:
                 num_steps=num_steps,
                 step_size_bytes=step_size_bytes,
             )
-            compression_factor = estimate_compression_factor(smallest_image_width, smallest_image_height, smallest_image_size)
 
             # create a set of images in different files sizes, guess width and height to find the right size
+            aspect_ratio = source['aspect_ratio']
+            compression_factor = estimate_compression_factor(smallest_image_width, smallest_image_height, smallest_image_size)
             for step in range(1 - num_steps, 0):
+                # Claude's proposal:
+                # width = largest_image_width * sqrt(step / num_steps)
                 wanted_image_size = largest_image_size + step * step_size_bytes
                 for attempt in range(3):
                     if landscape:
-                        width = sqrt(wanted_image_size / largest_image_size * source['aspect_ratio'] * compression_factor * largest_image_area)
-                        height = round(width / source['aspect_ratio'])
+                        width = sqrt(wanted_image_size / largest_image_size * aspect_ratio * compression_factor * largest_image_area)
+                        height = round(width / aspect_ratio)
                     else:
-                        height = sqrt(wanted_image_size / largest_image_size / source['aspect_ratio'] * compression_factor * largest_image_area)
-                        width = round(height * source['aspect_ratio'])
-                    cropped_image_path, created_cropped = cls.get_or_create_cropped(ambit, instance.image, width, height)
+                        height = sqrt(wanted_image_size / largest_image_size / aspect_ratio * compression_factor * largest_image_area)
+                        width = round(height * aspect_ratio)
+                    cropped_image_path, created_cropped = cls.get_or_create_cropped(
+                        ambit, instance.image, width, height
+                    )
                     cropped_image_size = ambit.sample_storage.size(cropped_image_path)
                     real_to_wanted_ratio = wanted_image_size / cropped_image_size
                     logger.debug(

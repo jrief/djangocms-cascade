@@ -20,8 +20,8 @@ dist
 htmlcov
 cmsplugin_cascade/static/cascade/admin/bootstrap5/js/formset-extensions*
 cmsplugin_cascade/static/cascade/admin/bootstrap5/js/formset/*
-cmsplugin_cascade/static/cascade/css/*.css
-cmsplugin_cascade/static/cascade/css/*.css.map
+cmsplugin_cascade/static/cascade/css/admin/*
+cmsplugin_cascade/static/cascade/css/bootstrap5/*
 node_modules/
 workdir/
 .venv

@@ -6,9 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.hyperlink import HyperlinkDialogForm
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.models import CascadeElement
+from cmsplugin_cascade.forms import InternalTitleModelForm
 
-from formset.forms import ModelForm
 from formset.formfields.geomap import GeoMapField
 from formset.formfields.richtext import RichTextField
 from formset.geomap import controls, dialogs
@@ -44,7 +43,7 @@ class SpecialMarkerDialogForm(dialogs.GeoMapDialogForm):
     )
 
 
-class LeafletMarkerForm(ModelForm):
+class LeafletMarkerForm(InternalTitleModelForm):
     map = GeoMapField(
         label='',
         widget=GeoMapWidget(
@@ -58,12 +57,8 @@ class LeafletMarkerForm(ModelForm):
         ),
     )
 
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary']
-        fields_map = {
-            'glossary': ['map'],
-        }
+    class Meta(InternalTitleModelForm.Meta):
+        fields_map = {'glossary': ['title_attribute', 'map']}
 
 
 class LeafletPlugin(BootstrapPluginBase):
@@ -74,7 +69,7 @@ class LeafletPlugin(BootstrapPluginBase):
 
     class Media:
         css = {'all': [
-            'cascade/css/leaflet.css',
+            'cascade/css/admin/leaflet.css',
             'formset/css/bootstrap5-extra.css',
         ]}
 

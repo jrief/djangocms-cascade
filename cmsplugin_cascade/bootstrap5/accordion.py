@@ -9,9 +9,9 @@ from django.utils.translation import gettext, gettext_lazy as _, ngettext
 
 from cms.models import Page, CMSPlugin
 from cms.plugin_pool import plugin_pool
+from cmsplugin_cascade.forms import InternalTitleModelForm
 from cmsplugin_cascade.bootstrap5.mixins import VerticalMarginsMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase, logger
-from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.mixins import ManageChildrenMixin
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.widgets import NumberInputWidget
@@ -19,13 +19,14 @@ from cmsplugin_cascade.widgets import NumberInputWidget
 from formset.forms import ModelForm
 
 
-class AccordionForm(ManageChildrenFormMixin, ModelForm):
+class AccordionForm(InternalTitleModelForm):
     num_children = IntegerField(
         min_value=1,
         initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
         label=_("Items"),
         help_text=_("Number of items for this accordion."),
+        required=False,
     )
     first_is_open = BooleanField(
          label=_("First open"),
@@ -40,10 +41,8 @@ class AccordionForm(ManageChildrenFormMixin, ModelForm):
          help_text=_("Open only one item at a time.")
     )
 
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary']
-        fields_map = {'glossary': ['first_is_open', 'close_others']}
+    class Meta(InternalTitleModelForm.Meta):
+        fields_map = {'glossary': ['title_attribute', 'first_is_open', 'close_others']}
 
 
 
@@ -70,7 +69,7 @@ class BootstrapAccordionPlugin(VerticalMarginsMixin, ManageChildrenMixin, Bootst
         return context
 
     def save_model(self, request, instance, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
+        wanted_children = int(form.cleaned_data.get('num_children') or 0)
         super().save_model(request, instance, form, change)
         child_glossary = {'heading': gettext("Extra Accordion")}
         self.extend_children(instance, wanted_children, BootstrapAccordionItemPlugin, child_glossary=child_glossary)

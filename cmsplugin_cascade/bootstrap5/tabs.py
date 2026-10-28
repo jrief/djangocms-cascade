@@ -7,7 +7,7 @@ from django.forms.fields import IntegerField
 
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase, logger
-from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.forms import InternalTitleModelForm
 from cmsplugin_cascade.mixins import ManageChildrenMixin
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.widgets import NumberInputWidget
@@ -15,23 +15,22 @@ from cmsplugin_cascade.widgets import NumberInputWidget
 from formset.forms import ModelForm
 
 
-class TabSetForm(ManageChildrenFormMixin, ModelForm):
+class TabSetForm(InternalTitleModelForm):
     num_children = IntegerField(
         min_value=1,
         initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
         label=_("Number of Tabs"),
         help_text=_("Number can be adjusted at any time."),
+        required=False,
     )
     justified = BooleanField(
         label=_("Justified tabs"),
         required=False,
     )
 
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary']
-        fields_map = {'glossary': ['justified']}
+    class Meta(InternalTitleModelForm.Meta):
+        fields_map = {'glossary': ['title_attribute', 'justified']}
 
 
 class BootstrapTabSetPlugin(ManageChildrenMixin, BootstrapPluginBase):
@@ -57,7 +56,7 @@ class BootstrapTabSetPlugin(ManageChildrenMixin, BootstrapPluginBase):
         return css_classes
 
     def save_model(self, request, obj, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
+        wanted_children = int(form.cleaned_data.get('num_children') or 0)
         super().save_model(request, obj, form, change)
         child_glossary = {'tab_title': gettext("Extra Tab")}
         self.extend_children(obj, wanted_children, BootstrapTabPanePlugin, child_glossary=child_glossary)

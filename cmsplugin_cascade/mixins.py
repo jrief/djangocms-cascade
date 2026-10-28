@@ -1,3 +1,5 @@
+from cms.api import add_plugin
+from cmsplugin_cascade.forms import ManageChildrenFormMixin
 from cmsplugin_cascade.models import InlineCascadeElement, SortableInlineCascadeElement
 
 
@@ -56,8 +58,8 @@ class CascadePluginMixin:
         """
 
         css_classes = []
-        if hasattr(cls, 'default_css_class'):
-            css_classes.append(cls.default_css_class)
+        if default_css_class := getattr(cls, 'default_css_class', None):
+            css_classes.append(default_css_class)
         default_css_attributes = getattr(cls, 'default_css_attributes', [])
         for attr in default_css_attributes:
             css_class = instance.glossary.get(attr)
@@ -139,13 +141,17 @@ class ManageChildrenMixin:
     It allows the client to modify the number of children attached to this plugin.
     """
 
+    def get_model_form(self, **kwargs):
+        form_class = super().get_model_form(**kwargs)
+        if not issubclass(form_class, ManageChildrenFormMixin):
+            form_class = type(form_class.__name__, (ManageChildrenFormMixin, form_class), {'Meta': form_class.Meta})
+        return form_class
+
     def extend_children(self, parent, wanted_children, child_class, child_glossary=None):
         """
         Extend the number of children so that the parent object contains wanted children.
         No child will be removed if wanted_children is smaller than the current number of children.
         """
-        from cms.api import add_plugin
-
         current_children = parent.get_num_children()
         for _ in range(current_children, wanted_children):
             child = add_plugin(parent.placeholder, child_class, parent.language, target=parent)

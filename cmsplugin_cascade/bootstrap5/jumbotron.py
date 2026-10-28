@@ -1,23 +1,19 @@
 import logging
 
 from django.core.exceptions import ValidationError
-from django.forms import widgets, BooleanField, ChoiceField
+from django.forms import widgets, CharField, ChoiceField
 from django.utils.html import format_html
 from django.utils.translation import gettext, gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
-from cmsplugin_cascade import app_settings
-# from cmsplugin_cascade.fields import ColorField, MultiSizeField, CascadeImageField
-from cmsplugin_cascade.models import CascadeElement
-# from cmsplugin_cascade.image import ImagePropertyMixin
+from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint
+from cmsplugin_cascade.bootstrap5.fields import AspectRatioChoiceField
+from cmsplugin_cascade.bootstrap5.mixins import AspectRatioChoicesMixin, PaddingsMixin, VerticalMarginsMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.bootstrap5.picture import ImageElementMixin
-# from cmsplugin_cascade.bootstrap5.container import ContainerGridMixin
-from cmsplugin_cascade.bootstrap5.fields import BootstrapMultiSizeField
-# from cmsplugin_cascade.bootstrap5.picture import get_picture_elements
+from cmsplugin_cascade.bootstrap5.picture import ImageElementMixin, LazySizesPictureMixin
+from cmsplugin_cascade.forms import InternalTitleModelForm
 
 from finder.forms.fields import FinderFileField
-from finder.models.file import FileModel as FinderFileModel
 
 from formset.forms import ModelForm
 
@@ -25,23 +21,6 @@ logger = logging.getLogger('cascade')
 
 
 class ImageBackgroundMixin:
-    @property
-    def element_heights(self):
-        element_heights = self.glossary.get('element_heights', {})
-        for bp, media_query in self.glossary['media_queries'].items():
-            if bp in element_heights:
-                yield {'media': media_query['media'], 'height': element_heights[bp]}
-
-    @property
-    def background_color(self):
-        try:
-            color, disabled = self.glossary['background_color']
-            if not disabled and disabled != 'disabled':
-                return 'background-color: {};'.format(color)
-        except (KeyError, TypeError, ValueError):
-            pass
-        return ''
-
     @property
     def background_attachment(self):
         try:
@@ -104,13 +83,64 @@ class BackgroundChoiceWidget(widgets.RadioSelect):
         ('bg-dark-subtle text-dark-emphasis', _("Subtle Dark")),
     ]
 
-    def get_context(self, name, value, attrs):
-        attrs = attrs or {}
-        context = super().get_context(name, value, attrs)
-        return context
+
+class BorderColorWidget(widgets.RadioSelect):
+    """
+    Render sample border colors in different colors.
+    """
+    template_name = 'cascade/admin/widgets/background_choices.html'
+    BORDER_COLOR_CHOICES = [
+        ('', _("No border")),
+        ('border-primary', _("Primary")),
+        ('border-primary-subtle', _("Subtle Primary")),
+        ('border-secondary', _("Secondary")),
+        ('border-secondary-subtle', _("Subtle Secondary")),
+        ('border-success', _("Success")),
+        ('border-success-subtle', _("Subtle Success")),
+        ('border-danger', _("Danger")),
+        ('border-danger-subtle', _("Subtle Danger")),
+        ('border-warning', _("Warning")),
+        ('border-warning-subtle', _("Subtle Warning")),
+        ('border-info', _("Info")),
+        ('border-info-subtle', _("Subtle Info")),
+        ('border-light', _("Light")),
+        ('border-light-subtle', _("Subtle Light")),
+        ('border-dark', _("Dark")),
+        ('border-dark-subtle', _("Subtle Dark")),
+        ('border-white', _("White")),
+        ('border-black', _("Black")),
+    ]
 
 
-class JumbotronForm(ModelForm):
+class BorderWidthWidget(widgets.RadioSelect):
+    """
+    Render sample border widths in different widths.
+    """
+    template_name = 'cascade/admin/widgets/background_choices.html'
+    BORDER_WIDTH_CHOICES = [
+        ('border-1', _("1 pixel")),
+        ('border-2', _("2 pixels")),
+        ('border-3', _("3 pixels")),
+        ('border-4', _("4 pixels")),
+        ('border-5', _("5 pixels")),
+    ]
+
+
+class RoundedCornerWidget(widgets.RadioSelect):
+    template_name = 'cascade/admin/widgets/background_choices.html'
+    ROUNDED_CHOICES = [
+        ('rounded-0', _("Unrounded Corner")),
+        ('rounded-1', _("Rounded 4 pixel")),
+        ('rounded-2', _("Rounded 6 pixels")),
+        ('rounded-3', _("Rounded 8 pixels")),
+        ('rounded-4', _("Rounded 16 pixels")),
+        ('rounded-5', _("Rounded 32 pixels")),
+        ('rounded-circle', _("Rounded Circle")),
+        ('rounded-pill', _("Rounded Pill")),
+    ]
+
+
+class JumbotronForm(InternalTitleModelForm):
     """
     Form class to validate the JumbotronPlugin.
     """
@@ -119,53 +149,45 @@ class JumbotronForm(ModelForm):
     HORIZONTAL_POSITION_CHOICES = ['left', '10%', '20%', '30%', '40%', 'center', '60%', '70%', '80%', '90%', 'right']
     REPEAT_CHOICES = ['repeat', 'repeat-x', 'repeat-y', 'no-repeat']
     SIZE_CHOICES = ['auto', 'width/height', 'cover', 'contain']
-
-    # BUTTON_STYLE_CHOICES = [
-    #     ('btn-outline-success', _("Success")),
-    #     ('btn-outline-danger', _("Danger")),
-    #     ('btn-outline-warning', _("Warning")),
-    #     ('btn-outline-info', _("Info")),
-    #     ('btn-outline-light', _("Light")),
-    #     ('btn-outline-dark', _("Dark")),
-    #     ('btn-outline-link', _("Link")),
-    # ]
-    #
-    # BUTTON_STYLE_CHOICES = [
-    #     ('text-bg-light', _("Light with contrasting color")),
-    #     ('text-bg-dark', _("Dark with contrasting color")),
-    # ]
-
-    # style = ChoiceField(
-    #     label=_("Style"),
-    #     choices=JUMBOTRON_STYLE_CHOICES,
-    #     initial=JUMBOTRON_STYLE_CHOICES[0][0],
-    # )
-
-    fluid = BooleanField(
-        label=_("Is fluid"),
-        initial=True,
-        required=False,
-        help_text=_("Shall this element occupy the entire horizontal space of its parent."),
-    )
-
-    # element_heights = BootstrapMultiSizeField(
-    #     label=("Element Heights"),
-    #     required=True,
-    #     allowed_units=['rem', 'px', 'auto'],
-    #     initial='300px',
-    #     help_text=_("This property specifies the height for each Bootstrap breakpoint."),
-    # )
-
     background_color = ChoiceField(
         label=_("Background color"),
         choices=BackgroundChoiceWidget.BACKGROUND_COLOR_CHOICES,
         widget=BackgroundChoiceWidget(),
         initial=BackgroundChoiceWidget.BACKGROUND_COLOR_CHOICES[0][0],
     )
+    border_color = ChoiceField(
+        label=_("Border color"),
+        choices=BorderColorWidget.BORDER_COLOR_CHOICES,
+        widget=BorderColorWidget(),
+        initial=BorderColorWidget.BORDER_COLOR_CHOICES[0][0],
+        required=False,
+        help_text=_("This property specifies the border color."),
+    )
+    border_width = ChoiceField(
+        label=_("Border width"),
+        choices=BorderWidthWidget.BORDER_WIDTH_CHOICES,
+        widget=BorderWidthWidget(attrs={'df-show': '.border_color'}),
+        initial=BorderWidthWidget.BORDER_WIDTH_CHOICES[0][0],
+        required=False,
+        help_text=_("This property specifies the border width."),
+    )
+    rounded_corder = ChoiceField(
+        label=_("Rounded corners"),
+        choices=RoundedCornerWidget.ROUNDED_CHOICES,
+        widget=RoundedCornerWidget(),
+        initial=RoundedCornerWidget.ROUNDED_CHOICES[3][0],
+        required=False,
+        help_text=_("This property specifies corner rounding."),
+    )
     image = FinderFileField(
         accept_mime_types=['image/*'],
         label=_("Background Image"),
         required=False,
+    )
+    aspect_ratio = AspectRatioChoiceField(
+        Breakpoint.xs,
+        label=_("Aspect Ratio for Image"),
+        widget=widgets.Select(attrs={'df-show': '.image'}),
     )
     background_repeat = ChoiceField(
         label=_("Background repeat"),
@@ -208,105 +230,100 @@ class JumbotronForm(ModelForm):
         help_text=_("This property specifies how the background image is sized."),
     )
 
-    # background_width_height = MultiSizeField(
-    #     ['width', 'height'],
-    #     label=_("Background width/height"),
-    #     sublabels=[_("Width"), _("Height")],
-    #     allowed_units=['px', '%'],
-    #     required=False,
-    #     help_text=_("This property specifies the width and height of a background image in px or %."),
-    # )
-
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary']
+    class Meta(InternalTitleModelForm.Meta):
         fields_map = {
             'glossary': [
-                'fluid', 'background_color', 'image', 'background_repeat',
-                'background_attachment', 'background_vertical_position', 'background_horizontal_position',
-                'background_size',
+                'title_attribute', 'background_color', 'border_color', 'border_width', 'rounded_corder', 'image',
+                'aspect_ratio', 'background_repeat', 'background_attachment', 'background_vertical_position',
+                'background_horizontal_position', 'background_size',
             ],
         }
 
-    def validate_optional_field(self, name):
-        field = self.fields[name]
-        value = field.widget.value_from_datadict(self.data, self.files, self.add_prefix(name))
-        if value in field.empty_values:
-            self.add_error(name, ValidationError(field.error_messages['required'], code='required'))
-        else:
-            return value
-
     def clean(self):
+        def validate_optional_field(name):
+            field = self.fields[name]
+            value = field.widget.value_from_datadict(self.data, self.files, self.add_prefix(name))
+            if value in field.empty_values:
+                self.add_error(name, ValidationError(field.error_messages['required'], code='required'))
+            else:
+                return value
+
         cleaned_data = super().clean()
         if cleaned_data['image']:
-            self.validate_optional_field('background_repeat')
-            self.validate_optional_field('background_attachment')
-            self.validate_optional_field('background_vertical_position')
-            self.validate_optional_field('background_horizontal_position')
-            # if self.validate_optional_field('background_size') == 'width/height':
-            #     try:
-            #         cleaned_data['background_width_height']['width']
-            #     except KeyError:
-            #         msg = _("You must at least set a background width.")
-            #         self.add_error('background_width_height', msg)
-            #        raise ValidationError(msg)
+            validate_optional_field('background_repeat')
+            validate_optional_field('background_attachment')
+            validate_optional_field('background_vertical_position')
+            validate_optional_field('background_horizontal_position')
         return cleaned_data
 
+    def full_clean(self):
+        super().full_clean()
+        if 'image' in self.changed_data or 'aspect_ratio' in self.changed_data:
+            self.instance.glossary.pop('cached_sources', None)
 
-class BootstrapJumbotronPlugin(BootstrapPluginBase):
+
+class BootstrapJumbotronPlugin(AspectRatioChoicesMixin, LazySizesPictureMixin, PaddingsMixin, VerticalMarginsMixin, BootstrapPluginBase):
     name = _("Jumbotron")
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapColumnPlugin']
-    default_css_class = 'p-3'
-    # model_mixins = (ImagePropertyMixin, ImageBackgroundMixin)
+    default_css_class = None
     model_mixins = (ImageElementMixin, ImageBackgroundMixin)
     form = JumbotronForm
     render_template = 'cascade/bootstrap5/jumbotron.html'
-    # footnote_html = ""
+    footnote_html = ""
 
     class Media:
         css = {'all': [
-            'cascade/css/background.css',
+            'cascade/css/admin/background.css',
         ]}
-
-    def render(self, context, instance, placeholder):
-        # image shall be rendered in a responsive context using the ``<picture>`` element
-        if instance.image:
-            pass  # the background image
-        return self.super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
-
-    # @classmethod
-    # def sanitize_model(cls, obj):
-    #     sanitized = False
-    #     super().sanitize_model(obj)
-    #     grid_container = obj.get_bound_plugin().get_grid_instance()
-    #     obj.glossary.setdefault('media_queries', {})
-    #     for bp, bound in grid_container.bounds.items():
-    #         obj.glossary['media_queries'].setdefault(bp.name, {})
-    #         width = round(bound.max)
-    #         if obj.glossary['media_queries'][bp.name].get('width') != width:
-    #             obj.glossary['media_queries'][bp.name]['width'] = width
-    #             sanitized = True
-    #         if obj.glossary['media_queries'][bp.name].get('media') != bp.media_query:
-    #             obj.glossary['media_queries'][bp.name]['media'] = bp.media_query
-    #             sanitized = True
-    #     return sanitized
 
     @classmethod
     def get_css_classes(cls, obj):
         css_classes = cls.super(BootstrapJumbotronPlugin, cls).get_css_classes(obj)
-        if obj.glossary.get('style'):
-            css_classes.append(obj.glossary.get('style'))
-        if obj.glossary.get('fluid'):
-            css_classes.append('w-100')
+        if background_color := obj.glossary.get('background_color'):
+            css_classes.append(background_color)
+        if border_color := obj.glossary.get('border_color'):
+            css_classes.extend(['border', border_color])
+            if border_width := obj.glossary.get('border_width'):
+                css_classes.append(border_width)
+        if rounded_corder := obj.glossary.get('rounded_corder'):
+            css_classes.extend(['rounded', rounded_corder])
         return css_classes
 
     @classmethod
     def get_identifier(cls, obj):
         identifier = super().get_identifier(obj)
         try:
-            content = obj.image.name or obj.image.original_filename
+            content = obj.title_attribute or obj.image.name or obj.image.original_filename
         except AttributeError:
             content = gettext("Without background image")
         return format_html('{0}{1}', identifier, content)
+
+    def render(self, context, instance, placeholder):
+        if instance.image:
+            if cached_sources := instance.glossary.get('cached_sources'):
+                context['image_sets'] = cached_sources
+            else:
+                ambit = instance.image.folder.get_ambit()
+                sources = self.get_sources_bounds(instance)
+                for source in sources:
+                    # create images for image-set()
+                    if source['min_width'] and source['max_width']:
+                        source['media'] = '(min-width: {min_width}) and (max-width: {max_width})'.format(**source)
+                    elif source['min_width']:
+                        source['media'] = '(min-width: {min_width})'.format(**source)
+                    elif source['max_width']:
+                        source['media'] = '(max-width: {max_width})'.format(**source)
+                    image_width = source['upper_bound']['width']
+                    image_height = source['upper_bound']['height']
+                    image_path, created = self.get_or_create_cropped(ambit, instance.image, image_width, image_height)
+                    source['url_2x'] = ambit.sample_storage.url(image_path)
+                    image_width, image_height = image_width / 2, image_height / 2
+                    image_path, created = self.get_or_create_cropped(ambit, instance.image, image_width, image_height)
+                    source['url_1x'] = ambit.sample_storage.url(image_path)
+                context['image_sets'] = instance.glossary['cached_sources'] = sources
+                instance.save(update_fields=['glossary'])
+
+        return self.super(BootstrapJumbotronPlugin, self).render(context, instance, placeholder)
+
 
 plugin_pool.register_plugin(BootstrapJumbotronPlugin)

@@ -1,0 +1,59 @@
+
+django-formset {
+	.form-row {
+		display: flex;
+		flex-direction: column;
+
+		label {
+			display: inline-block;
+			width: auto;
+			padding: 4px 0;
+		}
+
+		div.help {
+			margin-left: unset;
+			padding-left: unset;
+		}
+
+		[is^=django-selectize] + .shadow-wrapper {
+			width: 100%;
+		}
+
+		.fieldBox {
+			margin-bottom: 15px;
+		}
+		.dj-form-inlined {
+			margin-right: 15px;
+		}
+	}
+
+	.aligned {
+		fieldset > div {
+			width: initial;
+		}
+
+		.dj-field-errors {
+			margin-left: 0;
+		}
+	}
+
+	django-form-collection {
+		.collection-siblings {
+			django-form-collection[sibling-position]:not(:first-child) {
+				margin-top: 5px;
+			}
+
+			django-form-collection[sibling-position] .remove-collection {
+				top: 0;
+			}
+
+			.module.aligned fieldset {
+				border-top: none;
+			}
+		}
+	}
+
+	[role="form"] {
+		margin: 0;
+	}
+}

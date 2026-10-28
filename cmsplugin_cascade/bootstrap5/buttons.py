@@ -132,10 +132,7 @@ class BootstrapButtonPlugin(VerticalMarginsMixin, HyperlinkPluginMixin, Bootstra
     DEFAULT_BUTTON_ATTRIBUTES = {'role': 'button'}
 
     class Media:
-        css = {'all': [
-            'cascade/css/buttons.css',
-            'cascade/css/admin/iconplugin.css',
-        ]}
+        css = {'all': ['cascade/css/admin/buttons.css']}
 
     @classmethod
     def get_identifier(cls, instance):

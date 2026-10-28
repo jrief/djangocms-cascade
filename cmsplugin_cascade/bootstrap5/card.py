@@ -1,6 +1,6 @@
 from django.forms.fields import CharField
 from django.forms.forms import Form
-from django.forms.widgets import TextInput
+from django.forms.widgets import Select, TextInput
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -44,12 +44,16 @@ class ListGroupCollection(FormCollection):
 
 class CardForm(HyperlinkForm):
     image = FinderFileField(
+        accept_mime_types=['image/*'],
         label=_("Image"),
         required=False,
-        accept_mime_types=['image/*'],
         help_text=_("Optional image for this card."),
     )
-    aspect_ratio = AspectRatioChoiceField(Breakpoint.xs, add_original=True)
+    aspect_ratio = AspectRatioChoiceField(
+        Breakpoint.xs,
+        add_original=True,
+        widget=Select(attrs={'df-show': '.image'}),
+    )
     title = CharField(
         label=_("Title"),
         required=False,
@@ -105,6 +109,11 @@ class CardForm(HyperlinkForm):
             ],
         }
 
+    def full_clean(self):
+        super().full_clean()
+        if 'image' in self.changed_data:
+            self.instance.glossary.pop('cached_sources', None)
+
 
 class BootstrapCardPlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySizesPictureMixin, BootstrapPluginBase):
     """
@@ -123,7 +132,7 @@ class BootstrapCardPlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySiz
     class Media:
         css = {
             'all': [
-                'cascade/css/richtext.css',
+                'cascade/css/admin/richtext.css',
                 'formset/css/bootstrap5-extra.css',
             ]
         }
@@ -142,7 +151,7 @@ class BootstrapCardPlugin(HyperlinkPluginMixin, AspectRatioChoicesMixin, LazySiz
         return super().render_change_form(request, context, add, change, form_url, obj)
 
     def render(self, context, instance, placeholder):
-        if not (sources := instance.glossary.get('cached_sources')):
+        if True or not (sources := instance.glossary.get('cached_sources')):
             sources, complete = self.get_picture_sources(instance)
             instance.glossary['cached_sources'] = sources
             instance.save(update_fields=['glossary'])

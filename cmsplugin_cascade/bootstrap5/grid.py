@@ -1,4 +1,5 @@
 import re
+from math import floor
 
 from django.core.exceptions import ValidationError
 from django.forms import widgets
@@ -9,27 +10,13 @@ from django.utils.translation import gettext, gettext_lazy as _, ngettext, ngett
 from cms.models import CMSPlugin, Page
 from cms.plugin_pool import plugin_pool
 from cmsplugin_cascade.bootstrap5.breakpoint import Breakpoint, get_widget_choices
-from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.mixins import ManageChildrenMixin
 
-from formset.forms import ModelForm
 from formset.widgets import Selectize
 
 from cmsplugin_cascade.bootstrap5.mixins import HidePluginMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.models import CascadeElement
-
-
-class GridModelForm(ModelForm):
-    title_attribute = CharField(
-        label=_("Internal Title"),
-        required=False,
-        help_text=_("Internal title attribute to organize components in the structure editor."),
-    )
-
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary']
-        fields_map = {'glossary': ['title_attribute']}
+from cmsplugin_cascade.forms import InternalTitleModelForm
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
@@ -42,7 +29,17 @@ class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
         return context
 
 
-class ContainerForm(GridModelForm):
+class ContainerForm(InternalTitleModelForm):
+    LAYOUT_CHOICES = [
+        ('container', _("Container with fixed widths for all breakpoints")),
+        ('container-sm', _("Container with fixed widths starting from small breakpoint")),
+        ('container-md', _("Container with fixed widths starting from medium breakpoint")),
+        ('container-lg', _("Container with fixed widths starting from large breakpoint")),
+        ('container-xl', _("Container with fixed widths starting from extra large breakpoint")),
+        ('container-xxl', _("Container with fixed widths starting from XXL breakpoint")),
+        ('container-fluid', _("Container with fluid widths for every breakpoint")),
+    ]
+
     breakpoints = MultipleChoiceField(
         label=_("Available Breakpoints"),
         choices=get_widget_choices(),
@@ -53,22 +50,13 @@ class ContainerForm(GridModelForm):
     layout = ChoiceField(
         label=_("Container Layout"),
         initial='container',
-        choices=[
-            ('container', _("Container with fixed widths for all breakpoints")),
-            ('container-sm', _("Container with fixed widths starting from small breakpoint")),
-            ('container-md', _("Container with fixed widths starting from medium breakpoint")),
-            ('container-lg', _("Container with fixed widths starting from large breakpoint")),
-            ('container-xl', _("Container with fixed widths starting from extra large breakpoint")),
-            ('container-xxl', _("Container with fixed widths starting from XXL breakpoint")),
-            ('container-fluid', _("Container with fluid widths for every breakpoint")),
-        ],
         help_text=_(
             "Add <code>.container-*</code> class to set the most basic layout element in Bootstrap."
         ),
         widget=Selectize(),
     )
 
-    class Meta(GridModelForm.Meta):
+    class Meta(InternalTitleModelForm.Meta):
         fields_map = {'glossary': ['title_attribute', 'breakpoints', 'layout']}
 
     def clean_layout(self):
@@ -102,6 +90,22 @@ class BootstrapContainerPlugin(BootstrapPluginBase):
         css_classes.append(obj.glossary.get('layout', 'container'))
         return css_classes
 
+    def get_model_form(self):
+        model_form = super().get_model_form()
+        layout_field = model_form.base_fields['layout']
+        layout_field.choices = [ContainerForm.LAYOUT_CHOICES[0]]
+        layout_choices = dict(ContainerForm.LAYOUT_CHOICES[1:-1])
+        breakpoints = self.object.glossary.get('breakpoints', []) if self.object else []
+        for bp in breakpoints:
+            if bp == 'xs':
+                continue
+            key = f'container-{bp}'
+            layout_field.choices.append((key, layout_choices[key]))
+        layout_field.choices.append(ContainerForm.LAYOUT_CHOICES[-1])
+        model_form = type(model_form.__name__, (model_form,), {'layout': layout_field})
+        return model_form
+
+
 plugin_pool.register_plugin(BootstrapContainerPlugin)
 
 
@@ -130,7 +134,7 @@ class ColumnsChoiceField(ChoiceField):
         super().__init__(*args, choices=choices, **kwargs)
 
 
-class BootstrapRowForm(ManageChildrenFormMixin, GridModelForm):
+class BootstrapRowForm(InternalTitleModelForm):
     """
     Form class to add non-materialized field to count the number of children.
     """
@@ -143,6 +147,7 @@ class BootstrapRowForm(ManageChildrenFormMixin, GridModelForm):
         initial=1,
         widget=SelectColumnsWidget,
         help_text=_("Number of columns to be created with this row."),
+        required=False,
     )
     row_columns = ColumnsChoiceField(
         label=_("Row Columns for ‘{}’").format(Breakpoint.xs.label),
@@ -151,18 +156,11 @@ class BootstrapRowForm(ManageChildrenFormMixin, GridModelForm):
         help_text=_("Add <code>.row-cols-*</code> class to set the number of columns that best render the content (default breakpoint).")
     )
 
-    class Meta(GridModelForm.Meta):
-        fields = '__all__'
+    class Meta(InternalTitleModelForm.Meta):
         fields_map = {'glossary': ['title_attribute', 'row_columns']}
 
-    def save(self):
-        super().save()
-        child_glossary = {'column_width': '1'}
-        self.extend_children(BootstrapColumnPlugin, child_glossary=child_glossary)
-        return self.instance
 
-
-class BootstrapRowPlugin(BootstrapPluginBase):
+class BootstrapRowPlugin(ManageChildrenMixin, BootstrapPluginBase):
     name = _("Row")
     default_css_class = 'row'
     parent_classes = ['BootstrapContainerPlugin', 'BootstrapJumbotronPlugin']
@@ -197,8 +195,8 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         else:
             breakpoints = []
 
-        model_form = super().get_model_form()
-        glossary_fields = list(model_form._meta.fields_map['glossary'])
+        form_class = super().get_model_form()
+        glossary_fields = list(form_class._meta.fields_map['glossary'])
         attrs, prev_bp = {}, 'xs'
 
         # define the Row Columns fields
@@ -252,18 +250,20 @@ class BootstrapRowPlugin(BootstrapPluginBase):
         )
         glossary_fields.append('justify_content')
 
-        attrs['Meta'] = type('Meta', (model_form.Meta,), {
-            'fields_map': {'glossary': glossary_fields},
-        })
-        model_form = type(model_form.__name__, model_form.__mro__, attrs)
-        if self.object and self.object.pk:
-            model_form.base_fields['num_children'].initial = self.object.get_num_children()
-        return model_form
+        attrs['Meta'] = type('Meta', (form_class.Meta,), {'fields_map': {'glossary': glossary_fields}})
+        return type(form_class.__name__, form_class.__mro__, attrs)
+
+    def save_model(self, request, instance, form, change):
+        wanted_children = int(form.cleaned_data.get('num_children') or 0)
+        super().save_model(request, instance, form, change)
+        child_glossary = {'column_width': floor(12 / wanted_children)}
+        self.extend_children(instance, wanted_children, BootstrapColumnPlugin, child_glossary=child_glossary)
+
 
 plugin_pool.register_plugin(BootstrapRowPlugin)
 
 
-class BootstrapColumnForm(GridModelForm):
+class BootstrapColumnForm(InternalTitleModelForm):
     column_width = ColumnsChoiceField(
         label=_("Column Width"),
         required=False,
@@ -310,8 +310,7 @@ class BootstrapColumnForm(GridModelForm):
             gettext("Change the vertical alignment with the responsive <code>align-self-*</code> classes.")),
     )
 
-    class Meta(GridModelForm.Meta):
-        fields = '__all__'
+    class Meta(InternalTitleModelForm.Meta):
         fields_map = {'glossary': [
             'title_attribute', 'column_width', 'column_ordering', 'margin_utility', 'align_self',
         ]}

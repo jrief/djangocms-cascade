@@ -10,7 +10,7 @@ from cmsplugin_cascade.bootstrap5.mixins import AspectRatioChoicesMixin, Vertica
 from cmsplugin_cascade.bootstrap5.picture import LazySizesPictureMixin, ImageElementMixin
 from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase, logger
 from cmsplugin_cascade.bootstrap5.richtext import HyperlinkDialogForm
-from cmsplugin_cascade.forms import ManageChildrenFormMixin
+from cmsplugin_cascade.forms import InternalTitleModelForm
 from cmsplugin_cascade.mixins import ManageChildrenMixin
 from cmsplugin_cascade.models import CascadeElement
 from cmsplugin_cascade.widgets import NumberInputWidget
@@ -21,7 +21,7 @@ from formset.formfields.richtext import RichTextarea, RichTextField
 from formset.richtext import controls
 
 
-class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
+class CarouselSlidesForm(InternalTitleModelForm):
     OPTION_CHOICES = [
         ('fade', _("Fade transition")),
         ('wrap', _("Wrap")),
@@ -35,6 +35,7 @@ class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
         initial=1,
         widget=NumberInputWidget(attrs={'size': '3', 'style': 'width: 5em !important;'}),
         help_text=_("Number of slides for this carousel."),
+        required=False,
     )
     aspect_ratio = AspectRatioChoiceField(Breakpoint.xs)
     interval = IntegerField(
@@ -63,10 +64,10 @@ class CarouselSlidesForm(ManageChildrenFormMixin, ModelForm):
         initial=True,
     )
 
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary']
-        fields_map = {'glossary': ['aspect_ratio', 'interval', 'options', 'add_controls', 'add_indicators']}
+    class Meta(InternalTitleModelForm.Meta):
+        fields_map = {
+            'glossary': ['title_attribute', 'aspect_ratio', 'interval', 'options', 'add_controls', 'add_indicators'],
+        }
 
 
 class BootstrapCarouselPlugin(ManageChildrenMixin, VerticalMarginsMixin, AspectRatioChoicesMixin, BootstrapPluginBase):
@@ -110,7 +111,7 @@ class BootstrapCarouselPlugin(ManageChildrenMixin, VerticalMarginsMixin, AspectR
         return context
 
     def save_model(self, request, instance, form, change):
-        wanted_children = int(form.cleaned_data.get('num_children'))
+        wanted_children = int(form.cleaned_data.get('num_children') or 0)
         super().save_model(request, instance, form, change)
         self.extend_children(instance, wanted_children, BootstrapCarouselSlidePlugin)
         keys = ['aspect_ratio' if bp == 'xs' else f'aspect_ratio_{bp}' for bp in self.get_breakpoints(instance)]
