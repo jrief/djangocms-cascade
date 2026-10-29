@@ -4,15 +4,16 @@ from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_pool import plugin_pool
 from cms.models.pagemodel import Page
-from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
-from cmsplugin_cascade.bootstrap5.hyperlink import PageChoiceField
-from cmsplugin_cascade.models import CascadeElement
 
-from formset.forms import ModelForm
+from cmsplugin_cascade.bootstrap5.hyperlink import PageChoiceField
+from cmsplugin_cascade.bootstrap5.mixins import VerticalMarginsMixin
+from cmsplugin_cascade.bootstrap5.plugin_base import BootstrapPluginBase
+from cmsplugin_cascade.forms import InternalTitleModelForm
+
 from formset.fieldsmapping import get_related_object
 
 
-class SecondaryMenuForm(ModelForm):
+class SecondaryMenuForm(InternalTitleModelForm):
     cms_page = PageChoiceField(
         label=_("CMS Page"),
         queryset=Page.objects.filter(reverse_id__isnull=False),
@@ -31,13 +32,11 @@ class SecondaryMenuForm(ModelForm):
         help_text=_("Number of child menus."),
     )
 
-    class Meta:
-        model = CascadeElement
-        exclude = ['shared_glossary']
-        fields_map = {'glossary': ['cms_page', 'offset', 'limit']}
+    class Meta(InternalTitleModelForm.Meta):
+        fields_map = {'glossary': ['title_attribute', 'cms_page', 'offset', 'limit']}
 
 
-class BootstrapSecondaryMenuPlugin(BootstrapPluginBase):
+class BootstrapSecondaryMenuPlugin(VerticalMarginsMixin, BootstrapPluginBase):
     """
     Use this plugin to display a secondary menu in arbitrary locations.
     This renders links onto  all CMS pages, which are children of the selected Page Id.
