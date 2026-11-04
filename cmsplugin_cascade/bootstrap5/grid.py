@@ -20,7 +20,7 @@ from cmsplugin_cascade.forms import InternalTitleModelForm
 
 
 class ContainerBreakpointsWidget(widgets.CheckboxSelectMultiple):
-    template_name = 'cascade/admin/widgets/bs5_container_breakpoints.html'
+    template_name = 'cascade/admin/widgets/container_breakpoints.html'
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)

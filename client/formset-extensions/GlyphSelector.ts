@@ -1,6 +1,6 @@
 import capitalize from 'lodash.capitalize';
 import template from 'lodash.template';
-import '../../assets/scss/iconfont.scss';
+import '../../assets/scss/admin/iconfont.scss';
 
 
 class GlyphSelector {

@@ -1,38 +1,727 @@
-/*!
- * clipboard.js v1.5.5
- * https://zenorocha.github.io/clipboard.js
- *
- * Licensed MIT © Zeno Rocha
- */
-!function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("function"==typeof define&&define.amd)define([],t);else{var e;e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,e.Clipboard=t()}}(function(){var t,e,n;return function t(e,n,r){function o(a,c){if(!n[a]){if(!e[a]){var s="function"==typeof require&&require;if(!c&&s)return s(a,!0);if(i)return i(a,!0);var u=new Error("Cannot find module '"+a+"'");throw u.code="MODULE_NOT_FOUND",u}var l=n[a]={exports:{}};e[a][0].call(l.exports,function(t){var n=e[a][1][t];return o(n?n:t)},l,l.exports,t,e,n,r)}return n[a].exports}for(var i="function"==typeof require&&require,a=0;a<r.length;a++)o(r[a]);return o}({1:[function(t,e,n){var r=t("matches-selector");e.exports=function(t,e,n){for(var o=n?t:t.parentNode;o&&o!==document;){if(r(o,e))return o;o=o.parentNode}}},{"matches-selector":2}],2:[function(t,e,n){function r(t,e){if(i)return i.call(t,e);for(var n=t.parentNode.querySelectorAll(e),r=0;r<n.length;++r)if(n[r]==t)return!0;return!1}var o=Element.prototype,i=o.matchesSelector||o.webkitMatchesSelector||o.mozMatchesSelector||o.msMatchesSelector||o.oMatchesSelector;e.exports=r},{}],3:[function(t,e,n){function r(t,e,n,r){var i=o.apply(this,arguments);return t.addEventListener(n,i),{destroy:function(){t.removeEventListener(n,i)}}}function o(t,e,n,r){return function(n){n.delegateTarget=i(n.target,e,!0),n.delegateTarget&&r.call(t,n)}}var i=t("closest");e.exports=r},{closest:1}],4:[function(t,e,n){n.node=function(t){return void 0!==t&&t instanceof HTMLElement&&1===t.nodeType},n.nodeList=function(t){var e=Object.prototype.toString.call(t);return void 0!==t&&("[object NodeList]"===e||"[object HTMLCollection]"===e)&&"length"in t&&(0===t.length||n.node(t[0]))},n.string=function(t){return"string"==typeof t||t instanceof String},n.function=function(t){var e=Object.prototype.toString.call(t);return"[object Function]"===e}},{}],5:[function(t,e,n){function r(t,e,n){if(!t&&!e&&!n)throw new Error("Missing required arguments");if(!c.string(e))throw new TypeError("Second argument must be a String");if(!c.function(n))throw new TypeError("Third argument must be a Function");if(c.node(t))return o(t,e,n);if(c.nodeList(t))return i(t,e,n);if(c.string(t))return a(t,e,n);throw new TypeError("First argument must be a String, HTMLElement, HTMLCollection, or NodeList")}function o(t,e,n){return t.addEventListener(e,n),{destroy:function(){t.removeEventListener(e,n)}}}function i(t,e,n){return Array.prototype.forEach.call(t,function(t){t.addEventListener(e,n)}),{destroy:function(){Array.prototype.forEach.call(t,function(t){t.removeEventListener(e,n)})}}}function a(t,e,n){return s(document.body,t,e,n)}var c=t("./is"),s=t("delegate");e.exports=r},{"./is":4,delegate:3}],6:[function(t,e,n){function r(t){var e;if("INPUT"===t.nodeName||"TEXTAREA"===t.nodeName)t.focus(),t.setSelectionRange(0,t.value.length),e=t.value;else{t.hasAttribute("contenteditable")&&t.focus();var n=window.getSelection(),r=document.createRange();r.selectNodeContents(t),n.removeAllRanges(),n.addRange(r),e=n.toString()}return e}e.exports=r},{}],7:[function(t,e,n){function r(){}r.prototype={on:function(t,e,n){var r=this.e||(this.e={});return(r[t]||(r[t]=[])).push({fn:e,ctx:n}),this},once:function(t,e,n){function r(){o.off(t,r),e.apply(n,arguments)}var o=this;return r._=e,this.on(t,r,n)},emit:function(t){var e=[].slice.call(arguments,1),n=((this.e||(this.e={}))[t]||[]).slice(),r=0,o=n.length;for(r;o>r;r++)n[r].fn.apply(n[r].ctx,e);return this},off:function(t,e){var n=this.e||(this.e={}),r=n[t],o=[];if(r&&e)for(var i=0,a=r.length;a>i;i++)r[i].fn!==e&&r[i].fn._!==e&&o.push(r[i]);return o.length?n[t]=o:delete n[t],this}},e.exports=r},{}],8:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function o(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}n.__esModule=!0;var i=function(){function t(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}return function(e,n,r){return n&&t(e.prototype,n),r&&t(e,r),e}}(),a=t("select"),c=r(a),s=function(){function t(e){o(this,t),this.resolveOptions(e),this.initSelection()}return t.prototype.resolveOptions=function t(){var e=arguments.length<=0||void 0===arguments[0]?{}:arguments[0];this.action=e.action,this.emitter=e.emitter,this.target=e.target,this.text=e.text,this.trigger=e.trigger,this.selectedText=""},t.prototype.initSelection=function t(){if(this.text&&this.target)throw new Error('Multiple attributes declared, use either "target" or "text"');if(this.text)this.selectFake();else{if(!this.target)throw new Error('Missing required attributes, use either "target" or "text"');this.selectTarget()}},t.prototype.selectFake=function t(){var e=this;this.removeFake(),this.fakeHandler=document.body.addEventListener("click",function(){return e.removeFake()}),this.fakeElem=document.createElement("textarea"),this.fakeElem.style.position="absolute",this.fakeElem.style.left="-9999px",this.fakeElem.style.top=(window.pageYOffset||document.documentElement.scrollTop)+"px",this.fakeElem.setAttribute("readonly",""),this.fakeElem.value=this.text,document.body.appendChild(this.fakeElem),this.selectedText=c.default(this.fakeElem),this.copyText()},t.prototype.removeFake=function t(){this.fakeHandler&&(document.body.removeEventListener("click"),this.fakeHandler=null),this.fakeElem&&(document.body.removeChild(this.fakeElem),this.fakeElem=null)},t.prototype.selectTarget=function t(){this.selectedText=c.default(this.target),this.copyText()},t.prototype.copyText=function t(){var e=void 0;try{e=document.execCommand(this.action)}catch(n){e=!1}this.handleResult(e)},t.prototype.handleResult=function t(e){e?this.emitter.emit("success",{action:this.action,text:this.selectedText,trigger:this.trigger,clearSelection:this.clearSelection.bind(this)}):this.emitter.emit("error",{action:this.action,trigger:this.trigger,clearSelection:this.clearSelection.bind(this)})},t.prototype.clearSelection=function t(){this.target&&this.target.blur(),window.getSelection().removeAllRanges()},t.prototype.destroy=function t(){this.removeFake()},i(t,[{key:"action",set:function t(){var e=arguments.length<=0||void 0===arguments[0]?"copy":arguments[0];if(this._action=e,"copy"!==this._action&&"cut"!==this._action)throw new Error('Invalid "action" value, use either "copy" or "cut"')},get:function t(){return this._action}},{key:"target",set:function t(e){if(void 0!==e){if(!e||"object"!=typeof e||1!==e.nodeType)throw new Error('Invalid "target" value, use a valid Element');this._target=e}},get:function t(){return this._target}}]),t}();n.default=s,e.exports=n.default},{select:6}],9:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function o(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function i(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}function a(t,e){var n="data-clipboard-"+t;if(e.hasAttribute(n))return e.getAttribute(n)}n.__esModule=!0;var c=t("./clipboard-action"),s=r(c),u=t("tiny-emitter"),l=r(u),f=t("good-listener"),d=r(f),h=function(t){function e(n,r){o(this,e),t.call(this),this.resolveOptions(r),this.listenClick(n)}return i(e,t),e.prototype.resolveOptions=function t(){var e=arguments.length<=0||void 0===arguments[0]?{}:arguments[0];this.action="function"==typeof e.action?e.action:this.defaultAction,this.target="function"==typeof e.target?e.target:this.defaultTarget,this.text="function"==typeof e.text?e.text:this.defaultText},e.prototype.listenClick=function t(e){var n=this;this.listener=d.default(e,"click",function(t){return n.onClick(t)})},e.prototype.onClick=function t(e){var n=e.delegateTarget||e.currentTarget;this.clipboardAction&&(this.clipboardAction=null),this.clipboardAction=new s.default({action:this.action(n),target:this.target(n),text:this.text(n),trigger:n,emitter:this})},e.prototype.defaultAction=function t(e){return a("action",e)},e.prototype.defaultTarget=function t(e){var n=a("target",e);return n?document.querySelector(n):void 0},e.prototype.defaultText=function t(e){return a("text",e)},e.prototype.destroy=function t(){this.listener.destroy(),this.clipboardAction&&(this.clipboardAction.destroy(),this.clipboardAction=null)},e}(l.default);n.default=h,e.exports=n.default},{"./clipboard-action":8,"good-listener":5,"tiny-emitter":7}]},{},[9])(9)});
+// This file is generated by esbuild
+// !!!DO NOT EDIT!!!
 
-django.jQuery(function($) {
-	'use strict';
+(() => {
+  var __create = Object.create;
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __commonJS = (cb, mod) => function __require() {
+    try {
+      return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    } catch (e) {
+      throw mod = 0, e;
+    }
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+    mod
+  ));
 
-	// initialize paste to clipboard
-	new Clipboard('.clip-btn');
+  // node_modules/clipboard/dist/clipboard.js
+  var require_clipboard = __commonJS({
+    "node_modules/clipboard/dist/clipboard.js"(exports, module) {
+      (function webpackUniversalModuleDefinition(root, factory) {
+        if (typeof exports === "object" && typeof module === "object")
+          module.exports = factory();
+        else if (typeof define === "function" && define.amd)
+          define([], factory);
+        else if (typeof exports === "object")
+          exports["ClipboardJS"] = factory();
+        else
+          root["ClipboardJS"] = factory();
+      })(exports, function() {
+        return (
+          /******/
+          (function() {
+            var __webpack_modules__ = {
+              /***/
+              686: (
+                /***/
+                (function(__unused_webpack_module, __webpack_exports__, __webpack_require__2) {
+                  "use strict";
+                  __webpack_require__2.d(__webpack_exports__, {
+                    "default": function() {
+                      return (
+                        /* binding */
+                        clipboard
+                      );
+                    }
+                  });
+                  var tiny_emitter = __webpack_require__2(279);
+                  var tiny_emitter_default = /* @__PURE__ */ __webpack_require__2.n(tiny_emitter);
+                  var listen = __webpack_require__2(370);
+                  var listen_default = /* @__PURE__ */ __webpack_require__2.n(listen);
+                  var src_select = __webpack_require__2(817);
+                  var select_default = /* @__PURE__ */ __webpack_require__2.n(src_select);
+                  ;
+                  function command(type) {
+                    try {
+                      return document.execCommand(type);
+                    } catch (err) {
+                      return false;
+                    }
+                  }
+                  ;
+                  var ClipboardActionCut = function ClipboardActionCut2(target) {
+                    var selectedText = select_default()(target);
+                    command("cut");
+                    return selectedText;
+                  };
+                  var actions_cut = ClipboardActionCut;
+                  ;
+                  function createFakeElement(value) {
+                    var isRTL = document.documentElement.getAttribute("dir") === "rtl";
+                    var fakeElement = document.createElement("textarea");
+                    fakeElement.style.fontSize = "12pt";
+                    fakeElement.style.border = "0";
+                    fakeElement.style.padding = "0";
+                    fakeElement.style.margin = "0";
+                    fakeElement.style.position = "absolute";
+                    fakeElement.style[isRTL ? "right" : "left"] = "-9999px";
+                    var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+                    fakeElement.style.top = "".concat(yPosition, "px");
+                    fakeElement.setAttribute("readonly", "");
+                    fakeElement.value = value;
+                    return fakeElement;
+                  }
+                  ;
+                  var fakeCopyAction = function fakeCopyAction2(value, options) {
+                    var fakeElement = createFakeElement(value);
+                    options.container.appendChild(fakeElement);
+                    var selectedText = select_default()(fakeElement);
+                    command("copy");
+                    fakeElement.remove();
+                    return selectedText;
+                  };
+                  var ClipboardActionCopy = function ClipboardActionCopy2(target) {
+                    var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
+                      container: document.body
+                    };
+                    var selectedText = "";
+                    if (typeof target === "string") {
+                      selectedText = fakeCopyAction(target, options);
+                    } else if (target instanceof HTMLInputElement && !["text", "search", "url", "tel", "password"].includes(target === null || target === void 0 ? void 0 : target.type)) {
+                      selectedText = fakeCopyAction(target.value, options);
+                    } else {
+                      selectedText = select_default()(target);
+                      command("copy");
+                    }
+                    return selectedText;
+                  };
+                  var actions_copy = ClipboardActionCopy;
+                  ;
+                  function _typeof(obj) {
+                    "@babel/helpers - typeof";
+                    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+                      _typeof = function _typeof2(obj2) {
+                        return typeof obj2;
+                      };
+                    } else {
+                      _typeof = function _typeof2(obj2) {
+                        return obj2 && typeof Symbol === "function" && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+                      };
+                    }
+                    return _typeof(obj);
+                  }
+                  var ClipboardActionDefault = function ClipboardActionDefault2() {
+                    var options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+                    var _options$action = options.action, action = _options$action === void 0 ? "copy" : _options$action, container = options.container, target = options.target, text = options.text;
+                    if (action !== "copy" && action !== "cut") {
+                      throw new Error('Invalid "action" value, use either "copy" or "cut"');
+                    }
+                    if (target !== void 0) {
+                      if (target && _typeof(target) === "object" && target.nodeType === 1) {
+                        if (action === "copy" && target.hasAttribute("disabled")) {
+                          throw new Error('Invalid "target" attribute. Please use "readonly" instead of "disabled" attribute');
+                        }
+                        if (action === "cut" && (target.hasAttribute("readonly") || target.hasAttribute("disabled"))) {
+                          throw new Error(`Invalid "target" attribute. You can't cut text from elements with "readonly" or "disabled" attributes`);
+                        }
+                      } else {
+                        throw new Error('Invalid "target" value, use a valid Element');
+                      }
+                    }
+                    if (text) {
+                      return actions_copy(text, {
+                        container
+                      });
+                    }
+                    if (target) {
+                      return action === "cut" ? actions_cut(target) : actions_copy(target, {
+                        container
+                      });
+                    }
+                  };
+                  var actions_default = ClipboardActionDefault;
+                  ;
+                  function clipboard_typeof(obj) {
+                    "@babel/helpers - typeof";
+                    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+                      clipboard_typeof = function _typeof2(obj2) {
+                        return typeof obj2;
+                      };
+                    } else {
+                      clipboard_typeof = function _typeof2(obj2) {
+                        return obj2 && typeof Symbol === "function" && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+                      };
+                    }
+                    return clipboard_typeof(obj);
+                  }
+                  function _classCallCheck(instance, Constructor) {
+                    if (!(instance instanceof Constructor)) {
+                      throw new TypeError("Cannot call a class as a function");
+                    }
+                  }
+                  function _defineProperties(target, props) {
+                    for (var i = 0; i < props.length; i++) {
+                      var descriptor = props[i];
+                      descriptor.enumerable = descriptor.enumerable || false;
+                      descriptor.configurable = true;
+                      if ("value" in descriptor) descriptor.writable = true;
+                      Object.defineProperty(target, descriptor.key, descriptor);
+                    }
+                  }
+                  function _createClass(Constructor, protoProps, staticProps) {
+                    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+                    if (staticProps) _defineProperties(Constructor, staticProps);
+                    return Constructor;
+                  }
+                  function _inherits(subClass, superClass) {
+                    if (typeof superClass !== "function" && superClass !== null) {
+                      throw new TypeError("Super expression must either be null or a function");
+                    }
+                    subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } });
+                    if (superClass) _setPrototypeOf(subClass, superClass);
+                  }
+                  function _setPrototypeOf(o, p) {
+                    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf2(o2, p2) {
+                      o2.__proto__ = p2;
+                      return o2;
+                    };
+                    return _setPrototypeOf(o, p);
+                  }
+                  function _createSuper(Derived) {
+                    var hasNativeReflectConstruct = _isNativeReflectConstruct();
+                    return function _createSuperInternal() {
+                      var Super = _getPrototypeOf(Derived), result;
+                      if (hasNativeReflectConstruct) {
+                        var NewTarget = _getPrototypeOf(this).constructor;
+                        result = Reflect.construct(Super, arguments, NewTarget);
+                      } else {
+                        result = Super.apply(this, arguments);
+                      }
+                      return _possibleConstructorReturn(this, result);
+                    };
+                  }
+                  function _possibleConstructorReturn(self, call) {
+                    if (call && (clipboard_typeof(call) === "object" || typeof call === "function")) {
+                      return call;
+                    }
+                    return _assertThisInitialized(self);
+                  }
+                  function _assertThisInitialized(self) {
+                    if (self === void 0) {
+                      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+                    }
+                    return self;
+                  }
+                  function _isNativeReflectConstruct() {
+                    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+                    if (Reflect.construct.sham) return false;
+                    if (typeof Proxy === "function") return true;
+                    try {
+                      Date.prototype.toString.call(Reflect.construct(Date, [], function() {
+                      }));
+                      return true;
+                    } catch (e) {
+                      return false;
+                    }
+                  }
+                  function _getPrototypeOf(o) {
+                    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf2(o2) {
+                      return o2.__proto__ || Object.getPrototypeOf(o2);
+                    };
+                    return _getPrototypeOf(o);
+                  }
+                  function getAttributeValue(suffix, element) {
+                    var attribute = "data-clipboard-".concat(suffix);
+                    if (!element.hasAttribute(attribute)) {
+                      return;
+                    }
+                    return element.getAttribute(attribute);
+                  }
+                  var Clipboard = /* @__PURE__ */ (function(_Emitter) {
+                    _inherits(Clipboard2, _Emitter);
+                    var _super = _createSuper(Clipboard2);
+                    function Clipboard2(trigger, options) {
+                      var _this;
+                      _classCallCheck(this, Clipboard2);
+                      _this = _super.call(this);
+                      _this.resolveOptions(options);
+                      _this.listenClick(trigger);
+                      return _this;
+                    }
+                    _createClass(Clipboard2, [{
+                      key: "resolveOptions",
+                      value: function resolveOptions() {
+                        var options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+                        this.action = typeof options.action === "function" ? options.action : this.defaultAction;
+                        this.target = typeof options.target === "function" ? options.target : this.defaultTarget;
+                        this.text = typeof options.text === "function" ? options.text : this.defaultText;
+                        this.container = clipboard_typeof(options.container) === "object" ? options.container : document.body;
+                      }
+                      /**
+                       * Adds a click event listener to the passed trigger.
+                       * @param {String|HTMLElement|HTMLCollection|NodeList} trigger
+                       */
+                    }, {
+                      key: "listenClick",
+                      value: function listenClick(trigger) {
+                        var _this2 = this;
+                        this.listener = listen_default()(trigger, "click", function(e) {
+                          return _this2.onClick(e);
+                        });
+                      }
+                      /**
+                       * Defines a new `ClipboardAction` on each click event.
+                       * @param {Event} e
+                       */
+                    }, {
+                      key: "onClick",
+                      value: function onClick(e) {
+                        var trigger = e.delegateTarget || e.currentTarget;
+                        var action = this.action(trigger) || "copy";
+                        var text = actions_default({
+                          action,
+                          container: this.container,
+                          target: this.target(trigger),
+                          text: this.text(trigger)
+                        });
+                        this.emit(text ? "success" : "error", {
+                          action,
+                          text,
+                          trigger,
+                          clearSelection: function clearSelection() {
+                            if (trigger) {
+                              trigger.focus();
+                            }
+                            window.getSelection().removeAllRanges();
+                          }
+                        });
+                      }
+                      /**
+                       * Default `action` lookup function.
+                       * @param {Element} trigger
+                       */
+                    }, {
+                      key: "defaultAction",
+                      value: function defaultAction(trigger) {
+                        return getAttributeValue("action", trigger);
+                      }
+                      /**
+                       * Default `target` lookup function.
+                       * @param {Element} trigger
+                       */
+                    }, {
+                      key: "defaultTarget",
+                      value: function defaultTarget(trigger) {
+                        var selector = getAttributeValue("target", trigger);
+                        if (selector) {
+                          return document.querySelector(selector);
+                        }
+                      }
+                      /**
+                       * Allow fire programmatically a copy action
+                       * @param {String|HTMLElement} target
+                       * @param {Object} options
+                       * @returns Text copied.
+                       */
+                    }, {
+                      key: "defaultText",
+                      /**
+                       * Default `text` lookup function.
+                       * @param {Element} trigger
+                       */
+                      value: function defaultText(trigger) {
+                        return getAttributeValue("text", trigger);
+                      }
+                      /**
+                       * Destroy lifecycle.
+                       */
+                    }, {
+                      key: "destroy",
+                      value: function destroy() {
+                        this.listener.destroy();
+                      }
+                    }], [{
+                      key: "copy",
+                      value: function copy(target) {
+                        var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
+                          container: document.body
+                        };
+                        return actions_copy(target, options);
+                      }
+                      /**
+                       * Allow fire programmatically a cut action
+                       * @param {String|HTMLElement} target
+                       * @returns Text cutted.
+                       */
+                    }, {
+                      key: "cut",
+                      value: function cut(target) {
+                        return actions_cut(target);
+                      }
+                      /**
+                       * Returns the support of the given action, or all actions if no action is
+                       * given.
+                       * @param {String} [action]
+                       */
+                    }, {
+                      key: "isSupported",
+                      value: function isSupported() {
+                        var action = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : ["copy", "cut"];
+                        var actions = typeof action === "string" ? [action] : action;
+                        var support = !!document.queryCommandSupported;
+                        actions.forEach(function(action2) {
+                          support = support && !!document.queryCommandSupported(action2);
+                        });
+                        return support;
+                      }
+                    }]);
+                    return Clipboard2;
+                  })(tiny_emitter_default());
+                  var clipboard = Clipboard;
+                })
+              ),
+              /***/
+              828: (
+                /***/
+                (function(module2) {
+                  var DOCUMENT_NODE_TYPE = 9;
+                  if (typeof Element !== "undefined" && !Element.prototype.matches) {
+                    var proto = Element.prototype;
+                    proto.matches = proto.matchesSelector || proto.mozMatchesSelector || proto.msMatchesSelector || proto.oMatchesSelector || proto.webkitMatchesSelector;
+                  }
+                  function closest(element, selector) {
+                    while (element && element.nodeType !== DOCUMENT_NODE_TYPE) {
+                      if (typeof element.matches === "function" && element.matches(selector)) {
+                        return element;
+                      }
+                      element = element.parentNode;
+                    }
+                  }
+                  module2.exports = closest;
+                })
+              ),
+              /***/
+              438: (
+                /***/
+                (function(module2, __unused_webpack_exports, __webpack_require__2) {
+                  var closest = __webpack_require__2(828);
+                  function _delegate(element, selector, type, callback, useCapture) {
+                    var listenerFn = listener.apply(this, arguments);
+                    element.addEventListener(type, listenerFn, useCapture);
+                    return {
+                      destroy: function() {
+                        element.removeEventListener(type, listenerFn, useCapture);
+                      }
+                    };
+                  }
+                  function delegate(elements, selector, type, callback, useCapture) {
+                    if (typeof elements.addEventListener === "function") {
+                      return _delegate.apply(null, arguments);
+                    }
+                    if (typeof type === "function") {
+                      return _delegate.bind(null, document).apply(null, arguments);
+                    }
+                    if (typeof elements === "string") {
+                      elements = document.querySelectorAll(elements);
+                    }
+                    return Array.prototype.map.call(elements, function(element) {
+                      return _delegate(element, selector, type, callback, useCapture);
+                    });
+                  }
+                  function listener(element, selector, type, callback) {
+                    return function(e) {
+                      e.delegateTarget = closest(e.target, selector);
+                      if (e.delegateTarget) {
+                        callback.call(element, e);
+                      }
+                    };
+                  }
+                  module2.exports = delegate;
+                })
+              ),
+              /***/
+              879: (
+                /***/
+                (function(__unused_webpack_module, exports2) {
+                  exports2.node = function(value) {
+                    return value !== void 0 && value instanceof HTMLElement && value.nodeType === 1;
+                  };
+                  exports2.nodeList = function(value) {
+                    var type = Object.prototype.toString.call(value);
+                    return value !== void 0 && (type === "[object NodeList]" || type === "[object HTMLCollection]") && "length" in value && (value.length === 0 || exports2.node(value[0]));
+                  };
+                  exports2.string = function(value) {
+                    return typeof value === "string" || value instanceof String;
+                  };
+                  exports2.fn = function(value) {
+                    var type = Object.prototype.toString.call(value);
+                    return type === "[object Function]";
+                  };
+                })
+              ),
+              /***/
+              370: (
+                /***/
+                (function(module2, __unused_webpack_exports, __webpack_require__2) {
+                  var is = __webpack_require__2(879);
+                  var delegate = __webpack_require__2(438);
+                  function listen(target, type, callback) {
+                    if (!target && !type && !callback) {
+                      throw new Error("Missing required arguments");
+                    }
+                    if (!is.string(type)) {
+                      throw new TypeError("Second argument must be a String");
+                    }
+                    if (!is.fn(callback)) {
+                      throw new TypeError("Third argument must be a Function");
+                    }
+                    if (is.node(target)) {
+                      return listenNode(target, type, callback);
+                    } else if (is.nodeList(target)) {
+                      return listenNodeList(target, type, callback);
+                    } else if (is.string(target)) {
+                      return listenSelector(target, type, callback);
+                    } else {
+                      throw new TypeError("First argument must be a String, HTMLElement, HTMLCollection, or NodeList");
+                    }
+                  }
+                  function listenNode(node, type, callback) {
+                    node.addEventListener(type, callback);
+                    return {
+                      destroy: function() {
+                        node.removeEventListener(type, callback);
+                      }
+                    };
+                  }
+                  function listenNodeList(nodeList, type, callback) {
+                    Array.prototype.forEach.call(nodeList, function(node) {
+                      node.addEventListener(type, callback);
+                    });
+                    return {
+                      destroy: function() {
+                        Array.prototype.forEach.call(nodeList, function(node) {
+                          node.removeEventListener(type, callback);
+                        });
+                      }
+                    };
+                  }
+                  function listenSelector(selector, type, callback) {
+                    return delegate(document.body, selector, type, callback);
+                  }
+                  module2.exports = listen;
+                })
+              ),
+              /***/
+              817: (
+                /***/
+                (function(module2) {
+                  function select(element) {
+                    var selectedText;
+                    if (element.nodeName === "SELECT") {
+                      element.focus();
+                      selectedText = element.value;
+                    } else if (element.nodeName === "INPUT" || element.nodeName === "TEXTAREA") {
+                      var isReadOnly = element.hasAttribute("readonly");
+                      if (!isReadOnly) {
+                        element.setAttribute("readonly", "");
+                      }
+                      element.select();
+                      element.setSelectionRange(0, element.value.length);
+                      if (!isReadOnly) {
+                        element.removeAttribute("readonly");
+                      }
+                      selectedText = element.value;
+                    } else {
+                      if (element.hasAttribute("contenteditable")) {
+                        element.focus();
+                      }
+                      var selection = window.getSelection();
+                      var range = document.createRange();
+                      range.selectNodeContents(element);
+                      selection.removeAllRanges();
+                      selection.addRange(range);
+                      selectedText = selection.toString();
+                    }
+                    return selectedText;
+                  }
+                  module2.exports = select;
+                })
+              ),
+              /***/
+              279: (
+                /***/
+                (function(module2) {
+                  function E() {
+                  }
+                  E.prototype = {
+                    on: function(name, callback, ctx) {
+                      var e = this.e || (this.e = {});
+                      (e[name] || (e[name] = [])).push({
+                        fn: callback,
+                        ctx
+                      });
+                      return this;
+                    },
+                    once: function(name, callback, ctx) {
+                      var self = this;
+                      function listener() {
+                        self.off(name, listener);
+                        callback.apply(ctx, arguments);
+                      }
+                      ;
+                      listener._ = callback;
+                      return this.on(name, listener, ctx);
+                    },
+                    emit: function(name) {
+                      var data = [].slice.call(arguments, 1);
+                      var evtArr = ((this.e || (this.e = {}))[name] || []).slice();
+                      var i = 0;
+                      var len = evtArr.length;
+                      for (i; i < len; i++) {
+                        evtArr[i].fn.apply(evtArr[i].ctx, data);
+                      }
+                      return this;
+                    },
+                    off: function(name, callback) {
+                      var e = this.e || (this.e = {});
+                      var evts = e[name];
+                      var liveEvents = [];
+                      if (evts && callback) {
+                        for (var i = 0, len = evts.length; i < len; i++) {
+                          if (evts[i].fn !== callback && evts[i].fn._ !== callback)
+                            liveEvents.push(evts[i]);
+                        }
+                      }
+                      liveEvents.length ? e[name] = liveEvents : delete e[name];
+                      return this;
+                    }
+                  };
+                  module2.exports = E;
+                  module2.exports.TinyEmitter = E;
+                })
+              )
+              /******/
+            };
+            var __webpack_module_cache__ = {};
+            function __webpack_require__(moduleId) {
+              if (__webpack_module_cache__[moduleId]) {
+                return __webpack_module_cache__[moduleId].exports;
+              }
+              var module2 = __webpack_module_cache__[moduleId] = {
+                /******/
+                // no module.id needed
+                /******/
+                // no module.loaded needed
+                /******/
+                exports: {}
+                /******/
+              };
+              __webpack_modules__[moduleId](module2, module2.exports, __webpack_require__);
+              return module2.exports;
+            }
+            !(function() {
+              __webpack_require__.n = function(module2) {
+                var getter = module2 && module2.__esModule ? (
+                  /******/
+                  function() {
+                    return module2["default"];
+                  }
+                ) : (
+                  /******/
+                  function() {
+                    return module2;
+                  }
+                );
+                __webpack_require__.d(getter, { a: getter });
+                return getter;
+              };
+            })();
+            !(function() {
+              __webpack_require__.d = function(exports2, definition) {
+                for (var key in definition) {
+                  if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports2, key)) {
+                    Object.defineProperty(exports2, key, { enumerable: true, get: definition[key] });
+                  }
+                }
+              };
+            })();
+            !(function() {
+              __webpack_require__.o = function(obj, prop) {
+                return Object.prototype.hasOwnProperty.call(obj, prop);
+              };
+            })();
+            return __webpack_require__(686);
+          })().default
+        );
+      });
+    }
+  });
 
-	// handle paste from clipboard
-	var $pasted_success = $('#pasted_success'), $copied_success = $('#copied_success');
-	$pasted_success.fadeOut(0);
-	$copied_success.fadeOut(0);
+  // client/clipboard.ts
+  var import_clipboard = __toESM(require_clipboard());
+  function initClipboard() {
+    const textarea = document.getElementById("id_data");
+    const pastedSuccess = document.getElementById("pasted_success");
+    const copiedSuccess = document.getElementById("copied_success");
+    if (!textarea || !pastedSuccess || !copiedSuccess)
+      return;
+    pastedSuccess.style.display = "none";
+    copiedSuccess.style.display = "none";
+    const clipboard = new import_clipboard.default("#clip-btn");
+    clipboard.on("success", function(e) {
+      copiedSuccess.style.display = "inline";
+      setTimeout(() => copiedSuccess.style.display = "none", 2e3);
+    });
+    clipboard.on("error", function(e) {
+      alert("Copy to clipboard failed. Please use Ctrl+C or Cmd+C to copy the text.");
+    });
+    textarea.addEventListener("paste", function(e) {
+      pastedSuccess.style.display = "inline";
+      setTimeout(() => pastedSuccess.style.display = "none", 2e3);
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initClipboard);
+  } else {
+    initClipboard();
+  }
+})();
+/*! Bundled license information:
 
-	$('#id_data').on('paste', function(e) {
-		var json_data;
-		e.preventDefault();
-		json_data = (e.originalEvent || e).clipboardData.getData('text/plain');
-		try {
-			json_data = JSON.parse(json_data);
-		} catch (err) {
-			alert("Pasted data does not seem to be valid JSON");
-			return;
-		}
-		$(this).val(JSON.stringify(json_data, null, 2));
-		$pasted_success.fadeIn(100).delay(2500).fadeOut(400);
-	});
-
-	$('.clip-btn').on('click', function(e) {
-		$copied_success.fadeIn(100).delay(2500).fadeOut(400);
-	});
-
-});
+clipboard/dist/clipboard.js:
+  (*!
+   * clipboard.js v2.0.11
+   * https://clipboardjs.com/
+   *
+   * Licensed MIT © Zeno Rocha
+   *)
+*/
+//# sourceMappingURL=clipboard.js.map

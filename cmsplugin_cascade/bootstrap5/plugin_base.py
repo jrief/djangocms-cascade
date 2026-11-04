@@ -38,15 +38,15 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
     class Media:
         css = {'all': ['formset/css/adminform.css', 'cascade/css/admin/adminform.css']}
         js = [
-            'cascade/admin/bootstrap5/js/formset-extensions.js',
+            'cascade/js/admin/formset-extensions.js',
         ]
 
     def __repr__(self):
         return f'<{self.__class__.__name__}>'
 
-    # @classmethod
-    # def get_child_classes(cls, slot, page, instance=None, only_uncached=False):
-    #     child_classes = super().get_child_classes(slot, page, instance, only_uncached)
+    @classmethod
+    def get_child_classes(cls, slot, page, instance=None, only_uncached=False):
+        child_classes = super().get_child_classes(slot, page, instance, only_uncached)
     #     # for installed_plugin in cls.get_child_plugin_candidates(slot, page):
     #     #     if (
     #     #         cls.__name__ in (getattr(installed_plugin, 'parent_classes') or ())
@@ -54,7 +54,7 @@ class BootstrapPluginBase(CascadePluginMixin, ModelAdminMixin, CMSPluginBase, me
     #     #     ):
     #     #         child_classes.append(installed_plugin.__name__)
     #     print(f"{cls.__name__}: {child_classes}")
-    #     return child_classes
+        return child_classes
 
     def get_render_template(self, context, instance, placeholder):
         render_template = getattr(self, 'render_template', None)

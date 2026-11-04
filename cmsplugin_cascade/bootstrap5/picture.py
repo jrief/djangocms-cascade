@@ -85,7 +85,7 @@ class LazySizesPictureMixin:
     max_thumbnail_width = 1920
     max_pixel_ratio = 2.0  # maximum pixel ratio for the image
     real_to_wanted_ratio = (0.85, 1.15)  # acceptable ratio between wanted and real thumbnail size
-    fallback_image = static('cascade/fallback.svg')
+    fallback_image = static('cascade/icons/fallback.svg')
 
     @classmethod
     def get_sources_bounds(cls, instance):

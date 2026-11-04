@@ -186,6 +186,7 @@ class RichtextPlugin(BootstrapPluginBase):
     form = RichtextForm
     change_form_template = 'admin/cmsplugin_cascade/formset/richtext_change_form.html'
     render_template = 'cascade/bootstrap5/richtext.html'
+    default_doc_content = {'type': 'doc', 'content': []}
 
     class Media:
         css = {
@@ -221,6 +222,11 @@ class RichtextPlugin(BootstrapPluginBase):
             instance.glossary['body'] = result.text
             instance.save(update_fields=['body'])
 
+    @classmethod
+    def get_data_representation(cls, instance):
+        body = instance.glossary.get('body', cls.default_doc_content)
+        return {'glossary': {'body': body}, 'pk': instance.pk}
+
     def render_change_form(
         self, request, context, add=False, change=False, form_url="", obj=None
     ):
@@ -232,7 +238,7 @@ class RichtextPlugin(BootstrapPluginBase):
 
     def render(self, context, instance, placeholder):
         context = self.super(RichtextPlugin, self).render(context, instance, placeholder)
-        body = instance.glossary.get('body', {'type': 'doc', 'content': []})
+        body = instance.glossary.get('body', self.default_doc_content)
         context.update({
             'body': body,
             'stylesheet_urls': extract_stylesheet_urls(body['content']),
