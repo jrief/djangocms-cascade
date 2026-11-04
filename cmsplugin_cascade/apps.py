@@ -3,7 +3,6 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import pre_migrate, post_migrate
 from django.db.utils import DatabaseError
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -15,11 +14,6 @@ class CascadeConfig(AppConfig):
     def ready(self):
         if 'django_select2' not in settings.INSTALLED_APPS:
             raise ImproperlyConfigured('django_select2 not configured')
-
-        stylesSet = str(settings.CKEDITOR_SETTINGS.get('stylesSet'))
-        if stylesSet != 'default:{}'.format(reverse('admin:cascade_texteditor_config')):
-            msg = "settings.CKEDITOR_SETTINGS['stylesSet'] should be `format_lazy('default:{}', reverse_lazy('admin:cascade_texteditor_config'))`"
-            raise ImproperlyConfigured(msg)
 
         pre_migrate.connect(self.__class__.pre_migrate, sender=self)
         post_migrate.connect(self.__class__.post_migrate, sender=self)
@@ -36,7 +30,7 @@ class CascadeConfig(AppConfig):
                 model = ctype.model_class()
                 if model is None:
                     sender.revoke_permissions(ctype)
-                    ContentType.objects.get(app_label=sender.label, model=ctype).delete()
+                    ContentType.objects.filter(app_label=sender.label, model=ctype).delete()
         except DatabaseError:
             return
 

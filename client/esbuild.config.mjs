@@ -10,7 +10,6 @@ build({
   entryPoints: [
     'client/formset-extensions.ts',
     'client/formset-extensions/GlyphSelector.ts',
-    'client/clipboard.ts',
   ],
   bundle: true,
   minify: !buildOptions.debug,

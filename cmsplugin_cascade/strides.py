@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import get_language_from_request
 
 from classytags.utils import flatten_context
-from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
+# from djangocms_text_ckeditor.utils import OBJ_ADMIN_RE
 
 from cmsplugin_cascade import app_settings
 from cmsplugin_cascade.mixins import CascadePluginMixin

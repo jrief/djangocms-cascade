@@ -184,90 +184,11 @@ class PluginExtraFields(models.Model):
         return plugin_pool.get_plugin(self.plugin_type).name
 
 
-class TextEditorConfigFields(models.Model):
-    ELEMENT_CHOICES = [(c, c) for c in [
-        'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'address', 'div', 'span', 'ol', 'ul']
-    ]
-
-    name = models.CharField(
-        _("Name"),
-        max_length=50,
-    )
-
-    element_type = models.CharField(
-        _("Element Type"),
-        choices=ELEMENT_CHOICES,
-        max_length=12,
-    )
-
-    css_classes = models.CharField(
-        _("CSS classes"),
-        max_length=250,
-        help_text=_("Freely selectable CSS classnames for this Text-Editor Style, separated by spaces."),
-    )
-
-    class Meta:
-        verbose_name = _("Text Editor Config")
-
-    def get_config(self):
-        config = {
-            'name': self.name,
-            'element': self.element_type,
-            'attributes': {'class': self.css_classes},
-        }
-        return json.dumps(config)
-
-
 class Segmentation(models.Model):
     class Meta:
         verbose_name = _("Segmentation")
         managed = False  # it's a dummy model
         db_table = None
-
-
-class CascadeClipboard(models.Model):
-    """
-    A model class to persist, export and re-import the clipboard's content.
-    """
-    identifier = models.CharField(
-        _("Identifier"),
-        max_length=50,
-        unique=True,
-    )
-
-    data = models.JSONField(
-        null=True,
-        blank=True,
-        default=dict,
-    )
-
-    created_by = models.ForeignKey(
-        get_user_model(),
-        verbose_name=_("Created by"),
-        on_delete=models.SET_NULL,
-        editable=False,
-        null=True,
-    )
-
-    created_at = models.DateTimeField(
-        _("Created at"),
-        auto_now_add=True,
-        editable=False,
-    )
-
-    last_accessed_at = models.DateTimeField(
-        _("Last accessed at"),
-        null=True,
-        default=None,
-        editable=False,
-    )
-
-    class Meta:
-        verbose_name = _("Persisted Clipboard Content")
-        verbose_name_plural = _("Persisted Clipboard Contents")
-
-    def __str__(self):
-        return self.identifier
 
 
 class IconFont(models.Model):
