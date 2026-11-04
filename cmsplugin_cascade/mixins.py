@@ -93,6 +93,13 @@ class CascadePluginMixin:
         attributes = getattr(cls, 'html_tag_attributes', {})
         return dict((attr, instance.glossary.get(key, '')) for key, attr in attributes.items())
 
+    @classmethod
+    def get_data_representation(cls, instance):
+        """
+        Return a representation of the given instance suitable for a serialized representation.
+        """
+        return {'glossary': instance.glossary, 'pk': instance.pk}
+
 
 class WithInlineElementsMixin:
     """

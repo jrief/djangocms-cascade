@@ -13,10 +13,11 @@ from django.utils.translation import gettext_lazy as _, get_language_from_reques
 
 from cms.plugin_base import CMSPluginBase, PluginMenuItem
 from cms.plugin_pool import plugin_pool
-from cms.toolbar.utils import get_plugin_tree
+from cms.toolbar.utils import get_plugin_tree, get_toolbar_from_request
+from cms.utils.plugins import copy_plugins_to_placeholder
 from cmsplugin_cascade.clipboard.forms import ClipboardBaseForm
 from cmsplugin_cascade.clipboard.utils import deserialize_to_clipboard, serialize_from_placeholder
-from cmsplugin_cascade.models import CascadeClipboard
+from cmsplugin_cascade.models import CascadeClipboard, CascadeElement
 
 
 class CascadeClipboardPlugin(CMSPluginBase):
@@ -110,34 +111,40 @@ class CascadeClipboardPlugin(CMSPluginBase):
         return self.render_modal_window(request, form)
 
     def paste_from_clipboard(self, request, form):
-        placeholder = form.cleaned_data['placeholder']
+        target_placeholder = form.cleaned_data['placeholder']
+        target_position = 1 # int(form.cleaned_data.get('target_position', '0'))  # 1
         language = form.cleaned_data['language']
         cascade_clipboard = form.cleaned_data['clipboard']
-        tree_order = placeholder.get_plugin_tree_order(language)
         deserialize_to_clipboard(request, cascade_clipboard.data)
         cascade_clipboard.last_accessed_at = now()
         cascade_clipboard.save(update_fields=['last_accessed_at'])
 
         # detach plugins from clipboard and reattach them to current placeholder
-        cb_placeholder_plugin = request.toolbar.clipboard.cmsplugin_set.filter(plugin_type='PlaceholderPlugin').first()
+        clipboard = get_toolbar_from_request(request).clipboard
+        cb_placeholder_plugin = clipboard.cmsplugin_set.filter(plugin_type='PlaceholderPlugin').first()
         cb_placeholder_instance, _ = cb_placeholder_plugin.get_plugin_instance()
-        new_plugins = cb_placeholder_instance.placeholder_ref.get_plugins()
-        new_plugins.update(placeholder=placeholder)
+        plugins = cb_placeholder_instance.placeholder_ref.get_plugins()
+        tree_order = target_placeholder.get_plugin_tree_order(language, parent_id=cb_placeholder_plugin.id)
+        new_plugins = copy_plugins_to_placeholder(
+            plugins,
+            placeholder=target_placeholder,
+            language=language,
+            start_positions={language: target_position},
+        )
+        new_plugin_ids = (new.pk for new in new_plugins)
+        target_placeholder.clear_cache(language)
+        new_plugins = list(
+            CascadeElement
+            .objects
+            .filter(pk__in=new_plugin_ids)
+            .select_related('placeholder')
+        )
 
-        # until CMS3 root plugins in placeholder were reordered by their changed_date
-        # this functionality does not work in CMS4 anymore, and has been removed
-
-        # create a list of pasted plugins to be added to the structure view
-        all_plugins = placeholder.get_plugins(language)
-        if all_plugins.exists():
-            new_plugins = placeholder.get_plugins(language).exclude(pk__in=tree_order)
-            data = get_plugin_tree(request, list(new_plugins))
-            data['plugin_order'] = tree_order + ['__COPY__']
-        else:
-            return render(request, 'cascade/admin/clipboard_reload_page.html')
-        data['target_placeholder_id'] = placeholder.pk
+        data = get_plugin_tree(request, new_plugins)
+        data['plugin_order'] = tree_order + ['__COPY__']
+        data['target_placeholder_id'] = target_placeholder.pk
         context = {'structure_data': json.dumps(data)}
-        return render(request, 'cascade/admin/clipboard_paste_plugins.html', context)
+        return render(request, 'djangocms_transfer/placeholder_close_frame.html', context)
 
     def export_plugins_view(self, request):
         if not request.user.is_staff:

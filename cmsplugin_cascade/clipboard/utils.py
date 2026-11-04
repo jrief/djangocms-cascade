@@ -5,10 +5,7 @@ from django.utils.translation import get_language_from_request
 from cms.api import add_plugin
 from cms.models.placeholderpluginmodel import PlaceholderReference
 from cms.plugin_pool import plugin_pool
-
-from djangocms_text_ckeditor.models import Text
-from djangocms_text_ckeditor.utils import plugin_tags_to_id_list, replace_plugin_tags
-
+from cms.toolbar.utils import get_toolbar_from_request
 from cmsplugin_cascade.models import CascadeElement
 
 
@@ -20,13 +17,7 @@ def serialize_from_placeholder(placeholder, admin_site=default_admin_site):
         for child in plugin_qs.filter(parent=parent).order_by('position'):
             instance, plugin = child.get_plugin_instance(admin_site)
             plugin_type = plugin.__class__.__name__
-            try:
-                entry = (plugin_type, plugin.get_data_representation(instance), [])
-            except AttributeError:
-                if isinstance(instance, Text):
-                    entry = (plugin_type, {'body': instance.body, 'pk': instance.pk}, [])
-                else:
-                    continue
+            entry = (plugin_type, plugin.get_data_representation(instance), [])
             data.append(entry)
             populate_data(child, entry[2])
 
@@ -53,29 +44,20 @@ def deserialize_to_clipboard(request, data):
             try:
                 instance = add_plugin(placeholder, plugin_class, language, target=parent, **kwargs)
             except Exception:
-                messages.add_message(request, messages.ERROR, "Unable to create structure for plugin: {}".format(plugin_class.name))
+                msg = "Unable to create plugin of type: {} with data: {}".format(plugin_type, kwargs)
+                messages.add_message(request, messages.ERROR, msg)
                 continue
-            if isinstance(instance, CascadeElement):
-                instance.plugin_class.add_inline_elements(instance, inlines)
-                instance.plugin_class.add_shared_reference(instance, shared_glossary)
+            assert isinstance(instance, CascadeElement)
+            # instance.plugin_class.add_inline_elements(instance, inlines)
+            # instance.plugin_class.add_shared_reference(instance, shared_glossary)
 
             # for some unknown reasons add_plugin sets instance.numchild to 0,
             # but fixing and save()-ing 'instance' executes some filters in an unwanted manner
             plugins_from_data(placeholder, instance, children_data)
 
-            if isinstance(instance, Text):
-                # we must convert the old plugin IDs into the new ones,
-                # otherwise links are not displayed
-                id_dict = dict(zip(
-                    plugin_tags_to_id_list(instance.body),
-                    (t[0] for t in instance.get_children().values_list('id'))
-                ))
-                instance.body = replace_plugin_tags(instance.body, id_dict)
-                instance.save()
-
     language = get_language_from_request(request, check_path=True)
-
     clipboard = request.toolbar.clipboard
+    clipboard = get_toolbar_from_request(request).clipboard
     ref_plugin = clipboard.cmsplugin_set.first()
     if ref_plugin is None:
         # the clipboard is empty

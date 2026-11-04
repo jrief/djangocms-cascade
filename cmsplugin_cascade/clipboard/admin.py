@@ -14,26 +14,30 @@ from cmsplugin_cascade.models import CascadeClipboard
 
 
 class JSONAdminWidget(widgets.Textarea):
-    def __init__(self):
-        attrs = {'cols': '40', 'rows': '3'}
-        super(JSONAdminWidget, self).__init__(attrs)
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs['class'] = 'vLargeTextField'
+        attrs['rows'] = 4
+        return attrs
 
     def render(self, name, value, attrs=None, renderer=None):
         if value is None:
             value = ''
         final_attrs = self.build_attrs(self.attrs, extra_attrs=dict(attrs, name=name))
         id_data = attrs.get('id', 'id_data')
-        clippy_url = static('cascade/admin/clippy.svg')
-        return format_html('<textarea{0}>\r\n{1}</textarea> '
-            '<button data-clipboard-target="#{2}" type="button" title="{4}" class="clip-btn">'
-                '<img src="{3}" alt="{4}">'
+        clippy_url = static('cascade/icons/clippy.svg')
+        return format_html(
+            '<textarea{0}>\r\n{1}</textarea> '
+            '<button data-clipboard-target="#{2}" type="button" title="{4}" id="clip-btn" alt="{4}">'
+                '<img src="{3}">'
             '</button>\n'
             '<div class="status-line"><label></label><strong id="pasted_success">{5}</strong>'
             '<strong id="copied_success">{6}</strong></div>',
             flatatt(final_attrs), str(value), id_data, clippy_url,
             _("Copy to Clipboard"),
             _("Successfully pasted JSON data"),
-            _("Successfully copied JSON data"))
+            _("Successfully copied JSON data"),
+        )
 
 
 @admin.register(CascadeClipboard)
@@ -50,13 +54,17 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
         js = ['admin/js/jquery.init.js', 'cascade/js/admin/clipboard.js']
 
     def save_clipboard(self, obj):
-        return format_html('<input type="submit" value="{}" class="default pull-left" name="save_clipboard" />',
-                           _("Insert Data"))
+        return format_html(
+            '<input type="submit" value="{}" class="default pull-left" name="save_clipboard" />',
+            _("Insert Data"),
+        )
     save_clipboard.short_description = _("From CMS Clipboard")
 
     def restore_clipboard(self, obj):
-        return format_html('<input type="submit" value="{}" class="default pull-left" name="restore_clipboard" />',
-                           _("Restore Data"))
+        return format_html(
+            '<input type="submit" value="{}" class="default pull-left" name="restore_clipboard" />',
+            _("Restore Data"),
+        )
     restore_clipboard.short_description = _("To CMS Clipboard")
 
     def save_model(self, request, obj, form, change):
@@ -76,4 +84,3 @@ class CascadeClipboardAdmin(admin.ModelAdmin):
             deserialize_to_clipboard(request, obj.data)
             obj.last_accessed_at = now()
         super().save_model(request, obj, form, change)
-
