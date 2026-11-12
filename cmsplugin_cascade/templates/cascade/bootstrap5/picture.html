@@ -1,0 +1,20 @@
+{% load l10n static cascade_tags thumbnail %}
+{% localize off %}{% spaceless %}
+<picture{{ instance.html_tag_attributes }}>
+{% if instance.image|is_valid_image %}
+	{% for elem in elements %}
+		{% thumbnail instance.image elem.size zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb %}
+		{% if elem.size2 %}
+			{% thumbnail instance.image elem.size2 zoom=elem.zoom crop=elem.crop upscale=elem.upscale subject_location=elem.subject_location as thumb2 %}
+		{% endif %}
+		{% if elem.tag == "source" %}
+	<source srcset="{{ thumb.url }}{% if thumb2 %} 1x, {{ thumb2.url }} 2x{% endif %}" media="{{ elem.media }}" />
+		{% elif elem.tag == "img" %}
+	<img src="{{ thumb.url }}" class="{{ instance.css_classes }}"{% if not is_fluid %} width="{{ thumb.width }}" height="{{ thumb.height }}"{% endif %} />
+		{% endif %}
+	{% endfor %}
+{% else %}
+	<img src="{% static 'cascade/fallback.svg' %}" style="background-color:lightgray;" class="{{ instance.css_classes }}" />
+{% endif %}
+</picture>
+{% endspaceless %}{% endlocalize %}
